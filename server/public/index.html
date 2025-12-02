@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas Demo</title>
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+</head>
+<body>
+  <div class="status-badge">
+        <div class="status-dot"></div>
+        <span>Server: <span id="serverStatus">Checking...</span></span>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>📐 Collaborative Geometry</h1>
+            <p>Διαδραστικές Γεωμετρικές Δραστηριότητες σε Πραγματικό Χρόνο</p>
+        </div>
+
+        <div class="roles">
+            <!-- Camera Client -->
+            <div class="role-card" onclick="selectRole('camera')">
+                <span class="role-icon">📹</span>
+                <div class="role-title">Camera Client</div>
+                <div class="role-description">
+                    Χρησιμοποιήστε την κάμερα για body tracking και κινήστε σημεία με τα χέρια σας!
+                </div>
+                <ul class="role-features">
+                    <li>MoveNet MultiPose (έως 6 άτομα)</li>
+                    <li>YOLO + DeepSORT (10+ άτομα)</li>
+                    <li>Real-time skeleton overlay</li>
+                    <li>Wrist/hand tracking</li>
+                </ul>
+            </div>
+
+            <!-- Mouse Client -->
+            <div class="role-card" onclick="selectRole('mouse')">
+                <span class="role-icon">🖱️</span>
+                <div class="role-title">Mouse Client</div>
+                <div class="role-description">
+                    Κινήστε το σημείο σας με το ποντίκι ή touch screen. Ιδανικό για μαθητές!
+                </div>
+                <ul class="role-features">
+                    <li>Drag & drop controls</li>
+                    <li>Προσαρμόσιμο χρώμα/μέγεθος</li>
+                    <li>Touch support (mobile/tablet)</li>
+                    <li>Low latency (16ms)</li>
+                </ul>
+            </div>
+
+            <!-- Teacher Client -->
+            <div class="role-card" onclick="selectRole('teacher')">
+                <span class="role-icon">👨‍🏫</span>
+                <div class="role-title">Teacher Client</div>
+                <div class="role-description">
+                    Σχεδιάστε δραστηριότητες, παρακολουθήστε μαθητές, αναλύστε στατιστικά!
+                </div>
+                <ul class="role-features">
+                    <li>Γεωμετρικός σχεδιαστής</li>
+                    <li>Activity management</li>
+                    <li>Real-time statistics</li>
+                    <li>Save/Load activities</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2>🎯 Πώς Λειτουργεί</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <h3>1. Επιλογή Ρόλου</h3>
+                    <p>Επιλέξτε πώς θέλετε να συμμετάσχετε: με κάμερα, ποντίκι ή ως εκπαιδευτής.</p>
+                </div>
+                <div class="info-item">
+                    <h3>2. Κοινός Καμβάς</h3>
+                    <p>Όλοι βλέπουν τον ίδιο καμβά με γεωμετρικά σχήματα και σημεία σε real-time.</p>
+                </div>
+                <div class="info-item">
+                    <h3>3. Συνεργασία</h3>
+                    <p>Εργαστείτε μαζί για να ολοκληρώσετε γεωμετρικές δραστηριότητες και ασκήσεις.</p>
+                </div>
+                <div class="info-item">
+                    <h3>4. Στατιστικά</h3>
+                    <p>Ο εκπαιδευτής βλέπει live μετρήσεις, αποστάσεις, γωνίες και χρόνους.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Πανεπιστήμιο Αιγαίου</p>
+            <p></p>
+        </div>
+    </div>
+
+    <script>
+        // Check server status
+        async function checkServer() {
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                document.getElementById('serverStatus').textContent = 'Online ✓';
+                document.getElementById('serverStatus').style.color = '#10b981';
+            } catch (error) {
+                document.getElementById('serverStatus').textContent = 'Offline ✗';
+                document.getElementById('serverStatus').style.color = '#ef4444';
+            }
+        }
+
+        // Role selection
+        function selectRole(role) {
+            // Store role in localStorage
+            localStorage.setItem('selectedRole', role);
+            
+            // Redirect to client page with role parameter
+            window.location.href = `/client.html?role=${role}`;
+        }
+
+        // Check server on load
+        checkServer();
+        setInterval(checkServer, 5000);
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '1') selectRole('camera');
+            if (e.key === '2') selectRole('mouse');
+            if (e.key === '3') selectRole('teacher');
+        });
+    </script>
+
+  
+  
+</body>
+</html>

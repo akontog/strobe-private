@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas Demo</title>
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+        <div class="container">
+        <div class="header panel">
+            <h1>👨‍🏫 Teacher Client - Γεωμετρικός Σχεδιαστής</h1>
+            <p>Σχεδιάστε γεωμετρικές δραστηριότητες για τους μαθητές</p>
+        </div>
+
+        <!-- Left Panel: Tools -->
+        <div class="panel">
+            <h2>🛠️ Εργαλεία</h2>
+            
+            <div class="tool-section">
+                <h3>Σχεδίαση</h3>
+                <button class="tool-btn active" data-tool="point">📍 Σημείο</button>
+                <button class="tool-btn" data-tool="line">📏 Ευθύγραμμο Τμήμα</button>
+                <button class="tool-btn" data-tool="ray">➡️ Ημιευθεία</button>
+                <button class="tool-btn" data-tool="circle">⭕ Κύκλος</button>
+                <button class="tool-btn" data-tool="triangle">🔺 Τρίγωνο</button>
+                <button class="tool-btn" data-tool="rectangle">⬜ Ορθογώνιο</button>
+                <button class="tool-btn" data-tool="polygon">⬡ Πολύγωνο</button>
+            </div>
+
+            <div class="tool-section">
+                <h3>Μετρήσεις</h3>
+                <button class="tool-btn" data-tool="measure-distance">📐 Απόσταση</button>
+                <button class="tool-btn" data-tool="measure-angle">📐 Γωνία</button>
+            </div>
+
+            <div class="tool-section">
+                <h3>Χρώμα</h3>
+                <div class="color-picker">
+                    <div class="color-option active" data-color="#000000" style="background: #000000"></div>
+                    <div class="color-option" data-color="#FF6B6B" style="background: #FF6B6B"></div>
+                    <div class="color-option" data-color="#4ECDC4" style="background: #4ECDC4"></div>
+                    <div class="color-option" data-color="#45B7D1" style="background: #45B7D1"></div>
+                    <div class="color-option" data-color="#FFA07A" style="background: #FFA07A"></div>
+                    <div class="color-option" data-color="#98D8C8" style="background: #98D8C8"></div>
+                </div>
+            </div>
+
+            <div class="tool-section">
+                <h3>Ρυθμίσεις</h3>
+                <label>Πάχος Γραμμής:</label>
+                <input type="number" id="lineWidth" value="2" min="1" max="10">
+                
+                <div class="grid-toggle">
+                    <input type="checkbox" id="showGrid" checked>
+                    <label>Εμφάνιση Grid</label>
+                </div>
+                
+                <div class="grid-toggle">
+                    <input type="checkbox" id="snapToGrid">
+                    <label>Snap to Grid</label>
+                </div>
+
+                <label>Grid Size:</label>
+                <input type="number" id="gridSize" value="50" min="10" max="100">
+            </div>
+        </div>
+
+        <!-- Center Panel: Canvas -->
+        <div class="panel canvas-panel">
+            <h2>🎨 Καμβάς</h2>
+            <div class="canvas-container">
+                <canvas id="canvas" width="900" height="600"></canvas>
+            </div>
+            <div class="canvas-controls">
+                <button class="btn btn-danger" id="clearBtn">🗑️ Καθαρισμός</button>
+                <button class="btn btn-primary" id="undoBtn">↶ Undo</button>
+                <button class="btn btn-success" id="broadcastBtn">📡 Αποστολή σε Μαθητές</button>
+                <button class="btn btn-primary" id="saveBtn">💾 Αποθήκευση</button>
+                <button class="btn btn-primary" id="loadBtn">📂 Φόρτωση</button>
+            </div>
+
+            <div class="measurements">
+                <h3>📊 Μετρήσεις</h3>
+                <div id="measurementsDisplay">
+                    <p style="opacity: 0.7; font-style: italic;">Επιλέξτε στοιχεία για μετρήσεις</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Stats & Students -->
+        <div class="panel">
+            <h2>📊 Στατιστικά & Μαθητές</h2>
+            
+            <div class="stats-section">
+                <h3>Σύνδεση</h3>
+                <div class="stat-item">
+                    <span>Κατάσταση:</span>
+                    <span class="stat-value" id="connectionStatus">❌ Offline</span>
+                </div>
+                <div class="stat-item">
+                    <span>Συνδεδεμένοι:</span>
+                    <span class="stat-value" id="connectedCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Κάμερες:</span>
+                    <span class="stat-value" id="cameraCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Ποντίκια:</span>
+                    <span class="stat-value" id="mouseCount">0</span>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <h3>👥 Μαθητές</h3>
+                <div class="student-list" id="studentList">
+                    <p style="opacity: 0.7; text-align: center;">Κανένας μαθητής συνδεδεμένος</p>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <h3>📐 Γεωμετρικά</h3>
+                <div class="geometry-list" id="geometryList">
+                    <p style="opacity: 0.7; text-align: center;">Κανένα σχήμα</p>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <h3>⏱️ Δραστηριότητα</h3>
+                <button class="btn btn-success" id="startActivityBtn" style="width: 100%; margin: 5px 0;">▶️ Έναρξη</button>
+                <button class="btn btn-danger" id="stopActivityBtn" style="width: 100%; margin: 5px 0;">⏸️ Παύση</button>
+                <div class="stat-item">
+                    <span>Χρόνος:</span>
+                    <span class="stat-value" id="activityTimer">00:00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === Configuration ===
+        const SERVER_URL = 'http://localhost:3000';
+        let socket = null;
+        let isConnected = false;
+
+        // Canvas
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const CANVAS_WIDTH = canvas.width;
+        const CANVAS_HEIGHT = canvas.height;
+
+        // State
+        let currentTool = 'point';
+        let currentColor = '#000000';
+        let lineWidth = 2;
+        let showGrid = true;
+        let snapToGrid = false;
+        let gridSize = 50;
+
+        // Geometry storage
+        let geometryObjects = [];
+        let studentPoints = new Map();  // userId -> {x, y, color, name}
+        let tempPoints = [];  // For multi-point shapes (triangle, polygon)
+        let isDrawing = false;
+        let startPoint = null;
+
+        // Activity
+        let activityStartTime = null;
+        let activityTimer = null;
+
+        // Letter labels for points
+        let pointLabel = 0;
+        const POINT_LABELS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+        // === Socket.io Connection ===
+        function connectToServer() {
+            socket = io(SERVER_URL);
+
+            socket.on('connect', () => {
+                console.log('✅ Connected to server');
+                socket.emit('register', {
+                    userId: 'teacher_' + Math.random().toString(36).substr(2, 9),
+                    clientType: 'teacher',
+                    metadata: { name: 'Teacher' }
+                });
+            });
+
+            socket.on('welcome', (data) => {
+                isConnected = true;
+                updateConnectionStatus(true);
+                console.log('Welcome:', data);
+            });
+
+            socket.on('position_update', (data) => {
+                // Update student point positions
+                studentPoints.set(data.pointId, {
+                    x: data.position.x * CANVAS_WIDTH,
+                    y: data.position.y * CANVAS_HEIGHT,
+                    userId: data.userId,
+                    timestamp: data.timestamp
+                });
+                render();
+            });
+
+            socket.on('client_joined', (data) => {
+                console.log('Client joined:', data);
+                updateStats();
+            });
+
+            socket.on('client_left', (data) => {
+                console.log('Client left:', data);
+                // Remove their points
+                for (const [pointId, point] of studentPoints.entries()) {
+                    if (point.userId === data.userId) {
+                        studentPoints.delete(pointId);
+                    }
+                }
+                updateStats();
+                render();
+            });
+
+            socket.on('stats_update', (data) => {
+                updateStatsDisplay(data.stats);
+            });
+
+            socket.on('disconnect', () => {
+                isConnected = false;
+                updateConnectionStatus(false);
+            });
+        }
+
+        // === Tool Selection ===
+        document.querySelectorAll('.tool-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentTool = btn.dataset.tool;
+                tempPoints = [];
+                console.log('Tool selected:', currentTool);
+            });
+        });
+
+        // === Color Selection ===
+        document.querySelectorAll('.color-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                document.querySelectorAll('.color-option').forEach(o => o.classList.remove('active'));
+                opt.classList.add('active');
+                currentColor = opt.dataset.color;
+            });
+        });
+
+        // === Settings ===
+        document.getElementById('lineWidth').addEventListener('change', (e) => {
+            lineWidth = parseInt(e.target.value);
+        });
+
+        document.getElementById('showGrid').addEventListener('change', (e) => {
+            showGrid = e.target.checked;
+            render();
+        });
+
+        document.getElementById('snapToGrid').addEventListener('change', (e) => {
+            snapToGrid = e.target.checked;
+        });
+
+        document.getElementById('gridSize').addEventListener('change', (e) => {
+            gridSize = parseInt(e.target.value);
+            render();
+        });
+
+        // === Canvas Mouse Events ===
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            let y = e.clientY - rect.top;
+
+            if (snapToGrid) {
+                x = Math.round(x / gridSize) * gridSize;
+                y = Math.round(y / gridSize) * gridSize;
+            }
+
+            handleMouseDown(x, y);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            let y = e.clientY - rect.top;
+
+            if (snapToGrid) {
+                x = Math.round(x / gridSize) * gridSize;
+                y = Math.round(y / gridSize) * gridSize;
+            }
+
+            handleMouseMove(x, y);
+        });
+
+        canvas.addEventListener('mouseup', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            let x = e.clientX - rect.left;
+            let y = e.clientY - rect.top;
+
+            if (snapToGrid) {
+                x = Math.round(x / gridSize) * gridSize;
+                y = Math.round(y / gridSize) * gridSize;
+            }
+
+            handleMouseUp(x, y);
+        });
+
+        // === Drawing Logic ===
+        function handleMouseDown(x, y) {
+            isDrawing = true;
+            startPoint = {x, y};
+
+            if (currentTool === 'point') {
+                addGeometry({
+                    type: 'point',
+                    x, y,
+                    color: currentColor,
+                    label: POINT_LABELS[pointLabel % 26]
+                });
+                pointLabel++;
+                isDrawing = false;
+                render();
+                broadcastEnvironment();
+            } else if (['triangle', 'polygon'].includes(currentTool)) {
+                tempPoints.push({x, y});
+                render();
+            }
+        }
+
+        function handleMouseMove(x, y) {
+            if (!isDrawing || !startPoint) return;
+
+            // Preview for line, circle, rectangle
+            render();
+            
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = lineWidth;
+            ctx.setLineDash([5, 5]);
+
+            if (currentTool === 'line' || currentTool === 'ray') {
+                ctx.beginPath();
+                ctx.moveTo(startPoint.x, startPoint.y);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            } else if (currentTool === 'circle') {
+                const radius = Math.sqrt(Math.pow(x - startPoint.x, 2) + Math.pow(y - startPoint.y, 2));
+                ctx.beginPath();
+                ctx.arc(startPoint.x, startPoint.y, radius, 0, Math.PI * 2);
+                ctx.stroke();
+            } else if (currentTool === 'rectangle') {
+                ctx.beginPath();
+                ctx.rect(startPoint.x, startPoint.y, x - startPoint.x, y - startPoint.y);
+                ctx.stroke();
+            }
+
+            ctx.setLineDash([]);
+        }
+
+        function handleMouseUp(x, y) {
+            if (!isDrawing) return;
+            isDrawing = false;
+
+            if (currentTool === 'line') {
+                addGeometry({
+                    type: 'line',
+                    x1: startPoint.x, y1: startPoint.y,
+                    x2: x, y2: y,
+                    color: currentColor,
+                    width: lineWidth
+                });
+            } else if (currentTool === 'ray') {
+                addGeometry({
+                    type: 'ray',
+                    x1: startPoint.x, y1: startPoint.y,
+                    x2: x, y2: y,
+                    color: currentColor,
+                    width: lineWidth
+                });
+            } else if (currentTool === 'circle') {
+                const radius = Math.sqrt(Math.pow(x - startPoint.x, 2) + Math.pow(y - startPoint.y, 2));
+                addGeometry({
+                    type: 'circle',
+                    x: startPoint.x, y: startPoint.y,
+                    radius,
+                    color: currentColor,
+                    width: lineWidth
+                });
+            } else if (currentTool === 'rectangle') {
+                addGeometry({
+                    type: 'rectangle',
+                    x: startPoint.x, y: startPoint.y,
+                    width: x - startPoint.x,
+                    height: y - startPoint.y,
+                    color: currentColor,
+                    lineWidth
+                });
+            } else if (currentTool === 'triangle' && tempPoints.length === 3) {
+                addGeometry({
+                    type: 'triangle',
+                    points: [...tempPoints],
+                    color: currentColor,
+                    width: lineWidth
+                });
+                tempPoints = [];
+            }
+
+            render();
+            broadcastEnvironment();
+        }
+
+        // === Geometry Management ===
+        function addGeometry(obj) {
+            obj.id = 'geo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            geometryObjects.push(obj);
+            updateGeometryList();
+        }
+
+        function deleteGeometry(id) {
+            geometryObjects = geometryObjects.filter(obj => obj.id !== id);
+            updateGeometryList();
+            render();
+            broadcastEnvironment();
+        }
+
+        function updateGeometryList() {
+            const list = document.getElementById('geometryList');
+            
+            if (geometryObjects.length === 0) {
+                list.innerHTML = '<p style="opacity: 0.7; text-align: center;">Κανένα σχήμα</p>';
+                return;
+            }
+
+            list.innerHTML = geometryObjects.map(obj => {
+                let label = '';
+                if (obj.type === 'point') label = `Σημείο ${obj.label}`;
+                else if (obj.type === 'line') label = 'Ευθύγραμμο Τμήμα';
+                else if (obj.type === 'circle') label = `Κύκλος (r=${Math.round(obj.radius)})`;
+                else if (obj.type === 'triangle') label = 'Τρίγωνο';
+                else label = obj.type;
+
+                return `
+                    <div class="geometry-item">
+                        <span>${label}</span>
+                        <button class="delete-btn" onclick="deleteGeometry('${obj.id}')">🗑️</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // === Rendering ===
+        function render() {
+            // Clear
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+            // Grid
+            if (showGrid) {
+                ctx.strokeStyle = '#e0e0e0';
+                ctx.lineWidth = 1;
+                for (let i = 0; i <= CANVAS_WIDTH; i += gridSize) {
+                    ctx.beginPath();
+                    ctx.moveTo(i, 0);
+                    ctx.lineTo(i, CANVAS_HEIGHT);
+                    ctx.stroke();
+                }
+            }
+
+            // Draw geometry objects
+            geometryObjects.forEach(obj => drawGeometry(obj));
+
+            // Draw temp points (for polygon/triangle)
+            tempPoints.forEach((p, i) => {
+                ctx.fillStyle = currentColor;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+                ctx.fill();
+                
+                if (i > 0) {
+                    ctx.strokeStyle = currentColor;
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(tempPoints[i-1].x, tempPoints[i-1].y);
+                    ctx.lineTo(p.x, p.y);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            });
+
+            // Draw student points
+            studentPoints.forEach((point, pointId) => {
+                ctx.fillStyle = '#FF6B6B';
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, 8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+        }
+
+        function drawGeometry(obj) {
+            ctx.strokeStyle = obj.color;
+            ctx.fillStyle = obj.color;
+            ctx.lineWidth = obj.width || obj.lineWidth || 2;
+
+            if (obj.type === 'point') {
+                ctx.beginPath();
+                ctx.arc(obj.x, obj.y, 6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Label
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 16px sans-serif';
+                ctx.fillText(obj.label, obj.x + 10, obj.y - 10);
+            }
+            else if (obj.type === 'line') {
+                ctx.beginPath();
+                ctx.moveTo(obj.x1, obj.y1);
+                ctx.lineTo(obj.x2, obj.y2);
+                ctx.stroke();
+            }
+            else if (obj.type === 'ray') {
+                const dx = obj.x2 - obj.x1;
+                const dy = obj.y2 - obj.y1;
+                const len = Math.sqrt(dx*dx + dy*dy);
+                const extendX = obj.x1 + (dx/len) * CANVAS_WIDTH;
+                const extendY = obj.y1 + (dy/len) * CANVAS_HEIGHT;
+                
+                ctx.beginPath();
+                ctx.moveTo(obj.x1, obj.y1);
+                ctx.lineTo(extendX, extendY);
+                ctx.stroke();
+            }
+            else if (obj.type === 'circle') {
+                ctx.beginPath();
+                ctx.arc(obj.x, obj.y, obj.radius, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            else if (obj.type === 'rectangle') {
+                ctx.beginPath();
+                ctx.rect(obj.x, obj.y, obj.width, obj.height);
+                ctx.stroke();
+            }
+            else if (obj.type === 'triangle') {
+                ctx.beginPath();
+                ctx.moveTo(obj.points[0].x, obj.points[0].y);
+                ctx.lineTo(obj.points[1].x, obj.points[1].y);
+                ctx.lineTo(obj.points[2].x, obj.points[2].y);
+                ctx.closePath();
+                ctx.stroke();
+            }
+        }
+
+        // === Broadcast Environment ===
+        function broadcastEnvironment() {
+            if (!isConnected) return;
+
+            socket.emit('environment_update', {
+                geometryObjects,
+                timestamp: Date.now()
+            });
+
+            console.log('📡 Environment broadcast to all clients');
+        }
+
+        // === Controls ===
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            if (confirm('Διαγραφή όλων των σχημάτων;')) {
+                geometryObjects = [];
+                tempPoints = [];
+                pointLabel = 0;
+                updateGeometryList();
+                render();
+                broadcastEnvironment();
+            }
+        });
+
+        document.getElementById('undoBtn').addEventListener('click', () => {
+            if (geometryObjects.length > 0) {
+                geometryObjects.pop();
+                updateGeometryList();
+                render();
+                broadcastEnvironment();
+            }
+        });
+
+        document.getElementById('broadcastBtn').addEventListener('click', () => {
+            broadcastEnvironment();
+            alert('Περιβάλλον στάλθηκε σε όλους τους μαθητές!');
+        });
+
+        document.getElementById('saveBtn').addEventListener('click', () => {
+            const data = JSON.stringify(geometryObjects);
+            const blob = new Blob([data], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'geometry_activity.json';
+            a.click();
+        });
+
+        document.getElementById('loadBtn').addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        geometryObjects = JSON.parse(event.target.result);
+                        updateGeometryList();
+                        render();
+                        broadcastEnvironment();
+                    } catch (error) {
+                        alert('Σφάλμα φόρτωσης αρχείου');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        });
+
+        // === Activity Controls ===
+        document.getElementById('startActivityBtn').addEventListener('click', () => {
+            activityStartTime = Date.now();
+            activityTimer = setInterval(updateActivityTimer, 1000);
+            
+            if (isConnected) {
+                socket.emit('activity_control', {
+                    action: 'start',
+                    activityName: 'Geometry Activity',
+                    timestamp: activityStartTime
+                });
+            }
+        });
+
+        document.getElementById('stopActivityBtn').addEventListener('click', () => {
+            if (activityTimer) {
+                clearInterval(activityTimer);
+                activityTimer = null;
+            }
+            
+            if (isConnected) {
+                socket.emit('activity_control', {
+                    action: 'stop',
+                    timestamp: Date.now()
+                });
+            }
+        });
+
+        function updateActivityTimer() {
+            if (!activityStartTime) return;
+            
+            const elapsed = Math.floor((Date.now() - activityStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            
+            document.getElementById('activityTimer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // === Stats ===
+        function updateConnectionStatus(connected) {
+            const status = document.getElementById('connectionStatus');
+            status.textContent = connected ? '✅ Online' : '❌ Offline';
+        }
+
+        function updateStatsDisplay(stats) {
+            document.getElementById('connectedCount').textContent = stats.total || 0;
+            document.getElementById('cameraCount').textContent = stats.camera || 0;
+            document.getElementById('mouseCount').textContent = stats.mouse || 0;
+        }
+
+        function updateStats() {
+            if (isConnected) {
+                socket.emit('request_stats');
+            }
+        }
+
+        // === Initialize ===
+        window.addEventListener('load', () => {
+            connectToServer();
+            render();
+            
+            // Request stats every 2 seconds
+            setInterval(updateStats, 2000);
+        });
+
+        // Make deleteGeometry available globally
+        window.deleteGeometry = deleteGeometry;
+    </script>
+</body>
+</html>
