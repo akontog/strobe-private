@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buffon's Needle — Μαθητής</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; min-height: 100%; }
+  body {
+    background: #0f1117; color: #e2e8f0;
+    font-family: 'Courier New', monospace;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 20px 16px; gap: 14px;
+    min-height: 100dvh; overflow-x: hidden;
+  }
+  h1 { font-size: 20px; letter-spacing: 2px; color: #f8fafc; font-weight: 700; }
+  .subtitle { font-size: 11px; color: #94a3b8; letter-spacing: 1px; font-weight: 700; text-align: center; margin-top: 3px; }
+
+  /* Team name bar */
+  .team-bar {
+    width: 100%; max-width: 580px;
+    background: #1e2230; border: 1px solid #2d3348;
+    border-radius: 10px; padding: 12px 16px;
+    display: flex; gap: 10px; align-items: center;
+  }
+  .team-bar label {
+    font-size: 12px; color: #cbd5e1; letter-spacing: 1px;
+    font-weight: 700; white-space: nowrap;
+  }
+  .team-bar input {
+    flex: 1; background: #141720; border: 1px solid #3d4460;
+    border-radius: 6px; padding: 8px 12px; color: #f8fafc;
+    font-family: inherit; font-size: 14px; font-weight: 700;
+    outline: none;
+  }
+  .team-bar input:focus { border-color: #3b82f6; }
+  .team-bar button {
+    padding: 8px 18px; font-size: 12px; cursor: pointer;
+    border: none; border-radius: 6px; background: #3b82f6;
+    color: white; font-family: inherit; font-weight: 700;
+  }
+  .team-bar button:hover { background: #2563eb; }
+  .conn-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #ef4444; flex-shrink: 0;
+    transition: background 0.3s;
+  }
+  .conn-dot.connected { background: #34d399; }
+
+  .canvas-row {
+    width: 100%; max-width: 580px;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .canvas-stage { width: 100%; max-width: 480px; }
+  canvas { display: block; max-width: 100%; height: auto; }
+  #sim { border-radius: 10px; border: 1px solid #334155; background: #f8fbff; }
+  .canvas-footer { display: flex; gap: 16px; font-size: 11px; color: #94a3b8; justify-content: center; margin-top: 5px; }
+
+  .vspinner {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 7px; padding: 12px 8px;
+    background: #1e2230; border: 1px solid #2d3348;
+    border-radius: 10px; width: 68px;
+  }
+  .vspinner .lbl {
+    font-size: 10px; color: #cbd5e1; letter-spacing: 1px;
+    font-weight: 700; text-align: center; line-height: 1.35;
+  }
+  .vspinner .val { font-size: 20px; font-weight: 700; text-align: center; min-height: 28px; }
+  .vspinner input[type=range] {
+    writing-mode: vertical-lr; direction: rtl;
+    -webkit-appearance: slider-vertical; appearance: slider-vertical;
+    width: 22px; height: 90px; cursor: pointer; margin: 2px 0;
+  }
+  .vspinner .range-labels { font-size: 8px; color: #334155; }
+
+  .spin-btn {
+    width: 30px; height: 30px; font-size: 18px; cursor: pointer;
+    border: 1px solid #3d4460; border-radius: 6px;
+    background: #2d3348; color: #e2e8f0; font-family: inherit; line-height: 1;
+  }
+  .spin-btn:hover { background: #3d4460; }
+
+  .panel {
+    width: 100%; max-width: 580px;
+    background: #1e2230; border: 1px solid #2d3348;
+    border-radius: 10px; padding: 14px 18px;
+    display: flex; flex-wrap: wrap; gap: 14px;
+    align-items: flex-end; justify-content: center;
+  }
+  .step-inline {
+    display: flex; align-items: flex-end; gap: 8px;
+    flex-wrap: nowrap; min-width: 0;
+    flex: 1 1 auto;
+  }
+  .run-controls .btn { white-space: nowrap; }
+  .step-col { display: flex; flex-direction: column; align-items: stretch; gap: 4px; min-width: 0; }
+  .step-col .lbl { font-size: 10px; color: #cbd5e1; font-weight: 700; }
+  .step-row { display: flex; align-items: center; gap: 6px; }
+  .step-row .spin-btn { width: 24px; height: 24px; font-size: 14px; }
+  .step-val { min-width: 40px; text-align: center; font-size: 16px; font-weight: 700; }
+  input[type=range].hrange { width: 130px; cursor: pointer; accent-color: #3b82f6; }
+
+  .btn { padding: 8px 10px; font-size: 12px; cursor: pointer; border: none; border-radius: 6px; font-family: inherit; font-weight: 700; }
+  .btn-primary { background: #3b82f6; color: white; }
+  .btn-primary:hover { background: #2563eb; }
+  .btn-danger { background: #7f1d1d; color: #fca5a5; }
+  .btn-danger:hover { background: #991b1b; }
+
+  .run-controls {
+    width: 100%;
+    display: flex; gap: 4px; align-items: center;
+    flex-wrap: nowrap; justify-content: flex-start;
+  }
+  .auto-switch-wrap {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px;
+    background: #141720;
+    border: 1px solid #2d3348;
+    border-radius: 7px;
+  }
+  .auto-switch-wrap .auto-lbl {
+    font-size: 11px; color: #cbd5e1; letter-spacing: 1px; font-weight: 700;
+  }
+  .auto-switch-wrap .auto-rate {
+    font-size: 10px; color: #94a3b8;
+  }
+  .switch {
+    position: relative; display: inline-block;
+    width: 36px; height: 20px;
+  }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #334155; transition: 0.2s;
+    border-radius: 999px;
+  }
+  .slider::before {
+    content: '';
+    position: absolute;
+    height: 14px; width: 14px;
+    left: 3px; top: 3px;
+    background: #e2e8f0;
+    border-radius: 50%;
+    transition: 0.2s;
+  }
+  .switch input:checked + .slider {
+    background: #22c55e;
+  }
+  .switch input:checked + .slider::before {
+    transform: translateX(16px);
+  }
+
+  .stats-row {
+    width: 100%; max-width: 580px;
+    background: #1e2230; border: 1px solid #2d3348;
+    border-radius: 10px; padding: 10px 14px;
+    display: flex; gap: 8px;
+  }
+  .stat-box { background: #141720; border: 1px solid #2d3348; border-radius: 6px; padding: 7px 10px; text-align: center; flex: 1; }
+  .stat-box .s-lbl { font-size: 10px; color: #cbd5e1; letter-spacing: 1px; margin-bottom: 2px; font-weight: 700; }
+  .stat-box .s-val { font-size: 14px; font-weight: 700; word-break: break-all; }
+
+  .chart-wrap {
+    width: 100%; max-width: 580px;
+    background: #1e2230; border: 1px solid #2d3348;
+    border-radius: 10px; overflow: hidden;
+  }
+  .chart-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; cursor: pointer; user-select: none;
+  }
+  .chart-header:hover { background: #252a3a; }
+  .chart-header .c-lbl { font-size: 11px; color: #cbd5e1; letter-spacing: 1px; margin: 0; font-weight: 700; }
+  .chart-toggle { font-size: 14px; color: #475569; transition: transform 0.25s ease; display: inline-block; }
+  .chart-toggle.open { transform: rotate(180deg); }
+  .chart-body { display: none; padding: 0 10px 10px; }
+  .chart-body.open { display: block; }
+
+  @media (max-width: 1024px) and (orientation: portrait) {
+    body {
+      width: 100%;
+      min-height: 100dvh;
+      padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+      gap: 10px;
+    }
+
+    h1 { font-size: 18px; letter-spacing: 1px; }
+
+    .team-bar,
+    .canvas-row,
+    .panel,
+    .step-inline,
+    .stats-row,
+    .chart-wrap {
+      width: 100%;
+      max-width: none;
+    }
+
+    .team-bar {
+      flex-wrap: wrap;
+      padding: 10px 12px;
+    }
+    .team-bar label { width: 100%; }
+    .team-bar button { width: 100%; }
+
+    .canvas-row {
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+    }
+
+    .canvas-stage {
+      order: 0;
+      flex: 1 1 auto;
+      min-width: 0;
+      max-width: none;
+    }
+
+    .canvas-row .vspinner {
+      order: 0;
+      flex: 0 0 clamp(56px, 14vw, 74px);
+      width: clamp(56px, 14vw, 74px);
+      min-width: 0;
+      align-self: center;
+      padding: 4px 3px;
+      gap: 3px;
+    }
+
+    .canvas-row .vspinner .lbl { font-size: 8px; line-height: 1.15; }
+    .canvas-row .vspinner .val { font-size: 14px; min-height: 17px; }
+    .canvas-row .vspinner .range-labels { font-size: 7px; }
+    .canvas-row .vspinner input[type=range] { height: clamp(62px, 13vh, 84px); }
+    .canvas-row .spin-btn { width: 24px; height: 24px; font-size: 14px; }
+
+    #sim { width: 100%; height: auto; }
+    .canvas-footer { gap: 10px; font-size: 10px; flex-wrap: wrap; }
+
+    .panel {
+      padding: 12px;
+      gap: 10px;
+    }
+
+    .step-inline {
+      width: auto;
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      flex-wrap: nowrap;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .step-col {
+      width: auto;
+      flex: 1 1 auto;
+      min-width: 0;
+      align-items: stretch;
+    }
+
+    .run-controls {
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      gap: 4px;
+      flex-wrap: nowrap;
+    }
+
+    .run-controls input[type=range].hrange {
+      width: clamp(86px, 22vw, 116px);
+      max-width: none;
+    }
+
+    .run-controls .btn {
+      width: auto;
+      flex: 0 0 auto;
+      padding: 8px 9px;
+      font-size: 11px;
+    }
+
+    .auto-switch-wrap {
+      width: auto;
+      justify-content: center;
+      min-width: 0;
+      padding: 6px 7px;
+    }
+
+    .stats-row {
+      flex-wrap: wrap;
+      padding: 10px;
+    }
+
+    .stat-box {
+      flex: 1 1 calc(50% - 8px);
+      min-width: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div style="text-align:center">
+  <h1>Προσέγγιση του π</h1>
+  <div class="subtitle">Η βελόνα του Buffon</div>
+</div>
+
+<!-- Team name -->
+<div class="team-bar">
+  <div class="conn-dot" id="conn-dot"></div>
+  <label>ΟΜΑΔΑ</label>
+  <input type="text" id="team-input" placeholder="Δώστε το όνομα της ομάδας σας" maxlength="30">
+  <button onclick="registerTeam()">Σύνδεση</button>
+</div>
+
+<!-- Canvas row -->
+<div class="canvas-row">
+  <div class="vspinner">
+    <div class="lbl">l<br>Μήκος<br>βελόνας</div>
+    <button class="spin-btn" onclick="changeL(5)">+</button>
+    <div class="val" id="val-l" style="color:#a78bfa">50</div>
+    <button class="spin-btn" onclick="changeL(-5)">−</button>
+    <input type="range" id="range-l" min="10" max="120" value="50"
+      style="accent-color:#a78bfa" oninput="setL(+this.value)">
+    <div class="range-labels">10–120</div>
+  </div>
+
+  <div class="canvas-stage">
+    <canvas id="sim" width="480" height="280"></canvas>
+    <div class="canvas-footer">
+      <span><span style="color:#ef4444">━</span> hit</span>
+      <span><span style="color:#22c55e">━</span> miss</span>
+      <span id="ratio-badge"></span>
+    </div>
+  </div>
+
+  <div class="vspinner">
+    <div class="lbl">d<br>Απόσταση<br>γραμμών</div>
+    <button class="spin-btn" onclick="changeD(5)">+</button>
+    <div class="val" id="val-d" style="color:#38bdf8">60</div>
+    <button class="spin-btn" onclick="changeD(-5)">−</button>
+    <input type="range" id="range-d" min="30" max="150" value="60"
+      style="accent-color:#38bdf8" oninput="setD(+this.value)">
+    <div class="range-labels">30–150</div>
+  </div>
+</div>
+
+<!-- Controls -->
+<div class="panel">
+  <div class="run-controls">
+    <div class="step-inline">
+      <div class="step-col">
+        <div class="lbl">Βελόνες ανά βήμα</div>
+        <div class="step-row">
+          <button class="spin-btn" onclick="changeStep(-1)">−</button>
+          <div class="step-val" id="step-val">1</div>
+          <button class="spin-btn" onclick="changeStep(1)">+</button>
+        </div>
+        <input type="range" class="hrange" id="range-step" min="1" max="100" value="1"
+          oninput="setStep(+this.value)">
+      </div>
+    </div>
+    <button class="btn btn-primary" id="step-btn" onclick="doStep()">▶ +1 βελόνα</button>
+    <div class="auto-switch-wrap">
+      <span class="auto-lbl">AUTO</span>
+      <label class="switch">
+        <input type="checkbox" id="auto-toggle" onchange="toggleAutoDrop(this.checked)">
+        <span class="slider"></span>
+      </label>
+      <span class="auto-rate">0.1s</span>
+    </div>
+    <button class="btn btn-danger" onclick="resetAll()">↺ Reset</button>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-row">
+  <div class="stat-box">
+    <div class="s-lbl">\(\hat{\pi}\)</div>
+    <div class="s-val" id="s-pi" style="color:#34d399">—</div>
+  </div>
+  <div class="stat-box">
+    <div class="s-lbl">ΣΦΑΛΜΑ</div>
+    <div class="s-val" id="s-err" style="color:#fbbf24">—</div>
+  </div>
+  <div class="stat-box">
+    <div class="s-lbl">HITS</div>
+    <div class="s-val" id="s-hits" style="color:#f87171">0</div>
+  </div>
+  <div class="stat-box">
+    <div class="s-lbl">MISS</div>
+    <div class="s-val" id="s-miss" style="color:#22c55e">0</div>
+  </div>
+  <div class="stat-box">
+    <div class="s-lbl">ΒΕΛΟΝΕΣ</div>
+    <div class="s-val" id="s-drops">0</div>
+  </div>
+</div>
+
+<!-- Formula collapsible -->
+<div class="chart-wrap">
+  <div class="chart-header" onclick="toggleFormula()">
+    <span class="c-lbl">ΤΥΠΟΣ</span>
+    <span class="chart-toggle" id="formula-arrow">▼</span>
+  </div>
+  <div class="chart-body" id="formula-body">
+    <div style="text-align:center;font-size:13px;line-height:2;padding:4px 0 8px;">
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;">
+        <span style="color:#a78bfa">\(\hat{\pi}\)</span>
+        <span style="color:#64748b">\(\approx\)</span>
+        <span>
+          <div style="border-bottom:1px solid #94a3b8;padding-bottom:2px;text-align:center;">
+            <span style="color:#38bdf8">2</span><span style="color:#64748b"> · </span>
+            <span style="color:#a78bfa">l</span><span style="color:#64748b"> · </span>
+            <span style="color:#e2e8f0">N</span>
+          </div>
+          <div style="padding-top:2px;text-align:center;">
+            <span style="color:#38bdf8">d</span><span style="color:#64748b"> · </span>
+            <span style="color:#f87171">H</span>
+          </div>
+        </span>
+        <span style="color:#64748b">=</span>
+        <span>
+          <div style="border-bottom:1px solid #94a3b8;padding-bottom:2px;text-align:center;">
+            <span style="color:#38bdf8">2</span><span style="color:#64748b"> · </span>
+            <span style="color:#a78bfa" id="f-l">50</span><span style="color:#64748b"> · </span>
+            <span style="color:#e2e8f0" id="f-n">0</span>
+          </div>
+          <div style="padding-top:2px;text-align:center;">
+            <span style="color:#38bdf8" id="f-d">60</span><span style="color:#64748b"> · </span>
+            <span style="color:#f87171" id="f-h">0</span>
+          </div>
+        </span>
+        <span style="color:#64748b">=</span>
+        <span style="color:#34d399;font-weight:700;font-size:16px;" id="f-result">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart collapsible -->
+<div class="chart-wrap">
+  <div class="chart-header" onclick="toggleChart()">
+    <span class="c-lbl">ΣΥΓΚΛΙΣΗ ΠΡΟΣ π</span>
+    <span class="chart-toggle" id="chart-arrow">▼</span>
+  </div>
+  <div class="chart-body" id="chart-body">
+    <canvas id="chart-cv"></canvas>
+  </div>
+</div>
+
+<script>
+const Y_MIN = 1.5, Y_MAX = 5.0;
+const simCv  = document.getElementById('sim');
+const simCtx = simCv.getContext('2d');
+const SW = simCv.width, SH = simCv.height;
+const chartCv  = document.getElementById('chart-cv');
+const chartCtx = chartCv.getContext('2d');
+
+let needleL = 50, lineD = 60, stepN = 1;
+let drops = 0, hits = 0, history = [];
+let teamName = '';
+let ws = null;
+let socketConnected = false;
+let teamRegistered = false;
+let autoDropTimer = null;
+
+// ── WebSocket ─────────────────────────────────────
+function connectWS() {
+  const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+  ws = new WebSocket(`${proto}://${location.host}`);
+
+  ws.onopen  = () => {
+    socketConnected = true;
+    updateConnDot();
+  };
+
+  ws.onclose = () => {
+    socketConnected = false;
+    teamRegistered = false;
+    updateConnDot();
+    setTimeout(connectWS, 2000); // reconnect
+  };
+}
+
+function registerTeam() {
+  teamName = document.getElementById('team-input').value.trim();
+  if (!teamName) {
+    teamRegistered = false;
+    updateConnDot();
+    return;
+  }
+
+  if (!ws || ws.readyState !== 1) { connectWS(); setTimeout(registerTeam, 500); return; }
+  ws.send(JSON.stringify({ type: 'register_student', team: teamName }));
+  teamRegistered = true;
+  updateConnDot();
+  sendUpdate();
+}
+
+function sendUpdate() {
+  if (!ws || ws.readyState !== 1 || !teamName || !teamRegistered) return;
+  const piEst = hits > 0 ? (2 * needleL * drops) / (lineD * hits) : null;
+  ws.send(JSON.stringify({ type: 'update', drops, hits, piEst: piEst ? parseFloat(piEst.toFixed(5)) : null }));
+}
+
+function updateConnDot() {
+  const dot = document.getElementById('conn-dot');
+  dot.classList.toggle('connected', socketConnected && teamRegistered);
+}
+
+// ── Grid ──────────────────────────────────────────
+function drawGrid() {
+  simCtx.clearRect(0, 0, SW, SH);
+  simCtx.strokeStyle = '#94a3b8'; simCtx.lineWidth = 1.5;
+  for (let x = 0; x <= SW; x += lineD) {
+    simCtx.beginPath(); simCtx.moveTo(x, 0); simCtx.lineTo(x, SH); simCtx.stroke();
+  }
+}
+
+function drawPreviewNeedle() {
+  const halfL = needleL / 2;
+  const safePad = 8;
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+  const safeXMin = halfL + safePad;
+  const safeXMax = SW - halfL - safePad;
+  const safeYMin = halfL + safePad;
+  const safeYMax = SH - halfL - safePad;
+
+  const centerGridLine = Math.round((SW * 0.5) / lineD) * lineD;
+  const redX = clamp(centerGridLine, safeXMin, safeXMax);
+  const redY = clamp(SH * 0.35, safeYMin, safeYMax);
+
+  let greenX = redX + lineD * 0.5;
+  if (greenX > safeXMax) greenX = redX - lineD * 0.5;
+  greenX = clamp(greenX, safeXMin, safeXMax);
+  const greenY = clamp(SH * 0.68, safeYMin, safeYMax);
+
+  function drawDashedNeedle(cx, cy, angle, color) {
+    const x1 = cx - halfL * Math.cos(angle);
+    const x2 = cx + halfL * Math.cos(angle);
+    const y1 = cy - halfL * Math.sin(angle);
+    const y2 = cy + halfL * Math.sin(angle);
+
+    simCtx.save();
+    simCtx.beginPath();
+    simCtx.setLineDash([8, 5]);
+    simCtx.lineCap = 'round';
+    simCtx.strokeStyle = color;
+    simCtx.lineWidth = 3.2;
+    simCtx.shadowColor = color;
+    simCtx.shadowBlur = 5;
+    simCtx.moveTo(x1, y1);
+    simCtx.lineTo(x2, y2);
+    simCtx.stroke();
+    simCtx.restore();
+  }
+
+  // Red preview crosses a grid line (hit), green preview stays in one strip (miss).
+  drawDashedNeedle(redX, redY, 0, 'rgba(239,68,68,0.98)');
+  drawDashedNeedle(greenX, greenY, Math.PI / 2, 'rgba(34,197,94,0.98)');
+}
+
+// ── Needles ───────────────────────────────────────
+function dropNeedles(count) {
+  if (drops === 0) {
+    // Remove preview needle before first real drop so counts match visuals.
+    drawGrid();
+  }
+
+  for (let i = 0; i < count; i++) {
+    const x = Math.random() * SW, y = Math.random() * SH;
+    const a = Math.random() * Math.PI;
+    const x1 = x - (needleL/2)*Math.cos(a), x2 = x + (needleL/2)*Math.cos(a);
+    const y1 = y - (needleL/2)*Math.sin(a), y2 = y + (needleL/2)*Math.sin(a);
+    const hit = Math.floor(x1/lineD) !== Math.floor(x2/lineD);
+    if (hit) hits++;
+    drops++;
+    simCtx.beginPath();
+    simCtx.strokeStyle = hit ? 'rgba(220,38,38,0.78)' : 'rgba(22,163,74,0.72)';
+    simCtx.lineWidth = 2;
+    simCtx.moveTo(x1,y1); simCtx.lineTo(x2,y2); simCtx.stroke();
+  }
+  const piEst = hits > 0 ? (2*needleL*drops)/(lineD*hits) : null;
+  if (piEst) history.push({ n: drops, pi: parseFloat(piEst.toFixed(5)) });
+  if (history.length > 500) {
+    const s = Math.ceil(history.length/500);
+    history = history.filter((_,i) => i%s===0);
+  }
+  updateStats(piEst);
+  drawChart();
+  sendUpdate();
+}
+
+function doStep() { dropNeedles(stepN); }
+
+function stopAutoDrop() {
+  if (autoDropTimer !== null) {
+    clearInterval(autoDropTimer);
+    autoDropTimer = null;
+  }
+}
+
+function startAutoDrop() {
+  stopAutoDrop();
+  autoDropTimer = setInterval(() => {
+    dropNeedles(stepN);
+  }, 100);
+}
+
+function toggleAutoDrop(enabled) {
+  if (enabled) {
+    startAutoDrop();
+  } else {
+    stopAutoDrop();
+  }
+}
+
+// ── Stats ─────────────────────────────────────────
+function updateStats(piEst) {
+  document.getElementById('s-drops').textContent = drops.toLocaleString();
+  document.getElementById('s-hits').textContent  = hits.toLocaleString();
+  document.getElementById('s-miss').textContent  = (drops-hits).toLocaleString();
+  document.getElementById('s-pi').textContent    = piEst ? piEst.toFixed(5) : '—';
+  document.getElementById('s-err').textContent   = piEst ? Math.abs(piEst-Math.PI).toFixed(6) : '—';
+  document.getElementById('f-l').textContent     = needleL;
+  document.getElementById('f-d').textContent     = lineD;
+  document.getElementById('f-n').textContent     = drops.toLocaleString();
+  document.getElementById('f-h').textContent     = hits.toLocaleString();
+  document.getElementById('f-result').textContent = piEst ? piEst.toFixed(4) : '—';
+  const r = (needleL/lineD).toFixed(2), ok = needleL<=lineD;
+  document.getElementById('ratio-badge').innerHTML =
+    `<span style="color:${ok?'#34d399':'#fbbf24'}">l/d=${r} ${ok?'✓':'⚠'}</span>`;
+}
+
+// ── Chart ─────────────────────────────────────────
+function drawChart() {
+  const body = document.getElementById('chart-body');
+  if (!body.classList.contains('open')) return;
+  const cw = body.clientWidth - 4, ch = 148;
+  chartCv.width = cw; chartCv.height = ch;
+  const PAD = { top:8, right:18, bottom:28, left:38 };
+  const pw = cw-PAD.left-PAD.right, ph = ch-PAD.top-PAD.bottom;
+  chartCtx.clearRect(0,0,cw,ch);
+  chartCtx.fillStyle='#141720';
+  chartCtx.beginPath(); chartCtx.roundRect(0,0,cw,ch,6); chartCtx.fill();
+  const xMax=Math.max(10,drops), xMin=0, xRange=xMax;
+  const toX = n  => PAD.left + ((n-xMin)/xRange)*pw;
+  const toY = pi => PAD.top  + (1-(pi-Y_MIN)/(Y_MAX-Y_MIN))*ph;
+  chartCtx.save();
+  chartCtx.beginPath(); chartCtx.rect(PAD.left,PAD.top,pw,ph); chartCtx.clip();
+  chartCtx.strokeStyle='#2d3348'; chartCtx.lineWidth=0.8; chartCtx.setLineDash([]);
+  [1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0].forEach(y=>{
+    chartCtx.beginPath(); chartCtx.moveTo(PAD.left,toY(y)); chartCtx.lineTo(PAD.left+pw,toY(y)); chartCtx.stroke();
+  });
+  const pyp=toY(Math.PI);
+  chartCtx.strokeStyle='#fbbf24'; chartCtx.lineWidth=1.2; chartCtx.setLineDash([4,4]);
+  chartCtx.beginPath(); chartCtx.moveTo(PAD.left,pyp); chartCtx.lineTo(PAD.left+pw,pyp); chartCtx.stroke();
+  chartCtx.setLineDash([]);
+  if (history.length>=1) {
+    chartCtx.strokeStyle='#34d399'; chartCtx.lineWidth=1.5; chartCtx.beginPath();
+    history.forEach((pt,i)=>{ const x=toX(pt.n),y=toY(pt.pi); i===0?chartCtx.moveTo(x,y):chartCtx.lineTo(x,y); });
+    chartCtx.stroke();
+  }
+  chartCtx.restore();
+  chartCtx.fillStyle='#fbbf24'; chartCtx.font='9px Courier New'; chartCtx.textAlign='left';
+  chartCtx.fillText('π',PAD.left+pw+3,pyp+3);
+  chartCtx.strokeStyle='#475569'; chartCtx.lineWidth=1;
+  chartCtx.beginPath(); chartCtx.moveTo(PAD.left,PAD.top); chartCtx.lineTo(PAD.left,PAD.top+ph); chartCtx.lineTo(PAD.left+pw,PAD.top+ph); chartCtx.stroke();
+  chartCtx.fillStyle='#475569'; chartCtx.font='9px Courier New'; chartCtx.textAlign='right';
+  [1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0].forEach(y=>chartCtx.fillText(y.toFixed(1),PAD.left-4,toY(y)+3));
+  chartCtx.textAlign='center';
+  for(let i=0;i<=5;i++){const n=Math.round(xRange*i/5);chartCtx.fillText(n>=1000?`${Math.round(n/1000)}k`:n,toX(n),PAD.top+ph+14);}
+  chartCtx.fillText('# βελόνες',PAD.left+pw/2,ch-4);
+}
+
+function toggleChart() {
+  const body=document.getElementById('chart-body'), arrow=document.getElementById('chart-arrow');
+  const open=body.classList.toggle('open'); arrow.classList.toggle('open',open);
+  if(open) drawChart();
+}
+function toggleFormula() {
+  document.getElementById('formula-body').classList.toggle('open');
+  document.getElementById('formula-arrow').classList.toggle('open');
+}
+
+// ── Reset ─────────────────────────────────────────
+function resetAll() {
+  drops=0; hits=0; history=[];
+  drawGrid(); drawPreviewNeedle(); updateStats(null); drawChart(); sendUpdate();
+}
+
+// ── Spinners ──────────────────────────────────────
+function setL(v){ needleL=Math.min(120,Math.max(10,v)); document.getElementById('val-l').textContent=needleL; document.getElementById('range-l').value=needleL; document.getElementById('f-l').textContent=needleL; resetAll(); }
+function changeL(d){ setL(needleL+d); }
+function setD(v){ lineD=Math.min(150,Math.max(30,v)); document.getElementById('val-d').textContent=lineD; document.getElementById('range-d').value=lineD; document.getElementById('f-d').textContent=lineD; resetAll(); }
+function changeD(d){ setD(lineD+d); }
+function setStep(v){ stepN=Math.min(1000,Math.max(1,v)); document.getElementById('step-val').textContent=stepN; document.getElementById('range-step').value=stepN; document.getElementById('step-btn').textContent=`▶ +${stepN} βελόν${stepN===1?'α':'ες'}`; }
+function changeStep(d){ setStep(stepN+d); }
+
+// ── Init ──────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('team-input').addEventListener('input', () => {
+    const currentName = document.getElementById('team-input').value.trim();
+    if (!currentName || currentName !== teamName) {
+      teamRegistered = false;
+      updateConnDot();
+    }
+  });
+
+  connectWS();
+  updateConnDot();
+  drawGrid();
+  drawPreviewNeedle();
+  updateStats(null);
+});
+
+window.addEventListener('beforeunload', stopAutoDrop);
+</script>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)'], ['$', '$']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</body>
+</html>

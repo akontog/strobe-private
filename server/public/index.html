@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Canvas Demo</title>
+  <title>Strobe | Select role</title>
   <link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 <body>
@@ -13,60 +13,44 @@
     </div>
 
     <div class="container">
-        <div class="header">
-            <h1>📐 Collaborative Geometry</h1>
+        <div class="header" style="display: flex;justify-content: center;align-items: center;">
+            <h1><img src="icons/strobelogo.svg" style="height:50px;" alt="Strobe Logo"> 
+            | 📐 Collaborative Geometry</h1>
             <p>Διαδραστικές Γεωμετρικές Δραστηριότητες σε Πραγματικό Χρόνο</p>
         </div>
 
         <div class="roles">
-            <!-- Camera Client -->
-            <div class="role-card" onclick="selectRole('camera')">
-                <span class="role-icon">📹</span>
-                <div class="role-title">Camera Client</div>
-                <div class="role-description">
-                    Χρησιμοποιήστε την κάμερα για body tracking και κινήστε σημεία με τα χέρια σας!
-                </div>
-                <ul class="role-features">
-                    <li>MoveNet MultiPose (έως 6 άτομα)</li>
-                    <li>YOLO + DeepSORT (10+ άτομα)</li>
-                    <li>Real-time skeleton overlay</li>
-                    <li>Wrist/hand tracking</li>
-                </ul>
-            </div>
-
-            <!-- Mouse Client -->
-            <div class="role-card" onclick="selectRole('mouse')">
-                <span class="role-icon">🖱️</span>
-                <div class="role-title">Mouse Client</div>
-                <div class="role-description">
-                    Κινήστε το σημείο σας με το ποντίκι ή touch screen. Ιδανικό για μαθητές!
-                </div>
-                <ul class="role-features">
-                    <li>Drag & drop controls</li>
-                    <li>Προσαρμόσιμο χρώμα/μέγεθος</li>
-                    <li>Touch support (mobile/tablet)</li>
-                    <li>Low latency (16ms)</li>
-                </ul>
-            </div>
-
             <!-- Teacher Client -->
             <div class="role-card" onclick="selectRole('teacher')">
                 <span class="role-icon">👨‍🏫</span>
                 <div class="role-title">Teacher Client</div>
                 <div class="role-description">
-                    Σχεδιάστε δραστηριότητες, παρακολουθήστε μαθητές, αναλύστε στατιστικά!
+                    Σχεδιάστε δραστηριότητες, παρακολουθήστε μαθητές, δείτε στατιστικά.
                 </div>
                 <ul class="role-features">
-                    <li>Γεωμετρικός σχεδιαστής</li>
-                    <li>Activity management</li>
-                    <li>Real-time statistics</li>
-                    <li>Save/Load activities</li>
+                    <li>Σχεδίαση/Διαχείριση δραστηριοτήτων</li>
+                    <li>Live στατιστικά</li>
+                    <li>Αποθήκευση/Φόρτωση μαθήματος</li>
+                </ul>
+            </div>
+
+            <!-- User Client -->
+            <div class="role-card" onclick="selectRole('user')">
+                <span class="role-icon">🧑‍🎓</span>
+                <div class="role-title">User Client</div>
+                <div class="role-description">
+                    Επιλέξτε κάμερα ή ποντίκι/αφή και κινηθείτε πάνω στον καμβά.
+                </div>
+                <ul class="role-features">
+                    <li>Mouse/Touch ή Camera mode</li>
+                    <li>Όνομα, χρώμα και σχήμα σημείου</li>
+                    <li>Real-time συνεργασία</li>
                 </ul>
             </div>
         </div>
 
         <div class="info-section">
-            <h2>🎯 Πώς Λειτουργεί</h2>
+            <h2>Λειτουργία</h2>
             <div class="info-grid">
                 <div class="info-item">
                     <h3>1. Επιλογή Ρόλου</h3>
@@ -81,15 +65,14 @@
                     <p>Εργαστείτε μαζί για να ολοκληρώσετε γεωμετρικές δραστηριότητες και ασκήσεις.</p>
                 </div>
                 <div class="info-item">
-                    <h3>4. Στατιστικά</h3>
-                    <p>Ο εκπαιδευτής βλέπει live μετρήσεις, αποστάσεις, γωνίες και χρόνους.</p>
-                </div>
+                    <h3>4. Ανατροφοδότηση</h3>
+                    <p>Ο εκπαιδευτής μπορεί να παρακολουθεί την πρόοδο και να παρέχει βοήθεια.</p>
             </div>
         </div>
 
         <div class="footer">
-            <p>Πανεπιστήμιο Αιγαίου</p>
-            <p></p>
+
+            <img src="icons/mathlogo.png" style="height:50px;" alt="Strobe Logo">
         </div>
     </div>
 
@@ -109,11 +92,14 @@
 
         // Role selection
         function selectRole(role) {
-            // Store role in localStorage
             localStorage.setItem('selectedRole', role);
-            
-            // Redirect to client page with role parameter
-            window.location.href = `/client.html?role=${role}`;
+
+            if (role === 'teacher') {
+                window.location.href = '/client.html';
+                return;
+            }
+
+            window.location.href = '/user.html';
         }
 
         // Check server on load
@@ -122,9 +108,8 @@
 
         // Add keyboard shortcuts
         document.addEventListener('keydown', (e) => {
-            if (e.key === '1') selectRole('camera');
-            if (e.key === '2') selectRole('mouse');
-            if (e.key === '3') selectRole('teacher');
+            if (e.key === '1') selectRole('teacher');
+            if (e.key === '2') selectRole('user');
         });
     </script>
 

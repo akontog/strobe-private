@@ -11,130 +11,87 @@
         <div class="container">
         <div class="header panel">
             <h1>👨‍🏫 Teacher Client - Γεωμετρικός Σχεδιαστής</h1>
-            <p>Σχεδιάστε γεωμετρικές δραστηριότητες για τους μαθητές</p>
-        </div>
-
-        <!-- Left Panel: Tools -->
-        <div class="panel">
-            <h2>🛠️ Εργαλεία</h2>
             
-            <div class="tool-section">
-                <h3>Σχεδίαση</h3>
-                <button class="tool-btn active" data-tool="point">📍 Σημείο</button>
-                <button class="tool-btn" data-tool="line">📏 Ευθύγραμμο Τμήμα</button>
-                <button class="tool-btn" data-tool="ray">➡️ Ημιευθεία</button>
-                <button class="tool-btn" data-tool="circle">⭕ Κύκλος</button>
-                <button class="tool-btn" data-tool="triangle">🔺 Τρίγωνο</button>
-                <button class="tool-btn" data-tool="rectangle">⬜ Ορθογώνιο</button>
-                <button class="tool-btn" data-tool="polygon">⬡ Πολύγωνο</button>
-            </div>
+            <!-- Compact Controls Row -->
+            <div class="compact-controls">
+                <div class="control-group">
+                    <label>Σχήμα:</label>
+                    <select id="shapeSelect" class="compact-select">
+                        <option value="point">📍 Σημείο</option>
+                        <option value="line">📏 Ευθύγραμμο Τμήμα</option>
+                        <option value="ray">➡️ Ημιευθεία</option>
+                        <option value="circle">⭕ Κύκλος</option>
+                        <option value="triangle">🔺 Τρίγωνο</option>
+                        <option value="rectangle">⬜ Ορθογώνιο</option>
+                        <option value="polygon">⬡ Πολύγωνο</option>
+                    </select>
+                </div>
 
-            <div class="tool-section">
-                <h3>Μετρήσεις</h3>
-                <button class="tool-btn" data-tool="measure-distance">📐 Απόσταση</button>
-                <button class="tool-btn" data-tool="measure-angle">📐 Γωνία</button>
-            </div>
+                <div class="control-group">
+                    <label>Μέτρηση:</label>
+                    <select id="measureSelect" class="compact-select">
+                        <option value="">Χωρίς μέτρηση</option>
+                        <option value="measure-distance">📐 Απόσταση</option>
+                        <option value="measure-angle">📐 Γωνία</option>
+                    </select>
+                </div>
 
-            <div class="tool-section">
-                <h3>Χρώμα</h3>
-                <div class="color-picker">
-                    <div class="color-option active" data-color="#000000" style="background: #000000"></div>
-                    <div class="color-option" data-color="#FF6B6B" style="background: #FF6B6B"></div>
-                    <div class="color-option" data-color="#4ECDC4" style="background: #4ECDC4"></div>
-                    <div class="color-option" data-color="#45B7D1" style="background: #45B7D1"></div>
-                    <div class="color-option" data-color="#FFA07A" style="background: #FFA07A"></div>
-                    <div class="color-option" data-color="#98D8C8" style="background: #98D8C8"></div>
+                <div class="control-group">
+                    <label>Χρώμα:</label>
+                    <input type="color" id="colorPicker" value="#000000" class="compact-color">
+                </div>
+
+                <div class="control-group">
+                    <label>Πάχος:</label>
+                    <input type="number" id="lineWidth" value="2" min="1" max="10" class="compact-input">
+                </div>
+
+                <div class="control-group">
+                    <label>Grid:</label>
+                    <input type="number" id="gridSize" value="50" min="10" max="100" class="compact-input">
+                    <input type="checkbox" id="showGrid" checked title="Εμφάνιση">
+                    <input type="checkbox" id="snapToGrid" title="Snap">
+                </div>
+
+                <div class="control-group">
+                    <button class="btn-compact btn-danger" id="clearBtn">🗑️</button>
+                    <button class="btn-compact btn-primary" id="undoBtn">↶</button>
+                    <button class="btn-compact btn-success" id="broadcastBtn">📡</button>
+                    <button class="btn-compact btn-primary" id="saveBtn">💾</button>
+                    <button class="btn-compact btn-primary" id="loadBtn">📂</button>
                 </div>
             </div>
 
-            <div class="tool-section">
-                <h3>Ρυθμίσεις</h3>
-                <label>Πάχος Γραμμής:</label>
-                <input type="number" id="lineWidth" value="2" min="1" max="10">
-                
-                <div class="grid-toggle">
-                    <input type="checkbox" id="showGrid" checked>
-                    <label>Εμφάνιση Grid</label>
+            <!-- Stats & Students Row -->
+            <div class="stats-row">
+                <div class="stat-group">
+                    <span>Κατάσταση: <span class="stat-value" id="connectionStatus">❌ Offline</span></span>
+                    <span>Συνδεδεμένοι: <span class="stat-value" id="connectedCount">0</span></span>
+                    <span>Κάμερες: <span class="stat-value" id="cameraCount">0</span></span>
+                    <span>Ποντίκια: <span class="stat-value" id="mouseCount">0</span></span>
                 </div>
-                
-                <div class="grid-toggle">
-                    <input type="checkbox" id="snapToGrid">
-                    <label>Snap to Grid</label>
+                <div class="stat-group">
+                    <button class="btn-compact btn-success" id="startActivityBtn">▶️ Έναρξη</button>
+                    <button class="btn-compact btn-danger" id="stopActivityBtn">⏸️ Παύση</button>
+                    <span>Χρόνος: <span class="stat-value" id="activityTimer">00:00</span></span>
                 </div>
-
-                <label>Grid Size:</label>
-                <input type="number" id="gridSize" value="50" min="10" max="100">
+                <div class="stat-group students-inline">
+                    <label>👥 Μαθητές:</label>
+                    <div class="student-list-inline" id="studentList">
+                        <span style="opacity: 0.7;">Κανένας</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Center Panel: Canvas -->
-        <div class="panel canvas-panel">
-            <h2>🎨 Καμβάς</h2>
+        <!-- Canvas Panel (full width) -->
+        <div class="panel canvas-panel-full">
             <div class="canvas-container">
-                <canvas id="canvas" width="900" height="600"></canvas>
+                <canvas id="canvas" width="1200" height="700"></canvas>
             </div>
-            <div class="canvas-controls">
-                <button class="btn btn-danger" id="clearBtn">🗑️ Καθαρισμός</button>
-                <button class="btn btn-primary" id="undoBtn">↶ Undo</button>
-                <button class="btn btn-success" id="broadcastBtn">📡 Αποστολή σε Μαθητές</button>
-                <button class="btn btn-primary" id="saveBtn">💾 Αποθήκευση</button>
-                <button class="btn btn-primary" id="loadBtn">📂 Φόρτωση</button>
-            </div>
-
-            <div class="measurements">
-                <h3>📊 Μετρήσεις</h3>
-                <div id="measurementsDisplay">
-                    <p style="opacity: 0.7; font-style: italic;">Επιλέξτε στοιχεία για μετρήσεις</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Right Panel: Stats & Students -->
-        <div class="panel">
-            <h2>📊 Στατιστικά & Μαθητές</h2>
-            
-            <div class="stats-section">
-                <h3>Σύνδεση</h3>
-                <div class="stat-item">
-                    <span>Κατάσταση:</span>
-                    <span class="stat-value" id="connectionStatus">❌ Offline</span>
-                </div>
-                <div class="stat-item">
-                    <span>Συνδεδεμένοι:</span>
-                    <span class="stat-value" id="connectedCount">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Κάμερες:</span>
-                    <span class="stat-value" id="cameraCount">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Ποντίκια:</span>
-                    <span class="stat-value" id="mouseCount">0</span>
-                </div>
-            </div>
-
-            <div class="stats-section">
-                <h3>👥 Μαθητές</h3>
-                <div class="student-list" id="studentList">
-                    <p style="opacity: 0.7; text-align: center;">Κανένας μαθητής συνδεδεμένος</p>
-                </div>
-            </div>
-
-            <div class="stats-section">
-                <h3>📐 Γεωμετρικά</h3>
-                <div class="geometry-list" id="geometryList">
-                    <p style="opacity: 0.7; text-align: center;">Κανένα σχήμα</p>
-                </div>
-            </div>
-
-            <div class="stats-section">
-                <h3>⏱️ Δραστηριότητα</h3>
-                <button class="btn btn-success" id="startActivityBtn" style="width: 100%; margin: 5px 0;">▶️ Έναρξη</button>
-                <button class="btn btn-danger" id="stopActivityBtn" style="width: 100%; margin: 5px 0;">⏸️ Παύση</button>
-                <div class="stat-item">
-                    <span>Χρόνος:</span>
-                    <span class="stat-value" id="activityTimer">00:00</span>
-                </div>
+            <div class="measurements-inline">
+                <strong>📊 Μετρήσεις:</strong>
+                <span id="measurementsDisplay" style="opacity: 0.7; font-style: italic;">Επιλέξτε στοιχεία</span>
             </div>
         </div>
     </div>
@@ -179,50 +136,21 @@
             socket = io(SERVER_URL);
 
             socket.on('connect', () => {
-                console.log('✅ Connected to server');
-                socket.emit('register', {
-                    userId: 'teacher_' + Math.random().toString(36).substr(2, 9),
-                    clientType: 'teacher',
-                    metadata: { name: 'Teacher' }
-                });
-            });
-
-            socket.on('welcome', (data) => {
                 isConnected = true;
                 updateConnectionStatus(true);
-                console.log('Welcome:', data);
+                console.log('✅ Connected to server');
             });
 
-            socket.on('position_update', (data) => {
-                // Update student point positions
-                studentPoints.set(data.pointId, {
-                    x: data.position.x * CANVAS_WIDTH,
-                    y: data.position.y * CANVAS_HEIGHT,
-                    userId: data.userId,
-                    timestamp: data.timestamp
-                });
-                render();
-            });
-
-            socket.on('client_joined', (data) => {
-                console.log('Client joined:', data);
-                updateStats();
-            });
-
-            socket.on('client_left', (data) => {
-                console.log('Client left:', data);
-                // Remove their points
-                for (const [pointId, point] of studentPoints.entries()) {
-                    if (point.userId === data.userId) {
-                        studentPoints.delete(pointId);
-                    }
+            socket.on('activity-loaded', (activity) => {
+                if (activity && activity.geometry) {
+                    geometryObjects = activity.geometry;
+                    updateGeometryList();
+                    render();
                 }
-                updateStats();
-                render();
             });
 
-            socket.on('stats_update', (data) => {
-                updateStatsDisplay(data.stats);
+            socket.on('users-update', (users) => {
+                updateFromUsers(users);
             });
 
             socket.on('disconnect', () => {
@@ -232,23 +160,25 @@
         }
 
         // === Tool Selection ===
-        document.querySelectorAll('.tool-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentTool = btn.dataset.tool;
+        document.getElementById('shapeSelect').addEventListener('change', (e) => {
+            currentTool = e.target.value;
+            tempPoints = [];
+            // Clear measure if shape selected
+            document.getElementById('measureSelect').value = '';
+            console.log('Tool selected:', currentTool);
+        });
+
+        document.getElementById('measureSelect').addEventListener('change', (e) => {
+            if (e.target.value) {
+                currentTool = e.target.value;
                 tempPoints = [];
-                console.log('Tool selected:', currentTool);
-            });
+                console.log('Measure tool selected:', currentTool);
+            }
         });
 
         // === Color Selection ===
-        document.querySelectorAll('.color-option').forEach(opt => {
-            opt.addEventListener('click', () => {
-                document.querySelectorAll('.color-option').forEach(o => o.classList.remove('active'));
-                opt.classList.add('active');
-                currentColor = opt.dataset.color;
-            });
+        document.getElementById('colorPicker').addEventListener('change', (e) => {
+            currentColor = e.target.value;
         });
 
         // === Settings ===
@@ -495,14 +425,8 @@
             });
 
             // Draw student points
-            studentPoints.forEach((point, pointId) => {
-                ctx.fillStyle = '#FF6B6B';
-                ctx.beginPath();
-                ctx.arc(point.x, point.y, 8, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = 'white';
-                ctx.lineWidth = 2;
-                ctx.stroke();
+            studentPoints.forEach((point) => {
+                drawUserMarker(point);
             });
         }
 
@@ -562,14 +486,60 @@
             }
         }
 
+        function drawUserMarker(point) {
+            const x = point.x * CANVAS_WIDTH;
+            const y = point.y * CANVAS_HEIGHT;
+            const color = point.color || '#FF6B6B';
+            const shape = point.shape || 'circle';
+            const label = point.name || 'Χρήστης';
+            const size = 10;
+
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = color;
+
+            ctx.fillStyle = color;
+            drawMarkerShape(x, y, size, shape);
+
+            ctx.shadowBlur = 0;
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = color;
+            ctx.font = 'bold 12px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(label, x, y - 16);
+        }
+
+        function drawMarkerShape(x, y, size, shape) {
+            ctx.beginPath();
+
+            if (shape === 'square') {
+                ctx.rect(x - size, y - size, size * 2, size * 2);
+            } else if (shape === 'triangle') {
+                ctx.moveTo(x, y - size - 2);
+                ctx.lineTo(x - size - 2, y + size + 2);
+                ctx.lineTo(x + size + 2, y + size + 2);
+                ctx.closePath();
+            } else if (shape === 'diamond') {
+                ctx.moveTo(x, y - size - 2);
+                ctx.lineTo(x - size - 2, y);
+                ctx.lineTo(x, y + size + 2);
+                ctx.lineTo(x + size + 2, y);
+                ctx.closePath();
+            } else {
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+            }
+
+            ctx.fill();
+        }
+
         // === Broadcast Environment ===
         function broadcastEnvironment() {
             if (!isConnected) return;
 
-            socket.emit('environment_update', {
-                geometryObjects,
-                timestamp: Date.now()
-            });
+            socket.emit('activity-update', geometryObjects);
 
             console.log('📡 Environment broadcast to all clients');
         }
@@ -600,36 +570,60 @@
             alert('Περιβάλλον στάλθηκε σε όλους τους μαθητές!');
         });
 
-        document.getElementById('saveBtn').addEventListener('click', () => {
-            const data = JSON.stringify(geometryObjects);
-            const blob = new Blob([data], {type: 'application/json'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'geometry_activity.json';
-            a.click();
+        document.getElementById('saveBtn').addEventListener('click', async () => {
+            const name = prompt('Όνομα δραστηριότητας:', 'Activity_' + new Date().toISOString().split('T')[0]);
+            if (!name) return;
+            
+            try {
+                const response = await fetch('/api/activity/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name,
+                        geometry: geometryObjects
+                    })
+                });
+                const result = await response.json();
+                alert('✅ Η δραστηριότητα αποθηκεύτηκε!');
+                console.log('Saved:', result);
+            } catch (error) {
+                alert('❌ Σφάλμα αποθήκευσης');
+                console.error(error);
+            }
         });
 
-        document.getElementById('loadBtn').addEventListener('click', () => {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            input.onchange = (e) => {
-                const file = e.target.files[0];
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    try {
-                        geometryObjects = JSON.parse(event.target.result);
-                        updateGeometryList();
-                        render();
-                        broadcastEnvironment();
-                    } catch (error) {
-                        alert('Σφάλμα φόρτωσης αρχείου');
-                    }
-                };
-                reader.readAsText(file);
-            };
-            input.click();
+        document.getElementById('loadBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/activity/list');
+                const activities = await response.json();
+                
+                if (activities.length === 0) {
+                    alert('Δεν υπάρχουν αποθηκευμένες δραστηριότητες');
+                    return;
+                }
+                
+                let list = 'Επιλέξτε δραστηριότητα:\n\n';
+                activities.forEach((act, idx) => {
+                    list += `${idx + 1}. ${act.name} (${new Date(act.createdAt).toLocaleString('el-GR')})\n`;
+                });
+                
+                const choice = prompt(list + '\nΑριθμός:');
+                if (!choice) return;
+                
+                const idx = parseInt(choice) - 1;
+                if (idx >= 0 && idx < activities.length) {
+                    const loadResponse = await fetch(`/api/activity/load/${activities[idx].filename}`);
+                    const activity = await loadResponse.json();
+                    geometryObjects = activity.geometry;
+                    updateGeometryList();
+                    render();
+                    broadcastEnvironment();
+                    alert('✅ Φορτώθηκε: ' + activity.name);
+                }
+            } catch (error) {
+                alert('❌ Σφάλμα φόρτωσης');
+                console.error(error);
+            }
         });
 
         // === Activity Controls ===
@@ -677,16 +671,69 @@
             status.textContent = connected ? '✅ Online' : '❌ Offline';
         }
 
-        function updateStatsDisplay(stats) {
-            document.getElementById('connectedCount').textContent = stats.total || 0;
-            document.getElementById('cameraCount').textContent = stats.camera || 0;
-            document.getElementById('mouseCount').textContent = stats.mouse || 0;
+        function updateStatsFromUsers(users) {
+            const total = users.length;
+            const camera = users.filter((u) => u.role === 'camera').length;
+            const mouse = users.filter((u) => u.role === 'mouse').length;
+
+            document.getElementById('connectedCount').textContent = total;
+            document.getElementById('cameraCount').textContent = camera;
+            document.getElementById('mouseCount').textContent = mouse;
         }
 
-        function updateStats() {
-            if (isConnected) {
-                socket.emit('request_stats');
+        function updateStudentList(users) {
+            const container = document.getElementById('studentList');
+            container.innerHTML = '';
+
+            if (!users.length) {
+                const empty = document.createElement('span');
+                empty.style.opacity = '0.7';
+                empty.textContent = 'Κανένας';
+                container.appendChild(empty);
+                return;
             }
+
+            users.forEach((user) => {
+                const item = document.createElement('span');
+                item.style.display = 'inline-flex';
+                item.style.alignItems = 'center';
+                item.style.gap = '6px';
+                item.style.padding = '4px 8px';
+                item.style.borderRadius = '8px';
+                item.style.background = 'rgba(255,255,255,0.15)';
+                item.style.fontSize = '0.85rem';
+
+                const dot = document.createElement('span');
+                dot.style.width = '10px';
+                dot.style.height = '10px';
+                dot.style.background = user.color || '#FF6B6B';
+                dot.style.borderRadius = user.shape === 'square' ? '2px' : '50%';
+                dot.style.display = 'inline-block';
+
+                item.appendChild(dot);
+                item.appendChild(document.createTextNode(user.name || 'Χρήστης'));
+                container.appendChild(item);
+            });
+        }
+
+        function updateFromUsers(users) {
+            studentPoints.clear();
+
+            users.forEach((user) => {
+                if (typeof user.x !== 'number' || typeof user.y !== 'number') return;
+                studentPoints.set(user.id, {
+                    x: user.x,
+                    y: user.y,
+                    color: user.color,
+                    shape: user.shape,
+                    name: user.name,
+                    role: user.role
+                });
+            });
+
+            updateStatsFromUsers(users);
+            updateStudentList(users);
+            render();
         }
 
         // === Initialize ===
@@ -694,8 +741,6 @@
             connectToServer();
             render();
             
-            // Request stats every 2 seconds
-            setInterval(updateStats, 2000);
         });
 
         // Make deleteGeometry available globally

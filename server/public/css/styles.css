@@ -422,3 +422,129 @@ body {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
 }
+/***** Compact Teacher Interface *****/
+.compact-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+    background: rgba(255,255,255,0.1);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.control-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.compact-select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    min-width: 150px;
+}
+
+.compact-select option {
+    background: #764ba2;
+    color: white;
+}
+
+.compact-color {
+    width: 50px;
+    height: 35px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.compact-input {
+    width: 60px;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-weight: 600;
+    text-align: center;
+}
+
+.btn-compact {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1.1rem;
+}
+
+.btn-compact.btn-danger { background: #ef4444; color: white; }
+.btn-compact.btn-primary { background: #3b82f6; color: white; }
+.btn-compact.btn-success { background: #10b981; color: white; }
+.btn-compact:hover { transform: scale(1.05); opacity: 0.9; }
+
+.stats-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+    background: rgba(255,255,255,0.1);
+    padding: 15px;
+    border-radius: 10px;
+    justify-content: space-between;
+}
+
+.stat-group {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.stat-group span {
+    font-size: 0.9rem;
+}
+
+.stat-value {
+    font-weight: bold;
+    color: #4ECDC4;
+}
+
+.students-inline {
+    flex: 1;
+    min-width: 200px;
+}
+
+.student-list-inline {
+    display: inline-flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.canvas-panel-full {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.measurements-inline {
+    padding: 10px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    margin-top: 10px;
+    text-align: left;
+    font-size: 0.9rem;
+}

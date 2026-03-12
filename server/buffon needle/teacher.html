@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buffon's Needle — Καθηγητής</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0f1117; color: #e2e8f0;
+    font-family: 'Courier New', monospace;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 24px 20px; gap: 16px; min-height: 100vh;
+  }
+  h1 { font-size: 22px; letter-spacing: 2px; color: #f8fafc; font-weight: 700; }
+  .subtitle { font-size: 11px; color: #94a3b8; letter-spacing: 1px; font-weight: 700; text-align: center; margin-top: 3px; }
+
+  .status-bar {
+    width: 100%; max-width: 760px;
+    display: flex; align-items: center; gap: 10px;
+    background: #1e2230; border: 1px solid #2d3348;
+    border-radius: 10px; padding: 10px 16px;
+    font-size: 12px; color: #64748b;
+  }
+  .conn-dot { width: 10px; height: 10px; border-radius: 50%; background: #475569; flex-shrink: 0; transition: background 0.3s; }
+  .conn-dot.connected { background: #34d399; }
+
+  /* Leaderboard table */
+  .board {
+    width: 100%; max-width: 760px;
+    background: #1e2230; border: 1px solid #2d3348;
+    border-radius: 10px; overflow: hidden;
+  }
+  .board-header {
+    display: grid;
+    grid-template-columns: 2rem 1fr 7rem 7rem 6rem 6rem 6rem;
+    gap: 0;
+    background: #141720;
+    border-bottom: 1px solid #2d3348;
+    padding: 10px 16px;
+    font-size: 9px; color: #64748b; letter-spacing: 1px;
+  }
+  .board-header span, .board-row span { display: flex; align-items: center; }
+
+  .board-body { display: flex; flex-direction: column; }
+
+  .board-row {
+    display: grid;
+    grid-template-columns: 2rem 1fr 7rem 7rem 6rem 6rem 6rem;
+    padding: 12px 16px;
+    border-bottom: 1px solid #1a1f2e;
+    transition: background 0.2s;
+    gap: 0;
+  }
+  .board-row:last-child { border-bottom: none; }
+  .board-row:hover { background: #252a3a; }
+  .board-row.row-pending { opacity: 0.58; }
+  .board-row.row-pending .team-name,
+  .board-row.row-pending .drops-val,
+  .board-row.row-pending .hits-val,
+  .board-row.row-pending .miss-val,
+  .board-row.row-pending .pi-val,
+  .board-row.row-pending .err-val {
+    color: #7b879b;
+  }
+
+  .rank { font-size: 13px; color: #475569; font-weight: 700; }
+  .team-name { font-size: 14px; font-weight: 700; color: #f8fafc; }
+  .drops-val { font-size: 13px; color: #94a3b8; }
+  .hits-val  { font-size: 13px; color: #f87171; }
+  .miss-val  { font-size: 13px; color: #22c55e; }
+  .pi-val    { font-size: 15px; font-weight: 700; color: #34d399; }
+  .err-val   { font-size: 13px; color: #fbbf24; }
+  .rank-up   { animation: riseFlash 0.7s ease; }
+  .rank-down { animation: dropFlash 0.7s ease; }
+
+  @keyframes riseFlash {
+    from { background: rgba(34, 197, 94, 0.16); }
+    to { background: transparent; }
+  }
+
+  @keyframes dropFlash {
+    from { background: rgba(248, 113, 113, 0.14); }
+    to { background: transparent; }
+  }
+
+  /* progress bar toward π */
+  .pi-bar-wrap {
+    width: 100%; max-width: 760px;
+    background: #1e2230; border: 1px solid #2d3348;
+    border-radius: 10px; padding: 14px 18px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .pi-bar-wrap .title { font-size: 10px; color: #64748b; letter-spacing: 1px; }
+  .pi-bar-row { display: flex; align-items: center; gap: 10px; }
+  .pi-bar-row.pending { opacity: 0.58; }
+  .pi-bar-name { min-width: 130px; font-size: 12px; font-weight: 700; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pi-bar-track { flex: 1; height: 14px; background: #141720; border-radius: 7px; overflow: hidden; position: relative; }
+  .pi-bar-fill { height: 100%; border-radius: 7px; transition: width 0.4s ease; min-width: 2px; }
+  .pi-bar-label { min-width: 70px; font-size: 11px; color: #94a3b8; text-align: right; }
+
+  .chart-wrap {
+    width: 100%; max-width: 760px;
+    background: #1e2230; border: 1px solid #2d3348;
+    border-radius: 10px; overflow: hidden;
+  }
+  .chart-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; cursor: pointer; user-select: none;
+  }
+  .chart-header:hover { background: #252a3a; }
+  .chart-header .c-lbl { font-size: 10px; color: #64748b; letter-spacing: 1px; margin: 0; }
+  .chart-toggle { font-size: 14px; color: #475569; transition: transform 0.25s ease; display: inline-block; }
+  .chart-toggle.open { transform: rotate(180deg); }
+  .chart-body { display: none; padding: 0 10px 10px; }
+  .chart-body.open { display: block; }
+
+  .empty { color: #334155; font-size: 13px; text-align: center; padding: 40px; }
+
+  .join-box {
+    width: 100%; max-width: 760px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 14px;
+    background: #1e2230; border: 1px solid #2d3348;
+    border-radius: 10px; padding: 12px 16px;
+  }
+  .join-copy { display: flex; flex-direction: column; gap: 4px; }
+  .join-title { font-size: 10px; color: #64748b; letter-spacing: 1px; }
+  .join-help { font-size: 13px; color: #e2e8f0; font-weight: 700; }
+  .join-qr {
+    width: 140px; height: 140px; object-fit: contain;
+    background: #ffffff;
+    border-radius: 8px; padding: 6px;
+    border: 1px solid #334155;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 700px) {
+    .join-box { flex-direction: column; align-items: flex-start; }
+    .join-qr { align-self: center; width: 170px; height: 170px; }
+  }
+</style>
+</head>
+<body>
+
+<div style="text-align:center">
+  <h1>Η βελόνα του Buffon</h1>
+  <div class="subtitle"></div>
+</div>
+
+<div class="chart-wrap">
+  <div class="chart-header" onclick="toggleJoinQr()">
+    <span class="c-lbl">ΣΥΝΔΕΣΗ ΜΑΘΗΤΩΝ</span>
+    <span class="chart-toggle open" id="join-qr-arrow">▼</span>
+  </div>
+  <div class="chart-body open" id="join-qr-body">
+    <div class="join-box">
+      <div class="join-copy">
+        <div class="join-help">Σαρώστε το QR για να ανοίξετε την εφαρμογή.</div>
+      </div>
+      <img class="join-qr" src="qrcode.png" alt="QR code για student.html">
+    </div>
+  </div>
+</div>
+
+<div class="status-bar">
+  <div class="conn-dot" id="conn-dot"></div>
+  <span id="status-text">Σύνδεση...</span>
+  <span style="margin-left:auto;color:#475569" id="count-text">0 ομάδες συνδεδεμένες</span>
+</div>
+
+<!-- Leaderboard -->
+<div class="board">
+  <div class="board-header">
+    <span>#</span>
+    <span>ΟΜΑΔΑ</span>
+    <span>\(\hat{\pi}\)</span>
+    <span>ΣΦΑΛΜΑ</span>
+    <span>ΒΕΛΟΝΕΣ</span>
+    <span>HITS</span>
+    <span>MISS</span>
+  </div>
+  <div class="board-body" id="board-body">
+    <div class="empty" id="empty-msg">Καμία ομάδα δεν είναι συνδεδεμένη ακόμα...</div>
+  </div>
+</div>
+
+<!-- Proximity bars -->
+<div class="pi-bar-wrap">
+  <div class="title">ΠΛΗΣΙΑΣΜΑ ΠΡΟΣ π (μικρότερο σφάλμα = μεγαλύτερη μπάρα)</div>
+  <div id="bar-body">
+    <div class="empty" style="padding:20px">—</div>
+  </div>
+</div>
+
+<div class="chart-wrap">
+  <div class="chart-header" onclick="toggleTeacherChart()">
+    <span class="c-lbl">ΣΥΓΚΛΙΣΗ ΟΜΑΔΩΝ ΠΡΟΣ \(\pi\)</span>
+    <span class="chart-toggle open" id="teacher-chart-arrow">▼</span>
+  </div>
+  <div class="chart-body open" id="teacher-chart-body">
+    <canvas id="teacher-chart-cv"></canvas>
+  </div>
+</div>
+
+<script>
+let students = [];
+let previousRanks = new Map();
+let latestSorted = [];
+let teamHistories = new Map();
+
+const TEACHER_Y_MIN = 1.5;
+const TEACHER_Y_MAX = 5.0;
+const teacherChartCv = document.getElementById('teacher-chart-cv');
+const teacherChartCtx = teacherChartCv.getContext('2d');
+
+function connectWS() {
+  const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+  const ws = new WebSocket(`${proto}://${location.host}`);
+
+  ws.onopen = () => {
+    ws.send(JSON.stringify({ type: 'register_teacher' }));
+    document.getElementById('conn-dot').classList.add('connected');
+    document.getElementById('status-text').textContent = 'Συνδεδεμένος';
+  };
+
+  ws.onmessage = e => {
+    const msg = JSON.parse(e.data);
+    if (msg.type === 'roster') {
+      students = msg.students;
+      render();
+    }
+  };
+
+  ws.onclose = () => {
+    document.getElementById('conn-dot').classList.remove('connected');
+    document.getElementById('status-text').textContent = 'Αποσυνδέθηκε — επανασύνδεση...';
+    setTimeout(connectWS, 2000);
+  };
+}
+
+function render() {
+  document.getElementById('count-text').textContent =
+    `${students.length} ομάδ${students.length === 1 ? 'α' : 'ες'} συνδεδεμέν${students.length === 1 ? 'η' : 'ες'}`;
+
+  const body  = document.getElementById('board-body');
+  const barBody = document.getElementById('bar-body');
+
+  if (students.length === 0) {
+    body.innerHTML = '<div class="empty" id="empty-msg">Καμία ομάδα δεν είναι συνδεδεμένη ακόμα...</div>';
+    barBody.innerHTML = '<div class="empty" style="padding:20px">—</div>';
+    latestSorted = [];
+    previousRanks = new Map();
+    teamHistories.clear();
+    drawTeacherChart();
+    return;
+  }
+
+  // Sort by error ascending (best first), nulls last
+  const sorted = [...students].sort((a, b) => {
+    const aHasPi = hasPiEstimate(a);
+    const bHasPi = hasPiEstimate(b);
+
+    if (aHasPi !== bHasPi) {
+      return aHasPi ? -1 : 1;
+    }
+
+    const ea = aHasPi ? Math.abs(a.piEst - Math.PI) : Infinity;
+    const eb = bHasPi ? Math.abs(b.piEst - Math.PI) : Infinity;
+
+    if (ea !== eb) return ea - eb;
+
+    const ad = typeof a.drops === 'number' ? a.drops : 0;
+    const bd = typeof b.drops === 'number' ? b.drops : 0;
+    if (ad !== bd) return bd - ad;
+
+    return String(a.team || '').localeCompare(String(b.team || ''), 'el');
+  });
+
+  const rankMovement = new Map();
+  sorted.forEach((s, i) => {
+    const key = studentKey(s);
+    const prevIndex = previousRanks.has(key) ? previousRanks.get(key) : null;
+    rankMovement.set(key, prevIndex === null ? null : prevIndex - i);
+  });
+
+  // Leaderboard
+  body.innerHTML = sorted.map((s, i) => {
+    const key   = studentKey(s);
+    const delta = rankMovement.get(key);
+    const hasPi = hasPiEstimate(s);
+    const err   = hasPi ? Math.abs(s.piEst - Math.PI).toFixed(6) : '—';
+    const piStr = hasPi ? s.piEst.toFixed(5) : '—';
+    const miss  = Math.max(0, (s.drops || 0) - (s.hits || 0));
+    const rankLabel = i + 1;
+
+    const rowClass =
+      !hasPi ? 'row-pending' :
+      delta > 0 ? 'rank-up' :
+      delta < 0 ? 'rank-down' :
+      '';
+
+    return `
+      <div class="board-row ${rowClass}">
+        <span class="rank" style="color:${hasPi ? getSeriesColor(i) : '#64748b'}">${rankLabel}</span>
+        <span class="team-name">${esc(s.team)}</span>
+        <span class="pi-val">${piStr}</span>
+        <span class="err-val">${err}</span>
+        <span class="drops-val">${(s.drops || 0).toLocaleString()}</span>
+        <span class="hits-val">${(s.hits || 0).toLocaleString()}</span>
+        <span class="miss-val">${miss.toLocaleString()}</span>
+      </div>`;
+  }).join('');
+
+  // Proximity bars
+  const maxErr = Math.max(...sorted.filter(hasPiEstimate).map(s=>Math.abs(s.piEst-Math.PI)), 1);
+
+  barBody.innerHTML = sorted.map((s, i) => {
+    const hasPi = hasPiEstimate(s);
+    const err = hasPi ? Math.abs(s.piEst - Math.PI) : null;
+    const pct = err !== null ? Math.max(2, (1 - err / maxErr) * 100).toFixed(1) : 2;
+    const color = hasPi ? getSeriesColor(i) : '#334155';
+    const pendingClass = hasPi ? '' : ' pending';
+    return `
+      <div class="pi-bar-row${pendingClass}">
+        <div class="pi-bar-name">#${i + 1} ${esc(s.team)}</div>
+        <div class="pi-bar-track">
+          <div class="pi-bar-fill" style="width:${pct}%;background:${color}"></div>
+        </div>
+        <div class="pi-bar-label">${err !== null ? err.toFixed(5) : '—'}</div>
+      </div>`;
+  }).join('');
+
+  latestSorted = sorted;
+  updateTeamHistories(sorted);
+  drawTeacherChart();
+  previousRanks = new Map(sorted.map((s, i) => [studentKey(s), i]));
+}
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function studentKey(s) {
+  return String(s.team || '');
+}
+
+function hasPiEstimate(s) {
+  return typeof s.piEst === 'number' && Number.isFinite(s.piEst);
+}
+
+function toggleTeacherChart() {
+  const body = document.getElementById('teacher-chart-body');
+  const arrow = document.getElementById('teacher-chart-arrow');
+  const open = body.classList.toggle('open');
+  arrow.classList.toggle('open', open);
+  if (open) drawTeacherChart();
+}
+
+function toggleJoinQr() {
+  const body = document.getElementById('join-qr-body');
+  const arrow = document.getElementById('join-qr-arrow');
+  const open = body.classList.toggle('open');
+  arrow.classList.toggle('open', open);
+}
+
+function getSeriesColor(index) {
+  const palette = ['#fbbf24', '#94a3b8', '#cd7c3a', '#3b82f6', '#a78bfa', '#f87171', '#34d399', '#f97316', '#38bdf8', '#e879f9'];
+  return palette[index % palette.length];
+}
+
+function updateTeamHistories(sorted) {
+  const activeKeys = new Set(sorted.map(studentKey));
+  for (const key of Array.from(teamHistories.keys())) {
+    if (!activeKeys.has(key)) {
+      teamHistories.delete(key);
+    }
+  }
+
+  sorted.forEach((s) => {
+    const key = studentKey(s);
+    const drops = typeof s.drops === 'number' ? s.drops : 0;
+
+    if (drops <= 0) {
+      teamHistories.set(key, []);
+      return;
+    }
+
+    if (!hasPiEstimate(s)) return;
+
+    const pi = s.piEst;
+    const points = teamHistories.get(key) || [];
+    const last = points[points.length - 1];
+
+    if (!last || drops > last.n || Math.abs(pi - last.pi) > 1e-12) {
+      points.push({ n: drops, pi });
+
+      if (points.length > 500) {
+        const skip = Math.ceil(points.length / 500);
+        teamHistories.set(key, points.filter((_, idx) => idx % skip === 0));
+      } else {
+        teamHistories.set(key, points);
+      }
+    }
+  });
+}
+
+function drawTeacherChart() {
+  const body = document.getElementById('teacher-chart-body');
+  if (!body.classList.contains('open')) return;
+
+  const cw = Math.max(340, body.clientWidth - 4);
+  const ch = 172;
+  teacherChartCv.width = cw;
+  teacherChartCv.height = ch;
+
+  const PAD = { top: 10, right: 18, bottom: 30, left: 40 };
+  const pw = cw - PAD.left - PAD.right;
+  const ph = ch - PAD.top - PAD.bottom;
+
+  teacherChartCtx.clearRect(0, 0, cw, ch);
+  teacherChartCtx.fillStyle = '#141720';
+  teacherChartCtx.beginPath();
+  teacherChartCtx.roundRect(0, 0, cw, ch, 6);
+  teacherChartCtx.fill();
+
+  const activeSeries = latestSorted
+    .filter(hasPiEstimate)
+    .map((s, i) => {
+      const key = studentKey(s);
+      const points = (teamHistories.get(key) || []).filter(pt => pt.n > 0);
+      return {
+        rank: i + 1,
+        team: String(s.team || ''),
+        color: getSeriesColor(i),
+        points,
+      };
+    })
+    .filter(series => series.points.length > 0);
+
+  if (!activeSeries.length) {
+    teacherChartCtx.fillStyle = '#64748b';
+    teacherChartCtx.font = '12px Courier New';
+    teacherChartCtx.textAlign = 'center';
+    teacherChartCtx.fillText('Χωρίς εκτιμήσεις π ακόμα', cw / 2, ch / 2);
+    return;
+  }
+
+  let xMax = 10;
+  activeSeries.forEach(series => {
+    series.points.forEach(pt => {
+      if (pt.n > xMax) xMax = pt.n;
+    });
+  });
+
+  const toX = (n) => PAD.left + (n / xMax) * pw;
+  const toY = (pi) => PAD.top + (1 - (pi - TEACHER_Y_MIN) / (TEACHER_Y_MAX - TEACHER_Y_MIN)) * ph;
+
+  teacherChartCtx.save();
+  teacherChartCtx.beginPath();
+  teacherChartCtx.rect(PAD.left, PAD.top, pw, ph);
+  teacherChartCtx.clip();
+
+  teacherChartCtx.strokeStyle = '#2d3348';
+  teacherChartCtx.lineWidth = 0.8;
+  teacherChartCtx.setLineDash([]);
+  [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0].forEach(y => {
+    teacherChartCtx.beginPath();
+    teacherChartCtx.moveTo(PAD.left, toY(y));
+    teacherChartCtx.lineTo(PAD.left + pw, toY(y));
+    teacherChartCtx.stroke();
+  });
+
+  const piY = toY(Math.PI);
+  teacherChartCtx.strokeStyle = '#fbbf24';
+  teacherChartCtx.lineWidth = 1.2;
+  teacherChartCtx.setLineDash([4, 4]);
+  teacherChartCtx.beginPath();
+  teacherChartCtx.moveTo(PAD.left, piY);
+  teacherChartCtx.lineTo(PAD.left + pw, piY);
+  teacherChartCtx.stroke();
+  teacherChartCtx.setLineDash([]);
+
+  activeSeries.forEach(series => {
+    teacherChartCtx.strokeStyle = series.color;
+    teacherChartCtx.lineWidth = 1.6;
+    teacherChartCtx.beginPath();
+    series.points.forEach((pt, idx) => {
+      const x = toX(pt.n);
+      const y = toY(pt.pi);
+      if (idx === 0) teacherChartCtx.moveTo(x, y);
+      else teacherChartCtx.lineTo(x, y);
+    });
+    teacherChartCtx.stroke();
+
+    const last = series.points[series.points.length - 1];
+    teacherChartCtx.fillStyle = series.color;
+    teacherChartCtx.beginPath();
+    teacherChartCtx.arc(toX(last.n), toY(last.pi), 2.8, 0, Math.PI * 2);
+    teacherChartCtx.fill();
+  });
+
+  teacherChartCtx.restore();
+
+  teacherChartCtx.fillStyle = '#fbbf24';
+  teacherChartCtx.font = '9px Courier New';
+  teacherChartCtx.textAlign = 'left';
+  teacherChartCtx.fillText('π', PAD.left + pw + 3, piY + 3);
+
+  teacherChartCtx.strokeStyle = '#475569';
+  teacherChartCtx.lineWidth = 1;
+  teacherChartCtx.beginPath();
+  teacherChartCtx.moveTo(PAD.left, PAD.top);
+  teacherChartCtx.lineTo(PAD.left, PAD.top + ph);
+  teacherChartCtx.lineTo(PAD.left + pw, PAD.top + ph);
+  teacherChartCtx.stroke();
+
+  teacherChartCtx.fillStyle = '#475569';
+  teacherChartCtx.font = '9px Courier New';
+  teacherChartCtx.textAlign = 'right';
+  [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0].forEach(y => {
+    teacherChartCtx.fillText(y.toFixed(1), PAD.left - 4, toY(y) + 3);
+  });
+
+  teacherChartCtx.textAlign = 'center';
+  for (let i = 0; i <= 5; i++) {
+    const n = Math.round((xMax * i) / 5);
+    const label = n >= 1000 ? `${Math.round(n / 1000)}k` : n;
+    teacherChartCtx.fillText(label, toX(n), PAD.top + ph + 14);
+  }
+  teacherChartCtx.fillText('# βελόνες', PAD.left + pw / 2, ch - 4);
+
+  let lx = PAD.left;
+  let ly = PAD.top + 12;
+  teacherChartCtx.font = '9px Courier New';
+  teacherChartCtx.textAlign = 'left';
+  activeSeries.slice(0, 8).forEach(series => {
+    teacherChartCtx.fillStyle = series.color;
+    teacherChartCtx.fillRect(lx, ly - 7, 8, 8);
+    teacherChartCtx.fillStyle = '#94a3b8';
+    teacherChartCtx.fillText(`#${series.rank} ${series.team}`, lx + 12, ly);
+    ly += 12;
+  });
+}
+
+connectWS();
+window.addEventListener('resize', drawTeacherChart);
+</script>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)'], ['$', '$']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</body>
+</html>

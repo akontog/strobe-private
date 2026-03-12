@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strobe User - Κίνηση Σημείου</title>
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    .user-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+    }
+
+    .user-header {
+      background: rgba(255,255,255,0.15);
+      padding: 20px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .user-header h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .role-selector {
+      margin: 20px 0;
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .user-settings {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .user-field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.15);
+      padding: 8px 12px;
+      border-radius: 10px;
+    }
+
+    .user-field label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      white-space: nowrap;
+    }
+
+    .user-input,
+    .user-select {
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.95rem;
+      background: rgba(255,255,255,0.9);
+    }
+
+    .user-color {
+      width: 40px;
+      height: 30px;
+      border: 2px solid rgba(255,255,255,0.6);
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .role-btn {
+      padding: 15px 30px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: rgba(255,255,255,0.2);
+      color: white;
+    }
+
+    .role-btn.active {
+      background: #4ECDC4;
+      transform: scale(1.1);
+    }
+
+    .role-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .user-canvas-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      margin: 20px;
+      border-radius: 15px;
+      background: white;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+
+    #userCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+
+    .user-marker {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      transition: all 0.1s ease-out;
+    }
+
+    .user-marker.me {
+      width: 25px;
+      height: 25px;
+      border-width: 4px;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.2); }
+    }
+
+    .user-info {
+      padding: 15px;
+      background: rgba(255,255,255,0.1);
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: blink 1s infinite;
+    }
+
+    .status-indicator.connected {
+      background: #4ECDC4;
+    }
+
+    .status-indicator.disconnected {
+      background: #ef4444;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .camera-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.2;
+      display: none;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="user-container">
+    <div class="user-header">
+      <h1>🎯 Strobe User Client</h1>
+      <p>Κουνήστε το σημείο σας πάνω στη δραστηριότητα!</p>
+      
+      <div class="role-selector">
+        <button class="role-btn active" id="mouseRoleBtn">🖱️ Ποντίκι/Αφή</button>
+        <button class="role-btn" id="cameraRoleBtn">📹 Κάμερα</button>
+      </div>
+
+      <div class="user-settings">
+        <div class="user-field">
+          <label for="userName">Όνομα:</label>
+          <input id="userName" class="user-input" type="text" placeholder="π.χ. Μαρία">
+        </div>
+        <div class="user-field">
+          <label for="userColor">Χρώμα:</label>
+          <input id="userColor" class="user-color" type="color" value="#4ECDC4">
+        </div>
+        <div class="user-field">
+          <label for="userShape">Σχήμα:</label>
+          <select id="userShape" class="user-select">
+            <option value="circle">● Κύκλος</option>
+            <option value="square">■ Τετράγωνο</option>
+            <option value="triangle">▲ Τρίγωνο</option>
+            <option value="diamond">◆ Ρόμβος</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="user-canvas-container">
+      <video id="cameraOverlay" class="camera-overlay" autoplay playsinline muted></video>
+      <canvas id="userCanvas"></canvas>
+    </div>
+
+    <div class="user-info">
+      <span class="status-indicator disconnected" id="statusIndicator"></span>
+      <span id="statusText">Σύνδεση...</span>
+      <span style="margin-left: 20px;">👥 Ενεργοί χρήστες: <strong id="userCount">0</strong></span>
+    </div>
+  </div>
+
+  <script>
+    // === Configuration ===
+    const canvas = document.getElementById('userCanvas');
+    const ctx = canvas.getContext('2d');
+    const socket = io();
+
+    let currentRole = 'mouse'; // 'mouse' or 'camera'
+    let myPosition = { x: 0.5, y: 0.5 }; // Normalized 0-1
+    let allUsers = [];
+    let currentActivity = null;
+    let isConnected = false;
+    let myUserId = null;
+    let userName = '';
+    let userColor = '#4ECDC4';
+    let userShape = 'circle';
+
+    // Resize canvas
+    function resizeCanvas() {
+      const container = canvas.parentElement;
+      canvas.width = container.clientWidth;
+      canvas.height = container.clientHeight;
+      render();
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // === Socket Connection ===
+    socket.on('connect', () => {
+      isConnected = true;
+      myUserId = socket.id;
+      updateStatus('✅ Συνδεθήκατε!', true);
+      console.log('Connected:', myUserId);
+      emitUserUpdate();
+    });
+
+    socket.on('disconnect', () => {
+      isConnected = false;
+      updateStatus('❌ Αποσυνδεθήκατε', false);
+    });
+
+    socket.on('activity-loaded', (activity) => {
+      currentActivity = activity;
+      console.log('Activity loaded:', activity);
+      render();
+    });
+
+    socket.on('users-update', (users) => {
+      allUsers = users;
+      document.getElementById('userCount').textContent = users.length;
+      render();
+    });
+
+    socket.on('camera-points', (data) => {
+      if (currentRole !== 'camera') return;
+      if (!data || !Array.isArray(data.points) || data.points.length === 0) return;
+
+      const first = data.points[0];
+      if (typeof first.x === 'number' && typeof first.y === 'number') {
+        myPosition = {
+          x: Math.max(0, Math.min(1, first.x)),
+          y: Math.max(0, Math.min(1, first.y))
+        };
+        render();
+      }
+    });
+
+    // === Role Selection ===
+    document.getElementById('mouseRoleBtn').addEventListener('click', () => {
+      setRole('mouse');
+    });
+
+    document.getElementById('cameraRoleBtn').addEventListener('click', () => {
+      setRole('camera');
+    });
+
+    function setRole(role) {
+      currentRole = role;
+      
+      // Update UI
+      document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+      if (role === 'mouse') {
+        document.getElementById('mouseRoleBtn').classList.add('active');
+        stopCamera();
+      } else {
+        document.getElementById('cameraRoleBtn').classList.add('active');
+        startCamera();
+      }
+
+      emitUserUpdate();
+    }
+
+    // === User Settings ===
+    function loadUserSettings() {
+      const storedName = localStorage.getItem('strobeUserName');
+      const storedColor = localStorage.getItem('strobeUserColor');
+      const storedShape = localStorage.getItem('strobeUserShape');
+
+      if (storedName && storedName.trim()) {
+        userName = storedName.trim();
+      } else {
+        userName = generateDefaultName();
+      }
+
+      userColor = storedColor || '#4ECDC4';
+      userShape = storedShape || 'circle';
+
+      document.getElementById('userName').value = userName;
+      document.getElementById('userColor').value = userColor;
+      document.getElementById('userShape').value = userShape;
+
+      persistUserSettings();
+    }
+
+    function generateDefaultName() {
+      const existing = localStorage.getItem('strobeAutoName');
+      if (existing) return existing;
+
+      const randomId = Math.floor(1000 + Math.random() * 9000);
+      const autoName = `Χρήστης-${randomId}`;
+      localStorage.setItem('strobeAutoName', autoName);
+      return autoName;
+    }
+
+    function persistUserSettings() {
+      localStorage.setItem('strobeUserName', userName);
+      localStorage.setItem('strobeUserColor', userColor);
+      localStorage.setItem('strobeUserShape', userShape);
+    }
+
+    document.getElementById('userName').addEventListener('input', (e) => {
+      userName = e.target.value.trim();
+      persistUserSettings();
+      emitUserUpdate();
+    });
+
+    document.getElementById('userColor').addEventListener('change', (e) => {
+      userColor = e.target.value;
+      persistUserSettings();
+      emitUserUpdate();
+      render();
+    });
+
+    document.getElementById('userShape').addEventListener('change', (e) => {
+      userShape = e.target.value;
+      persistUserSettings();
+      emitUserUpdate();
+      render();
+    });
+
+    // === Mouse/Touch Tracking ===
+    canvas.addEventListener('mousemove', (e) => {
+      if (currentRole !== 'mouse') return;
+      updateMyPosition(e);
+    });
+
+    canvas.addEventListener('touchmove', (e) => {
+      if (currentRole !== 'mouse') return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      updateMyPosition(touch);
+    });
+
+    function updateMyPosition(event) {
+      const rect = canvas.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width;
+      const y = (event.clientY - rect.top) / rect.height;
+      
+      myPosition = { x: Math.max(0, Math.min(1, x)), y: Math.max(0, Math.min(1, y)) };
+      
+      // Send to server
+      emitUserUpdate();
+      
+      render();
+    }
+
+    // === Camera Tracking ===
+    let cameraStream = null;
+    let cameraInterval = null;
+    let captureCanvas = null;
+    let captureCtx = null;
+
+    async function startCamera() {
+      try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({ 
+          video: { facingMode: 'user' } 
+        });
+        
+        const video = document.getElementById('cameraOverlay');
+        video.srcObject = cameraStream;
+        video.style.display = 'block';
+
+        if (!captureCanvas) {
+          captureCanvas = document.createElement('canvas');
+          captureCanvas.width = 320;
+          captureCanvas.height = 240;
+          captureCtx = captureCanvas.getContext('2d');
+        }
+
+        cameraInterval = setInterval(() => {
+          if (!captureCtx) return;
+
+          captureCtx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
+          const dataUrl = captureCanvas.toDataURL('image/jpeg', 0.55);
+          const base64 = dataUrl.split(',')[1];
+
+          socket.emit('camera-frame', {
+            image: base64,
+            name: userName || 'Χρήστης',
+            color: userColor,
+            shape: userShape
+          });
+        }, 150);
+      } catch (error) {
+        alert('❌ Δεν ήταν δυνατή η πρόσβαση στην κάμερα');
+        setRole('mouse');
+        console.error(error);
+      }
+    }
+
+    function stopCamera() {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
+      if (cameraInterval) {
+        clearInterval(cameraInterval);
+        cameraInterval = null;
+      }
+      const video = document.getElementById('cameraOverlay');
+      video.srcObject = null;
+      video.style.display = 'none';
+    }
+
+    // === Rendering ===
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw activity geometry (static shapes from teacher)
+      if (currentActivity && currentActivity.geometry) {
+        drawActivity(currentActivity.geometry);
+      }
+      
+      // Draw all user positions
+      allUsers.forEach(user => {
+        drawUserMarker(user, user.id === myUserId);
+      });
+    }
+
+    function drawActivity(geometry) {
+      geometry.forEach(obj => {
+        ctx.strokeStyle = obj.color || '#000000';
+        ctx.lineWidth = obj.lineWidth || 2;
+        ctx.beginPath();
+
+        const scaleX = (x) => x * canvas.width;
+        const scaleY = (y) => y * canvas.height;
+
+        switch (obj.type) {
+          case 'point':
+            ctx.fillStyle = obj.color || '#000000';
+            ctx.arc(scaleX(obj.x), scaleY(obj.y), 5, 0, Math.PI * 2);
+            ctx.fill();
+            break;
+
+          case 'line':
+            ctx.moveTo(scaleX(obj.x1), scaleY(obj.y1));
+            ctx.lineTo(scaleX(obj.x2), scaleY(obj.y2));
+            ctx.stroke();
+            break;
+
+          case 'circle':
+            ctx.arc(scaleX(obj.cx), scaleY(obj.cy), obj.radius * canvas.width, 0, Math.PI * 2);
+            ctx.stroke();
+            break;
+
+          case 'triangle':
+            ctx.moveTo(scaleX(obj.points[0].x), scaleY(obj.points[0].y));
+            ctx.lineTo(scaleX(obj.points[1].x), scaleY(obj.points[1].y));
+            ctx.lineTo(scaleX(obj.points[2].x), scaleY(obj.points[2].y));
+            ctx.closePath();
+            ctx.stroke();
+            break;
+
+          case 'rectangle':
+            const w = (obj.x2 - obj.x1) * canvas.width;
+            const h = (obj.y2 - obj.y1) * canvas.height;
+            ctx.rect(scaleX(obj.x1), scaleY(obj.y1), w, h);
+            ctx.stroke();
+            break;
+
+          case 'polygon':
+            if (obj.points && obj.points.length > 0) {
+              ctx.moveTo(scaleX(obj.points[0].x), scaleY(obj.points[0].y));
+              for (let i = 1; i < obj.points.length; i++) {
+                ctx.lineTo(scaleX(obj.points[i].x), scaleY(obj.points[i].y));
+              }
+              ctx.closePath();
+              ctx.stroke();
+            }
+            break;
+        }
+      });
+    }
+
+    function drawUserMarker(user, isMe) {
+      const x = user.x * canvas.width;
+      const y = user.y * canvas.height;
+      const color = user.color || '#4ECDC4';
+      const shape = user.shape || 'circle';
+      const label = user.name || (isMe ? 'ΕΓΩ' : 'Χρήστης');
+      const size = isMe ? 12 : 10;
+
+      // Outer glow
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = color;
+
+      // Self highlight ring
+      if (isMe) {
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(x, y, size + 6, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Marker shape
+      ctx.fillStyle = color;
+      drawMarkerShape(x, y, size, shape);
+
+      // Inner white dot
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.arc(x, y, isMe ? 5 : 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Label
+      ctx.fillStyle = isMe ? 'white' : color;
+      ctx.font = isMe ? 'bold 14px sans-serif' : 'bold 12px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, x, y - (isMe ? 24 : 18));
+    }
+
+    function drawMarkerShape(x, y, size, shape) {
+      ctx.beginPath();
+
+      if (shape === 'square') {
+        ctx.rect(x - size, y - size, size * 2, size * 2);
+      } else if (shape === 'triangle') {
+        ctx.moveTo(x, y - size - 2);
+        ctx.lineTo(x - size - 2, y + size + 2);
+        ctx.lineTo(x + size + 2, y + size + 2);
+        ctx.closePath();
+      } else if (shape === 'diamond') {
+        ctx.moveTo(x, y - size - 2);
+        ctx.lineTo(x - size - 2, y);
+        ctx.lineTo(x, y + size + 2);
+        ctx.lineTo(x + size + 2, y);
+        ctx.closePath();
+      } else {
+        ctx.arc(x, y, size, 0, Math.PI * 2);
+      }
+
+      ctx.fill();
+    }
+
+    function emitUserUpdate() {
+      if (!isConnected) return;
+
+      socket.emit('user-position', {
+        x: myPosition.x,
+        y: myPosition.y,
+        role: currentRole,
+        name: userName || 'Χρήστης',
+        color: userColor,
+        shape: userShape
+      });
+    }
+
+    function updateStatus(text, connected) {
+      document.getElementById('statusText').textContent = text;
+      const indicator = document.getElementById('statusIndicator');
+      indicator.className = `status-indicator ${connected ? 'connected' : 'disconnected'}`;
+    }
+
+    // Initial load
+    loadUserSettings();
+    fetch('/api/activity/current')
+      .then(r => r.json())
+      .then(activity => {
+        if (activity.geometry) {
+          currentActivity = activity;
+          render();
+        }
+      });
+  </script>
+</body>
+</html>
