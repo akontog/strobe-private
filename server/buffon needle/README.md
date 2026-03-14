@@ -27,6 +27,8 @@ nohup npm start & <- δεν δούλεψε
 
 ### Δούλεψε
 #### Εκκίνηση 
+Σωστός φάκελος:
+cd /var/www/html/dmlt/buffon
 screen
 npm start
 control a
@@ -38,8 +40,7 @@ ss -tulpn | grep 3000
 #### Τερματισμός
 screen -r
 ### Εκκίνηση server
-Σωστός φάκελος:
-cd /var/www/html/dmlt/buffon
+
 ```bash
 npm install
 ```

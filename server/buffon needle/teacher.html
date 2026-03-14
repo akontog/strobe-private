@@ -15,17 +15,99 @@
   h1 { font-size: 22px; letter-spacing: 2px; color: #f8fafc; font-weight: 700; }
   .subtitle { font-size: 11px; color: #94a3b8; letter-spacing: 1px; font-weight: 700; text-align: center; margin-top: 3px; }
 
-  .status-bar {
+  .round-panel {
     width: 100%; max-width: 760px;
-    display: flex; align-items: center; gap: 10px;
     background: #1e2230; border: 1px solid #2d3348;
-    border-radius: 10px; padding: 10px 16px;
-    font-size: 12px; color: #64748b;
+    border-radius: 10px; padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 12px;
   }
-  .conn-dot { width: 10px; height: 10px; border-radius: 50%; background: #475569; flex-shrink: 0; transition: background 0.3s; }
-  .conn-dot.connected { background: #34d399; }
+  .round-grid {
+    display: flex; gap: 12px; align-items: stretch;
+  }
+  .round-control {
+    flex: 1;
+    background: #141720; border: 1px solid #2d3348;
+    border-radius: 8px; padding: 10px 12px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .round-control .lbl {
+    font-size: 11px; letter-spacing: 1px; color: #cbd5e1; font-weight: 800;
+  }
+  .round-control .val {
+    font-size: 18px; color: #f8fafc; font-weight: 800;
+  }
+  .round-control input[type=range] {
+    width: 100%; accent-color: #3b82f6; cursor: pointer;
+  }
+  .round-control .scale {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: #94a3b8; font-weight: 700;
+  }
+  .target-slider {
+    direction: rtl;
+    accent-color: #f59e0b !important;
+  }
+  .round-actions {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .round-start {
+    border: none; border-radius: 7px;
+    padding: 10px 16px;
+    font-family: inherit; font-size: 12px; font-weight: 700;
+    background: #2563eb; color: #f8fafc;
+    cursor: pointer;
+  }
+  .round-start:hover { background: #1d4ed8; }
+  .round-stop,
+  .round-reset {
+    border: none; border-radius: 7px;
+    padding: 10px 14px;
+    font-family: inherit; font-size: 12px; font-weight: 700;
+    cursor: pointer;
+    color: #f8fafc;
+  }
+  .round-stop { background: #b45309; }
+  .round-stop:hover { background: #92400e; }
+  .round-reset { background: #991b1b; }
+  .round-reset:hover { background: #7f1d1d; }
+  .round-start:disabled,
+  .round-stop:disabled,
+  .round-reset:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .round-meta {
+    margin-left: auto;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 12px; color: #cbd5e1; font-weight: 700;
+  }
+  .round-timer {
+    font-size: 20px; color: #facc15; font-weight: 800;
+    min-width: 54px; text-align: right;
+  }
+  .round-status {
+    border-radius: 8px;
+    border: 1px solid #475569;
+    background: #111827;
+    padding: 9px 11px;
+    font-size: 14px;
+    color: #e2e8f0;
+    font-weight: 800;
+  }
+  .round-status.active {
+    border-color: rgba(59,130,246,0.75);
+    color: #dbeafe;
+  }
+  .round-status.ended {
+    border-color: rgba(245,158,11,0.75);
+    color: #fef08a;
+  }
+  .round-result {
+    font-size: 13px;
+    color: #f8fafc;
+  }
 
-  /* Leaderboard table */
+  /* Live + total score tables */
   .board {
     width: 100%; max-width: 760px;
     background: #1e2230; border: 1px solid #2d3348;
@@ -33,34 +115,45 @@
   }
   .board-header {
     display: grid;
-    grid-template-columns: 2rem 1fr 7rem 7rem 6rem 6rem 6rem;
     gap: 0;
-    background: #141720;
+    background: #111827;
     border-bottom: 1px solid #2d3348;
-    padding: 10px 16px;
-    font-size: 9px; color: #64748b; letter-spacing: 1px;
+    padding: 11px 16px;
+    font-size: 12px;
+    color: #f1f5f9;
+    letter-spacing: 0.9px;
+    font-weight: 900;
+    text-transform: uppercase;
   }
-  .board-header span, .board-row span { display: flex; align-items: center; }
-
-  .board-body { display: flex; flex-direction: column; }
-
   .board-row {
     display: grid;
-    grid-template-columns: 2rem 1fr 7rem 7rem 6rem 6rem 6rem;
     padding: 12px 16px;
     border-bottom: 1px solid #1a1f2e;
     transition: background 0.2s;
     gap: 0;
   }
+  .live-board-header, .live-board-row {
+    grid-template-columns: 2rem 1fr 6.6rem 6.6rem 5.2rem 5.2rem 5.2rem;
+  }
+  .score-board-header, .score-board-row {
+    grid-template-columns: 2rem 1fr 7rem 7rem;
+  }
+  .board-header span, .board-row span { display: flex; align-items: center; }
+  .board-header span {
+    font-weight: 900;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.55);
+  }
+
+  .board-body { display: flex; flex-direction: column; }
   .board-row:last-child { border-bottom: none; }
   .board-row:hover { background: #252a3a; }
-  .board-row.row-pending { opacity: 0.58; }
-  .board-row.row-pending .team-name,
-  .board-row.row-pending .drops-val,
-  .board-row.row-pending .hits-val,
-  .board-row.row-pending .miss-val,
-  .board-row.row-pending .pi-val,
-  .board-row.row-pending .err-val {
+  .live-board-row.pending { opacity: 0.58; }
+  .live-board-row.pending .team-name,
+  .live-board-row.pending .drops-val,
+  .live-board-row.pending .hits-val,
+  .live-board-row.pending .miss-val,
+  .live-board-row.pending .pi-val,
+  .live-board-row.pending .err-val {
     color: #7b879b;
   }
 
@@ -69,10 +162,16 @@
   .drops-val { font-size: 13px; color: #94a3b8; }
   .hits-val  { font-size: 13px; color: #f87171; }
   .miss-val  { font-size: 13px; color: #22c55e; }
+  .round-points-val { font-size: 13px; color: #c084fc; font-weight: 700; }
+  .total-points-val { font-size: 13px; color: #60a5fa; font-weight: 700; }
   .pi-val    { font-size: 15px; font-weight: 700; color: #34d399; }
   .err-val   { font-size: 13px; color: #fbbf24; }
   .rank-up   { animation: riseFlash 0.7s ease; }
   .rank-down { animation: dropFlash 0.7s ease; }
+  .score-board-row.round-winner {
+    background: rgba(245, 158, 11, 0.12);
+    box-shadow: inset 3px 0 0 #f59e0b;
+  }
 
   @keyframes riseFlash {
     from { background: rgba(34, 197, 94, 0.16); }
@@ -84,21 +183,6 @@
     to { background: transparent; }
   }
 
-  /* progress bar toward π */
-  .pi-bar-wrap {
-    width: 100%; max-width: 760px;
-    background: #1e2230; border: 1px solid #2d3348;
-    border-radius: 10px; padding: 14px 18px;
-    display: flex; flex-direction: column; gap: 10px;
-  }
-  .pi-bar-wrap .title { font-size: 10px; color: #64748b; letter-spacing: 1px; }
-  .pi-bar-row { display: flex; align-items: center; gap: 10px; }
-  .pi-bar-row.pending { opacity: 0.58; }
-  .pi-bar-name { min-width: 130px; font-size: 12px; font-weight: 700; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .pi-bar-track { flex: 1; height: 14px; background: #141720; border-radius: 7px; overflow: hidden; position: relative; }
-  .pi-bar-fill { height: 100%; border-radius: 7px; transition: width 0.4s ease; min-width: 2px; }
-  .pi-bar-label { min-width: 70px; font-size: 11px; color: #94a3b8; text-align: right; }
-
   .chart-wrap {
     width: 100%; max-width: 760px;
     background: #1e2230; border: 1px solid #2d3348;
@@ -109,13 +193,13 @@
     padding: 10px 14px; cursor: pointer; user-select: none;
   }
   .chart-header:hover { background: #252a3a; }
-  .chart-header .c-lbl { font-size: 10px; color: #64748b; letter-spacing: 1px; margin: 0; }
+  .chart-header .c-lbl { font-size: 11px; color: #cbd5e1; letter-spacing: 1px; margin: 0; font-weight: 800; }
   .chart-toggle { font-size: 14px; color: #475569; transition: transform 0.25s ease; display: inline-block; }
   .chart-toggle.open { transform: rotate(180deg); }
   .chart-body { display: none; padding: 0 10px 10px; }
   .chart-body.open { display: block; }
 
-  .empty { color: #334155; font-size: 13px; text-align: center; padding: 40px; }
+  .empty { color: #cbd5e1; font-size: 14px; text-align: center; padding: 40px; font-weight: 800; }
 
   .join-box {
     width: 100%; max-width: 760px;
@@ -136,6 +220,12 @@
   }
 
   @media (max-width: 700px) {
+    .round-grid { flex-direction: column; }
+    .round-actions { flex-wrap: wrap; }
+    .round-start,
+    .round-stop,
+    .round-reset { width: 100%; }
+    .round-meta { margin-left: 0; width: 100%; justify-content: space-between; }
     .join-box { flex-direction: column; align-items: flex-start; }
     .join-qr { align-self: center; width: 170px; height: 170px; }
   }
@@ -163,33 +253,76 @@
   </div>
 </div>
 
-<div class="status-bar">
-  <div class="conn-dot" id="conn-dot"></div>
-  <span id="status-text">Σύνδεση...</span>
-  <span style="margin-left:auto;color:#475569" id="count-text">0 ομάδες συνδεδεμένες</span>
+<div class="round-panel">
+  <div class="round-grid">
+    <div class="round-control">
+      <div class="lbl">ΧΡΟΝΟΣ ΓΥΡΟΥ</div>
+      <div class="val" id="round-time-value">60 sec</div>
+      <input type="range" id="round-time-slider" min="20" max="120" step="1" value="60" oninput="updateRoundControlLabels()">
+      <div class="scale"><span>20 sec</span><span>120 sec</span></div>
+    </div>
+    <div class="round-control">
+      <div class="lbl">ΣΤΟΧΟΣ ΣΦΑΛΜΑΤΟΣ</div>
+      <div class="val" id="round-target-value">0.005</div>
+      <input type="range" class="target-slider" id="round-target-slider" min="1" max="10" step="1" value="5" oninput="updateRoundControlLabels()">
+      <div class="scale"><span>0.010</span><span>0.001</span></div>
+    </div>
+  </div>
+
+  <div class="round-actions">
+    <button class="round-start" id="round-start-btn" onclick="startRoundFromTeacher()">ΕΝΑΡΞΗ ΓΥΡΟΥ</button>
+    <button class="round-stop" id="round-stop-btn" onclick="stopRoundManually()" disabled>ΧΕΙΡΟΚΙΝΗΤΟ STOP</button>
+    <button class="round-reset" id="round-reset-btn" onclick="resetTournamentScores()">ΣΥΝΟΛΙΚΟ RESET</button>
+    <div class="round-meta">
+      <span id="round-info">Γύρος: —</span>
+      <span class="round-timer" id="round-timer">—</span>
+    </div>
+  </div>
+
+  <div class="round-status" id="round-status">Πάτησε «ΕΝΑΡΞΗ ΓΥΡΟΥ» για νέο παιχνίδι.</div>
+  <div class="round-status round-result" id="round-result">—</div>
 </div>
 
-<!-- Leaderboard -->
-<div class="board">
-  <div class="board-header">
-    <span>#</span>
-    <span>ΟΜΑΔΑ</span>
-    <span>\(\hat{\pi}\)</span>
-    <span>ΣΦΑΛΜΑ</span>
-    <span>ΒΕΛΟΝΕΣ</span>
-    <span>HITS</span>
-    <span>MISS</span>
+<div class="chart-wrap">
+  <div class="chart-header" onclick="toggleLiveBoard()">
+    <span class="c-lbl">ΤΡΕΧΟΥΣΑ ΒΑΘΜΟΛΟΓΙΑ (LIVE)</span>
+    <span class="chart-toggle open" id="live-board-arrow">▼</span>
   </div>
-  <div class="board-body" id="board-body">
-    <div class="empty" id="empty-msg">Καμία ομάδα δεν είναι συνδεδεμένη ακόμα...</div>
+  <div class="chart-body open" id="live-board-wrap">
+    <div class="board">
+      <div class="board-header live-board-header">
+        <span>#</span>
+        <span>ΟΜΑΔΑ</span>
+        <span>\(\hat{\pi}\)</span>
+        <span>ΣΦΑΛΜΑ</span>
+        <span>ΒΕΛΟΝΕΣ</span>
+        <span>HITS</span>
+        <span>MISS</span>
+      </div>
+      <div class="board-body" id="live-board-body">
+        <div class="empty">Καμία ομάδα δεν είναι συνδεδεμένη ακόμα...</div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- Proximity bars -->
-<div class="pi-bar-wrap">
-  <div class="title">ΠΛΗΣΙΑΣΜΑ ΠΡΟΣ π (μικρότερο σφάλμα = μεγαλύτερη μπάρα)</div>
-  <div id="bar-body">
-    <div class="empty" style="padding:20px">—</div>
+<div class="chart-wrap">
+  <div class="chart-header" onclick="toggleTotalBoard()">
+    <span class="c-lbl">ΣΥΝΟΛΙΚΗ ΒΑΘΜΟΛΟΓΙΑ</span>
+    <span class="chart-toggle open" id="total-board-arrow">▼</span>
+  </div>
+  <div class="chart-body open" id="total-board-wrap">
+    <div class="board">
+      <div class="board-header score-board-header">
+        <span>#</span>
+        <span>ΟΜΑΔΑ</span>
+        <span>ΓΥΡΟΣ</span>
+        <span>ΣΥΝΟΛΟ</span>
+      </div>
+      <div class="board-body" id="total-board-body">
+        <div class="empty">Καμία ομάδα δεν είναι συνδεδεμένη ακόμα...</div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -204,10 +337,28 @@
 </div>
 
 <script>
+let ws = null;
 let students = [];
-let previousRanks = new Map();
-let latestSorted = [];
+let previousLiveRanks = new Map();
+let previousTotalRanks = new Map();
+let latestLiveSorted = [];
 let teamHistories = new Map();
+let teamPoints = new Map();
+let lastRoundPoints = new Map();
+
+let currentRound = 0;
+let roundActive = false;
+let roundEndAt = 0;
+let roundTimerId = null;
+let roundEndScheduled = false;
+let lockedWinnerTeam = '';
+let lastRoundWinnerTeam = '';
+let targetReachedAt = new Map();
+
+const roundConfig = {
+  timeSec: 60,
+  targetError: 0.005,
+};
 
 const TEACHER_Y_MIN = 1.5;
 const TEACHER_Y_MAX = 5.0;
@@ -216,58 +367,132 @@ const teacherChartCtx = teacherChartCv.getContext('2d');
 
 function connectWS() {
   const proto = location.protocol === 'https:' ? 'wss' : 'ws';
-  const ws = new WebSocket(`${proto}://${location.host}`);
+  ws = new WebSocket(`${proto}://${location.host}`);
 
   ws.onopen = () => {
-    ws.send(JSON.stringify({ type: 'register_teacher' }));
-    document.getElementById('conn-dot').classList.add('connected');
-    document.getElementById('status-text').textContent = 'Συνδεδεμένος';
+    sendWs({ type: 'register_teacher' });
+    setRoundStatus('Συνδεδεμένος.', roundActive ? 'active' : 'idle');
   };
 
-  ws.onmessage = e => {
-    const msg = JSON.parse(e.data);
+  ws.onmessage = (e) => {
+    let msg;
+    try {
+      msg = JSON.parse(e.data);
+    } catch {
+      return;
+    }
+
     if (msg.type === 'roster') {
-      students = msg.students;
+      students = Array.isArray(msg.students) ? msg.students : [];
       render();
     }
   };
 
   ws.onclose = () => {
-    document.getElementById('conn-dot').classList.remove('connected');
-    document.getElementById('status-text').textContent = 'Αποσυνδέθηκε — επανασύνδεση...';
+    setRoundStatus('Αποσύνδεση από τον server — επανασύνδεση...', 'ended');
     setTimeout(connectWS, 2000);
   };
 }
 
-function render() {
-  document.getElementById('count-text').textContent =
-    `${students.length} ομάδ${students.length === 1 ? 'α' : 'ες'} συνδεδεμέν${students.length === 1 ? 'η' : 'ες'}`;
+function sendWs(payload) {
+  if (!ws || ws.readyState !== 1) return;
+  ws.send(JSON.stringify(payload));
+}
 
-  const body  = document.getElementById('board-body');
-  const barBody = document.getElementById('bar-body');
+function updateRoundActionButtons() {
+  const startBtn = document.getElementById('round-start-btn');
+  const stopBtn = document.getElementById('round-stop-btn');
+  if (startBtn) startBtn.disabled = roundActive;
+  if (stopBtn) stopBtn.disabled = !roundActive;
+}
 
-  if (students.length === 0) {
-    body.innerHTML = '<div class="empty" id="empty-msg">Καμία ομάδα δεν είναι συνδεδεμένη ακόμα...</div>';
-    barBody.innerHTML = '<div class="empty" style="padding:20px">—</div>';
-    latestSorted = [];
-    previousRanks = new Map();
-    teamHistories.clear();
-    drawTeacherChart();
+function sliderToTarget(sliderValue) {
+  const raw = Number.parseInt(sliderValue, 10);
+  const safe = Number.isInteger(raw) ? raw : 5;
+  return Math.max(0.001, Math.min(0.01, safe / 1000));
+}
+
+function updateRoundControlLabels() {
+  const timeSlider = document.getElementById('round-time-slider');
+  const targetSlider = document.getElementById('round-target-slider');
+  const timeSec = Number.parseInt(timeSlider.value, 10) || 60;
+  const target = sliderToTarget(targetSlider.value);
+  document.getElementById('round-time-value').textContent = `${timeSec} sec`;
+  document.getElementById('round-target-value').textContent = target.toFixed(3);
+}
+
+function updateTimerLabel() {
+  const timerEl = document.getElementById('round-timer');
+  if (!roundActive) {
+    timerEl.textContent = '—';
     return;
   }
 
-  // Sort by error ascending (best first), nulls last
-  const sorted = [...students].sort((a, b) => {
+  const secondsLeft = Math.max(0, Math.ceil((roundEndAt - Date.now()) / 1000));
+  timerEl.textContent = `${secondsLeft} sec`;
+}
+
+function stopRoundTimer() {
+  if (roundTimerId !== null) {
+    clearInterval(roundTimerId);
+    roundTimerId = null;
+  }
+}
+
+function startRoundTimer() {
+  stopRoundTimer();
+  updateTimerLabel();
+
+  roundTimerId = setInterval(() => {
+    if (!roundActive) {
+      stopRoundTimer();
+      return;
+    }
+
+    if (Date.now() >= roundEndAt) {
+      endRound('time_up');
+      return;
+    }
+
+    updateTimerLabel();
+  }, 200);
+}
+
+function setRoundStatus(text, mode) {
+  const statusEl = document.getElementById('round-status');
+  statusEl.textContent = text;
+  statusEl.classList.remove('active', 'ended');
+  if (mode === 'active') statusEl.classList.add('active');
+  if (mode === 'ended') statusEl.classList.add('ended');
+}
+
+function pointsForRank(rank) {
+  if (rank === 1) return 12;
+  if (rank === 2) return 10;
+  return Math.max(1, 11 - rank);
+}
+
+function studentKey(student) {
+  return String((student && student.team) || '');
+}
+
+function hasPiEstimate(student) {
+  return typeof student.piEst === 'number' && Number.isFinite(student.piEst);
+}
+
+function getStudentError(student) {
+  return hasPiEstimate(student) ? Math.abs(student.piEst - Math.PI) : null;
+}
+
+function sortStudentsByPerformance(list) {
+  return [...list].sort((a, b) => {
     const aHasPi = hasPiEstimate(a);
     const bHasPi = hasPiEstimate(b);
 
-    if (aHasPi !== bHasPi) {
-      return aHasPi ? -1 : 1;
-    }
+    if (aHasPi !== bHasPi) return aHasPi ? -1 : 1;
 
     const ea = aHasPi ? Math.abs(a.piEst - Math.PI) : Infinity;
     const eb = bHasPi ? Math.abs(b.piEst - Math.PI) : Infinity;
-
     if (ea !== eb) return ea - eb;
 
     const ad = typeof a.drops === 'number' ? a.drops : 0;
@@ -276,77 +501,312 @@ function render() {
 
     return String(a.team || '').localeCompare(String(b.team || ''), 'el');
   });
+}
 
-  const rankMovement = new Map();
-  sorted.forEach((s, i) => {
-    const key = studentKey(s);
-    const prevIndex = previousRanks.has(key) ? previousRanks.get(key) : null;
-    rankMovement.set(key, prevIndex === null ? null : prevIndex - i);
+function sortStudentsByTotalPoints(list) {
+  return [...list].sort((a, b) => {
+    const aKey = studentKey(a);
+    const bKey = studentKey(b);
+
+    const at = teamPoints.get(aKey) || 0;
+    const bt = teamPoints.get(bKey) || 0;
+    if (at !== bt) return bt - at;
+
+    const ar = lastRoundPoints.get(aKey) || 0;
+    const br = lastRoundPoints.get(bKey) || 0;
+    if (ar !== br) return br - ar;
+
+    const ea = getStudentError(a);
+    const eb = getStudentError(b);
+    const safeEa = ea === null ? Infinity : ea;
+    const safeEb = eb === null ? Infinity : eb;
+    if (safeEa !== safeEb) return safeEa - safeEb;
+
+    return String(a.team || '').localeCompare(String(b.team || ''), 'el');
+  });
+}
+
+function applyLockedWinner(sorted) {
+  if (!lockedWinnerTeam) return sorted;
+  const idx = sorted.findIndex((s) => studentKey(s) === lockedWinnerTeam);
+  if (idx <= 0) return sorted;
+  return [sorted[idx], ...sorted.slice(0, idx), ...sorted.slice(idx + 1)];
+}
+
+function detectTargetReached(sorted) {
+  if (!roundActive || roundEndScheduled) return;
+
+  const now = Date.now();
+  sorted.forEach((student) => {
+    const key = studentKey(student);
+    if (!key || targetReachedAt.has(key)) return;
+
+    const err = getStudentError(student);
+    if (err !== null && err <= roundConfig.targetError) {
+      targetReachedAt.set(key, now);
+    }
   });
 
-  // Leaderboard
-  body.innerHTML = sorted.map((s, i) => {
-    const key   = studentKey(s);
-    const delta = rankMovement.get(key);
-    const hasPi = hasPiEstimate(s);
-    const err   = hasPi ? Math.abs(s.piEst - Math.PI).toFixed(6) : '—';
-    const piStr = hasPi ? s.piEst.toFixed(5) : '—';
-    const miss  = Math.max(0, (s.drops || 0) - (s.hits || 0));
-    const rankLabel = i + 1;
+  if (targetReachedAt.size === 0) return;
 
-    const rowClass =
-      !hasPi ? 'row-pending' :
-      delta > 0 ? 'rank-up' :
-      delta < 0 ? 'rank-down' :
+  const [winnerEntry] = [...targetReachedAt.entries()].sort((a, b) => a[1] - b[1]);
+  if (!winnerEntry) return;
+
+  lockedWinnerTeam = winnerEntry[0];
+  roundEndScheduled = true;
+  setTimeout(() => endRound('target_reached'), 0);
+}
+
+function getRoundRanking() {
+  return applyLockedWinner(sortStudentsByPerformance(students));
+}
+
+function startRoundFromTeacher() {
+  if (roundActive) return;
+
+  const timeSec = Number.parseInt(document.getElementById('round-time-slider').value, 10) || 60;
+  const targetError = sliderToTarget(document.getElementById('round-target-slider').value);
+
+  stopRoundTimer();
+  roundActive = true;
+  roundEndScheduled = false;
+  currentRound += 1;
+  roundEndAt = Date.now() + timeSec * 1000;
+
+  roundConfig.timeSec = Math.max(20, Math.min(120, timeSec));
+  roundConfig.targetError = Math.max(0.001, Math.min(0.01, targetError));
+
+  lockedWinnerTeam = '';
+  lastRoundWinnerTeam = '';
+  lastRoundPoints = new Map();
+  targetReachedAt.clear();
+
+  previousLiveRanks = new Map();
+  previousTotalRanks = new Map();
+  latestLiveSorted = [];
+  teamHistories = new Map();
+
+  students = students.map((student) => ({
+    ...student,
+    drops: 0,
+    hits: 0,
+    piEst: null,
+  }));
+
+  document.getElementById('round-info').textContent = `Γύρος: ${currentRound} | στόχος ≤ ${roundConfig.targetError.toFixed(3)}`;
+  document.getElementById('round-result').textContent = '—';
+  setRoundStatus(`Ξεκίνησε ο γύρος ${currentRound}.`, 'active');
+  updateRoundActionButtons();
+
+  render();
+  startRoundTimer();
+
+  sendWs({
+    type: 'start_round',
+    round: currentRound,
+    timeSec: roundConfig.timeSec,
+    targetError: roundConfig.targetError,
+  });
+}
+
+function stopRoundManually() {
+  if (!roundActive) return;
+  endRound('manual_stop', { awardPoints: true });
+}
+
+function resetTournamentScores() {
+  stopRoundTimer();
+  roundActive = false;
+  roundEndScheduled = false;
+  roundEndAt = 0;
+  currentRound = 0;
+  lockedWinnerTeam = '';
+  lastRoundWinnerTeam = '';
+  targetReachedAt.clear();
+
+  previousLiveRanks = new Map();
+  previousTotalRanks = new Map();
+  latestLiveSorted = [];
+  teamHistories = new Map();
+  teamPoints = new Map();
+  lastRoundPoints = new Map();
+
+  students = students.map((student) => ({
+    ...student,
+    drops: 0,
+    hits: 0,
+    piEst: null,
+  }));
+
+  document.getElementById('round-info').textContent = 'Γύρος: —';
+  document.getElementById('round-result').textContent = 'Όλοι οι πόντοι μηδενίστηκαν.';
+  document.getElementById('round-timer').textContent = '—';
+  setRoundStatus('Έγινε συνολικό reset. Ξεκινήστε νέο γύρο.', 'ended');
+  updateRoundActionButtons();
+
+  sendWs({ type: 'reset_tournament' });
+  render();
+}
+
+function endRound(reason, options = {}) {
+  if (!roundActive) return;
+
+  const awardPoints = options.awardPoints !== false;
+
+  roundActive = false;
+  roundEndScheduled = false;
+  stopRoundTimer();
+
+  const ranking = getRoundRanking();
+  lastRoundPoints = new Map();
+
+  const awards = ranking
+    .map((student, index) => {
+      const team = studentKey(student);
+      if (!team) return null;
+
+      const rank = index + 1;
+      const points = awardPoints ? pointsForRank(rank) : 0;
+      lastRoundPoints.set(team, points);
+
+      if (awardPoints) {
+        const total = (teamPoints.get(team) || 0) + points;
+        teamPoints.set(team, total);
+      }
+
+      return {
+        rank,
+        team,
+        points,
+        error: getStudentError(student),
+      };
+    })
+    .filter(Boolean);
+
+  lastRoundWinnerTeam = awards.length ? awards[0].team : '';
+
+  let reasonText = 'Ο χρόνος του γύρου ολοκληρώθηκε.';
+  if (reason === 'target_reached') {
+    reasonText = `Στόχος σφάλματος επιτεύχθηκε από την ομάδα ${lastRoundWinnerTeam || '—'}.`;
+  } else if (reason === 'manual_stop') {
+    reasonText = 'Ο γύρος σταμάτησε χειροκίνητα από τον καθηγητή.';
+  }
+
+  const podium = awards.slice(0, 3).map((entry) => `${entry.rank}. ${entry.team} (+${entry.points})`).join(' | ');
+  document.getElementById('round-info').textContent = `Γύρος: ${currentRound} ολοκληρώθηκε`;
+  document.getElementById('round-result').textContent = podium || 'Δεν υπάρχουν αποτελέσματα για αυτόν τον γύρο.';
+  setRoundStatus(`${reasonText} Η διαδικασία τελείωσε.`, 'ended');
+  document.getElementById('round-timer').textContent = '0 sec';
+  updateRoundActionButtons();
+
+  sendWs({
+    type: 'end_round',
+    round: currentRound,
+    reason,
+    winnerTeam: lastRoundWinnerTeam,
+    targetError: roundConfig.targetError,
+    rankings: awards,
+  });
+
+  targetReachedAt.clear();
+  lockedWinnerTeam = '';
+  previousLiveRanks = new Map();
+  previousTotalRanks = new Map();
+  render();
+}
+
+function render() {
+  const liveBody = document.getElementById('live-board-body');
+  const totalBody = document.getElementById('total-board-body');
+
+  if (students.length === 0) {
+    liveBody.innerHTML = '<div class="empty">Καμία ομάδα δεν είναι συνδεδεμένη ακόμα...</div>';
+    totalBody.innerHTML = '<div class="empty">Καμία ομάδα δεν είναι συνδεδεμένη ακόμα...</div>';
+    latestLiveSorted = [];
+    previousLiveRanks = new Map();
+    previousTotalRanks = new Map();
+    teamHistories.clear();
+    drawTeacherChart();
+    return;
+  }
+
+  const baseLiveSorted = sortStudentsByPerformance(students);
+  if (roundActive) detectTargetReached(baseLiveSorted);
+  const liveSorted = roundActive ? applyLockedWinner(baseLiveSorted) : baseLiveSorted;
+  const totalSorted = sortStudentsByTotalPoints(students);
+
+  const liveMovement = new Map();
+  liveSorted.forEach((student, idx) => {
+    const key = studentKey(student);
+    const prevIndex = previousLiveRanks.has(key) ? previousLiveRanks.get(key) : null;
+    liveMovement.set(key, prevIndex === null ? null : prevIndex - idx);
+  });
+
+  const totalMovement = new Map();
+  totalSorted.forEach((student, idx) => {
+    const key = studentKey(student);
+    const prevIndex = previousTotalRanks.has(key) ? previousTotalRanks.get(key) : null;
+    totalMovement.set(key, prevIndex === null ? null : prevIndex - idx);
+  });
+
+  liveBody.innerHTML = liveSorted.map((student, idx) => {
+    const key = studentKey(student);
+    const delta = liveMovement.get(key);
+    const hasPi = hasPiEstimate(student);
+    const err = hasPi ? Math.abs(student.piEst - Math.PI).toFixed(6) : '—';
+    const piStr = hasPi ? student.piEst.toFixed(5) : '—';
+    const miss = Math.max(0, (student.drops || 0) - (student.hits || 0));
+
+    const movementClass =
+      !hasPi ? ' pending' :
+      delta > 0 ? ' rank-up' :
+      delta < 0 ? ' rank-down' :
       '';
 
     return `
-      <div class="board-row ${rowClass}">
-        <span class="rank" style="color:${hasPi ? getSeriesColor(i) : '#64748b'}">${rankLabel}</span>
-        <span class="team-name">${esc(s.team)}</span>
+      <div class="board-row live-board-row${movementClass}">
+        <span class="rank" style="color:${hasPi ? getSeriesColor(idx) : '#64748b'}">${idx + 1}</span>
+        <span class="team-name">${esc(student.team)}</span>
         <span class="pi-val">${piStr}</span>
         <span class="err-val">${err}</span>
-        <span class="drops-val">${(s.drops || 0).toLocaleString()}</span>
-        <span class="hits-val">${(s.hits || 0).toLocaleString()}</span>
+        <span class="drops-val">${(student.drops || 0).toLocaleString()}</span>
+        <span class="hits-val">${(student.hits || 0).toLocaleString()}</span>
         <span class="miss-val">${miss.toLocaleString()}</span>
       </div>`;
   }).join('');
 
-  // Proximity bars
-  const maxErr = Math.max(...sorted.filter(hasPiEstimate).map(s=>Math.abs(s.piEst-Math.PI)), 1);
+  totalBody.innerHTML = totalSorted.map((student, idx) => {
+    const key = studentKey(student);
+    const delta = totalMovement.get(key);
+    const roundPoints = roundActive
+      ? '—'
+      : (currentRound > 0 ? (lastRoundPoints.get(key) || 0).toLocaleString() : '—');
+    const totalPoints = (teamPoints.get(key) || 0).toLocaleString();
 
-  barBody.innerHTML = sorted.map((s, i) => {
-    const hasPi = hasPiEstimate(s);
-    const err = hasPi ? Math.abs(s.piEst - Math.PI) : null;
-    const pct = err !== null ? Math.max(2, (1 - err / maxErr) * 100).toFixed(1) : 2;
-    const color = hasPi ? getSeriesColor(i) : '#334155';
-    const pendingClass = hasPi ? '' : ' pending';
+    const movementClass =
+      delta > 0 ? ' rank-up' :
+      delta < 0 ? ' rank-down' :
+      '';
+    const winnerClass = !roundActive && key && key === lastRoundWinnerTeam ? ' round-winner' : '';
+
     return `
-      <div class="pi-bar-row${pendingClass}">
-        <div class="pi-bar-name">#${i + 1} ${esc(s.team)}</div>
-        <div class="pi-bar-track">
-          <div class="pi-bar-fill" style="width:${pct}%;background:${color}"></div>
-        </div>
-        <div class="pi-bar-label">${err !== null ? err.toFixed(5) : '—'}</div>
+      <div class="board-row score-board-row${movementClass}${winnerClass}">
+        <span class="rank" style="color:#60a5fa">${idx + 1}</span>
+        <span class="team-name">${esc(student.team)}</span>
+        <span class="round-points-val">${roundPoints}</span>
+        <span class="total-points-val">${totalPoints}</span>
       </div>`;
   }).join('');
 
-  latestSorted = sorted;
-  updateTeamHistories(sorted);
+  latestLiveSorted = liveSorted;
+  updateTeamHistories(liveSorted);
   drawTeacherChart();
-  previousRanks = new Map(sorted.map((s, i) => [studentKey(s), i]));
+  previousLiveRanks = new Map(liveSorted.map((student, idx) => [studentKey(student), idx]));
+  previousTotalRanks = new Map(totalSorted.map((student, idx) => [studentKey(student), idx]));
 }
 
-function esc(s) {
-  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-function studentKey(s) {
-  return String(s.team || '');
-}
-
-function hasPiEstimate(s) {
-  return typeof s.piEst === 'number' && Number.isFinite(s.piEst);
+function esc(text) {
+  return String(text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 function toggleTeacherChart() {
@@ -364,6 +824,20 @@ function toggleJoinQr() {
   arrow.classList.toggle('open', open);
 }
 
+function toggleLiveBoard() {
+  const body = document.getElementById('live-board-wrap');
+  const arrow = document.getElementById('live-board-arrow');
+  const open = body.classList.toggle('open');
+  arrow.classList.toggle('open', open);
+}
+
+function toggleTotalBoard() {
+  const body = document.getElementById('total-board-wrap');
+  const arrow = document.getElementById('total-board-arrow');
+  const open = body.classList.toggle('open');
+  arrow.classList.toggle('open', open);
+}
+
 function getSeriesColor(index) {
   const palette = ['#fbbf24', '#94a3b8', '#cd7c3a', '#3b82f6', '#a78bfa', '#f87171', '#34d399', '#f97316', '#38bdf8', '#e879f9'];
   return palette[index % palette.length];
@@ -372,29 +846,26 @@ function getSeriesColor(index) {
 function updateTeamHistories(sorted) {
   const activeKeys = new Set(sorted.map(studentKey));
   for (const key of Array.from(teamHistories.keys())) {
-    if (!activeKeys.has(key)) {
-      teamHistories.delete(key);
-    }
+    if (!activeKeys.has(key)) teamHistories.delete(key);
   }
 
-  sorted.forEach((s) => {
-    const key = studentKey(s);
-    const drops = typeof s.drops === 'number' ? s.drops : 0;
+  sorted.forEach((student) => {
+    const key = studentKey(student);
+    const drops = typeof student.drops === 'number' ? student.drops : 0;
 
     if (drops <= 0) {
       teamHistories.set(key, []);
       return;
     }
 
-    if (!hasPiEstimate(s)) return;
+    if (!hasPiEstimate(student)) return;
 
-    const pi = s.piEst;
+    const pi = student.piEst;
     const points = teamHistories.get(key) || [];
     const last = points[points.length - 1];
 
     if (!last || drops > last.n || Math.abs(pi - last.pi) > 1e-12) {
       points.push({ n: drops, pi });
-
       if (points.length > 500) {
         const skip = Math.ceil(points.length / 500);
         teamHistories.set(key, points.filter((_, idx) => idx % skip === 0));
@@ -424,19 +895,19 @@ function drawTeacherChart() {
   teacherChartCtx.roundRect(0, 0, cw, ch, 6);
   teacherChartCtx.fill();
 
-  const activeSeries = latestSorted
+  const activeSeries = latestLiveSorted
     .filter(hasPiEstimate)
-    .map((s, i) => {
-      const key = studentKey(s);
-      const points = (teamHistories.get(key) || []).filter(pt => pt.n > 0);
+    .map((student, idx) => {
+      const key = studentKey(student);
+      const points = (teamHistories.get(key) || []).filter((pt) => pt.n > 0);
       return {
-        rank: i + 1,
-        team: String(s.team || ''),
-        color: getSeriesColor(i),
+        rank: idx + 1,
+        team: String(student.team || ''),
+        color: getSeriesColor(idx),
         points,
       };
     })
-    .filter(series => series.points.length > 0);
+    .filter((series) => series.points.length > 0);
 
   if (!activeSeries.length) {
     teacherChartCtx.fillStyle = '#64748b';
@@ -447,8 +918,8 @@ function drawTeacherChart() {
   }
 
   let xMax = 10;
-  activeSeries.forEach(series => {
-    series.points.forEach(pt => {
+  activeSeries.forEach((series) => {
+    series.points.forEach((pt) => {
       if (pt.n > xMax) xMax = pt.n;
     });
   });
@@ -464,7 +935,7 @@ function drawTeacherChart() {
   teacherChartCtx.strokeStyle = '#2d3348';
   teacherChartCtx.lineWidth = 0.8;
   teacherChartCtx.setLineDash([]);
-  [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0].forEach(y => {
+  [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0].forEach((y) => {
     teacherChartCtx.beginPath();
     teacherChartCtx.moveTo(PAD.left, toY(y));
     teacherChartCtx.lineTo(PAD.left + pw, toY(y));
@@ -481,7 +952,7 @@ function drawTeacherChart() {
   teacherChartCtx.stroke();
   teacherChartCtx.setLineDash([]);
 
-  activeSeries.forEach(series => {
+  activeSeries.forEach((series) => {
     teacherChartCtx.strokeStyle = series.color;
     teacherChartCtx.lineWidth = 1.6;
     teacherChartCtx.beginPath();
@@ -518,7 +989,7 @@ function drawTeacherChart() {
   teacherChartCtx.fillStyle = '#475569';
   teacherChartCtx.font = '9px Courier New';
   teacherChartCtx.textAlign = 'right';
-  [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0].forEach(y => {
+  [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0].forEach((y) => {
     teacherChartCtx.fillText(y.toFixed(1), PAD.left - 4, toY(y) + 3);
   });
 
@@ -534,7 +1005,7 @@ function drawTeacherChart() {
   let ly = PAD.top + 12;
   teacherChartCtx.font = '9px Courier New';
   teacherChartCtx.textAlign = 'left';
-  activeSeries.slice(0, 8).forEach(series => {
+  activeSeries.slice(0, 8).forEach((series) => {
     teacherChartCtx.fillStyle = series.color;
     teacherChartCtx.fillRect(lx, ly - 7, 8, 8);
     teacherChartCtx.fillStyle = '#94a3b8';
@@ -543,6 +1014,9 @@ function drawTeacherChart() {
   });
 }
 
+updateRoundControlLabels();
+updateRoundActionButtons();
+setRoundStatus('Πάτησε «ΕΝΑΡΞΗ ΓΥΡΟΥ» για νέο παιχνίδι.', 'idle');
 connectWS();
 window.addEventListener('resize', drawTeacherChart);
 </script>

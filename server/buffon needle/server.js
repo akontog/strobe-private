@@ -43,9 +43,18 @@ const wss = new WebSocketServer({ server: httpServer });
 const students = new Map();
 const teachers  = new Set();
 
-function broadcast(data) {
+function broadcastTeachers(data) {
   const msg = JSON.stringify(data);
-  teachers.forEach(t => { if (t.readyState === 1) t.send(msg); });
+  teachers.forEach((teacherWs) => {
+    if (teacherWs.readyState === 1) teacherWs.send(msg);
+  });
+}
+
+function broadcastStudents(data) {
+  const msg = JSON.stringify(data);
+  students.forEach((_, studentWs) => {
+    if (studentWs.readyState === 1) studentWs.send(msg);
+  });
 }
 
 function sendRoster(target) {
@@ -82,6 +91,113 @@ wss.on('connection', ws => {
         });
         sendRoster();
       }
+      return;
+    }
+
+    if (msg.type === 'start_round') {
+      if (!teachers.has(ws)) return;
+
+      const parsedTime = Number.parseInt(msg.timeSec, 10);
+      const timeSec = Number.isInteger(parsedTime)
+        ? Math.max(20, Math.min(120, parsedTime))
+        : 60;
+
+      const parsedTarget = Number.parseFloat(msg.targetError);
+      const targetError = Number.isFinite(parsedTarget)
+        ? Math.max(0.001, Math.min(0.01, parsedTarget))
+        : 0.005;
+
+      const round = Number.parseInt(msg.round, 10) || 1;
+      const endAt = Date.now() + timeSec * 1000;
+
+      students.forEach((state, studentWs) => {
+        students.set(studentWs, {
+          team: state.team,
+          drops: 0,
+          hits: 0,
+          piEst: null,
+        });
+      });
+      sendRoster();
+
+      broadcastStudents({
+        type: 'round_start',
+        round,
+        timeSec,
+        targetError,
+        endAt,
+        defaults: {
+          needleL: 50,
+          lineD: 60,
+          stepN: 1,
+          auto: false,
+        },
+      });
+      return;
+    }
+
+    if (msg.type === 'end_round') {
+      if (!teachers.has(ws)) return;
+
+      const round = Number.parseInt(msg.round, 10) || 1;
+      const rawReason = typeof msg.reason === 'string' ? msg.reason : '';
+      const reason = rawReason === 'target_reached' || rawReason === 'manual_stop' || rawReason === 'time_up'
+        ? rawReason
+        : 'time_up';
+      const winnerTeam = typeof msg.winnerTeam === 'string' ? msg.winnerTeam : '';
+
+      const rankings = Array.isArray(msg.rankings)
+        ? msg.rankings.slice(0, 100).map((entry, idx) => {
+            const rank = Number.parseInt(entry && entry.rank, 10);
+            const points = Number.parseInt(entry && entry.points, 10);
+            const parsedError = Number.parseFloat(entry && entry.error);
+            return {
+              rank: Number.isInteger(rank) && rank > 0 ? rank : idx + 1,
+              team: typeof (entry && entry.team) === 'string' ? entry.team : '',
+              points: Number.isInteger(points) ? points : 0,
+              error: Number.isFinite(parsedError) ? parsedError : null,
+            };
+          })
+        : [];
+
+      const parsedTarget = Number.parseFloat(msg.targetError);
+      const targetError = Number.isFinite(parsedTarget)
+        ? Math.max(0.001, Math.min(0.01, parsedTarget))
+        : null;
+
+      broadcastStudents({
+        type: 'round_end',
+        round,
+        reason,
+        winnerTeam,
+        targetError,
+        rankings,
+      });
+      return;
+    }
+
+    if (msg.type === 'reset_tournament') {
+      if (!teachers.has(ws)) return;
+
+      students.forEach((state, studentWs) => {
+        students.set(studentWs, {
+          team: state.team,
+          drops: 0,
+          hits: 0,
+          piEst: null,
+        });
+      });
+      sendRoster();
+
+      broadcastStudents({
+        type: 'reset_tournament',
+        defaults: {
+          needleL: 50,
+          lineD: 60,
+          stepN: 1,
+          auto: false,
+        },
+      });
     }
   });
 

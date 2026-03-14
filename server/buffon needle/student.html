@@ -48,6 +48,33 @@
   }
   .conn-dot.connected { background: #34d399; }
 
+  .round-banner {
+    width: 100%; max-width: 580px;
+    border-radius: 10px;
+    border: 1px solid #475569;
+    background: #111827;
+    padding: 11px 14px;
+    font-size: 15px;
+    color: #e2e8f0;
+    text-align: center;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+  .round-banner.waiting {
+    color: #e2e8f0;
+    border-color: #64748b;
+  }
+  .round-banner.active {
+    color: #dbeafe;
+    border-color: rgba(59,130,246,0.8);
+    background: #0f172a;
+  }
+  .round-banner.ended {
+    color: #fef08a;
+    border-color: rgba(245,158,11,0.8);
+    background: #1f1a0a;
+  }
+
   .canvas-row {
     width: 100%; max-width: 580px;
     display: flex; align-items: center; justify-content: center; gap: 10px;
@@ -190,6 +217,7 @@
     h1 { font-size: 18px; letter-spacing: 1px; }
 
     .team-bar,
+    .round-banner,
     .canvas-row,
     .panel,
     .step-inline,
@@ -314,6 +342,8 @@
   <input type="text" id="team-input" placeholder="Δώστε το όνομα της ομάδας σας" maxlength="30">
   <button onclick="registerTeam()">Σύνδεση</button>
 </div>
+
+<div class="round-banner waiting" id="round-banner">Περιμένετε την έναρξη.</div>
 
 <!-- Canvas row -->
 <div class="canvas-row">
@@ -466,6 +496,12 @@ let ws = null;
 let socketConnected = false;
 let teamRegistered = false;
 let autoDropTimer = null;
+let roundControlEnabled = false;
+let roundActive = false;
+let roundNumber = 0;
+let roundTargetError = null;
+let roundEndAt = 0;
+let roundBannerTimer = null;
 
 // ── WebSocket ─────────────────────────────────────
 function connectWS() {
@@ -474,12 +510,47 @@ function connectWS() {
 
   ws.onopen  = () => {
     socketConnected = true;
+    if (teamName) {
+      ws.send(JSON.stringify({ type: 'register_student', team: teamName }));
+      teamRegistered = true;
+      roundControlEnabled = true;
+      setRoundBanner('Συνδεθήκατε. Περιμένετε την έναρξη.', 'waiting');
+      sendUpdate();
+    }
     updateConnDot();
+  };
+
+  ws.onmessage = (e) => {
+    let msg;
+    try {
+      msg = JSON.parse(e.data);
+    } catch {
+      return;
+    }
+
+    if (msg.type === 'round_start') {
+      handleRoundStart(msg);
+      return;
+    }
+
+    if (msg.type === 'round_end') {
+      handleRoundEnd(msg);
+      return;
+    }
+
+    if (msg.type === 'reset_tournament') {
+      handleTournamentReset(msg);
+    }
   };
 
   ws.onclose = () => {
     socketConnected = false;
     teamRegistered = false;
+    roundControlEnabled = false;
+    roundActive = false;
+    stopAutoDrop();
+    stopRoundBannerTimer();
+    setRoundBanner('Αποσύνδεση από server... μπορείτε να συνεχίσετε ελεύθερο πειραματισμό.', 'waiting');
     updateConnDot();
     setTimeout(connectWS, 2000); // reconnect
   };
@@ -489,6 +560,8 @@ function registerTeam() {
   teamName = document.getElementById('team-input').value.trim();
   if (!teamName) {
     teamRegistered = false;
+    roundControlEnabled = false;
+    setRoundBanner('Χωρίς σύνδεση ομάδας: ελεύθερος πειραματισμός.', 'waiting');
     updateConnDot();
     return;
   }
@@ -496,6 +569,8 @@ function registerTeam() {
   if (!ws || ws.readyState !== 1) { connectWS(); setTimeout(registerTeam, 500); return; }
   ws.send(JSON.stringify({ type: 'register_student', team: teamName }));
   teamRegistered = true;
+  roundControlEnabled = true;
+  setRoundBanner('Συνδεθήκατε. Περιμένετε την έναρξη από τον καθηγητή.', 'waiting');
   updateConnDot();
   sendUpdate();
 }
@@ -509,6 +584,147 @@ function sendUpdate() {
 function updateConnDot() {
   const dot = document.getElementById('conn-dot');
   dot.classList.toggle('connected', socketConnected && teamRegistered);
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function setRoundBanner(text, mode) {
+  const banner = document.getElementById('round-banner');
+  banner.textContent = text;
+  banner.classList.remove('waiting', 'active', 'ended');
+  if (mode === 'active') banner.classList.add('active');
+  else if (mode === 'ended') banner.classList.add('ended');
+  else banner.classList.add('waiting');
+}
+
+function stopRoundBannerTimer() {
+  if (roundBannerTimer !== null) {
+    clearInterval(roundBannerTimer);
+    roundBannerTimer = null;
+  }
+}
+
+function updateActiveRoundBanner() {
+  const secs = Math.max(0, Math.ceil((roundEndAt - Date.now()) / 1000));
+  const targetText = Number.isFinite(roundTargetError)
+    ? `στόχος ≤ ${roundTargetError.toFixed(3)}`
+    : 'στόχος σφάλματος';
+  setRoundBanner(`Γύρος ${roundNumber}: ${targetText} | απομένουν ${secs} sec`, 'active');
+}
+
+function startRoundBannerTimer() {
+  stopRoundBannerTimer();
+  updateActiveRoundBanner();
+
+  roundBannerTimer = setInterval(() => {
+    if (!roundActive) {
+      stopRoundBannerTimer();
+      return;
+    }
+    updateActiveRoundBanner();
+  }, 250);
+}
+
+function applyRoundDefaults(defaults) {
+  const defaultL = clamp(Number.parseInt(defaults.needleL, 10) || 50, 10, 120);
+  const defaultD = clamp(Number.parseInt(defaults.lineD, 10) || 60, 30, 150);
+  const defaultStep = clamp(Number.parseInt(defaults.stepN, 10) || 1, 1, 1000);
+
+  needleL = defaultL;
+  lineD = defaultD;
+
+  document.getElementById('val-l').textContent = needleL;
+  document.getElementById('range-l').value = needleL;
+  document.getElementById('val-d').textContent = lineD;
+  document.getElementById('range-d').value = lineD;
+
+  setStep(defaultStep);
+
+  stopAutoDrop();
+  document.getElementById('auto-toggle').checked = false;
+  resetAll();
+}
+
+function handleRoundStart(msg) {
+  roundControlEnabled = true;
+  roundActive = true;
+  roundNumber = Number.parseInt(msg.round, 10) || roundNumber + 1 || 1;
+
+  const parsedTarget = Number.parseFloat(msg.targetError);
+  roundTargetError = Number.isFinite(parsedTarget)
+    ? clamp(parsedTarget, 0.001, 0.01)
+    : null;
+
+  const parsedEndAt = Number.parseInt(msg.endAt, 10);
+  if (Number.isFinite(parsedEndAt) && parsedEndAt > Date.now()) {
+    roundEndAt = parsedEndAt;
+  } else {
+    const parsedTime = Number.parseInt(msg.timeSec, 10);
+    const safeTime = clamp(Number.isInteger(parsedTime) ? parsedTime : 60, 20, 120);
+    roundEndAt = Date.now() + safeTime * 1000;
+  }
+
+  applyRoundDefaults(msg.defaults || {});
+  startRoundBannerTimer();
+}
+
+function handleRoundEnd(msg) {
+  roundControlEnabled = true;
+  roundActive = false;
+  roundEndAt = 0;
+  stopAutoDrop();
+  document.getElementById('auto-toggle').checked = false;
+  stopRoundBannerTimer();
+
+  let reason = 'Ο χρόνος της διαδικασίας έληξε.';
+  if (msg.reason === 'target_reached') {
+    reason = 'Ο στόχος σφάλματος επιτεύχθηκε.';
+  } else if (msg.reason === 'manual_stop') {
+    reason = 'Ο γύρος σταμάτησε χειροκίνητα από τον καθηγητή.';
+  }
+
+  const winnerText = msg.winnerTeam
+    ? ` Νικήτρια ομάδα: ${msg.winnerTeam}.`
+    : '';
+
+  let podium = '';
+  if (Array.isArray(msg.rankings) && msg.rankings.length > 0) {
+    podium = msg.rankings
+      .slice(0, 3)
+      .map((entry) => {
+        const rank = Number.parseInt(entry && entry.rank, 10);
+        const team = String((entry && entry.team) || '').trim();
+        if (!team) return null;
+        return `${Number.isInteger(rank) ? rank : '?'}:${team}`;
+      })
+      .filter(Boolean)
+      .join(' | ');
+  }
+
+  const podiumText = podium ? ` Κατάταξη: ${podium}.` : '';
+  setRoundBanner(`${reason}${winnerText}${podiumText}`, 'ended');
+}
+
+function handleTournamentReset(msg) {
+  roundControlEnabled = true;
+  roundActive = false;
+  roundNumber = 0;
+  roundTargetError = null;
+  roundEndAt = 0;
+  stopAutoDrop();
+  document.getElementById('auto-toggle').checked = false;
+  stopRoundBannerTimer();
+
+  const defaults = msg && msg.defaults ? msg.defaults : {};
+  applyRoundDefaults(defaults);
+  setRoundBanner('Έγινε συνολικό reset από τον καθηγητή. Περιμένετε νέο γύρο.', 'waiting');
+}
+
+function canPlayCurrentRound() {
+  if (!roundControlEnabled) return true;
+  return roundActive;
 }
 
 // ── Grid ──────────────────────────────────────────
@@ -594,7 +810,10 @@ function dropNeedles(count) {
   sendUpdate();
 }
 
-function doStep() { dropNeedles(stepN); }
+function doStep() {
+  if (!canPlayCurrentRound()) return;
+  dropNeedles(stepN);
+}
 
 function stopAutoDrop() {
   if (autoDropTimer !== null) {
@@ -604,6 +823,7 @@ function stopAutoDrop() {
 }
 
 function startAutoDrop() {
+  if (!canPlayCurrentRound()) return;
   stopAutoDrop();
   autoDropTimer = setInterval(() => {
     dropNeedles(stepN);
@@ -611,6 +831,11 @@ function startAutoDrop() {
 }
 
 function toggleAutoDrop(enabled) {
+  if (enabled && !canPlayCurrentRound()) {
+    document.getElementById('auto-toggle').checked = false;
+    return;
+  }
+
   if (enabled) {
     startAutoDrop();
   } else {
@@ -706,10 +931,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentName = document.getElementById('team-input').value.trim();
     if (!currentName || currentName !== teamName) {
       teamRegistered = false;
+      roundControlEnabled = false;
+      setRoundBanner('Χωρίς σύνδεση ομάδας: ελεύθερος πειραματισμός.', 'waiting');
       updateConnDot();
     }
   });
 
+  setRoundBanner('Ελεύθερος πειραματισμός. Συνδεθείτε ως ομάδα για αγώνα!', 'waiting');
   connectWS();
   updateConnDot();
   drawGrid();
@@ -717,7 +945,10 @@ document.addEventListener('DOMContentLoaded', () => {
   updateStats(null);
 });
 
-window.addEventListener('beforeunload', stopAutoDrop);
+window.addEventListener('beforeunload', () => {
+  stopAutoDrop();
+  stopRoundBannerTimer();
+});
 </script>
 <script>
 window.MathJax = {
