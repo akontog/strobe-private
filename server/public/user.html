@@ -54,6 +54,13 @@
       border-radius: 10px;
     }
 
+    .user-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
     .user-field label {
       font-weight: 600;
       font-size: 0.95rem;
@@ -97,6 +104,32 @@
 
     .role-btn:hover {
       transform: scale(1.05);
+    }
+
+    .connect-btn {
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #0f172a;
+      background: #4ECDC4;
+      transition: transform 0.2s ease;
+    }
+
+    .connect-btn.disconnect {
+      background: #fca5a5;
+      color: #7f1d1d;
+    }
+
+    .connect-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .connect-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
     }
 
     .user-canvas-container {
@@ -210,6 +243,10 @@
             <option value="diamond">◆ Ρόμβος</option>
           </select>
         </div>
+        <div class="user-field user-actions">
+          <button id="connectBtn" class="connect-btn" type="button">Connect</button>
+          <button id="disconnectBtn" class="connect-btn disconnect" type="button" disabled>Disconnect</button>
+        </div>
       </div>
     </div>
 
@@ -220,7 +257,7 @@
 
     <div class="user-info">
       <span class="status-indicator disconnected" id="statusIndicator"></span>
-      <span id="statusText">Σύνδεση...</span>
+      <span id="statusText">Disconnected. Δώσε όνομα και πάτα Connect.</span>
       <span style="margin-left: 20px;">👥 Ενεργοί χρήστες: <strong id="userCount">0</strong></span>
     </div>
   </div>
@@ -229,7 +266,15 @@
     // === Configuration ===
     const canvas = document.getElementById('userCanvas');
     const ctx = canvas.getContext('2d');
-    const socket = io();
+    const socket = io({ autoConnect: false });
+    const urlParams = new URLSearchParams(window.location.search);
+    const connectBtn = document.getElementById('connectBtn');
+    const disconnectBtn = document.getElementById('disconnectBtn');
+
+    const CONNECT_NAME_KEY = 'strobeStudentConnectName';
+    const QUERY_NAME = (urlParams.get('name') || '').trim();
+    const AUTO_CONNECT_QUERY = (urlParams.get('autoconnect') || '').toLowerCase();
+    const SHOULD_AUTOCONNECT = ['1', 'true', 'yes'].includes(AUTO_CONNECT_QUERY);
 
     let currentRole = 'mouse'; // 'mouse' or 'camera'
     let myPosition = { x: 0.5, y: 0.5 }; // Normalized 0-1
@@ -240,6 +285,9 @@
     let userName = '';
     let userColor = '#4ECDC4';
     let userShape = 'circle';
+
+    const LEGACY_ACTIVITY_WIDTH = 1200;
+    const LEGACY_ACTIVITY_HEIGHT = 700;
 
     // Resize canvas
     function resizeCanvas() {
@@ -256,13 +304,19 @@
       isConnected = true;
       myUserId = socket.id;
       updateStatus('✅ Συνδεθήκατε!', true);
+      updateConnectionButtons();
       console.log('Connected:', myUserId);
       emitUserUpdate();
     });
 
     socket.on('disconnect', () => {
       isConnected = false;
-      updateStatus('❌ Αποσυνδεθήκατε', false);
+      myUserId = null;
+      allUsers = [];
+      document.getElementById('userCount').textContent = '0';
+      updateStatus('⚪ Disconnected. Πάτα Connect για σύνδεση.', false);
+      updateConnectionButtons();
+      render();
     });
 
     socket.on('activity-loaded', (activity) => {
@@ -316,16 +370,54 @@
       emitUserUpdate();
     }
 
+    function updateConnectionButtons() {
+      connectBtn.disabled = isConnected;
+      disconnectBtn.disabled = !isConnected;
+    }
+
+    function connectSocket() {
+      userName = document.getElementById('userName').value.trim();
+      if (!userName) {
+        updateStatus('⚠️ Συμπλήρωσε όνομα και μετά πάτα Connect.', false);
+        document.getElementById('userName').focus();
+        return;
+      }
+
+      persistUserSettings();
+
+      if (socket.connected) {
+        emitUserUpdate();
+        return;
+      }
+
+      updateStatus('⏳ Σύνδεση...', false);
+      socket.connect();
+    }
+
+    function disconnectSocket() {
+      if (socket.connected || socket.active) {
+        socket.disconnect();
+      }
+    }
+
+    connectBtn.addEventListener('click', connectSocket);
+    disconnectBtn.addEventListener('click', disconnectSocket);
+
     // === User Settings ===
     function loadUserSettings() {
+      const launcherName = localStorage.getItem(CONNECT_NAME_KEY);
       const storedName = localStorage.getItem('strobeUserName');
       const storedColor = localStorage.getItem('strobeUserColor');
       const storedShape = localStorage.getItem('strobeUserShape');
 
-      if (storedName && storedName.trim()) {
+      if (QUERY_NAME) {
+        userName = QUERY_NAME;
+      } else if (launcherName && launcherName.trim()) {
+        userName = launcherName.trim();
+      } else if (storedName && storedName.trim()) {
         userName = storedName.trim();
       } else {
-        userName = generateDefaultName();
+        userName = '';
       }
 
       userColor = storedColor || '#4ECDC4';
@@ -338,18 +430,9 @@
       persistUserSettings();
     }
 
-    function generateDefaultName() {
-      const existing = localStorage.getItem('strobeAutoName');
-      if (existing) return existing;
-
-      const randomId = Math.floor(1000 + Math.random() * 9000);
-      const autoName = `Χρήστης-${randomId}`;
-      localStorage.setItem('strobeAutoName', autoName);
-      return autoName;
-    }
-
     function persistUserSettings() {
       localStorage.setItem('strobeUserName', userName);
+      localStorage.setItem(CONNECT_NAME_KEY, userName);
       localStorage.setItem('strobeUserColor', userColor);
       localStorage.setItem('strobeUserShape', userShape);
     }
@@ -358,6 +441,12 @@
       userName = e.target.value.trim();
       persistUserSettings();
       emitUserUpdate();
+    });
+
+    document.getElementById('userName').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        connectSocket();
+      }
     });
 
     document.getElementById('userColor').addEventListener('change', (e) => {
@@ -424,7 +513,7 @@
         }
 
         cameraInterval = setInterval(() => {
-          if (!captureCtx) return;
+          if (!captureCtx || !isConnected) return;
 
           captureCtx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
           const dataUrl = captureCanvas.toDataURL('image/jpeg', 0.55);
@@ -473,53 +562,153 @@
       });
     }
 
-    function drawActivity(geometry) {
-      geometry.forEach(obj => {
-        ctx.strokeStyle = obj.color || '#000000';
-        ctx.lineWidth = obj.lineWidth || 2;
-        ctx.beginPath();
+    function isNormalizedCoordinate(value) {
+      return Number.isFinite(value) && value >= 0 && value <= 1;
+    }
 
-        const scaleX = (x) => x * canvas.width;
-        const scaleY = (y) => y * canvas.height;
+    function projectX(value) {
+      if (!Number.isFinite(value)) return 0;
+      return isNormalizedCoordinate(value)
+        ? value * canvas.width
+        : (value / LEGACY_ACTIVITY_WIDTH) * canvas.width;
+    }
+
+    function projectY(value) {
+      if (!Number.isFinite(value)) return 0;
+      return isNormalizedCoordinate(value)
+        ? value * canvas.height
+        : (value / LEGACY_ACTIVITY_HEIGHT) * canvas.height;
+    }
+
+    function projectDeltaX(value) {
+      if (!Number.isFinite(value)) return 0;
+      return isNormalizedCoordinate(value)
+        ? value * canvas.width
+        : (value / LEGACY_ACTIVITY_WIDTH) * canvas.width;
+    }
+
+    function projectDeltaY(value) {
+      if (!Number.isFinite(value)) return 0;
+      return isNormalizedCoordinate(value)
+        ? value * canvas.height
+        : (value / LEGACY_ACTIVITY_HEIGHT) * canvas.height;
+    }
+
+    function projectRadius(value) {
+      if (!Number.isFinite(value)) return 0;
+
+      if (isNormalizedCoordinate(value)) {
+        return value * Math.min(canvas.width, canvas.height);
+      }
+
+      const sx = canvas.width / LEGACY_ACTIVITY_WIDTH;
+      const sy = canvas.height / LEGACY_ACTIVITY_HEIGHT;
+      return value * Math.min(sx, sy);
+    }
+
+    function drawActivity(geometry) {
+      if (!Array.isArray(geometry)) {
+        return;
+      }
+
+      geometry.forEach(obj => {
+        if (!obj || typeof obj !== 'object') {
+          return;
+        }
+
+        ctx.strokeStyle = obj.color || '#000000';
+        ctx.fillStyle = obj.color || '#000000';
+        ctx.lineWidth = obj.width || obj.lineWidth || 2;
 
         switch (obj.type) {
           case 'point':
-            ctx.fillStyle = obj.color || '#000000';
-            ctx.arc(scaleX(obj.x), scaleY(obj.y), 5, 0, Math.PI * 2);
+            ctx.beginPath();
+            ctx.arc(projectX(obj.x), projectY(obj.y), 5, 0, Math.PI * 2);
             ctx.fill();
             break;
 
           case 'line':
-            ctx.moveTo(scaleX(obj.x1), scaleY(obj.y1));
-            ctx.lineTo(scaleX(obj.x2), scaleY(obj.y2));
+            ctx.beginPath();
+            ctx.moveTo(projectX(obj.x1), projectY(obj.y1));
+            ctx.lineTo(projectX(obj.x2), projectY(obj.y2));
             ctx.stroke();
             break;
+
+          case 'ray': {
+            const startX = projectX(obj.x1);
+            const startY = projectY(obj.y1);
+            const secondX = projectX(obj.x2);
+            const secondY = projectY(obj.y2);
+            const dx = secondX - startX;
+            const dy = secondY - startY;
+            const len = Math.hypot(dx, dy);
+
+            if (!Number.isFinite(len) || len < 0.001) {
+              break;
+            }
+
+            const extension = Math.max(canvas.width, canvas.height) * 2;
+
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(startX + (dx / len) * extension, startY + (dy / len) * extension);
+            ctx.stroke();
+            break;
+          }
 
           case 'circle':
-            ctx.arc(scaleX(obj.cx), scaleY(obj.cy), obj.radius * canvas.width, 0, Math.PI * 2);
-            ctx.stroke();
-            break;
+            {
+              const cxRaw = Number.isFinite(obj.cx) ? obj.cx : obj.x;
+              const cyRaw = Number.isFinite(obj.cy) ? obj.cy : obj.y;
+              const radius = projectRadius(obj.radius);
+
+              if (!Number.isFinite(cxRaw) || !Number.isFinite(cyRaw) || radius <= 0) {
+                break;
+              }
+
+              ctx.beginPath();
+              ctx.arc(projectX(cxRaw), projectY(cyRaw), radius, 0, Math.PI * 2);
+              ctx.stroke();
+              break;
+            }
 
           case 'triangle':
-            ctx.moveTo(scaleX(obj.points[0].x), scaleY(obj.points[0].y));
-            ctx.lineTo(scaleX(obj.points[1].x), scaleY(obj.points[1].y));
-            ctx.lineTo(scaleX(obj.points[2].x), scaleY(obj.points[2].y));
-            ctx.closePath();
-            ctx.stroke();
+            if (Array.isArray(obj.points) && obj.points.length >= 3) {
+              ctx.beginPath();
+              ctx.moveTo(projectX(obj.points[0].x), projectY(obj.points[0].y));
+              ctx.lineTo(projectX(obj.points[1].x), projectY(obj.points[1].y));
+              ctx.lineTo(projectX(obj.points[2].x), projectY(obj.points[2].y));
+              ctx.closePath();
+              ctx.stroke();
+            }
             break;
 
           case 'rectangle':
-            const w = (obj.x2 - obj.x1) * canvas.width;
-            const h = (obj.y2 - obj.y1) * canvas.height;
-            ctx.rect(scaleX(obj.x1), scaleY(obj.y1), w, h);
-            ctx.stroke();
+            if (Number.isFinite(obj.x) && Number.isFinite(obj.y) && Number.isFinite(obj.width) && Number.isFinite(obj.height)) {
+              ctx.beginPath();
+              ctx.rect(projectX(obj.x), projectY(obj.y), projectDeltaX(obj.width), projectDeltaY(obj.height));
+              ctx.stroke();
+              break;
+            }
+
+            if (Number.isFinite(obj.x1) && Number.isFinite(obj.y1) && Number.isFinite(obj.x2) && Number.isFinite(obj.y2)) {
+              const x1 = projectX(obj.x1);
+              const y1 = projectY(obj.y1);
+              const x2 = projectX(obj.x2);
+              const y2 = projectY(obj.y2);
+
+              ctx.beginPath();
+              ctx.rect(x1, y1, x2 - x1, y2 - y1);
+              ctx.stroke();
+            }
             break;
 
           case 'polygon':
             if (obj.points && obj.points.length > 0) {
-              ctx.moveTo(scaleX(obj.points[0].x), scaleY(obj.points[0].y));
+              ctx.beginPath();
+              ctx.moveTo(projectX(obj.points[0].x), projectY(obj.points[0].y));
               for (let i = 1; i < obj.points.length; i++) {
-                ctx.lineTo(scaleX(obj.points[i].x), scaleY(obj.points[i].y));
+                ctx.lineTo(projectX(obj.points[i].x), projectY(obj.points[i].y));
               }
               ctx.closePath();
               ctx.stroke();
@@ -613,6 +802,14 @@
 
     // Initial load
     loadUserSettings();
+    updateConnectionButtons();
+
+    if (SHOULD_AUTOCONNECT && userName) {
+      connectSocket();
+    } else {
+      updateStatus('⚪ Disconnected. Δώσε όνομα και πάτα Connect.', false);
+    }
+
     fetch('/api/activity/current')
       .then(r => r.json())
       .then(activity => {

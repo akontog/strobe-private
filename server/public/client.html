@@ -59,6 +59,9 @@
                     <button class="btn-compact btn-success" id="broadcastBtn">📡</button>
                     <button class="btn-compact btn-primary" id="saveBtn">💾</button>
                     <button class="btn-compact btn-primary" id="loadBtn">📂</button>
+                    <button class="btn-compact btn-primary" id="exportJsonBtn" title="Εξαγωγή JSON">⬇️</button>
+                    <button class="btn-compact btn-primary" id="importJsonBtn" title="Εισαγωγή JSON">⬆️</button>
+                    <input type="file" id="activityJsonInput" accept=".json,application/json" hidden>
                 </div>
             </div>
 
@@ -131,6 +134,89 @@
         let pointLabel = 0;
         const POINT_LABELS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
+        function getPointLabelIndex(label) {
+            if (typeof label !== 'string' || !label.trim()) {
+                return -1;
+            }
+
+            return POINT_LABELS.indexOf(label.trim().charAt(0).toUpperCase());
+        }
+
+        function recalculatePointLabel() {
+            const pointCount = geometryObjects.filter((obj) => obj && obj.type === 'point').length;
+            const highestLabelIndex = geometryObjects.reduce((maxIdx, obj) => {
+                if (!obj || obj.type !== 'point') {
+                    return maxIdx;
+                }
+
+                const idx = getPointLabelIndex(obj.label);
+                return idx >= 0 ? Math.max(maxIdx, idx + 1) : maxIdx;
+            }, 0);
+
+            pointLabel = Math.max(pointCount, highestLabelIndex, 0);
+        }
+
+        function refreshCanvasView() {
+            updateGeometryList();
+            render();
+        }
+
+        function syncGeometryState() {
+            refreshCanvasView();
+            broadcastEnvironment();
+        }
+
+        function applyLoadedGeometry(nextGeometry) {
+            geometryObjects = Array.isArray(nextGeometry) ? nextGeometry : [];
+            tempPoints = [];
+            recalculatePointLabel();
+            refreshCanvasView();
+        }
+
+        function normalizeActivityPayload(payload) {
+            if (Array.isArray(payload)) {
+                return {
+                    name: 'Imported Activity',
+                    geometry: payload
+                };
+            }
+
+            if (payload && Array.isArray(payload.geometry)) {
+                return {
+                    name: typeof payload.name === 'string' && payload.name.trim() ? payload.name.trim() : 'Imported Activity',
+                    geometry: payload.geometry
+                };
+            }
+
+            return null;
+        }
+
+        function sanitizeJsonFilename(baseName) {
+            const safe = String(baseName || 'activity')
+                .trim()
+                .replace(/[^a-z0-9_-]/gi, '_')
+                .replace(/_+/g, '_')
+                .replace(/^_+|_+$/g, '');
+
+            return `${safe || 'activity'}.json`;
+        }
+
+        function buildJsonActivityPayload(name) {
+            return {
+                name: name || `Activity_${new Date().toISOString().split('T')[0]}`,
+                geometry: geometryObjects,
+                createdAt: new Date().toISOString(),
+                meta: {
+                    app: 'geometry-live',
+                    format: 'strobe-geometry-activity-v1',
+                    canvas: {
+                        width: CANVAS_WIDTH,
+                        height: CANVAS_HEIGHT
+                    }
+                }
+            };
+        }
+
         // === Socket.io Connection ===
         function connectToServer() {
             socket = io(SERVER_URL);
@@ -142,10 +228,8 @@
             });
 
             socket.on('activity-loaded', (activity) => {
-                if (activity && activity.geometry) {
-                    geometryObjects = activity.geometry;
-                    updateGeometryList();
-                    render();
+                if (activity && Array.isArray(activity.geometry)) {
+                    applyLoadedGeometry(activity.geometry);
                 }
             });
 
@@ -256,8 +340,7 @@
                 });
                 pointLabel++;
                 isDrawing = false;
-                render();
-                broadcastEnvironment();
+                syncGeometryState();
             } else if (['triangle', 'polygon'].includes(currentTool)) {
                 tempPoints.push({x, y});
                 render();
@@ -296,6 +379,7 @@
         function handleMouseUp(x, y) {
             if (!isDrawing) return;
             isDrawing = false;
+            let geometryChanged = false;
 
             if (currentTool === 'line') {
                 addGeometry({
@@ -305,6 +389,7 @@
                     color: currentColor,
                     width: lineWidth
                 });
+                geometryChanged = true;
             } else if (currentTool === 'ray') {
                 addGeometry({
                     type: 'ray',
@@ -313,6 +398,7 @@
                     color: currentColor,
                     width: lineWidth
                 });
+                geometryChanged = true;
             } else if (currentTool === 'circle') {
                 const radius = Math.sqrt(Math.pow(x - startPoint.x, 2) + Math.pow(y - startPoint.y, 2));
                 addGeometry({
@@ -322,6 +408,7 @@
                     color: currentColor,
                     width: lineWidth
                 });
+                geometryChanged = true;
             } else if (currentTool === 'rectangle') {
                 addGeometry({
                     type: 'rectangle',
@@ -331,6 +418,7 @@
                     color: currentColor,
                     lineWidth
                 });
+                geometryChanged = true;
             } else if (currentTool === 'triangle' && tempPoints.length === 3) {
                 addGeometry({
                     type: 'triangle',
@@ -339,28 +427,34 @@
                     width: lineWidth
                 });
                 tempPoints = [];
+                geometryChanged = true;
             }
 
-            render();
-            broadcastEnvironment();
+            if (geometryChanged) {
+                syncGeometryState();
+            } else {
+                render();
+            }
         }
 
         // === Geometry Management ===
         function addGeometry(obj) {
             obj.id = 'geo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             geometryObjects.push(obj);
-            updateGeometryList();
         }
 
         function deleteGeometry(id) {
             geometryObjects = geometryObjects.filter(obj => obj.id !== id);
-            updateGeometryList();
-            render();
-            broadcastEnvironment();
+            syncGeometryState();
         }
 
         function updateGeometryList() {
             const list = document.getElementById('geometryList');
+
+            // The compact teacher UI does not render a geometry side list.
+            if (!list) {
+                return;
+            }
             
             if (geometryObjects.length === 0) {
                 list.innerHTML = '<p style="opacity: 0.7; text-align: center;">Κανένα σχήμα</p>';
@@ -550,18 +644,15 @@
                 geometryObjects = [];
                 tempPoints = [];
                 pointLabel = 0;
-                updateGeometryList();
-                render();
-                broadcastEnvironment();
+                syncGeometryState();
             }
         });
 
         document.getElementById('undoBtn').addEventListener('click', () => {
             if (geometryObjects.length > 0) {
                 geometryObjects.pop();
-                updateGeometryList();
-                render();
-                broadcastEnvironment();
+                recalculatePointLabel();
+                syncGeometryState();
             }
         });
 
@@ -592,6 +683,63 @@
             }
         });
 
+        document.getElementById('exportJsonBtn').addEventListener('click', () => {
+            const defaultName = `Activity_${new Date().toISOString().slice(0, 10)}`;
+            const name = prompt('Όνομα δραστηριότητας για εξαγωγή JSON:', defaultName);
+
+            if (name === null) {
+                return;
+            }
+
+            const payload = buildJsonActivityPayload(name.trim() || defaultName);
+            const json = JSON.stringify(payload, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+
+            link.href = url;
+            link.download = sanitizeJsonFilename(payload.name);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+        });
+
+        document.getElementById('importJsonBtn').addEventListener('click', () => {
+            const fileInput = document.getElementById('activityJsonInput');
+
+            if (fileInput) {
+                fileInput.click();
+            }
+        });
+
+        document.getElementById('activityJsonInput').addEventListener('change', async (event) => {
+            const [file] = event.target.files || [];
+            event.target.value = '';
+
+            if (!file) {
+                return;
+            }
+
+            try {
+                const text = await file.text();
+                const parsed = JSON.parse(text);
+                const normalized = normalizeActivityPayload(parsed);
+
+                if (!normalized) {
+                    alert('❌ Το JSON δεν έχει έγκυρη μορφή δραστηριότητας.');
+                    return;
+                }
+
+                applyLoadedGeometry(normalized.geometry);
+                broadcastEnvironment();
+                alert(`✅ Φορτώθηκε JSON: ${normalized.name}`);
+            } catch (error) {
+                alert('❌ Σφάλμα ανάγνωσης JSON αρχείου');
+                console.error(error);
+            }
+        });
+
         document.getElementById('loadBtn').addEventListener('click', async () => {
             try {
                 const response = await fetch('/api/activity/list');
@@ -614,9 +762,7 @@
                 if (idx >= 0 && idx < activities.length) {
                     const loadResponse = await fetch(`/api/activity/load/${activities[idx].filename}`);
                     const activity = await loadResponse.json();
-                    geometryObjects = activity.geometry;
-                    updateGeometryList();
-                    render();
+                    applyLoadedGeometry(activity.geometry);
                     broadcastEnvironment();
                     alert('✅ Φορτώθηκε: ' + activity.name);
                 }

@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Teacher Dashboard</title>
+  <style>
+    :root {
+      --bg: #f4f8fb;
+      --ink: #102a43;
+      --muted: #486581;
+      --surface: #ffffff;
+      --line: #d9e2ec;
+      --blue: #0f6cbd;
+      --green: #13795b;
+      --shadow: 0 16px 32px rgba(17, 24, 39, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+      background:
+        radial-gradient(circle at 90% -5%, rgba(15, 108, 189, 0.17), transparent 33%),
+        linear-gradient(180deg, #eff6ff, var(--bg));
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      width: min(1120px, 94vw);
+      margin: 28px auto;
+      display: grid;
+      gap: 16px;
+    }
+
+    .top {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.15rem, 2vw, 1.45rem);
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 980px) {
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .apps {
+      display: grid;
+      gap: 10px;
+    }
+
+    .app-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .app-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+
+    .app-title {
+      font-weight: 700;
+    }
+
+    .app-desc {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.4;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button,
+    .button-link {
+      border: 0;
+      border-radius: 10px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.92rem;
+      text-decoration: none;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--blue);
+    }
+
+    button.secondary {
+      background: #5f6c7b;
+    }
+
+    button.good {
+      background: var(--green);
+    }
+
+    button:hover,
+    .button-link:hover {
+      filter: brightness(1.05);
+    }
+
+    .logout {
+      background: #9b1c1c;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    input,
+    select,
+    textarea {
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 9px 10px;
+      font: inherit;
+      color: var(--ink);
+      width: 100%;
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.88rem;
+    }
+
+    .list {
+      display: grid;
+      gap: 8px;
+      max-height: 280px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .item {
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 8px 10px;
+      display: grid;
+      gap: 4px;
+      background: #f8fafc;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    pre {
+      margin: 0;
+      background: #0f172a;
+      color: #f1f5f9;
+      border-radius: 10px;
+      padding: 10px;
+      overflow: auto;
+      max-height: 220px;
+      font-size: 0.82rem;
+    }
+
+    #status {
+      min-height: 20px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div>
+        <h1>Teacher Control Room</h1>
+        <div class="meta" id="userMeta">Teacher mode (χωρίς login)</div>
+      </div>
+      <a class="button-link logout" href="/">Αρχική</a>
+    </header>
+
+    <section class="grid">
+      <article class="panel">
+        <h2>Available Apps</h2>
+        <div id="appCards" class="apps"></div>
+      </article>
+
+      <article class="panel">
+        <h2>Activity Builder</h2>
+
+        <div class="field">
+          <label for="appSelect">App</label>
+          <select id="appSelect"></select>
+        </div>
+
+        <div class="field">
+          <label for="activityName">Activity name</label>
+          <input id="activityName" placeholder="Example: Buffon round - week 3">
+        </div>
+
+        <div class="field">
+          <label for="activityConfig">Config JSON</label>
+          <textarea id="activityConfig">{
+  "roundTimeSec": 60,
+  "targetError": 0.005
+}</textarea>
+        </div>
+
+        <div class="field">
+          <label for="activityNotes">Teacher notes</label>
+          <textarea id="activityNotes" style="min-height:80px; font-family: inherit;">Preparation notes...</textarea>
+        </div>
+
+        <div class="btn-row">
+          <button class="good" id="saveBtn">Save Activity</button>
+          <button class="secondary" id="reloadBtn">Reload List</button>
+        </div>
+
+        <div id="status"></div>
+
+        <h2 style="margin-top: 6px;">Saved Activities</h2>
+        <div id="activityList" class="list"></div>
+        <pre id="activityPreview">Select an activity to preview JSON.</pre>
+      </article>
+    </section>
+  </div>
+
+  <script>
+    const state = {
+      user: null,
+      apps: [],
+      selectedApp: ''
+    };
+
+    const appCards = document.getElementById('appCards');
+    const appSelect = document.getElementById('appSelect');
+    const activityList = document.getElementById('activityList');
+    const activityPreview = document.getElementById('activityPreview');
+    const statusNode = document.getElementById('status');
+
+    async function api(url, options = {}) {
+      const response = await fetch(url, {
+        headers: {
+          Accept: 'application/json',
+          ...(options.body ? { 'Content-Type': 'application/json' } : {})
+        },
+        ...options
+      });
+
+      const payload = await response.json();
+
+      if (!response.ok) {
+        throw new Error(payload.error || 'Request failed');
+      }
+
+      return payload;
+    }
+
+    function setStatus(message, isError = false) {
+      statusNode.textContent = message;
+      statusNode.style.color = isError ? '#b42318' : '#486581';
+    }
+
+    function renderApps() {
+      appCards.innerHTML = '';
+      appSelect.innerHTML = '';
+
+      state.apps.forEach((app) => {
+        const card = document.createElement('div');
+        card.className = 'app-card';
+
+        card.innerHTML = `
+          <div class="app-head">
+            <div class="app-title">${app.title}</div>
+            <div class="muted">${app.slug}</div>
+          </div>
+          <div class="app-desc">${app.description}</div>
+          <div class="btn-row">
+            <a class="button-link" href="${app.launchPath}">Open Teacher View</a>
+            <button class="secondary" data-slug="${app.slug}">Manage Activities</button>
+          </div>
+        `;
+
+        card.querySelector('button').addEventListener('click', () => {
+          state.selectedApp = app.slug;
+          appSelect.value = app.slug;
+          loadActivities();
+        });
+
+        appCards.appendChild(card);
+
+        const option = document.createElement('option');
+        option.value = app.slug;
+        option.textContent = `${app.title} (${app.slug})`;
+        appSelect.appendChild(option);
+      });
+
+      if (!state.selectedApp && state.apps.length > 0) {
+        state.selectedApp = state.apps[0].slug;
+      }
+
+      if (state.selectedApp) {
+        appSelect.value = state.selectedApp;
+      }
+    }
+
+    function renderActivities(items) {
+      activityList.innerHTML = '';
+
+      if (!items.length) {
+        activityList.innerHTML = '<div class="muted">No activities saved yet for this app.</div>';
+        return;
+      }
+
+      items.forEach((item) => {
+        const node = document.createElement('div');
+        node.className = 'item';
+
+        const when = item.createdAt ? new Date(item.createdAt).toLocaleString() : 'unknown time';
+        const author = item.author && item.author.username ? item.author.username : 'unknown author';
+
+        node.innerHTML = `
+          <strong>${item.name}</strong>
+          <span class="muted">${item.filename}</span>
+          <span class="muted">${when} | ${author}</span>
+        `;
+
+        node.addEventListener('click', () => loadActivity(item.filename));
+        activityList.appendChild(node);
+      });
+    }
+
+    async function loadApps() {
+      const apps = await api('/teacher/apps');
+      if (!apps) return;
+      state.apps = apps;
+      renderApps();
+      await loadActivities();
+    }
+
+    async function loadActivities() {
+      if (!state.selectedApp) return;
+
+      setStatus('Loading activities...');
+      try {
+        const items = await api(`/teacher/activities/${state.selectedApp}`);
+        if (!items) return;
+        renderActivities(items);
+        setStatus(`Loaded ${items.length} activities for ${state.selectedApp}.`);
+      } catch (error) {
+        setStatus(error.message, true);
+      }
+    }
+
+    async function loadActivity(filename) {
+      try {
+        const item = await api(`/teacher/activities/${state.selectedApp}/${filename}`);
+        if (!item) return;
+        activityPreview.textContent = JSON.stringify(item, null, 2);
+      } catch (error) {
+        setStatus(error.message, true);
+      }
+    }
+
+    async function saveActivity() {
+      if (!state.selectedApp) {
+        setStatus('Please select an app first.', true);
+        return;
+      }
+
+      const name = document.getElementById('activityName').value.trim() || 'Untitled activity';
+      const notes = document.getElementById('activityNotes').value;
+      const configRaw = document.getElementById('activityConfig').value.trim();
+
+      let config = {};
+      if (configRaw) {
+        try {
+          config = JSON.parse(configRaw);
+        } catch (error) {
+          setStatus('Config JSON is not valid.', true);
+          return;
+        }
+      }
+
+      setStatus('Saving activity...');
+
+      try {
+        const result = await api(`/teacher/activities/${state.selectedApp}`, {
+          method: 'POST',
+          body: JSON.stringify({ name, notes, config })
+        });
+
+        if (!result) return;
+
+        setStatus(`Saved ${result.filename}.`);
+        await loadActivities();
+      } catch (error) {
+        setStatus(error.message, true);
+      }
+    }
+
+    document.getElementById('saveBtn').addEventListener('click', saveActivity);
+    document.getElementById('reloadBtn').addEventListener('click', loadActivities);
+
+    appSelect.addEventListener('change', () => {
+      state.selectedApp = appSelect.value;
+      loadActivities();
+    });
+
+    async function init() {
+      try {
+        await loadApps();
+      } catch (error) {
+        setStatus(error.message, true);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

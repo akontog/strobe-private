@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin Dashboard</title>
+  <style>
+    :root {
+      --bg: #f7f6ff;
+      --ink: #1f1647;
+      --muted: #5a5390;
+      --surface: #ffffff;
+      --line: #ddd9f3;
+      --accent: #4c3dd9;
+      --shadow: 0 18px 34px rgba(26, 31, 54, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 80% 0%, rgba(76, 61, 217, 0.2), transparent 35%),
+        linear-gradient(180deg, #f3f2ff, var(--bg));
+    }
+
+    .wrap {
+      width: min(1100px, 96vw);
+      margin: 28px auto;
+      display: grid;
+      gap: 16px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    h1, h2 {
+      margin: 0;
+    }
+
+    .stats {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      background: #faf9ff;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .value {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.92rem;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      padding: 8px;
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.84rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .muted { color: var(--muted); font-size: 0.88rem; }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 9px 11px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #fff;
+      background: var(--accent);
+    }
+
+    button.logout {
+      background: #9b1c1c;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="panel">
+      <div class="top">
+        <h1>Admin Session Monitor</h1>
+        <div class="btn-row">
+          <button id="refreshBtn">Refresh now</button>
+          <button class="logout" id="logoutBtn">Back home</button>
+        </div>
+      </div>
+      <div class="muted" id="status">Loading...</div>
+    </section>
+
+    <section class="panel">
+      <h2>Live Stats</h2>
+      <div class="stats">
+        <div class="stat">
+          <div class="label">Active sessions</div>
+          <div class="value" id="totalSessions">0</div>
+        </div>
+        <div class="stat">
+          <div class="label">Connected sockets</div>
+          <div class="value" id="socketCount">0</div>
+        </div>
+        <div class="stat">
+          <div class="label">Tracked user points</div>
+          <div class="value" id="trackedPoints">0</div>
+        </div>
+      </div>
+      <div id="roleStats" class="muted"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Who is Logged In</h2>
+      <div style="overflow:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Role</th>
+              <th>Login at</th>
+              <th>Last seen</th>
+              <th>IP</th>
+              <th>User agent</th>
+            </tr>
+          </thead>
+          <tbody id="sessionRows"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const rowsNode = document.getElementById('sessionRows');
+    const statusNode = document.getElementById('status');
+
+    async function loadStats() {
+      const response = await fetch('/admin/sessions', {
+        headers: { Accept: 'application/json' }
+      });
+
+      const payload = await response.json();
+
+      if (!response.ok) {
+        throw new Error(payload.error || 'Failed to load stats');
+      }
+
+      const total = payload.sessionStats ? payload.sessionStats.total : 0;
+      const byRole = payload.sessionStats ? payload.sessionStats.byRole : {};
+      const realtime = payload.realtimeStats || {};
+
+      document.getElementById('totalSessions').textContent = String(total);
+      document.getElementById('socketCount').textContent = String(realtime.connectedSockets || 0);
+      document.getElementById('trackedPoints').textContent = String(realtime.activeUserPoints || 0);
+      document.getElementById('roleStats').textContent = `Roles: ${JSON.stringify(byRole)}`;
+
+      rowsNode.innerHTML = '';
+      (payload.sessions || []).forEach((session) => {
+        const displayName = String(session.displayName || session.name || session.username || 'unknown');
+        const username = String(session.username || '');
+        const loginAt = session.loginAt || session.createdAt || '-';
+        const lastSeen = session.lastSeen || '-';
+        const source = session.source ? ` (${session.source})` : '';
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${displayName}${username && username !== displayName ? ` (${username})` : ''}</td>
+          <td>${session.role || 'unknown'}${source}</td>
+          <td>${loginAt}</td>
+          <td>${lastSeen}</td>
+          <td>${session.ip || '-'}</td>
+          <td>${session.userAgent || '-'}</td>
+        `;
+        rowsNode.appendChild(row);
+      });
+
+      if (!payload.sessions || payload.sessions.length === 0) {
+        rowsNode.innerHTML = '<tr><td colspan="6" class="muted">No active sessions.</td></tr>';
+      }
+
+      statusNode.textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+    }
+
+    async function refresh() {
+      try {
+        await loadStats();
+      } catch (error) {
+        statusNode.textContent = error.message;
+        statusNode.style.color = '#b42318';
+      }
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', refresh);
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      window.location.href = '/';
+    });
+
+    refresh();
+    setInterval(refresh, 5000);
+  </script>
+</body>
+</html>

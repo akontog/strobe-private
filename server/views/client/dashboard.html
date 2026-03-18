@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student Launcher</title>
+  <style>
+    :root {
+      --bg: #fff9f1;
+      --ink: #322514;
+      --muted: #6f604d;
+      --surface: #ffffff;
+      --line: #eadcc8;
+      --accent: #d97608;
+      --accent-2: #0f6cbd;
+      --shadow: 0 14px 28px rgba(17, 24, 39, 0.1);
+      --danger: #b42318;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(217, 118, 8, 0.18), transparent 35%),
+        linear-gradient(180deg, #fffbf5, var(--bg));
+    }
+
+    .wrap {
+      width: min(1080px, 94vw);
+      margin: 28px auto;
+      display: grid;
+      gap: 14px;
+    }
+
+    .top,
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    h1 { margin: 0; font-size: clamp(1.15rem, 2vw, 1.4rem); }
+    .muted { color: var(--muted); font-size: 0.92rem; }
+
+    .home-link {
+      text-decoration: none;
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-weight: 700;
+      color: #fff;
+      background: #9b1c1c;
+    }
+
+    .field-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .field-row label {
+      font-weight: 700;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .field-row input {
+      flex: 1;
+      min-width: 220px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 9px 10px;
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 9px 12px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #fff;
+      background: var(--accent-2);
+    }
+
+    button:hover,
+    .open:hover,
+    .direct:hover {
+      filter: brightness(1.05);
+    }
+
+    .grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      display: grid;
+      gap: 9px;
+    }
+
+    .title { font-weight: 700; }
+    .slug { color: var(--muted); font-size: 0.85rem; }
+
+    .btn-row {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .open,
+    .direct {
+      text-decoration: none;
+      text-align: center;
+      border-radius: 9px;
+      padding: 8px 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .open {
+      background: var(--accent);
+      color: #fff;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .direct {
+      background: #fff;
+      color: #6b7280;
+      border: 1px dashed #9ca3af;
+    }
+
+    #status {
+      min-height: 20px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    #nameStatus {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <div>
+        <h1>Student App Launcher</h1>
+        <div class="muted">Δώσε όνομα σύνδεσης και διάλεξε εφαρμογή.</div>
+      </div>
+      <a class="home-link" href="/">Αρχική</a>
+    </header>
+
+    <section class="panel">
+      <div class="field-row">
+        <label for="studentName">Όνομα σύνδεσης</label>
+        <input id="studentName" type="text" placeholder="π.χ. Ομάδα-Α" maxlength="40">
+        <button id="saveNameBtn" type="button">Αποθήκευση</button>
+      </div>
+      <div id="nameStatus">Αν ανοίξεις app με «σύνδεση», το όνομα περνάει έτοιμο.</div>
+    </section>
+
+    <section>
+      <div class="muted" style="margin-bottom: 8px;">Εφαρμογές μαθητή</div>
+      <div id="appGrid" class="grid"></div>
+      <div id="status"></div>
+    </section>
+  </div>
+
+  <script>
+    const appGrid = document.getElementById('appGrid');
+    const statusNode = document.getElementById('status');
+    const nameInput = document.getElementById('studentName');
+    const nameStatus = document.getElementById('nameStatus');
+    const NAME_STORAGE_KEY = 'strobeStudentConnectName';
+
+    const state = {
+      studentName: '',
+      apps: []
+    };
+
+    async function api(url) {
+      const response = await fetch(url, { headers: { Accept: 'application/json' } });
+      const payload = await response.json();
+
+      if (!response.ok) {
+        throw new Error(payload.error || 'Request failed');
+      }
+
+      return payload;
+    }
+
+    function setStatus(message, isError = false) {
+      statusNode.textContent = message;
+      statusNode.style.color = isError ? 'var(--danger)' : 'var(--muted)';
+    }
+
+    function loadName() {
+      const stored = localStorage.getItem(NAME_STORAGE_KEY);
+      state.studentName = String(stored || '').trim();
+      nameInput.value = state.studentName;
+      renderNameStatus();
+    }
+
+    function saveName() {
+      state.studentName = nameInput.value.trim();
+      localStorage.setItem(NAME_STORAGE_KEY, state.studentName);
+      renderNameStatus();
+    }
+
+    function renderNameStatus() {
+      if (!state.studentName) {
+        nameStatus.textContent = 'Δεν έχει δοθεί όνομα. Σε direct app link θα φαίνεσαι disconnected μέχρι να συνδεθείς εκεί.';
+        return;
+      }
+
+      nameStatus.textContent = `Τρέχον όνομα: ${state.studentName}`;
+    }
+
+    function appendParams(basePath, params) {
+      const url = new URL(basePath, window.location.origin);
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && String(value).length > 0) {
+          url.searchParams.set(key, String(value));
+        }
+      });
+      return `${url.pathname}${url.search}`;
+    }
+
+    function openAppConnected(app) {
+      if (!state.studentName) {
+        setStatus('Δώσε πρώτα όνομα σύνδεσης.', true);
+        nameInput.focus();
+        return;
+      }
+
+      const target = appendParams(app.launchPath, {
+        name: state.studentName,
+        autoconnect: '1'
+      });
+
+      window.location.href = target;
+    }
+
+    function renderApps(apps) {
+      appGrid.innerHTML = '';
+
+      if (!apps.length) {
+        appGrid.innerHTML = '<div class="muted">Δεν υπάρχουν διαθέσιμες εφαρμογές.</div>';
+        return;
+      }
+
+      apps.forEach((app) => {
+        const card = document.createElement('article');
+        card.className = 'card';
+
+        const directLink = appendParams(app.launchPath, {
+          mode: app.launchPath.includes('mode=') ? undefined : 'client'
+        });
+
+        card.innerHTML = `
+          <div class="title">${app.title}</div>
+          <div class="muted">${app.description}</div>
+          <div class="slug">${app.slug}</div>
+          <div class="btn-row">
+            <button class="open" type="button">Άνοιγμα με σύνδεση</button>
+            <a class="direct" href="${directLink}">Direct link (disconnected)</a>
+          </div>
+        `;
+
+        card.querySelector('button').addEventListener('click', () => openAppConnected(app));
+        appGrid.appendChild(card);
+      });
+    }
+
+    async function init() {
+      loadName();
+
+      try {
+        const apps = await api('/client/apps');
+        state.apps = apps;
+        renderApps(apps);
+        setStatus(`Βρέθηκαν ${apps.length} εφαρμογές.`);
+      } catch (error) {
+        setStatus(error.message, true);
+      }
+    }
+
+    document.getElementById('saveNameBtn').addEventListener('click', () => {
+      saveName();
+      setStatus('Το όνομα αποθηκεύτηκε.');
+    });
+
+    nameInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        saveName();
+        setStatus('Το όνομα αποθηκεύτηκε.');
+      }
+    });
+
+    init();
+  </script>
+</body>
+</html>

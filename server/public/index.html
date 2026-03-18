@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Strobe | Select role</title>
+    <title>Strobe | Entry</title>
   <link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 <body>
@@ -13,75 +13,79 @@
     </div>
 
     <div class="container">
-        <div class="header" style="display: flex;justify-content: center;align-items: center;">
-            <h1><img src="icons/strobelogo.svg" style="height:50px;" alt="Strobe Logo"> 
-            | 📐 Collaborative Geometry</h1>
-            <p>Διαδραστικές Γεωμετρικές Δραστηριότητες σε Πραγματικό Χρόνο</p>
+        <div class="header" style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;">
+            <h1><img src="icons/strobelogo.svg" style="height:50px;" alt="Strobe Logo"> | Multi-App Classroom</h1>
+            <p>Χωρίς login. Επέλεξε πού θέλεις να μπεις.</p>
         </div>
 
         <div class="roles">
-            <!-- Teacher Client -->
-            <div class="role-card" onclick="selectRole('teacher')">
+            <div class="role-card" onclick="goTo('/teacher')">
                 <span class="role-icon">👨‍🏫</span>
-                <div class="role-title">Teacher Client</div>
+                <div class="role-title">Teacher Dashboard</div>
                 <div class="role-description">
-                    Σχεδιάστε δραστηριότητες, παρακολουθήστε μαθητές, δείτε στατιστικά.
+                    Εκκίνηση εφαρμογών σε teacher mode και διαχείριση δραστηριοτήτων ανά app.
                 </div>
                 <ul class="role-features">
-                    <li>Σχεδίαση/Διαχείριση δραστηριοτήτων</li>
-                    <li>Live στατιστικά</li>
-                    <li>Αποθήκευση/Φόρτωση μαθήματος</li>
+                    <li>Λίστα εφαρμογών</li>
+                    <li>Αποθήκευση/φόρτωση δραστηριοτήτων</li>
+                    <li>Παρακολούθηση τάξης</li>
                 </ul>
             </div>
 
-            <!-- User Client -->
-            <div class="role-card" onclick="selectRole('user')">
+            <div class="role-card" onclick="goTo('/student')">
                 <span class="role-icon">🧑‍🎓</span>
-                <div class="role-title">User Client</div>
+                <div class="role-title">Student Launcher</div>
                 <div class="role-description">
-                    Επιλέξτε κάμερα ή ποντίκι/αφή και κινηθείτε πάνω στον καμβά.
+                    Επιλογή app και ονόματος σύνδεσης. Το launcher μεταφέρει το όνομα στην εφαρμογή.
                 </div>
                 <ul class="role-features">
-                    <li>Mouse/Touch ή Camera mode</li>
-                    <li>Όνομα, χρώμα και σχήμα σημείου</li>
+                    <li>Εισαγωγή ονόματος σύνδεσης</li>
+                    <li>Άνοιγμα app με auto-connect</li>
+                    <li>Direct links για disconnected δοκιμή</li>
+                </ul>
+            </div>
+
+            <div class="role-card" onclick="goTo('/user.html')">
+                <span class="role-icon">📐</span>
+                <div class="role-title">Geometry Direct</div>
+                <div class="role-description">
+                    Άμεσο άνοιγμα geometry app. Ξεκινά disconnected μέχρι να συνδεθείς με όνομα.
+                </div>
+                <ul class="role-features">
+                    <li>Κατάλληλο για test direct links</li>
+                    <li>Χειροκίνητο connect</li>
                     <li>Real-time συνεργασία</li>
                 </ul>
             </div>
         </div>
 
         <div class="info-section">
-            <h2>Λειτουργία</h2>
+            <h2>Flow</h2>
             <div class="info-grid">
                 <div class="info-item">
-                    <h3>1. Επιλογή Ρόλου</h3>
-                    <p>Επιλέξτε πώς θέλετε να συμμετάσχετε: με κάμερα, ποντίκι ή ως εκπαιδευτής.</p>
+                    <h3>1. Teacher</h3>
+                    <p>Μπαίνει στο teacher dashboard και ανοίγει app σε teacher mode.</p>
                 </div>
                 <div class="info-item">
-                    <h3>2. Κοινός Καμβάς</h3>
-                    <p>Όλοι βλέπουν τον ίδιο καμβά με γεωμετρικά σχήματα και σημεία σε real-time.</p>
+                    <h3>2. Student</h3>
+                    <p>Μπαίνει από student launcher, βάζει όνομα και επιλέγει εφαρμογή.</p>
                 </div>
                 <div class="info-item">
-                    <h3>3. Συνεργασία</h3>
-                    <p>Εργαστείτε μαζί για να ολοκληρώσετε γεωμετρικές δραστηριότητες και ασκήσεις.</p>
+                    <h3>3. Direct App Link</h3>
+                    <p>Ανοίγει app μόνο του και παραμένει disconnected μέχρι manual connect.</p>
                 </div>
-                <div class="info-item">
-                    <h3>4. Ανατροφοδότηση</h3>
-                    <p>Ο εκπαιδευτής μπορεί να παρακολουθεί την πρόοδο και να παρέχει βοήθεια.</p>
             </div>
         </div>
 
         <div class="footer">
-
-            <img src="icons/mathlogo.png" style="height:50px;" alt="Strobe Logo">
+            <img src="icons/mathlogo.png" style="height:50px;" alt="Math Logo">
         </div>
     </div>
 
     <script>
-        // Check server status
         async function checkServer() {
             try {
-                const response = await fetch('/health');
-                const data = await response.json();
+                await fetch('/health');
                 document.getElementById('serverStatus').textContent = 'Online ✓';
                 document.getElementById('serverStatus').style.color = '#10b981';
             } catch (error) {
@@ -90,30 +94,18 @@
             }
         }
 
-        // Role selection
-        function selectRole(role) {
-            localStorage.setItem('selectedRole', role);
-
-            if (role === 'teacher') {
-                window.location.href = '/client.html';
-                return;
-            }
-
-            window.location.href = '/user.html';
+        function goTo(path) {
+            window.location.href = path;
         }
 
-        // Check server on load
         checkServer();
         setInterval(checkServer, 5000);
 
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.key === '1') selectRole('teacher');
-            if (e.key === '2') selectRole('user');
+        document.addEventListener('keydown', (event) => {
+            if (event.key === '1') goTo('/teacher');
+            if (event.key === '2') goTo('/student');
+            if (event.key === '3') goTo('/user.html');
         });
     </script>
-
-  
-  
 </body>
 </html>
