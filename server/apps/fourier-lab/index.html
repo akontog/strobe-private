@@ -1687,11 +1687,11 @@
     </div>
 
     <div class="class-accordion" id="classChatAccordion">
-      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classChatBody" aria-controls="classChatBody" aria-expanded="true">
+      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classChatBody" aria-controls="classChatBody" aria-expanded="false">
         <span>Class Chat</span>
-        <span class="class-accordion-arrow open">▼</span>
+        <span class="class-accordion-arrow">▼</span>
       </button>
-      <div class="class-accordion-body open" id="classChatBody">
+      <div class="class-accordion-body" id="classChatBody">
         <div class="class-chat-feed" id="classChatFeed">
           <div class="class-empty">Δεν υπάρχουν ακόμα μηνύματα.</div>
         </div>
@@ -1704,11 +1704,11 @@
     </div>
 
     <div class="teacher-only class-accordion" id="classQrAccordion">
-      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classQrBody" aria-controls="classQrBody" aria-expanded="true">
+      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classQrBody" aria-controls="classQrBody" aria-expanded="false">
         <span>QR Σύνδεσης</span>
-        <span class="class-accordion-arrow open">▼</span>
+        <span class="class-accordion-arrow">▼</span>
       </button>
-      <div class="class-accordion-body open" id="classQrBody">
+      <div class="class-accordion-body" id="classQrBody">
         <div class="class-qr-box">
           <div class="class-qr-copy">
             <div id="classJoinLinkText">Student link loading...</div>
@@ -1721,11 +1721,11 @@
     </div>
 
     <div class="teacher-only class-accordion" id="classUsersAccordion">
-      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classUsersBody" aria-controls="classUsersBody" aria-expanded="true">
+      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classUsersBody" aria-controls="classUsersBody" aria-expanded="false">
         <span>Connected Users (<span id="classUsersCount">0</span>)</span>
-        <span class="class-accordion-arrow open">▼</span>
+        <span class="class-accordion-arrow">▼</span>
       </button>
-      <div class="class-accordion-body open" id="classUsersBody">
+      <div class="class-accordion-body" id="classUsersBody">
         <div class="class-table class-table-users">
           <div class="class-table-header">
             <span>#</span>
@@ -1743,11 +1743,11 @@
     </div>
 
     <div class="teacher-only class-accordion" id="classScoresAccordion">
-      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classScoresBody" aria-controls="classScoresBody" aria-expanded="true">
+      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classScoresBody" aria-controls="classScoresBody" aria-expanded="false">
         <span>Συνολικές Βαθμολογίες (<span id="classScoresCount">0</span>)</span>
-        <span class="class-accordion-arrow open">▼</span>
+        <span class="class-accordion-arrow">▼</span>
       </button>
-      <div class="class-accordion-body open" id="classScoresBody">
+      <div class="class-accordion-body" id="classScoresBody">
         <div class="class-table class-table-scores">
           <div class="class-table-header">
             <span>#</span>
@@ -1763,11 +1763,11 @@
     </div>
 
     <div class="teacher-only class-accordion" id="classFftDuelAccordion">
-      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classFftDuelBody" aria-controls="classFftDuelBody" aria-expanded="true">
+      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classFftDuelBody" aria-controls="classFftDuelBody" aria-expanded="false">
         <span>FFT Duel (4.2) (<span id="classFftDuelSolved">0</span>/<span id="classFftDuelTotal">0</span>)</span>
-        <span class="class-accordion-arrow open">▼</span>
+        <span class="class-accordion-arrow">▼</span>
       </button>
-      <div class="class-accordion-body open" id="classFftDuelBody">
+      <div class="class-accordion-body" id="classFftDuelBody">
         <div class="fft-duel-toolbar">
           <button type="button" class="fft-duel-submit" id="classFftDuelStartBtn">Νέος γύρος FFT Duel</button>
           <span class="fft-duel-pill" id="classFftDuelRoundLabel">Γύρος: -</span>
@@ -2992,6 +2992,9 @@
     const content = document.getElementById("content");
     const slides = Array.from(document.querySelectorAll("main .section"));
     let currentSlideIndex = 0;
+    let navigationSettleTimer = null;
+    let ignoreObserverUntil = 0;
+    let pendingNavigationIndex = -1;
 
     const referenceWaveCanvas = document.getElementById("referenceWaveCanvas");
     const interactiveWaveCanvas = document.getElementById("interactiveWaveCanvas");
@@ -3498,6 +3501,20 @@
       );
     }
 
+    function beginProgrammaticNavigation(targetIndex, smooth) {
+      pendingNavigationIndex = targetIndex;
+      ignoreObserverUntil = performance.now() + (smooth ? 700 : 120);
+
+      if (navigationSettleTimer) {
+        clearTimeout(navigationSettleTimer);
+      }
+
+      navigationSettleTimer = window.setTimeout(() => {
+        pendingNavigationIndex = -1;
+        navigationSettleTimer = null;
+      }, smooth ? 720 : 140);
+    }
+
     function goToSlide(index, options = {}) {
       const boundedIndex = Math.max(0, Math.min(slides.length - 1, index));
       const source = options.source || "local";
@@ -3508,8 +3525,20 @@
         return false;
       }
 
+      if (!force && boundedIndex === currentSlideIndex && pendingNavigationIndex !== -1) {
+        return true;
+      }
+
       currentSlideIndex = boundedIndex;
-      slides[boundedIndex].scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+      beginProgrammaticNavigation(boundedIndex, smooth);
+      if (contentEl) {
+        contentEl.scrollTo({
+          top: slides[boundedIndex].offsetTop,
+          behavior: smooth ? "smooth" : "auto",
+        });
+      } else {
+        slides[boundedIndex].scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+      }
       refreshNavButtons();
       updateActiveTocSlide(boundedIndex);
       emitSlideChanged(source);
@@ -3546,17 +3575,36 @@
 
     const observer = new IntersectionObserver(
       (entries) => {
+        if (performance.now() < ignoreObserverUntil) {
+          return;
+        }
+
+        let bestEntry = null;
+
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.55) {
-            const idx = slides.indexOf(entry.target);
-            if (idx >= 0 && idx !== currentSlideIndex) {
-              currentSlideIndex = idx;
-              refreshNavButtons();
-              updateActiveTocSlide(idx);
-              emitSlideChanged("scroll");
-            }
+          if (!entry.isIntersecting || entry.intersectionRatio <= 0.55) {
+            return;
+          }
+
+          if (!bestEntry || entry.intersectionRatio > bestEntry.intersectionRatio) {
+            bestEntry = entry;
           }
         });
+
+        if (!bestEntry) {
+          return;
+        }
+
+        const idx = slides.indexOf(bestEntry.target);
+        if (idx < 0 || idx === currentSlideIndex) {
+          return;
+        }
+
+        pendingNavigationIndex = -1;
+        currentSlideIndex = idx;
+        refreshNavButtons();
+        updateActiveTocSlide(idx);
+        emitSlideChanged("scroll");
       },
       {
         root: contentEl,
@@ -6260,17 +6308,20 @@
       const sources = normalizeCompositeSourcesInput(sourcesOrLegacy, includeSecond, includeThird);
       const ampScale = height * 0.30;
       const cyclesAcrossScreen = 2.4;
+      const showSourceOverlay = canvas.id === "soundWaveSumCanvas";
       const totalAmplitude = Math.max(
         1,
         sources.reduce((sum, source) => sum + Math.abs(source.amplitude), 0)
       );
 
-      context.fillStyle = "#9db7dd";
-      context.font = `${Math.max(11, 11 * ratio)}px Segoe UI`;
-      context.fillText(`Ενεργές πηγές: ${sources.length}`, 10 * ratio, 16 * ratio);
-      context.fillStyle = "#a5bde0";
-      context.font = `${Math.max(10, 10 * ratio)}px Segoe UI`;
-      context.fillText("Αχνά: ατομικές πηγές • Έντονο: άθροισμα", 10 * ratio, 30 * ratio);
+      if (showSourceOverlay) {
+        context.fillStyle = "#9db7dd";
+        context.font = `${Math.max(11, 11 * ratio)}px Segoe UI`;
+        context.fillText(`Ενεργές πηγές: ${sources.length}`, 10 * ratio, 16 * ratio);
+        context.fillStyle = "#a5bde0";
+        context.font = `${Math.max(10, 10 * ratio)}px Segoe UI`;
+        context.fillText("Αχνά: ατομικές πηγές • Έντονο: άθροισμα", 10 * ratio, 30 * ratio);
+      }
 
       if (!sources.length) {
         context.strokeStyle = "#88c7ff";
@@ -6317,13 +6368,15 @@
         const baseLabelY = midY - ampScale * (labelValue / totalAmplitude);
         const labelY = baseLabelY + ((index % 2 === 0 ? -1 : 1) * (7 + (index % 3) * 2) * ratio);
 
-        context.fillStyle = getCompositeSourceColor(source, index, 0.96);
-        context.font = `${Math.max(10, 10 * ratio)}px Segoe UI`;
-        context.fillText(
-          getCompositeSourceLabel(source, index),
-          width * labelAnchorNx + 6 * ratio,
-          Math.max(11 * ratio, Math.min(height - 8 * ratio, labelY))
-        );
+        if (showSourceOverlay) {
+          context.fillStyle = getCompositeSourceColor(source, index, 0.96);
+          context.font = `${Math.max(10, 10 * ratio)}px Segoe UI`;
+          context.fillText(
+            getCompositeSourceLabel(source, index),
+            width * labelAnchorNx + 6 * ratio,
+            Math.max(11 * ratio, Math.min(height - 8 * ratio, labelY))
+          );
+        }
       });
 
       context.strokeStyle = "#b5ff9e";
