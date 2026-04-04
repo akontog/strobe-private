@@ -29,6 +29,16 @@ const APPS = [
     staticDir: path.join(__dirname, 'fourier-lab'),
     teacherEntry: 'index.html',
     clientEntry: 'index.html'
+  },
+  {
+    slug: 'chess',
+    title: 'Chess Lab',
+    description: 'Interactive chess presentation with board demos and puzzles.',
+    roles: ['teacher', 'client'],
+    kind: 'static',
+    staticDir: path.join(__dirname, 'chess'),
+    teacherEntry: 'index.html',
+    clientEntry: 'index.html'
   }
 ];
 

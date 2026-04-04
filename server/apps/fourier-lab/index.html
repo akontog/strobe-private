@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Παρουσίαση: Ήχος, Συχνότητες και Ocean Waves (Manim)</title>
   <script src="assets/vendor/three.min.js"></script>
-  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/realtime-socket.js"></script>
   <script>
     window.MathJax = {
       tex: {
@@ -24,6 +24,7 @@
       --muted: #9fb0d1;
       --line: #2d3e63;
       --accent: #58a6ff;
+      --classroom-content-shift: 0px;
     }
 
     * {
@@ -43,7 +44,7 @@
       position: fixed;
       top: 14px;
       left: 14px;
-      z-index: 1000;
+      z-index: 1300;
       border: 1px solid var(--line);
       background: var(--panel);
       color: var(--text);
@@ -52,6 +53,33 @@
       width: 42px;
       height: 42px;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menu-btn-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: #ef4444;
+      color: #ffffff;
+      font-size: 0.68rem;
+      font-weight: 700;
+      line-height: 16px;
+      text-align: center;
+      display: none;
+      pointer-events: none;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    .menu-btn-badge.show {
+      display: inline-block;
     }
 
     .layout {
@@ -72,6 +100,7 @@
       transform: translateX(0);
       transition: transform 0.24s ease;
       z-index: 900;
+      display: none;
     }
 
     .sidebar.hidden {
@@ -138,8 +167,8 @@
     }
 
     .content {
-      margin-left: 300px;
-      width: calc(100% - 300px);
+      margin-left: 0;
+      width: 100%;
       height: 100vh;
       overflow-y: auto;
       scroll-snap-type: y mandatory;
@@ -149,6 +178,11 @@
     .content.expanded {
       margin-left: 0;
       width: 100%;
+    }
+
+    .content.sidebar-open-shift {
+      margin-left: var(--classroom-content-shift);
+      width: calc(100% - var(--classroom-content-shift));
     }
 
     .section {
@@ -352,6 +386,70 @@
       margin: 10px 0 6px;
     }
 
+    .sound-student-controls {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(170px, 1fr));
+      gap: 10px;
+    }
+
+    .sound-slider {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px;
+      background: #070d18;
+      display: grid;
+      gap: 6px;
+    }
+
+    .sound-slider input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .sound-teacher-controls {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sound-teacher-frequency-grid {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(170px, 1fr));
+      gap: 10px;
+      width: 100%;
+    }
+
+    .teacher-tone-card .sum-toggle {
+      margin: 0;
+      font-size: 0.78rem;
+      color: #dbeafe;
+    }
+
+    .teacher-tone-card .sum-toggle input[type="checkbox"] {
+      accent-color: var(--accent);
+    }
+
+    .sound-state-pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      border: 1px solid #334155;
+      background: #0b1222;
+      color: #cbd5e1;
+      padding: 6px 10px;
+      font-size: 0.76rem;
+    }
+
+    .sound-student-note {
+      margin-top: 8px;
+      color: #9db7dd;
+      font-size: 0.84rem;
+    }
+
     .speaker-btn,
     .speaker-stop {
       border: 1px solid var(--line);
@@ -397,6 +495,33 @@
       margin: 0 0 6px;
       color: var(--muted);
       font-size: 0.88rem;
+    }
+
+    .sound-decomposition-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .sound-decomposition-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(13, 21, 36, 0.55);
+    }
+
+    .sound-decomposition-card strong,
+    .sound-decomposition-main strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .sound-decomposition-main {
+      margin-top: 12px;
     }
 
     .sound-wave-canvas {
@@ -590,7 +715,7 @@
     }
 
     .edge-nav.left {
-      left: 316px;
+      left: 14px;
     }
 
     .edge-nav.right {
@@ -610,7 +735,6 @@
       display: none !important;
     }
 
-    body.client-mode.follow-teacher .menu-btn,
     body.client-mode.follow-teacher .edge-nav,
     body.client-mode.follow-teacher .sidebar {
       display: none !important;
@@ -623,18 +747,526 @@
 
     .classroom-dock {
       position: fixed;
-      right: 14px;
-      top: 14px;
+      left: 0;
+      right: auto;
+      top: 0;
+      bottom: 0;
       z-index: 1200;
-      width: min(350px, calc(100vw - 20px));
-      border-radius: 12px;
-      border: 1px solid rgba(96, 165, 250, 0.45);
+      width: min(390px, calc(100vw - 20px));
+      max-width: 100%;
+      border-radius: 0;
+      border-right: 1px solid rgba(96, 165, 250, 0.45);
+      border-left: 0;
+      border-top: 0;
+      border-bottom: 0;
       background: rgba(2, 8, 23, 0.92);
       box-shadow: 0 14px 28px rgba(0, 0, 0, 0.4);
-      padding: 10px 12px;
+      padding: 68px 12px 14px;
       display: grid;
-      gap: 8px;
+      gap: 10px;
       backdrop-filter: blur(6px);
+      overflow-y: auto;
+      transform: translateX(-100%);
+      transition: transform 0.24s ease;
+    }
+
+    body.teacher-mode .classroom-dock.open,
+    body.client-mode .classroom-dock.open {
+      transform: translateX(0);
+    }
+
+    .class-accordion {
+      border: 1px solid #334155;
+      border-radius: 10px;
+      background: #030d1f;
+      overflow: hidden;
+    }
+
+    .class-accordion-header {
+      width: 100%;
+      border: 0;
+      background: #0b1222;
+      color: #dbeafe;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 11px;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .class-accordion-arrow {
+      color: #93c5fd;
+      transition: transform 0.24s ease;
+      font-size: 0.78rem;
+      line-height: 1;
+      transform: rotate(-90deg);
+    }
+
+    .class-accordion-arrow.open {
+      transform: rotate(0deg);
+    }
+
+    .class-accordion-body {
+      display: none;
+      padding: 10px;
+      background: #020814;
+      border-top: 1px solid #334155;
+    }
+
+    .class-accordion-body.open {
+      display: block;
+    }
+
+    #classContentsAccordion {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #classContentsAccordion > .class-accordion-header {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    #classContentsBody.open {
+      max-height: min(58vh, 520px);
+      overflow-y: auto;
+    }
+
+    .class-toc-list {
+      display: grid;
+      gap: 4px;
+      max-height: min(58vh, 520px);
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    #classContentsBody .class-toc-list {
+      max-height: none;
+      overflow-y: visible;
+    }
+
+    .class-toc-list .toc-group-title {
+      margin: 12px 2px 5px;
+      border-bottom: 1px solid rgba(74, 97, 141, 0.45);
+      padding-bottom: 4px;
+      font-size: 0.74rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .class-toc-list .toc-group-title.active-group {
+      color: #d6e9ff;
+      border-bottom-color: rgba(88, 166, 255, 0.65);
+    }
+
+    .class-toc-list a {
+      display: block;
+      text-decoration: none;
+      color: #dbeafe;
+      padding: 7px 8px;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      line-height: 1.35;
+    }
+
+    .class-toc-list a:hover {
+      background: #0d1524;
+      color: var(--accent);
+    }
+
+    .class-toc-list a.active {
+      background: rgba(88, 166, 255, 0.2);
+      color: #e7f2ff;
+      border: 1px solid rgba(88, 166, 255, 0.55);
+      box-shadow: inset 0 0 0 1px rgba(88, 166, 255, 0.12);
+      font-weight: 600;
+    }
+
+    .class-qr-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .class-qr-copy {
+      display: grid;
+      gap: 6px;
+      color: #cbd5e1;
+      font-size: 0.78rem;
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .class-qr-image {
+      width: 136px;
+      height: 136px;
+      object-fit: contain;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      background: #ffffff;
+      padding: 5px;
+      flex-shrink: 0;
+    }
+
+    .class-table {
+      border: 1px solid #334155;
+      border-radius: 9px;
+      overflow: hidden;
+      background: #010814;
+    }
+
+    .class-table-header,
+    .class-table-row {
+      display: grid;
+      gap: 0;
+      font-size: 0.74rem;
+      padding: 7px 8px;
+      align-items: center;
+    }
+
+    .class-table-header {
+      background: #0b1222;
+      border-bottom: 1px solid #334155;
+      color: #bfdbfe;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .class-table-row {
+      color: #cbd5e1;
+      border-bottom: 1px solid #1e293b;
+    }
+
+    .class-table-row:last-child {
+      border-bottom: 0;
+    }
+
+    .class-table-users .class-table-header,
+    .class-table-users .class-table-row {
+      grid-template-columns: 1.8rem 1.6fr 1.2fr 0.8fr 1fr 0.9fr;
+    }
+
+    .class-table-scores .class-table-header,
+    .class-table-scores .class-table-row {
+      grid-template-columns: 1.8rem 1.8fr 1fr 1fr;
+    }
+
+    .class-table-body {
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .class-row-name {
+      color: #e2e8f0;
+      font-weight: 700;
+    }
+
+    .class-row-team {
+      color: #93c5fd;
+    }
+
+    .class-row-role {
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 0.68rem;
+    }
+
+    .class-row-sound {
+      color: #a7f3d0;
+      font-size: 0.72rem;
+    }
+
+    .class-row-score {
+      color: #fcd34d;
+      font-weight: 700;
+    }
+
+    .class-empty {
+      color: #64748b;
+      border: 1px dashed #334155;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 0.76rem;
+      background: #020814;
+      text-align: center;
+    }
+
+    .class-chat-feed {
+      border: 1px solid #334155;
+      border-radius: 10px;
+      background: #020814;
+      min-height: 130px;
+      max-height: 240px;
+      overflow-y: auto;
+      padding: 8px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .class-chat-item {
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      background: #071224;
+      padding: 6px 7px;
+      display: grid;
+      gap: 3px;
+    }
+
+    .class-chat-meta {
+      color: #93c5fd;
+      font-size: 0.72rem;
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .class-chat-text {
+      color: #dbeafe;
+      font-size: 0.79rem;
+      line-height: 1.35;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .class-chat-compose {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .class-chat-compose input[type="text"] {
+      width: 100%;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      background: #0b1222;
+      color: #e2e8f0;
+      padding: 7px 9px;
+      font-size: 0.8rem;
+    }
+
+    .class-chat-compose button {
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 7px 11px;
+      font-size: 0.76rem;
+      background: #1d4ed8;
+      color: #eff6ff;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .class-chat-hint {
+      margin-top: 6px;
+      color: #94a3b8;
+      font-size: 0.72rem;
+      line-height: 1.3;
+      min-height: 1em;
+    }
+
+    .fft-duel-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .fft-duel-pill {
+      border: 1px solid #334155;
+      border-radius: 999px;
+      background: #0b1222;
+      color: #dbeafe;
+      font-size: 0.74rem;
+      padding: 5px 10px;
+      line-height: 1.15;
+      white-space: nowrap;
+    }
+
+    .fft-duel-note {
+      margin-top: 8px;
+      color: #93c5fd;
+      font-size: 0.79rem;
+      line-height: 1.35;
+    }
+
+    .fft-duel-note strong {
+      color: #facc15;
+    }
+
+    .fft-duel-lock {
+      color: #fde68a;
+      font-size: 0.78rem;
+      font-weight: 700;
+      line-height: 1.3;
+      min-height: 1.2em;
+    }
+
+    .fft-duel-submit {
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 7px 11px;
+      font-size: 0.78rem;
+      background: #0369a1;
+      color: #f0f9ff;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .fft-duel-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .fft-duel-board {
+      border: 1px solid #334155;
+      border-radius: 9px;
+      background: #010814;
+      padding: 8px;
+      display: grid;
+      gap: 7px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+
+    .fft-duel-player {
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      background: #071224;
+      padding: 7px;
+      display: grid;
+      gap: 3px;
+    }
+
+    .fft-duel-player-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: #cfe7ff;
+      font-size: 0.76rem;
+      align-items: center;
+    }
+
+    .fft-duel-player-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: #93c5fd;
+      font-size: 0.7rem;
+    }
+
+    .fft-duel-track {
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #1e293b, #0f172a);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fft-duel-track-probe,
+    .fft-duel-track-target {
+      position: absolute;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      border-radius: 2px;
+    }
+
+    .fft-duel-track-probe {
+      background: #f87171;
+    }
+
+    .fft-duel-track-target {
+      background: #22d3ee;
+      opacity: 0.9;
+    }
+
+    .fft-duel-empty {
+      color: #64748b;
+      border: 1px dashed #334155;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 0.76rem;
+      background: #020814;
+      text-align: center;
+    }
+
+    .random-freq-toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .random-freq-chip {
+      border: 1px solid #334155;
+      border-radius: 999px;
+      background: #0b1222;
+      color: #dbeafe;
+      font-size: 0.74rem;
+      padding: 5px 10px;
+      line-height: 1.15;
+      white-space: nowrap;
+    }
+
+    .random-freq-btn {
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 7px 11px;
+      font-size: 0.78rem;
+      background: #155e75;
+      color: #ecfeff;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .random-freq-preview {
+      font-size: 0.78rem;
+      color: #a7f3d0;
+      line-height: 1.35;
+      min-height: 1.2em;
+    }
+
+    .random-freq-table {
+      border: 1px solid #334155;
+      border-radius: 9px;
+      background: #010814;
+      padding: 8px;
+      display: grid;
+      gap: 5px;
+      max-height: 170px;
+      overflow-y: auto;
+      margin-top: 8px;
+    }
+
+    .random-freq-row {
+      display: grid;
+      grid-template-columns: 1.7rem 1.3fr 1fr 1fr 1fr;
+      gap: 8px;
+      font-size: 0.73rem;
+      color: #cbd5e1;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 4px;
+    }
+
+    .random-freq-row:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
     }
 
     .classroom-dock h3 {
@@ -862,15 +1494,114 @@
       font-size: 0.84rem;
     }
 
+    .complexity-choice-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .complexity-choice-option {
+      position: relative;
+      display: block;
+      cursor: pointer;
+    }
+
+    .complexity-choice-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .complexity-choice-option span {
+      display: block;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      background: #071224;
+      color: #dbeafe;
+      padding: 9px 11px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+
+    .complexity-choice-option:hover span {
+      border-color: #4f7bb0;
+      background: #0b1830;
+    }
+
+    .complexity-choice-option input:checked + span {
+      border-color: #60a5fa;
+      background: rgba(30, 58, 110, 0.7);
+      color: #eff6ff;
+      box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.3) inset;
+    }
+
+    .complexity-race-teacher {
+      gap: 10px;
+    }
+
+    .heat-control-grid {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .heat-classroom-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: #cbd5e1;
+      font-size: 0.82rem;
+    }
+
+    .heat-classroom-toggle input[type="checkbox"] {
+      accent-color: var(--accent);
+    }
+
+    .heat-student-note {
+      margin-top: 6px;
+      color: #9db7dd;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
     @media (max-width: 900px) {
       .classroom-dock {
-        left: 10px;
-        right: 10px;
+        left: 0;
+        right: auto;
         top: 10px;
-        width: auto;
+        width: min(360px, calc(100vw - 20px));
+        padding-top: 62px;
+      }
+
+      .sound-student-controls {
+        grid-template-columns: 1fr;
+      }
+
+      .sound-teacher-frequency-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .class-table-users .class-table-header,
+      .class-table-users .class-table-row {
+        grid-template-columns: 1.4rem 1.6fr 1.2fr 0.7fr 0.9fr 0.8fr;
+        font-size: 0.68rem;
+      }
+
+      .class-table-scores .class-table-header,
+      .class-table-scores .class-table-row {
+        grid-template-columns: 1.4rem 1.5fr 0.9fr 0.9fr;
       }
 
       .activity-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .heat-control-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .class-chat-compose {
         grid-template-columns: 1fr;
       }
 
@@ -923,30 +1654,131 @@
       .ocean-controls {
         grid-template-columns: repeat(2, minmax(120px, 1fr));
       }
+
+      .content.sidebar-open-shift {
+        margin-left: 0;
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <button class="menu-btn" id="menuBtn" aria-label="Άνοιγμα πίνακα περιεχομένων">☰</button>
+  <button class="menu-btn" id="menuBtn" aria-label="Άνοιγμα classroom panel" aria-controls="classroomDock" aria-expanded="false">☰<span class="menu-btn-badge" id="classDockUnreadBadge" aria-live="polite">0</span></button>
   <button class="edge-nav left" id="prevSlideBtn" aria-label="Προηγούμενη διαφάνεια">◀</button>
   <button class="edge-nav right" id="nextSlideBtn" aria-label="Επόμενη διαφάνεια">▶</button>
 
   <div class="classroom-dock" id="classroomDock">
-    <h3>Fourier Classroom</h3>
-    <div class="dock-row">
-      <strong id="classRoleLabel">Σύνδεση...</strong>
-      <span id="classConnectionState" class="status-pill">offline</span>
-      <span class="teacher-only status-pill" id="classRoomPill">teacher view</span>
-      <span class="student-only status-pill" id="classFollowPill">follow teacher</span>
+    <div class="class-accordion" id="classContentsAccordion">
+      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classContentsBody" aria-controls="classContentsBody" aria-expanded="true">
+        <span>Περιεχόμενα</span>
+        <span class="class-accordion-arrow open">▼</span>
+      </button>
+      <div class="class-accordion-body open" id="classContentsBody">
+        <div class="class-toc-list" id="classTocContainer">
+          <div class="class-empty">Φόρτωση περιεχομένων...</div>
+        </div>
+      </div>
     </div>
+
     <div class="dock-row student-only" id="studentNameRow">
       <input type="text" id="classStudentNameInput" placeholder="Όνομα μαθητή" maxlength="40" />
+      <input type="text" id="classStudentTeamInput" placeholder="Ομάδα" maxlength="30" />
       <button type="button" id="classStudentJoinBtn">Σύνδεση</button>
     </div>
-    <div class="dock-row teacher-only">
-      <button type="button" class="secondary" id="classCopyStudentLinkBtn">Αντιγραφή student link</button>
-      <span id="classCopyHint"></span>
+
+    <div class="class-accordion" id="classChatAccordion">
+      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classChatBody" aria-controls="classChatBody" aria-expanded="true">
+        <span>Class Chat</span>
+        <span class="class-accordion-arrow open">▼</span>
+      </button>
+      <div class="class-accordion-body open" id="classChatBody">
+        <div class="class-chat-feed" id="classChatFeed">
+          <div class="class-empty">Δεν υπάρχουν ακόμα μηνύματα.</div>
+        </div>
+        <div class="class-chat-compose">
+          <input type="text" id="classChatInput" maxlength="280" placeholder="Γράψε μήνυμα για όλη την τάξη..." />
+          <button type="button" id="classChatSendBtn">Αποστολή</button>
+        </div>
+        <div class="class-chat-hint" id="classChatHint">Τα μηνύματα εμφανίζονται live σε teacher και students.</div>
+      </div>
     </div>
+
+    <div class="teacher-only class-accordion" id="classQrAccordion">
+      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classQrBody" aria-controls="classQrBody" aria-expanded="true">
+        <span>QR Σύνδεσης</span>
+        <span class="class-accordion-arrow open">▼</span>
+      </button>
+      <div class="class-accordion-body open" id="classQrBody">
+        <div class="class-qr-box">
+          <div class="class-qr-copy">
+            <div id="classJoinLinkText">Student link loading...</div>
+            <button type="button" class="secondary" id="classCopyStudentLinkBtn">Αντιγραφή student link</button>
+            <span id="classCopyHint"></span>
+          </div>
+          <img class="class-qr-image" id="classJoinQrImage" alt="QR για σύνδεση μαθητών" />
+        </div>
+      </div>
+    </div>
+
+    <div class="teacher-only class-accordion" id="classUsersAccordion">
+      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classUsersBody" aria-controls="classUsersBody" aria-expanded="true">
+        <span>Connected Users (<span id="classUsersCount">0</span>)</span>
+        <span class="class-accordion-arrow open">▼</span>
+      </button>
+      <div class="class-accordion-body open" id="classUsersBody">
+        <div class="class-table class-table-users">
+          <div class="class-table-header">
+            <span>#</span>
+            <span>Όνομα</span>
+            <span>Ομάδα</span>
+            <span>Ρόλος</span>
+            <span>Ήχος</span>
+            <span>Σύνολο</span>
+          </div>
+          <div class="class-table-body" id="classUsersList">
+            <div class="class-empty">Δεν υπάρχουν ακόμα συνδεδεμένοι χρήστες.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="teacher-only class-accordion" id="classScoresAccordion">
+      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classScoresBody" aria-controls="classScoresBody" aria-expanded="true">
+        <span>Συνολικές Βαθμολογίες (<span id="classScoresCount">0</span>)</span>
+        <span class="class-accordion-arrow open">▼</span>
+      </button>
+      <div class="class-accordion-body open" id="classScoresBody">
+        <div class="class-table class-table-scores">
+          <div class="class-table-header">
+            <span>#</span>
+            <span>Ομάδα</span>
+            <span>Μέλη</span>
+            <span>Σύνολο</span>
+          </div>
+          <div class="class-table-body" id="classScoresList">
+            <div class="class-empty">Δεν υπάρχουν ακόμα ομαδικά δεδομένα.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="teacher-only class-accordion" id="classFftDuelAccordion">
+      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classFftDuelBody" aria-controls="classFftDuelBody" aria-expanded="true">
+        <span>FFT Duel (4.2) (<span id="classFftDuelSolved">0</span>/<span id="classFftDuelTotal">0</span>)</span>
+        <span class="class-accordion-arrow open">▼</span>
+      </button>
+      <div class="class-accordion-body open" id="classFftDuelBody">
+        <div class="fft-duel-toolbar">
+          <button type="button" class="fft-duel-submit" id="classFftDuelStartBtn">Νέος γύρος FFT Duel</button>
+          <span class="fft-duel-pill" id="classFftDuelRoundLabel">Γύρος: -</span>
+        </div>
+        <div class="class-chat-hint" id="classFftDuelStatus">Πάτησε «Νέος γύρος» για να σταλεί διαφορετικό σήμα σε κάθε student.</div>
+        <div class="fft-duel-board" id="classFftDuelBoard">
+          <div class="fft-duel-empty">Δεν υπάρχει ενεργός γύρος.</div>
+        </div>
+      </div>
+    </div>
+
     <div class="dock-mini" id="classSummaryMini">Φόρτωση classroom κατάστασης...</div>
   </div>
 
@@ -962,46 +1794,53 @@
       <div class="toc-group-title">2. Θεμέλια κυμάτων</div>
       <a href="#sec-intro">2.1 Παράμετροι κύματος</a>
       <a href="#sec-propagation">2.2 Διάδοση κύματος sin(kx-ωt)</a>
-      <a href="#sec-wave2d">2.3 2D κύμα A·sin(kx·x+kz·z+ωt+φ)</a>
-      <a href="#sec-gerstner">2.4 Gerstner waves</a>
-      <a href="#sec-gerstner-orbits">2.5 Gerstner particle orbits (2D)</a>
+      <a href="#sec-sum">2.3 Άθροισμα συχνοτήτων</a>
+      <a href="#sec-wave2d">2.4 2D κύμα A·sin(kx·x+kz·z+ωt+φ)</a>
+      <a href="#sec-gerstner">2.5 Gerstner waves</a>
+      <a href="#sec-gerstner-orbits">2.6 Gerstner particle orbits (2D)</a>
 
-      <div class="toc-group-title">3. Σήμα και μαθηματικά</div>
-      <a href="#sec-sum">3.1 Άθροισμα συχνοτήτων</a>
-      <a href="#sec-sound">3.2 Παράδειγμα ήχου</a>
-      <a href="#sec-euler-plane">3.3 Euler και μιγαδικό επίπεδο</a>
-      <a href="#sec-euler-proof">3.4 Αποδείξεις Euler</a>
-      <a href="#sec-heat-rod">3.5 Fourier και θερμοκρασία ράβδου</a>
-      <a href="#sec-step-function">3.6 Step function σε ράβδο 1 m</a>
-      <a href="#sec-activity-spectrum-mix">3.7 Δραστηριότητα: Μίξη συχνοτήτων</a>
+      <div class="toc-group-title">3. Ήχος</div>
+      <a href="#sec-sound-simple">3.1 Το παράδειγμα του ήχου</a>
+      <a href="#sec-sound">3.2 Παράδειγμα ήχου τάξης</a>
+      <a href="#sec-sound-decompose">3.3 Από σύνθετο ήχο σε 3 καθαρούς</a>
 
-      <div class="toc-group-title">4. Μετασχηματισμός Fourier</div>
-      <a href="#sec-fft">4.1 Από το σήμα στο φάσμα (Fourier Transform)</a>
-      <a href="#sec-fft-spikes">4.2 Σύνθετο σήμα και spikes</a>
-      <a href="#sec-fft-explain">4.3 Τι κάνει ο Fourier Transform (DFT)</a>
-      <a href="#sec-ifft-explain">4.4 Τι κάνει το IFFT</a>
-      <a href="#sec-audio-smooth">4.5 Παράδειγμα Fourier → IFFT σε ήχο</a>
-      <a href="#sec-activity-filter-decisions">4.6 Δραστηριότητα: Επιλογή φίλτρου</a>
+      <div class="toc-group-title">4. Euler</div>
+      <a href="#sec-euler-plane">4.1 Euler και μιγαδικό επίπεδο</a>
+      <a href="#sec-euler-proof">4.2 Αποδείξεις Euler</a>
 
-      <div class="toc-group-title">5. Cooley-Tukey και πολυπλοκότητα</div>
-      <a href="#sec-fft-complexity">5.1 Divide and conquer: N² vs N log N</a>
-      <a href="#sec-cooley-tukey">5.2 Cooley-Tukey FFT βήμα-βήμα</a>
-      <a href="#sec-activity-complexity-check">5.3 Δραστηριότητα: Πολυπλοκότητα ομάδας</a>
+      <div class="toc-group-title">5. Fourier ράβδος</div>
+      <a href="#sec-heat-rod">5.1 Fourier και θερμοκρασία ράβδου</a>
+      <a href="#sec-step-function">5.2 Step function σε ράβδο 1 m</a>
 
-      <div class="toc-group-title">6. Pipeline θάλασσας</div>
-      <a href="#sec-bridge-1d2d">6.1 Από 1D ήχο σε 2D θάλασσα</a>
-      <a href="#sec-wave">6.2 Τι είναι ο κυματισμός</a>
-      <a href="#sec-spectrum">6.3 Ενεργειακό φάσμα</a>
-      <a href="#sec-phillips">6.4 Φάσμα Phillips</a>
-      <a href="#sec-random">6.5 Τυχαίες φάσεις</a>
-      <a href="#sec-time">6.6 Εξέλιξη στον χρόνο</a>
-      <a href="#sec-ifft">6.7 IFFT ανακατασκευή</a>
-      <a href="#sec-final">6.8 Τελικό rendering</a>
-      <a href="#sec-activity-ocean-config">6.9 Δραστηριότητα: Σενάριο θάλασσας</a>
+      <div class="toc-group-title">6. Μετασχηματισμός Fourier</div>
+      <a href="#sec-activity-spectrum-mix">6.1 Δραστηριότητα: Μίξη συχνοτήτων</a>
+      <a href="#sec-fft">6.2 Από το σήμα στο φάσμα (Fourier Transform)</a>
+      <a href="#sec-fft-duel">6.3 FFT Duel: Βρες τη συχνότητα</a>
+      <a href="#sec-fft-spikes">6.4 Σύνθετο σήμα και spikes</a>
+      <a href="#sec-fft-explain">6.5 Τι κάνει ο Fourier Transform (DFT)</a>
+      <a href="#sec-ifft-explain">6.6 Τι κάνει το IFFT</a>
+      <a href="#sec-audio-smooth">6.7 Παράδειγμα Fourier → IFFT σε ήχο</a>
+      <a href="#sec-activity-filter-decisions">6.8 Δραστηριότητα: Επιλογή φίλτρου</a>
 
-      <div class="toc-group-title">7. Εκτέλεση και κλείσιμο</div>
-      <a href="#sec-run">7.1 Ρυθμίσεις web demo</a>
-      <a href="#sec-ocean">7.2 Θάλασσα κυμάτων</a>
+      <div class="toc-group-title">7. Cooley-Tukey και πολυπλοκότητα</div>
+      <a href="#sec-fft-complexity">7.1 Divide and conquer: N² vs N log N</a>
+      <a href="#sec-cooley-tukey">7.2 Cooley-Tukey FFT βήμα-βήμα</a>
+      <a href="#sec-activity-complexity-check">7.3 Αγώνες πολυπλοκότητας (διαδραστικό)</a>
+
+      <div class="toc-group-title">8. Pipeline θάλασσας</div>
+      <a href="#sec-bridge-1d2d">8.1 Από 1D ήχο σε 2D θάλασσα</a>
+      <a href="#sec-wave">8.2 Τι είναι ο κυματισμός</a>
+      <a href="#sec-spectrum">8.3 Ενεργειακό φάσμα</a>
+      <a href="#sec-phillips">8.4 Φάσμα Phillips</a>
+      <a href="#sec-random">8.5 Τυχαίες φάσεις</a>
+      <a href="#sec-time">8.6 Εξέλιξη στον χρόνο</a>
+      <a href="#sec-ifft">8.7 IFFT ανακατασκευή</a>
+      <a href="#sec-final">8.8 Τελικό rendering</a>
+      <a href="#sec-activity-ocean-config">8.9 Δραστηριότητα: Σενάριο θάλασσας</a>
+
+      <div class="toc-group-title">9. Εκτέλεση και κλείσιμο</div>
+      <a href="#sec-run">9.1 Ρυθμίσεις web demo</a>
+      <a href="#sec-ocean">9.2 Θάλασσα κυμάτων</a>
     </aside>
 
     <main class="content" id="content">
@@ -1178,103 +2017,10 @@
         </div>
       </section>
 
-      <section class="section" id="sec-wave2d">
-        <div class="slide-card">
-          <div class="slide-content">
-            <h2>2.3) 2D κύμα: \(A\sin(k_xx+k_zz+\omega t+\phi)\)</h2>
-            <canvas id="wave2DCanvas" class="demo-canvas" width="940" height="360"></canvas>
-            <div class="wave2d-controls">
-              <label class="ocean-control">
-                <span>A <strong id="wave2DAmpValue">0.80</strong></span>
-                <input id="wave2DAmp" type="range" min="0.1" max="1.8" step="0.01" value="0.8" />
-              </label>
-              <label class="ocean-control">
-                <span>k<sub>x</sub> <strong id="wave2DKxValue">1.40</strong></span>
-                <input id="wave2DKx" type="range" min="0.2" max="5" step="0.01" value="1.4" />
-              </label>
-              <label class="ocean-control">
-                <span>k<sub>z</sub> <strong id="wave2DKzValue">1.00</strong></span>
-                <input id="wave2DKz" type="range" min="0.2" max="5" step="0.01" value="1.0" />
-              </label>
-              <label class="ocean-control">
-                <span>ω <strong id="wave2DOmegaValue">1.20</strong></span>
-                <input id="wave2DOmega" type="range" min="0.1" max="4" step="0.01" value="1.2" />
-              </label>
-              <label class="ocean-control">
-                <span>φ <strong id="wave2DPhiValue">0.00</strong></span>
-                <input id="wave2DPhi" type="range" min="-3.14" max="3.14" step="0.01" value="0" />
-              </label>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="sec-gerstner">
-        <div class="slide-card">
-          <div class="slide-content">
-            <h2>2.4) Gerstner waves</h2>
-            <canvas id="gerstnerCanvas" class="demo-canvas" width="940" height="360"></canvas>
-            <div class="wave2d-controls">
-              <label class="ocean-control">
-                <span>A <strong id="gerstnerAmpValue">0.70</strong></span>
-                <input id="gerstnerAmp" type="range" min="0.1" max="1.6" step="0.01" value="0.7" />
-              </label>
-              <label class="ocean-control">
-                <span>Q (steepness) <strong id="gerstnerQValue">0.55</strong></span>
-                <input id="gerstnerQ" type="range" min="0" max="1" step="0.01" value="0.55" />
-              </label>
-              <label class="ocean-control">
-                <span>k <strong id="gerstnerKValue">1.40</strong></span>
-                <input id="gerstnerK" type="range" min="0.2" max="4.5" step="0.01" value="1.4" />
-              </label>
-              <label class="ocean-control">
-                <span>ω <strong id="gerstnerOmegaValue">1.10</strong></span>
-                <input id="gerstnerOmega" type="range" min="0.1" max="4" step="0.01" value="1.1" />
-              </label>
-              <label class="ocean-control">
-                <span>dir θ <strong id="gerstnerDirValue">35°</strong></span>
-                <input id="gerstnerDir" type="range" min="0" max="360" step="1" value="35" />
-              </label>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="sec-gerstner-orbits">
-        <div class="slide-card">
-          <div class="slide-content">
-            <h2>2.5) Gerstner: 2D κυκλικές κινήσεις σωματιδίων</h2>
-            <canvas id="gerstnerOrbitCanvas" class="demo-canvas" width="940" height="300"></canvas>
-            <div class="wave2d-controls">
-              <label class="ocean-control">
-                <span>A <strong id="gerstnerOrbitAmpValue">0.70</strong></span>
-                <input id="gerstnerOrbitAmp" type="range" min="0.1" max="1.6" step="0.01" value="0.7" />
-              </label>
-              <label class="ocean-control">
-                <span>Q <strong id="gerstnerOrbitQValue">0.55</strong></span>
-                <input id="gerstnerOrbitQ" type="range" min="0" max="1" step="0.01" value="0.55" />
-              </label>
-              <label class="ocean-control">
-                <span>k <strong id="gerstnerOrbitKValue">1.40</strong></span>
-                <input id="gerstnerOrbitK" type="range" min="0.2" max="4.5" step="0.01" value="1.4" />
-              </label>
-              <label class="ocean-control">
-                <span>ω <strong id="gerstnerOrbitOmegaValue">1.10</strong></span>
-                <input id="gerstnerOrbitOmega" type="range" min="0.1" max="4" step="0.01" value="1.1" />
-              </label>
-              <label class="ocean-control">
-                <span>depth fade <strong id="gerstnerOrbitDepthValue">0.85</strong></span>
-                <input id="gerstnerOrbitDepth" type="range" min="0.2" max="1.5" step="0.01" value="0.85" />
-              </label>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section class="section" id="sec-sum">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>3.1) Άθροισμα κυμάτων διαφορετικών συχνοτήτων (διαδραστικά)</h2>
+            <h2>2.3) Άθροισμα κυμάτων διαφορετικών συχνοτήτων (διαδραστικά)</h2>
             <p>
               Ρύθμισε πλάτος και συχνότητα για τέσσερις συνιστώσες. Το τελικό κύμα είναι
               στατικό και προκύπτει αποκλειστικά από το άθροισμα των 4 συνιστωσών.
@@ -1345,20 +2091,164 @@
         </div>
       </section>
 
+      <section class="section" id="sec-wave2d">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>2.4) 2D κύμα: \(A\sin(k_xx+k_zz+\omega t+\phi)\)</h2>
+            <canvas id="wave2DCanvas" class="demo-canvas" width="940" height="360"></canvas>
+            <div class="wave2d-controls">
+              <label class="ocean-control">
+                <span>A <strong id="wave2DAmpValue">0.80</strong></span>
+                <input id="wave2DAmp" type="range" min="0.1" max="1.8" step="0.01" value="0.8" />
+              </label>
+              <label class="ocean-control">
+                <span>k<sub>x</sub> <strong id="wave2DKxValue">1.40</strong></span>
+                <input id="wave2DKx" type="range" min="0.2" max="5" step="0.01" value="1.4" />
+              </label>
+              <label class="ocean-control">
+                <span>k<sub>z</sub> <strong id="wave2DKzValue">1.00</strong></span>
+                <input id="wave2DKz" type="range" min="0.2" max="5" step="0.01" value="1.0" />
+              </label>
+              <label class="ocean-control">
+                <span>ω <strong id="wave2DOmegaValue">1.20</strong></span>
+                <input id="wave2DOmega" type="range" min="0.1" max="4" step="0.01" value="1.2" />
+              </label>
+              <label class="ocean-control">
+                <span>φ <strong id="wave2DPhiValue">0.00</strong></span>
+                <input id="wave2DPhi" type="range" min="-3.14" max="3.14" step="0.01" value="0" />
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-gerstner">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>2.5) Gerstner waves</h2>
+            <canvas id="gerstnerCanvas" class="demo-canvas" width="940" height="360"></canvas>
+            <div class="wave2d-controls">
+              <label class="ocean-control">
+                <span>A <strong id="gerstnerAmpValue">0.70</strong></span>
+                <input id="gerstnerAmp" type="range" min="0.1" max="1.6" step="0.01" value="0.7" />
+              </label>
+              <label class="ocean-control">
+                <span>Q (steepness) <strong id="gerstnerQValue">0.55</strong></span>
+                <input id="gerstnerQ" type="range" min="0" max="1" step="0.01" value="0.55" />
+              </label>
+              <label class="ocean-control">
+                <span>k <strong id="gerstnerKValue">1.40</strong></span>
+                <input id="gerstnerK" type="range" min="0.2" max="4.5" step="0.01" value="1.4" />
+              </label>
+              <label class="ocean-control">
+                <span>ω <strong id="gerstnerOmegaValue">1.10</strong></span>
+                <input id="gerstnerOmega" type="range" min="0.1" max="4" step="0.01" value="1.1" />
+              </label>
+              <label class="ocean-control">
+                <span>dir θ <strong id="gerstnerDirValue">35°</strong></span>
+                <input id="gerstnerDir" type="range" min="0" max="360" step="1" value="35" />
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-gerstner-orbits">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>2.6) Gerstner: 2D κυκλικές κινήσεις σωματιδίων</h2>
+            <canvas id="gerstnerOrbitCanvas" class="demo-canvas" width="940" height="300"></canvas>
+            <div class="wave2d-controls">
+              <label class="ocean-control">
+                <span>A <strong id="gerstnerOrbitAmpValue">0.70</strong></span>
+                <input id="gerstnerOrbitAmp" type="range" min="0.1" max="1.6" step="0.01" value="0.7" />
+              </label>
+              <label class="ocean-control">
+                <span>Q <strong id="gerstnerOrbitQValue">0.55</strong></span>
+                <input id="gerstnerOrbitQ" type="range" min="0" max="1" step="0.01" value="0.55" />
+              </label>
+              <label class="ocean-control">
+                <span>k <strong id="gerstnerOrbitKValue">1.40</strong></span>
+                <input id="gerstnerOrbitK" type="range" min="0.2" max="4.5" step="0.01" value="1.4" />
+              </label>
+              <label class="ocean-control">
+                <span>ω <strong id="gerstnerOrbitOmegaValue">1.10</strong></span>
+                <input id="gerstnerOrbitOmega" type="range" min="0.1" max="4" step="0.01" value="1.1" />
+              </label>
+              <label class="ocean-control">
+                <span>depth fade <strong id="gerstnerOrbitDepthValue">0.85</strong></span>
+                <input id="gerstnerOrbitDepth" type="range" min="0.2" max="1.5" step="0.01" value="0.85" />
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-sound-simple">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>3.1) Το παράδειγμα του ήχου</h2>
+            <p>
+              Μια μόνο συχνότητα <strong>f</strong> παράγει ένα καθαρό ημίτονο. Κοντά στις κορυφές
+              συγκεντρώνονται τα μόρια αέρα (<strong>πύκνωση</strong>) και κοντά στα κοιλώματα
+              αραιώνουν (<strong>αραίωση</strong>). Η συχνότητα καθορίζει τον αριθμό των κύκλων
+              ανά δευτερόλεπτο — δηλαδή τον <em>τόνο</em> του ήχου.
+            </p>
+            <canvas id="soundSimpleWaveCanvas" class="demo-canvas" width="940" height="160"></canvas>
+            <canvas id="soundSimpleMolCanvas" class="air-canvas" width="940" height="130"></canvas>
+            <div class="slider-grid">
+              <div class="slider-group">
+                <div class="slider-label"><span>Συχνότητα f</span><span id="soundSimpleFreqValue">2.0</span></div>
+                <input id="soundSimpleFreq" type="range" min="0.5" max="6" step="0.1" value="2" />
+              </div>
+              <div class="slider-group">
+                <div class="slider-label"><span>Πλάτος A</span><span id="soundSimpleAmpValue">1.00</span></div>
+                <input id="soundSimpleAmp" type="range" min="0.1" max="1.8" step="0.01" value="1" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="section" id="sec-sound">
         <div class="slide-card">
           <div class="slide-content">
             <h2>3.2) Παράδειγμα ήχου: συχνότητες και πυκνώσεις/αραιώσεις</h2>
-            <p>
-              Πάτα τα ηχεία για να ακούσεις: (1) πρώτη συχνότητα, (2) δεύτερη συχνότητα, (3) τρίτη συχνότητα,
-              και αν είναι ενεργές πολλές μαζί ακούγεται το άθροισμά τους. Στο canvas φαίνεται η διάδοση στον αέρα με
-              <strong>πυκνώσεις</strong> και <strong>αραιώσεις</strong> μορίων.
+            <p class="teacher-only">
+              Ομαδική, μη ανταγωνιστική δραστηριότητα: κάθε student ρυθμίζει συχνότητα και πλάτος,
+              ενώ εδώ φαίνονται αχνά οι ατομικές συνεισφορές και εντονότερα το συνολικό άθροισμα.
+              Οι teacher συνιστώσες εμφανίζονται ως <strong>f1</strong> και <strong>f2</strong>.
             </p>
-            <div class="speaker-row">
-              <button id="speakerOne" class="speaker-btn" type="button"><span class="icon">🔊</span> Συχνότητα 1 (440 Hz)</button>
-              <button id="speakerTwo" class="speaker-btn" type="button"><span class="icon">🔊</span> Συχνότητα 2 (660 Hz)</button>
-              <button id="speakerThree" class="speaker-btn" type="button"><span class="icon">🔊</span> Συχνότητα 3 (880 Hz)</button>
-              <button id="speakerStop" class="speaker-stop" type="button">⏹ Σταμάτα ήχο</button>
+            <p class="student-only">
+              Ρύθμισε συχνότητα και πλάτος. Η επιλογή σου στέλνεται live για τη δημιουργία του κεντρικού ήχου της τάξης.
+            </p>
+            <div class="student-only sound-student-controls">
+              <label class="sound-slider">
+                <div class="slider-label"><span>Συχνότητα (Hz)</span><span id="studentSoundFrequencyValue">440 Hz</span></div>
+                <input id="studentSoundFrequency" type="range" min="120" max="1200" step="1" value="440" />
+              </label>
+              <label class="sound-slider">
+                <div class="slider-label"><span>Πλάτος</span><span id="studentSoundAmplitudeValue">0%</span></div>
+                <input id="studentSoundAmplitude" type="range" min="0" max="1" step="0.01" value="0" />
+              </label>
+            </div>
+            <p class="student-only sound-student-note">Το κύμα και τα μόρια παρακάτω δείχνουν προεπισκόπηση των δικών σου ρυθμίσεων.</p>
+            <div class="teacher-only sound-teacher-controls">
+              <button id="teacherSoundActivateBtn" class="speaker-btn" type="button"><span class="icon">🔊</span> Ενεργοποίηση classroom ήχου</button>
+              <button id="teacherSoundMuteBtn" class="speaker-stop" type="button">⏹ Σίγαση classroom ήχου</button>
+              <span id="teacherSoundStateLabel" class="sound-state-pill">Classroom ήχος: ενεργός (χωρίς ενεργές πηγές)</span>
+            </div>
+            <div class="teacher-only sound-teacher-frequency-grid">
+              <div class="sound-slider teacher-tone-card">
+                <div class="slider-label"><span>Teacher f1 (Hz)</span><span id="teacherSoundFreqOneValue">330 Hz</span></div>
+                <input id="teacherSoundFreqOne" type="range" min="120" max="1200" step="1" value="330" />
+                <label class="sum-toggle"><input id="teacherSoundFreqOneOn" type="checkbox" /> ενεργή f1</label>
+              </div>
+              <div class="sound-slider teacher-tone-card">
+                <div class="slider-label"><span>Teacher f2 (Hz)</span><span id="teacherSoundFreqTwoValue">550 Hz</span></div>
+                <input id="teacherSoundFreqTwo" type="range" min="120" max="1200" step="1" value="550" />
+                <label class="sum-toggle"><input id="teacherSoundFreqTwoOn" type="checkbox" /> ενεργή f2</label>
+              </div>
             </div>
             <div class="sound-wave-item">
               <p>Τελικό κύμα (ενεργές συχνότητες)</p>
@@ -1369,10 +2259,40 @@
         </div>
       </section>
 
+      <section class="section" id="sec-sound-decompose">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>3.3) Αντίστροφη διαδικασία: από σύνθετο ήχο σε 3 καθαρούς ήχους</h2>
+            <p>
+              Ξεκινάμε από έναν σύνθετο ήχο στο πάνω μέρος. Κάτω φαίνονται οι τρεις συνιστώσες
+              που τον δημιουργούν όταν τις απομονώσουμε στο φάσμα.
+            </p>
+            <div class="sound-decomposition-main sound-wave-item">
+              <strong>Σύνθετος ήχος</strong>
+              <canvas id="soundDecomposeMixCanvas" class="sound-wave-canvas" width="940" height="130"></canvas>
+            </div>
+            <div class="sound-decomposition-grid">
+              <div class="sound-decomposition-card">
+                <strong>Συνιστώσα 1</strong>
+                <canvas id="soundDecomposePartOneCanvas" class="sound-wave-canvas" width="300" height="120"></canvas>
+              </div>
+              <div class="sound-decomposition-card">
+                <strong>Συνιστώσα 2</strong>
+                <canvas id="soundDecomposePartTwoCanvas" class="sound-wave-canvas" width="300" height="120"></canvas>
+              </div>
+              <div class="sound-decomposition-card">
+                <strong>Συνιστώσα 3</strong>
+                <canvas id="soundDecomposePartThreeCanvas" class="sound-wave-canvas" width="300" height="120"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="section" id="sec-euler-plane">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>3.3) Euler σε σκίτσο και μιγαδικό επίπεδο</h2>
+            <h2>4.1) Euler σε σκίτσο και μιγαδικό επίπεδο</h2>
             <p>
               Ρύθμισε την γωνία θ και το μέτρο r και δες το διάνυσμα στο μιγαδικό επίπεδο:
               η προβολή στον άξονα Re είναι r cosθ και στον άξονα Im είναι r sinθ.
@@ -1398,7 +2318,7 @@
       <section class="section" id="sec-euler-proof">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>3.4) Αποδείξεις της Euler Formula</h2>
+            <h2>4.2) Αποδείξεις της Euler Formula</h2>
             <p>Με τα κουμπιά βλέπεις βήμα-βήμα δύο κλασικές προσεγγίσεις, συμπεριλαμβανομένης της απόδειξης με παραγώγους.</p>
             <div class="proof-layout">
               <div class="proof-dual">
@@ -1431,7 +2351,7 @@
       <section class="section" id="sec-heat-rod">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>3.5) Fourier και θερμοκρασία ράβδου</h2>
+            <h2>5.1) Fourier και θερμοκρασία ράβδου</h2>
             <p>
               Ξεκινάμε από μια «περίεργη» αρχική κατανομή θερμοκρασίας με σκαμπανεβάσματα.
               Ο Fourier τη γράφει ως άθροισμα αρμονικών και με τον χρόνο οι υψηλές συχνότητες
@@ -1440,8 +2360,42 @@
             <canvas id="heatRodCanvas" class="demo-canvas" width="940" height="320"></canvas>
             <div class="slider-grid">
               <div class="slider-group">
-                <div class="slider-label"><span>Χρόνος εξέλιξης t</span><span id="heatTimeValue">0.00</span></div>
+                <div class="slider-label"><span>Χρόνος εξέλιξης t (μόνο teacher)</span><span id="heatTimeValue">0.00</span></div>
                 <input id="heatTimeSlider" type="range" min="0" max="8" step="0.02" value="0" />
+              </div>
+            </div>
+            <div class="heat-control-grid">
+              <div class="activity-card">
+                <h3>Σημείο και Θερμοκρασία (3.5)</h3>
+                <div class="activity-control">
+                  <div class="slider-label"><span>Σημείο</span><span id="heatStudentPositionValue">0.00 m</span></div>
+                  <input id="heatStudentPosition" type="range" min="-0.5" max="0.5" step="0.01" value="0"
+                    data-activity-control="heat-rod-control" data-control-key="positionMeter" />
+                </div>
+                <div class="activity-control">
+                  <div class="slider-label"><span>Θερμοκρασία</span><span id="heatStudentTemperatureValue">53 °C</span></div>
+                  <input id="heatStudentTemperature" type="range" min="0" max="100" step="1" value="53"
+                    data-activity-control="heat-rod-control" data-control-key="temperatureC" />
+                </div>
+                <div class="heat-student-note student-only">
+                  Η επιλογή σου στέλνεται αυτόματα στον server. Ο teacher μπορεί να δείξει την εξέλιξη
+                  της ράβδου με βάση όλες τις επιλογές της τάξης.
+                </div>
+                <div class="heat-student-note teacher-only">
+                  Αν δεν υπάρχουν μαθητές, όρισε εσύ Σημείο και Θερμοκρασία από τους παραπάνω sliders.
+                </div>
+              </div>
+              <div class="activity-live teacher-only">
+                <h3>Classroom επιλογές θερμότητας</h3>
+                <div class="activity-metrics">
+                  <div class="activity-metric"><span>Επιλογές</span><strong id="heatClassroomCount">0</strong></div>
+                  <div class="activity-metric"><span>Μέση θέση</span><strong id="heatClassroomMeanPosition">0.00 m</strong></div>
+                  <div class="activity-metric"><span>Μέση θερμοκρασία</span><strong id="heatClassroomMeanTemperature">53 °C</strong></div>
+                </div>
+                <label class="heat-classroom-toggle"><input id="heatTeacherUseClassroom" type="checkbox" /> Χρήση classroom επιλογών στο μοντέλο 3.5</label>
+                <div class="activity-feed" id="heatClassroomSelectionFeed">
+                  <div class="empty">Δεν υπάρχουν ακόμα επιλογές από μαθητές.</div>
+                </div>
               </div>
             </div>
             <div id="heatEquationMath" class="mathjax-box"></div>
@@ -1452,7 +2406,7 @@
       <section class="section" id="sec-step-function">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>3.6) Ράβδος 1 m και step function</h2>
+            <h2>5.2) Ράβδος 1 m και step function</h2>
             <p>
               Η ράβδος έχει μήκος 1 m: στο αριστερό μισό η θερμοκρασία είναι χαμηλή και στο δεξί υψηλή.
               Η απότομη αλλαγή (step) προσεγγίζεται από άθροισμα Fourier με όλο και περισσότερους όρους.
@@ -1472,7 +2426,7 @@
       <section class="section activity-slide" id="sec-activity-spectrum-mix" data-activity-id="spectrum-mix">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>3.7) Δραστηριότητα: Μίξη συχνοτήτων ομάδας</h2>
+            <h2>6.1) Δραστηριότητα: Μίξη συχνοτήτων ομάδας</h2>
             <p>
               Δημιούργησε ένα σύνθετο σήμα επιλέγοντας συνιστώσες. Προσπάθησε να εντοπίσεις ποια συχνότητα
               θα κυριαρχήσει στο φάσμα πριν εμφανιστούν τα spikes.
@@ -1523,7 +2477,7 @@
       <section class="section" id="sec-fft">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>4.1) Από το σήμα στο φάσμα (Fourier Transform)</h2>
+            <h2>6.2) Από το σήμα στο φάσμα (Fourier Transform)</h2>
             <p>
               Ρύθμισε τη συχνότητα του σήματος και τη δοκιμαστική συχνότητα <strong>k</strong>.
               Η ημιτονοειδής καμπύλη «τυλίγεται» μέσω του <strong>e<sup>-i2πkn/N</sup></strong> και η
@@ -1545,10 +2499,45 @@
         </div>
       </section>
 
+      <section class="section" id="sec-fft-duel">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>6.3) FFT Duel: Βρες τη συχνότητα του σήματος</h2>
+            <p>
+              Κάθε student παίρνει διαφορετικό σήμα. Με το slider αλλάζεις τη δοκιμαστική συχνότητα <strong>k</strong>
+              και «τυλίγεις/ξετυλίγεις» το σήμα. Όταν βρεις το καλύτερο ταίριασμα πατάς submit, η τιμή στέλνεται στον server
+              και η κίνηση κλειδώνει για αυτόν τον γύρο.
+            </p>
+            <canvas id="fftDuelCanvas" class="demo-canvas" width="940" height="320"></canvas>
+            <div class="fft-duel-toolbar">
+              <span class="fft-duel-pill">Σήμα: <strong id="fftDuelSignalLabel">-</strong></span>
+              <span class="fft-duel-pill">Γύρος: <strong id="fftDuelRoundLabel">-</strong></span>
+              <span class="fft-duel-pill">Υποβολές: <strong id="fftDuelProgressLabel">0/0</strong></span>
+            </div>
+            <div class="slider-grid">
+              <div class="slider-group">
+                <div class="slider-label"><span>Δοκιμαστική συχνότητα k</span><span id="fftDuelProbeValue">2.00</span></div>
+                <input id="fftDuelProbeFreq" type="range" min="0" max="8" step="0.01" value="2" data-activity-control="fft-duel" data-control-key="probeFreq" />
+              </div>
+              <div class="slider-group student-only">
+                <div class="slider-label"><span>Τιμή που θα στείλω</span><span id="fftDuelGuessValue">2.00</span></div>
+                <button id="fftDuelSubmitBtn" class="fft-duel-submit" type="button">Submit συχνότητας</button>
+              </div>
+              <div class="slider-group teacher-only">
+                <div class="slider-label"><span>Έλεγχος γύρου</span><span id="fftDuelTeacherHint">Στείλε νέο γύρο στην τάξη</span></div>
+                <button id="fftDuelStartBtn" class="fft-duel-submit" type="button">Νέος γύρος για όλους</button>
+              </div>
+            </div>
+            <div id="fftDuelLockLabel" class="fft-duel-lock">Περίμενε νέο γύρο από τον teacher.</div>
+            <p class="fft-duel-note">Στον teacher εμφανίζονται live οι κινήσεις όλων των players στο classroom panel.</p>
+          </div>
+        </div>
+      </section>
+
       <section class="section" id="sec-fft-spikes">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>4.2) Σύνθετο σήμα 2-3 συχνοτήτων και spikes</h2>
+            <h2>6.4) Σύνθετο σήμα 2-3 συχνοτήτων και spikes</h2>
             <p>
               Διαδραστική απεικόνιση μετάβασης από το πεδίο χρόνου στο πεδίο συχνοτήτων, όπου οι
               κορυφές δείχνουν ποιες συχνότητες υπάρχουν περισσότερο. Εδώ βλέπεις και το τύλιγμα
@@ -1580,7 +2569,7 @@
       <section class="section" id="sec-fft-explain">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>4.3) Τι κάνει ο Fourier Transform (DFT)</h2>
+            <h2>6.5) Τι κάνει ο Fourier Transform (DFT)</h2>
             <p>
               Ο Fourier Transform παίρνει ένα σήμα στον χρόνο και υπολογίζει πόση ενέργεια έχει σε κάθε συχνότητα.
               Έτσι από το «κυματάκι» περνάμε σε spikes που δείχνουν καθαρά ποιες συχνότητες συμμετέχουν.
@@ -1594,7 +2583,7 @@
       <section class="section" id="sec-ifft-explain">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>4.4) Τι κάνει το IFFT</h2>
+            <h2>6.6) Τι κάνει το IFFT</h2>
             <p>
               Το IFFT κάνει το αντίστροφο: από το φάσμα επιστρέφει στο σήμα χρόνου.
               Αν αφαιρέσουμε τη πολύ υψηλή συχνότητα στο φάσμα, το ανακατασκευασμένο σήμα γίνεται πιο ομαλό.
@@ -1608,7 +2597,7 @@
       <section class="section" id="sec-audio-smooth">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>4.5) Παράδειγμα Fourier → IFFT σε ήχο (φιλτράρισμα)</h2>
+            <h2>6.7) Παράδειγμα Fourier → IFFT σε ήχο (φιλτράρισμα)</h2>
             <p>
               Εδώ εφαρμόζουμε το pipeline στην πράξη: Fourier transform για ανάλυση του ήχου,
               αφαίρεση της πολύ υψηλής συνιστώσας (3200 Hz), και IFFT για ανακατασκευή
@@ -1627,7 +2616,7 @@
       <section class="section activity-slide" id="sec-activity-filter-decisions" data-activity-id="filter-decisions">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>4.6) Δραστηριότητα: Επιλογή στρατηγικής φίλτρου</h2>
+            <h2>6.8) Δραστηριότητα: Επιλογή στρατηγικής φίλτρου</h2>
             <p>
               Επίλεξε cutoff στρατηγική για το σήμα και δήλωσε αν κρατάς ή αφαιρείς τις υψηλές συχνότητες.
               Συγκρίνουμε τις επιλογές της τάξης πριν ακούσουμε το αποτέλεσμα.
@@ -1672,7 +2661,7 @@
       <section class="section" id="sec-fft-complexity">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>5.1) Cooley-Tukey: divide and conquer</h2>
+            <h2>7.1) Cooley-Tukey: divide and conquer</h2>
             <p>
               Αν υπολογίσουμε τον DFT άμεσα, η πολυπλοκότητα είναι περίπου <strong>\(N^2\)</strong>.
               Ο αλγόριθμος Cooley-Tukey σπάει το πρόβλημα σε μικρότερα (divide and conquer) και
@@ -1710,7 +2699,7 @@
       <section class="section" id="sec-cooley-tukey">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>5.2) Cooley-Tukey FFT: αναδρομή και επίπεδα</h2>
+            <h2>7.2) Cooley-Tukey FFT: αναδρομή και επίπεδα</h2>
             <p>
               Ιδέα Cooley-Tukey: χωρίζουμε το σήμα σε άρτιες/περιττές θέσεις και λύνουμε δύο
               μικρότερα προβλήματα, ξανά και ξανά. Η σχέση είναι
@@ -1737,37 +2726,53 @@
       <section class="section activity-slide" id="sec-activity-complexity-check" data-activity-id="complexity-check">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>5.3) Δραστηριότητα: Σκέψη πολυπλοκότητας</h2>
-            <p>
-              Για ποιο μέγεθος δεδομένων πιστεύεις ότι η FFT γίνεται κρίσιμη; Δώσε πρόβλεψη και σύγκρινε
-              με την υπόλοιπη τάξη.
+            <h2>7.3) Αγώνες πολυπλοκότητας (διαδραστικό)</h2>
+            <p class="student-only">
+              Επέλεξε μία πολυπλοκότητα. Μπορείτε να επιλέξετε και ίδια συνάρτηση, αλλά στο teacher γράφημα
+              θα φανεί ποια «σκάει» πρώτη πάνω από 1.000.000.
+            </p>
+            <p class="teacher-only">
+              Ρύθμισε το N με βήμα ×10. Στο γράφημα προβάλλονται από 0 έως N όλες οι πολυπλοκότητες,
+              και δίπλα εμφανίζονται οι μαθητές που έχουν επιλέξει καθεμία.
             </p>
             <div class="activity-grid">
-              <div class="activity-card">
-                <h3>Πρόβλεψη μαθητή</h3>
-                <div class="activity-control">
-                  <label>Εκτιμώμενο N=2^m όπου η διαφορά γίνεται εμφανής
-                    <input type="range" min="4" max="18" step="1" value="10" data-activity-control="complexity-check" data-control-key="criticalPower" />
+              <div class="activity-card student-only">
+                <h3>Επιλογή πολυπλοκότητας</h3>
+                <div class="complexity-choice-grid">
+                  <label class="complexity-choice-option">
+                    <input type="radio" name="complexityRaceChoice" value="half-n2" data-activity-control="complexity-check" data-control-key="complexityChoice" />
+                    <span>0.5 · N²</span>
+                  </label>
+                  <label class="complexity-choice-option">
+                    <input type="radio" name="complexityRaceChoice" value="thousand-n" data-activity-control="complexity-check" data-control-key="complexityChoice" />
+                    <span>1000 · N</span>
+                  </label>
+                  <label class="complexity-choice-option">
+                    <input type="radio" name="complexityRaceChoice" value="factorial" data-activity-control="complexity-check" data-control-key="complexityChoice" />
+                    <span>N!</span>
+                  </label>
+                  <label class="complexity-choice-option">
+                    <input type="radio" name="complexityRaceChoice" value="half-2n" data-activity-control="complexity-check" data-control-key="complexityChoice" />
+                    <span>0.5 · 2^N</span>
+                  </label>
+                  <label class="complexity-choice-option">
+                    <input type="radio" name="complexityRaceChoice" value="n-log-n" data-activity-control="complexity-check" data-control-key="complexityChoice" />
+                    <span>N log N</span>
                   </label>
                 </div>
-                <div class="activity-control">
-                  <label>Ποια πολυπλοκότητα κερδίζει;
-                    <select data-activity-control="complexity-check" data-control-key="winner">
-                      <option value="nlogn" selected>N log N</option>
-                      <option value="n2">N^2</option>
-                      <option value="depends">Εξαρτάται από N</option>
-                    </select>
-                  </label>
-                </div>
+                <div class="hint">Στον teacher εμφανίζεται live ποιος επέλεξε τι.</div>
               </div>
-              <div class="activity-live teacher-only">
-                <h3>Ομαδική εκτίμηση</h3>
-                <div class="activity-metrics">
-                  <div class="activity-metric"><span>Παρόντες</span><strong data-activity-metric="participants">0</strong></div>
-                  <div class="activity-metric"><span>Ενέργειες</span><strong data-activity-metric="events">0</strong></div>
-                  <div class="activity-metric"><span>Top δραστηριότητα</span><strong data-activity-metric="topActivity">-</strong></div>
+              <div class="activity-live teacher-only complexity-race-teacher">
+                <h3>Πίνακας teacher</h3>
+                <div class="slider-group">
+                  <div class="slider-label"><span>N (×10 ανά βήμα)</span><span id="complexityRaceNValue">0</span></div>
+                  <input id="complexityRaceNStep" type="range" min="0" max="6" step="1" value="0" />
                 </div>
-                <div class="activity-feed" data-activity-feed="complexity-check"><div class="empty">Περιμένω εκτιμήσεις για το κρίσιμο N.</div></div>
+                <canvas id="complexityRaceCanvas" class="demo-canvas" width="940" height="320"></canvas>
+                <div class="activity-note">
+                  Άξονας X: από 0 έως επιλεγμένο N (μέχρι 1.000.000). Άξονας Y: όριο 1.000.000.
+                  Ό,τι το ξεπερνά βγαίνει πάνω από το γράφημα.
+                </div>
               </div>
             </div>
           </div>
@@ -1777,7 +2782,7 @@
       <section class="section" id="sec-bridge-1d2d">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.1) Από 1D ήχο σε 2D θάλασσα</h2>
+            <h2>8.1) Από 1D ήχο σε 2D θάλασσα</h2>
             <canvas id="bridgeDimCanvas" class="demo-canvas" width="940" height="300"></canvas>
             <div id="bridgeDimMath" class="mathjax-box"></div>
           </div>
@@ -1787,7 +2792,7 @@
       <section class="section" id="sec-wave">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.2) Τι είναι ο κυματισμός</h2>
+            <h2>8.2) Τι είναι ο κυματισμός</h2>
             <p>
               Στον ωκεανό, το ύψος της επιφάνειας είναι ένα πεδίο τιμών που μπορεί επίσης να αναλυθεί
               φασματικά, όπως και ένα ηχητικό σήμα.
@@ -1800,11 +2805,23 @@
       <section class="section" id="sec-spectrum">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.3) Ενεργειακό φάσμα</h2>
+            <h2>8.3) Ενεργειακό φάσμα</h2>
             <p>
-              Ξεκινάμε από Gaussian τυχαίες τιμές \(\xi_r,\xi_i\) στο \(k\)-space (μηδενικός μέσος, διασπορά 1).
-              Σε αυτό το στάδιο δεν υπάρχει ακόμα «θαλάσσια φυσική» — είναι απλός τυχαίος θόρυβος.
+              Classroom έκδοση: κάθε student στέλνει 3 ή 4 τυχαίες συχνότητες.
+              Ο server φτιάχνει ένα κοινό set ~40 όρων (όχι απαραίτητα Gaussian) και από αυτό
+              προκύπτει ένα συνολικό «raw» κύμα πριν το φυσικό weighting.
             </p>
+            <div class="random-freq-toolbar">
+              <button id="randomFreqGenerateBtn" class="random-freq-btn student-only" type="button">Νέο random pack</button>
+              <button id="randomFreqClearBtn" class="random-freq-btn teacher-only" type="button">Καθαρισμός classroom set</button>
+              <span class="random-freq-chip">Στόχος όρων: <strong id="randomFreqTargetLabel">40</strong></span>
+              <span class="random-freq-chip">Συνολικοί όροι: <strong id="randomFreqTotalLabel">0</strong></span>
+              <span class="random-freq-chip">Used στο κύμα: <strong id="randomFreqUsedLabel">0</strong></span>
+            </div>
+            <div class="random-freq-preview" id="randomFreqPackPreview">Πάτησε «Νέο random pack» για αποστολή συχνοτήτων.</div>
+            <div class="random-freq-table teacher-only" id="randomFreqTeacherTable">
+              <div class="fft-duel-empty">Δεν υπάρχουν ακόμα συχνότητες από students.</div>
+            </div>
             <canvas id="energySpectrumCanvas" class="demo-canvas" width="940" height="250"></canvas>
           </div>
         </div>
@@ -1813,7 +2830,7 @@
       <section class="section" id="sec-phillips">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.4) Φάσμα Phillips</h2>
+            <h2>8.4) Φάσμα Phillips</h2>
             <p>
               Τώρα βάζουμε φυσική: πολλαπλασιάζουμε τις Gaussian τιμές με \(\sqrt{P(k)}\), όπου \(P(k)\)
               είναι το Phillips spectrum. Έτσι ενισχύονται/καταστέλλονται συγκεκριμένα μήκη κύματος.
@@ -1826,7 +2843,7 @@
       <section class="section" id="sec-random">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.5) Τυχαίες φάσεις</h2>
+            <h2>8.5) Τυχαίες φάσεις</h2>
             <p>
               Από το μέτρο και την τυχαία φάση φτιάχνουμε τους μιγαδικούς συντελεστές \(H_0(k)\).
               Αυτό δίνει ρεαλισμό: η επιφάνεια δεν επαναλαμβάνεται μηχανικά, αλλά παραμένει στατιστικά σωστή.
@@ -1839,7 +2856,7 @@
       <section class="section" id="sec-time">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.6) Εξέλιξη στον χρόνο</h2>
+            <h2>8.6) Εξέλιξη στον χρόνο</h2>
             <p>
               Κάθε mode ταλαντώνεται με δική του γωνιακή συχνότητα. Το άθροισμα όλων των modes είναι η
               τελική δυναμική κίνηση του νερού.
@@ -1852,7 +2869,7 @@
       <section class="section" id="sec-ifft">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.7) IFFT: από \(H(k_x,k_z)\) σε \(h(x,z,t)\)</h2>
+            <h2>8.7) IFFT: από \(H(k_x,k_z)\) σε \(h(x,z,t)\)</h2>
             <p>
               Με IFFT γυρίζουμε από το spectral domain στο spatial domain και παίρνουμε ξανά ύψος επιφάνειας
               ανά σημείο πλέγματος.
@@ -1866,7 +2883,7 @@
       <section class="section" id="sec-final">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.8) Τελικό rendering</h2>
+            <h2>8.8) Τελικό rendering</h2>
             <p>
               Το τελικό αποτέλεσμα προκύπτει από displacement + normals + shading και μπορεί να χρησιμοποιηθεί
               για πλάνα μεγάλης κλίμακας.
@@ -1879,7 +2896,7 @@
       <section class="section activity-slide" id="sec-activity-ocean-config" data-activity-id="ocean-config">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.9) Δραστηριότητα: Σενάριο θάλασσας</h2>
+            <h2>8.9) Δραστηριότητα: Σενάριο θάλασσας</h2>
             <p>
               Επίλεξε παραμέτρους για την τελική θάλασσα και ψήφισε ποιο σενάριο θέλεις να δούμε στην ολομέλεια.
             </p>
@@ -1923,7 +2940,7 @@
       <section class="section" id="sec-run">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>7.1) Εκτέλεση κάθε animation ξεχωριστά</h2>
+            <h2>9.1) Εκτέλεση κάθε animation ξεχωριστά</h2>
             <p>
               Η παρουσίαση πλέον είναι 100% web-native με JavaScript + Canvas.
             </p>
@@ -1937,7 +2954,7 @@
       <section class="section" id="sec-ocean">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>7.2) Θάλασσα κυμάτων (τελική εικόνα)</h2>
+            <h2>9.2) Θάλασσα κυμάτων (τελική εικόνα)</h2>
             <p>
               Η ίδια ιδέα του στόχου κλείνει την παρουσίαση: από θεμελιώδη κύματα και ήχο,
               σε μια δυναμική επιφάνεια θάλασσας με επάλληλους κυματισμούς.
@@ -2052,12 +3069,39 @@
     const sumAmp4Value = document.getElementById("sumAmp4Value");
     const sumFreq4Value = document.getElementById("sumFreq4Value");
 
+    const classroomDock = document.getElementById("classroomDock");
+    const classTocContainer = document.getElementById("classTocContainer");
+    const classAccordionButtons = Array.from(document.querySelectorAll("[data-class-accordion-toggle]"));
+
     const speakerOne = document.getElementById("speakerOne");
     const speakerTwo = document.getElementById("speakerTwo");
     const speakerThree = document.getElementById("speakerThree");
     const speakerStop = document.getElementById("speakerStop");
+    const studentSoundFrequency = document.getElementById("studentSoundFrequency");
+    const studentSoundAmplitude = document.getElementById("studentSoundAmplitude");
+    const studentSoundFrequencyValue = document.getElementById("studentSoundFrequencyValue");
+    const studentSoundAmplitudeValue = document.getElementById("studentSoundAmplitudeValue");
+    const teacherSoundActivateBtn = document.getElementById("teacherSoundActivateBtn");
+    const teacherSoundMuteBtn = document.getElementById("teacherSoundMuteBtn");
+    const teacherSoundStateLabel = document.getElementById("teacherSoundStateLabel");
+    const teacherSoundFreqOne = document.getElementById("teacherSoundFreqOne");
+    const teacherSoundFreqOneValue = document.getElementById("teacherSoundFreqOneValue");
+    const teacherSoundFreqOneOn = document.getElementById("teacherSoundFreqOneOn");
+    const teacherSoundFreqTwo = document.getElementById("teacherSoundFreqTwo");
+    const teacherSoundFreqTwoValue = document.getElementById("teacherSoundFreqTwoValue");
+    const teacherSoundFreqTwoOn = document.getElementById("teacherSoundFreqTwoOn");
     const airMoleculesCanvas = document.getElementById("airMoleculesCanvas");
     const soundWaveSumCanvas = document.getElementById("soundWaveSumCanvas");
+    const soundSimpleWaveCanvas = document.getElementById("soundSimpleWaveCanvas");
+    const soundSimpleMolCanvas = document.getElementById("soundSimpleMolCanvas");
+    const soundSimpleFreq = document.getElementById("soundSimpleFreq");
+    const soundSimpleAmp = document.getElementById("soundSimpleAmp");
+    const soundSimpleFreqValue = document.getElementById("soundSimpleFreqValue");
+    const soundSimpleAmpValue = document.getElementById("soundSimpleAmpValue");
+    const soundDecomposeMixCanvas = document.getElementById("soundDecomposeMixCanvas");
+    const soundDecomposePartOneCanvas = document.getElementById("soundDecomposePartOneCanvas");
+    const soundDecomposePartTwoCanvas = document.getElementById("soundDecomposePartTwoCanvas");
+    const soundDecomposePartThreeCanvas = document.getElementById("soundDecomposePartThreeCanvas");
     const oceanWaveCanvasMain = document.getElementById("oceanWaveCanvasMain");
     const oceanWaveCanvas = document.getElementById("oceanWaveCanvas");
 
@@ -2083,10 +3127,36 @@
     const fftProbeFreq = document.getElementById("fftProbeFreq");
     const fftSignalFreqValue = document.getElementById("fftSignalFreqValue");
     const fftProbeFreqValue = document.getElementById("fftProbeFreqValue");
+    const fftDuelCanvas = document.getElementById("fftDuelCanvas");
+    const fftDuelProbeFreq = document.getElementById("fftDuelProbeFreq");
+    const fftDuelProbeValue = document.getElementById("fftDuelProbeValue");
+    const fftDuelGuessValue = document.getElementById("fftDuelGuessValue");
+    const fftDuelSignalLabel = document.getElementById("fftDuelSignalLabel");
+    const fftDuelRoundLabel = document.getElementById("fftDuelRoundLabel");
+    const fftDuelProgressLabel = document.getElementById("fftDuelProgressLabel");
+    const fftDuelLockLabel = document.getElementById("fftDuelLockLabel");
+    const fftDuelTeacherHint = document.getElementById("fftDuelTeacherHint");
+    const fftDuelSubmitBtn = document.getElementById("fftDuelSubmitBtn");
+    const fftDuelStartBtn = document.getElementById("fftDuelStartBtn");
+    const classFftDuelStartBtn = document.getElementById("classFftDuelStartBtn");
+    const classFftDuelStatus = document.getElementById("classFftDuelStatus");
+    const classFftDuelBoard = document.getElementById("classFftDuelBoard");
+    const classFftDuelSolved = document.getElementById("classFftDuelSolved");
+    const classFftDuelTotal = document.getElementById("classFftDuelTotal");
+    const classFftDuelRoundLabel = document.getElementById("classFftDuelRoundLabel");
     const heatRodCanvas = document.getElementById("heatRodCanvas");
     const heatTimeSlider = document.getElementById("heatTimeSlider");
     const heatTimeValue = document.getElementById("heatTimeValue");
     const heatEquationMath = document.getElementById("heatEquationMath");
+    const heatStudentPosition = document.getElementById("heatStudentPosition");
+    const heatStudentPositionValue = document.getElementById("heatStudentPositionValue");
+    const heatStudentTemperature = document.getElementById("heatStudentTemperature");
+    const heatStudentTemperatureValue = document.getElementById("heatStudentTemperatureValue");
+    const heatTeacherUseClassroom = document.getElementById("heatTeacherUseClassroom");
+    const heatClassroomCount = document.getElementById("heatClassroomCount");
+    const heatClassroomMeanPosition = document.getElementById("heatClassroomMeanPosition");
+    const heatClassroomMeanTemperature = document.getElementById("heatClassroomMeanTemperature");
+    const heatClassroomSelectionFeed = document.getElementById("heatClassroomSelectionFeed");
     const stepFourierCanvas = document.getElementById("stepFourierCanvas");
     const stepTermsSlider = document.getElementById("stepTermsSlider");
     const stepTermsValue = document.getElementById("stepTermsValue");
@@ -2127,6 +3197,10 @@
     const cooleyTreeDirectValue = document.getElementById("cooleyTreeDirectValue");
     const cooleyTreeFftValue = document.getElementById("cooleyTreeFftValue");
     const cooleyTreeGainValue = document.getElementById("cooleyTreeGainValue");
+    const complexityRaceCanvas = document.getElementById("complexityRaceCanvas");
+    const complexityRaceNStep = document.getElementById("complexityRaceNStep");
+    const complexityRaceNValue = document.getElementById("complexityRaceNValue");
+    const complexityRaceChoiceInputs = Array.from(document.querySelectorAll('input[name="complexityRaceChoice"]'));
     const bridgeDimCanvas = document.getElementById("bridgeDimCanvas");
     const bridgeDimMath = document.getElementById("bridgeDimMath");
     const ifftExplainCanvas = document.getElementById("ifftExplainCanvas");
@@ -2134,6 +3208,13 @@
     const ifftOceanMath = document.getElementById("ifftOceanMath");
     const wavinessCanvas = document.getElementById("wavinessCanvas");
     const energySpectrumCanvas = document.getElementById("energySpectrumCanvas");
+    const randomFreqGenerateBtn = document.getElementById("randomFreqGenerateBtn");
+    const randomFreqClearBtn = document.getElementById("randomFreqClearBtn");
+    const randomFreqPackPreview = document.getElementById("randomFreqPackPreview");
+    const randomFreqTeacherTable = document.getElementById("randomFreqTeacherTable");
+    const randomFreqTargetLabel = document.getElementById("randomFreqTargetLabel");
+    const randomFreqTotalLabel = document.getElementById("randomFreqTotalLabel");
+    const randomFreqUsedLabel = document.getElementById("randomFreqUsedLabel");
     const phillipsCanvas = document.getElementById("phillipsCanvas");
     const randomPhaseCanvas = document.getElementById("randomPhaseCanvas");
     const timeEvolutionCanvas = document.getElementById("timeEvolutionCanvas");
@@ -2155,44 +3236,192 @@
     const proofNextDerivBtn = document.getElementById("proofNextDerivBtn");
     const eulerProofSketchCanvas = document.getElementById("eulerProofSketchCanvas");
 
+    const pageMode = new URLSearchParams(window.location.search).get("mode") === "teacher" ? "teacher" : "client";
+    const isTeacherMode = pageMode === "teacher";
+
+    const COMPLEXITY_RACE_MAX_VALUE = 1000000;
+    const complexityRaceModels = [
+      { key: "half-n2", label: "0.5 · N²", color: "rgba(255, 191, 99, 0.72)" },
+      { key: "thousand-n", label: "1000 · N", color: "rgba(108, 226, 164, 0.72)" },
+      { key: "factorial", label: "N!", color: "rgba(255, 132, 132, 0.72)" },
+      { key: "half-2n", label: "0.5 · 2^N", color: "rgba(193, 163, 255, 0.72)" },
+      { key: "n-log-n", label: "N log N", color: "rgba(143, 229, 255, 0.72)" },
+    ];
+    const complexityRaceModelMap = new Map(complexityRaceModels.map((model) => [model.key, model]));
+    const complexityRaceSelections = new Map();
+    const fftDuelSignalLabels = {
+      sine: "Sine",
+      square: "Square",
+      triangle: "Triangle",
+      saw: "Saw",
+    };
+    const fftDuelUiState = {
+      roundId: "",
+      status: "idle",
+      solvedCount: 0,
+      totalPlayers: 0,
+      own: null,
+      players: [],
+    };
+    const RANDOM_FREQ_MAX_TERMS = 40;
+    let classroomRandomFreqPacks = [];
+    let classroomRandomFreqUsedTerms = [];
+
     let audioContext = null;
     let activeOscillators = [];
     let filterOscillators = [];
     const selectedTones = { one: false, two: false, three: false };
     let activeMode = "none";
     let filterMode = "none";
+    let classroomSoundEnabled = false;
+    let classroomMasterGain = null;
+    let classroomSoundRoster = [];
+    let classroomHeatRoster = [];
+    let heatClassroomProfile = null;
+    const classroomOscillators = new Map();
+    let teacherAudioUnlockInstalled = false;
+    let classroomContentShiftPx = 0;
+
+    function updateClassroomLayoutShift() {
+      if (!content || !classroomDock) {
+        classroomContentShiftPx = 0;
+        document.documentElement.style.setProperty("--classroom-content-shift", "0px");
+        return;
+      }
+
+      const isDockOpen = classroomDock.classList.contains("open");
+      if (!isDockOpen || window.innerWidth <= 900) {
+        classroomContentShiftPx = 0;
+      } else {
+        const dockWidth = Math.max(0, classroomDock.getBoundingClientRect().width || 0);
+        const maxShift = Math.max(0, window.innerWidth - 320);
+        classroomContentShiftPx = Math.round(Math.min(dockWidth, maxShift));
+      }
+
+      document.documentElement.style.setProperty("--classroom-content-shift", `${classroomContentShiftPx}px`);
+      content.classList.toggle("sidebar-open-shift", classroomContentShiftPx > 0);
+    }
 
     function updateEdgeNavPosition() {
-      if (window.innerWidth <= 900 || sidebar.classList.contains("hidden")) {
-        prevSlideBtn.style.left = "10px";
-      } else {
-        prevSlideBtn.style.left = "316px";
-      }
-    }
-
-    function toggleSidebar() {
       if (window.innerWidth <= 900) {
-        sidebar.classList.toggle("open");
-      } else {
-        sidebar.classList.toggle("hidden");
-        content.classList.toggle("expanded");
-        updateEdgeNavPosition();
+        prevSlideBtn.style.left = "10px";
+        return;
       }
+
+      prevSlideBtn.style.left = `${Math.max(14, 14 + classroomContentShiftPx)}px`;
     }
 
-    menuBtn.addEventListener("click", toggleSidebar);
-    window.addEventListener("resize", updateEdgeNavPosition);
+    window.addEventListener("resize", () => {
+      updateClassroomLayoutShift();
+      updateEdgeNavPosition();
+    });
 
-    sidebar.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        if (window.innerWidth <= 900) {
-          sidebar.classList.remove("open");
-        }
+    function setClassAccordionOpen(button, forceOpen = null) {
+      const targetId = String(button?.dataset?.target || "").trim();
+      const target = targetId ? document.getElementById(targetId) : null;
+      const arrow = button?.querySelector(".class-accordion-arrow") || null;
+
+      if (!target) {
+        return;
+      }
+
+      const shouldOpen = forceOpen === null
+        ? !target.classList.contains("open")
+        : Boolean(forceOpen);
+
+      target.classList.toggle("open", shouldOpen);
+      arrow?.classList.toggle("open", shouldOpen);
+      button.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
+    }
+
+    classAccordionButtons.forEach((button) => {
+      setClassAccordionOpen(button, button.getAttribute("aria-expanded") !== "false");
+      button.addEventListener("click", () => {
+        setClassAccordionOpen(button, null);
       });
     });
 
-    const tocGroupTitles = Array.from(sidebar.querySelectorAll(".toc-group-title"));
-    const tocLinks = Array.from(sidebar.querySelectorAll('a[href^="#"]'));
+    function emitClassroomDockState(open) {
+      document.dispatchEvent(
+        new CustomEvent("fourier:classroom-dock-toggle", {
+          detail: {
+            open,
+          },
+        })
+      );
+    }
+
+    function setClassroomDockOpen(forceOpen = null) {
+      if (!classroomDock) {
+        return false;
+      }
+
+      const shouldOpen = forceOpen === null
+        ? !classroomDock.classList.contains("open")
+        : Boolean(forceOpen);
+
+      classroomDock.classList.toggle("open", shouldOpen);
+      menuBtn.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
+      menuBtn.setAttribute("aria-label", shouldOpen ? "Κλείσιμο classroom panel" : "Άνοιγμα classroom panel");
+      updateClassroomLayoutShift();
+      updateEdgeNavPosition();
+      emitClassroomDockState(shouldOpen);
+      return shouldOpen;
+    }
+
+    if (classroomDock && menuBtn) {
+      menuBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        setClassroomDockOpen(null);
+      });
+
+      document.addEventListener("click", (event) => {
+        if (!classroomDock.classList.contains("open")) {
+          return;
+        }
+
+        const target = event.target;
+        if (classroomDock.contains(target) || menuBtn.contains(target)) {
+          return;
+        }
+
+        setClassroomDockOpen(false);
+      });
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          setClassroomDockOpen(false);
+        }
+      });
+    }
+
+    emitClassroomDockState(Boolean(classroomDock && classroomDock.classList.contains("open")));
+  updateClassroomLayoutShift();
+  updateEdgeNavPosition();
+
+    if (classTocContainer && sidebar) {
+      classTocContainer.innerHTML = "";
+      Array.from(sidebar.children).forEach((node) => {
+        const tagName = node.tagName ? node.tagName.toLowerCase() : "";
+        if (tagName === "h2") {
+          return;
+        }
+
+        classTocContainer.appendChild(node.cloneNode(true));
+      });
+    }
+
+    const tocRoot = classTocContainer || sidebar;
+    const tocGroupTitles = Array.from(tocRoot.querySelectorAll(".toc-group-title"));
+    const tocLinks = Array.from(tocRoot.querySelectorAll('a[href^="#"]'));
+
+    tocLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        if (window.innerWidth <= 900) {
+          setClassroomDockOpen(false);
+        }
+      });
+    });
     const tocLinkBySlideId = new Map(
       tocLinks
         .map((link) => {
@@ -2211,44 +3440,6 @@
       }
       return pointer;
     }
-
-    function toggleTocGroup(titleEl, forceCollapsed = null) {
-      const shouldCollapse = forceCollapsed === null
-        ? !titleEl.classList.contains("collapsed")
-        : forceCollapsed;
-
-      if (shouldCollapse && titleEl.classList.contains("active-group")) {
-        return;
-      }
-
-      titleEl.classList.toggle("collapsed", shouldCollapse);
-      titleEl.setAttribute("aria-expanded", shouldCollapse ? "false" : "true");
-
-      let next = titleEl.nextElementSibling;
-      while (next && !next.classList.contains("toc-group-title")) {
-        if (next.tagName && next.tagName.toLowerCase() === "a") {
-          next.style.display = shouldCollapse ? "none" : "block";
-        }
-        next = next.nextElementSibling;
-      }
-    }
-
-    tocGroupTitles.forEach((titleEl) => {
-      titleEl.setAttribute("role", "button");
-      titleEl.setAttribute("tabindex", "0");
-      titleEl.setAttribute("aria-expanded", "true");
-
-      titleEl.addEventListener("click", () => {
-        toggleTocGroup(titleEl);
-      });
-
-      titleEl.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          toggleTocGroup(titleEl);
-        }
-      });
-    });
 
     function updateActiveTocSlide(index, shouldScrollIntoView = true) {
       const slide = slides[index];
@@ -2270,9 +3461,6 @@
       const activeGroupTitle = findTocGroupTitleForElement(activeLink);
       if (activeGroupTitle) {
         activeGroupTitle.classList.add("active-group");
-        if (activeGroupTitle.classList.contains("collapsed")) {
-          toggleTocGroup(activeGroupTitle, false);
-        }
       }
 
       if (shouldScrollIntoView) {
@@ -2674,6 +3862,16 @@
     });
     updateSumLabels();
 
+    function updateSoundSimpleLabels() {
+      if (!soundSimpleFreq) return;
+      soundSimpleFreqValue.textContent = Number(soundSimpleFreq.value).toFixed(1);
+      soundSimpleAmpValue.textContent = Number(soundSimpleAmp.value).toFixed(2);
+    }
+    [soundSimpleFreq, soundSimpleAmp].forEach((slider) => {
+      slider?.addEventListener("input", updateSoundSimpleLabels);
+    });
+    updateSoundSimpleLabels();
+
     function updateFFTBridgeLabels() {
       if (!fftSignalFreq) {
         return;
@@ -2686,6 +3884,362 @@
       slider?.addEventListener("input", updateFFTBridgeLabels);
     });
     updateFFTBridgeLabels();
+
+    function clampFftDuelFrequency(value, fallback = 2) {
+      const numeric = Number(value);
+      if (!Number.isFinite(numeric)) {
+        return fallback;
+      }
+      return Math.max(0, Math.min(8, numeric));
+    }
+
+    function formatFftDuelRound(roundId) {
+      const safe = String(roundId || "").trim();
+      if (!safe) {
+        return "-";
+      }
+      const compact = safe.split("-").pop() || safe;
+      return compact.slice(-6);
+    }
+
+    function getFftDuelSignalLabel(signalKind) {
+      const safe = String(signalKind || "").trim();
+      return fftDuelSignalLabels[safe] || "Sine";
+    }
+
+    function setFftDuelStatus(message) {
+      if (fftDuelLockLabel) {
+        fftDuelLockLabel.textContent = message;
+      }
+    }
+
+    function renderTeacherFftDuelBoard(players) {
+      if (!classFftDuelBoard) {
+        return;
+      }
+
+      if (!Array.isArray(players) || !players.length) {
+        classFftDuelBoard.innerHTML = '<div class="fft-duel-empty">Δεν υπάρχει ενεργός γύρος.</div>';
+        return;
+      }
+
+      const ranked = players.slice().sort((a, b) => {
+        const aSolved = Boolean(a && a.submitted);
+        const bSolved = Boolean(b && b.submitted);
+        if (aSolved !== bSolved) {
+          return aSolved ? -1 : 1;
+        }
+
+        const aErr = Number.isFinite(Number(a && a.error)) ? Number(a.error) : Number.POSITIVE_INFINITY;
+        const bErr = Number.isFinite(Number(b && b.error)) ? Number(b.error) : Number.POSITIVE_INFINITY;
+        if (aErr !== bErr) {
+          return aErr - bErr;
+        }
+
+        const aName = String((a && a.name) || "");
+        const bName = String((b && b.name) || "");
+        return aName.localeCompare(bName, "el");
+      });
+
+      classFftDuelBoard.innerHTML = ranked
+        .map((entry, index) => {
+          const probe = clampFftDuelFrequency(entry && entry.probeFreq, 2);
+          const target = clampFftDuelFrequency(entry && entry.targetFreq, probe);
+          const probePct = (probe / 8) * 100;
+          const targetPct = (target / 8) * 100;
+          const solved = Boolean(entry && entry.submitted);
+          const errText = solved && Number.isFinite(Number(entry && entry.error))
+            ? `${Number(entry.error).toFixed(3)} Hz`
+            : "-";
+          const name = String((entry && entry.name) || "Student");
+          const team = String((entry && entry.team) || "-");
+          const signal = getFftDuelSignalLabel(entry && entry.signalKind);
+
+          return `
+            <div class="fft-duel-player">
+              <div class="fft-duel-player-header">
+                <strong>${index + 1}. ${name}</strong>
+                <span>${solved ? "κλείδωσε" : "σε εξέλιξη"}</span>
+              </div>
+              <div class="fft-duel-player-meta">
+                <span>Ομάδα: ${team}</span>
+                <span>Σήμα: ${signal}</span>
+                <span>k: ${probe.toFixed(2)}</span>
+                <span>target: ${target.toFixed(2)}</span>
+                <span>σφάλμα: ${errText}</span>
+              </div>
+              <div class="fft-duel-track">
+                <span class="fft-duel-track-target" style="left: ${targetPct.toFixed(2)}%"></span>
+                <span class="fft-duel-track-probe" style="left: ${probePct.toFixed(2)}%"></span>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function renderFftDuelUi() {
+      const own = fftDuelUiState.own || null;
+      const roundLabel = formatFftDuelRound(fftDuelUiState.roundId);
+      const solvedCount = Number(fftDuelUiState.solvedCount) || 0;
+      const totalPlayers = Number(fftDuelUiState.totalPlayers) || 0;
+
+      if (fftDuelRoundLabel) {
+        fftDuelRoundLabel.textContent = roundLabel;
+      }
+
+      if (fftDuelProgressLabel) {
+        fftDuelProgressLabel.textContent = `${solvedCount}/${totalPlayers}`;
+      }
+
+      if (classFftDuelSolved) {
+        classFftDuelSolved.textContent = String(solvedCount);
+      }
+
+      if (classFftDuelTotal) {
+        classFftDuelTotal.textContent = String(totalPlayers);
+      }
+
+      if (classFftDuelRoundLabel) {
+        classFftDuelRoundLabel.textContent = `Γύρος: ${roundLabel}`;
+      }
+
+      if (fftDuelSignalLabel) {
+        fftDuelSignalLabel.textContent = own ? getFftDuelSignalLabel(own.signalKind) : "-";
+      }
+
+      const probeFreq = own
+        ? clampFftDuelFrequency(own.probeFreq, clampFftDuelFrequency(fftDuelProbeFreq && fftDuelProbeFreq.value, 2))
+        : clampFftDuelFrequency(fftDuelProbeFreq && fftDuelProbeFreq.value, 2);
+
+      if (fftDuelProbeFreq) {
+        fftDuelProbeFreq.value = probeFreq.toFixed(2);
+      }
+
+      if (fftDuelProbeValue) {
+        fftDuelProbeValue.textContent = probeFreq.toFixed(2);
+      }
+
+      if (fftDuelGuessValue) {
+        fftDuelGuessValue.textContent = probeFreq.toFixed(2);
+      }
+
+      const running = String(fftDuelUiState.status || "idle") === "running";
+      const ownLocked = Boolean(own && own.locked);
+
+      if (fftDuelSubmitBtn) {
+        fftDuelSubmitBtn.disabled = !running || !own || ownLocked;
+      }
+
+      if (fftDuelProbeFreq) {
+        fftDuelProbeFreq.disabled = !running || !own || ownLocked;
+      }
+
+      if (fftDuelStartBtn) {
+        fftDuelStartBtn.disabled = !isTeacherMode;
+      }
+
+      if (classFftDuelStartBtn) {
+        classFftDuelStartBtn.disabled = !isTeacherMode;
+      }
+
+      if (fftDuelTeacherHint) {
+        fftDuelTeacherHint.textContent = running
+          ? `Ενεργός γύρος: ${solvedCount}/${totalPlayers} submissions`
+          : "Στείλε νέο γύρο στην τάξη";
+      }
+
+      if (classFftDuelStatus) {
+        classFftDuelStatus.textContent = running
+          ? `Γύρος ενεργός. Υποβολές: ${solvedCount}/${totalPlayers}`
+          : "Πάτησε «Νέος γύρος» για να σταλεί διαφορετικό σήμα σε κάθε student.";
+      }
+
+      if (!running) {
+        setFftDuelStatus("Περίμενε νέο γύρο από τον teacher.");
+      } else if (!own) {
+        setFftDuelStatus("Σύνδεση στο classroom... θα λάβεις σήμα στον επόμενο γύρο.");
+      } else if (ownLocked) {
+        const err = Number.isFinite(Number(own.error)) ? Number(own.error).toFixed(3) : "-";
+        setFftDuelStatus(`Κλειδώθηκε. Υποβολή: ${probeFreq.toFixed(2)} Hz, σφάλμα: ${err} Hz.`);
+      } else {
+        setFftDuelStatus("Κινήσου με το slider, βρες το ταίριασμα και πάτα submit.");
+      }
+
+      renderTeacherFftDuelBoard(fftDuelUiState.players);
+    }
+
+    function applyFftDuelState(detail) {
+      const payload = detail && typeof detail === "object" ? detail : {};
+      fftDuelUiState.roundId = String(payload.roundId || "").trim();
+      fftDuelUiState.status = String(payload.status || "idle").trim() || "idle";
+      fftDuelUiState.solvedCount = Math.max(0, Number(payload.solvedCount) || 0);
+      fftDuelUiState.totalPlayers = Math.max(0, Number(payload.totalPlayers) || 0);
+      fftDuelUiState.players = Array.isArray(payload.players) ? payload.players.slice(0, 120) : [];
+      fftDuelUiState.own = payload.own && typeof payload.own === "object" ? payload.own : null;
+      renderFftDuelUi();
+    }
+
+    let lastFftDuelProbeEmitAt = 0;
+    fftDuelProbeFreq?.addEventListener("input", () => {
+      const value = clampFftDuelFrequency(fftDuelProbeFreq.value, 2);
+      if (fftDuelProbeValue) {
+        fftDuelProbeValue.textContent = value.toFixed(2);
+      }
+      if (fftDuelGuessValue) {
+        fftDuelGuessValue.textContent = value.toFixed(2);
+      }
+
+      const now = Date.now();
+      if (now - lastFftDuelProbeEmitAt < 80) {
+        return;
+      }
+      lastFftDuelProbeEmitAt = now;
+
+      document.dispatchEvent(
+        new CustomEvent("fourier:fft-duel-probe-local-change", {
+          detail: {
+            probeFreq: value,
+          },
+        })
+      );
+    });
+
+    fftDuelProbeFreq?.addEventListener("change", () => {
+      const value = clampFftDuelFrequency(fftDuelProbeFreq.value, 2);
+      document.dispatchEvent(
+        new CustomEvent("fourier:fft-duel-probe-local-change", {
+          detail: {
+            probeFreq: value,
+            force: true,
+          },
+        })
+      );
+    });
+
+    fftDuelSubmitBtn?.addEventListener("click", () => {
+      const guessFreq = clampFftDuelFrequency(fftDuelProbeFreq ? fftDuelProbeFreq.value : 2, 2);
+      document.dispatchEvent(
+        new CustomEvent("fourier:fft-duel-submit-local", {
+          detail: {
+            guessFreq,
+          },
+        })
+      );
+    });
+
+    [fftDuelStartBtn, classFftDuelStartBtn].forEach((button) => {
+      button?.addEventListener("click", () => {
+        document.dispatchEvent(new CustomEvent("fourier:fft-duel-start-local"));
+      });
+    });
+
+    document.addEventListener("fourier:fft-duel-state", (event) => {
+      applyFftDuelState(event && event.detail ? event.detail : null);
+    });
+
+    renderFftDuelUi();
+
+    function formatRandomFreqPreviewItems(items) {
+      if (!Array.isArray(items) || !items.length) {
+        return "-";
+      }
+      return items
+        .map((item) => `${Number(item.freq).toFixed(2)}Hz`)
+        .join(", ");
+    }
+
+    function chooseRandomPackSize() {
+      const participantEstimate = Math.max(1, classroomRandomFreqPacks.length);
+      return participantEstimate <= 10 ? 4 : 3;
+    }
+
+    function buildRandomFreqPackItems(packSize) {
+      const items = [];
+      for (let i = 0; i < packSize; i += 1) {
+        const freq = Number((0.4 + Math.random() * 5.8).toFixed(2));
+        const amp = Number((0.05 + Math.random() * 0.16).toFixed(3));
+        const phase = Number((Math.random() * Math.PI * 2).toFixed(3));
+        const angle = Number((Math.random() * Math.PI * 2).toFixed(3));
+        items.push({ freq, amp, phase, angle });
+      }
+      return items;
+    }
+
+    function renderRandomFreqTeacherTable() {
+      if (!randomFreqTeacherTable) {
+        return;
+      }
+
+      if (!classroomRandomFreqPacks.length) {
+        randomFreqTeacherTable.innerHTML = '<div class="fft-duel-empty">Δεν υπάρχουν ακόμα συχνότητες από students.</div>';
+        return;
+      }
+
+      const rows = [];
+      let rowIndex = 1;
+      classroomRandomFreqPacks.slice(0, 80).forEach((pack) => {
+        const owner = String(pack && pack.name ? pack.name : "Student");
+        const terms = Array.isArray(pack && pack.items) ? pack.items : [];
+        terms.forEach((term) => {
+          rows.push(`
+            <div class="random-freq-row">
+              <span>${rowIndex}</span>
+              <span>${owner}</span>
+              <span>${Number(term.freq).toFixed(2)} Hz</span>
+              <span>${Number(term.amp).toFixed(3)}</span>
+              <span>${Number(term.phase).toFixed(2)}</span>
+            </div>
+          `);
+          rowIndex += 1;
+        });
+      });
+
+      randomFreqTeacherTable.innerHTML = rows.join("");
+    }
+
+    function applyClassroomRandomFreqState(detail) {
+      const payload = detail && typeof detail === "object" ? detail : {};
+      classroomRandomFreqPacks = Array.isArray(payload.packs) ? payload.packs.slice(0, 140) : [];
+      classroomRandomFreqUsedTerms = Array.isArray(payload.usedTerms) ? payload.usedTerms.slice(0, RANDOM_FREQ_MAX_TERMS) : [];
+
+      if (randomFreqTargetLabel) {
+        randomFreqTargetLabel.textContent = String(RANDOM_FREQ_MAX_TERMS);
+      }
+      if (randomFreqTotalLabel) {
+        randomFreqTotalLabel.textContent = String(Number(payload.totalTerms) || 0);
+      }
+      if (randomFreqUsedLabel) {
+        randomFreqUsedLabel.textContent = String(classroomRandomFreqUsedTerms.length);
+      }
+
+      renderRandomFreqTeacherTable();
+    }
+
+    randomFreqGenerateBtn?.addEventListener("click", () => {
+      const packSize = chooseRandomPackSize();
+      const items = buildRandomFreqPackItems(packSize);
+
+      if (randomFreqPackPreview) {
+        randomFreqPackPreview.textContent = `Αποστολή ${packSize} συχνοτήτων: ${formatRandomFreqPreviewItems(items)}`;
+      }
+
+      document.dispatchEvent(
+        new CustomEvent("fourier:ocean-random-pack-local", {
+          detail: {
+            items,
+          },
+        })
+      );
+    });
+
+    randomFreqClearBtn?.addEventListener("click", () => {
+      document.dispatchEvent(new CustomEvent("fourier:ocean-random-pack-clear-local"));
+    });
+
+    document.addEventListener("fourier:classroom-ocean-random-state", (event) => {
+      applyClassroomRandomFreqState(event && event.detail ? event.detail : null);
+    });
 
     function getComplexityAxisRatios() {
       return {
@@ -2760,6 +4314,160 @@
     });
     updateComplexityLabels();
 
+    function normalizeComplexityRaceChoice(value) {
+      const safe = String(value || "").trim();
+      return complexityRaceModelMap.has(safe) ? safe : "";
+    }
+
+    function getComplexityRaceNFromStep() {
+      const step = complexityRaceNStep ? Number(complexityRaceNStep.value) : 0;
+      if (!Number.isFinite(step) || step <= 0) {
+        return 0;
+      }
+      const power = Math.max(1, Math.min(6, Math.round(step)));
+      return Math.pow(10, power);
+    }
+
+    function updateComplexityRaceNLabel() {
+      if (!complexityRaceNValue) {
+        return;
+      }
+      const n = getComplexityRaceNFromStep();
+      complexityRaceNValue.textContent = n.toLocaleString("el-GR");
+    }
+
+    function factorialBounded(inputN) {
+      const n = Math.max(0, Math.floor(inputN));
+      if (n > 170) {
+        return Number.POSITIVE_INFINITY;
+      }
+
+      let value = 1;
+      for (let i = 2; i <= n; i += 1) {
+        value *= i;
+        if (!Number.isFinite(value)) {
+          return Number.POSITIVE_INFINITY;
+        }
+      }
+      return value;
+    }
+
+    function evaluateComplexityRace(modelKey, n) {
+      const safeN = Math.max(0, Number(n) || 0);
+
+      if (modelKey === "half-n2") {
+        return 0.5 * safeN * safeN;
+      }
+      if (modelKey === "thousand-n") {
+        return 1000 * safeN;
+      }
+      if (modelKey === "factorial") {
+        return factorialBounded(safeN);
+      }
+      if (modelKey === "half-2n") {
+        if (safeN > 120) {
+          return Number.POSITIVE_INFINITY;
+        }
+        return 0.5 * Math.pow(2, safeN);
+      }
+      if (modelKey === "n-log-n") {
+        if (safeN <= 1) {
+          return 0;
+        }
+        return safeN * Math.log2(safeN);
+      }
+
+      return 0;
+    }
+
+    function isComplexityRaceEntry(entry) {
+      if (!entry || typeof entry !== "object") {
+        return false;
+      }
+
+      return String(entry.activityId || "") === "complexity-check"
+        && String(entry.controlId || "") === "complexityChoice";
+    }
+
+    function applyComplexityRaceSelection(name, selectionKey) {
+      const safeName = String(name || "").trim().slice(0, 32);
+      const safeSelection = normalizeComplexityRaceChoice(selectionKey);
+
+      if (!safeName || !safeSelection) {
+        return;
+      }
+
+      complexityRaceSelections.set(safeName, safeSelection);
+    }
+
+    function rebuildComplexityRaceSelections(summary) {
+      const recent = Array.isArray(summary && summary.recent) ? summary.recent.slice() : [];
+      complexityRaceSelections.clear();
+
+      recent
+        .filter((entry) => isComplexityRaceEntry(entry))
+        .sort((a, b) => Number(a && a.ts) - Number(b && b.ts))
+        .forEach((entry) => {
+          applyComplexityRaceSelection(entry && entry.name, entry && entry.value);
+        });
+    }
+
+    function summarizeComplexityRaceUsers(selectionKey) {
+      const selectedUsers = [];
+
+      complexityRaceSelections.forEach((value, name) => {
+        if (value === selectionKey) {
+          selectedUsers.push(name);
+        }
+      });
+
+      selectedUsers.sort((a, b) => a.localeCompare(b, "el"));
+
+      if (!selectedUsers.length) {
+        return "-";
+      }
+
+      if (selectedUsers.length <= 3) {
+        return selectedUsers.join(", ");
+      }
+
+      return `${selectedUsers.slice(0, 3).join(", ")} +${selectedUsers.length - 3}`;
+    }
+
+    complexityRaceNStep?.addEventListener("input", () => {
+      updateComplexityRaceNLabel();
+      drawComplexityRace(complexityRaceCanvas, 0);
+    });
+
+    document.addEventListener("fourier:classroom-summary", (event) => {
+      const summary = event && event.detail ? event.detail.summary : null;
+      rebuildComplexityRaceSelections(summary);
+      drawComplexityRace(complexityRaceCanvas, 0);
+    });
+
+    document.addEventListener("fourier:classroom-activity-event", (event) => {
+      const entry = event && event.detail ? event.detail.entry : null;
+      if (!isComplexityRaceEntry(entry)) {
+        return;
+      }
+
+      applyComplexityRaceSelection(entry && entry.name, entry && entry.value);
+      drawComplexityRace(complexityRaceCanvas, 0);
+    });
+
+    complexityRaceChoiceInputs.forEach((input) => {
+      input.addEventListener("change", () => {
+        const nextKey = normalizeComplexityRaceChoice(input.value);
+        if (!nextKey) {
+          return;
+        }
+
+        input.dataset.lastChoiceLabel = complexityRaceModelMap.get(nextKey).label;
+      });
+    });
+
+    updateComplexityRaceNLabel();
+
     function getCooleyTreeValues() {
       const exponent = cooleyTreePower ? Number(cooleyTreePower.value) : 10;
       const n = Math.pow(2, exponent);
@@ -2792,12 +4500,12 @@
     cooleyTreePower?.addEventListener("input", updateCooleyTreeLabels);
     updateCooleyTreeLabels();
 
-    function updateHeatSliderLabel() {
-      if (!heatTimeSlider || !heatTimeValue) {
-        return;
+    function clampHeatValue(value, min, max, fallback) {
+      const numeric = Number(value);
+      if (!Number.isFinite(numeric)) {
+        return fallback;
       }
-      heatTimeValue.textContent = Number(heatTimeSlider.value).toFixed(2);
-      renderHeatEquationMath(Number(heatTimeSlider.value));
+      return Math.max(min, Math.min(max, numeric));
     }
 
     const HEAT_KAPPA = 0.0004;
@@ -2807,19 +4515,347 @@
       0.075, -0.065, 0.058, -0.52, 0.45, -0.40, 0.036, -0.032,
       0.028, -0.025, 0.022, -0.019, 0.016, -0.014
     ];
+    const HEAT_CLASSROOM_MODE_COUNT = 28;
+    const HEAT_CLASSROOM_SAMPLE_COUNT = 320;
+    const HEAT_CLASSROOM_SIGMA = 0.085;
+    const HEAT_POSITION_MIN = -0.5;
+    const HEAT_POSITION_MAX = 0.5;
+    const HEAT_TEMPERATURE_MIN = 0;
+    const HEAT_TEMPERATURE_MAX = 100;
+    const HEAT_TEMPERATURE_DEFAULT = Math.round(HEAT_MEAN_TEMP * 100);
+    const HEAT_DEFAULT_PROFILE = {
+      source: "default",
+      sourceCount: 0,
+      mean: HEAT_MEAN_TEMP,
+      coefficients: HEAT_COEFFICIENTS.slice(),
+    };
+
+    function escapeHeatText(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function normalizeHeatSelection(selection, index = 0) {
+      const rawPosition = Number(selection && selection.position);
+      const inferredPosition = Number.isFinite(rawPosition)
+        ? rawPosition
+        : Number.isFinite(Number(selection && selection.positionMeter))
+          ? Number(selection.positionMeter) + 0.5
+          : 0.5;
+      const position = Number(clampHeatValue(inferredPosition, 0, 1, 0.5).toFixed(4));
+      const positionMeter = Number((HEAT_POSITION_MIN + (HEAT_POSITION_MAX - HEAT_POSITION_MIN) * position).toFixed(3));
+
+      const rawTemperature = Number(
+        selection && (selection.temperature ?? selection.temperatureC)
+      );
+      const inferredTemperature = Number.isFinite(rawTemperature)
+        ? rawTemperature
+        : Number.isFinite(Number(selection && selection.temperatureNorm))
+          ? Number(selection.temperatureNorm) * 100
+          : HEAT_TEMPERATURE_DEFAULT;
+      const temperature = Number(
+        clampHeatValue(inferredTemperature, HEAT_TEMPERATURE_MIN, HEAT_TEMPERATURE_MAX, HEAT_TEMPERATURE_DEFAULT).toFixed(2)
+      );
+
+      const rawKey = selection && (selection.socketId || selection.key || selection.name);
+      const key = String(rawKey || `heat-selection-${index}`).slice(0, 80);
+
+      return {
+        key,
+        socketId: String((selection && selection.socketId) || key),
+        name: String((selection && selection.name) || "Student"),
+        position,
+        positionMeter,
+        temperature,
+        temperatureNorm: Number((temperature / 100).toFixed(4)),
+        updatedAt: Number(selection && selection.updatedAt) || 0,
+      };
+    }
+
+    function getLocalHeatSelectionFromDom() {
+      const baseSelection = {
+        socketId: "local-student",
+        name: "Εσύ",
+        positionMeter: heatStudentPosition ? Number(heatStudentPosition.value) : 0,
+        temperature: heatStudentTemperature ? Number(heatStudentTemperature.value) : HEAT_TEMPERATURE_DEFAULT,
+      };
+      return normalizeHeatSelection(baseSelection);
+    }
+
+    function updateHeatSelectionLabels(emitChange = false) {
+      const localSelection = getLocalHeatSelectionFromDom();
+
+      if (heatStudentPositionValue) {
+        heatStudentPositionValue.textContent = `${localSelection.positionMeter.toFixed(2)} m`;
+      }
+
+      if (heatStudentTemperatureValue) {
+        heatStudentTemperatureValue.textContent = `${localSelection.temperature.toFixed(0)} °C`;
+      }
+
+      if (emitChange) {
+        document.dispatchEvent(
+          new CustomEvent("fourier:heat-control-local-change", {
+            detail: {
+              position: localSelection.position,
+              positionMeter: localSelection.positionMeter,
+              temperature: localSelection.temperature,
+              temperatureNorm: localSelection.temperatureNorm,
+            },
+          })
+        );
+      }
+
+      // Keep equation/profile text in sync whenever local point/temperature changes.
+      updateHeatSliderLabel();
+
+      return localSelection;
+    }
+
+    function buildHeatClassroomProfile(selections) {
+      if (!Array.isArray(selections) || selections.length === 0) {
+        return null;
+      }
+
+      const safeSelections = selections
+        .map((item, index) => normalizeHeatSelection(item, index))
+        .slice(0, 90);
+
+      if (!safeSelections.length) {
+        return null;
+      }
+
+      const sampleCount = HEAT_CLASSROOM_SAMPLE_COUNT;
+      const samples = new Array(sampleCount);
+      let sampleSum = 0;
+
+      for (let sampleIndex = 0; sampleIndex < sampleCount; sampleIndex += 1) {
+        const x = sampleIndex / (sampleCount - 1);
+        let value = HEAT_MEAN_TEMP;
+
+        safeSelections.forEach((selection) => {
+          const dx = x - selection.position;
+          const gaussian = Math.exp(-(dx * dx) / (2 * HEAT_CLASSROOM_SIGMA * HEAT_CLASSROOM_SIGMA));
+          value += (selection.temperatureNorm - HEAT_MEAN_TEMP) * gaussian;
+        });
+
+        value = clampHeatValue(value, 0, 1, HEAT_MEAN_TEMP);
+        samples[sampleIndex] = value;
+        sampleSum += value;
+      }
+
+      const mean = sampleSum / sampleCount;
+      const coefficients = [];
+
+      for (let n = 1; n <= HEAT_CLASSROOM_MODE_COUNT; n += 1) {
+        let coefficientSum = 0;
+
+        for (let sampleIndex = 0; sampleIndex < sampleCount; sampleIndex += 1) {
+          const x = sampleIndex / (sampleCount - 1);
+          const weight = sampleIndex === 0 || sampleIndex === sampleCount - 1 ? 0.5 : 1;
+          coefficientSum += (samples[sampleIndex] - mean) * Math.cos(n * Math.PI * x) * weight;
+        }
+
+        coefficients.push((2 / (sampleCount - 1)) * coefficientSum);
+      }
+
+      return {
+        source: "classroom",
+        sourceCount: safeSelections.length,
+        mean,
+        coefficients,
+      };
+    }
+
+    function buildLocalHeatProfile() {
+      const localSelection = getLocalHeatSelectionFromDom();
+      const localProfile = buildHeatClassroomProfile([localSelection]);
+
+      if (!localProfile) {
+        return null;
+      }
+
+      return {
+        source: "local",
+        sourceCount: 1,
+        mean: localProfile.mean,
+        coefficients: localProfile.coefficients,
+      };
+    }
+
+    function shouldUseClassroomHeatProfile() {
+      if (!heatClassroomProfile || heatClassroomProfile.sourceCount <= 0) {
+        return false;
+      }
+
+      if (isTeacherMode) {
+        return Boolean(heatTeacherUseClassroom && heatTeacherUseClassroom.checked);
+      }
+
+      return true;
+    }
+
+    function getActiveHeatProfile() {
+      if (shouldUseClassroomHeatProfile()) {
+        return heatClassroomProfile;
+      }
+
+      return buildLocalHeatProfile() || HEAT_DEFAULT_PROFILE;
+    }
+
+    function getHeatMarkersForCurrentView() {
+      if (classroomHeatRoster.length > 0) {
+        return classroomHeatRoster.slice(0, 28);
+      }
+
+      return [getLocalHeatSelectionFromDom()];
+    }
+
+    function renderHeatClassroomStatus() {
+      const selections = classroomHeatRoster.slice();
+      const count = selections.length;
+
+      if (heatClassroomCount) {
+        heatClassroomCount.textContent = String(count);
+      }
+
+      if (heatClassroomMeanPosition) {
+        const meanPosition = count > 0
+          ? selections.reduce((sum, item) => sum + item.positionMeter, 0) / count
+          : 0;
+        heatClassroomMeanPosition.textContent = `${meanPosition.toFixed(2)} m`;
+      }
+
+      if (heatClassroomMeanTemperature) {
+        const meanTemperature = count > 0
+          ? selections.reduce((sum, item) => sum + item.temperature, 0) / count
+          : HEAT_TEMPERATURE_DEFAULT;
+        heatClassroomMeanTemperature.textContent = `${meanTemperature.toFixed(0)} °C`;
+      }
+
+      if (!heatClassroomSelectionFeed) {
+        return;
+      }
+
+      if (!count) {
+        heatClassroomSelectionFeed.innerHTML = '<div class="empty">Δεν υπάρχουν ακόμα επιλογές από μαθητές.</div>';
+        return;
+      }
+
+      const sortedSelections = selections
+        .slice()
+        .sort((a, b) => String(a.name).localeCompare(String(b.name), "el"));
+
+      heatClassroomSelectionFeed.innerHTML = sortedSelections
+        .slice(0, 40)
+        .map((selection) => {
+          const name = escapeHeatText(selection.name || "Student");
+          return `<div class="line"><strong>${name}</strong> • x=${selection.positionMeter.toFixed(2)} m • ${selection.temperature.toFixed(0)} °C</div>`;
+        })
+        .join("");
+    }
 
     function renderHeatEquationMath(timeValue) {
       if (!heatEquationMath) {
         return;
       }
-      const modeCount = HEAT_COEFFICIENTS.length;
-      heatEquationMath.innerHTML = `\\[u(x,t)=${HEAT_MEAN_TEMP.toFixed(2)}+\\sum_{n=1}^{${modeCount}} a_n e^{-${HEAT_KAPPA.toFixed(2)} n^2\\pi^2 t}\\cos(n\\pi x),\\quad a_n\\in\\{\\text{coefficients}\\}\\]`;
+
+      const profile = getActiveHeatProfile();
+      const modeCount = profile.coefficients.length;
+      const sourceText = profile.source === "classroom"
+        ? `\\text{classroom επιλογές: }${profile.sourceCount}`
+        : profile.source === "local"
+          ? "\\text{τοπική επιλογή (teacher/student)}"
+        : "\\text{preset profile}";
+
+      heatEquationMath.innerHTML = `\\[u(x,t)=${profile.mean.toFixed(2)}+\\sum_{n=1}^{${modeCount}} a_n e^{-${HEAT_KAPPA.toFixed(4)} n^2\\pi^2 t}\\cos(n\\pi x),\\quad ${sourceText}\\]`;
       if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
         window.MathJax.typesetPromise([heatEquationMath]).catch(() => {});
       }
     }
 
-    heatTimeSlider?.addEventListener("input", updateHeatSliderLabel);
+    function updateHeatSliderLabel(emitChange = false) {
+      if (!heatTimeSlider || !heatTimeValue) {
+        return;
+      }
+
+      const normalizedTime = Number(clampHeatValue(heatTimeSlider.value, 0, 8, 0).toFixed(2));
+      heatTimeSlider.value = normalizedTime.toFixed(2);
+      heatTimeValue.textContent = normalizedTime.toFixed(2);
+      renderHeatEquationMath(normalizedTime);
+
+      if (emitChange && isTeacherMode) {
+        document.dispatchEvent(
+          new CustomEvent("fourier:heat-time-local-change", {
+            detail: {
+              value: normalizedTime,
+            },
+          })
+        );
+      }
+    }
+
+    heatTimeSlider?.addEventListener("input", () => {
+      updateHeatSliderLabel(true);
+    });
+
+    heatTimeSlider?.addEventListener("change", () => {
+      updateHeatSliderLabel(true);
+    });
+
+    [heatStudentPosition, heatStudentTemperature].forEach((control) => {
+      control?.addEventListener("input", () => {
+        updateHeatSelectionLabels(true);
+      });
+
+      control?.addEventListener("change", () => {
+        updateHeatSelectionLabels(true);
+      });
+    });
+
+    if (heatTeacherUseClassroom) {
+      heatTeacherUseClassroom.checked = false;
+    }
+
+    if (heatTimeSlider) {
+      heatTimeSlider.disabled = !isTeacherMode;
+    }
+
+    heatTeacherUseClassroom?.addEventListener("change", () => {
+      renderHeatClassroomStatus();
+      updateHeatSliderLabel();
+    });
+
+    document.addEventListener("fourier:classroom-heat-state", (event) => {
+      const payload = (event && event.detail) || {};
+      const list = Array.isArray(payload.heatStates) ? payload.heatStates : [];
+
+      classroomHeatRoster = list
+        .map((item, index) => normalizeHeatSelection(item, index))
+        .sort((a, b) => String(a.name).localeCompare(String(b.name), "el"));
+
+      heatClassroomProfile = buildHeatClassroomProfile(classroomHeatRoster);
+      renderHeatClassroomStatus();
+      updateHeatSliderLabel();
+    });
+
+    document.addEventListener("fourier:classroom-heat-time", (event) => {
+      const payload = (event && event.detail) || {};
+      if (!heatTimeSlider) {
+        return;
+      }
+
+      const nextValue = Number(clampHeatValue(payload.value, 0, 8, Number(heatTimeSlider.value) || 0).toFixed(2));
+      heatTimeSlider.value = nextValue.toFixed(2);
+      updateHeatSliderLabel(false);
+    });
+
+    updateHeatSelectionLabels(false);
+    renderHeatClassroomStatus();
     updateHeatSliderLabel();
 
     function renderStepSeriesMath(terms) {
@@ -3526,6 +5562,373 @@
     });
     renderProofPanels();
 
+    function clampSoundNumber(value, min, max, fallback) {
+      const parsed = Number(value);
+      if (!Number.isFinite(parsed)) {
+        return fallback;
+      }
+      return Math.max(min, Math.min(max, parsed));
+    }
+
+    function normalizeClassroomSoundSource(source, index = 0) {
+      const frequency = Number(clampSoundNumber(source && source.frequency, 80, 1400, 440).toFixed(2));
+      const amplitude = Number(clampSoundNumber(source && source.amplitude, 0, 1, 0).toFixed(3));
+      const rawKey = source && (source.socketId || source.key || source.name);
+      const key = String(rawKey || `source-${index}`).slice(0, 80);
+      const role = source && source.role === "teacher" ? "teacher" : "client";
+      const origin = source && source.origin === "teacher"
+        ? "teacher"
+        : role === "teacher"
+          ? "teacher"
+          : "student";
+      const name = String((source && source.name) || (origin === "teacher" ? "Teacher" : "Student")).trim() || "Student";
+      const label = String((source && source.label) || name).trim() || name;
+
+      return {
+        key,
+        socketId: String((source && source.socketId) || key),
+        name,
+        label,
+        role,
+        origin,
+        frequency,
+        amplitude,
+      };
+    }
+
+    function getClassroomRosterSoundSources() {
+      return classroomSoundRoster
+        .map((source, index) => normalizeClassroomSoundSource(source, index))
+        .filter((source) => source.amplitude > 0.001);
+    }
+
+    function getTeacherToneSources() {
+      if (!isTeacherMode) {
+        return [];
+      }
+
+      const teacherSources = [];
+      if (teacherSoundFreqOneOn?.checked && teacherSoundFreqOne) {
+        teacherSources.push(
+          normalizeClassroomSoundSource({
+            key: "teacher-f1",
+            socketId: "teacher-f1",
+            name: "Teacher",
+            label: "f1",
+            role: "teacher",
+            origin: "teacher",
+            frequency: Number(teacherSoundFreqOne.value),
+            amplitude: 0.36,
+          })
+        );
+      }
+
+      if (teacherSoundFreqTwoOn?.checked && teacherSoundFreqTwo) {
+        teacherSources.push(
+          normalizeClassroomSoundSource({
+            key: "teacher-f2",
+            socketId: "teacher-f2",
+            name: "Teacher",
+            label: "f2",
+            role: "teacher",
+            origin: "teacher",
+            frequency: Number(teacherSoundFreqTwo.value),
+            amplitude: 0.36,
+          })
+        );
+      }
+
+      return teacherSources;
+    }
+
+    function getActiveClassroomSoundSources() {
+      return [...getClassroomRosterSoundSources(), ...getTeacherToneSources()];
+    }
+
+    function getSourcesForWaveView() {
+      const classroomSources = getClassroomRosterSoundSources();
+
+      if (isTeacherMode) {
+        return [...classroomSources, ...getTeacherToneSources()];
+      }
+
+      if (classroomSources.length > 0) {
+        return classroomSources;
+      }
+
+      return getStudentPreviewSoundSources();
+    }
+
+    function getStudentPreviewSoundSources() {
+      if (!studentSoundFrequency || !studentSoundAmplitude) {
+        return [];
+      }
+
+      return [
+        normalizeClassroomSoundSource({
+          key: "local-student",
+          socketId: "local-student",
+          name: "Εσύ",
+          frequency: Number(studentSoundFrequency.value),
+          amplitude: Number(studentSoundAmplitude.value),
+        }),
+      ];
+    }
+
+    function updateStudentSoundLabels(emitChange = false) {
+      if (!studentSoundFrequency || !studentSoundAmplitude) {
+        return;
+      }
+
+      const source = normalizeClassroomSoundSource({
+        socketId: "local-student",
+        name: "Εσύ",
+        frequency: Number(studentSoundFrequency.value),
+        amplitude: Number(studentSoundAmplitude.value),
+      });
+
+      if (studentSoundFrequencyValue) {
+        studentSoundFrequencyValue.textContent = `${Math.round(source.frequency)} Hz`;
+      }
+
+      if (studentSoundAmplitudeValue) {
+        studentSoundAmplitudeValue.textContent = `${Math.round(source.amplitude * 100)}%`;
+      }
+
+      if (emitChange && !isTeacherMode) {
+        // Communication bridge #1 (UI -> sync layer):
+        // classroom-sync.js listens to this event and forwards data through
+        // WebSocket as `fourier:sound-control`.
+        document.dispatchEvent(
+          new CustomEvent("fourier:sound-control-local-change", {
+            detail: {
+              frequency: source.frequency,
+              amplitude: source.amplitude,
+            },
+          })
+        );
+      }
+    }
+
+    [studentSoundFrequency, studentSoundAmplitude].forEach((slider) => {
+      slider?.addEventListener("input", () => {
+        updateStudentSoundLabels(true);
+      });
+
+      slider?.addEventListener("change", () => {
+        updateStudentSoundLabels(true);
+      });
+    });
+
+    function updateTeacherFrequencyLabels(syncAudio = false) {
+      if (teacherSoundFreqOneValue && teacherSoundFreqOne) {
+        teacherSoundFreqOneValue.textContent = `${Math.round(Number(teacherSoundFreqOne.value))} Hz`;
+      }
+
+      if (teacherSoundFreqTwoValue && teacherSoundFreqTwo) {
+        teacherSoundFreqTwoValue.textContent = `${Math.round(Number(teacherSoundFreqTwo.value))} Hz`;
+      }
+
+      if (syncAudio && isTeacherMode && classroomSoundEnabled) {
+        syncClassroomSoundEngine();
+      }
+
+      updateTeacherSoundStatus();
+    }
+
+    [teacherSoundFreqOne, teacherSoundFreqTwo].forEach((control) => {
+      control?.addEventListener("input", () => {
+        updateTeacherFrequencyLabels(true);
+      });
+
+      control?.addEventListener("change", () => {
+        updateTeacherFrequencyLabels(true);
+      });
+    });
+
+    [teacherSoundFreqOneOn, teacherSoundFreqTwoOn].forEach((control) => {
+      control?.addEventListener("change", () => {
+        updateTeacherFrequencyLabels(true);
+      });
+    });
+
+    function updateTeacherSoundStatus() {
+      if (!teacherSoundStateLabel) {
+        return;
+      }
+
+      const classroomSources = getClassroomRosterSoundSources();
+      const teacherSources = getTeacherToneSources();
+      const activeSources = [...classroomSources, ...teacherSources];
+      const activeCount = activeSources.length;
+      const studentCount = classroomSources.length;
+      const teacherCount = teacherSources.length;
+
+      if (!isTeacherMode) {
+        teacherSoundStateLabel.textContent = "Classroom ήχος: διαθέσιμος στον teacher";
+        return;
+      }
+
+      if (!classroomSoundEnabled) {
+        teacherSoundStateLabel.textContent = `Classroom ήχος: mute (${studentCount} students + ${teacherCount} teacher tones)`;
+      } else if (activeCount === 0) {
+        teacherSoundStateLabel.textContent = "Classroom ήχος: ενεργός (χωρίς ενεργές πηγές)";
+      } else {
+        teacherSoundStateLabel.textContent = `Classroom ήχος: ${activeCount} ενεργές πηγές (${studentCount} students + ${teacherCount} teacher tones)`;
+      }
+
+      teacherSoundActivateBtn?.classList.toggle("active", classroomSoundEnabled);
+    }
+
+    function stopClassroomTone(key, tone) {
+      if (!tone) {
+        return;
+      }
+
+      if (tone.stopTimer) {
+        clearTimeout(tone.stopTimer);
+      }
+
+      const now = audioContext ? audioContext.currentTime : 0;
+
+      try {
+        tone.gain.gain.cancelScheduledValues(now);
+        tone.gain.gain.setTargetAtTime(0.0001, now, 0.04);
+      } catch {
+      }
+
+      tone.stopTimer = setTimeout(() => {
+        try {
+          tone.oscillator.stop();
+        } catch {
+        }
+        try {
+          tone.oscillator.disconnect();
+          tone.gain.disconnect();
+        } catch {
+        }
+      }, 180);
+
+      classroomOscillators.delete(key);
+    }
+
+    function stopClassroomSoundEngine() {
+      [...classroomOscillators.entries()].forEach(([key, tone]) => {
+        stopClassroomTone(key, tone);
+      });
+    }
+
+    function ensureClassroomMasterGain() {
+      if (!audioContext) {
+        return null;
+      }
+
+      if (!classroomMasterGain) {
+        classroomMasterGain = audioContext.createGain();
+        classroomMasterGain.gain.value = 0.9;
+        classroomMasterGain.connect(audioContext.destination);
+      }
+
+      return classroomMasterGain;
+    }
+
+    function syncClassroomSoundEngine() {
+      if (!isTeacherMode) {
+        return;
+      }
+
+      if (!classroomSoundEnabled) {
+        stopClassroomSoundEngine();
+        updateTeacherSoundStatus();
+        return;
+      }
+
+      ensureAudioContext();
+      const masterGain = ensureClassroomMasterGain();
+
+      if (!masterGain || !audioContext) {
+        return;
+      }
+
+      const now = audioContext.currentTime;
+      const activeSources = getActiveClassroomSoundSources().slice(0, 18);
+      const activeKeys = new Set(activeSources.map((source) => source.key));
+
+      classroomOscillators.forEach((tone, key) => {
+        if (!activeKeys.has(key)) {
+          stopClassroomTone(key, tone);
+        }
+      });
+
+      activeSources.forEach((source) => {
+        let tone = classroomOscillators.get(source.key);
+
+        if (!tone) {
+          const oscillator = audioContext.createOscillator();
+          oscillator.type = "sine";
+
+          const gain = audioContext.createGain();
+          gain.gain.value = 0.0001;
+
+          oscillator.connect(gain);
+          gain.connect(masterGain);
+          oscillator.start(now);
+
+          tone = { oscillator, gain, stopTimer: null };
+          classroomOscillators.set(source.key, tone);
+        }
+
+        if (tone.stopTimer) {
+          clearTimeout(tone.stopTimer);
+          tone.stopTimer = null;
+        }
+
+        const targetGain = Math.max(0.0001, source.amplitude * 0.045);
+
+        tone.oscillator.frequency.cancelScheduledValues(now);
+        tone.oscillator.frequency.setTargetAtTime(source.frequency, now, 0.03);
+        tone.gain.gain.cancelScheduledValues(now);
+        tone.gain.gain.setTargetAtTime(targetGain, now, 0.05);
+      });
+
+      updateTeacherSoundStatus();
+    }
+
+    // Communication bridge #2 (sync layer -> rendering/audio layer):
+    // classroom-sync.js dispatches this after receiving `fourier:sound-state`
+    // (or summary/state snapshots) from the server.
+    document.addEventListener("fourier:classroom-sound-state", (event) => {
+      const payload = (event && event.detail) || {};
+      const list = Array.isArray(payload.soundStates) ? payload.soundStates : [];
+
+      classroomSoundRoster = list.map((source, index) => normalizeClassroomSoundSource(source, index));
+      syncClassroomSoundEngine();
+      updateTeacherSoundStatus();
+    });
+
+    teacherSoundActivateBtn?.addEventListener("click", () => {
+      classroomSoundEnabled = true;
+      stopCurrentSound();
+      stopFilterSound();
+      syncClassroomSoundEngine();
+      updateTeacherSoundStatus();
+    });
+
+    teacherSoundMuteBtn?.addEventListener("click", () => {
+      classroomSoundEnabled = false;
+      stopClassroomSoundEngine();
+      updateTeacherSoundStatus();
+    });
+
+    updateStudentSoundLabels(false);
+    updateTeacherFrequencyLabels(false);
+    updateTeacherSoundStatus();
+    installTeacherAudioUnlock();
+
+    if (isTeacherMode && classroomSoundEnabled) {
+      syncClassroomSoundEngine();
+    }
+
     function drawEulerProofSketch(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const cx = width * 0.48;
@@ -3588,8 +5991,37 @@
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
       }
       if (audioContext.state === "suspended") {
-        audioContext.resume();
+        audioContext.resume().catch(() => {
+        });
       }
+    }
+
+    function installTeacherAudioUnlock() {
+      if (!isTeacherMode || teacherAudioUnlockInstalled) {
+        return;
+      }
+
+      teacherAudioUnlockInstalled = true;
+
+      const tryUnlock = () => {
+        ensureAudioContext();
+
+        if (!audioContext || audioContext.state !== "running") {
+          return;
+        }
+
+        window.removeEventListener("pointerdown", tryUnlock);
+        window.removeEventListener("keydown", tryUnlock);
+        window.removeEventListener("touchstart", tryUnlock);
+
+        if (classroomSoundEnabled) {
+          syncClassroomSoundEngine();
+        }
+      };
+
+      window.addEventListener("pointerdown", tryUnlock, { passive: true });
+      window.addEventListener("keydown", tryUnlock);
+      window.addEventListener("touchstart", tryUnlock, { passive: true });
     }
 
     function stopCurrentSound() {
@@ -3640,6 +6072,9 @@
       ensureAudioContext();
       stopCurrentSound();
       stopFilterSound();
+      classroomSoundEnabled = false;
+      stopClassroomSoundEngine();
+      updateTeacherSoundStatus();
 
       filterMode = mode;
       refreshFilterButtons();
@@ -3751,7 +6186,56 @@
       stopFilterSound();
     });
 
-    function drawCompositeWave(canvas, time, includeFirst, includeSecond, includeThird) {
+    function normalizeCompositeSourcesInput(sourcesOrLegacy, includeSecond, includeThird) {
+      if (Array.isArray(sourcesOrLegacy)) {
+        return sourcesOrLegacy
+          .map((source, index) => normalizeClassroomSoundSource(source, index))
+          .filter((source) => source.amplitude > 0.001);
+      }
+
+      const legacy = [];
+      if (sourcesOrLegacy) {
+        legacy.push({ key: "legacy-1", frequency: 440, amplitude: 0.85 });
+      }
+      if (includeSecond) {
+        legacy.push({ key: "legacy-2", frequency: 660, amplitude: 0.7 });
+      }
+      if (includeThird) {
+        legacy.push({ key: "legacy-3", frequency: 880, amplitude: 0.55 });
+      }
+
+      return legacy.map((source, index) => normalizeClassroomSoundSource(source, index));
+    }
+
+    function getCompositeSourceColor(source, index, alpha = 0.45) {
+      const sourceLabel = String(source && source.label ? source.label : "").trim().toLowerCase();
+      if (sourceLabel === "f1") {
+        return `rgba(255, 182, 92, ${alpha})`;
+      }
+      if (sourceLabel === "f2") {
+        return `rgba(199, 150, 255, ${alpha})`;
+      }
+
+      const token = String((source && source.key) || (source && source.name) || index);
+      let hash = 0;
+      for (let i = 0; i < token.length; i += 1) {
+        hash = (hash * 31 + token.charCodeAt(i)) >>> 0;
+      }
+      const hue = hash % 360;
+      return `hsla(${hue}, 88%, 72%, ${alpha})`;
+    }
+
+    function getCompositeSourceLabel(source, index) {
+      const raw = String((source && source.label) || (source && source.name) || `πηγή ${index + 1}`)
+        .trim()
+        .replace(/\s+/g, " ");
+      if (raw.length <= 18) {
+        return raw;
+      }
+      return `${raw.slice(0, 17)}…`;
+    }
+
+    function drawCompositeWave(canvas, time, sourcesOrLegacy, includeSecond, includeThird) {
       if (!canvas) {
         return;
       }
@@ -3773,28 +6257,94 @@
       context.lineTo(width, midY);
       context.stroke();
 
-      const ampScale = height * 0.24;
+      const sources = normalizeCompositeSourcesInput(sourcesOrLegacy, includeSecond, includeThird);
+      const ampScale = height * 0.30;
       const cyclesAcrossScreen = 2.4;
+      const totalAmplitude = Math.max(
+        1,
+        sources.reduce((sum, source) => sum + Math.abs(source.amplitude), 0)
+      );
 
-      context.strokeStyle = "#88c7ff";
-      context.lineWidth = Math.max(2, ratio * 2);
+      context.fillStyle = "#9db7dd";
+      context.font = `${Math.max(11, 11 * ratio)}px Segoe UI`;
+      context.fillText(`Ενεργές πηγές: ${sources.length}`, 10 * ratio, 16 * ratio);
+      context.fillStyle = "#a5bde0";
+      context.font = `${Math.max(10, 10 * ratio)}px Segoe UI`;
+      context.fillText("Αχνά: ατομικές πηγές • Έντονο: άθροισμα", 10 * ratio, 30 * ratio);
+
+      if (!sources.length) {
+        context.strokeStyle = "#88c7ff";
+        context.lineWidth = Math.max(2, ratio * 2);
+        context.beginPath();
+        context.moveTo(0, midY);
+        context.lineTo(width, midY);
+        context.stroke();
+        return;
+      }
+
+      const labelAnchorNx = 0.88;
+      sources.forEach((source, index) => {
+        const componentColor = getCompositeSourceColor(source, index, 0.42);
+        context.strokeStyle = componentColor;
+        context.lineWidth = Math.max(1, ratio * 1.2);
+        context.beginPath();
+
+        for (let pixelX = 0; pixelX <= width; pixelX += 2) {
+          const nx = pixelX / width;
+          const frequencyScale = source.frequency / 220;
+          const phase = index * 0.55;
+          const omega = 0.35 + frequencyScale * 0.12;
+          const componentValue = source.amplitude * Math.sin(
+            2 * Math.PI * (frequencyScale * cyclesAcrossScreen * nx - omega * time) + phase
+          );
+
+          const y = midY - ampScale * (componentValue / totalAmplitude);
+          if (pixelX === 0) {
+            context.moveTo(pixelX, y);
+          } else {
+            context.lineTo(pixelX, y);
+          }
+        }
+
+        context.stroke();
+
+        const frequencyScale = source.frequency / 220;
+        const phase = index * 0.55;
+        const omega = 0.35 + frequencyScale * 0.12;
+        const labelValue = source.amplitude * Math.sin(
+          2 * Math.PI * (frequencyScale * cyclesAcrossScreen * labelAnchorNx - omega * time) + phase
+        );
+        const baseLabelY = midY - ampScale * (labelValue / totalAmplitude);
+        const labelY = baseLabelY + ((index % 2 === 0 ? -1 : 1) * (7 + (index % 3) * 2) * ratio);
+
+        context.fillStyle = getCompositeSourceColor(source, index, 0.96);
+        context.font = `${Math.max(10, 10 * ratio)}px Segoe UI`;
+        context.fillText(
+          getCompositeSourceLabel(source, index),
+          width * labelAnchorNx + 6 * ratio,
+          Math.max(11 * ratio, Math.min(height - 8 * ratio, labelY))
+        );
+      });
+
+      context.strokeStyle = "#b5ff9e";
+      context.lineWidth = Math.max(2.4, ratio * 2.6);
       context.beginPath();
 
       for (let pixelX = 0; pixelX <= width; pixelX += 2) {
         const nx = pixelX / width;
         let yValue = 0;
 
-        if (includeFirst) {
-          yValue += Math.sin(2 * Math.PI * (1.0 * cyclesAcrossScreen * nx - 0.9 * time));
-        }
-        if (includeSecond) {
-          yValue += 0.75 * Math.sin(2 * Math.PI * (1.5 * cyclesAcrossScreen * nx - 1.25 * time));
-        }
-        if (includeThird) {
-          yValue += 0.55 * Math.sin(2 * Math.PI * (2.1 * cyclesAcrossScreen * nx - 1.55 * time + 0.2));
+        for (let index = 0; index < sources.length; index += 1) {
+          const source = sources[index];
+          const frequencyScale = source.frequency / 220;
+          const phase = index * 0.55;
+          const omega = 0.35 + frequencyScale * 0.12;
+          yValue += source.amplitude * Math.sin(
+            2 * Math.PI * (frequencyScale * cyclesAcrossScreen * nx - omega * time) + phase
+          );
         }
 
-        const y = midY - ampScale * yValue;
+        const y = midY - ampScale * (yValue / totalAmplitude);
         if (pixelX === 0) {
           context.moveTo(pixelX, y);
         } else {
@@ -3802,9 +6352,127 @@
         }
       }
       context.stroke();
+
+      context.strokeStyle = "rgba(181, 255, 158, 0.38)";
+      context.lineWidth = Math.max(4, ratio * 4.5);
+      context.stroke();
     }
 
-    function drawAirMolecules(canvas, time, tones) {
+    function drawSoundSimple(waveCanvas, molCanvas, time) {
+      if (!waveCanvas || !molCanvas) return;
+      fitCanvasToDisplaySize(waveCanvas);
+      fitCanvasToDisplaySize(molCanvas);
+      const ratio = window.devicePixelRatio || 1;
+      const freq = parseFloat(soundSimpleFreq?.value ?? 2);
+      const amp = parseFloat(soundSimpleAmp?.value ?? 1);
+
+      // ── sine wave panel ──────────────────────────────────────────
+      const wCtx = waveCanvas.getContext("2d");
+      const wW = waveCanvas.width;
+      const wH = waveCanvas.height;
+      wCtx.clearRect(0, 0, wW, wH);
+      wCtx.fillStyle = "#0b1820";
+      wCtx.fillRect(0, 0, wW, wH);
+
+      // axis
+      wCtx.strokeStyle = "#334455";
+      wCtx.lineWidth = 1 * ratio;
+      wCtx.beginPath();
+      wCtx.moveTo(0, wH / 2);
+      wCtx.lineTo(wW, wH / 2);
+      wCtx.stroke();
+
+      // label
+      wCtx.fillStyle = "#7dcfcf";
+      wCtx.font = `${11 * ratio}px Segoe UI, sans-serif`;
+      wCtx.fillText(`f = ${freq.toFixed(1)}   A = ${amp.toFixed(2)}`, 12 * ratio, 18 * ratio);
+
+      const omega = 2 * Math.PI * freq * 0.3;
+      const maxAmp = (wH / 2 - 14 * ratio) * Math.min(1, amp / 1.8);
+
+      // gradient fill under wave
+      const grad = wCtx.createLinearGradient(0, wH / 2 - maxAmp, 0, wH / 2 + maxAmp);
+      grad.addColorStop(0, "rgba(64,220,220,0.18)");
+      grad.addColorStop(0.5, "rgba(64,220,220,0.04)");
+      grad.addColorStop(1, "rgba(64,220,220,0.18)");
+      wCtx.fillStyle = grad;
+      wCtx.beginPath();
+      for (let px = 0; px <= wW; px++) {
+        const nx = px / wW;
+        const y = wH / 2 - maxAmp * Math.sin(2 * Math.PI * freq * nx - omega * time);
+        if (px === 0) wCtx.moveTo(px, y); else wCtx.lineTo(px, y);
+      }
+      wCtx.lineTo(wW, wH / 2);
+      wCtx.lineTo(0, wH / 2);
+      wCtx.closePath();
+      wCtx.fill();
+
+      // wave line
+      wCtx.strokeStyle = "#40dddd";
+      wCtx.lineWidth = 2.5 * ratio;
+      wCtx.beginPath();
+      for (let px = 0; px <= wW; px++) {
+        const nx = px / wW;
+        const y = wH / 2 - maxAmp * Math.sin(2 * Math.PI * freq * nx - omega * time);
+        if (px === 0) wCtx.moveTo(px, y); else wCtx.lineTo(px, y);
+      }
+      wCtx.stroke();
+
+      // ── air molecules panel ───────────────────────────────────────
+      const mCtx = molCanvas.getContext("2d");
+      const mW = molCanvas.width;
+      const mH = molCanvas.height;
+      mCtx.clearRect(0, 0, mW, mH);
+      mCtx.fillStyle = "#000";
+      mCtx.fillRect(0, 0, mW, mH);
+
+      mCtx.fillStyle = "#7dc5ff";
+      mCtx.font = `${11 * ratio}px Segoe UI, sans-serif`;
+      mCtx.fillText("Πυκνώσεις / Αραιώσεις αέρα", 12 * ratio, 18 * ratio);
+
+      const columns = 80;
+      const rows = 4;
+      const lp = 15 * ratio, rp = 15 * ratio, tp = 28 * ratio;
+      const uw = mW - lp - rp;
+      const rGap = (mH - tp - 8 * ratio) / rows;
+      const spatial = 2 * Math.PI * (1.4 + freq * 0.32);
+
+      for (let row = 0; row < rows; row++) {
+        const y = tp + row * rGap + rGap / 2;
+        for (let i = 0; i < columns; i++) {
+          const nx = i / (columns - 1);
+          const baseX = lp + nx * uw;
+          const phase = spatial * nx - omega * time;
+          const density = amp * Math.cos(phase);
+          const displacement = amp * 7 * ratio * Math.sin(phase);
+          const x = baseX + displacement;
+          const r = Math.max(0.4, (1.8 + density * 1.4) * ratio);
+          const bright = Math.min(255, Math.max(50, Math.round(130 + density * 110)));
+          mCtx.fillStyle = `rgb(${bright},${bright + 25},255)`;
+          mCtx.beginPath();
+          mCtx.arc(x, y, r, 0, Math.PI * 2);
+          mCtx.fill();
+        }
+      }
+    }
+
+    function getSoundDecompositionSources() {
+      return [
+        { key: "decompose-1", name: "f1", frequency: 180, amplitude: 0.95 },
+        { key: "decompose-2", name: "f2", frequency: 320, amplitude: 0.62 },
+        { key: "decompose-3", name: "f3", frequency: 540, amplitude: 0.42 },
+      ];
+    }
+
+    function drawSoundDecomposition(time) {
+      const sources = getSoundDecompositionSources();
+      drawCompositeWave(soundDecomposeMixCanvas, time, sources);
+      drawCompositeWave(soundDecomposePartOneCanvas, time, [sources[0]]);
+      drawCompositeWave(soundDecomposePartTwoCanvas, time, [sources[1]]);
+      drawCompositeWave(soundDecomposePartThreeCanvas, time, [sources[2]]);
+    }
+
+    function drawAirMolecules(canvas, time, sourcesOrLegacy) {
       if (!canvas) {
         return;
       }
@@ -3830,17 +6498,8 @@
       const usableWidth = width - leftPadding - rightPadding;
       const rowGap = (height - topPadding - 18 * ratio) / rows;
 
-      const w1 = 2 * Math.PI * 0.85;
-      const w2 = 2 * Math.PI * 1.2;
-      const w3 = 2 * Math.PI * 1.55;
-      const spatial1 = 2 * Math.PI * 1.6;
-      const spatial2 = 2 * Math.PI * 2.5;
-      const spatial3 = 2 * Math.PI * 3.2;
-
-      const includeFirst = Boolean(tones?.one);
-      const includeSecond = Boolean(tones?.two);
-      const includeThird = Boolean(tones?.three);
-      const hasAny = includeFirst || includeSecond || includeThird;
+      const sources = normalizeCompositeSourcesInput(sourcesOrLegacy);
+      const hasAny = sources.length > 0;
 
       for (let row = 0; row < rows; row += 1) {
         const y = topPadding + row * rowGap;
@@ -3849,21 +6508,20 @@
           const baseX = leftPadding + nx * usableWidth;
 
           let displacement = 0;
-          if (includeFirst) {
-            displacement += 11 * ratio * Math.sin(spatial1 * nx - w1 * time);
-          }
-          if (includeSecond) {
-            displacement += 10 * ratio * Math.sin(spatial2 * nx - w2 * time + 0.4);
-          }
-          if (includeThird) {
-            displacement += 8 * ratio * Math.sin(spatial3 * nx - w3 * time + 0.7);
+          let densityAccumulator = 0;
+
+          for (let sourceIndex = 0; sourceIndex < sources.length; sourceIndex += 1) {
+            const source = sources[sourceIndex];
+            const frequencyScale = source.frequency / 220;
+            const spatial = 2 * Math.PI * (1.2 + sourceIndex * 0.55 + frequencyScale * 0.35);
+            const omega = 2 * Math.PI * (0.45 + frequencyScale * 0.24);
+            const phase = sourceIndex * 0.8;
+
+            displacement += source.amplitude * 12 * ratio * Math.sin(spatial * nx - omega * time + phase);
+            densityAccumulator += source.amplitude * Math.cos(spatial * nx - omega * time + phase);
           }
 
-          const densityProxy = Math.abs(
-            Math.cos(spatial1 * nx - w1 * time) * (includeFirst ? 1.0 : 0) +
-            Math.cos(spatial2 * nx - w2 * time) * (includeSecond ? 0.9 : 0) +
-            Math.cos(spatial3 * nx - w3 * time) * (includeThird ? 0.75 : 0)
-          );
+          const densityProxy = Math.abs(densityAccumulator);
 
           const alpha = hasAny ? Math.min(0.95, 0.25 + densityProxy * 0.55) : 0.35;
           const radius = hasAny ? (1.8 + densityProxy * 1.8) * ratio : 2.2 * ratio;
@@ -4032,7 +6690,10 @@
 
     function drawHeatRod(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
+        const ratio = window.devicePixelRatio || 1;
         const timeValue = heatTimeSlider ? Number(heatTimeSlider.value) : 0;
+        const activeProfile = getActiveHeatProfile();
+        const activeCoefficients = Array.isArray(activeProfile.coefficients) ? activeProfile.coefficients : HEAT_COEFFICIENTS;
         const left = 40;
         const right = width - 24;
         const graphTop = 18;
@@ -4050,10 +6711,10 @@
         for (let i = 0; i < points; i += 1) {
           const x = i / (points - 1);
           const xNorm = -1 + 2 * x;
-          let value = HEAT_MEAN_TEMP;
+          let value = activeProfile.mean;
 
-          for (let n = 1; n <= HEAT_COEFFICIENTS.length; n += 1) {
-            const coefficient = HEAT_COEFFICIENTS[n - 1];
+          for (let n = 1; n <= activeCoefficients.length; n += 1) {
+            const coefficient = activeCoefficients[n - 1];
             const decay = Math.exp(-HEAT_KAPPA * n * n * Math.PI * Math.PI * timeValue);
             value += coefficient * Math.cos(n * Math.PI * x) * decay;
           }
@@ -4106,7 +6767,44 @@
         ctx.strokeStyle = "#345886";
         ctx.strokeRect(left, rodTop, rodW, rodH);
 
+        const markers = getHeatMarkersForCurrentView();
+        markers.forEach((marker, index) => {
+          const markerX = left + marker.position * graphW;
+          const markerColor = temperatureToColor(marker.temperatureNorm);
+          ctx.strokeStyle = markerColor;
+          ctx.lineWidth = Math.max(1, ratio * 1.1);
+          ctx.beginPath();
+          ctx.moveTo(markerX, rodTop);
+          ctx.lineTo(markerX, rodBottom);
+          ctx.stroke();
+
+          const sampleIndex = Math.max(0, Math.min(points - 1, Math.round(marker.position * (points - 1))));
+          const predictedValue = samples[sampleIndex].value;
+          const markerY = graphBottom - ((predictedValue - yMin) / (yMax - yMin)) * graphH;
+
+          ctx.fillStyle = markerColor;
+          ctx.beginPath();
+          ctx.arc(markerX, markerY, Math.max(2, ratio * 2), 0, 2 * Math.PI);
+          ctx.fill();
+
+          if (index < 4) {
+            ctx.fillStyle = "#dbeafe";
+            ctx.font = `${Math.max(10, 10 * ratio)}px Segoe UI, sans-serif`;
+            ctx.fillText(
+              `${marker.name}: ${marker.positionMeter.toFixed(2)}m, ${marker.temperature.toFixed(0)}°C`,
+              markerX + 4,
+              Math.max(graphTop + 14, markerY - 6)
+            );
+          }
+        });
+
         ctx.fillStyle = "#c7dcff";
+        const profileLabel = activeProfile.source === "classroom"
+          ? `profile: classroom (${activeProfile.sourceCount})`
+          : activeProfile.source === "local"
+            ? "profile: local point/temperature"
+            : "profile: preset";
+        ctx.fillText(profileLabel, left + 6, graphTop + 14);
         ctx.fillText(`y_min=${yMin.toFixed(2)}  y_max=${yMax.toFixed(2)}`, right - 160, graphTop + 14);
         ctx.fillText(`t = ${timeValue.toFixed(2)}`, right - 64, graphTop + 14);
       });
@@ -4558,6 +7256,198 @@
         ctx.font = "13px Segoe UI, sans-serif";
         ctx.fillText(`${signalFreq.toFixed(2)} cycles/sec`, topX1 + 8, pad + 18);
         ctx.fillText(`k = ${probeFreq.toFixed(2)} cycles/sec`, pad + 12, bottomY + 22);
+        ctx.fillText(`μ(k) = ${mu.toFixed(3)}`, gx1 + 8, gy1 + 18);
+      });
+    }
+
+    function sampleFftDuelSignal(signalKind, signalFreq, u) {
+      const phase = 2 * Math.PI * signalFreq * u;
+      if (signalKind === "square") {
+        return Math.sin(phase) >= 0 ? 1 : -1;
+      }
+      if (signalKind === "triangle") {
+        return (2 / Math.PI) * Math.asin(Math.sin(phase));
+      }
+      if (signalKind === "saw") {
+        const wrapped = (signalFreq * u) % 1;
+        return 2 * wrapped - 1;
+      }
+      return Math.sin(phase);
+    }
+
+    function drawFFTDuel(canvas, t) {
+      drawAxesCanvas(canvas, (ctx, width, height) => {
+        const own = fftDuelUiState.own || null;
+        const signalKind = own ? String(own.signalKind || "sine") : "sine";
+        const targetFreq = own ? clampFftDuelFrequency(own.targetFreq, 2) : 2;
+        const probeFreq = clampFftDuelFrequency(fftDuelProbeFreq ? fftDuelProbeFreq.value : 2, 2);
+
+        const topH = height * 0.33;
+        const pad = 12;
+        const bottomY = topH + 8;
+        const leftW = width * 0.40;
+        const rightX = leftW + 10;
+        const rightW = width - rightX;
+        const bottomH = height - bottomY;
+
+        ctx.strokeStyle = "#33507c";
+        ctx.strokeRect(pad, pad, width - 2 * pad, topH - pad - 2);
+        ctx.strokeRect(pad, bottomY + 2, leftW - 2 * pad, bottomH - 12);
+        ctx.strokeRect(rightX + 2, bottomY + 2, rightW - pad - 4, bottomH - 12);
+
+        const N = 260;
+        const samples = [];
+        for (let n = 0; n < N; n += 1) {
+          const u = n / N;
+          const x = sampleFftDuelSignal(signalKind, targetFreq, u + t * 0.02);
+          samples.push({ u, x });
+        }
+
+        const topMidY = pad + (topH - pad - 2) * 0.58;
+        const topX1 = pad + 8;
+        const topX2 = width - pad - 8;
+        ctx.strokeStyle = "#3f5f90";
+        ctx.beginPath();
+        ctx.moveTo(topX1, topMidY);
+        ctx.lineTo(topX2, topMidY);
+        ctx.stroke();
+
+        ctx.strokeStyle = "#f1eb45";
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        for (let i = 0; i < samples.length; i += 1) {
+          const point = samples[i];
+          const x = topX1 + point.u * (topX2 - topX1);
+          const y = topMidY - point.x * (topH * 0.26);
+          if (i === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+        ctx.stroke();
+
+        const cx = pad + (leftW - 2 * pad) * 0.50;
+        const cy = bottomY + (bottomH - 12) * 0.51;
+        const radius = Math.min(leftW - 2 * pad, bottomH - 12) * 0.30;
+
+        ctx.strokeStyle = "#3f5f90";
+        ctx.beginPath();
+        ctx.moveTo(cx - radius - 16, cy);
+        ctx.lineTo(cx + radius + 16, cy);
+        ctx.moveTo(cx, cy - radius - 16);
+        ctx.lineTo(cx, cy + radius + 16);
+        ctx.stroke();
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        const winding = [];
+        let meanRe = 0;
+        let meanIm = 0;
+        samples.forEach((point) => {
+          const theta = 2 * Math.PI * probeFreq * point.u;
+          const re = point.x * Math.cos(theta);
+          const im = -point.x * Math.sin(theta);
+          winding.push({ re, im });
+          meanRe += re;
+          meanIm += im;
+        });
+        meanRe /= N;
+        meanIm /= N;
+        const mu = Math.hypot(meanRe, meanIm);
+
+        ctx.strokeStyle = "rgba(241, 235, 69, 0.65)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        winding.forEach((point, idx) => {
+          const x = cx + point.re * radius;
+          const y = cy - point.im * radius;
+          if (idx === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        });
+        ctx.stroke();
+
+        const mx = cx + meanRe * radius;
+        const my = cy - meanIm * radius;
+        ctx.strokeStyle = "#ff7f7f";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(mx, my);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(mx, my, 4, 0, 2 * Math.PI);
+        ctx.fillStyle = "#ff7f7f";
+        ctx.fill();
+
+        const gx1 = rightX + 10;
+        const gy1 = bottomY + 12;
+        const gw = rightW - pad - 20;
+        const gh = bottomH - 30;
+        const maxK = 8;
+        const bins = 180;
+        const spectrum = [];
+        let maxMu = 1e-6;
+
+        for (let b = 0; b <= bins; b += 1) {
+          const k = (b / bins) * maxK;
+          let re = 0;
+          let im = 0;
+          samples.forEach((point) => {
+            const theta = 2 * Math.PI * k * point.u;
+            re += point.x * Math.cos(theta);
+            im -= point.x * Math.sin(theta);
+          });
+          re /= N;
+          im /= N;
+          const val = Math.hypot(re, im);
+          maxMu = Math.max(maxMu, val);
+          spectrum.push({ k, mu: val });
+        }
+
+        ctx.strokeStyle = "#3f5f90";
+        ctx.beginPath();
+        ctx.moveTo(gx1, gy1 + gh);
+        ctx.lineTo(gx1 + gw, gy1 + gh);
+        ctx.stroke();
+
+        ctx.strokeStyle = "#7fd0ff";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        spectrum.forEach((point, idx) => {
+          const x = gx1 + (point.k / maxK) * gw;
+          const y = gy1 + gh - (point.mu / maxMu) * (gh - 4);
+          if (idx === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        });
+        ctx.stroke();
+
+        const probeX = gx1 + (probeFreq / maxK) * gw;
+        const probeY = gy1 + gh - (mu / maxMu) * (gh - 4);
+        ctx.strokeStyle = "#ff7f7f";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(probeX, gy1 + gh);
+        ctx.lineTo(probeX, probeY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(probeX, probeY, 4, 0, 2 * Math.PI);
+        ctx.fillStyle = "#ff7f7f";
+        ctx.fill();
+
+        ctx.fillStyle = "#c7dcff";
+        ctx.font = "13px Segoe UI, sans-serif";
+        ctx.fillText(`signal: ${getFftDuelSignalLabel(signalKind)} (${targetFreq.toFixed(2)} Hz)`, topX1 + 8, pad + 18);
+        ctx.fillText(`k = ${probeFreq.toFixed(2)} Hz`, pad + 12, bottomY + 22);
         ctx.fillText(`μ(k) = ${mu.toFixed(3)}`, gx1 + 8, gy1 + 18);
       });
     }
@@ -5314,6 +8204,147 @@
       });
     }
 
+    function drawComplexityRace(canvas, t) {
+      drawAxesCanvas(canvas, (ctx, width, height) => {
+        const left = 16;
+        const right = width - 16;
+        const top = 14;
+        const bottom = height - 16;
+        const panelWidth = Math.min(300, Math.max(210, width * 0.34));
+        const gx1 = left + 44;
+        const gx2 = right - panelWidth - 12;
+        const gy1 = top + 14;
+        const gy2 = bottom - 26;
+        const graphWidth = Math.max(10, gx2 - gx1);
+        const graphHeight = Math.max(10, gy2 - gy1);
+
+        const selectedN = getComplexityRaceNFromStep();
+        const axisN = Math.max(1, selectedN);
+
+        const xToCanvas = (nValue) => gx1 + (Math.max(0, Math.min(axisN, nValue)) / axisN) * graphWidth;
+        const yToCanvas = (value) => {
+          if (!Number.isFinite(value)) {
+            return gy1 - graphHeight * 1.2;
+          }
+          return gy2 - (value / COMPLEXITY_RACE_MAX_VALUE) * graphHeight;
+        };
+
+        ctx.strokeStyle = "#345886";
+        ctx.strokeRect(left, top, right - left, bottom - top);
+
+        ctx.strokeStyle = "#2f4f85";
+        ctx.beginPath();
+        ctx.moveTo(gx1, gy2);
+        ctx.lineTo(gx2, gy2);
+        ctx.moveTo(gx1, gy2);
+        ctx.lineTo(gx1, gy1);
+        ctx.stroke();
+
+        for (let i = 0; i <= 5; i += 1) {
+          const nTick = (axisN * i) / 5;
+          const x = xToCanvas(nTick);
+          ctx.strokeStyle = "rgba(132, 169, 219, 0.2)";
+          ctx.beginPath();
+          ctx.moveTo(x, gy1);
+          ctx.lineTo(x, gy2);
+          ctx.stroke();
+
+          ctx.fillStyle = "#9fbde3";
+          ctx.font = "10px Segoe UI, sans-serif";
+          ctx.fillText(Math.round(nTick).toLocaleString("el-GR"), x - 12, gy2 + 14);
+        }
+
+        for (let i = 0; i <= 4; i += 1) {
+          const yValue = (COMPLEXITY_RACE_MAX_VALUE * i) / 4;
+          const y = yToCanvas(yValue);
+          ctx.strokeStyle = "rgba(132, 169, 219, 0.2)";
+          ctx.beginPath();
+          ctx.moveTo(gx1, y);
+          ctx.lineTo(gx2, y);
+          ctx.stroke();
+
+          ctx.fillStyle = "rgba(175, 205, 244, 0.75)";
+          ctx.font = "10px Segoe UI, sans-serif";
+          ctx.fillText(Math.round(yValue).toLocaleString("el-GR"), gx1 - 40, y + 4);
+        }
+
+        ctx.strokeStyle = "rgba(255, 121, 121, 0.42)";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(gx1, yToCanvas(COMPLEXITY_RACE_MAX_VALUE));
+        ctx.lineTo(gx2, yToCanvas(COMPLEXITY_RACE_MAX_VALUE));
+        ctx.stroke();
+
+        const samples = 180;
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(gx1, gy1, graphWidth, graphHeight);
+        ctx.clip();
+
+        complexityRaceModels.forEach((model) => {
+          ctx.strokeStyle = model.color;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+
+          for (let i = 0; i <= samples; i += 1) {
+            const ratio = i / samples;
+            const nValue = axisN * ratio;
+            const x = xToCanvas(nValue);
+            const y = yToCanvas(evaluateComplexityRace(model.key, nValue));
+
+            if (i === 0) {
+              ctx.moveTo(x, y);
+            } else {
+              ctx.lineTo(x, y);
+            }
+          }
+
+          ctx.stroke();
+        });
+
+        ctx.restore();
+
+        ctx.fillStyle = "#c7dcff";
+        ctx.font = "12px Segoe UI, sans-serif";
+        ctx.fillText(`N = ${selectedN.toLocaleString("el-GR")}`, gx1 + 8, gy1 + 14);
+        ctx.fillText("Άξονας Y: όριο 1.000.000", gx1 + 8, gy1 + 30);
+
+        const panelX = gx2 + 10;
+        const panelY = gy1;
+        const panelH = graphHeight;
+        ctx.fillStyle = "rgba(9, 20, 38, 0.9)";
+        ctx.fillRect(panelX, panelY, panelWidth, panelH);
+        ctx.strokeStyle = "rgba(139, 183, 244, 0.35)";
+        ctx.strokeRect(panelX, panelY, panelWidth, panelH);
+
+        ctx.fillStyle = "#d8eeff";
+        ctx.font = "12px Segoe UI, sans-serif";
+        ctx.fillText("Επιλογές μαθητών ανά πολυπλοκότητα", panelX + 9, panelY + 15);
+
+        const rowTop = panelY + 26;
+        const rowGap = (panelH - 32) / Math.max(1, complexityRaceModels.length);
+
+        complexityRaceModels.forEach((model, index) => {
+          const y = rowTop + index * rowGap;
+
+          ctx.strokeStyle = model.color;
+          ctx.lineWidth = 2.3;
+          ctx.beginPath();
+          ctx.moveTo(panelX + 9, y + 5);
+          ctx.lineTo(panelX + 23, y + 5);
+          ctx.stroke();
+
+          ctx.fillStyle = "#d8eeff";
+          ctx.font = "11px Segoe UI, sans-serif";
+          ctx.fillText(model.label, panelX + 28, y + 8);
+
+          ctx.fillStyle = "#9fbde3";
+          ctx.font = "10px Segoe UI, sans-serif";
+          ctx.fillText(summarizeComplexityRaceUsers(model.key), panelX + 9, y + 21);
+        });
+      });
+    }
+
     function drawCooleyTree(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const values = getCooleyTreeValues();
@@ -5486,20 +8517,51 @@
         ctx.lineTo(cx, top + boxH - 10);
         ctx.stroke();
 
-        for (let i = 0; i < 140; i += 1) {
-          const g1 = seededGaussian(i + 1, i + 91);
-          const g2 = seededGaussian(i + 211, i + 389);
-          const x = cx + scale * g1;
-          const y = cy - scale * g2;
-          ctx.fillStyle = "rgba(159, 208, 255, 0.55)";
-          ctx.beginPath();
-          ctx.arc(x, y, 2, 0, 2 * Math.PI);
-          ctx.fill();
+        const usedTerms = Array.isArray(classroomRandomFreqUsedTerms) ? classroomRandomFreqUsedTerms : [];
+
+        if (usedTerms.length) {
+          usedTerms.forEach((term, index) => {
+            const freq = Number(term && term.freq);
+            const phase = Number(term && term.phase);
+            const angle = Number(term && term.angle);
+            const amp = Number(term && term.amp);
+            if (!Number.isFinite(freq) || !Number.isFinite(phase) || !Number.isFinite(angle) || !Number.isFinite(amp)) {
+              return;
+            }
+
+            const nx = Math.cos(angle) * Math.min(1.6, freq / 3.2);
+            const ny = Math.sin(angle) * Math.min(1.6, freq / 3.2);
+            const x = cx + scale * nx;
+            const y = cy - scale * ny;
+            const radius = 1.4 + Math.min(3.1, amp * 16);
+            const alpha = 0.42 + Math.min(0.48, amp * 2.4);
+            ctx.fillStyle = `rgba(159, 208, 255, ${alpha.toFixed(3)})`;
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.fill();
+          });
+        } else {
+          for (let i = 0; i < 140; i += 1) {
+            const g1 = seededGaussian(i + 1, i + 91);
+            const g2 = seededGaussian(i + 211, i + 389);
+            const x = cx + scale * g1;
+            const y = cy - scale * g2;
+            ctx.fillStyle = "rgba(159, 208, 255, 0.55)";
+            ctx.beginPath();
+            ctx.arc(x, y, 2, 0, 2 * Math.PI);
+            ctx.fill();
+          }
         }
 
         ctx.fillStyle = "#c7dcff";
         ctx.font = "12px Segoe UI, sans-serif";
-        ctx.fillText("Gaussian samples στο μιγαδικό επίπεδο (ξr, ξi)", leftX + 10, top + 16);
+        ctx.fillText(
+          usedTerms.length
+            ? "Classroom random συχνότητες στο μιγαδικό επίπεδο"
+            : "Gaussian samples στο μιγαδικό επίπεδο (ξr, ξi)",
+          leftX + 10,
+          top + 16
+        );
 
         const x1 = rightX + 10;
         const x2 = rightX + rightW - 10;
@@ -5514,10 +8576,32 @@
         ctx.lineTo(x2, y2);
         ctx.stroke();
 
+        const spectrumByBin = new Array(bins).fill(0);
+        if (usedTerms.length) {
+          usedTerms.forEach((term) => {
+            const freq = Number(term && term.freq);
+            const amp = Number(term && term.amp);
+            if (!Number.isFinite(freq) || !Number.isFinite(amp)) {
+              return;
+            }
+            const clampedFreq = Math.max(0, Math.min(maxK, freq));
+            const idx = Math.max(0, Math.min(bins - 1, Math.round((clampedFreq / maxK) * (bins - 1))));
+            spectrumByBin[idx] += Math.max(0, amp);
+          });
+        }
+
+        let maxAmp = 1e-6;
+        if (usedTerms.length) {
+          spectrumByBin.forEach((v) => {
+            maxAmp = Math.max(maxAmp, v);
+          });
+        }
+
         for (let b = 0; b < bins; b += 1) {
           const k = (b / (bins - 1)) * maxK;
-          const g = seededGaussian(b + 17, b + 501);
-          const amp = Math.min(1, Math.abs(g) / 2.2);
+          const amp = usedTerms.length
+            ? Math.min(1, spectrumByBin[b] / maxAmp)
+            : Math.min(1, Math.abs(seededGaussian(b + 17, b + 501)) / 2.2);
           const x = x1 + (k / maxK) * (x2 - x1);
           const y = y2 - amp * (y2 - y1 - 8);
           ctx.strokeStyle = color;
@@ -5528,8 +8612,41 @@
           ctx.stroke();
         }
 
+        if (usedTerms.length) {
+          ctx.strokeStyle = "#6ee7b7";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          for (let i = 0; i <= 220; i += 1) {
+            const nx = i / 220;
+            const x = x1 + nx * (x2 - x1);
+            let waveValue = 0;
+            usedTerms.forEach((term) => {
+              const freq = Number(term && term.freq);
+              const amp = Number(term && term.amp);
+              const phase = Number(term && term.phase);
+              if (!Number.isFinite(freq) || !Number.isFinite(amp) || !Number.isFinite(phase)) {
+                return;
+              }
+              waveValue += amp * Math.sin(2 * Math.PI * freq * nx - 0.75 * t + phase);
+            });
+            const y = y2 - 0.5 * (y2 - y1 - 8) - waveValue * 26;
+            if (i === 0) {
+              ctx.moveTo(x, y);
+            } else {
+              ctx.lineTo(x, y);
+            }
+          }
+          ctx.stroke();
+        }
+
         ctx.fillStyle = "#c7dcff";
-        ctx.fillText("|ξ(k)| πριν από το spectrum weighting", x1 + 4, y1 + 12);
+        ctx.fillText(
+          usedTerms.length
+            ? "Classroom |A(k)| και κύμα από έως 40 τυχαίους όρους"
+            : "|ξ(k)| πριν από το spectrum weighting",
+          x1 + 4,
+          y1 + 12
+        );
         ctx.fillText("k", x2 - 8, y2 + 12);
       });
     }
@@ -5987,15 +9104,20 @@
       updateGerstnerScene(gerstnerState, elapsedSeconds, getGerstnerSettings());
       drawGerstnerParticleOrbits(gerstnerOrbitCanvas, elapsedSeconds, getGerstnerOrbitSettings());
 
-      drawCompositeWave(soundWaveSumCanvas, elapsedSeconds, selectedTones.one, selectedTones.two, selectedTones.three);
+      const soundSourcesForView = getSourcesForWaveView();
 
-      drawAirMolecules(airMoleculesCanvas, elapsedSeconds, selectedTones);
+      drawCompositeWave(soundWaveSumCanvas, elapsedSeconds, soundSourcesForView);
+      drawAirMolecules(airMoleculesCanvas, elapsedSeconds, soundSourcesForView);
+        drawSoundSimple(soundSimpleWaveCanvas, soundSimpleMolCanvas, elapsedSeconds);
+      drawSoundDecomposition(elapsedSeconds);
       drawSignalDemo(sumWavesCanvas, elapsedSeconds);
       drawHeatRod(heatRodCanvas, elapsedSeconds);
       drawStepFourier(stepFourierCanvas, elapsedSeconds);
       drawFFTEulerBridge(fftEulerBridgeCanvas, elapsedSeconds);
+      drawFFTDuel(fftDuelCanvas, elapsedSeconds);
       drawFFTDemo(fftDemoCanvas, elapsedSeconds);
       drawFilteredAudioDemo(soundFilterCanvas, elapsedSeconds);
+      drawComplexityRace(complexityRaceCanvas, elapsedSeconds);
       drawFFTExplain(fftExplainCanvas, elapsedSeconds);
       drawIFFTExplain(ifftExplainCanvas, elapsedSeconds);
       drawDimensionalBridge(bridgeDimCanvas, elapsedSeconds);
@@ -6028,6 +9150,9 @@
       if (document.hidden) {
         stopCurrentSound();
         stopFilterSound();
+        stopClassroomSoundEngine();
+      } else if (classroomSoundEnabled) {
+        syncClassroomSoundEngine();
       }
     });
 

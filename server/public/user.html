@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Strobe User - Κίνηση Σημείου</title>
   <link rel="stylesheet" type="text/css" href="css/styles.css">
-  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/realtime-socket.js"></script>
   <style>
     .user-container {
       display: flex;
@@ -147,6 +147,9 @@
       width: 100%;
       height: 100%;
       cursor: crosshair;
+      position: relative;
+      z-index: 2;
+      background: transparent;
     }
 
     .user-marker {
@@ -208,9 +211,10 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 0.2;
+      opacity: 1;
       display: none;
       pointer-events: none;
+      z-index: 1;
     }
   </style>
 </head>
@@ -259,6 +263,8 @@
       <span class="status-indicator disconnected" id="statusIndicator"></span>
       <span id="statusText">Disconnected. Δώσε όνομα και πάτα Connect.</span>
       <span style="margin-left: 20px;">👥 Ενεργοί χρήστες: <strong id="userCount">0</strong></span>
+      <span style="margin-left: 20px;">🧠 Tracking: <strong id="trackingBackend">-</strong></span>
+      <span style="margin-left: 20px;">▭ Boxes: <strong id="trackingBoxCount">0</strong></span>
     </div>
   </div>
 
@@ -266,7 +272,7 @@
     // === Configuration ===
     const canvas = document.getElementById('userCanvas');
     const ctx = canvas.getContext('2d');
-    const socket = io({ autoConnect: false });
+    const socket = createRealtimeSocket({ autoConnect: false });
     const urlParams = new URLSearchParams(window.location.search);
     const connectBtn = document.getElementById('connectBtn');
     const disconnectBtn = document.getElementById('disconnectBtn');
@@ -285,6 +291,13 @@
     let userName = '';
     let userColor = '#4ECDC4';
     let userShape = 'circle';
+    let cameraSelectedTrackId = null;
+    let cameraLastPoint = null;
+    let cameraTrackedBoxes = [];
+    let cameraTrackingBackend = '-';
+
+    const trackingBackendNode = document.getElementById('trackingBackend');
+    const trackingBoxCountNode = document.getElementById('trackingBoxCount');
 
     const LEGACY_ACTIVITY_WIDTH = 1200;
     const LEGACY_ACTIVITY_HEIGHT = 700;
@@ -333,16 +346,25 @@
 
     socket.on('camera-points', (data) => {
       if (currentRole !== 'camera') return;
-      if (!data || !Array.isArray(data.points) || data.points.length === 0) return;
 
-      const first = data.points[0];
-      if (typeof first.x === 'number' && typeof first.y === 'number') {
-        myPosition = {
-          x: Math.max(0, Math.min(1, first.x)),
-          y: Math.max(0, Math.min(1, first.y))
-        };
-        render();
+      const points = Array.isArray(data && data.points) ? data.points : [];
+      cameraTrackedBoxes = normalizeCameraBoxes(data && data.boxes);
+
+      if (data && typeof data.tracking === 'string') {
+        cameraTrackingBackend = data.tracking;
       }
+
+      updateTrackingInfo();
+
+      const trackedPoint = pickTrackedCameraPoint(points);
+      if (trackedPoint) {
+        myPosition = {
+          x: trackedPoint.x,
+          y: trackedPoint.y
+        };
+      }
+
+      render();
     });
 
     // === Role Selection ===
@@ -356,6 +378,7 @@
 
     function setRole(role) {
       currentRole = role;
+      resetCameraTargetTracking();
       
       // Update UI
       document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
@@ -368,6 +391,143 @@
       }
 
       emitUserUpdate();
+    }
+
+    function clamp01(value) {
+      return Math.max(0, Math.min(1, Number(value) || 0));
+    }
+
+    function normalizeCameraPoint(point) {
+      const x = Number(point && point.x);
+      const y = Number(point && point.y);
+
+      if (!Number.isFinite(x) || !Number.isFinite(y)) {
+        return null;
+      }
+
+      const rawId = Number(point && point.id);
+
+      return {
+        id: Number.isFinite(rawId) ? rawId : null,
+        x: clamp01(x),
+        y: clamp01(y)
+      };
+    }
+
+    function squaredDistance(a, b) {
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      return dx * dx + dy * dy;
+    }
+
+    function resetCameraTargetTracking() {
+      cameraSelectedTrackId = null;
+      cameraLastPoint = null;
+      cameraTrackedBoxes = [];
+    }
+
+    function normalizeCameraBox(box) {
+      const x = Number(box && (box.x ?? box.left));
+      const y = Number(box && (box.y ?? box.top));
+      const width = Number(box && (box.w ?? box.width));
+      const height = Number(box && (box.h ?? box.height));
+
+      if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(width) || !Number.isFinite(height)) {
+        return null;
+      }
+
+      const clampedX = clamp01(x);
+      const clampedY = clamp01(y);
+      const clampedW = Math.max(0, Math.min(1 - clampedX, width));
+      const clampedH = Math.max(0, Math.min(1 - clampedY, height));
+
+      if (clampedW <= 0.0001 || clampedH <= 0.0001) {
+        return null;
+      }
+
+      const rawId = Number(box && box.id);
+      const rawLabel = String((box && box.label) || '').trim();
+      const rawConfidence = Number(box && box.confidence);
+
+      return {
+        id: Number.isFinite(rawId) ? rawId : null,
+        x: clampedX,
+        y: clampedY,
+        w: clampedW,
+        h: clampedH,
+        label: rawLabel,
+        confidence: Number.isFinite(rawConfidence) ? Math.max(0, Math.min(1, rawConfidence)) : null
+      };
+    }
+
+    function normalizeCameraBoxes(boxes) {
+      if (!Array.isArray(boxes)) {
+        return [];
+      }
+
+      return boxes
+        .map(normalizeCameraBox)
+        .filter(Boolean)
+        .slice(0, 24);
+    }
+
+    function updateTrackingInfo() {
+      if (trackingBackendNode) {
+        trackingBackendNode.textContent = cameraTrackingBackend;
+      }
+
+      if (trackingBoxCountNode) {
+        trackingBoxCountNode.textContent = String(cameraTrackedBoxes.length);
+      }
+    }
+
+    function pickTrackedCameraPoint(points) {
+      const normalized = points
+        .map(normalizeCameraPoint)
+        .filter(Boolean);
+
+      if (!normalized.length) {
+        return null;
+      }
+
+      if (Number.isFinite(cameraSelectedTrackId)) {
+        const byId = normalized.find((point) => point.id === cameraSelectedTrackId);
+        if (byId) {
+          cameraLastPoint = byId;
+          return byId;
+        }
+      }
+
+      let chosen = null;
+
+      if (cameraLastPoint) {
+        let bestDistance = Number.POSITIVE_INFINITY;
+
+        normalized.forEach((point) => {
+          const distance = squaredDistance(point, cameraLastPoint);
+          if (distance < bestDistance) {
+            bestDistance = distance;
+            chosen = point;
+          }
+        });
+      }
+
+      if (!chosen) {
+        const center = { x: 0.5, y: 0.5 };
+        let bestDistance = Number.POSITIVE_INFINITY;
+
+        normalized.forEach((point) => {
+          const distance = squaredDistance(point, center);
+          if (distance < bestDistance) {
+            bestDistance = distance;
+            chosen = point;
+          }
+        });
+      }
+
+      cameraSelectedTrackId = chosen && Number.isFinite(chosen.id) ? chosen.id : null;
+      cameraLastPoint = chosen || null;
+      return chosen;
     }
 
     function updateConnectionButtons() {
@@ -507,16 +667,16 @@
 
         if (!captureCanvas) {
           captureCanvas = document.createElement('canvas');
-          captureCanvas.width = 320;
-          captureCanvas.height = 240;
+          captureCanvas.width = 480;
+          captureCanvas.height = 360;
           captureCtx = captureCanvas.getContext('2d');
         }
 
         cameraInterval = setInterval(() => {
-          if (!captureCtx || !isConnected) return;
+          if (!captureCtx || !isConnected || video.readyState < 2) return;
 
           captureCtx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
-          const dataUrl = captureCanvas.toDataURL('image/jpeg', 0.55);
+          const dataUrl = captureCanvas.toDataURL('image/jpeg', 0.82);
           const base64 = dataUrl.split(',')[1];
 
           socket.emit('camera-frame', {
@@ -525,7 +685,7 @@
             color: userColor,
             shape: userShape
           });
-        }, 150);
+        }, 120);
       } catch (error) {
         alert('❌ Δεν ήταν δυνατή η πρόσβαση στην κάμερα');
         setRole('mouse');
@@ -545,6 +705,10 @@
       const video = document.getElementById('cameraOverlay');
       video.srcObject = null;
       video.style.display = 'none';
+      resetCameraTargetTracking();
+      cameraTrackingBackend = '-';
+      updateTrackingInfo();
+      render();
     }
 
     // === Rendering ===
@@ -560,6 +724,54 @@
       allUsers.forEach(user => {
         drawUserMarker(user, user.id === myUserId);
       });
+
+      // Draw Deep SORT rectangles on top of the canvas while camera mode is active.
+      drawCameraTrackingBoxes();
+    }
+
+    function drawCameraTrackingBoxes() {
+      if (currentRole !== 'camera' || !cameraTrackedBoxes.length) {
+        return;
+      }
+
+      ctx.save();
+      ctx.lineWidth = 2.5;
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'left';
+
+      cameraTrackedBoxes.forEach((box, index) => {
+        const left = box.x * canvas.width;
+        const top = box.y * canvas.height;
+        const width = box.w * canvas.width;
+        const height = box.h * canvas.height;
+
+        if (!Number.isFinite(left) || !Number.isFinite(top) || width <= 1 || height <= 1) {
+          return;
+        }
+
+        const labelKey = String(box.label || '').toLowerCase();
+        let boxColor = 'rgba(34, 211, 238, 0.95)';
+        if (labelKey.includes('ball')) {
+          boxColor = 'rgba(251, 146, 60, 0.95)';
+        } else if (labelKey.includes('book')) {
+          boxColor = 'rgba(167, 139, 250, 0.95)';
+        }
+
+        ctx.strokeStyle = boxColor;
+        ctx.fillStyle = boxColor;
+
+        ctx.strokeRect(left, top, width, height);
+
+        const className = box.label ? String(box.label) : 'object';
+        const idPart = Number.isFinite(box.id) ? `#${box.id}` : `#${index + 1}`;
+        const confidencePart = Number.isFinite(box.confidence) ? ` ${(box.confidence * 100).toFixed(0)}%` : '';
+        const label = `${className} ${idPart}${confidencePart}`;
+        const textX = Math.max(6, left + 6);
+        const textY = top > 18 ? top - 6 : top + 14;
+        ctx.fillText(label, textX, textY);
+      });
+
+      ctx.restore();
     }
 
     function isNormalizedCoordinate(value) {
@@ -624,7 +836,7 @@
           case 'point':
             ctx.beginPath();
             ctx.arc(projectX(obj.x), projectY(obj.y), 5, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.stroke();
             break;
 
           case 'line':
@@ -809,6 +1021,8 @@
     } else {
       updateStatus('⚪ Disconnected. Δώσε όνομα και πάτα Connect.', false);
     }
+
+    updateTrackingInfo();
 
     fetch('/api/activity/current')
       .then(r => r.json())

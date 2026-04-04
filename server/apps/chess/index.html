@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chess Lab: Διαδραστική Παρουσίαση</title>
+  <script src="/js/realtime-socket.js"></script>
+  <style>
+    :root {
+      --bg: #08120f;
+      --panel: #0f1d19;
+      --panel-2: #132721;
+      --text: #e8f4ef;
+      --muted: #9dc6b8;
+      --line: #2d4a41;
+      --accent: #e0b45e;
+      --accent-2: #89d9c3;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at 20% 0%, #17342c 0%, #08120f 42%, #040907 100%);
+      overflow: hidden;
+    }
+
+    .menu-btn {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      z-index: 1200;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 290px;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      background: rgba(9, 19, 16, 0.95);
+      border-right: 1px solid var(--line);
+      padding: 66px 14px 14px;
+      overflow-y: auto;
+      transform: translateX(0);
+      transition: transform 0.22s ease;
+      z-index: 900;
+    }
+
+    .sidebar.hidden {
+      transform: translateX(-100%);
+    }
+
+    .sidebar h2 {
+      margin: 0 0 10px;
+      font-size: 0.95rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .sidebar a {
+      display: block;
+      text-decoration: none;
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 8px;
+      margin-bottom: 4px;
+      border: 1px solid transparent;
+    }
+
+    .sidebar a:hover {
+      background: #17342c;
+    }
+
+    .sidebar a.active {
+      background: rgba(224, 180, 94, 0.15);
+      border-color: rgba(224, 180, 94, 0.55);
+      color: #ffe7bd;
+      font-weight: 600;
+    }
+
+    .content {
+      width: 100%;
+      height: 100vh;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+    }
+
+    .section {
+      min-height: 100vh;
+      scroll-snap-align: start;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .slide {
+      width: min(1040px, 100%);
+      height: min(92vh, 860px);
+      background: linear-gradient(160deg, rgba(19, 39, 33, 0.95), rgba(12, 25, 21, 0.95));
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow: hidden;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+    }
+
+    h1, h2, h3 { margin: 0; }
+
+    h1 {
+      font-size: clamp(1.5rem, 2.4vw, 2.3rem);
+      color: #ffe6a4;
+    }
+
+    h2 {
+      font-size: clamp(1.2rem, 2vw, 1.7rem);
+      color: #f4ecd5;
+    }
+
+    p { margin: 0; color: #d8ece4; }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      min-height: 0;
+      flex: 1;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(7, 14, 12, 0.68);
+      padding: 12px;
+      overflow: auto;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      width: min(100%, 460px);
+      aspect-ratio: 1;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .square {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(1.35rem, 2.2vw, 2rem);
+      user-select: none;
+      position: relative;
+    }
+
+    .sq-light { background: #dfc792; color: #2d1805; }
+    .sq-dark { background: #8d6032; color: #120a03; }
+    .square.highlight::after {
+      content: "";
+      position: absolute;
+      inset: 12%;
+      border: 2px solid #70ffcf;
+      border-radius: 6px;
+      box-shadow: 0 0 12px rgba(112, 255, 207, 0.55);
+    }
+
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+      align-items: center;
+    }
+
+    input, select, button {
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #0f211c;
+      color: var(--text);
+      padding: 7px 9px;
+      font-size: 0.92rem;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+      padding: 0;
+      height: 22px;
+      background: transparent;
+      border: 0;
+    }
+
+    button {
+      cursor: pointer;
+      background: #163128;
+    }
+
+    button:hover {
+      border-color: var(--accent);
+      color: #ffe6b0;
+    }
+
+    .edge-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1000;
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 1.3rem;
+    }
+
+    .edge-nav.left { left: 12px; }
+    .edge-nav.right { right: 12px; }
+    .edge-nav:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .classroom-mini {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(5, 11, 9, 0.8);
+      padding: 10px;
+      margin-top: 8px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .pill {
+      display: inline-flex;
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-right: 6px;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .eval-bar {
+      width: 100%;
+      height: 16px;
+      border-radius: 999px;
+      background: #201a12;
+      border: 1px solid #5f4a2f;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .eval-fill {
+      height: 100%;
+      width: 50%;
+      background: linear-gradient(90deg, #f7e5bf, #e4b35e);
+      transition: width 0.2s ease;
+    }
+
+    @media (max-width: 980px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .edge-nav {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="menu-btn" id="menuToggleBtn" title="Menu">☰</button>
+
+  <button class="edge-nav left" id="prevSlideBtn" title="Προηγούμενη">◀</button>
+  <button class="edge-nav right" id="nextSlideBtn" title="Επόμενη">▶</button>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <h2>Chess Lab</h2>
+      <a href="#cover">1. Εισαγωγή</a>
+      <a href="#rules">2. Γρήγοροι Κανόνες</a>
+      <a href="#fen-board">3. Διαδραστική Σκακιέρα (FEN)</a>
+      <a href="#knight-path">4. Knight Path Lab</a>
+      <a href="#evaluation">5. Material Evaluation</a>
+      <a href="#lesson-flow">6. Ροή Μαθήματος</a>
+    </aside>
+
+    <main class="content" id="content">
+      <section class="section" id="cover">
+        <article class="slide">
+          <h1>Σκάκι + Web Τεχνολογίες</h1>
+          <p class="lead">Μετατροπή υλικού παρουσίασης σε διαδραστικό εργαστήριο για Node.js.</p>
+          <div>
+            <span class="pill" id="classRoleLabel">Role: local</span>
+            <span class="pill" id="classConnectionState">offline</span>
+            <span class="pill" id="classSummaryMini">Deck ready</span>
+          </div>
+          <div class="classroom-mini">
+            <strong>Classroom Launch</strong>
+            <p class="meta">Teacher mode: <code>?mode=teacher</code> | Client mode: <code>?mode=client</code></p>
+            <div class="control-row" id="studentNameRow">
+              <input id="classStudentNameInput" placeholder="Όνομα μαθητή" />
+              <input id="classStudentTeamInput" placeholder="Ομάδα" />
+              <button id="classStudentJoinBtn">Join</button>
+              <button id="classCopyStudentLinkBtn">Copy link</button>
+            </div>
+            <p class="meta" id="classCopyHint">-</p>
+            <img id="classJoinQrImage" alt="QR" style="max-width:130px; border:1px solid var(--line); border-radius:8px;" />
+            <p class="meta" id="classJoinLinkText"></p>
+          </div>
+        </article>
+      </section>
+
+      <section class="section" id="rules">
+        <article class="slide">
+          <h2>Γρήγοροι Κανόνες και Διδακτικοί Στόχοι</h2>
+          <div class="grid-2">
+            <div class="card">
+              <h3>Κεντρικά σημεία</h3>
+              <ul>
+                <li>Έλεγχος κέντρου: τετράγωνα e4, d4, e5, d5.</li>
+                <li>Ανάπτυξη κομματιών πριν από επιθετικές κινήσεις.</li>
+                <li>Ασφάλεια βασιλιά: έγκαιρο ροκέ.</li>
+                <li>Σκέψη με candidate moves, όχι με πρώτη ιδέα.</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>Προτεινόμενη ροή μαθήματος</h3>
+              <ol>
+                <li>Οπτικοποίηση θέσης.</li>
+                <li>Αναζήτηση απειλών.</li>
+                <li>Υπολογισμός 2-3 κινήσεων.</li>
+                <li>Σύγκριση με engine ή teacher λύση.</li>
+              </ol>
+              <p class="meta" style="margin-top:10px;">Η ίδια δομή μπορεί να συνδεθεί με quiz/events μέσω WebSocket.</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="section" id="fen-board">
+        <article class="slide">
+          <h2>Διαδραστική Σκακιέρα από FEN</h2>
+          <p class="lead">Άλλαξε το FEN και δες άμεσα τη θέση.</p>
+          <div class="grid-2">
+            <div class="card">
+              <label for="fenInput">FEN</label>
+              <input
+                id="fenInput"
+                data-activity-control="fen-input"
+                value="r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R"
+                style="width:100%; margin-top:8px;"
+              />
+              <div class="control-row">
+                <button id="fenApplyBtn" data-activity-control="fen-apply">Apply</button>
+                <button id="fenStartBtn" data-activity-control="fen-start">Start Position</button>
+              </div>
+              <p class="meta" id="fenStatus">Έτοιμο</p>
+            </div>
+            <div class="card">
+              <div class="board" id="fenBoard"></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="section" id="knight-path">
+        <article class="slide">
+          <h2>Knight Path Lab</h2>
+          <p class="lead">Shortest path σε γράφο κινήσεων ίππου.</p>
+          <div class="grid-2">
+            <div class="card">
+              <div class="control-row">
+                <label>Start</label>
+                <select id="knightStart" data-activity-control="knight-start"></select>
+                <label>Target</label>
+                <select id="knightEnd" data-activity-control="knight-target"></select>
+                <button id="knightSolveBtn" data-activity-control="knight-solve">Solve</button>
+              </div>
+              <p class="meta" id="knightResult">Επέλεξε τετράγωνα και πάτησε Solve.</p>
+              <p class="meta">Μαθηματική ιδέα: BFS στο γράφο 64 κόμβων.</p>
+            </div>
+            <div class="card">
+              <div class="board" id="knightBoard"></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="section" id="evaluation">
+        <article class="slide">
+          <h2>Material Evaluation Sandbox</h2>
+          <p class="lead">Άλλαξε πλήθος κομματιών και παρατήρησε το score.</p>
+          <div class="grid-2">
+            <div class="card">
+              <div class="legend">
+                <label>White Pawns <input type="range" min="0" max="8" value="8" id="wP" data-activity-control="wP" /></label>
+                <label>Black Pawns <input type="range" min="0" max="8" value="8" id="bP" data-activity-control="bP" /></label>
+                <label>White Knights <input type="range" min="0" max="2" value="2" id="wN" data-activity-control="wN" /></label>
+                <label>Black Knights <input type="range" min="0" max="2" value="2" id="bN" data-activity-control="bN" /></label>
+                <label>White Bishops <input type="range" min="0" max="2" value="2" id="wB" data-activity-control="wB" /></label>
+                <label>Black Bishops <input type="range" min="0" max="2" value="2" id="bB" data-activity-control="bB" /></label>
+                <label>White Rooks <input type="range" min="0" max="2" value="2" id="wR" data-activity-control="wR" /></label>
+                <label>Black Rooks <input type="range" min="0" max="2" value="2" id="bR" data-activity-control="bR" /></label>
+                <label>White Queens <input type="range" min="0" max="1" value="1" id="wQ" data-activity-control="wQ" /></label>
+                <label>Black Queens <input type="range" min="0" max="1" value="1" id="bQ" data-activity-control="bQ" /></label>
+              </div>
+            </div>
+            <div class="card">
+              <h3>Evaluation</h3>
+              <p id="evalText" class="lead">Ισορροπημένη θέση.</p>
+              <div class="eval-bar"><div class="eval-fill" id="evalFill"></div></div>
+              <p class="meta" id="evalNumber" style="margin-top:8px;">Score: 0.00</p>
+              <p class="meta">Χρησιμοποιούνται τυπικές τιμές: P=1, N=3, B=3.25, R=5, Q=9.</p>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="section" id="lesson-flow">
+        <article class="slide">
+          <h2>Τι κάνεις από εδώ και πέρα</h2>
+          <div class="card" style="flex:1;">
+            <ol>
+              <li>Σπάσε το PDF σε 8-12 slides (ένα concept ανά slide).</li>
+              <li>Μετέφερε διαγράμματα/εικόνες στον φάκελο <code>media/</code>.</li>
+              <li>Κάθε θεωρητικό slide να έχει ένα interactive στοιχείο.</li>
+              <li>Σύνδεσε events για classroom analytics μέσω <code>data-activity-control</code>.</li>
+            </ol>
+            <p class="meta" style="margin-top:10px;">Το template αυτό είναι ήδη έτοιμο για παρουσίαση από τον Node.js server του strobe-private.</p>
+
+            <div class="classroom-mini">
+              <strong>Live στοιχεία τάξης</strong>
+              <p class="meta">Users: <span id="classUsersCount">0</span> | Scores: <span id="classScoresCount">0</span></p>
+              <div id="classUsersList" class="meta">-</div>
+              <div id="classScoresList" class="meta">-</div>
+              <div id="classChatFeed" class="meta">-</div>
+              <div class="control-row">
+                <input id="classChatInput" placeholder="Μήνυμα τάξης" />
+                <button id="classChatSendBtn">Send</button>
+              </div>
+              <p class="meta" id="classChatHint"></p>
+              <span id="classDockUnreadBadge" class="pill">0</span>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function initDeck() {
+      const sidebar = document.getElementById("sidebar");
+      const menuToggleBtn = document.getElementById("menuToggleBtn");
+      const content = document.getElementById("content");
+      const slides = Array.from(document.querySelectorAll(".section"));
+      const links = Array.from(document.querySelectorAll(".sidebar a"));
+      const prevSlideBtn = document.getElementById("prevSlideBtn");
+      const nextSlideBtn = document.getElementById("nextSlideBtn");
+      let currentSlideIndex = 0;
+      let navigationLocked = false;
+
+      function setActiveLink(index) {
+        links.forEach((link, i) => {
+          link.classList.toggle("active", i === index);
+        });
+      }
+
+      function refreshNavButtons() {
+        prevSlideBtn.disabled = navigationLocked || currentSlideIndex === 0;
+        nextSlideBtn.disabled = navigationLocked || currentSlideIndex === slides.length - 1;
+      }
+
+      function emitSlideChanged(source) {
+        const slide = slides[currentSlideIndex];
+        if (!slide) return;
+
+        document.dispatchEvent(new CustomEvent("fourier:slide-changed", {
+          detail: {
+            index: currentSlideIndex,
+            slideId: slide.id || "",
+            source: source || "local"
+          }
+        }));
+      }
+
+      function goToSlide(index, options) {
+        const opts = options || {};
+        const bounded = Math.max(0, Math.min(slides.length - 1, index));
+        const source = opts.source || "local";
+        const force = Boolean(opts.force);
+        const smooth = opts.smooth !== false;
+
+        if (navigationLocked && !force && source !== "remote") {
+          return false;
+        }
+
+        currentSlideIndex = bounded;
+        slides[bounded].scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
+        setActiveLink(bounded);
+        refreshNavButtons();
+        emitSlideChanged(source);
+        return true;
+      }
+
+      menuToggleBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("hidden");
+      });
+
+      prevSlideBtn.addEventListener("click", () => goToSlide(currentSlideIndex - 1));
+      nextSlideBtn.addEventListener("click", () => goToSlide(currentSlideIndex + 1));
+
+      document.addEventListener("keydown", (event) => {
+        const tag = (event.target && event.target.tagName || "").toLowerCase();
+        if (tag === "input" || tag === "textarea") {
+          return;
+        }
+
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          goToSlide(currentSlideIndex + 1);
+        }
+
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          goToSlide(currentSlideIndex - 1);
+        }
+      });
+
+      links.forEach((link, index) => {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          goToSlide(index);
+        });
+      });
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.55) {
+            const idx = slides.indexOf(entry.target);
+            if (idx >= 0) {
+              currentSlideIndex = idx;
+              setActiveLink(idx);
+              refreshNavButtons();
+            }
+          }
+        });
+      }, { root: content, threshold: [0.55, 0.7] });
+
+      slides.forEach((slide) => observer.observe(slide));
+      setActiveLink(0);
+      refreshNavButtons();
+
+      window.chessSlideDeck = {
+        getSlides() {
+          return slides.map((slide, index) => ({ index, id: slide.id || "" }));
+        },
+        getCurrentSlideIndex() {
+          return currentSlideIndex;
+        },
+        getCurrentSlideId() {
+          return slides[currentSlideIndex] ? slides[currentSlideIndex].id : "";
+        },
+        goToSlide(index, options) {
+          return goToSlide(index, options || {});
+        },
+        goToSlideById(slideId, options) {
+          const targetIndex = slides.findIndex((slide) => slide.id === slideId);
+          if (targetIndex < 0) return false;
+          return goToSlide(targetIndex, options || {});
+        },
+        setNavigationLocked(locked) {
+          navigationLocked = Boolean(locked);
+          content.style.overflowY = navigationLocked ? "hidden" : "auto";
+          refreshNavButtons();
+        },
+        isNavigationLocked() {
+          return navigationLocked;
+        },
+        refreshNavButtons
+      };
+
+      // Keep compatibility with the existing classroom sync script.
+      window.fourierSlideDeck = window.chessSlideDeck;
+
+      document.dispatchEvent(new CustomEvent("fourier:deck-ready", {
+        detail: {
+          currentSlideIndex,
+          currentSlideId: slides[currentSlideIndex] ? slides[currentSlideIndex].id : ""
+        }
+      }));
+
+      emitSlideChanged("init");
+    })();
+
+    (function initFenBoard() {
+      const boardNode = document.getElementById("fenBoard");
+      const fenInput = document.getElementById("fenInput");
+      const applyBtn = document.getElementById("fenApplyBtn");
+      const startBtn = document.getElementById("fenStartBtn");
+      const statusNode = document.getElementById("fenStatus");
+
+      const pieceMap = {
+        p: "♟", r: "♜", n: "♞", b: "♝", q: "♛", k: "♚",
+        P: "♙", R: "♖", N: "♘", B: "♗", Q: "♕", K: "♔"
+      };
+
+      function squareClass(index) {
+        const row = Math.floor(index / 8);
+        const col = index % 8;
+        return (row + col) % 2 === 0 ? "sq-light" : "sq-dark";
+      }
+
+      function fenToBoard(fen) {
+        const rows = String(fen || "").trim().split("/");
+        if (rows.length !== 8) return null;
+
+        const board = [];
+        for (const row of rows) {
+          let count = 0;
+          for (const char of row) {
+            if (/\d/.test(char)) {
+              const empties = Number(char);
+              count += empties;
+              for (let i = 0; i < empties; i += 1) {
+                board.push("");
+              }
+            } else {
+              board.push(pieceMap[char] || "");
+              count += 1;
+            }
+          }
+
+          if (count !== 8) return null;
+        }
+
+        return board.length === 64 ? board : null;
+      }
+
+      function draw(board) {
+        boardNode.innerHTML = "";
+        board.forEach((piece, index) => {
+          const square = document.createElement("div");
+          square.className = `square ${squareClass(index)}`;
+          square.textContent = piece;
+          boardNode.appendChild(square);
+        });
+      }
+
+      function applyFen() {
+        const parsed = fenToBoard(fenInput.value);
+        if (!parsed) {
+          statusNode.textContent = "Μη έγκυρο FEN για board setup.";
+          statusNode.style.color = "#ffb4b4";
+          return;
+        }
+
+        draw(parsed);
+        statusNode.textContent = "Η θέση φορτώθηκε.";
+        statusNode.style.color = "#9dc6b8";
+      }
+
+      applyBtn.addEventListener("click", applyFen);
+      startBtn.addEventListener("click", () => {
+        fenInput.value = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
+        applyFen();
+      });
+      applyFen();
+    })();
+
+    (function initKnightLab() {
+      const boardNode = document.getElementById("knightBoard");
+      const startNode = document.getElementById("knightStart");
+      const endNode = document.getElementById("knightEnd");
+      const solveBtn = document.getElementById("knightSolveBtn");
+      const resultNode = document.getElementById("knightResult");
+      const files = ["a", "b", "c", "d", "e", "f", "g", "h"];
+      const knightMoves = [[1, 2], [2, 1], [-1, 2], [-2, 1], [1, -2], [2, -1], [-1, -2], [-2, -1]];
+
+      function toCoord(square) {
+        const file = files.indexOf(square[0]);
+        const rank = Number(square[1]) - 1;
+        return { x: file, y: rank };
+      }
+
+      function toSquare(x, y) {
+        return `${files[x]}${y + 1}`;
+      }
+
+      function inBounds(x, y) {
+        return x >= 0 && x < 8 && y >= 0 && y < 8;
+      }
+
+      function shortestPath(start, target) {
+        if (start === target) return [start];
+
+        const queue = [start];
+        const parent = new Map([[start, null]]);
+
+        while (queue.length) {
+          const current = queue.shift();
+          const { x, y } = toCoord(current);
+
+          for (const [dx, dy] of knightMoves) {
+            const nx = x + dx;
+            const ny = y + dy;
+            if (!inBounds(nx, ny)) continue;
+            const next = toSquare(nx, ny);
+            if (parent.has(next)) continue;
+
+            parent.set(next, current);
+            if (next === target) {
+              const path = [target];
+              let walk = current;
+              while (walk) {
+                path.push(walk);
+                walk = parent.get(walk);
+              }
+              return path.reverse();
+            }
+            queue.push(next);
+          }
+        }
+
+        return [];
+      }
+
+      function draw(path) {
+        const highlight = new Set(path);
+        boardNode.innerHTML = "";
+        for (let rank = 8; rank >= 1; rank -= 1) {
+          for (let file = 0; file < 8; file += 1) {
+            const squareName = `${files[file]}${rank}`;
+            const square = document.createElement("div");
+            const row = 8 - rank;
+            square.className = `square ${(row + file) % 2 === 0 ? "sq-light" : "sq-dark"}`;
+            if (highlight.has(squareName)) {
+              square.classList.add("highlight");
+            }
+            square.textContent = squareName;
+            boardNode.appendChild(square);
+          }
+        }
+      }
+
+      for (let rank = 1; rank <= 8; rank += 1) {
+        for (const file of files) {
+          const squareName = `${file}${rank}`;
+          const optA = document.createElement("option");
+          const optB = document.createElement("option");
+          optA.value = squareName;
+          optA.textContent = squareName;
+          optB.value = squareName;
+          optB.textContent = squareName;
+          startNode.appendChild(optA);
+          endNode.appendChild(optB);
+        }
+      }
+
+      startNode.value = "b1";
+      endNode.value = "c3";
+
+      solveBtn.addEventListener("click", () => {
+        const start = startNode.value;
+        const target = endNode.value;
+        const path = shortestPath(start, target);
+        draw(path);
+        resultNode.textContent = path.length
+          ? `Path (${Math.max(0, path.length - 1)} moves): ${path.join(" -> ")}`
+          : "Δεν βρέθηκε path.";
+      });
+
+      draw([startNode.value, endNode.value]);
+    })();
+
+    (function initEvaluation() {
+      const ids = ["wP", "bP", "wN", "bN", "wB", "bB", "wR", "bR", "wQ", "bQ"];
+      const weights = { P: 1, N: 3, B: 3.25, R: 5, Q: 9 };
+      const evalText = document.getElementById("evalText");
+      const evalFill = document.getElementById("evalFill");
+      const evalNumber = document.getElementById("evalNumber");
+      const nodes = ids.map((id) => document.getElementById(id));
+
+      function compute() {
+        const v = {};
+        ids.forEach((id) => { v[id] = Number(document.getElementById(id).value); });
+
+        const white = v.wP * weights.P + v.wN * weights.N + v.wB * weights.B + v.wR * weights.R + v.wQ * weights.Q;
+        const black = v.bP * weights.P + v.bN * weights.N + v.bB * weights.B + v.bR * weights.R + v.bQ * weights.Q;
+        const score = white - black;
+        const clamped = Math.max(-20, Math.min(20, score));
+        const percentage = ((clamped + 20) / 40) * 100;
+
+        evalFill.style.width = `${percentage}%`;
+        evalNumber.textContent = `Score: ${score.toFixed(2)} (${score >= 0 ? "White" : "Black"} edge)`;
+
+        if (Math.abs(score) < 0.2) {
+          evalText.textContent = "Ισορροπημένη θέση.";
+        } else if (score > 0) {
+          evalText.textContent = "Πλεονέκτημα λευκών.";
+        } else {
+          evalText.textContent = "Πλεονέκτημα μαύρων.";
+        }
+      }
+
+      nodes.forEach((node) => node.addEventListener("input", compute));
+      compute();
+    })();
+  </script>
+
+  <script src="classroom-sync.js"></script>
+</body>
+</html>

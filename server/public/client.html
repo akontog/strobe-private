@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Canvas Demo</title>
   <link rel="stylesheet" type="text/css" href="css/styles.css">
-  <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/realtime-socket.js"></script>
 </head>
 <body>
         <div class="container">
@@ -217,9 +217,9 @@
             };
         }
 
-        // === Socket.io Connection ===
+        // === WebSocket Connection ===
         function connectToServer() {
-            socket = io(SERVER_URL);
+            socket = createRealtimeSocket({ url: SERVER_URL });
 
             socket.on('connect', () => {
                 isConnected = true;
@@ -532,9 +532,6 @@
             if (obj.type === 'point') {
                 ctx.beginPath();
                 ctx.arc(obj.x, obj.y, 6, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.strokeStyle = 'white';
-                ctx.lineWidth = 2;
                 ctx.stroke();
                 
                 // Label

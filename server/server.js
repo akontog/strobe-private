@@ -2,7 +2,8 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
-const { Server } = require('socket.io');
+const { spawn } = require('child_process');
+const readline = require('readline');
 const { WebSocketServer } = require('ws');
 
 const teacherRouter = require('./routes/teacher');
@@ -12,14 +13,531 @@ const createAppsRouter = require('./routes/apps');
 
 const app = express();
 const httpServer = http.createServer(app);
-const io = new Server(httpServer);
 
 const HOST = process.env.HOST || '0.0.0.0';
 const parsedPort = Number.parseInt(process.env.PORT || '3000', 10);
 const PORT = Number.isInteger(parsedPort) && parsedPort > 0 && parsedPort < 65536
   ? parsedPort
   : 3000;
-const CAMERA_SERVICE_URL = process.env.CAMERA_SERVICE_URL || 'http://localhost:5001/detect';
+const REALTIME_WS_PATH = '/ws/realtime';
+const parsedCameraWorkerTimeoutMs = Number.parseInt(process.env.CAMERA_WORKER_TIMEOUT_MS || '1200', 10);
+const CAMERA_WORKER_TIMEOUT_MS = Number.isInteger(parsedCameraWorkerTimeoutMs)
+  ? Math.max(150, Math.min(parsedCameraWorkerTimeoutMs, 10000))
+  : 1200;
+const parsedCameraWorkerMaxPending = Number.parseInt(process.env.CAMERA_WORKER_MAX_PENDING || '24', 10);
+const CAMERA_WORKER_MAX_PENDING = Number.isInteger(parsedCameraWorkerMaxPending)
+  ? Math.max(1, Math.min(parsedCameraWorkerMaxPending, 120))
+  : 24;
+const CAMERA_WORKER_RESTART_DELAY_MS = 1200;
+const CAMERA_WORKER_ENABLED = String(process.env.CAMERA_WORKER_ENABLED || '1').trim() !== '0';
+const CAMERA_WORKER_SCRIPT = process.env.CAMERA_WORKER_SCRIPT || path.join(__dirname, 'camera_server.py');
+
+function resolveCameraWorkerPython() {
+  const explicit = String(process.env.CAMERA_WORKER_PYTHON || '').trim();
+  if (explicit) {
+    return explicit;
+  }
+
+  const workspaceVenv = process.platform === 'win32'
+    ? path.join(__dirname, '..', '.venv', 'Scripts', 'python.exe')
+    : path.join(__dirname, '..', '.venv', 'bin', 'python');
+
+  if (fs.existsSync(workspaceVenv)) {
+    return workspaceVenv;
+  }
+
+  return 'python';
+}
+
+const CAMERA_WORKER_PYTHON = resolveCameraWorkerPython();
+
+function emptyCameraDetection(tracking = 'worker-offline') {
+  return {
+    points: [],
+    boxes: [],
+    tracking
+  };
+}
+
+function normalizeCameraWorkerResponse(message) {
+  return {
+    points: Array.isArray(message && message.points) ? message.points : [],
+    boxes: Array.isArray(message && message.boxes) ? message.boxes : [],
+    tracking: message && typeof message.tracking === 'string' ? message.tracking : 'unknown'
+  };
+}
+
+let cameraWorkerProcess = null;
+let cameraWorkerOutput = null;
+let cameraWorkerSeq = 0;
+let cameraWorkerRestartTimer = null;
+let cameraWorkerShuttingDown = false;
+const cameraPendingRequests = new Map();
+
+function clearCameraWorkerRestartTimer() {
+  if (!cameraWorkerRestartTimer) {
+    return;
+  }
+
+  clearTimeout(cameraWorkerRestartTimer);
+  cameraWorkerRestartTimer = null;
+}
+
+function resolveCameraRequest(requestId, message) {
+  const pending = cameraPendingRequests.get(requestId);
+  if (!pending) {
+    return;
+  }
+
+  cameraPendingRequests.delete(requestId);
+  clearTimeout(pending.timer);
+  pending.resolve(normalizeCameraWorkerResponse(message));
+}
+
+function rejectCameraRequest(requestId, tracking) {
+  const pending = cameraPendingRequests.get(requestId);
+  if (!pending) {
+    return;
+  }
+
+  cameraPendingRequests.delete(requestId);
+  clearTimeout(pending.timer);
+  pending.resolve(emptyCameraDetection(tracking));
+}
+
+function rejectAllCameraRequests(tracking) {
+  const ids = [...cameraPendingRequests.keys()];
+  ids.forEach((requestId) => {
+    rejectCameraRequest(requestId, tracking);
+  });
+}
+
+function scheduleCameraWorkerRestart() {
+  if (!CAMERA_WORKER_ENABLED || cameraWorkerShuttingDown || cameraWorkerRestartTimer) {
+    return;
+  }
+
+  cameraWorkerRestartTimer = setTimeout(() => {
+    cameraWorkerRestartTimer = null;
+    startCameraWorker();
+  }, CAMERA_WORKER_RESTART_DELAY_MS);
+}
+
+function attachCameraWorkerOutput(worker) {
+  cameraWorkerOutput = readline.createInterface({ input: worker.stdout });
+
+  cameraWorkerOutput.on('line', (line) => {
+    const safeLine = String(line || '').trim();
+    if (!safeLine) {
+      return;
+    }
+
+    let message;
+    try {
+      message = JSON.parse(safeLine);
+    } catch {
+      return;
+    }
+
+    const parsedId = Number.parseInt(message && message.id, 10);
+    if (!Number.isInteger(parsedId)) {
+      return;
+    }
+
+    resolveCameraRequest(parsedId, message);
+  });
+}
+
+function startCameraWorker() {
+  if (!CAMERA_WORKER_ENABLED || cameraWorkerShuttingDown) {
+    return false;
+  }
+
+  if (cameraWorkerProcess && !cameraWorkerProcess.killed && cameraWorkerProcess.exitCode === null) {
+    return true;
+  }
+
+  clearCameraWorkerRestartTimer();
+
+  try {
+    const worker = spawn(CAMERA_WORKER_PYTHON, [CAMERA_WORKER_SCRIPT], {
+      cwd: __dirname,
+      stdio: ['pipe', 'pipe', 'pipe']
+    });
+
+    cameraWorkerProcess = worker;
+    attachCameraWorkerOutput(worker);
+
+    worker.stderr.on('data', (chunk) => {
+      const text = String(chunk || '');
+      text
+        .split(/\r?\n/g)
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .forEach((line) => {
+          console.log(`[camera-worker] ${line}`);
+        });
+    });
+
+    worker.on('error', (error) => {
+      console.error('[camera-worker] failed to start:', error && error.message ? error.message : error);
+      rejectAllCameraRequests('worker-start-error');
+      scheduleCameraWorkerRestart();
+    });
+
+    worker.on('close', (code, signal) => {
+      if (cameraWorkerOutput) {
+        cameraWorkerOutput.close();
+      }
+
+      cameraWorkerProcess = null;
+      cameraWorkerOutput = null;
+      rejectAllCameraRequests('worker-closed');
+
+      if (!cameraWorkerShuttingDown) {
+        console.warn(`[camera-worker] exited (code=${code}, signal=${signal || 'none'})`);
+        scheduleCameraWorkerRestart();
+      }
+    });
+
+    return true;
+  } catch (error) {
+    console.error('[camera-worker] spawn error:', error && error.message ? error.message : error);
+    rejectAllCameraRequests('worker-spawn-error');
+    scheduleCameraWorkerRestart();
+    return false;
+  }
+}
+
+function stopCameraWorker() {
+  cameraWorkerShuttingDown = true;
+  clearCameraWorkerRestartTimer();
+  rejectAllCameraRequests('worker-stopped');
+
+  if (cameraWorkerOutput) {
+    cameraWorkerOutput.close();
+    cameraWorkerOutput = null;
+  }
+
+  if (cameraWorkerProcess && !cameraWorkerProcess.killed && cameraWorkerProcess.exitCode === null) {
+    cameraWorkerProcess.kill();
+  }
+}
+
+function requestCameraDetection(imageBase64) {
+  if (!CAMERA_WORKER_ENABLED) {
+    return Promise.resolve(emptyCameraDetection('worker-disabled'));
+  }
+
+  if (typeof imageBase64 !== 'string' || !imageBase64.trim()) {
+    return Promise.resolve(emptyCameraDetection('invalid-image'));
+  }
+
+  if (cameraPendingRequests.size >= CAMERA_WORKER_MAX_PENDING) {
+    return Promise.resolve(emptyCameraDetection('worker-busy'));
+  }
+
+  const started = startCameraWorker();
+  if (!started || !cameraWorkerProcess || !cameraWorkerProcess.stdin) {
+    return Promise.resolve(emptyCameraDetection('worker-offline'));
+  }
+
+  const requestId = ++cameraWorkerSeq;
+  const payload = JSON.stringify({ id: requestId, image: imageBase64 }) + '\n';
+
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => {
+      rejectCameraRequest(requestId, 'worker-timeout');
+    }, CAMERA_WORKER_TIMEOUT_MS);
+
+    cameraPendingRequests.set(requestId, {
+      resolve,
+      timer
+    });
+
+    try {
+      cameraWorkerProcess.stdin.write(payload, 'utf8', (error) => {
+        if (error) {
+          rejectCameraRequest(requestId, 'worker-write-error');
+        }
+      });
+    } catch {
+      rejectCameraRequest(requestId, 'worker-write-error');
+    }
+  });
+}
+
+function parseRealtimeMessage(raw) {
+  try {
+    const text = Buffer.isBuffer(raw) ? raw.toString('utf8') : String(raw || '');
+    const parsed = JSON.parse(text);
+
+    if (!parsed || typeof parsed !== 'object') {
+      return null;
+    }
+
+    const event = typeof parsed.event === 'string' ? parsed.event.trim() : '';
+    if (!event) {
+      return null;
+    }
+
+    return {
+      event,
+      data: parsed.data
+    };
+  } catch {
+    return null;
+  }
+}
+
+function createRealtimeTransport() {
+  const wss = new WebSocketServer({ noServer: true });
+  const sockets = new Map();
+  const rooms = new Map();
+  const connectionHandlers = [];
+  let socketSeq = 0;
+
+  function wsReady(ws) {
+    return Boolean(ws) && ws.readyState === 1;
+  }
+
+  function wsSend(ws, event, data) {
+    if (!wsReady(ws)) {
+      return;
+    }
+
+    try {
+      ws.send(JSON.stringify({ event, data }));
+    } catch {
+    }
+  }
+
+  function removeFromRooms(socketId) {
+    rooms.forEach((members) => {
+      members.delete(socketId);
+    });
+  }
+
+  function addToRoom(socketId, room) {
+    const safeRoom = String(room || '').trim();
+    if (!safeRoom) {
+      return;
+    }
+
+    if (!rooms.has(safeRoom)) {
+      rooms.set(safeRoom, new Set());
+    }
+
+    rooms.get(safeRoom).add(socketId);
+  }
+
+  function removeFromRoom(socketId, room) {
+    const safeRoom = String(room || '').trim();
+    if (!safeRoom) {
+      return;
+    }
+
+    const members = rooms.get(safeRoom);
+    if (!members) {
+      return;
+    }
+
+    members.delete(socketId);
+    if (!members.size) {
+      rooms.delete(safeRoom);
+    }
+  }
+
+  function createSocketWrapper(request, ws) {
+    const socketId = `ws-${++socketSeq}`;
+    const listeners = new Map();
+    let closed = false;
+
+    function trigger(event, ...args) {
+      const handlers = listeners.get(event);
+      if (!handlers || !handlers.length) {
+        return;
+      }
+
+      handlers.slice().forEach((handler) => {
+        try {
+          handler(...args);
+        } catch (error) {
+          console.error(`[realtime] handler error for ${event}:`, error && error.message ? error.message : error);
+        }
+      });
+    }
+
+    const socket = {
+      id: socketId,
+      ws,
+      connected: true,
+      active: true,
+      handshake: {
+        headers: request && request.headers ? request.headers : {},
+        address: request && request.socket ? request.socket.remoteAddress : 'unknown'
+      },
+      conn: {
+        remoteAddress: request && request.socket ? request.socket.remoteAddress : 'unknown',
+        transport: { name: 'websocket' }
+      },
+      on(event, handler) {
+        if (typeof handler !== 'function') {
+          return socket;
+        }
+
+        const safeEvent = String(event || '').trim();
+        if (!safeEvent) {
+          return socket;
+        }
+
+        const existing = listeners.get(safeEvent) || [];
+        existing.push(handler);
+        listeners.set(safeEvent, existing);
+        return socket;
+      },
+      emit(event, data) {
+        const safeEvent = String(event || '').trim();
+        if (!safeEvent) {
+          return socket;
+        }
+
+        wsSend(ws, safeEvent, data);
+        return socket;
+      },
+      join(room) {
+        addToRoom(socketId, room);
+        return socket;
+      },
+      leave(room) {
+        removeFromRoom(socketId, room);
+        return socket;
+      },
+      disconnect(code = 1000, reason = 'client-disconnect') {
+        socket.active = false;
+        socket.connected = false;
+        try {
+          ws.close(code, reason);
+        } catch {
+        }
+      },
+      broadcast: {
+        emit(event, data) {
+          const safeEvent = String(event || '').trim();
+          if (!safeEvent) {
+            return;
+          }
+
+          sockets.forEach((otherSocket, otherId) => {
+            if (otherId === socketId) {
+              return;
+            }
+
+            otherSocket.emit(safeEvent, data);
+          });
+        }
+      }
+    };
+
+    ws.on('message', (raw) => {
+      const message = parseRealtimeMessage(raw);
+      if (!message) {
+        return;
+      }
+
+      trigger(message.event, message.data);
+    });
+
+    ws.on('error', (error) => {
+      trigger('error', error);
+    });
+
+    ws.on('close', () => {
+      if (closed) {
+        return;
+      }
+
+      closed = true;
+      socket.connected = false;
+      socket.active = false;
+      removeFromRooms(socketId);
+      sockets.delete(socketId);
+      trigger('disconnect');
+    });
+
+    sockets.set(socketId, socket);
+    wsSend(ws, '__meta', { id: socketId });
+    return socket;
+  }
+
+  const ioTransport = {
+    engine: {
+      get clientsCount() {
+        return sockets.size;
+      }
+    },
+    on(event, handler) {
+      if (event === 'connection' && typeof handler === 'function') {
+        connectionHandlers.push(handler);
+      }
+      return ioTransport;
+    },
+    emit(event, data) {
+      const safeEvent = String(event || '').trim();
+      if (!safeEvent) {
+        return ioTransport;
+      }
+
+      sockets.forEach((socket) => {
+        socket.emit(safeEvent, data);
+      });
+
+      return ioTransport;
+    },
+    to(room) {
+      const safeRoom = String(room || '').trim();
+
+      return {
+        emit(event, data) {
+          const safeEvent = String(event || '').trim();
+          if (!safeRoom || !safeEvent) {
+            return;
+          }
+
+          const members = rooms.get(safeRoom);
+          if (!members || !members.size) {
+            return;
+          }
+
+          members.forEach((socketId) => {
+            const socket = sockets.get(socketId);
+            if (!socket) {
+              return;
+            }
+
+            socket.emit(safeEvent, data);
+          });
+        }
+      };
+    },
+    handleUpgrade(request, socket, head) {
+      wss.handleUpgrade(request, socket, head, (ws) => {
+        const wrapped = createSocketWrapper(request, ws);
+        connectionHandlers.forEach((handler) => {
+          try {
+            handler(wrapped);
+          } catch (error) {
+            console.error('[realtime] connection handler error:', error && error.message ? error.message : error);
+          }
+        });
+      });
+    }
+  };
+
+  return ioTransport;
+}
+
+const io = createRealtimeTransport();
 
 const publicDir = path.join(__dirname, 'public');
 const legacyActivitiesDir = path.join(__dirname, 'activities');
@@ -72,6 +590,185 @@ app.use('/client', clientRouter);
 const activeUsers = new Map();
 const geometryConnectionMeta = new Map();
 const buffonConnectionMeta = new WeakMap();
+const communicationLog = [];
+let communicationSeq = 0;
+const parsedCommLogLimit = Number.parseInt(process.env.ADMIN_COMM_LOG_LIMIT || '1200', 10);
+const COMM_LOG_LIMIT = Number.isInteger(parsedCommLogLimit) && parsedCommLogLimit >= 200
+  ? Math.min(parsedCommLogLimit, 10000)
+  : 1200;
+const COMM_EVENT_CATALOG = Object.freeze([
+  { app: 'socket', direction: 'in', event: 'socket:connect', description: 'WebSocket transport connected to server.' },
+  { app: 'socket', direction: 'in', event: 'socket:disconnect', description: 'WebSocket transport disconnected from server.' },
+
+  { app: 'geometry', direction: 'in', event: 'user-position', description: 'Client sends position update to server.' },
+  { app: 'geometry', direction: 'in', event: 'camera-frame', description: 'Client sends camera frame to server for detection.' },
+  { app: 'geometry', direction: 'in', event: 'activity-update', description: 'Teacher updates geometry activity on server.' },
+  { app: 'geometry', direction: 'out', event: 'users-update', description: 'Server broadcasts active geometry points/users.' },
+  { app: 'geometry', direction: 'out', event: 'camera-points', description: 'Server replies with detected camera points.' },
+  { app: 'geometry', direction: 'out', event: 'activity-loaded', description: 'Server pushes geometry activity snapshot.' },
+
+  { app: 'fourier', direction: 'in', event: 'fourier:join', description: 'Teacher/student join classroom room.' },
+  { app: 'fourier', direction: 'in', event: 'fourier:request-state', description: 'Client requests full classroom snapshot.' },
+  { app: 'fourier', direction: 'in', event: 'fourier:set-slide', description: 'Teacher sets active slide for classroom.' },
+  { app: 'fourier', direction: 'in', event: 'fourier:interaction', description: 'Student interaction telemetry from activity controls.' },
+  { app: 'fourier', direction: 'in', event: 'fourier:sound-control', description: 'Student sound sliders (frequency/amplitude) to server.' },
+  { app: 'fourier', direction: 'in', event: 'fourier:heat-control', description: 'Student/teacher heat sliders (position/temperature) to server.' },
+  { app: 'fourier', direction: 'in', event: 'fourier:heat-time-control', description: 'Teacher heat time slider updates for section 3.5.' },
+  { app: 'fourier', direction: 'in', event: 'fourier:fft-duel-start', description: 'Teacher starts competitive FFT duel round.' },
+  { app: 'fourier', direction: 'in', event: 'fourier:fft-duel-probe', description: 'Student updates current probe frequency for FFT duel.' },
+  { app: 'fourier', direction: 'in', event: 'fourier:fft-duel-submit', description: 'Student submits and locks FFT duel guess.' },
+  { app: 'fourier', direction: 'in', event: 'fourier:ocean-random-pack', description: 'Student submits a random frequency pack for section 6.3.' },
+  { app: 'fourier', direction: 'in', event: 'fourier:ocean-random-clear', description: 'Teacher clears classroom random frequency packs.' },
+  { app: 'fourier', direction: 'out', event: 'fourier:state', description: 'Server sends full initial/rehydration state.' },
+  { app: 'fourier', direction: 'out', event: 'fourier:slide', description: 'Server broadcasts active slide state.' },
+  { app: 'fourier', direction: 'out', event: 'fourier:participants', description: 'Server broadcasts participant roster counts/details.' },
+  { app: 'fourier', direction: 'out', event: 'fourier:summary', description: 'Server broadcasts aggregate summary metrics.' },
+  { app: 'fourier', direction: 'out', event: 'fourier:activity-event', description: 'Server broadcasts single interaction feed event.' },
+  { app: 'fourier', direction: 'out', event: 'fourier:sound-state', description: 'Server broadcasts all current student sound states.' },
+  { app: 'fourier', direction: 'out', event: 'fourier:heat-state', description: 'Server broadcasts all current student heat selections.' },
+  { app: 'fourier', direction: 'out', event: 'fourier:heat-time-state', description: 'Server broadcasts teacher-controlled heat time value.' },
+  { app: 'fourier', direction: 'out', event: 'fourier:fft-duel-state', description: 'Server sends competitive FFT duel state (viewer-aware).' },
+  { app: 'fourier', direction: 'out', event: 'fourier:ocean-random-state', description: 'Server broadcasts classroom random frequency packs for section 6.3.' },
+
+  { app: 'buffon', direction: 'in', event: 'buffon:ws-connect', description: 'Buffon websocket connection established.' },
+  { app: 'buffon', direction: 'in', event: 'buffon:ws-close', description: 'Buffon websocket connection closed.' },
+  { app: 'buffon', direction: 'in', event: 'buffon:register_teacher', description: 'Teacher registers in Buffon channel.' },
+  { app: 'buffon', direction: 'in', event: 'buffon:register_student', description: 'Student registers in Buffon channel.' },
+  { app: 'buffon', direction: 'in', event: 'buffon:update', description: 'Student update message (drops/hits/piEst).' },
+  { app: 'buffon', direction: 'in', event: 'buffon:start_round', description: 'Teacher starts a Buffon round.' },
+  { app: 'buffon', direction: 'in', event: 'buffon:end_round', description: 'Teacher ends Buffon round and sends ranking.' },
+  { app: 'buffon', direction: 'in', event: 'buffon:reset_tournament', description: 'Teacher resets Buffon tournament state.' },
+  { app: 'buffon', direction: 'out', event: 'buffon:roster', description: 'Server sends current roster to teachers.' },
+  { app: 'buffon', direction: 'out', event: 'buffon:round_start', description: 'Server pushes round start payload to students.' },
+  { app: 'buffon', direction: 'out', event: 'buffon:round_end', description: 'Server pushes round end payload to students.' },
+  { app: 'buffon', direction: 'out', event: 'buffon:reset_tournament', description: 'Server pushes tournament reset payload to students.' }
+]);
+
+function sanitizeCommString(value, maxLen = 200) {
+  const raw = String(value || '');
+
+  if (!raw) {
+    return '';
+  }
+
+  if (raw.startsWith('data:image/')) {
+    return '[image-data omitted]';
+  }
+
+  if (raw.length <= maxLen) {
+    return raw;
+  }
+
+  return `${raw.slice(0, maxLen)}...`;
+}
+
+function sanitizeCommPayload(value, depth = 0) {
+  if (value === null || typeof value === 'undefined') {
+    return null;
+  }
+
+  if (depth > 3) {
+    return '[max-depth]';
+  }
+
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? Number(value.toFixed(6)) : null;
+  }
+
+  if (typeof value === 'boolean') {
+    return value;
+  }
+
+  if (typeof value === 'string') {
+    return sanitizeCommString(value, 220);
+  }
+
+  if (Array.isArray(value)) {
+    const list = value.slice(0, 12).map((item) => sanitizeCommPayload(item, depth + 1));
+
+    if (value.length > 12) {
+      list.push(`[+${value.length - 12} more]`);
+    }
+
+    return list;
+  }
+
+  if (typeof value === 'object') {
+    const result = {};
+
+    Object.keys(value).slice(0, 14).forEach((key) => {
+      if (/image|frame|blob|buffer/i.test(key)) {
+        result[key] = '[binary omitted]';
+        return;
+      }
+
+      result[sanitizeCommString(key, 40)] = sanitizeCommPayload(value[key], depth + 1);
+    });
+
+    if (Object.keys(value).length > 14) {
+      result.__moreKeys = Object.keys(value).length - 14;
+    }
+
+    return result;
+  }
+
+  return sanitizeCommString(value, 220);
+}
+
+function recordCommunication(entry) {
+  const payload = entry && typeof entry === 'object' ? entry : {};
+  const message = {
+    id: ++communicationSeq,
+    ts: Date.now(),
+    isoTime: new Date().toISOString(),
+    app: sanitizeCommString(payload.app || 'system', 40),
+    direction: payload.direction === 'out' ? 'out' : 'in',
+    event: sanitizeCommString(payload.event || 'unknown', 90),
+    from: sanitizeCommString(payload.from || '-', 80),
+    to: sanitizeCommString(payload.to || '-', 80),
+    note: sanitizeCommString(payload.note || '', 200),
+    payload: sanitizeCommPayload(payload.payload)
+  };
+
+  communicationLog.push(message);
+
+  if (communicationLog.length > COMM_LOG_LIMIT) {
+    communicationLog.splice(0, communicationLog.length - COMM_LOG_LIMIT);
+  }
+}
+
+function getCommunicationLog(options = {}) {
+  const parsedLimit = Number.parseInt(options.limit, 10);
+  const limit = Number.isInteger(parsedLimit)
+    ? Math.max(20, Math.min(2000, parsedLimit))
+    : 300;
+
+  const source = sanitizeCommString(options.source || '', 40).toLowerCase();
+  const eventQuery = sanitizeCommString(options.event || '', 90).toLowerCase();
+
+  let list = communicationLog;
+
+  if (source) {
+    list = list.filter((item) => String(item.app || '').toLowerCase() === source);
+  }
+
+  if (eventQuery) {
+    list = list.filter((item) => String(item.event || '').toLowerCase().includes(eventQuery));
+  }
+
+  return list.slice(-limit).reverse().map((item) => ({ ...item }));
+}
+
+function clearCommunicationLog() {
+  const cleared = communicationLog.length;
+  communicationLog.length = 0;
+  communicationSeq = 0;
+  return cleared;
+}
+
+function getCommunicationCatalog() {
+  return COMM_EVENT_CATALOG.map((item) => ({ ...item }));
+}
 
 function getHeaderValue(headers, key) {
   if (!headers || !key) {
@@ -316,7 +1013,13 @@ function getRealtimeStats() {
   };
 }
 
-app.use('/admin', createAdminRouter({ getRealtimeStats, getRealtimeParticipants }));
+app.use('/admin', createAdminRouter({
+  getRealtimeStats,
+  getRealtimeParticipants,
+  getCommunicationLog,
+  clearCommunicationLog,
+  getCommunicationCatalog
+}));
 app.use('/apps', createAppsRouter());
 
 const FOURIER_ROOM = 'fourier:classroom';
@@ -326,9 +1029,38 @@ const fourierState = {
   activeSlideIndex: 0,
   updatedAt: Date.now()
 };
+const fourierHeatTimeState = {
+  value: 0,
+  updatedAt: Date.now(),
+  sourceSocketId: ''
+};
 const fourierInteractionFeed = [];
 const fourierBySlideCount = new Map();
 const fourierByActivityCount = new Map();
+const fourierSoundState = new Map();
+const fourierHeatState = new Map();
+const FOURIER_OCEAN_RANDOM_MAX_TERMS = 40;
+const fourierOceanRandomState = {
+  packs: new Map(),
+  updatedAt: Date.now()
+};
+const FOURIER_FFT_DUEL_SIGNAL_KINDS = ['sine', 'square', 'triangle', 'saw'];
+const fourierFftDuelState = {
+  roundId: '',
+  status: 'idle',
+  startedAt: 0,
+  updatedAt: Date.now(),
+  assignments: new Map()
+};
+const FOURIER_DEBUG = process.env.FOURIER_DEBUG === '1';
+
+function logFourier(eventName, payload) {
+  if (!FOURIER_DEBUG) {
+    return;
+  }
+
+  console.log('[fourier]', eventName, payload || '');
+}
 
 function resolveFourierRole(rawRole) {
   return rawRole === 'teacher' ? 'teacher' : 'client';
@@ -349,6 +1081,28 @@ function normalizeFourierName(rawName, role, socketId) {
   }
 
   return `Student-${String(socketId || '').slice(0, 5)}`;
+}
+
+function normalizeFourierTeam(rawTeam, role, fallbackName, socketId) {
+  const cleaned = String(rawTeam || '')
+    .trim()
+    .replace(/\s+/g, ' ')
+    .slice(0, 30);
+
+  if (role === 'teacher') {
+    return 'Teacher';
+  }
+
+  if (cleaned) {
+    return cleaned;
+  }
+
+  const fromName = String(fallbackName || '').trim();
+  if (fromName) {
+    return fromName.slice(0, 30);
+  }
+
+  return `Team-${String(socketId || '').slice(0, 4)}`;
 }
 
 function coerceFourierString(value, maxLen = 80) {
@@ -393,6 +1147,394 @@ function coerceFourierValue(value, depth = 0) {
   return '';
 }
 
+function clampFourierNumber(value, min, max, fallback) {
+  const parsed = Number(value);
+
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.max(min, Math.min(max, parsed));
+}
+
+function normalizeFourierSoundPayload(payload) {
+  const frequency = Number(
+    clampFourierNumber(payload && payload.frequency, 80, 1400, 440).toFixed(2)
+  );
+  const amplitude = Number(
+    clampFourierNumber(payload && payload.amplitude, 0, 1, 0).toFixed(3)
+  );
+
+  return {
+    frequency,
+    amplitude
+  };
+}
+
+function normalizeFourierHeatPayload(payload) {
+  const rawPosition = payload && payload.position;
+  const inferredPosition = Number.isFinite(Number(rawPosition))
+    ? Number(rawPosition)
+    : Number.isFinite(Number(payload && payload.positionMeter))
+      ? Number(payload.positionMeter) + 0.5
+      : 0.5;
+  const position = Number(clampFourierNumber(inferredPosition, 0, 1, 0.5).toFixed(4));
+
+  const rawTemperature = payload && payload.temperature;
+  const inferredTemperature = Number.isFinite(Number(rawTemperature))
+    ? Number(rawTemperature)
+    : Number.isFinite(Number(payload && payload.temperatureNorm))
+      ? Number(payload.temperatureNorm) * 100
+      : 53;
+  const temperature = Number(clampFourierNumber(inferredTemperature, 0, 100, 53).toFixed(2));
+
+  return {
+    position,
+    temperature
+  };
+}
+
+function normalizeFourierHeatTimePayload(payload) {
+  const rawValue = Number(
+    payload && typeof payload === 'object' && payload !== null
+      ? payload.value
+      : payload
+  );
+
+  return Number(clampFourierNumber(rawValue, 0, 8, 0).toFixed(2));
+}
+
+function normalizeFourierOceanRandomItems(rawItems) {
+  if (!Array.isArray(rawItems)) {
+    return [];
+  }
+
+  return rawItems
+    .slice(0, 8)
+    .map((item) => ({
+      freq: Number(clampFourierNumber(item && item.freq, 0, 8, 1).toFixed(2)),
+      amp: Number(clampFourierNumber(item && item.amp, 0.01, 1, 0.1).toFixed(3)),
+      phase: Number(clampFourierNumber(item && item.phase, 0, Math.PI * 2, 0).toFixed(3)),
+      angle: Number(clampFourierNumber(item && item.angle, 0, Math.PI * 2, 0).toFixed(3))
+    }))
+    .filter((item) => Number.isFinite(item.freq) && Number.isFinite(item.amp));
+}
+
+function buildFourierOceanRandomPayload() {
+  const packs = [];
+
+  fourierOceanRandomState.packs.forEach((pack, socketId) => {
+    const participant = fourierParticipants.get(socketId);
+    if (!participant || participant.role !== 'client') {
+      return;
+    }
+
+    packs.push({
+      socketId,
+      name: participant.name,
+      team: participant.team,
+      items: normalizeFourierOceanRandomItems(pack && pack.items),
+      updatedAt: pack && pack.updatedAt ? pack.updatedAt : 0
+    });
+  });
+
+  packs.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+
+  const usedTerms = [];
+  packs.forEach((pack) => {
+    (pack.items || []).forEach((item) => {
+      if (usedTerms.length < FOURIER_OCEAN_RANDOM_MAX_TERMS) {
+        usedTerms.push({ ...item });
+      }
+    });
+  });
+
+  return {
+    packs,
+    totalTerms: packs.reduce((sum, pack) => sum + ((pack.items && pack.items.length) || 0), 0),
+    usedTerms,
+    updatedAt: fourierOceanRandomState.updatedAt || Date.now()
+  };
+}
+
+function normalizeFourierFftDuelSignalKind(rawKind) {
+  const safe = coerceFourierString(rawKind, 20).toLowerCase();
+  return FOURIER_FFT_DUEL_SIGNAL_KINDS.includes(safe) ? safe : 'sine';
+}
+
+function buildFourierFftDuelAssignment(participant, socketId) {
+  const signalKind = FOURIER_FFT_DUEL_SIGNAL_KINDS[
+    Math.floor(Math.random() * FOURIER_FFT_DUEL_SIGNAL_KINDS.length)
+  ];
+  const targetFreq = Number((0.6 + Math.random() * 7.2).toFixed(2));
+  const now = Date.now();
+
+  return {
+    socketId,
+    role: participant && participant.role === 'teacher' ? 'teacher' : 'client',
+    name: normalizeFourierName(participant && participant.name, 'client', socketId),
+    team: normalizeFourierTeam(participant && participant.team, 'client', participant && participant.name, socketId),
+    signalKind,
+    targetFreq,
+    probeFreq: Number(targetFreq.toFixed(2)),
+    submitted: false,
+    locked: false,
+    guessFreq: null,
+    error: null,
+    submittedAt: 0,
+    updatedAt: now
+  };
+}
+
+function ensureFourierFftDuelAssignment(socketId) {
+  const participant = fourierParticipants.get(socketId);
+  if (!participant || participant.role !== 'client') {
+    return null;
+  }
+
+  const existing = fourierFftDuelState.assignments.get(socketId);
+  if (existing) {
+    return existing;
+  }
+
+  const next = buildFourierFftDuelAssignment(participant, socketId);
+  fourierFftDuelState.assignments.set(socketId, next);
+  return next;
+}
+
+function resetFourierFftDuelAssignmentsForCurrentClients() {
+  const nextAssignments = new Map();
+  fourierParticipants.forEach((participant, socketId) => {
+    if (!participant || participant.role !== 'client') {
+      return;
+    }
+
+    nextAssignments.set(socketId, buildFourierFftDuelAssignment(participant, socketId));
+  });
+  fourierFftDuelState.assignments = nextAssignments;
+}
+
+function startFourierFftDuelRound() {
+  const now = Date.now();
+  fourierFftDuelState.roundId = `fft-${now}`;
+  fourierFftDuelState.status = 'running';
+  fourierFftDuelState.startedAt = now;
+  fourierFftDuelState.updatedAt = now;
+  resetFourierFftDuelAssignmentsForCurrentClients();
+}
+
+function buildFourierFftDuelPlayerView(socketId, viewerSocketId, viewerRole) {
+  const participant = fourierParticipants.get(socketId);
+  if (!participant || participant.role !== 'client') {
+    return null;
+  }
+
+  const assignment = fourierFftDuelState.assignments.get(socketId) || ensureFourierFftDuelAssignment(socketId);
+  if (!assignment) {
+    return null;
+  }
+
+  const includeTarget = viewerRole === 'teacher' || socketId === viewerSocketId;
+
+  return {
+    socketId,
+    name: participant.name,
+    team: participant.team,
+    signalKind: normalizeFourierFftDuelSignalKind(assignment.signalKind),
+    probeFreq: Number(clampFourierNumber(assignment.probeFreq, 0, 8, 2).toFixed(2)),
+    targetFreq: includeTarget ? Number(clampFourierNumber(assignment.targetFreq, 0, 8, 2).toFixed(2)) : null,
+    submitted: Boolean(assignment.submitted),
+    locked: Boolean(assignment.locked),
+    guessFreq: assignment.submitted && Number.isFinite(Number(assignment.guessFreq))
+      ? Number(clampFourierNumber(assignment.guessFreq, 0, 8, 2).toFixed(2))
+      : null,
+    error: assignment.submitted && Number.isFinite(Number(assignment.error))
+      ? Number(Math.max(0, Number(assignment.error)).toFixed(3))
+      : null,
+    submittedAt: assignment.submittedAt || 0,
+    updatedAt: assignment.updatedAt || 0
+  };
+}
+
+function buildFourierFftDuelPayload(viewerSocketId = '', viewerRole = 'client') {
+  const players = [];
+  fourierParticipants.forEach((participant, socketId) => {
+    if (!participant || participant.role !== 'client') {
+      return;
+    }
+
+    const view = buildFourierFftDuelPlayerView(socketId, viewerSocketId, viewerRole);
+    if (view) {
+      players.push(view);
+    }
+  });
+
+  players.sort((a, b) => {
+    if (a.submitted !== b.submitted) {
+      return a.submitted ? -1 : 1;
+    }
+
+    const aErr = Number.isFinite(Number(a.error)) ? Number(a.error) : Number.POSITIVE_INFINITY;
+    const bErr = Number.isFinite(Number(b.error)) ? Number(b.error) : Number.POSITIVE_INFINITY;
+    if (aErr !== bErr) {
+      return aErr - bErr;
+    }
+
+    return String(a.name).localeCompare(String(b.name));
+  });
+
+  const solvedCount = players.reduce((sum, player) => sum + (player.submitted ? 1 : 0), 0);
+  const own = viewerRole === 'client'
+    ? players.find((player) => player.socketId === viewerSocketId) || null
+    : null;
+
+  return {
+    roundId: fourierFftDuelState.roundId,
+    status: fourierFftDuelState.status,
+    startedAt: fourierFftDuelState.startedAt,
+    updatedAt: fourierFftDuelState.updatedAt,
+    solvedCount,
+    totalPlayers: players.length,
+    players,
+    own
+  };
+}
+
+function ensureFourierSocketMeta(socket) {
+  const existing = geometryConnectionMeta.get(socket.id);
+
+  if (existing) {
+    return existing;
+  }
+
+  const socketMeta = {
+    connectedAt: Date.now(),
+    lastSeenAt: Date.now(),
+    ...getSocketClientInfo(socket)
+  };
+
+  geometryConnectionMeta.set(socket.id, socketMeta);
+  return socketMeta;
+}
+
+// Centralized participant registration used by both:
+// 1) explicit `fourier:join`
+// 2) implicit recovery from realtime control channels (`fourier:sound-control`, `fourier:heat-control`)
+function registerFourierParticipant(socket, role, rawName, rawTeam) {
+  const safeRole = resolveFourierRole(role);
+  const safeName = normalizeFourierName(rawName, safeRole, socket.id);
+  const safeTeam = normalizeFourierTeam(rawTeam, safeRole, safeName, socket.id);
+  const socketMeta = ensureFourierSocketMeta(socket);
+  const previous = fourierParticipants.get(socket.id);
+
+  socket.join(FOURIER_ROOM);
+
+  const participant = {
+    socketId: socket.id,
+    role: safeRole,
+    name: safeName,
+    team: safeTeam,
+    joinedAt: previous && previous.joinedAt ? previous.joinedAt : Date.now(),
+    interactions: previous && Number.isFinite(previous.interactions) ? previous.interactions : 0,
+    lastActionAt: previous ? previous.lastActionAt || null : null,
+    lastSlideId: previous ? previous.lastSlideId || '' : '',
+    ip: socketMeta.ip || 'unknown',
+    userAgent: socketMeta.userAgent || 'unknown'
+  };
+
+  fourierParticipants.set(socket.id, participant);
+
+  if (safeRole === 'client') {
+    const currentSound = fourierSoundState.get(socket.id) || {
+      frequency: 440,
+      amplitude: 0,
+      updatedAt: Date.now()
+    };
+
+    fourierSoundState.set(socket.id, {
+      frequency: Number(clampFourierNumber(currentSound.frequency, 80, 1400, 440).toFixed(2)),
+      amplitude: Number(clampFourierNumber(currentSound.amplitude, 0, 1, 0).toFixed(3)),
+      updatedAt: currentSound.updatedAt || Date.now()
+    });
+  } else {
+    fourierSoundState.delete(socket.id);
+    fourierHeatState.delete(socket.id);
+  }
+
+  return participant;
+}
+
+function buildFourierSoundPayload() {
+  const states = [];
+
+  fourierParticipants.forEach((participant, socketId) => {
+    if (!participant || participant.role !== 'client') {
+      return;
+    }
+
+    const current = fourierSoundState.get(socketId) || {
+      frequency: 440,
+      amplitude: 0,
+      updatedAt: 0
+    };
+
+    states.push({
+      socketId,
+      name: participant.name,
+      team: participant.team,
+      role: participant.role,
+      frequency: current.frequency,
+      amplitude: current.amplitude,
+      updatedAt: current.updatedAt || 0
+    });
+  });
+
+  return states
+    .sort((a, b) => String(a.name).localeCompare(String(b.name)))
+    .slice(0, 120);
+}
+
+function buildFourierHeatPayload() {
+  const states = [];
+
+  fourierParticipants.forEach((participant, socketId) => {
+    if (!participant) {
+      return;
+    }
+
+    const current = fourierHeatState.get(socketId);
+    if (!current) {
+      return;
+    }
+
+    const position = Number(clampFourierNumber(current.position, 0, 1, 0.5).toFixed(4));
+    const temperature = Number(clampFourierNumber(current.temperature, 0, 100, 53).toFixed(2));
+
+    states.push({
+      socketId,
+      name: participant.name,
+      team: participant.team,
+      role: participant.role,
+      position,
+      positionMeter: Number((position - 0.5).toFixed(3)),
+      temperature,
+      temperatureNorm: Number((temperature / 100).toFixed(4)),
+      updatedAt: current.updatedAt || 0
+    });
+  });
+
+  return states
+    .sort((a, b) => String(a.name).localeCompare(String(b.name)))
+    .slice(0, 120);
+}
+
+function buildFourierHeatTimePayload() {
+  return {
+    value: Number(clampFourierNumber(fourierHeatTimeState.value, 0, 8, 0).toFixed(2)),
+    updatedAt: fourierHeatTimeState.updatedAt || 0
+  };
+}
+
 function incrementCounter(map, key) {
   const safeKey = coerceFourierString(key, 80);
   if (!safeKey) {
@@ -422,13 +1564,30 @@ function buildFourierParticipantPayload() {
       studentCount += 1;
     }
 
+    const soundSnapshot = participant.role === 'client'
+      ? (fourierSoundState.get(participant.socketId) || {
+        frequency: 440,
+        amplitude: 0,
+        updatedAt: 0
+      })
+      : null;
+
     roster.push({
+      socketId: participant.socketId,
       role: participant.role,
       name: participant.name,
+      team: participant.team,
       joinedAt: participant.joinedAt,
       interactions: participant.interactions,
       lastActionAt: participant.lastActionAt,
-      lastSlideId: participant.lastSlideId
+      lastSlideId: participant.lastSlideId,
+      sound: soundSnapshot
+        ? {
+          frequency: soundSnapshot.frequency,
+          amplitude: soundSnapshot.amplitude,
+          updatedAt: soundSnapshot.updatedAt || 0
+        }
+        : null
     });
   });
 
@@ -441,6 +1600,10 @@ function buildFourierParticipantPayload() {
 
 function buildFourierSummary() {
   const participantPayload = buildFourierParticipantPayload();
+  const soundStates = buildFourierSoundPayload();
+  const heatStates = buildFourierHeatPayload();
+  const fftDuelPublic = buildFourierFftDuelPayload('', 'teacher');
+  const oceanRandom = buildFourierOceanRandomPayload();
 
   const topStudents = participantPayload.roster
     .filter((item) => item.role === 'client')
@@ -478,6 +1641,21 @@ function buildFourierSummary() {
     activeSlideId: fourierState.activeSlideId,
     activeSlideIndex: fourierState.activeSlideIndex,
     participants: participantPayload,
+    soundStates,
+    heatStates,
+    heatTime: buildFourierHeatTimePayload(),
+    fftDuel: {
+      roundId: fftDuelPublic.roundId,
+      status: fftDuelPublic.status,
+      solvedCount: fftDuelPublic.solvedCount,
+      totalPlayers: fftDuelPublic.totalPlayers,
+      updatedAt: fftDuelPublic.updatedAt
+    },
+    oceanRandom: {
+      totalTerms: oceanRandom.totalTerms,
+      usedTerms: oceanRandom.usedTerms,
+      updatedAt: oceanRandom.updatedAt
+    },
     topStudents,
     slideActivity,
     activityBreakdown,
@@ -487,35 +1665,201 @@ function buildFourierSummary() {
 }
 
 function emitFourierParticipants() {
-  io.to(FOURIER_ROOM).emit('fourier:participants', buildFourierParticipantPayload());
+  const payload = buildFourierParticipantPayload();
+
+  recordCommunication({
+    app: 'fourier',
+    direction: 'out',
+    event: 'fourier:participants',
+    from: 'server',
+    to: FOURIER_ROOM,
+    payload: {
+      teachers: payload.teachers,
+      students: payload.students,
+      rosterCount: Array.isArray(payload.roster) ? payload.roster.length : 0
+    }
+  });
+
+  io.to(FOURIER_ROOM).emit('fourier:participants', payload);
 }
 
 function emitFourierSummary() {
-  io.to(FOURIER_ROOM).emit('fourier:summary', buildFourierSummary());
+  const payload = buildFourierSummary();
+
+  recordCommunication({
+    app: 'fourier',
+    direction: 'out',
+    event: 'fourier:summary',
+    from: 'server',
+    to: FOURIER_ROOM,
+    payload: {
+      activeSlideId: payload.activeSlideId,
+      activeSlideIndex: payload.activeSlideIndex,
+      topStudents: Array.isArray(payload.topStudents) ? payload.topStudents.length : 0,
+      soundStates: Array.isArray(payload.soundStates) ? payload.soundStates.length : 0,
+      heatStates: Array.isArray(payload.heatStates) ? payload.heatStates.length : 0,
+      heatTime: payload.heatTime && Number.isFinite(payload.heatTime.value) ? payload.heatTime.value : 0
+    }
+  });
+
+  io.to(FOURIER_ROOM).emit('fourier:summary', payload);
+}
+
+function emitFourierSoundState() {
+  // Broadcast channel consumed by classroom-sync.js and then re-dispatched
+  // as `fourier:classroom-sound-state` for the rendering/audio layer.
+  const payload = {
+    soundStates: buildFourierSoundPayload(),
+    updatedAt: Date.now()
+  };
+
+  recordCommunication({
+    app: 'fourier',
+    direction: 'out',
+    event: 'fourier:sound-state',
+    from: 'server',
+    to: FOURIER_ROOM,
+    payload: {
+      sourceCount: Array.isArray(payload.soundStates) ? payload.soundStates.length : 0
+    }
+  });
+
+  io.to(FOURIER_ROOM).emit('fourier:sound-state', payload);
+}
+
+function emitFourierHeatState() {
+  // Broadcast channel consumed by classroom-sync.js and then re-dispatched
+  // as `fourier:classroom-heat-state` for the heat visualization layer.
+  const payload = {
+    heatStates: buildFourierHeatPayload(),
+    updatedAt: Date.now()
+  };
+
+  recordCommunication({
+    app: 'fourier',
+    direction: 'out',
+    event: 'fourier:heat-state',
+    from: 'server',
+    to: FOURIER_ROOM,
+    payload: {
+      sourceCount: Array.isArray(payload.heatStates) ? payload.heatStates.length : 0
+    }
+  });
+
+  io.to(FOURIER_ROOM).emit('fourier:heat-state', payload);
+}
+
+function emitFourierHeatTimeState() {
+  const payload = {
+    heatTime: buildFourierHeatTimePayload(),
+    updatedAt: Date.now()
+  };
+
+  recordCommunication({
+    app: 'fourier',
+    direction: 'out',
+    event: 'fourier:heat-time-state',
+    from: 'server',
+    to: FOURIER_ROOM,
+    payload: {
+      value: payload.heatTime.value,
+      updatedAt: payload.heatTime.updatedAt
+    }
+  });
+
+  io.to(FOURIER_ROOM).emit('fourier:heat-time-state', payload);
+}
+
+function emitFourierFftDuelState(targetSocket = null) {
+  if (targetSocket) {
+    const participant = fourierParticipants.get(targetSocket.id);
+    const payload = buildFourierFftDuelPayload(
+      targetSocket.id,
+      participant && participant.role ? participant.role : 'client'
+    );
+
+    recordCommunication({
+      app: 'fourier',
+      direction: 'out',
+      event: 'fourier:fft-duel-state',
+      from: 'server',
+      to: targetSocket.id,
+      payload: {
+        roundId: payload.roundId,
+        status: payload.status,
+        solvedCount: payload.solvedCount,
+        totalPlayers: payload.totalPlayers
+      }
+    });
+
+    targetSocket.emit('fourier:fft-duel-state', payload);
+    return;
+  }
+
+  recordCommunication({
+    app: 'fourier',
+    direction: 'out',
+    event: 'fourier:fft-duel-state',
+    from: 'server',
+    to: FOURIER_ROOM,
+    payload: {
+      status: fourierFftDuelState.status
+    }
+  });
+
+  fourierParticipants.forEach((participant, socketId) => {
+    if (!participant) {
+      return;
+    }
+
+    const payload = buildFourierFftDuelPayload(socketId, participant.role);
+    io.to(socketId).emit('fourier:fft-duel-state', payload);
+  });
+}
+
+function emitFourierOceanRandomState(targetSocket = null) {
+  const payload = buildFourierOceanRandomPayload();
+
+  recordCommunication({
+    app: 'fourier',
+    direction: 'out',
+    event: 'fourier:ocean-random-state',
+    from: 'server',
+    to: targetSocket ? targetSocket.id : FOURIER_ROOM,
+    payload: {
+      packs: Array.isArray(payload.packs) ? payload.packs.length : 0,
+      totalTerms: payload.totalTerms,
+      usedTerms: Array.isArray(payload.usedTerms) ? payload.usedTerms.length : 0
+    }
+  });
+
+  if (targetSocket) {
+    targetSocket.emit('fourier:ocean-random-state', payload);
+    return;
+  }
+
+  io.to(FOURIER_ROOM).emit('fourier:ocean-random-state', payload);
 }
 
 function emitUsersUpdate() {
-  io.emit('users-update', buildUserList());
+  const users = buildUserList();
+
+  recordCommunication({
+    app: 'geometry',
+    direction: 'out',
+    event: 'users-update',
+    from: 'server',
+    to: 'all-sockets',
+    payload: {
+      points: users.length
+    }
+  });
+
+  io.emit('users-update', users);
 }
 
 async function detectPointsFromPython(imageBase64) {
-  try {
-    const response = await fetch(CAMERA_SERVICE_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ image: imageBase64 })
-    });
-
-    if (!response.ok) {
-      return [];
-    }
-
-    const data = await response.json();
-    return Array.isArray(data.points) ? data.points : [];
-  } catch (error) {
-    console.error('[camera] service error:', error.message);
-    return [];
-  }
+  return requestCameraDetection(imageBase64);
 }
 
 function sanitizeLegacyFilename(filename) {
@@ -606,6 +1950,16 @@ app.get('/api/activity/current', (req, res) => {
 
 io.on('connection', (socket) => {
   console.log('[geometry] socket connected:', socket.id);
+  recordCommunication({
+    app: 'socket',
+    direction: 'in',
+    event: 'socket:connect',
+    from: socket.id,
+    to: 'server',
+    payload: {
+      transport: socket && socket.conn ? socket.conn.transport.name : 'unknown'
+    }
+  });
 
   geometryConnectionMeta.set(socket.id, {
     connectedAt: Date.now(),
@@ -614,6 +1968,16 @@ io.on('connection', (socket) => {
   });
 
   if (currentActivity) {
+    recordCommunication({
+      app: 'geometry',
+      direction: 'out',
+      event: 'activity-loaded',
+      from: 'server',
+      to: socket.id,
+      payload: {
+        shapeCount: Array.isArray(currentActivity.geometry) ? currentActivity.geometry.length : 0
+      }
+    });
     socket.emit('activity-loaded', currentActivity);
   }
 
@@ -621,6 +1985,19 @@ io.on('connection', (socket) => {
 
   socket.on('user-position', (data) => {
     touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'geometry',
+      direction: 'in',
+      event: 'user-position',
+      from: socket.id,
+      to: 'server',
+      payload: {
+        role: data && data.role,
+        x: data && data.x,
+        y: data && data.y,
+        name: data && data.name
+      }
+    });
 
     const existing = activeUsers.get(socket.id) || {};
 
@@ -645,8 +2022,23 @@ io.on('connection', (socket) => {
     }
 
     touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'geometry',
+      direction: 'in',
+      event: 'camera-frame',
+      from: socket.id,
+      to: 'server',
+      payload: {
+        name: data && data.name,
+        hasImage: Boolean(data && data.image),
+        imageLength: data && data.image ? String(data.image).length : 0
+      }
+    });
 
-    const points = await detectPointsFromPython(data.image);
+    const detection = await detectPointsFromPython(data.image);
+    const points = Array.isArray(detection.points) ? detection.points : [];
+    const boxes = Array.isArray(detection.boxes) ? detection.boxes : [];
+    const tracking = typeof detection.tracking === 'string' ? detection.tracking : 'unknown';
     const existing = activeUsers.get(socket.id) || {};
 
     activeUsers.set(socket.id, {
@@ -656,15 +2048,43 @@ io.on('connection', (socket) => {
       name: data.name || existing.name,
       color: data.color || existing.color,
       shape: data.shape || existing.shape,
-      points
+      points,
+      boxes,
+      cameraTracking: tracking
     });
 
-    socket.emit('camera-points', { points });
+    recordCommunication({
+      app: 'geometry',
+      direction: 'out',
+      event: 'camera-points',
+      from: 'server',
+      to: socket.id,
+      payload: {
+        count: Array.isArray(points) ? points.length : 0,
+        boxes: Array.isArray(boxes) ? boxes.length : 0,
+        tracking
+      }
+    });
+    socket.emit('camera-points', {
+      points,
+      boxes,
+      tracking
+    });
     emitUsersUpdate();
   });
 
   socket.on('activity-update', (geometry) => {
     touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'geometry',
+      direction: 'in',
+      event: 'activity-update',
+      from: socket.id,
+      to: 'server',
+      payload: {
+        shapeCount: Array.isArray(geometry) ? geometry.length : 0
+      }
+    });
 
     if (!currentActivity) {
       currentActivity = {
@@ -679,45 +2099,86 @@ io.on('connection', (socket) => {
       geometry
     };
 
+    recordCommunication({
+      app: 'geometry',
+      direction: 'out',
+      event: 'activity-loaded',
+      from: 'server',
+      to: 'broadcast-except-sender',
+      payload: {
+        shapeCount: Array.isArray(currentActivity.geometry) ? currentActivity.geometry.length : 0
+      }
+    });
     socket.broadcast.emit('activity-loaded', currentActivity);
   });
 
   socket.on('fourier:join', (data) => {
+    // Explicit classroom handshake.
+    // client/teacher -> server: fourier:join
+    // server -> caller: fourier:state + fourier:slide
+    // server -> room: participants/summary/sound-state refresh
     touchGeometryConnection(socket.id);
-
-    const role = resolveFourierRole(data && data.role);
-    const name = normalizeFourierName(data && data.name, role, socket.id);
-    const socketMeta = geometryConnectionMeta.get(socket.id) || {
-      connectedAt: Date.now(),
-      lastSeenAt: Date.now(),
-      ...getSocketClientInfo(socket)
-    };
-
-    geometryConnectionMeta.set(socket.id, socketMeta);
-
-    socket.join(FOURIER_ROOM);
-
-    fourierParticipants.set(socket.id, {
-      socketId: socket.id,
-      role,
-      name,
-      joinedAt: Date.now(),
-      interactions: 0,
-      lastActionAt: null,
-      lastSlideId: '',
-      ip: socketMeta.ip || 'unknown',
-      userAgent: socketMeta.userAgent || 'unknown'
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:join',
+      from: socket.id,
+      to: 'server',
+      payload: data
     });
 
+    const participant = registerFourierParticipant(
+      socket,
+      data && data.role,
+      data && data.name,
+      data && data.team
+    );
+
+    logFourier('recv fourier:join', {
+      socketId: socket.id,
+      role: participant.role,
+      name: participant.name,
+      team: participant.team
+    });
+
+    recordCommunication({
+      app: 'fourier',
+      direction: 'out',
+      event: 'fourier:state',
+      from: 'server',
+      to: socket.id,
+      payload: {
+        role: participant.role,
+        name: participant.name,
+        team: participant.team
+      }
+    });
     socket.emit('fourier:state', {
-      role,
-      name,
+      role: participant.role,
+      name: participant.name,
+      team: participant.team,
       activeSlideId: fourierState.activeSlideId,
       activeSlideIndex: fourierState.activeSlideIndex,
       participants: buildFourierParticipantPayload(),
+      soundStates: buildFourierSoundPayload(),
+      heatStates: buildFourierHeatPayload(),
+      heatTime: buildFourierHeatTimePayload(),
+      fftDuel: buildFourierFftDuelPayload(socket.id, participant.role),
+      oceanRandom: buildFourierOceanRandomPayload(),
       summary: buildFourierSummary()
     });
 
+    recordCommunication({
+      app: 'fourier',
+      direction: 'out',
+      event: 'fourier:slide',
+      from: 'server',
+      to: socket.id,
+      payload: {
+        activeSlideId: fourierState.activeSlideId,
+        activeSlideIndex: fourierState.activeSlideIndex
+      }
+    });
     socket.emit('fourier:slide', {
       activeSlideId: fourierState.activeSlideId,
       activeSlideIndex: fourierState.activeSlideIndex,
@@ -726,25 +2187,67 @@ io.on('connection', (socket) => {
 
     emitFourierParticipants();
     emitFourierSummary();
+    emitFourierSoundState();
+    emitFourierHeatState();
+    emitFourierHeatTimeState();
+    emitFourierFftDuelState();
+    emitFourierOceanRandomState();
   });
 
   socket.on('fourier:request-state', () => {
     touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:request-state',
+      from: socket.id,
+      to: 'server'
+    });
 
-    if (!fourierParticipants.has(socket.id)) {
+    const participant = fourierParticipants.get(socket.id);
+
+    if (!participant) {
       return;
     }
 
+    recordCommunication({
+      app: 'fourier',
+      direction: 'out',
+      event: 'fourier:state',
+      from: 'server',
+      to: socket.id,
+      payload: {
+        role: participant.role,
+        name: participant.name,
+        team: participant.team
+      }
+    });
     socket.emit('fourier:state', {
+      role: participant.role,
+      name: participant.name,
+      team: participant.team,
       activeSlideId: fourierState.activeSlideId,
       activeSlideIndex: fourierState.activeSlideIndex,
       participants: buildFourierParticipantPayload(),
+      soundStates: buildFourierSoundPayload(),
+      heatStates: buildFourierHeatPayload(),
+      heatTime: buildFourierHeatTimePayload(),
+      fftDuel: buildFourierFftDuelPayload(socket.id, participant.role),
+      oceanRandom: buildFourierOceanRandomPayload(),
       summary: buildFourierSummary()
     });
   });
 
   socket.on('fourier:set-slide', (payload) => {
     touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:set-slide',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
 
     const participant = fourierParticipants.get(socket.id);
 
@@ -763,6 +2266,17 @@ io.on('connection', (socket) => {
     fourierState.activeSlideIndex = slideIndex;
     fourierState.updatedAt = Date.now();
 
+    recordCommunication({
+      app: 'fourier',
+      direction: 'out',
+      event: 'fourier:slide',
+      from: 'server',
+      to: FOURIER_ROOM,
+      payload: {
+        activeSlideId: fourierState.activeSlideId,
+        activeSlideIndex: fourierState.activeSlideIndex
+      }
+    });
     io.to(FOURIER_ROOM).emit('fourier:slide', {
       activeSlideId: fourierState.activeSlideId,
       activeSlideIndex: fourierState.activeSlideIndex,
@@ -774,6 +2288,14 @@ io.on('connection', (socket) => {
 
   socket.on('fourier:interaction', (payload) => {
     touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:interaction',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
 
     const participant = fourierParticipants.get(socket.id);
 
@@ -806,17 +2328,449 @@ io.on('connection', (socket) => {
     incrementCounter(fourierByActivityCount, activityId || 'general');
     pushFourierFeed(entry);
 
+    recordCommunication({
+      app: 'fourier',
+      direction: 'out',
+      event: 'fourier:activity-event',
+      from: 'server',
+      to: FOURIER_ROOM,
+      payload: {
+        name: entry.name,
+        slideId: entry.slideId,
+        activityId: entry.activityId,
+        controlId: entry.controlId,
+        kind: entry.kind
+      }
+    });
     io.to(FOURIER_ROOM).emit('fourier:activity-event', entry);
+    emitFourierSummary();
+  });
+
+  socket.on('fourier:sound-control', (payload) => {
+    // Live slider updates from students.
+    // Robustness: if explicit join has not completed, we recover by creating
+    // a client participant from this payload (implicit join fallback).
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:sound-control',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    let participant = fourierParticipants.get(socket.id);
+    let createdFromSoundControl = false;
+
+    if (!participant) {
+      participant = registerFourierParticipant(
+        socket,
+        'client',
+        payload && payload.name,
+        payload && payload.team
+      );
+      createdFromSoundControl = true;
+
+      logFourier('implicit join from fourier:sound-control', {
+        socketId: socket.id,
+        role: participant.role,
+        name: participant.name,
+        team: participant.team
+      });
+    }
+
+    if (!participant || participant.role !== 'client') {
+      return;
+    }
+
+    const sound = normalizeFourierSoundPayload(payload);
+
+    fourierSoundState.set(socket.id, {
+      frequency: sound.frequency,
+      amplitude: sound.amplitude,
+      updatedAt: Date.now()
+    });
+
+    participant.lastActionAt = Date.now();
+    fourierParticipants.set(socket.id, participant);
+
+    if (createdFromSoundControl) {
+      // Send the missing initial snapshot to the caller so the client can
+      // mark itself as joined and continue sending without waiting manually.
+      recordCommunication({
+        app: 'fourier',
+        direction: 'out',
+        event: 'fourier:state',
+        from: 'server',
+        to: socket.id,
+        payload: {
+          role: participant.role,
+          name: participant.name,
+          team: participant.team,
+          reason: 'implicit-join-recovery'
+        }
+      });
+      socket.emit('fourier:state', {
+        role: participant.role,
+        name: participant.name,
+        team: participant.team,
+        activeSlideId: fourierState.activeSlideId,
+        activeSlideIndex: fourierState.activeSlideIndex,
+        participants: buildFourierParticipantPayload(),
+        soundStates: buildFourierSoundPayload(),
+        heatStates: buildFourierHeatPayload(),
+        heatTime: buildFourierHeatTimePayload(),
+        fftDuel: buildFourierFftDuelPayload(socket.id, participant.role),
+        oceanRandom: buildFourierOceanRandomPayload(),
+        summary: buildFourierSummary()
+      });
+
+      emitFourierParticipants();
+      emitFourierSummary();
+    }
+
+    logFourier('recv fourier:sound-control', {
+      socketId: socket.id,
+      frequency: sound.frequency,
+      amplitude: sound.amplitude
+    });
+
+    emitFourierSoundState();
+    emitFourierFftDuelState();
+  });
+
+  socket.on('fourier:heat-control', (payload) => {
+    // Heat choice updates from students/teacher.
+    // Robustness: if explicit join has not completed, recover by creating
+    // a participant from this payload (implicit join fallback).
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:heat-control',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    let participant = fourierParticipants.get(socket.id);
+    let createdFromHeatControl = false;
+
+    if (!participant) {
+      participant = registerFourierParticipant(
+        socket,
+        payload && payload.role,
+        payload && payload.name,
+        payload && payload.team
+      );
+      createdFromHeatControl = true;
+
+      logFourier('implicit join from fourier:heat-control', {
+        socketId: socket.id,
+        role: participant.role,
+        name: participant.name,
+        team: participant.team
+      });
+    }
+
+    if (!participant) {
+      return;
+    }
+
+    const heat = normalizeFourierHeatPayload(payload);
+
+    fourierHeatState.set(socket.id, {
+      position: heat.position,
+      temperature: heat.temperature,
+      updatedAt: Date.now()
+    });
+
+    participant.lastActionAt = Date.now();
+    fourierParticipants.set(socket.id, participant);
+
+    if (createdFromHeatControl) {
+      recordCommunication({
+        app: 'fourier',
+        direction: 'out',
+        event: 'fourier:state',
+        from: 'server',
+        to: socket.id,
+        payload: {
+          role: participant.role,
+          name: participant.name,
+          team: participant.team,
+          reason: 'implicit-join-recovery'
+        }
+      });
+      socket.emit('fourier:state', {
+        role: participant.role,
+        name: participant.name,
+        team: participant.team,
+        activeSlideId: fourierState.activeSlideId,
+        activeSlideIndex: fourierState.activeSlideIndex,
+        participants: buildFourierParticipantPayload(),
+        soundStates: buildFourierSoundPayload(),
+        heatStates: buildFourierHeatPayload(),
+        heatTime: buildFourierHeatTimePayload(),
+        fftDuel: buildFourierFftDuelPayload(socket.id, participant.role),
+        oceanRandom: buildFourierOceanRandomPayload(),
+        summary: buildFourierSummary()
+      });
+
+      emitFourierParticipants();
+      emitFourierSummary();
+      emitFourierSoundState();
+    }
+
+    logFourier('recv fourier:heat-control', {
+      socketId: socket.id,
+      position: heat.position,
+      temperature: heat.temperature
+    });
+
+    emitFourierHeatState();
+    emitFourierFftDuelState();
+  });
+
+  socket.on('fourier:heat-time-control', (payload) => {
+    // Teacher-only time authority for section 3.5 heat rod.
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:heat-time-control',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'teacher') {
+      return;
+    }
+
+    const heatTimeValue = normalizeFourierHeatTimePayload(payload);
+    fourierHeatTimeState.value = heatTimeValue;
+    fourierHeatTimeState.updatedAt = Date.now();
+    fourierHeatTimeState.sourceSocketId = socket.id;
+
+    logFourier('recv fourier:heat-time-control', {
+      socketId: socket.id,
+      value: heatTimeValue
+    });
+
+    emitFourierHeatTimeState();
+  });
+
+  socket.on('fourier:fft-duel-start', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:fft-duel-start',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'teacher') {
+      return;
+    }
+
+    startFourierFftDuelRound();
+    emitFourierFftDuelState();
+    emitFourierSummary();
+  });
+
+  socket.on('fourier:fft-duel-probe', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:fft-duel-probe',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'client') {
+      return;
+    }
+
+    if (fourierFftDuelState.status !== 'running') {
+      return;
+    }
+
+    const assignment = ensureFourierFftDuelAssignment(socket.id);
+    if (!assignment || assignment.locked) {
+      return;
+    }
+
+    assignment.probeFreq = Number(clampFourierNumber(payload && payload.probeFreq, 0, 8, assignment.probeFreq).toFixed(2));
+    assignment.updatedAt = Date.now();
+    fourierFftDuelState.assignments.set(socket.id, assignment);
+    fourierFftDuelState.updatedAt = assignment.updatedAt;
+
+    participant.lastActionAt = assignment.updatedAt;
+    fourierParticipants.set(socket.id, participant);
+
+    emitFourierFftDuelState();
+  });
+
+  socket.on('fourier:fft-duel-submit', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:fft-duel-submit',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'client') {
+      return;
+    }
+
+    if (fourierFftDuelState.status !== 'running') {
+      return;
+    }
+
+    const assignment = ensureFourierFftDuelAssignment(socket.id);
+    if (!assignment || assignment.locked) {
+      return;
+    }
+
+    const guessFreq = Number(clampFourierNumber(payload && payload.guessFreq, 0, 8, assignment.probeFreq).toFixed(2));
+    const error = Number(Math.abs(guessFreq - assignment.targetFreq).toFixed(3));
+    const now = Date.now();
+
+    assignment.probeFreq = guessFreq;
+    assignment.guessFreq = guessFreq;
+    assignment.error = error;
+    assignment.submitted = true;
+    assignment.locked = true;
+    assignment.submittedAt = now;
+    assignment.updatedAt = now;
+
+    fourierFftDuelState.assignments.set(socket.id, assignment);
+    fourierFftDuelState.updatedAt = now;
+
+    participant.interactions += 1;
+    participant.lastActionAt = now;
+    fourierParticipants.set(socket.id, participant);
+
+    emitFourierParticipants();
+    emitFourierSummary();
+    emitFourierFftDuelState();
+  });
+
+  socket.on('fourier:ocean-random-pack', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:ocean-random-pack',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'client') {
+      return;
+    }
+
+    const items = normalizeFourierOceanRandomItems(payload && payload.items);
+    if (!items.length) {
+      return;
+    }
+
+    const now = Date.now();
+    fourierOceanRandomState.packs.set(socket.id, {
+      items,
+      updatedAt: now
+    });
+    fourierOceanRandomState.updatedAt = now;
+
+    participant.lastActionAt = now;
+    fourierParticipants.set(socket.id, participant);
+
+    emitFourierOceanRandomState();
+    emitFourierSummary();
+  });
+
+  socket.on('fourier:ocean-random-clear', () => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:ocean-random-clear',
+      from: socket.id,
+      to: 'server'
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'teacher') {
+      return;
+    }
+
+    fourierOceanRandomState.packs.clear();
+    fourierOceanRandomState.updatedAt = Date.now();
+
+    emitFourierOceanRandomState();
     emitFourierSummary();
   });
 
   socket.on('disconnect', () => {
     console.log('[geometry] socket disconnected:', socket.id);
+    recordCommunication({
+      app: 'socket',
+      direction: 'in',
+      event: 'socket:disconnect',
+      from: socket.id,
+      to: 'server'
+    });
     activeUsers.delete(socket.id);
     geometryConnectionMeta.delete(socket.id);
 
-    if (fourierParticipants.delete(socket.id)) {
+    const removedParticipant = fourierParticipants.delete(socket.id);
+    const removedSoundState = fourierSoundState.delete(socket.id);
+    const removedHeatState = fourierHeatState.delete(socket.id);
+    const removedOceanRandomPack = fourierOceanRandomState.packs.delete(socket.id);
+    const removedFftDuelState = fourierFftDuelState.assignments.delete(socket.id);
+
+    if (fourierFftDuelState.assignments.size === 0) {
+      fourierFftDuelState.status = 'idle';
+      fourierFftDuelState.roundId = '';
+      fourierFftDuelState.startedAt = 0;
+      fourierFftDuelState.updatedAt = Date.now();
+    }
+
+    if (removedParticipant) {
       emitFourierParticipants();
+      emitFourierSummary();
+    }
+
+    if (removedSoundState || removedParticipant) {
+      emitFourierSoundState();
+    }
+
+    if (removedHeatState || removedParticipant) {
+      emitFourierHeatState();
+    }
+
+    if (removedFftDuelState || removedParticipant) {
+      emitFourierFftDuelState();
+    }
+
+    if (removedOceanRandomPack || removedParticipant) {
+      fourierOceanRandomState.updatedAt = Date.now();
+      emitFourierOceanRandomState();
       emitFourierSummary();
     }
 
@@ -832,6 +2786,15 @@ const buffonTeachers = new Set();
 function buffonBroadcastTeachers(data) {
   const message = JSON.stringify(data);
 
+  recordCommunication({
+    app: 'buffon',
+    direction: 'out',
+    event: data && data.type ? `buffon:${data.type}` : 'buffon:broadcast-teachers',
+    from: 'server',
+    to: 'buffon:teachers',
+    payload: data
+  });
+
   buffonTeachers.forEach((teacherWs) => {
     if (teacherWs.readyState === 1) {
       teacherWs.send(message);
@@ -841,6 +2804,15 @@ function buffonBroadcastTeachers(data) {
 
 function buffonBroadcastStudents(data) {
   const message = JSON.stringify(data);
+
+  recordCommunication({
+    app: 'buffon',
+    direction: 'out',
+    event: data && data.type ? `buffon:${data.type}` : 'buffon:broadcast-students',
+    from: 'server',
+    to: 'buffon:students',
+    payload: data
+  });
 
   buffonStudents.forEach((_, studentWs) => {
     if (studentWs.readyState === 1) {
@@ -852,6 +2824,17 @@ function buffonBroadcastStudents(data) {
 function sendBuffonRoster(target) {
   const list = [...buffonStudents.values()];
   const message = JSON.stringify({ type: 'roster', students: list });
+
+  recordCommunication({
+    app: 'buffon',
+    direction: 'out',
+    event: 'buffon:roster',
+    from: 'server',
+    to: target ? 'buffon:single-teacher' : 'buffon:teachers',
+    payload: {
+      students: list.length
+    }
+  });
 
   if (target) {
     if (target.readyState === 1) {
@@ -869,6 +2852,17 @@ function sendBuffonRoster(target) {
 
 buffonWss.on('connection', (ws, request) => {
   const connectionInfo = getUpgradeClientInfo(request);
+
+  recordCommunication({
+    app: 'buffon',
+    direction: 'in',
+    event: 'buffon:ws-connect',
+    from: connectionInfo.ip || 'unknown',
+    to: 'server',
+    payload: {
+      userAgent: connectionInfo.userAgent || 'unknown'
+    }
+  });
 
   buffonConnectionMeta.set(ws, {
     connectedAt: Date.now(),
@@ -889,6 +2883,16 @@ buffonWss.on('connection', (ws, request) => {
     } catch {
       return;
     }
+
+    const meta = buffonConnectionMeta.get(ws) || {};
+    recordCommunication({
+      app: 'buffon',
+      direction: 'in',
+      event: message && message.type ? `buffon:${message.type}` : 'buffon:message',
+      from: meta.name || meta.ip || 'buffon-client',
+      to: 'server',
+      payload: message
+    });
 
     if (message.type === 'register_teacher') {
       buffonTeachers.add(ws);
@@ -1059,6 +3063,15 @@ buffonWss.on('connection', (ws, request) => {
   });
 
   ws.on('close', () => {
+    const meta = buffonConnectionMeta.get(ws) || {};
+    recordCommunication({
+      app: 'buffon',
+      direction: 'in',
+      event: 'buffon:ws-close',
+      from: meta.name || meta.ip || 'buffon-client',
+      to: 'server'
+    });
+
     buffonStudents.delete(ws);
     buffonTeachers.delete(ws);
     buffonConnectionMeta.delete(ws);
@@ -1067,11 +3080,19 @@ buffonWss.on('connection', (ws, request) => {
 });
 
 httpServer.on('upgrade', (request, socket, head) => {
+  if (request.url && request.url.startsWith(REALTIME_WS_PATH)) {
+    io.handleUpgrade(request, socket, head);
+    return;
+  }
+
   if (request.url && request.url.startsWith('/ws/buffon')) {
     buffonWss.handleUpgrade(request, socket, head, (ws) => {
       buffonWss.emit('connection', ws, request);
     });
+    return;
   }
+
+  socket.destroy();
 });
 
 httpServer.listen(PORT, HOST, () => {
@@ -1083,4 +3104,26 @@ httpServer.listen(PORT, HOST, () => {
   console.log(`[server] student launcher: http://${displayHost}:${PORT}/student`);
   console.log(`[server] student launcher alias: http://${displayHost}:${PORT}/client`);
   console.log(`[server] admin dashboard: http://${displayHost}:${PORT}/admin`);
+
+  if (CAMERA_WORKER_ENABLED) {
+    console.log(`[camera-worker] enabled: ${CAMERA_WORKER_SCRIPT}`);
+    console.log(`[camera-worker] python: ${CAMERA_WORKER_PYTHON}`);
+    startCameraWorker();
+  } else {
+    console.log('[camera-worker] disabled by CAMERA_WORKER_ENABLED=0');
+  }
+});
+
+process.on('SIGINT', () => {
+  stopCameraWorker();
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  stopCameraWorker();
+  process.exit(0);
+});
+
+process.on('exit', () => {
+  stopCameraWorker();
 });

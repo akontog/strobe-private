@@ -3,104 +3,98 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Admin Dashboard</title>
+  <title>Admin Communication Monitor</title>
   <style>
     :root {
-      --bg: #f7f6ff;
-      --ink: #1f1647;
-      --muted: #5a5390;
-      --surface: #ffffff;
-      --line: #ddd9f3;
-      --accent: #4c3dd9;
-      --shadow: 0 18px 34px rgba(26, 31, 54, 0.12);
+      --bg: #020814;
+      --surface: #071223;
+      --surface-2: #0b1a30;
+      --line: #274267;
+      --ink: #dbeafe;
+      --muted: #9fb8d8;
+      --accent: #3b82f6;
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --bad: #ef4444;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: "Segoe UI", "Trebuchet MS", sans-serif;
       color: var(--ink);
+      font-family: "Segoe UI", "Trebuchet MS", sans-serif;
       background:
-        radial-gradient(circle at 80% 0%, rgba(76, 61, 217, 0.2), transparent 35%),
-        linear-gradient(180deg, #f3f2ff, var(--bg));
+        radial-gradient(circle at 85% -20%, rgba(59, 130, 246, 0.22), transparent 45%),
+        radial-gradient(circle at 0% 100%, rgba(14, 165, 233, 0.14), transparent 42%),
+        var(--bg);
     }
 
     .wrap {
-      width: min(1100px, 96vw);
-      margin: 28px auto;
+      width: min(1320px, 96vw);
+      margin: 18px auto;
       display: grid;
-      gap: 16px;
+      gap: 12px;
+      padding-bottom: 24px;
     }
 
-    .panel {
-      background: var(--surface);
+    .hero {
       border: 1px solid var(--line);
-      border-radius: 14px;
-      box-shadow: var(--shadow);
-      padding: 14px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(11, 26, 48, 0.95), rgba(4, 11, 22, 0.95));
+      padding: 12px;
       display: grid;
-      gap: 10px;
+      gap: 8px;
     }
 
-    .top {
+    .hero-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
-    h1, h2 {
+    h1,
+    h2 {
       margin: 0;
     }
 
-    .stats {
-      display: grid;
+    h1 {
+      font-size: 1.15rem;
+      letter-spacing: 0.02em;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
       gap: 8px;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    }
-
-    .stat {
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 10px;
-      background: #faf9ff;
-    }
-
-    .label {
       color: var(--muted);
       font-size: 0.85rem;
     }
 
-    .value {
-      font-size: 1.35rem;
-      font-weight: 700;
-      margin-top: 4px;
-    }
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      font-size: 0.92rem;
-    }
-
-    th, td {
-      border-bottom: 1px solid var(--line);
-      text-align: left;
-      padding: 8px;
-      vertical-align: top;
-    }
-
-    th {
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(2, 8, 20, 0.82);
+      padding: 4px 9px;
       color: var(--muted);
-      font-size: 0.84rem;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
+      font-size: 0.78rem;
     }
 
-    .muted { color: var(--muted); font-size: 0.88rem; }
+    .pill.ok {
+      border-color: rgba(34, 197, 94, 0.5);
+      color: #86efac;
+    }
+
+    .pill.error {
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #fca5a5;
+    }
 
     .btn-row {
       display: flex;
@@ -108,141 +102,652 @@
       flex-wrap: wrap;
     }
 
-    button {
-      border: 0;
-      border-radius: 10px;
-      padding: 9px 11px;
-      font-weight: 700;
-      cursor: pointer;
-      color: #fff;
-      background: var(--accent);
+    button,
+    select,
+    input {
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      font: inherit;
     }
 
-    button.logout {
-      background: #9b1c1c;
+    button {
+      padding: 8px 12px;
+      font-weight: 700;
+      cursor: pointer;
+      background: linear-gradient(180deg, rgba(59, 130, 246, 0.95), rgba(37, 99, 235, 0.95));
+      border-color: rgba(96, 165, 250, 0.8);
+    }
+
+    button.secondary {
+      background: #12243f;
+      border-color: #2b4e7a;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    button.warn {
+      background: #7c2d12;
+      border-color: #b45309;
+      color: #ffd7a8;
+    }
+
+    .class-accordion {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--surface-2);
+    }
+
+    .class-accordion-header {
+      width: 100%;
+      border: 0;
+      background: #0f1f38;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .class-accordion-arrow {
+      transition: transform 0.2s ease;
+      color: #93c5fd;
+      transform: rotate(-90deg);
+    }
+
+    .class-accordion-arrow.open {
+      transform: rotate(0);
+    }
+
+    .class-accordion-body {
+      display: none;
+      padding: 11px;
+      background: #050f1e;
+      border-top: 1px solid var(--line);
+    }
+
+    .class-accordion-body.open {
+      display: block;
+    }
+
+    .stats {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      background: rgba(9, 20, 37, 0.9);
+      display: grid;
+      gap: 4px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .value {
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .subtle {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .control {
+      display: grid;
+      gap: 5px;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
+    .control input,
+    .control select {
+      padding: 8px;
+      background: #08162a;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #030b18;
+      max-height: 440px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 840px;
+      font-size: 0.84rem;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #173357;
+      text-align: left;
+      vertical-align: top;
+      padding: 8px;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background: #0c1f3a;
+      color: #bfdbfe;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 0.74rem;
+    }
+
+    .mono {
+      font-family: Consolas, "Cascadia Mono", "Courier New", monospace;
+      font-size: 0.78rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .dir-pill {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .dir-pill.in {
+      color: #86efac;
+      background: rgba(34, 197, 94, 0.17);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+    }
+
+    .dir-pill.out {
+      color: #fcd34d;
+      background: rgba(245, 158, 11, 0.17);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .empty {
+      padding: 12px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      background: #041022;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 760px) {
+      .wrap {
+        width: 97vw;
+      }
+
+      .hero-top {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn-row {
+        width: 100%;
+      }
+
+      .btn-row button {
+        flex: 1;
+      }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <section class="panel">
-      <div class="top">
-        <h1>Admin Session Monitor</h1>
+    <section class="hero">
+      <div class="hero-top">
+        <h1>Admin Communication Monitor</h1>
         <div class="btn-row">
           <button id="refreshBtn">Refresh now</button>
-          <button class="logout" id="logoutBtn">Back home</button>
+          <button id="pauseBtn" class="secondary">Pause auto refresh</button>
+          <button id="homeBtn" class="warn">Back home</button>
         </div>
       </div>
-      <div class="muted" id="status">Loading...</div>
+      <div class="status-row">
+        <span id="statusPill" class="pill ok">ready</span>
+        <span class="pill" id="updatedAt">Updated: -</span>
+        <span class="pill" id="messageCountPill">Messages: 0</span>
+      </div>
+      <div class="subtle" id="statusText">Loading admin data...</div>
     </section>
 
-    <section class="panel">
-      <h2>Live Stats</h2>
-      <div class="stats">
-        <div class="stat">
-          <div class="label">Active sessions</div>
-          <div class="value" id="totalSessions">0</div>
+    <section class="class-accordion">
+      <button type="button" class="class-accordion-header" data-accordion-toggle data-target="statsBody" aria-expanded="true">
+        <span>Live Stats</span>
+        <span class="class-accordion-arrow open">▼</span>
+      </button>
+      <div class="class-accordion-body open" id="statsBody">
+        <div class="stats">
+          <div class="stat"><span class="label">Active sessions</span><span class="value" id="totalSessions">0</span></div>
+          <div class="stat"><span class="label">Connected sockets</span><span class="value" id="socketCount">0</span></div>
+          <div class="stat"><span class="label">Tracked user points</span><span class="value" id="trackedPoints">0</span></div>
+          <div class="stat"><span class="label">Fourier participants</span><span class="value" id="fourierParticipants">0</span></div>
+          <div class="stat"><span class="label">Buffon students</span><span class="value" id="buffonStudents">0</span></div>
+          <div class="stat"><span class="label">Buffon teachers</span><span class="value" id="buffonTeachers">0</span></div>
         </div>
-        <div class="stat">
-          <div class="label">Connected sockets</div>
-          <div class="value" id="socketCount">0</div>
-        </div>
-        <div class="stat">
-          <div class="label">Tracked user points</div>
-          <div class="value" id="trackedPoints">0</div>
+        <div class="subtle" id="roleStats">Roles: -</div>
+      </div>
+    </section>
+
+    <section class="class-accordion">
+      <button type="button" class="class-accordion-header" data-accordion-toggle data-target="sessionsBody" aria-expanded="false">
+        <span>Sessions Table</span>
+        <span class="class-accordion-arrow">▼</span>
+      </button>
+      <div class="class-accordion-body" id="sessionsBody">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Role</th>
+                <th>Source</th>
+                <th>Login at</th>
+                <th>Last seen</th>
+                <th>IP</th>
+                <th>User agent</th>
+              </tr>
+            </thead>
+            <tbody id="sessionRows"></tbody>
+          </table>
         </div>
       </div>
-      <div id="roleStats" class="muted"></div>
     </section>
 
-    <section class="panel">
-      <h2>Who is Logged In</h2>
-      <div style="overflow:auto;">
-        <table>
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Role</th>
-              <th>Login at</th>
-              <th>Last seen</th>
-              <th>IP</th>
-              <th>User agent</th>
-            </tr>
-          </thead>
-          <tbody id="sessionRows"></tbody>
-        </table>
+    <section class="class-accordion">
+      <button type="button" class="class-accordion-header" data-accordion-toggle data-target="messagesBody" aria-expanded="true">
+        <span>Communication Console</span>
+        <span class="class-accordion-arrow open">▼</span>
+      </button>
+      <div class="class-accordion-body open" id="messagesBody">
+        <div class="toolbar">
+          <label class="control">
+            Source
+            <select id="sourceFilter">
+              <option value="">all</option>
+              <option value="fourier">fourier</option>
+              <option value="geometry">geometry</option>
+              <option value="buffon">buffon</option>
+              <option value="socket">socket</option>
+            </select>
+          </label>
+          <label class="control">
+            Event contains
+            <input id="eventFilter" type="text" placeholder="e.g. sound-control" />
+          </label>
+          <label class="control">
+            Max rows
+            <input id="limitInput" type="number" min="20" max="2000" step="10" value="300" />
+          </label>
+          <div class="control">
+            Actions
+            <div class="btn-row">
+              <button id="applyFiltersBtn" class="secondary" type="button">Apply filters</button>
+              <button id="clearMessagesBtn" class="warn" type="button">Clear log</button>
+              <button id="reloadCatalogBtn" class="secondary" type="button">Reload catalog</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>App</th>
+                <th>Dir</th>
+                <th>Event</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Payload</th>
+              </tr>
+            </thead>
+            <tbody id="messageRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="class-accordion">
+      <button type="button" class="class-accordion-header" data-accordion-toggle data-target="catalogBody" aria-expanded="false">
+        <span>Communication Catalog</span>
+        <span class="class-accordion-arrow">▼</span>
+      </button>
+      <div class="class-accordion-body" id="catalogBody">
+        <div class="subtle" id="catalogHint">Known communication events across teacher/server/student channels.</div>
+        <div class="table-wrap" style="margin-top: 10px;">
+          <table>
+            <thead>
+              <tr>
+                <th>App</th>
+                <th>Dir</th>
+                <th>Event</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody id="catalogRows"></tbody>
+          </table>
+        </div>
       </div>
     </section>
   </div>
 
   <script>
-    const rowsNode = document.getElementById('sessionRows');
-    const statusNode = document.getElementById('status');
+    const state = {
+      paused: false,
+      lastMessages: [],
+      lastCatalog: []
+    };
 
-    async function loadStats() {
+    const statusText = document.getElementById('statusText');
+    const statusPill = document.getElementById('statusPill');
+    const updatedAtNode = document.getElementById('updatedAt');
+    const messageCountPill = document.getElementById('messageCountPill');
+    const sessionRows = document.getElementById('sessionRows');
+    const messageRows = document.getElementById('messageRows');
+    const catalogRows = document.getElementById('catalogRows');
+    const catalogHint = document.getElementById('catalogHint');
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function getFilters() {
+      const source = String(document.getElementById('sourceFilter').value || '').trim();
+      const eventText = String(document.getElementById('eventFilter').value || '').trim();
+      const parsedLimit = Number.parseInt(document.getElementById('limitInput').value, 10);
+      const limit = Number.isInteger(parsedLimit)
+        ? Math.max(20, Math.min(2000, parsedLimit))
+        : 300;
+
+      return { source, eventText, limit };
+    }
+
+    function setStatus(text, kind = 'ok') {
+      statusText.textContent = text;
+      statusPill.classList.remove('ok', 'error');
+      statusPill.classList.add(kind === 'error' ? 'error' : 'ok');
+      statusPill.textContent = kind === 'error' ? 'error' : 'ok';
+    }
+
+    function renderSessions(payload) {
+      const sessions = Array.isArray(payload && payload.sessions) ? payload.sessions : [];
+      const byRole = payload && payload.sessionStats ? payload.sessionStats.byRole || {} : {};
+      const realtime = payload && payload.realtimeStats ? payload.realtimeStats : {};
+
+      document.getElementById('totalSessions').textContent = String(payload && payload.sessionStats ? payload.sessionStats.total || 0 : 0);
+      document.getElementById('socketCount').textContent = String(realtime.connectedSockets || 0);
+      document.getElementById('trackedPoints').textContent = String(realtime.activeUserPoints || 0);
+      document.getElementById('fourierParticipants').textContent = String(realtime.fourierParticipants || 0);
+      document.getElementById('buffonStudents').textContent = String(realtime.buffonStudents || 0);
+      document.getElementById('buffonTeachers').textContent = String(realtime.buffonTeachers || 0);
+      document.getElementById('roleStats').textContent = `Roles: ${JSON.stringify(byRole)}`;
+
+      if (!sessions.length) {
+        sessionRows.innerHTML = '<tr><td colspan="7"><div class="empty">No active sessions.</div></td></tr>';
+        return;
+      }
+
+      sessionRows.innerHTML = sessions.map((session) => {
+        const user = escapeHtml(session.displayName || session.name || session.username || 'unknown');
+        const role = escapeHtml(session.role || 'unknown');
+        const source = escapeHtml(session.source || '-');
+        const loginAt = escapeHtml(session.loginAt || session.createdAt || '-');
+        const lastSeen = escapeHtml(session.lastSeen || '-');
+        const ip = escapeHtml(session.ip || '-');
+        const ua = escapeHtml(session.userAgent || '-');
+
+        return `
+          <tr>
+            <td>${user}</td>
+            <td>${role}</td>
+            <td>${source}</td>
+            <td class="mono">${loginAt}</td>
+            <td class="mono">${lastSeen}</td>
+            <td class="mono">${ip}</td>
+            <td class="mono">${ua}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderMessages(payload) {
+      const messages = Array.isArray(payload && payload.messages) ? payload.messages : [];
+      state.lastMessages = messages;
+      messageCountPill.textContent = `Messages: ${messages.length}`;
+
+      if (!messages.length) {
+        messageRows.innerHTML = '<tr><td colspan="7"><div class="empty">No communication messages for current filter.</div></td></tr>';
+        return;
+      }
+
+      messageRows.innerHTML = messages.map((msg) => {
+        const payloadText = escapeHtml(JSON.stringify(msg.payload || {}, null, 0));
+        const directionClass = msg.direction === 'out' ? 'out' : 'in';
+
+        return `
+          <tr>
+            <td class="mono">${escapeHtml(msg.isoTime || '-')}</td>
+            <td>${escapeHtml(msg.app || '-')}</td>
+            <td><span class="dir-pill ${directionClass}">${escapeHtml(msg.direction || '-')}</span></td>
+            <td class="mono">${escapeHtml(msg.event || '-')}</td>
+            <td class="mono">${escapeHtml(msg.from || '-')}</td>
+            <td class="mono">${escapeHtml(msg.to || '-')}</td>
+            <td class="mono">${payloadText}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderCatalog(payload) {
+      const catalog = Array.isArray(payload && payload.catalog) ? payload.catalog : [];
+      state.lastCatalog = catalog;
+      catalogHint.textContent = `Known communication events: ${catalog.length}`;
+
+      if (!catalog.length) {
+        catalogRows.innerHTML = '<tr><td colspan="4"><div class="empty">No catalog events available.</div></td></tr>';
+        return;
+      }
+
+      catalogRows.innerHTML = catalog.map((entry) => {
+        const directionClass = entry.direction === 'out' ? 'out' : 'in';
+
+        return `
+          <tr>
+            <td>${escapeHtml(entry.app || '-')}</td>
+            <td><span class="dir-pill ${directionClass}">${escapeHtml(entry.direction || '-')}</span></td>
+            <td class="mono">${escapeHtml(entry.event || '-')}</td>
+            <td>${escapeHtml(entry.description || '-')}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function loadSessions() {
       const response = await fetch('/admin/sessions', {
         headers: { Accept: 'application/json' }
       });
-
       const payload = await response.json();
 
       if (!response.ok) {
-        throw new Error(payload.error || 'Failed to load stats');
+        throw new Error(payload.error || 'Failed to load /admin/sessions');
       }
 
-      const total = payload.sessionStats ? payload.sessionStats.total : 0;
-      const byRole = payload.sessionStats ? payload.sessionStats.byRole : {};
-      const realtime = payload.realtimeStats || {};
+      renderSessions(payload);
+    }
 
-      document.getElementById('totalSessions').textContent = String(total);
-      document.getElementById('socketCount').textContent = String(realtime.connectedSockets || 0);
-      document.getElementById('trackedPoints').textContent = String(realtime.activeUserPoints || 0);
-      document.getElementById('roleStats').textContent = `Roles: ${JSON.stringify(byRole)}`;
+    async function loadMessages() {
+      const filters = getFilters();
+      const params = new URLSearchParams();
 
-      rowsNode.innerHTML = '';
-      (payload.sessions || []).forEach((session) => {
-        const displayName = String(session.displayName || session.name || session.username || 'unknown');
-        const username = String(session.username || '');
-        const loginAt = session.loginAt || session.createdAt || '-';
-        const lastSeen = session.lastSeen || '-';
-        const source = session.source ? ` (${session.source})` : '';
+      params.set('limit', String(filters.limit));
+      if (filters.source) {
+        params.set('source', filters.source);
+      }
+      if (filters.eventText) {
+        params.set('event', filters.eventText);
+      }
 
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${displayName}${username && username !== displayName ? ` (${username})` : ''}</td>
-          <td>${session.role || 'unknown'}${source}</td>
-          <td>${loginAt}</td>
-          <td>${lastSeen}</td>
-          <td>${session.ip || '-'}</td>
-          <td>${session.userAgent || '-'}</td>
-        `;
-        rowsNode.appendChild(row);
+      const response = await fetch(`/admin/messages?${params.toString()}`, {
+        headers: { Accept: 'application/json' }
       });
+      const payload = await response.json();
 
-      if (!payload.sessions || payload.sessions.length === 0) {
-        rowsNode.innerHTML = '<tr><td colspan="6" class="muted">No active sessions.</td></tr>';
+      if (!response.ok) {
+        throw new Error(payload.error || 'Failed to load /admin/messages');
       }
 
-      statusNode.textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+      renderMessages(payload);
+    }
+
+    async function clearMessages() {
+      const response = await fetch('/admin/messages/clear', {
+        method: 'POST',
+        headers: { Accept: 'application/json' }
+      });
+      const payload = await response.json();
+
+      if (!response.ok) {
+        throw new Error(payload.error || 'Failed to clear /admin/messages');
+      }
+
+      const clearedCount = Number.isInteger(payload.clearedCount) ? payload.clearedCount : 0;
+      setStatus(`Communication log cleared (${clearedCount} records).`, 'ok');
+      await loadMessages();
+    }
+
+    async function loadCatalog() {
+      const response = await fetch('/admin/messages/catalog', {
+        headers: { Accept: 'application/json' }
+      });
+      const payload = await response.json();
+
+      if (!response.ok) {
+        throw new Error(payload.error || 'Failed to load /admin/messages/catalog');
+      }
+
+      renderCatalog(payload);
     }
 
     async function refresh() {
       try {
-        await loadStats();
+        await Promise.all([loadSessions(), loadMessages()]);
+        updatedAtNode.textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+        setStatus('Admin monitor updated successfully.', 'ok');
       } catch (error) {
-        statusNode.textContent = error.message;
-        statusNode.style.color = '#b42318';
+        setStatus(error.message || 'Unknown admin refresh error', 'error');
       }
+    }
+
+    function initAccordion() {
+      const buttons = Array.from(document.querySelectorAll('[data-accordion-toggle]'));
+
+      buttons.forEach((button) => {
+        const targetId = String(button.getAttribute('data-target') || '').trim();
+        const target = targetId ? document.getElementById(targetId) : null;
+        const arrow = button.querySelector('.class-accordion-arrow');
+
+        if (!target) {
+          return;
+        }
+
+        const applyState = (open) => {
+          target.classList.toggle('open', open);
+          if (arrow) {
+            arrow.classList.toggle('open', open);
+          }
+          button.setAttribute('aria-expanded', open ? 'true' : 'false');
+        };
+
+        applyState(button.getAttribute('aria-expanded') === 'true');
+        button.addEventListener('click', () => {
+          const nowOpen = !target.classList.contains('open');
+          applyState(nowOpen);
+        });
+      });
     }
 
     document.getElementById('refreshBtn').addEventListener('click', refresh);
 
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
+    document.getElementById('pauseBtn').addEventListener('click', () => {
+      state.paused = !state.paused;
+      document.getElementById('pauseBtn').textContent = state.paused
+        ? 'Resume auto refresh'
+        : 'Pause auto refresh';
+      setStatus(state.paused ? 'Auto refresh paused.' : 'Auto refresh resumed.', 'ok');
+    });
+
+    document.getElementById('applyFiltersBtn').addEventListener('click', () => {
+      refresh();
+    });
+
+    document.getElementById('clearMessagesBtn').addEventListener('click', async () => {
+      try {
+        await clearMessages();
+        updatedAtNode.textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+      } catch (error) {
+        setStatus(error.message || 'Unknown clear error', 'error');
+      }
+    });
+
+    document.getElementById('reloadCatalogBtn').addEventListener('click', async () => {
+      try {
+        await loadCatalog();
+        setStatus('Communication catalog updated.', 'ok');
+      } catch (error) {
+        setStatus(error.message || 'Unknown catalog load error', 'error');
+      }
+    });
+
+    document.getElementById('homeBtn').addEventListener('click', () => {
       window.location.href = '/';
     });
 
+    initAccordion();
     refresh();
-    setInterval(refresh, 5000);
+    loadCatalog().catch((error) => {
+      setStatus(error.message || 'Catalog initialization failed', 'error');
+    });
+    setInterval(() => {
+      if (!state.paused) {
+        refresh();
+      }
+    }, 1500);
   </script>
 </body>
 </html>
