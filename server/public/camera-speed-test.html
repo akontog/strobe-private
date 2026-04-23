@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camera Speed Test | Strobe</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: #f8fafc;
+      background: radial-gradient(circle at top, #1e3a8a 0%, #0f172a 56%, #020617 100%);
+      padding: 20px;
+    }
+
+    .page {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 1.55rem;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 4px 0 0;
+      color: #93c5fd;
+      font-size: 0.95rem;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+    }
+
+    .controls label {
+      font-size: 0.85rem;
+      color: #bfdbfe;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .controls input {
+      width: 88px;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: rgba(30, 41, 59, 0.85);
+      color: #f8fafc;
+      padding: 6px 8px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 10px;
+      font-weight: 700;
+      padding: 9px 14px;
+      cursor: pointer;
+      transition: transform 0.12s ease, filter 0.12s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+    }
+
+    .btn-primary {
+      background: #16a34a;
+      color: #031307;
+    }
+
+    .btn-danger {
+      background: #f87171;
+      color: #2f0a0a;
+    }
+
+    .btn-link {
+      background: #38bdf8;
+      color: #082f49;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+    }
+
+    .stat {
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      background: rgba(15, 23, 42, 0.7);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .stat .label {
+      font-size: 0.78rem;
+      color: #bfdbfe;
+    }
+
+    .stat .value {
+      margin-top: 6px;
+      font-size: 1.1rem;
+      color: #e2e8f0;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .canvas-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .canvas-card {
+      border: 1px solid rgba(148, 163, 184, 0.32);
+      background: rgba(15, 23, 42, 0.7);
+      border-radius: 12px;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .canvas-card h2 {
+      margin: 0;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      color: #bfdbfe;
+      background: rgba(2, 6, 23, 0.4);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 16 / 9;
+      background: #000;
+    }
+
+    .hint {
+      color: #94a3b8;
+      font-size: 0.86rem;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 980px) {
+      .canvas-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <div>
+        <h1 class="title">Camera Speed Test</h1>
+        <p class="subtitle">Raw camera frame vs server-tracked frame (DeepSORT)</p>
+      </div>
+      <a class="btn btn-link" href="/">Back to entry</a>
+    </div>
+
+    <div class="controls">
+      <button id="startBtn" class="btn btn-primary">Start Test</button>
+      <button id="stopBtn" class="btn btn-danger" disabled>Stop Test</button>
+
+      <label>
+        Send FPS
+        <input id="fpsInput" type="number" min="1" max="30" step="1" value="8">
+      </label>
+
+      <label>
+        JPEG quality
+        <input id="qualityInput" type="number" min="0.2" max="0.95" step="0.05" value="0.65">
+      </label>
+
+      <div id="statusText" class="hint">Idle</div>
+    </div>
+
+    <div class="status-grid">
+      <div class="stat"><div class="label">Tracking Backend</div><div class="value" id="trackingValue">-</div></div>
+      <div class="stat"><div class="label">Round Trip (avg)</div><div class="value" id="rttValue">-</div></div>
+      <div class="stat"><div class="label">Server Proc (avg)</div><div class="value" id="serverValue">-</div></div>
+      <div class="stat"><div class="label">Send FPS</div><div class="value" id="sendFpsValue">0</div></div>
+      <div class="stat"><div class="label">Response FPS</div><div class="value" id="recvFpsValue">0</div></div>
+      <div class="stat"><div class="label">Tracked Boxes</div><div class="value" id="boxesValue">0</div></div>
+    </div>
+
+    <div class="canvas-grid">
+      <div class="canvas-card">
+        <h2>Camera Capture (client)</h2>
+        <canvas id="captureCanvas" width="960" height="540"></canvas>
+      </div>
+      <div class="canvas-card">
+        <h2>Tracked Frame (server response)</h2>
+        <canvas id="trackedCanvas" width="960" height="540"></canvas>
+      </div>
+    </div>
+
+    <div class="hint">
+      Η κάμερα διαβάζεται με getUserMedia (WebRTC capture API), στέλνονται JPEG frames στον server για tracking,
+      και επιστρέφεται annotated frame από τον worker.
+    </div>
+  </div>
+
+  <video id="cameraVideo" autoplay playsinline muted style="display:none"></video>
+
+  <script src="/js/realtime-socket.js"></script>
+  <script>
+    (() => {
+      const videoEl = document.getElementById('cameraVideo');
+      const captureCanvas = document.getElementById('captureCanvas');
+      const trackedCanvas = document.getElementById('trackedCanvas');
+      const captureCtx = captureCanvas.getContext('2d');
+      const trackedCtx = trackedCanvas.getContext('2d');
+
+      const startBtn = document.getElementById('startBtn');
+      const stopBtn = document.getElementById('stopBtn');
+      const fpsInput = document.getElementById('fpsInput');
+      const qualityInput = document.getElementById('qualityInput');
+      const statusText = document.getElementById('statusText');
+
+      const trackingValue = document.getElementById('trackingValue');
+      const rttValue = document.getElementById('rttValue');
+      const serverValue = document.getElementById('serverValue');
+      const sendFpsValue = document.getElementById('sendFpsValue');
+      const recvFpsValue = document.getElementById('recvFpsValue');
+      const boxesValue = document.getElementById('boxesValue');
+
+      const state = {
+        socket: null,
+        stream: null,
+        running: false,
+        inFlight: false,
+        requestSeq: 0,
+        sendTimer: null,
+        rafId: null,
+        pendingAt: new Map(),
+        receiveTimestamps: [],
+        sendTimestamps: [],
+        rttSamples: [],
+        serverSamples: [],
+        trackedDrawToken: 0
+      };
+
+      function pushBounded(list, value, max = 40) {
+        if (!Number.isFinite(value)) {
+          return;
+        }
+        list.push(value);
+        if (list.length > max) {
+          list.splice(0, list.length - max);
+        }
+      }
+
+      function average(list) {
+        if (!Array.isArray(list) || list.length === 0) {
+          return null;
+        }
+        return list.reduce((acc, cur) => acc + cur, 0) / list.length;
+      }
+
+      function fpsFromStamps(stamps) {
+        const now = performance.now();
+        const windowMs = 1500;
+        const fresh = stamps.filter((ts) => now - ts <= windowMs);
+        stamps.splice(0, stamps.length, ...fresh);
+        return fresh.length * (1000 / windowMs);
+      }
+
+      function setStatus(text, isError = false) {
+        statusText.textContent = text;
+        statusText.style.color = isError ? '#fca5a5' : '#94a3b8';
+      }
+
+      function updateStats() {
+        const avgRtt = average(state.rttSamples);
+        const avgServer = average(state.serverSamples);
+
+        rttValue.textContent = avgRtt == null ? '-' : `${avgRtt.toFixed(1)} ms`;
+        serverValue.textContent = avgServer == null ? '-' : `${avgServer.toFixed(1)} ms`;
+        sendFpsValue.textContent = fpsFromStamps(state.sendTimestamps).toFixed(1);
+        recvFpsValue.textContent = fpsFromStamps(state.receiveTimestamps).toFixed(1);
+      }
+
+      function resizeCanvases() {
+        const vw = Math.max(320, videoEl.videoWidth || 960);
+        const vh = Math.max(180, videoEl.videoHeight || 540);
+        captureCanvas.width = vw;
+        captureCanvas.height = vh;
+        trackedCanvas.width = vw;
+        trackedCanvas.height = vh;
+      }
+
+      function drawCaptureLoop() {
+        if (!state.running) {
+          return;
+        }
+
+        captureCtx.drawImage(videoEl, 0, 0, captureCanvas.width, captureCanvas.height);
+        state.rafId = requestAnimationFrame(drawCaptureLoop);
+      }
+
+      function drawAnnotatedFrame(imageBase64) {
+        if (!imageBase64) {
+          return;
+        }
+
+        const token = ++state.trackedDrawToken;
+        const image = new Image();
+        image.onload = () => {
+          if (token !== state.trackedDrawToken) {
+            return;
+          }
+          trackedCtx.drawImage(image, 0, 0, trackedCanvas.width, trackedCanvas.height);
+        };
+        image.src = `data:image/jpeg;base64,${imageBase64}`;
+      }
+
+      function getSendIntervalMs() {
+        const fps = Math.max(1, Math.min(30, Number(fpsInput.value) || 8));
+        return Math.round(1000 / fps);
+      }
+
+      function getJpegQuality() {
+        const quality = Number(qualityInput.value);
+        if (!Number.isFinite(quality)) {
+          return 0.65;
+        }
+        return Math.max(0.2, Math.min(0.95, quality));
+      }
+
+      function ensureSocket() {
+        if (state.socket) {
+          return;
+        }
+
+        state.socket = window.createRealtimeSocket({ autoConnect: true, reconnect: true });
+
+        state.socket.on('connect', () => {
+          setStatus('Realtime connected');
+        });
+
+        state.socket.on('disconnect', () => {
+          setStatus('Realtime disconnected', true);
+        });
+
+        state.socket.on('camera-speed-result', (payload) => {
+          const requestId = payload && payload.requestId;
+          const sentAt = state.pendingAt.get(requestId);
+          if (typeof sentAt === 'number') {
+            const rtt = performance.now() - sentAt;
+            pushBounded(state.rttSamples, rtt);
+          }
+          state.pendingAt.delete(requestId);
+
+          state.inFlight = false;
+          state.receiveTimestamps.push(performance.now());
+          pushBounded(state.serverSamples, Number(payload && payload.serverElapsedMs));
+
+          trackingValue.textContent = (payload && payload.tracking) || '-';
+          boxesValue.textContent = String(Array.isArray(payload && payload.boxes) ? payload.boxes.length : 0);
+
+          if (payload && typeof payload.annotatedImage === 'string') {
+            drawAnnotatedFrame(payload.annotatedImage);
+          }
+
+          updateStats();
+        });
+      }
+
+      function sendFrame() {
+        if (!state.running || !state.socket || !state.socket.connected || state.inFlight) {
+          return;
+        }
+
+        if (!captureCanvas.width || !captureCanvas.height) {
+          return;
+        }
+
+        const quality = getJpegQuality();
+        const dataUrl = captureCanvas.toDataURL('image/jpeg', quality);
+        const imageBase64 = dataUrl.split(',')[1];
+        const requestId = ++state.requestSeq;
+
+        state.inFlight = true;
+        const sentPerfNow = performance.now();
+        state.pendingAt.set(requestId, sentPerfNow);
+        state.sendTimestamps.push(sentPerfNow);
+
+        state.socket.emit('camera-speed-frame', {
+          requestId,
+          image: imageBase64,
+          clientSentAt: Date.now()
+        });
+
+        updateStats();
+      }
+
+      function startSendLoop() {
+        clearInterval(state.sendTimer);
+        const interval = getSendIntervalMs();
+        state.sendTimer = setInterval(sendFrame, interval);
+      }
+
+      async function startTest() {
+        if (state.running) {
+          return;
+        }
+
+        try {
+          ensureSocket();
+
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              width: { ideal: 960 },
+              height: { ideal: 540 },
+              frameRate: { ideal: 30, max: 30 }
+            },
+            audio: false
+          });
+
+          state.stream = stream;
+          videoEl.srcObject = stream;
+          await videoEl.play();
+
+          resizeCanvases();
+          state.running = true;
+          state.inFlight = false;
+          state.pendingAt.clear();
+          state.receiveTimestamps.length = 0;
+          state.sendTimestamps.length = 0;
+          state.rttSamples.length = 0;
+          state.serverSamples.length = 0;
+          boxesValue.textContent = '0';
+
+          drawCaptureLoop();
+          startSendLoop();
+          setStatus('Streaming test started');
+
+          startBtn.disabled = true;
+          stopBtn.disabled = false;
+        } catch (error) {
+          console.error(error);
+          setStatus('Camera permission denied or unavailable', true);
+        }
+      }
+
+      function stopTracks() {
+        if (!state.stream) {
+          return;
+        }
+        state.stream.getTracks().forEach((track) => track.stop());
+        state.stream = null;
+      }
+
+      function stopTest() {
+        state.running = false;
+        state.inFlight = false;
+        state.pendingAt.clear();
+
+        if (state.rafId) {
+          cancelAnimationFrame(state.rafId);
+          state.rafId = null;
+        }
+
+        clearInterval(state.sendTimer);
+        state.sendTimer = null;
+
+        stopTracks();
+        captureCtx.clearRect(0, 0, captureCanvas.width, captureCanvas.height);
+        trackedCtx.clearRect(0, 0, trackedCanvas.width, trackedCanvas.height);
+
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        setStatus('Stopped');
+      }
+
+      startBtn.addEventListener('click', startTest);
+      stopBtn.addEventListener('click', stopTest);
+      fpsInput.addEventListener('change', () => {
+        if (state.running) {
+          startSendLoop();
+        }
+      });
+
+      window.addEventListener('beforeunload', () => {
+        stopTest();
+        if (state.socket) {
+          state.socket.disconnect();
+          state.socket = null;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

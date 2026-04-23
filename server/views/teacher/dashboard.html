@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Teacher Dashboard</title>
+  <script src="/apps/assets/js/presentation-config.js"></script>
   <style>
     :root {
       --bg: #f4f8fb;
@@ -97,6 +98,44 @@
       padding: 12px;
       display: grid;
       gap: 8px;
+    }
+
+    .accordion-settings {
+      margin-top: 6px;
+      border-top: 1px dashed var(--line);
+      padding-top: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .accordion-settings-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .accordion-option-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 6px 12px;
+    }
+
+    .accordion-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--ink);
+    }
+
+    .accordion-option input {
+      width: auto;
+    }
+
+    .accordion-settings-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .app-head {
@@ -277,6 +316,25 @@
   </div>
 
   <script>
+    const PRESENTATION_PANEL_OPTIONS = {
+      chess: [
+        { key: 'contents', label: 'Περιεχόμενα' },
+        { key: 'studentJoin', label: 'Σύνδεση μαθητή' },
+        { key: 'chat', label: 'Class chat' },
+        { key: 'qr', label: 'QR code' },
+        { key: 'users', label: 'Connected users' },
+        { key: 'scores', label: 'Scores' },
+      ],
+      'fourier-lab': [
+        { key: 'contents', label: 'Περιεχόμενα' },
+        { key: 'studentJoin', label: 'Σύνδεση μαθητή' },
+        { key: 'chat', label: 'Class chat' },
+        { key: 'qr', label: 'QR code' },
+        { key: 'users', label: 'Connected users' },
+        { key: 'scores', label: 'Scores' },
+      ],
+    };
+
     const state = {
       user: null,
       apps: [],
@@ -312,6 +370,99 @@
       statusNode.style.color = isError ? '#b42318' : '#486581';
     }
 
+    function getDefaultPresentationConfig(slug) {
+      const options = PRESENTATION_PANEL_OPTIONS[slug] || [];
+      return {
+        classroomPanels: Object.fromEntries(options.map((item) => [item.key, true]))
+      };
+    }
+
+    function getSavedPresentationConfig(slug) {
+      if (!window.SharedPresentationConfig) {
+        return getDefaultPresentationConfig(slug);
+      }
+
+      return SharedPresentationConfig.getAppConfig(slug, getDefaultPresentationConfig(slug));
+    }
+
+    function savePresentationConfig(slug, config) {
+      if (!window.SharedPresentationConfig) {
+        return;
+      }
+
+      SharedPresentationConfig.saveAppConfig(slug, config);
+    }
+
+    function createClassroomPanelSettings(app) {
+      const options = PRESENTATION_PANEL_OPTIONS[app.slug];
+      if (!options || !options.length) {
+        return '';
+      }
+
+      const saved = getSavedPresentationConfig(app.slug);
+      const optionHtml = options.map((option) => {
+        const checked = saved.classroomPanels[option.key] !== false ? 'checked' : '';
+        return `
+          <label class="accordion-option">
+            <input type="checkbox" data-panel-app="${app.slug}" data-panel-key="${option.key}" ${checked}>
+            <span>${option.label}</span>
+          </label>
+        `;
+      }).join('');
+
+      return `
+        <div class="accordion-settings">
+          <div class="accordion-settings-title">Visible classroom panels</div>
+          <div class="accordion-option-list">${optionHtml}</div>
+          <div class="accordion-settings-actions">
+            <button class="secondary" type="button" data-panel-select-all="${app.slug}">Όλα</button>
+            <button class="secondary" type="button" data-panel-reset="${app.slug}">Reset</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function bindClassroomPanelSettings(card, app) {
+      const options = PRESENTATION_PANEL_OPTIONS[app.slug];
+      if (!options || !options.length) {
+        return;
+      }
+
+      const persist = () => {
+        const config = getDefaultPresentationConfig(app.slug);
+        card.querySelectorAll(`[data-panel-app="${app.slug}"]`).forEach((input) => {
+          config.classroomPanels[input.dataset.panelKey] = input.checked;
+        });
+        savePresentationConfig(app.slug, config);
+        setStatus(`Αποθηκεύτηκαν τα classroom panels για ${app.title}.`);
+      };
+
+      card.querySelectorAll(`[data-panel-app="${app.slug}"]`).forEach((input) => {
+        input.addEventListener('change', persist);
+      });
+
+      const selectAllBtn = card.querySelector(`[data-panel-select-all="${app.slug}"]`);
+      if (selectAllBtn) {
+        selectAllBtn.addEventListener('click', () => {
+          card.querySelectorAll(`[data-panel-app="${app.slug}"]`).forEach((input) => {
+            input.checked = true;
+          });
+          persist();
+        });
+      }
+
+      const resetBtn = card.querySelector(`[data-panel-reset="${app.slug}"]`);
+      if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+          const defaults = getDefaultPresentationConfig(app.slug);
+          card.querySelectorAll(`[data-panel-app="${app.slug}"]`).forEach((input) => {
+            input.checked = defaults.classroomPanels[input.dataset.panelKey] !== false;
+          });
+          persist();
+        });
+      }
+    }
+
     function renderApps() {
       appCards.innerHTML = '';
       appSelect.innerHTML = '';
@@ -330,6 +481,7 @@
             <a class="button-link" href="${app.launchPath}">Open Teacher View</a>
             <button class="secondary" data-slug="${app.slug}">Manage Activities</button>
           </div>
+          ${createClassroomPanelSettings(app)}
         `;
 
         card.querySelector('button').addEventListener('click', () => {
@@ -337,6 +489,8 @@
           appSelect.value = app.slug;
           loadActivities();
         });
+
+        bindClassroomPanelSettings(card, app);
 
         appCards.appendChild(card);
 

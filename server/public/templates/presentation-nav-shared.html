@@ -1,0 +1,21 @@
+<!-- Shared Presentation Top Navigation (Menu + Home Buttons) -->
+<!-- Include this in your app's <body> right after opening the body tag -->
+
+<!-- Menu Toggle Button -->
+<button class="menu-btn" id="menuToggleBtn" aria-label="Άνοιγμα μενού" aria-expanded="false">☰</button>
+
+<!-- Home Button (visible only when menu is open) -->
+<button class="home-btn" id="homeBtn" title="Αρχική σελίδα">🏠</button>
+
+<!-- Usage in your app:
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    PresentationSidebarManager.init({
+      sidebarSelector: '#sidebar',
+      menuButtonSelector: '#menuToggleBtn',
+      homeButtonSelector: '#homeBtn',
+      mobileBreakpoint: 900
+    });
+  });
+</script>
+-->

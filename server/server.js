@@ -55,15 +55,21 @@ function emptyCameraDetection(tracking = 'worker-offline') {
   return {
     points: [],
     boxes: [],
-    tracking
+    tracking,
+    annotatedImage: null
   };
 }
 
 function normalizeCameraWorkerResponse(message) {
+  const annotatedImage = message && typeof message.annotatedImage === 'string'
+    ? message.annotatedImage
+    : null;
+
   return {
     points: Array.isArray(message && message.points) ? message.points : [],
     boxes: Array.isArray(message && message.boxes) ? message.boxes : [],
-    tracking: message && typeof message.tracking === 'string' ? message.tracking : 'unknown'
+    tracking: message && typeof message.tracking === 'string' ? message.tracking : 'unknown',
+    annotatedImage
   };
 }
 
@@ -224,7 +230,7 @@ function stopCameraWorker() {
   }
 }
 
-function requestCameraDetection(imageBase64) {
+function requestCameraDetection(imageBase64, options = {}) {
   if (!CAMERA_WORKER_ENABLED) {
     return Promise.resolve(emptyCameraDetection('worker-disabled'));
   }
@@ -243,7 +249,12 @@ function requestCameraDetection(imageBase64) {
   }
 
   const requestId = ++cameraWorkerSeq;
-  const payload = JSON.stringify({ id: requestId, image: imageBase64 }) + '\n';
+  const includeAnnotatedImage = Boolean(options && options.includeAnnotatedImage);
+  const payload = JSON.stringify({
+    id: requestId,
+    image: imageBase64,
+    includeAnnotatedImage
+  }) + '\n';
 
   return new Promise((resolve) => {
     const timer = setTimeout(() => {
@@ -577,10 +588,19 @@ app.get('/user.html', (req, res) => {
   res.sendFile(path.join(publicDir, 'user.html'));
 });
 
+app.get('/camera-speed-test', (req, res) => {
+  res.sendFile(path.join(publicDir, 'camera-speed-test.html'));
+});
+
+app.get('/launcher.html', (req, res) => {
+  res.sendFile(path.join(publicDir, 'launcher.html'));
+});
+
 app.use('/css', express.static(path.join(publicDir, 'css')));
 app.use('/icons', express.static(path.join(publicDir, 'icons')));
 app.use('/js', express.static(path.join(publicDir, 'js')));
 app.use('/public', express.static(publicDir));
+app.use('/apps/assets', express.static(path.join(__dirname, 'apps', 'assets')));
 
 app.use('/teacher', teacherRouter);
 app.use('/student', clientRouter);
@@ -602,9 +622,11 @@ const COMM_EVENT_CATALOG = Object.freeze([
 
   { app: 'geometry', direction: 'in', event: 'user-position', description: 'Client sends position update to server.' },
   { app: 'geometry', direction: 'in', event: 'camera-frame', description: 'Client sends camera frame to server for detection.' },
+  { app: 'geometry', direction: 'in', event: 'camera-speed-frame', description: 'Client sends benchmark frame for camera speed test.' },
   { app: 'geometry', direction: 'in', event: 'activity-update', description: 'Teacher updates geometry activity on server.' },
   { app: 'geometry', direction: 'out', event: 'users-update', description: 'Server broadcasts active geometry points/users.' },
   { app: 'geometry', direction: 'out', event: 'camera-points', description: 'Server replies with detected camera points.' },
+  { app: 'geometry', direction: 'out', event: 'camera-speed-result', description: 'Server replies with benchmark tracking frame and latency metrics.' },
   { app: 'geometry', direction: 'out', event: 'activity-loaded', description: 'Server pushes geometry activity snapshot.' },
 
   { app: 'fourier', direction: 'in', event: 'fourier:join', description: 'Teacher/student join classroom room.' },
@@ -1862,6 +1884,10 @@ async function detectPointsFromPython(imageBase64) {
   return requestCameraDetection(imageBase64);
 }
 
+async function detectCameraFrameFromPython(imageBase64, options = {}) {
+  return requestCameraDetection(imageBase64, options);
+}
+
 function sanitizeLegacyFilename(filename) {
   const basename = path.basename(String(filename || ''));
   const safe = basename.replace(/[^a-z0-9._-]/gi, '');
@@ -2071,6 +2097,67 @@ io.on('connection', (socket) => {
       tracking
     });
     emitUsersUpdate();
+  });
+
+  socket.on('camera-speed-frame', async (data) => {
+    if (!data || !data.image) {
+      return;
+    }
+
+    touchGeometryConnection(socket.id);
+    const requestId = typeof data.requestId === 'number' || typeof data.requestId === 'string'
+      ? data.requestId
+      : null;
+    const serverReceivedAt = Date.now();
+
+    recordCommunication({
+      app: 'geometry',
+      direction: 'in',
+      event: 'camera-speed-frame',
+      from: socket.id,
+      to: 'server',
+      payload: {
+        requestId,
+        hasImage: Boolean(data && data.image),
+        imageLength: data && data.image ? String(data.image).length : 0
+      }
+    });
+
+    const detection = await detectCameraFrameFromPython(data.image, {
+      includeAnnotatedImage: true
+    });
+    const points = Array.isArray(detection.points) ? detection.points : [];
+    const boxes = Array.isArray(detection.boxes) ? detection.boxes : [];
+    const tracking = typeof detection.tracking === 'string' ? detection.tracking : 'unknown';
+    const annotatedImage = typeof detection.annotatedImage === 'string' ? detection.annotatedImage : null;
+    const serverSentAt = Date.now();
+
+    recordCommunication({
+      app: 'geometry',
+      direction: 'out',
+      event: 'camera-speed-result',
+      from: 'server',
+      to: socket.id,
+      payload: {
+        requestId,
+        boxes: boxes.length,
+        points: points.length,
+        tracking,
+        serverElapsedMs: serverSentAt - serverReceivedAt
+      }
+    });
+
+    socket.emit('camera-speed-result', {
+      requestId,
+      points,
+      boxes,
+      tracking,
+      annotatedImage,
+      serverReceivedAt,
+      serverSentAt,
+      serverElapsedMs: serverSentAt - serverReceivedAt,
+      clientSentAt: typeof data.clientSentAt === 'number' ? data.clientSentAt : null
+    });
   });
 
   socket.on('activity-update', (geometry) => {

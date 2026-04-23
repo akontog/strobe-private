@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Strobe | Εφαρμογές</title>
+  <style>
+    * { box-sizing: border-box; }
+    
+    :root {
+      --bg: #0a0e27;
+      --card-bg: #131b3a;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent-blue: #3b82f6;
+      --accent-teal: #14b8a6;
+      --accent-orange: #f97316;
+      --border: #1e293b;
+      --hover-bg: #1a2844;
+    }
+    
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      min-height: 100vh;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 50px;
+      padding: 30px 20px;
+    }
+    
+    .header h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #3b82f6, #14b8a6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .category {
+      margin-bottom: 60px;
+    }
+    
+    .category-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+    
+    .category-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+    
+    .category h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .app-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    
+    .app-card:hover {
+      background: var(--hover-bg);
+      border-color: var(--accent-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(59, 130, 246, 0.1);
+    }
+    
+    .app-card.presentations {
+      border-left: 4px solid var(--accent-blue);
+    }
+    
+    .app-card.presentations:hover {
+      box-shadow: 0 12px 24px rgba(59, 130, 246, 0.15);
+    }
+    
+    .app-card.games {
+      border-left: 4px solid var(--accent-orange);
+    }
+    
+    .app-card.games:hover {
+      box-shadow: 0 12px 24px rgba(249, 115, 22, 0.15);
+    }
+    
+    .app-card.geometry {
+      border-left: 4px solid var(--accent-teal);
+    }
+    
+    .app-card.geometry:hover {
+      box-shadow: 0 12px 24px rgba(20, 184, 166, 0.15);
+    }
+    
+    .app-icon {
+      font-size: 3rem;
+      line-height: 1;
+    }
+    
+    .app-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0;
+    }
+    
+    .app-description {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin: 0;
+      flex: 1;
+    }
+    
+    .app-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .app-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text);
+      font-size: 0.85rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+    
+    .app-btn:hover {
+      background: var(--card-bg);
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+    
+    .app-btn.teacher {
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+    
+    .app-btn.teacher:hover {
+      background: rgba(59, 130, 246, 0.1);
+    }
+    
+    .app-btn.student {
+      border-color: var(--muted);
+    }
+    
+    .app-btn.student:hover {
+      background: rgba(156, 163, 175, 0.1);
+    }
+    
+    @media (max-width: 768px) {
+      .header {
+        margin-bottom: 30px;
+        padding: 20px 10px;
+      }
+      
+      .apps-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .header h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🎓 Strobe Εφαρμογές</h1>
+    <p>Διαδραστικές παρουσιάσεις και δραστηριότητες για την τάξη</p>
+  </div>
+
+  <div class="container">
+    <!-- ΠΑΡΟΥΣΙΑΣΕΙΣ -->
+    <div class="category">
+      <div class="category-title">
+        <span class="category-icon">📊</span>
+        <h2>Παρουσιάσεις</h2>
+      </div>
+      <div class="apps-grid">
+        <a href="/apps/fourier-lab" class="app-card presentations">
+          <div class="app-icon">🌊</div>
+          <h3 class="app-title">Fourier Lab</h3>
+          <p class="app-description">Ήχος, συχνότητες και σειρές Fourier με διαδραστικές προσομοιώσεις κυμάτων.</p>
+          <div class="app-buttons">
+            <button class="app-btn teacher" onclick="event.preventDefault(); window.location.href='/apps/fourier-lab?mode=teacher'">Δάσκαλος</button>
+            <button class="app-btn student" onclick="event.preventDefault(); window.location.href='/student?app=fourier-lab'">Μαθητής</button>
+          </div>
+        </a>
+
+        <a href="/apps/chess" class="app-card presentations">
+          <div class="app-icon">♟️</div>
+          <h3 class="app-title">Chess Lab</h3>
+          <p class="app-description">Διαδραστική σκακιέρα με FEN notation, knight path solver και material evaluation.</p>
+          <div class="app-buttons">
+            <button class="app-btn teacher" onclick="event.preventDefault(); window.location.href='/apps/chess?mode=teacher'">Δάσκαλος</button>
+            <button class="app-btn student" onclick="event.preventDefault(); window.location.href='/student?app=chess'">Μαθητής</button>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ΠΑΙΧΝΙΔΙΑ -->
+    <div class="category">
+      <div class="category-title">
+        <span class="category-icon">🎮</span>
+        <h2>Παιχνίδια</h2>
+      </div>
+      <div class="apps-grid">
+        <a href="/apps/buffon-needle" class="app-card games">
+          <div class="app-icon">📍</div>
+          <h3 class="app-title">Buffon's Needle</h3>
+          <p class="app-description">Κλασικό πείραμα σύγκλισης προς π με multiplayer mode και live scoreboards.</p>
+          <div class="app-buttons">
+            <button class="app-btn teacher" onclick="event.preventDefault(); window.location.href='/apps/buffon-needle/teacher.html'">Δάσκαλος</button>
+            <button class="app-btn student" onclick="event.preventDefault(); window.location.href='/student?app=buffon-needle'">Μαθητής</button>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ΓΕΩΜΕΤΡΙΑ -->
+    <div class="category">
+      <div class="category-title">
+        <span class="category-icon">📐</span>
+        <h2>Γεωμετρία</h2>
+      </div>
+      <div class="apps-grid">
+        <a href="/user.html" class="app-card geometry">
+          <div class="app-icon">✏️</div>
+          <h3 class="app-title">Collaborative Geometry</h3>
+          <p class="app-description">Real-time διαδραστική γεωμετρία με κοινή canva για δάσκαλο και μαθητές.</p>
+          <div class="app-buttons">
+            <button class="app-btn teacher" onclick="event.preventDefault(); window.location.href='/client.html'">Δάσκαλος</button>
+            <button class="app-btn student" onclick="event.preventDefault(); window.location.href='/user.html'">Έναρξη</button>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

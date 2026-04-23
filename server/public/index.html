@@ -57,6 +57,19 @@
                     <li>Real-time συνεργασία</li>
                 </ul>
             </div>
+
+            <div class="role-card" onclick="goTo('/camera-speed-test')">
+                <span class="role-icon">🎥</span>
+                <div class="role-title">Camera Speed Test</div>
+                <div class="role-description">
+                    Δοκιμή ταχύτητας αποστολής/επιστροφής καρέ με server-side tracking.
+                </div>
+                <ul class="role-features">
+                    <li>2 κανβάδες: raw και tracked</li>
+                    <li>Round-trip latency metrics</li>
+                    <li>Annotated frame από Python worker</li>
+                </ul>
+            </div>
         </div>
 
         <div class="info-section">
@@ -105,6 +118,7 @@
             if (event.key === '1') goTo('/teacher');
             if (event.key === '2') goTo('/student');
             if (event.key === '3') goTo('/user.html');
+            if (event.key === '4') goTo('/camera-speed-test');
         });
     </script>
 </body>

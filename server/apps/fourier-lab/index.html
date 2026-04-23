@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Παρουσίαση: Ήχος, Συχνότητες και Ocean Waves (Manim)</title>
   <script src="assets/vendor/three.min.js"></script>
+  <link rel="stylesheet" href="/apps/assets/css/presentation-shell.css" />
   <script src="/js/realtime-socket.js"></script>
+  <script src="/apps/assets/js/presentation-config.js"></script>
+  <script src="/apps/assets/js/presentation-shell.js"></script>
+  <script src="/apps/assets/js/presentation-toc.js"></script>
   <script>
     window.MathJax = {
       tex: {
@@ -25,173 +29,23 @@
       --line: #2d3e63;
       --accent: #58a6ff;
       --classroom-content-shift: 0px;
-    }
-
-    * {
-      box-sizing: border-box;
+      --presentation-sidebar-width: 300px;
+      --presentation-sidebar-padding: 70px 16px 18px;
+      --presentation-section-padding: 22px;
+      --presentation-menu-bg: var(--panel);
+      --presentation-menu-color: var(--text);
+      --presentation-menu-border: var(--line);
+      --presentation-sidebar-hover-bg: #0d1524;
+      --presentation-sidebar-hover-color: var(--accent);
+      --presentation-sidebar-active-bg: rgba(88, 166, 255, 0.2);
+      --presentation-sidebar-active-border: rgba(88, 166, 255, 0.55);
+      --presentation-sidebar-active-color: #e7f2ff;
     }
 
     body {
-      margin: 0;
-      font-family: "Segoe UI", Tahoma, sans-serif;
       color: var(--text);
       background: var(--bg);
       line-height: 1.55;
-      overflow: hidden;
-    }
-
-    .menu-btn {
-      position: fixed;
-      top: 14px;
-      left: 14px;
-      z-index: 1300;
-      border: 1px solid var(--line);
-      background: var(--panel);
-      color: var(--text);
-      font-size: 1.25rem;
-      border-radius: 10px;
-      width: 42px;
-      height: 42px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .menu-btn-badge {
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      min-width: 18px;
-      height: 18px;
-      padding: 0 5px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      background: #ef4444;
-      color: #ffffff;
-      font-size: 0.68rem;
-      font-weight: 700;
-      line-height: 16px;
-      text-align: center;
-      display: none;
-      pointer-events: none;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-    }
-
-    .menu-btn-badge.show {
-      display: inline-block;
-    }
-
-    .layout {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    .sidebar {
-      width: 300px;
-      background: var(--panel);
-      border-right: 1px solid var(--line);
-      padding: 70px 16px 18px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      overflow-y: auto;
-      transform: translateX(0);
-      transition: transform 0.24s ease;
-      z-index: 900;
-      display: none;
-    }
-
-    .sidebar.hidden {
-      transform: translateX(-100%);
-    }
-
-    .sidebar h2 {
-      font-size: 1rem;
-      margin: 0 0 10px;
-      color: var(--muted);
-    }
-
-    .sidebar a {
-      display: block;
-      text-decoration: none;
-      color: var(--text);
-      padding: 8px 10px;
-      border-radius: 8px;
-      margin-bottom: 4px;
-    }
-
-    .toc-group-title {
-      margin: 12px 6px 6px;
-      color: var(--muted);
-      font-size: 0.82rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      border-bottom: 1px solid rgba(74, 97, 141, 0.45);
-      padding-bottom: 4px;
-      cursor: pointer;
-      user-select: none;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .toc-group-title::before {
-      content: "▾";
-      color: var(--accent);
-      font-size: 0.72rem;
-      line-height: 1;
-    }
-
-    .toc-group-title.collapsed::before {
-      content: "▸";
-    }
-
-    .sidebar a:hover {
-      background: #0d1524;
-      color: var(--accent);
-    }
-
-    .sidebar a.active {
-      background: rgba(88, 166, 255, 0.2);
-      color: #e7f2ff;
-      border: 1px solid rgba(88, 166, 255, 0.55);
-      box-shadow: inset 0 0 0 1px rgba(88, 166, 255, 0.12);
-      font-weight: 600;
-    }
-
-    .toc-group-title.active-group {
-      color: #d6e9ff;
-      border-bottom-color: rgba(88, 166, 255, 0.65);
-    }
-
-    .content {
-      margin-left: 0;
-      width: 100%;
-      height: 100vh;
-      overflow-y: auto;
-      scroll-snap-type: y mandatory;
-      transition: margin-left 0.24s ease, width 0.24s ease;
-    }
-
-    .content.expanded {
-      margin-left: 0;
-      width: 100%;
-    }
-
-    .content.sidebar-open-shift {
-      margin-left: var(--classroom-content-shift);
-      width: calc(100% - var(--classroom-content-shift));
-    }
-
-    .section {
-      min-height: 100vh;
-      scroll-snap-align: start;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 22px;
     }
 
     .slide-card {
@@ -243,7 +97,7 @@
 
     .cover-image {
       width: 100%;
-      height: 340px;
+      height: 380px;
       border: 1px solid var(--line);
       border-radius: 12px;
       object-fit: contain;
@@ -571,6 +425,94 @@
       gap: 4px;
     }
 
+    .ocean-control[data-tip] {
+      position: relative;
+      cursor: help;
+    }
+
+    .ocean-control[data-tip]::after {
+      content: attr(data-tip);
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 10px);
+      transform: translateX(-50%) translateY(4px);
+      width: clamp(180px, 22vw, 290px);
+      padding: 8px 10px;
+      border: 1px solid rgba(135, 198, 255, 0.45);
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(8, 18, 36, 0.98), rgba(5, 12, 24, 0.98));
+      color: #dff1ff;
+      font-size: 0.76rem;
+      line-height: 1.35;
+      letter-spacing: 0.15px;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 140ms ease, transform 140ms ease;
+      z-index: 18;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
+    }
+
+    .ocean-control[data-tip]::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 4px);
+      transform: translateX(-50%);
+      border-width: 6px 6px 0 6px;
+      border-style: solid;
+      border-color: rgba(8, 18, 36, 0.98) transparent transparent transparent;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 140ms ease;
+      z-index: 18;
+    }
+
+    .ocean-control[data-tip]:hover::after,
+    .ocean-control[data-tip]:focus-within::after {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .ocean-control[data-tip]:hover::before,
+    .ocean-control[data-tip]:focus-within::before {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .ocean-control[data-tip][data-tip-pos="left"]::after {
+      left: 10px;
+      transform: translateY(4px) !important;
+    }
+
+    .ocean-control[data-tip][data-tip-pos="left"]:hover::after,
+    .ocean-control[data-tip][data-tip-pos="left"]:focus-within::after {
+      transform: translateY(0) !important;
+    }
+
+    .ocean-control[data-tip][data-tip-pos="left"]::before {
+      left: 24px;
+      transform: none;
+    }
+
+    .ocean-control[data-tip][data-tip-pos="right"]::after {
+      left: auto;
+      right: 10px;
+      transform: translateY(4px) !important;
+    }
+
+    .ocean-control[data-tip][data-tip-pos="right"]:hover::after,
+    .ocean-control[data-tip][data-tip-pos="right"]:focus-within::after {
+      transform: translateY(0) !important;
+    }
+
+    .ocean-control[data-tip][data-tip-pos="right"]::before {
+      left: auto;
+      right: 24px;
+      transform: none;
+    }
+
     .ocean-control span {
       font-size: 0.78rem;
       color: #9db7dd;
@@ -608,8 +550,25 @@
       gap: 8px;
     }
 
+    .euler-proof-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      overflow-y: auto;
+      max-height: 720px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #050b16;
+      padding: 10px 14px;
+      color: #cfe6ff;
+    }
+    .euler-proof-step {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(100,150,220,0.15);
+    }
+    .euler-proof-step:last-child { border-bottom: none; }
+    .euler-proof-step p { margin: 0 0 4px; }
     .proof-box {
-      margin-top: 10px;
       border: 1px solid var(--line);
       border-radius: 12px;
       background: #050b16;
@@ -627,6 +586,43 @@
       gap: 10px;
       margin-top: 8px;
     }
+
+    .euler-proof-main {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .euler-proof-left {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .euler-proof-sliders {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .euler-i-powers {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #050b16;
+      padding: 10px 16px;
+      color: #cfe6ff;
+    }
+    .euler-i-powers table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    .euler-i-powers td {
+      padding: 4px 10px;
+      font-size: 0.97em;
+      text-align: center;
+    }
+    .euler-i-powers td.i-pow-label { color: #9dc9ff; }
+    .euler-i-powers td.i-pow-val   { color: #ffcc66; font-weight: bold; }
 
     .proof-dual {
       display: grid;
@@ -681,6 +677,76 @@
       color: #cfe6ff;
       min-height: 82px;
       overflow-x: auto;
+    }
+
+    .deriv-list {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #050b16;
+      padding: 10px 20px;
+      color: #cfe6ff;
+      overflow-x: auto;
+    }
+    .deriv-list .deriv-list-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+    .deriv-list table {
+      border-collapse: collapse;
+      font-size: 0.97em;
+    }
+    .deriv-list td {
+      padding: 3px 24px 3px 0;
+      white-space: nowrap;
+    }
+    .deriv-list td.deriv-val {
+      color: #ffcc66;
+      padding-right: 0;
+    }
+    .deriv-list .deriv-taylor {
+      border: 1px solid rgba(120, 170, 235, 0.35);
+      border-radius: 10px;
+      background: rgba(10, 22, 40, 0.65);
+      padding: 8px 12px;
+      color: #cfe6ff;
+      min-height: 100%;
+    }
+    .deriv-list .deriv-taylor p {
+      margin: 0 0 4px;
+      color: #9dc9ff;
+      font-size: 0.9em;
+      font-weight: 600;
+    }
+    @media (max-width: 900px) {
+      .deriv-list .deriv-list-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .heat-sine-rod-thin {
+      height: 72px;
+      margin-top: 8px;
+    }
+
+    .heat-sine-controls-row {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: minmax(230px, 0.9fr) minmax(340px, 1.1fr);
+      gap: 10px;
+      align-items: start;
+    }
+
+    .heat-sine-controls-row .slider-group,
+    .heat-sine-controls-row .mathjax-box {
+      margin-top: 0;
+    }
+
+    .heat-sine-controls-row .mathjax-box {
+      min-height: 96px;
+      padding-top: 12px;
     }
 
     .proof-nav {
@@ -1565,6 +1631,52 @@
       line-height: 1.45;
     }
 
+    .poly-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .poly-panel {
+      border: 1px solid #334155;
+      border-radius: 10px;
+      background: #071224;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .poly-panel h3 {
+      margin: 0;
+      color: #cde4ff;
+      font-size: 0.94rem;
+    }
+
+    .poly-table {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.82rem;
+      color: #dbeafe;
+      line-height: 1.5;
+      display: grid;
+      gap: 3px;
+    }
+
+    .poly-steps {
+      margin-top: 8px;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      background: #071224;
+      padding: 9px 10px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      color: #cfe6ff;
+      max-height: 140px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
     @media (max-width: 900px) {
       .classroom-dock {
         left: 0;
@@ -1601,6 +1713,14 @@
         grid-template-columns: 1fr;
       }
 
+      .heat-sine-controls-row {
+        grid-template-columns: 1fr;
+      }
+
+      .poly-grid {
+        grid-template-columns: 1fr;
+      }
+
       .class-chat-compose {
         grid-template-columns: 1fr;
       }
@@ -1609,21 +1729,12 @@
         grid-template-columns: 1fr;
       }
 
-      .content {
-        margin-left: 0;
-        width: 100%;
-      }
-
       .sidebar {
         transform: translateX(-100%);
       }
 
       .sidebar.open {
         transform: translateX(0);
-      }
-
-      .section {
-        padding: 10px;
       }
 
       .slide-card {
@@ -1647,28 +1758,17 @@
         left: 10px;
       }
 
-      .edge-nav.right {
-        right: 10px;
-      }
-
-      .ocean-controls {
-        grid-template-columns: repeat(2, minmax(120px, 1fr));
-      }
-
-      .content.sidebar-open-shift {
-        margin-left: 0;
-        width: 100%;
-      }
     }
   </style>
 </head>
 <body>
   <button class="menu-btn" id="menuBtn" aria-label="Άνοιγμα classroom panel" aria-controls="classroomDock" aria-expanded="false">☰<span class="menu-btn-badge" id="classDockUnreadBadge" aria-live="polite">0</span></button>
+  <button class="home-btn" id="homeBtn" title="Αρχική σελίδα">🏠</button>
   <button class="edge-nav left" id="prevSlideBtn" aria-label="Προηγούμενη διαφάνεια">◀</button>
   <button class="edge-nav right" id="nextSlideBtn" aria-label="Επόμενη διαφάνεια">▶</button>
 
   <div class="classroom-dock" id="classroomDock">
-    <div class="class-accordion" id="classContentsAccordion">
+    <div class="class-accordion" id="classContentsAccordion" data-classroom-panel="contents">
       <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classContentsBody" aria-controls="classContentsBody" aria-expanded="true">
         <span>Περιεχόμενα</span>
         <span class="class-accordion-arrow open">▼</span>
@@ -1680,13 +1780,13 @@
       </div>
     </div>
 
-    <div class="dock-row student-only" id="studentNameRow">
+    <div class="dock-row student-only" id="studentNameRow" data-classroom-panel="studentJoin">
       <input type="text" id="classStudentNameInput" placeholder="Όνομα μαθητή" maxlength="40" />
       <input type="text" id="classStudentTeamInput" placeholder="Ομάδα" maxlength="30" />
       <button type="button" id="classStudentJoinBtn">Σύνδεση</button>
     </div>
 
-    <div class="class-accordion" id="classChatAccordion">
+    <div class="class-accordion" id="classChatAccordion" data-classroom-panel="chat">
       <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classChatBody" aria-controls="classChatBody" aria-expanded="false">
         <span>Class Chat</span>
         <span class="class-accordion-arrow">▼</span>
@@ -1703,7 +1803,7 @@
       </div>
     </div>
 
-    <div class="teacher-only class-accordion" id="classQrAccordion">
+    <div class="teacher-only class-accordion" id="classQrAccordion" data-classroom-panel="qr">
       <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classQrBody" aria-controls="classQrBody" aria-expanded="false">
         <span>QR Σύνδεσης</span>
         <span class="class-accordion-arrow">▼</span>
@@ -1720,7 +1820,7 @@
       </div>
     </div>
 
-    <div class="teacher-only class-accordion" id="classUsersAccordion">
+    <div class="teacher-only class-accordion" id="classUsersAccordion" data-classroom-panel="users">
       <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classUsersBody" aria-controls="classUsersBody" aria-expanded="false">
         <span>Connected Users (<span id="classUsersCount">0</span>)</span>
         <span class="class-accordion-arrow">▼</span>
@@ -1742,7 +1842,7 @@
       </div>
     </div>
 
-    <div class="teacher-only class-accordion" id="classScoresAccordion">
+    <div class="teacher-only class-accordion" id="classScoresAccordion" data-classroom-panel="scores">
       <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classScoresBody" aria-controls="classScoresBody" aria-expanded="false">
         <span>Συνολικές Βαθμολογίες (<span id="classScoresCount">0</span>)</span>
         <span class="class-accordion-arrow">▼</span>
@@ -1764,7 +1864,7 @@
 
     <div class="teacher-only class-accordion" id="classFftDuelAccordion">
       <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classFftDuelBody" aria-controls="classFftDuelBody" aria-expanded="false">
-        <span>FFT Duel (4.2) (<span id="classFftDuelSolved">0</span>/<span id="classFftDuelTotal">0</span>)</span>
+        <span>FFT Duel (7.3) (<span id="classFftDuelSolved">0</span>/<span id="classFftDuelTotal">0</span>)</span>
         <span class="class-accordion-arrow">▼</span>
       </button>
       <div class="class-accordion-body" id="classFftDuelBody">
@@ -1785,62 +1885,72 @@
   <div class="layout">
     <aside class="sidebar" id="sidebar">
       <h2>Πίνακας Περιεχομένων</h2>
-      <div class="toc-group-title">1. Εισαγωγή</div>
-      <a href="#sec-cover">1.1 Ο Fourier και η θάλασσα</a>
-      <a href="#sec-movies">1.2 Η τεχνική στον κινηματογράφο</a>
-      <a href="#sec-goal">1.3 Θάλασσα κυμάτων</a>
-      <a href="#sec-activity-wave-basics">1.4 Δραστηριότητα: Ρυθμίσεις κύματος</a>
+      <div class="toc-group-title" data-accordion-group="intro">1. Εισαγωγή</div>
+      <a href="#sec-cover" data-accordion-group="intro">1.1 Ο Fourier και η θάλασσα</a>
+      <a href="#sec-movies" data-accordion-group="intro">1.2 Η τεχνική στον κινηματογράφο</a>
+      <a href="#sec-goal" data-accordion-group="intro">1.3 Θάλασσα κυμάτων</a>
 
-      <div class="toc-group-title">2. Θεμέλια κυμάτων</div>
-      <a href="#sec-intro">2.1 Παράμετροι κύματος</a>
-      <a href="#sec-propagation">2.2 Διάδοση κύματος sin(kx-ωt)</a>
-      <a href="#sec-sum">2.3 Άθροισμα συχνοτήτων</a>
-      <a href="#sec-wave2d">2.4 2D κύμα A·sin(kx·x+kz·z+ωt+φ)</a>
-      <a href="#sec-gerstner">2.5 Gerstner waves</a>
-      <a href="#sec-gerstner-orbits">2.6 Gerstner particle orbits (2D)</a>
+      <div class="toc-group-title" data-accordion-group="waves">2. Θεμέλια κυμάτων</div>
+      <a href="#sec-intro" data-accordion-group="waves">2.1 Παράμετροι κύματος</a>
+      <a href="#sec-propagation" data-accordion-group="waves">2.2 Διάδοση κύματος sin(kx-ωt)</a>
+      <a href="#sec-sum" data-accordion-group="waves">2.3 Άθροισμα συχνοτήτων</a>
+      <a href="#sec-wave2d" data-accordion-group="waves">2.4 2D κύμα A·sin(kx·x+kz·z+ωt+φ)</a>
+      <a href="#sec-gerstner" data-accordion-group="waves">2.5 Gerstner waves</a>
 
-      <div class="toc-group-title">3. Ήχος</div>
-      <a href="#sec-sound-simple">3.1 Το παράδειγμα του ήχου</a>
-      <a href="#sec-sound">3.2 Παράδειγμα ήχου τάξης</a>
-      <a href="#sec-sound-decompose">3.3 Από σύνθετο ήχο σε 3 καθαρούς</a>
+      <div class="toc-group-title" data-accordion-group="sound">3. Ήχος</div>
+      <a href="#sec-sound-simple" data-accordion-group="sound">3.1 Το παράδειγμα του ήχου</a>
+      <a href="#sec-sound" data-accordion-group="sound">3.2 Παράδειγμα ήχου τάξης</a>
+      <a href="#sec-sound-decompose" data-accordion-group="sound">3.3 Από σύνθετο ήχο σε 3 καθαρούς</a>
 
-      <div class="toc-group-title">4. Euler</div>
-      <a href="#sec-euler-plane">4.1 Euler και μιγαδικό επίπεδο</a>
-      <a href="#sec-euler-proof">4.2 Αποδείξεις Euler</a>
+      <div class="toc-group-title" data-accordion-group="taylor">4. Taylor</div>
+      <a href="#sec-taylor-polyfit" data-accordion-group="taylor">4.1 cos(x) με πολυώνυμο 2ου βαθμού</a>
+      <a href="#sec-taylor-cos" data-accordion-group="taylor">4.2 Taylor του cos(x)</a>
+      <a href="#sec-taylor-sin" data-accordion-group="taylor">4.3 Taylor του sin(x)</a>
+      <a href="#sec-taylor-exp" data-accordion-group="taylor">4.4 Taylor του e^x</a>
 
-      <div class="toc-group-title">5. Fourier ράβδος</div>
-      <a href="#sec-heat-rod">5.1 Fourier και θερμοκρασία ράβδου</a>
-      <a href="#sec-step-function">5.2 Step function σε ράβδο 1 m</a>
+      <div class="toc-group-title" data-accordion-group="euler">5. Euler</div>
+      <a href="#sec-euler-plane" data-accordion-group="euler">5.1 Euler και μιγαδικό επίπεδο</a>
+      <a href="#sec-euler-i-rotation" data-accordion-group="euler">5.2 Ο i ως περιστροφή και ανάπτυγμα</a>
 
-      <div class="toc-group-title">6. Μετασχηματισμός Fourier</div>
-      <a href="#sec-activity-spectrum-mix">6.1 Δραστηριότητα: Μίξη συχνοτήτων</a>
-      <a href="#sec-fft">6.2 Από το σήμα στο φάσμα (Fourier Transform)</a>
-      <a href="#sec-fft-duel">6.3 FFT Duel: Βρες τη συχνότητα</a>
-      <a href="#sec-fft-spikes">6.4 Σύνθετο σήμα και spikes</a>
-      <a href="#sec-fft-explain">6.5 Τι κάνει ο Fourier Transform (DFT)</a>
-      <a href="#sec-ifft-explain">6.6 Τι κάνει το IFFT</a>
-      <a href="#sec-audio-smooth">6.7 Παράδειγμα Fourier → IFFT σε ήχο</a>
-      <a href="#sec-activity-filter-decisions">6.8 Δραστηριότητα: Επιλογή φίλτρου</a>
+      <div class="toc-group-title" data-accordion-group="rod">6. Fourier ράβδος</div>
+      <a href="#sec-heat-sine-intro" data-accordion-group="rod">6.1 Διαδραστική: Διάχυση θερμότητας με ημίτονο</a>
+      <a href="#sec-heat-rod" data-accordion-group="rod">6.2 Fourier και θερμοκρασία ράβδου</a>
+      <a href="#sec-step-function" data-accordion-group="rod">6.3 Step function σε ράβδο 1 m</a>
 
-      <div class="toc-group-title">7. Cooley-Tukey και πολυπλοκότητα</div>
-      <a href="#sec-fft-complexity">7.1 Divide and conquer: N² vs N log N</a>
-      <a href="#sec-cooley-tukey">7.2 Cooley-Tukey FFT βήμα-βήμα</a>
-      <a href="#sec-activity-complexity-check">7.3 Αγώνες πολυπλοκότητας (διαδραστικό)</a>
+      <div class="toc-group-title" data-accordion-group="transform">7. Μετασχηματισμός Fourier</div>
+      <a href="#sec-activity-spectrum-mix" data-accordion-group="transform">7.1 Δραστηριότητα: Μίξη συχνοτήτων</a>
+      <a href="#sec-fft" data-accordion-group="transform">7.2 Από το σήμα στο φάσμα (Fourier Transform)</a>
+      <a href="#sec-fft-duel" data-accordion-group="transform">7.3 FFT Duel: Βρες τη συχνότητα</a>
+      <a href="#sec-fft-spikes" data-accordion-group="transform">7.4 Σύνθετο σήμα και spikes</a>
+      <a href="#sec-fft-explain" data-accordion-group="transform">7.5 Τι κάνει ο απλός Fourier Transform (DFT)</a>
+      <a href="#sec-ifft-explain" data-accordion-group="transform">7.6 Τι κάνει ο αντίστροφος μετασχηματισμός (IDFT/IFFT)</a>
+      <a href="#sec-audio-smooth" data-accordion-group="transform">7.7 Παράδειγμα απλού DFT → IFFT σε ήχο</a>
+      <a href="#sec-activity-filter-decisions" data-accordion-group="transform">7.8 Δραστηριότητα: Επιλογή φίλτρου</a>
 
-      <div class="toc-group-title">8. Pipeline θάλασσας</div>
-      <a href="#sec-bridge-1d2d">8.1 Από 1D ήχο σε 2D θάλασσα</a>
-      <a href="#sec-wave">8.2 Τι είναι ο κυματισμός</a>
-      <a href="#sec-spectrum">8.3 Ενεργειακό φάσμα</a>
-      <a href="#sec-phillips">8.4 Φάσμα Phillips</a>
-      <a href="#sec-random">8.5 Τυχαίες φάσεις</a>
-      <a href="#sec-time">8.6 Εξέλιξη στον χρόνο</a>
-      <a href="#sec-ifft">8.7 IFFT ανακατασκευή</a>
-      <a href="#sec-final">8.8 Τελικό rendering</a>
-      <a href="#sec-activity-ocean-config">8.9 Δραστηριότητα: Σενάριο θάλασσας</a>
+      <div class="toc-group-title" data-accordion-group="polynomials">8. Πολυώνυμα και συνέλιξη</div>
+      <a href="#sec-poly-coeff" data-accordion-group="polynomials">8.1 Πολυώνυμο από συντελεστές</a>
+      <a href="#sec-poly-points" data-accordion-group="polynomials">8.2 DFT = αποτίμηση πολυωνύμου</a>
+      <a href="#sec-poly-multiply" data-accordion-group="polynomials">8.3 Πολλαπλασιασμός πολυωνύμων</a>
 
-      <div class="toc-group-title">9. Εκτέλεση και κλείσιμο</div>
-      <a href="#sec-run">9.1 Ρυθμίσεις web demo</a>
-      <a href="#sec-ocean">9.2 Θάλασσα κυμάτων</a>
+      <div class="toc-group-title" data-accordion-group="complexity">9. Πολυπλοκότητα</div>
+      <a href="#sec-fft-complexity" data-accordion-group="complexity">9.1 Split άρτιων/περιττών όρων (Cooley)</a>
+      <a href="#sec-cooley-tukey" data-accordion-group="complexity">9.2 Cooley-Tukey FFT βήμα-βήμα</a>
+      <a href="#sec-activity-complexity-check" data-accordion-group="complexity">9.3 Αγώνες πολυπλοκότητας (διαδραστικό)</a>
+
+      <div class="toc-group-title" data-accordion-group="pipeline">10. Pipeline θάλασσας</div>
+      <a href="#sec-bridge-1d2d" data-accordion-group="pipeline">10.1 Από 1D ήχο σε 2D θάλασσα</a>
+      <a href="#sec-wave" data-accordion-group="pipeline">10.2 Τι είναι ο κυματισμός</a>
+      <a href="#sec-spectrum" data-accordion-group="pipeline">10.3 Ενεργειακό φάσμα</a>
+      <a href="#sec-phillips" data-accordion-group="pipeline">10.4 Φάσμα Phillips</a>
+      <a href="#sec-random" data-accordion-group="pipeline">10.5 Τυχαίες φάσεις</a>
+      <a href="#sec-time" data-accordion-group="pipeline">10.6 Εξέλιξη στον χρόνο</a>
+      <a href="#sec-ifft" data-accordion-group="pipeline">10.7 IFFT ανακατασκευή</a>
+      <a href="#sec-final" data-accordion-group="pipeline">10.8 Τελικό rendering</a>
+      <a href="#sec-activity-ocean-config" data-accordion-group="pipeline">10.9 Δραστηριότητα: Σενάριο θάλασσας</a>
+
+      <div class="toc-group-title" data-accordion-group="closing">11. Εκτέλεση και κλείσιμο</div>
+      <a href="#sec-run" data-accordion-group="closing">11.1 Ρυθμίσεις web demo</a>
+      <a href="#sec-ocean" data-accordion-group="closing">11.2 Θάλασσα κυμάτων</a>
     </aside>
 
     <main class="content" id="content">
@@ -1886,74 +1996,11 @@
         <div class="slide-card">
           <div class="slide-content">
             <h2>1.3) Θάλασσα κυμάτων</h2>
-            <canvas id="oceanWaveCanvasMain" class="ocean-canvas" width="940" height="430"></canvas>
-            <div class="ocean-controls">
-              <label class="ocean-control">
-                <span>N GRID <strong id="oceanNValue">40</strong></span>
-                <input id="oceanN" type="range" min="12" max="90" step="1" value="40" />
-              </label>
-              <label class="ocean-control">
-                <span>AMP <strong id="oceanAmpValue">1.00</strong></span>
-                <input id="oceanAmp" type="range" min="0.3" max="2.2" step="0.01" value="1" />
-              </label>
-              <label class="ocean-control">
-                <span>SPEED <strong id="oceanSpeedValue">1.00</strong></span>
-                <input id="oceanSpeed" type="range" min="0.2" max="2.8" step="0.01" value="1" />
-              </label>
-              <label class="ocean-control">
-                <span>CHOPPY <strong id="oceanChoppyValue">1.00</strong></span>
-                <input id="oceanChoppy" type="range" min="0.4" max="2.4" step="0.01" value="1" />
-              </label>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section activity-slide" id="sec-activity-wave-basics" data-activity-id="wave-basics">
-        <div class="slide-card">
-          <div class="slide-content">
-            <h2>1.4) Δραστηριότητα: Βρες το πιο ομαλό κύμα</h2>
             <p>
-              Κάθε μαθητής ρυθμίζει πλάτος, συχνότητα και φάση. Στόχος είναι μια καμπύλη με ήπια μορφή,
-              χωρίς απότομα peaks. Η τάξη στέλνει live τις δοκιμές και ο/η εκπαιδευτικός βλέπει τη συνολική εικόνα.
+              Teaser: μόνο το οπτικό αποτέλεσμα. Χωρίς ρυθμίσεις ακόμα,
+              για να μείνει η πρώτη εντύπωση καθαρή πριν μπούμε στις παραμέτρους.
             </p>
-            <div class="activity-grid">
-              <div class="activity-card">
-                <h3>Ρυθμίσεις μαθητή</h3>
-                <div class="activity-control">
-                  <label>Πλάτος A
-                    <input type="range" min="0" max="2" step="0.01" value="1" data-activity-control="wave-basics" data-control-key="amplitude" />
-                  </label>
-                </div>
-                <div class="activity-control">
-                  <label>Συχνότητα f
-                    <input type="range" min="0.2" max="3.5" step="0.01" value="1" data-activity-control="wave-basics" data-control-key="frequency" />
-                  </label>
-                </div>
-                <div class="activity-control">
-                  <label>Φάση φ
-                    <input type="range" min="-3.14" max="3.14" step="0.01" value="0" data-activity-control="wave-basics" data-control-key="phase" />
-                  </label>
-                </div>
-                <div class="activity-control">
-                  <div class="checkbox-row">
-                    <label><input type="checkbox" data-activity-control="wave-basics" data-control-key="lockAttempt" /> Κλειδώνω την τελική μου επιλογή</label>
-                  </div>
-                </div>
-              </div>
-              <div class="activity-live teacher-only">
-                <h3>Live εικόνα τάξης</h3>
-                <div class="activity-metrics">
-                  <div class="activity-metric"><span>Παρόντες</span><strong data-activity-metric="participants">0</strong></div>
-                  <div class="activity-metric"><span>Ενέργειες</span><strong data-activity-metric="events">0</strong></div>
-                  <div class="activity-metric"><span>Top δραστηριότητα</span><strong data-activity-metric="topActivity">-</strong></div>
-                </div>
-                <div class="activity-feed" data-activity-feed="wave-basics"><div class="empty">Δεν υπάρχουν ακόμα κινήσεις μαθητών.</div></div>
-              </div>
-            </div>
-            <div class="activity-note student-only">
-              Οι αλλαγές σου καταγράφονται αυτόματα και ο/η εκπαιδευτικός βλέπει μόνο την πορεία της ομάδας.
-            </div>
+            <canvas id="oceanWaveCanvasMain" class="ocean-canvas" width="940" height="430"></canvas>
           </div>
         </div>
       </section>
@@ -2095,27 +2142,27 @@
         <div class="slide-card">
           <div class="slide-content">
             <h2>2.4) 2D κύμα: \(A\sin(k_xx+k_zz+\omega t+\phi)\)</h2>
-            <canvas id="wave2DCanvas" class="demo-canvas" width="940" height="360"></canvas>
+            <canvas id="wave2DCanvas" class="demo-canvas" width="940" height="345"></canvas>
             <div class="wave2d-controls">
-              <label class="ocean-control">
+              <label class="ocean-control" data-tip="A: αυξάνει ή μειώνει το πλάτος του 2D κύματος.">
                 <span>A <strong id="wave2DAmpValue">0.80</strong></span>
-                <input id="wave2DAmp" type="range" min="0.1" max="1.8" step="0.01" value="0.8" />
+                <input id="wave2DAmp" type="range" min="0.1" max="1.8" step="0.01" value="0.8" title="A: αυξάνει ή μειώνει το πλάτος του 2D κύματος." />
               </label>
-              <label class="ocean-control">
+              <label class="ocean-control" data-tip="k_x: πόσο γρήγορα αλλάζει το κύμα κατά μήκος του άξονα x.">
                 <span>k<sub>x</sub> <strong id="wave2DKxValue">1.40</strong></span>
-                <input id="wave2DKx" type="range" min="0.2" max="5" step="0.01" value="1.4" />
+                <input id="wave2DKx" type="range" min="0.2" max="5" step="0.01" value="1.4" title="k_x: πόσο γρήγορα αλλάζει το κύμα κατά μήκος του άξονα x." />
               </label>
-              <label class="ocean-control">
+              <label class="ocean-control" data-tip="k_z: πόσο γρήγορα αλλάζει το κύμα κατά μήκος του άξονα z.">
                 <span>k<sub>z</sub> <strong id="wave2DKzValue">1.00</strong></span>
-                <input id="wave2DKz" type="range" min="0.2" max="5" step="0.01" value="1.0" />
+                <input id="wave2DKz" type="range" min="0.2" max="5" step="0.01" value="1.0" title="k_z: πόσο γρήγορα αλλάζει το κύμα κατά μήκος του άξονα z." />
               </label>
-              <label class="ocean-control">
+              <label class="ocean-control" data-tip="ω: πόσο γρήγορα εξελίσσεται χρονικά το κύμα.">
                 <span>ω <strong id="wave2DOmegaValue">1.20</strong></span>
-                <input id="wave2DOmega" type="range" min="0.1" max="4" step="0.01" value="1.2" />
+                <input id="wave2DOmega" type="range" min="0.1" max="4" step="0.01" value="1.2" title="ω: πόσο γρήγορα εξελίσσεται χρονικά το κύμα." />
               </label>
-              <label class="ocean-control">
+              <label class="ocean-control" data-tip="φ: μετατοπίζει τη φάση, δηλαδή οριζόντια μετακίνηση του μοτίβου.">
                 <span>φ <strong id="wave2DPhiValue">0.00</strong></span>
-                <input id="wave2DPhi" type="range" min="-3.14" max="3.14" step="0.01" value="0" />
+                <input id="wave2DPhi" type="range" min="-3.14" max="3.14" step="0.01" value="0" title="φ: μετατοπίζει τη φάση, δηλαδή οριζόντια μετακίνηση του μοτίβου." />
               </label>
             </div>
           </div>
@@ -2126,58 +2173,32 @@
         <div class="slide-card">
           <div class="slide-content">
             <h2>2.5) Gerstner waves</h2>
-            <canvas id="gerstnerCanvas" class="demo-canvas" width="940" height="360"></canvas>
+            <canvas id="gerstnerOrbitCanvas" class="demo-canvas" width="940" height="210"></canvas>
+            <canvas id="gerstnerCanvas" class="demo-canvas" width="940" height="250" style="margin-top:6px;"></canvas>
             <div class="wave2d-controls">
-              <label class="ocean-control">
+              <label class="ocean-control" data-tip="A: αυξάνει το ύψος του κύματος και το μέγεθος των τροχιών." title="A: αυξάνει το ύψος του κύματος και το μέγεθος των τροχιών.">
                 <span>A <strong id="gerstnerAmpValue">0.70</strong></span>
-                <input id="gerstnerAmp" type="range" min="0.1" max="1.6" step="0.01" value="0.7" />
+                <input id="gerstnerAmp" type="range" min="0.1" max="1.6" step="0.01" value="0.7" title="A: αυξάνει το ύψος του κύματος και το μέγεθος των τροχιών." />
               </label>
-              <label class="ocean-control">
+              <label class="ocean-control" data-tip="Q (steepness): κάνει την κορυφή πιο αιχμηρή και ενισχύει την οριζόντια μετατόπιση." title="Q (steepness): κάνει την κορυφή πιο αιχμηρή και ενισχύει την οριζόντια μετατόπιση.">
                 <span>Q (steepness) <strong id="gerstnerQValue">0.55</strong></span>
-                <input id="gerstnerQ" type="range" min="0" max="1" step="0.01" value="0.55" />
+                <input id="gerstnerQ" type="range" min="0" max="1" step="0.01" value="0.55" title="Q (steepness): κάνει την κορυφή πιο αιχμηρή και ενισχύει την οριζόντια μετατόπιση." />
               </label>
-              <label class="ocean-control">
+              <label class="ocean-control" data-tip="k: αυξάνει τον κυματικό αριθμό, άρα μικρότερο μήκος κύματος (πιο πυκνά κύματα)." title="k: αυξάνει τον κυματικό αριθμό, άρα μικρότερο μήκος κύματος (πιο πυκνά κύματα).">
                 <span>k <strong id="gerstnerKValue">1.40</strong></span>
-                <input id="gerstnerK" type="range" min="0.2" max="4.5" step="0.01" value="1.4" />
+                <input id="gerstnerK" type="range" min="0.2" max="4.5" step="0.01" value="1.4" title="k: αυξάνει τον κυματικό αριθμό, άρα μικρότερο μήκος κύματος (πιο πυκνά κύματα)." />
               </label>
-              <label class="ocean-control">
+              <label class="ocean-control" data-tip="ω: αλλάζει την ταχύτητα χρονικής κίνησης (πιο γρήγορη/αργή ταλάντωση)." title="ω: αλλάζει την ταχύτητα χρονικής κίνησης (πιο γρήγορη/αργή ταλάντωση).">
                 <span>ω <strong id="gerstnerOmegaValue">1.10</strong></span>
-                <input id="gerstnerOmega" type="range" min="0.1" max="4" step="0.01" value="1.1" />
+                <input id="gerstnerOmega" type="range" min="0.1" max="4" step="0.01" value="1.1" title="ω: αλλάζει την ταχύτητα χρονικής κίνησης (πιο γρήγορη/αργή ταλάντωση)." />
               </label>
-              <label class="ocean-control">
+              <label class="ocean-control" data-tip="dir θ: στρέφει τη διεύθυνση διάδοσης του κύματος." title="dir θ: στρέφει τη διεύθυνση διάδοσης του κύματος.">
                 <span>dir θ <strong id="gerstnerDirValue">35°</strong></span>
-                <input id="gerstnerDir" type="range" min="0" max="360" step="1" value="35" />
+                <input id="gerstnerDir" type="range" min="0" max="360" step="1" value="35" title="dir θ: στρέφει τη διεύθυνση διάδοσης του κύματος." />
               </label>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="sec-gerstner-orbits">
-        <div class="slide-card">
-          <div class="slide-content">
-            <h2>2.6) Gerstner: 2D κυκλικές κινήσεις σωματιδίων</h2>
-            <canvas id="gerstnerOrbitCanvas" class="demo-canvas" width="940" height="300"></canvas>
-            <div class="wave2d-controls">
-              <label class="ocean-control">
-                <span>A <strong id="gerstnerOrbitAmpValue">0.70</strong></span>
-                <input id="gerstnerOrbitAmp" type="range" min="0.1" max="1.6" step="0.01" value="0.7" />
-              </label>
-              <label class="ocean-control">
-                <span>Q <strong id="gerstnerOrbitQValue">0.55</strong></span>
-                <input id="gerstnerOrbitQ" type="range" min="0" max="1" step="0.01" value="0.55" />
-              </label>
-              <label class="ocean-control">
-                <span>k <strong id="gerstnerOrbitKValue">1.40</strong></span>
-                <input id="gerstnerOrbitK" type="range" min="0.2" max="4.5" step="0.01" value="1.4" />
-              </label>
-              <label class="ocean-control">
-                <span>ω <strong id="gerstnerOrbitOmegaValue">1.10</strong></span>
-                <input id="gerstnerOrbitOmega" type="range" min="0.1" max="4" step="0.01" value="1.1" />
-              </label>
-              <label class="ocean-control">
+              <label class="ocean-control" data-tip="depth fade: πόσο γρήγορα μικραίνουν οι τροχιές όσο αυξάνει το βάθος." title="depth fade: πόσο γρήγορα μικραίνουν οι τροχιές όσο αυξάνει το βάθος.">
                 <span>depth fade <strong id="gerstnerOrbitDepthValue">0.85</strong></span>
-                <input id="gerstnerOrbitDepth" type="range" min="0.2" max="1.5" step="0.01" value="0.85" />
+                <input id="gerstnerOrbitDepth" type="range" min="0.2" max="1.5" step="0.01" value="0.85" title="depth fade: πόσο γρήγορα μικραίνουν οι τροχιές όσο αυξάνει το βάθος." />
               </label>
             </div>
           </div>
@@ -2289,60 +2310,249 @@
         </div>
       </section>
 
-      <section class="section" id="sec-euler-plane">
+      <section class="section" id="sec-taylor-polyfit">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>4.1) Euler σε σκίτσο και μιγαδικό επίπεδο</h2>
+            <h2>4.1) Προσέγγιση του \(e^{x/2}\cos(x)\) με πολυώνυμο \(c_0 + c_1x + c_2x^2 + c_3x^3\) στο \(x_0=0\)</h2>
             <p>
-              Ρύθμισε την γωνία θ και το μέτρο r και δες το διάνυσμα στο μιγαδικό επίπεδο:
-              η προβολή στον άξονα Re είναι r cosθ και στον άξονα Im είναι r sinθ.
+              Ρύθμισε τους συντελεστές με τα sliders και δες πώς αλλάζει η προσέγγιση του \(e^{x/2}\cos(x)\).
+              Η μπλε καμπύλη είναι η αρχική συνάρτηση και η πορτοκαλί το πολυώνυμο Taylor.
             </p>
-            <div class="euler-grid">
-              <canvas id="eulerPlaneCanvas" class="euler-canvas" width="940" height="300"></canvas>
-              <div class="euler-panel">
-                <label class="ocean-control">
-                  <span>θ (radians) <strong id="thetaValue">1.57</strong></span>
-                  <input id="thetaSlider" type="range" min="-6.28" max="6.28" step="0.01" value="1.57" />
-                </label>
-                <label class="ocean-control">
-                  <span>r (μέτρο) <strong id="radiusValue">1.00</strong></span>
-                  <input id="radiusSlider" type="range" min="0.2" max="2.2" step="0.01" value="1" />
-                </label>
-                <p id="eulerFormulaText">re^{iθ} = 0.00 + i·0.00</p>
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch;">
+                <div style="display: flex; flex-direction: column;">
+                  <canvas id="taylorPolyfitCanvas" class="euler-canvas" width="500" height="450"></canvas>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div style="display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px;">
+                  <div>
+                    <label class="ocean-control">
+                      <span>\(c_0\) <strong id="taylorPolyC0Value">0.00</strong></span>
+                      <input id="taylorPolyC0Slider" type="range" min="-2" max="2" step="0.01" value="0" />
+                    </label>
+                  </div>
+                  <button id="taylorPolyC0Best" style="padding: 6px 10px; font-size: 12px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Βέλτιστη</button>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px;">
+                  <div>
+                    <label class="ocean-control">
+                      <span>\(c_1\) <strong id="taylorPolyC1Value">0.00</strong></span>
+                      <input id="taylorPolyC1Slider" type="range" min="-2" max="2" step="0.01" value="0" />
+                    </label>
+                  </div>
+                  <button id="taylorPolyC1Best" style="padding: 6px 10px; font-size: 12px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Βέλτιστη</button>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px;">
+                  <div>
+                    <label class="ocean-control">
+                      <span>\(c_2\) <strong id="taylorPolyC2Value">0.00</strong></span>
+                      <input id="taylorPolyC2Slider" type="range" min="-2" max="2" step="0.01" value="0" />
+                    </label>
+                  </div>
+                  <button id="taylorPolyC2Best" style="padding: 6px 10px; font-size: 12px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Βέλτιστη</button>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px;">
+                  <div>
+                    <label class="ocean-control">
+                      <span>\(c_3\) <strong id="taylorPolyC3Value">0.00</strong></span>
+                      <input id="taylorPolyC3Slider" type="range" min="-2" max="2" step="0.01" value="0" />
+                    </label>
+                  </div>
+                  <button id="taylorPolyC3Best" style="padding: 6px 10px; font-size: 12px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Βέλτιστη</button>
+                </div>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-top: 12px; border-top: 1px solid #666;">
+                <div style="font-size: 14px; line-height: 1.7; color: #f0f4ff;">
+                  <div style="margin-bottom: 8px; font-weight: 700; color: #ffffff;">Παράγωγοι στο x₀=0</div>
+                  <div>\(f(0) = 1\)</div>
+                  <div>\(f'(0) = \frac{1}{2}\)</div>
+                  <div>\(f''(0) = -\frac{3}{4}\)</div>
+                  <div>\(f'''(0) = -\frac{11}{8}\)</div>
+                </div>
+                <div style="font-size: 13px; line-height: 1.7; color: #f0f4ff;">
+                  <div style="margin-bottom: 8px; font-weight: 700; color: #ffffff;">Τύποι</div>
+                  <div style="margin-bottom: 8px;">\(T_3(x)=f(0)+f'(0)x+\frac{f''(0)}{2!}x^2+\frac{f'''(0)}{3!}x^3\)</div>
+                  <div id="taylorPolyfitFormulaBox" style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px; border-left: 2px solid #ffb15f;"></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="section" id="sec-euler-proof">
+      <section class="section" id="sec-taylor-cos">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>4.2) Αποδείξεις της Euler Formula</h2>
-            <p>Με τα κουμπιά βλέπεις βήμα-βήμα δύο κλασικές προσεγγίσεις, συμπεριλαμβανομένης της απόδειξης με παραγώγους.</p>
-            <div class="proof-layout">
-              <div class="proof-dual">
-                <div class="proof-card">
-                  <h3 class="proof-title">Απόδειξη 1: Αναπτύγματα Taylor</h3>
-                  <div class="proof-box" id="proofStepBoxTaylor"></div>
-                  <div class="proof-nav">
-                    <button type="button" id="proofPrevTaylorBtn">◀ Προηγούμενο</button>
-                    <button type="button" id="proofNextTaylorBtn">Επόμενο ▶</button>
-                  </div>
+            <h2>4.2) Taylor του \(\cos(x)\) από παραγώγους στο \(x_0=0\)</h2>
+            <p>
+              Κάθε συντελεστής προκύπτει από \(c_n = \frac{f^{(n)}(0)}{n!}\).
+              Με τον slider κρατάς περισσότερους όρους και βλέπεις καλύτερη προσέγγιση.
+            </p>
+            <div class="euler-grid">
+              <canvas id="taylorCosCanvas" class="euler-canvas" width="940" height="340"></canvas>
+              <div class="euler-panel">
+                <label class="ocean-control">
+                  <span>Όροι Taylor <strong id="taylorCosTermsValue">0</strong></span>
+                  <input id="taylorCosTermsSlider" type="range" min="0" max="10" step="1" value="0" />
+                </label>
+                <div id="taylorCosMath" class="mathjax-box"></div>
+              </div>
+            </div>
+            <div id="taylorCosDerivList" class="deriv-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-taylor-sin">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>4.3) Taylor του \(\sin(x)\) από παραγώγους στο \(x_0=0\)</h2>
+            <p>
+              Το \(\sin(x)\) έχει μόνο περιττούς όρους στο ανάπτυγμα γύρω από το 0.
+              Παρατήρησε τη διαφορά κοντά και μακριά από το 0.
+            </p>
+            <div class="euler-grid">
+              <canvas id="taylorSinCanvas" class="euler-canvas" width="940" height="340"></canvas>
+              <div class="euler-panel">
+                <label class="ocean-control">
+                  <span>Όροι Taylor <strong id="taylorSinTermsValue">0</strong></span>
+                  <input id="taylorSinTermsSlider" type="range" min="0" max="10" step="1" value="0" />
+                </label>
+                <div id="taylorSinMath" class="mathjax-box"></div>
+              </div>
+            </div>
+            <div id="taylorSinDerivList" class="deriv-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-taylor-exp">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>4.4) Taylor του \(e^x\) από παραγώγους στο \(x_0=0\)</h2>
+            <p>
+              Για το \(e^x\), όλες οι παράγωγοι στο 0 είναι 1, άρα οι συντελεστές είναι \(\frac{1}{n!}\).
+            </p>
+            <div class="euler-grid">
+              <canvas id="taylorExpCanvas" class="euler-canvas" width="940" height="340"></canvas>
+              <div class="euler-panel">
+                <label class="ocean-control">
+                  <span>Όροι Taylor <strong id="taylorExpTermsValue">0</strong></span>
+                  <input id="taylorExpTermsSlider" type="range" min="0" max="12" step="1" value="0" />
+                </label>
+                <div id="taylorExpMath" class="mathjax-box"></div>
+              </div>
+            </div>
+            <div id="taylorExpDerivList" class="deriv-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-euler-plane">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>5.1) Euler σε σκίτσο και μιγαδικό επίπεδο</h2>
+            <p>
+              Ρύθμισε την γωνία θ και το μέτρο r και δες το διάνυσμα στο μιγαδικό επίπεδο:
+              η προβολή στον άξονα Re είναι r cosθ και στον άξονα Im είναι r sinθ.
+            </p>
+            <div class="euler-proof-main">
+              <div class="euler-proof-left">
+                <canvas id="eulerPlaneCanvas" class="euler-canvas" style="height:260px;" width="940" height="260"></canvas>
+                <div class="euler-proof-sliders">
+                  <label class="ocean-control">
+                    <span>θ (radians) <strong id="thetaValue">1.57</strong></span>
+                    <input id="thetaSlider" type="range" min="-6.28" max="6.28" step="0.01" value="1.57" />
+                  </label>
+                  <label class="ocean-control">
+                    <span>r (μέτρο) <strong id="radiusValue">1.00</strong></span>
+                    <input id="radiusSlider" type="range" min="0.2" max="2.2" step="0.01" value="1" />
+                  </label>
                 </div>
-                <div class="proof-card">
-                  <h3 class="proof-title">Απόδειξη 2: Με παραγώγους</h3>
-                  <div class="proof-box" id="proofStepBoxDeriv"></div>
-                  <div class="proof-nav">
-                    <button type="button" id="proofPrevDerivBtn">◀ Προηγούμενο</button>
-                    <button type="button" id="proofNextDerivBtn">Επόμενο ▶</button>
-                  </div>
+                <p id="eulerFormulaText" style="color:#9fd0ff;margin:4px 0 0;">re^{iθ} = 0.00 + i·0.00</p>
+                <div class="euler-i-powers">
+                  <table>
+                    <tr>
+                      <td class="i-pow-label">\(i^0\)</td><td class="i-pow-val">\(=1\)</td>
+                      <td class="i-pow-label">\(i^1\)</td><td class="i-pow-val">\(=i\)</td>
+                      <td class="i-pow-label">\(i^2\)</td><td class="i-pow-val">\(=-1\)</td>
+                      <td class="i-pow-label">\(i^3\)</td><td class="i-pow-val">\(=-i\)</td>
+                      <td class="i-pow-label">\(i^4\)</td><td class="i-pow-val">\(=1\)</td>
+                    </tr>
+                  </table>
                 </div>
               </div>
-              <div class="proof-sketch">
-                <p>Σκίτσο Euler: \\(e^{i\\theta}=\\cos\\theta+i\\sin\\theta\\)</p>
-                <canvas id="eulerProofSketchCanvas" class="proof-sketch-canvas" width="520" height="220"></canvas>
+              <div class="euler-proof-steps">
+                <div class="euler-proof-step">
+                  <p>Γνωστές σειρές:</p>
+                  \[\cos x=\sum_{k=0}^{\infty}(-1)^k\frac{x^{2k}}{(2k)!},\qquad
+                  \sin x=\sum_{k=0}^{\infty}(-1)^k\frac{x^{2k+1}}{(2k+1)!}\]
+                </div>
+                <div class="euler-proof-step">
+                  \[e^x=\sum_{n=0}^{\infty}\frac{x^n}{n!},\qquad
+                  e^{i\theta}=\sum_{n=0}^{\infty}\frac{(i\theta)^n}{n!}\]
+                </div>
+                <div class="euler-proof-step">
+                  <p>Αρτιοι/περιττοί εκθέτες:</p>
+                  \[(i\theta)^{2k}=(-1)^k\theta^{2k},\qquad (i\theta)^{2k+1}=i(-1)^k\theta^{2k+1}\]
+                  \[e^{i\theta}=\underbrace{\sum_{k=0}^{\infty}(-1)^k\frac{\theta^{2k}}{(2k)!}}_{\cos\theta}
+                  +i\underbrace{\sum_{k=0}^{\infty}(-1)^k\frac{\theta^{2k+1}}{(2k+1)!}}_{\sin\theta}\]
+                </div>
+                <div class="euler-proof-step">
+                  \[\boxed{e^{i\theta}=\cos\theta+i\sin\theta}\]
+                </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-euler-i-rotation">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>5.2) Ο i ως περιστροφή και το ανάπτυγμα \(e^{i\theta}\)</h2>
+            <p>
+              Πολλαπλασιασμός ενός μιγαδικού αριθμού με <strong>i</strong> ισοδυναμεί με
+              περιστροφή κατά <strong>90°</strong> αντίθετα από τους δείκτες του ρολογιού.
+              Με τον slider ελέγξεις την γωνία θ.
+            </p>
+            <div class="euler-grid">
+              <canvas id="iRotationCanvas" class="euler-canvas" width="940" height="340"></canvas>
+              <div class="euler-panel">
+                <label class="ocean-control">
+                  <span>θ (radians) <strong id="iRotThetaValue">0.00</strong></span>
+                  <input id="iRotThetaSlider" type="range" min="0" max="6.28" step="0.01" value="0" />
+                </label>
+                <div class="mathjax-box">
+                  <p style="margin:0 0 8px;color:#ffcc66;font-weight:bold;">Ο i ως περιστροφή:</p>
+                  \[i \cdot z \;\Longrightarrow\; \text{στροφή } 90°\ (\text{αντίθετα ρολόι})\]
+                  \[i^0=1,\quad i^1=i,\quad i^2=-1,\quad i^3=-i,\quad i^4=1,\;\ldots\]
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-heat-sine-intro">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>6.1) Διαδραστική: θερμοκρασία ράβδου με απλό ημίτονο</h2>
+            <div class="heat-student-note">
+              Πάνω βλέπεις το προφίλ θερμοκρασίας \(u(x,t)\). Κάτω η ίδια πληροφορία στη ράβδο με χρώμα.
+              Μετακίνησε τον χρόνο και δες ότι το ημίτονο διατηρεί το σχήμα του αλλά το πλάτος του σβήνει λόγω διάχυσης.
+            </div>
+            <canvas id="heatSineWaveCanvas" class="demo-canvas" width="940" height="220"></canvas>
+            <canvas id="heatSineRodCanvas" class="demo-canvas heat-sine-rod-thin" width="940" height="72"></canvas>
+            <div class="heat-sine-controls-row">
+              <div class="slider-group">
+                <div class="slider-label"><span>Χρόνος t</span><span id="heatSineTimeValue">0.00</span></div>
+                <input id="heatSineTimeSlider" type="range" min="0" max="100" step="0.1" value="0" />
+                <div class="heat-student-note">Από \(t=0\) έως τον πρακτικό μηδενισμό του κύματος.</div>
+              </div>
+              <div id="heatSineMath" class="mathjax-box"></div>
             </div>
           </div>
         </div>
@@ -2351,7 +2561,7 @@
       <section class="section" id="sec-heat-rod">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>5.1) Fourier και θερμοκρασία ράβδου</h2>
+            <h2>6.2) Fourier και θερμοκρασία ράβδου</h2>
             <p>
               Ξεκινάμε από μια «περίεργη» αρχική κατανομή θερμοκρασίας με σκαμπανεβάσματα.
               Ο Fourier τη γράφει ως άθροισμα αρμονικών και με τον χρόνο οι υψηλές συχνότητες
@@ -2406,7 +2616,7 @@
       <section class="section" id="sec-step-function">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>5.2) Ράβδος 1 m και step function</h2>
+            <h2>6.3) Ράβδος 1 m και step function</h2>
             <p>
               Η ράβδος έχει μήκος 1 m: στο αριστερό μισό η θερμοκρασία είναι χαμηλή και στο δεξί υψηλή.
               Η απότομη αλλαγή (step) προσεγγίζεται από άθροισμα Fourier με όλο και περισσότερους όρους.
@@ -2426,7 +2636,7 @@
       <section class="section activity-slide" id="sec-activity-spectrum-mix" data-activity-id="spectrum-mix">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.1) Δραστηριότητα: Μίξη συχνοτήτων ομάδας</h2>
+            <h2>7.1) Δραστηριότητα: Μίξη συχνοτήτων ομάδας</h2>
             <p>
               Δημιούργησε ένα σύνθετο σήμα επιλέγοντας συνιστώσες. Προσπάθησε να εντοπίσεις ποια συχνότητα
               θα κυριαρχήσει στο φάσμα πριν εμφανιστούν τα spikes.
@@ -2477,7 +2687,7 @@
       <section class="section" id="sec-fft">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.2) Από το σήμα στο φάσμα (Fourier Transform)</h2>
+            <h2>7.2) Από το σήμα στο φάσμα (Fourier Transform)</h2>
             <p>
               Ρύθμισε τη συχνότητα του σήματος και τη δοκιμαστική συχνότητα <strong>k</strong>.
               Η ημιτονοειδής καμπύλη «τυλίγεται» μέσω του <strong>e<sup>-i2πkn/N</sup></strong> και η
@@ -2502,7 +2712,7 @@
       <section class="section" id="sec-fft-duel">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.3) FFT Duel: Βρες τη συχνότητα του σήματος</h2>
+            <h2>7.3) FFT Duel: Βρες τη συχνότητα του σήματος</h2>
             <p>
               Κάθε student παίρνει διαφορετικό σήμα. Με το slider αλλάζεις τη δοκιμαστική συχνότητα <strong>k</strong>
               και «τυλίγεις/ξετυλίγεις» το σήμα. Όταν βρεις το καλύτερο ταίριασμα πατάς submit, η τιμή στέλνεται στον server
@@ -2537,7 +2747,7 @@
       <section class="section" id="sec-fft-spikes">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.4) Σύνθετο σήμα 2-3 συχνοτήτων και spikes</h2>
+            <h2>7.4) Σύνθετο σήμα 2-3 συχνοτήτων και spikes</h2>
             <p>
               Διαδραστική απεικόνιση μετάβασης από το πεδίο χρόνου στο πεδίο συχνοτήτων, όπου οι
               κορυφές δείχνουν ποιες συχνότητες υπάρχουν περισσότερο. Εδώ βλέπεις και το τύλιγμα
@@ -2569,7 +2779,7 @@
       <section class="section" id="sec-fft-explain">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.5) Τι κάνει ο Fourier Transform (DFT)</h2>
+            <h2>7.5) Τι κάνει ο απλός Fourier Transform (DFT)</h2>
             <p>
               Ο Fourier Transform παίρνει ένα σήμα στον χρόνο και υπολογίζει πόση ενέργεια έχει σε κάθε συχνότητα.
               Έτσι από το «κυματάκι» περνάμε σε spikes που δείχνουν καθαρά ποιες συχνότητες συμμετέχουν.
@@ -2583,7 +2793,7 @@
       <section class="section" id="sec-ifft-explain">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.6) Τι κάνει το IFFT</h2>
+            <h2>7.6) Τι κάνει ο αντίστροφος μετασχηματισμός (IDFT/IFFT)</h2>
             <p>
               Το IFFT κάνει το αντίστροφο: από το φάσμα επιστρέφει στο σήμα χρόνου.
               Αν αφαιρέσουμε τη πολύ υψηλή συχνότητα στο φάσμα, το ανακατασκευασμένο σήμα γίνεται πιο ομαλό.
@@ -2597,7 +2807,7 @@
       <section class="section" id="sec-audio-smooth">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.7) Παράδειγμα Fourier → IFFT σε ήχο (φιλτράρισμα)</h2>
+            <h2>7.7) Παράδειγμα απλού DFT → IFFT σε ήχο (φιλτράρισμα)</h2>
             <p>
               Εδώ εφαρμόζουμε το pipeline στην πράξη: Fourier transform για ανάλυση του ήχου,
               αφαίρεση της πολύ υψηλής συνιστώσας (3200 Hz), και IFFT για ανακατασκευή
@@ -2616,7 +2826,7 @@
       <section class="section activity-slide" id="sec-activity-filter-decisions" data-activity-id="filter-decisions">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.8) Δραστηριότητα: Επιλογή στρατηγικής φίλτρου</h2>
+            <h2>7.8) Δραστηριότητα: Επιλογή στρατηγικής φίλτρου</h2>
             <p>
               Επίλεξε cutoff στρατηγική για το σήμα και δήλωσε αν κρατάς ή αφαιρείς τις υψηλές συχνότητες.
               Συγκρίνουμε τις επιλογές της τάξης πριν ακούσουμε το αποτέλεσμα.
@@ -2658,15 +2868,116 @@
         </div>
       </section>
 
+      <section class="section" id="sec-poly-coeff">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>8.1) Πολυώνυμο από συντελεστές (Coeff → Value)</h2>
+            <p>
+              Γράφουμε το πολυώνυμο με συντελεστές: \(A(x)=a_0+a_1x+a_2x^2+a_3x^3\).
+              Μετακίνησε τους sliders και δες πώς αλλάζει αμέσως η καμπύλη στο πεδίο τιμών.
+            </p>
+            <canvas id="polyCoeffCanvas" class="demo-canvas" width="940" height="300"></canvas>
+            <div class="slider-grid">
+              <div class="slider-group">
+                <div class="slider-label"><span>a0</span><span id="polyA0Value">1.00</span></div>
+                <input id="polyA0" type="range" min="-5" max="5" step="0.05" value="1" />
+              </div>
+              <div class="slider-group">
+                <div class="slider-label"><span>a1</span><span id="polyA1Value">-0.50</span></div>
+                <input id="polyA1" type="range" min="-5" max="5" step="0.05" value="-0.5" />
+              </div>
+              <div class="slider-group">
+                <div class="slider-label"><span>a2</span><span id="polyA2Value">0.75</span></div>
+                <input id="polyA2" type="range" min="-5" max="5" step="0.05" value="0.75" />
+              </div>
+              <div class="slider-group">
+                <div class="slider-label"><span>a3</span><span id="polyA3Value">0.00</span></div>
+                <input id="polyA3" type="range" min="-3" max="3" step="0.05" value="0" />
+              </div>
+            </div>
+            <div id="polyCoeffFormula" class="mathjax-box"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-poly-points">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>8.2) Το DFT είναι αποτίμηση πολυωνύμου</h2>
+            <p>
+              Η βασική σύνδεση: το DFT παίρνει το ίδιο πολυώνυμο και το αποτιμά σε πολλά σημεία
+              του μοναδιαίου κύκλου. Οπτικά, σπάμε το \(A(x)\) σε άρτιο και περιττό μέρος και
+              βλέπουμε παράλληλη αποτίμηση.
+            </p>
+            <canvas id="polyPointsCanvas" class="demo-canvas" width="940" height="320"></canvas>
+            <div class="slider-grid">
+              <div class="slider-group">
+                <div class="slider-label"><span>Γωνία αποτίμησης θ</span><span id="polyPointOffsetValue">1.05</span></div>
+                <input id="polyPointOffset" type="range" min="-3.14" max="3.14" step="0.01" value="1.05" />
+              </div>
+              <div class="slider-group">
+                <div class="slider-label"><span>Παράλληλες αποτιμήσεις N</span><span id="polyPointStepValue">8</span></div>
+                <input id="polyPointStep" type="range" min="4" max="24" step="1" value="8" />
+              </div>
+            </div>
+            <div class="poly-grid">
+              <div class="poly-panel">
+                <h3>Παράλληλες τιμές στο φάσμα</h3>
+                <div id="polyPointsTable" class="poly-table"></div>
+              </div>
+              <div class="poly-panel">
+                <h3>Split άρτιοι / περιττοί</h3>
+                <div id="polyRecoveredFormula" class="mathjax-box"></div>
+                <div id="polyRecoveryError" class="activity-note"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-poly-multiply">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>8.3) Πολλαπλασιασμός πολυωνύμων με συνέλιξη</h2>
+            <p>
+              Ο πολλαπλασιασμός \(C(x)=A(x)\cdot B(x)\) γίνεται ως συνέλιξη συντελεστών.
+              Ρύθμισε το \(B(x)\), δες τα \(A(x),B(x),C(x)\) και τις πράξεις που παράγουν κάθε \(c_k\).
+              Ο αφελής υπολογισμός δοκιμάζει κάθε ζεύγος όρων \((a_i,b_j)\), άρα κόστος περίπου \(N^2\).
+            </p>
+            <canvas id="polyMultiplyCanvas" class="demo-canvas" width="940" height="320"></canvas>
+            <div class="slider-grid">
+              <div class="slider-group">
+                <div class="slider-label"><span>b0</span><span id="polyB0Value">1.00</span></div>
+                <input id="polyB0" type="range" min="-5" max="5" step="0.05" value="1" />
+              </div>
+              <div class="slider-group">
+                <div class="slider-label"><span>b1</span><span id="polyB1Value">1.00</span></div>
+                <input id="polyB1" type="range" min="-5" max="5" step="0.05" value="1" />
+              </div>
+              <div class="slider-group">
+                <div class="slider-label"><span>b2</span><span id="polyB2Value">0.00</span></div>
+                <input id="polyB2" type="range" min="-5" max="5" step="0.05" value="0" />
+              </div>
+              <div class="slider-group">
+                <div class="slider-label"><span>b3</span><span id="polyB3Value">0.00</span></div>
+                <input id="polyB3" type="range" min="-3" max="3" step="0.05" value="0" />
+              </div>
+            </div>
+            <div id="polyMultiplyFormula" class="mathjax-box"></div>
+            <div id="polyConvolutionSteps" class="poly-steps"></div>
+          </div>
+        </div>
+      </section>
+
       <section class="section" id="sec-fft-complexity">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>7.1) Cooley-Tukey: divide and conquer</h2>
+            <h2>9.1) Cooley-Tukey: split σε άρτιους/περιττούς όρους</h2>
             <p>
-              Αν υπολογίσουμε τον DFT άμεσα, η πολυπλοκότητα είναι περίπου <strong>\(N^2\)</strong>.
-              Ο αλγόριθμος Cooley-Tukey σπάει το πρόβλημα σε μικρότερα (divide and conquer) και
-              πετυχαίνει <strong>\(N\log_2N\)</strong>, που για μεγάλα \(N\) είναι τεράστια διαφορά.
-              Τα ratio των αξόνων ξεκινούν αρχικά από <strong>1:1</strong> και αλλάζουν με τους δρομείς.
+              Γράφουμε το πολυώνυμο ως
+              <strong>\(A(x)=A_{\text{even}}(x^2)+x\,A_{\text{odd}}(x^2)\)</strong>.
+              Άρα αντί για ένα πρόβλημα μεγέθους \(N\), λύνουμε δύο προβλήματα μεγέθους \(N/2\),
+              και στο τέλος τα συνδυάζουμε. Αυτό είναι το κλειδί του Cooley-Tukey.
             </p>
             <canvas id="fftComplexityCanvas" class="demo-canvas" width="940" height="320"></canvas>
             <div class="slider-grid">
@@ -2699,7 +3010,7 @@
       <section class="section" id="sec-cooley-tukey">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>7.2) Cooley-Tukey FFT: αναδρομή και επίπεδα</h2>
+            <h2>9.2) Cooley-Tukey FFT: αναδρομή και επίπεδα</h2>
             <p>
               Ιδέα Cooley-Tukey: χωρίζουμε το σήμα σε άρτιες/περιττές θέσεις και λύνουμε δύο
               μικρότερα προβλήματα, ξανά και ξανά. Η σχέση είναι
@@ -2726,7 +3037,7 @@
       <section class="section activity-slide" id="sec-activity-complexity-check" data-activity-id="complexity-check">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>7.3) Αγώνες πολυπλοκότητας (διαδραστικό)</h2>
+            <h2>9.3) Αγώνες πολυπλοκότητας (διαδραστικό)</h2>
             <p class="student-only">
               Επέλεξε μία πολυπλοκότητα. Μπορείτε να επιλέξετε και ίδια συνάρτηση, αλλά στο teacher γράφημα
               θα φανεί ποια «σκάει» πρώτη πάνω από 1.000.000.
@@ -2782,7 +3093,7 @@
       <section class="section" id="sec-bridge-1d2d">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.1) Από 1D ήχο σε 2D θάλασσα</h2>
+            <h2>10.1) Από 1D ήχο σε 2D θάλασσα</h2>
             <canvas id="bridgeDimCanvas" class="demo-canvas" width="940" height="300"></canvas>
             <div id="bridgeDimMath" class="mathjax-box"></div>
           </div>
@@ -2792,7 +3103,7 @@
       <section class="section" id="sec-wave">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.2) Τι είναι ο κυματισμός</h2>
+            <h2>10.2) Τι είναι ο κυματισμός</h2>
             <p>
               Στον ωκεανό, το ύψος της επιφάνειας είναι ένα πεδίο τιμών που μπορεί επίσης να αναλυθεί
               φασματικά, όπως και ένα ηχητικό σήμα.
@@ -2805,7 +3116,7 @@
       <section class="section" id="sec-spectrum">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.3) Ενεργειακό φάσμα</h2>
+            <h2>10.3) Ενεργειακό φάσμα</h2>
             <p>
               Classroom έκδοση: κάθε student στέλνει 3 ή 4 τυχαίες συχνότητες.
               Ο server φτιάχνει ένα κοινό set ~40 όρων (όχι απαραίτητα Gaussian) και από αυτό
@@ -2830,7 +3141,7 @@
       <section class="section" id="sec-phillips">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.4) Φάσμα Phillips</h2>
+            <h2>10.4) Φάσμα Phillips</h2>
             <p>
               Τώρα βάζουμε φυσική: πολλαπλασιάζουμε τις Gaussian τιμές με \(\sqrt{P(k)}\), όπου \(P(k)\)
               είναι το Phillips spectrum. Έτσι ενισχύονται/καταστέλλονται συγκεκριμένα μήκη κύματος.
@@ -2843,7 +3154,7 @@
       <section class="section" id="sec-random">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.5) Τυχαίες φάσεις</h2>
+            <h2>10.5) Τυχαίες φάσεις</h2>
             <p>
               Από το μέτρο και την τυχαία φάση φτιάχνουμε τους μιγαδικούς συντελεστές \(H_0(k)\).
               Αυτό δίνει ρεαλισμό: η επιφάνεια δεν επαναλαμβάνεται μηχανικά, αλλά παραμένει στατιστικά σωστή.
@@ -2856,7 +3167,7 @@
       <section class="section" id="sec-time">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.6) Εξέλιξη στον χρόνο</h2>
+            <h2>10.6) Εξέλιξη στον χρόνο</h2>
             <p>
               Κάθε mode ταλαντώνεται με δική του γωνιακή συχνότητα. Το άθροισμα όλων των modes είναι η
               τελική δυναμική κίνηση του νερού.
@@ -2869,7 +3180,7 @@
       <section class="section" id="sec-ifft">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.7) IFFT: από \(H(k_x,k_z)\) σε \(h(x,z,t)\)</h2>
+            <h2>10.7) IFFT: από \(H(k_x,k_z)\) σε \(h(x,z,t)\)</h2>
             <p>
               Με IFFT γυρίζουμε από το spectral domain στο spatial domain και παίρνουμε ξανά ύψος επιφάνειας
               ανά σημείο πλέγματος.
@@ -2883,7 +3194,7 @@
       <section class="section" id="sec-final">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.8) Τελικό rendering</h2>
+            <h2>10.8) Τελικό rendering</h2>
             <p>
               Το τελικό αποτέλεσμα προκύπτει από displacement + normals + shading και μπορεί να χρησιμοποιηθεί
               για πλάνα μεγάλης κλίμακας.
@@ -2896,7 +3207,7 @@
       <section class="section activity-slide" id="sec-activity-ocean-config" data-activity-id="ocean-config">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.9) Δραστηριότητα: Σενάριο θάλασσας</h2>
+            <h2>10.9) Δραστηριότητα: Σενάριο θάλασσας</h2>
             <p>
               Επίλεξε παραμέτρους για την τελική θάλασσα και ψήφισε ποιο σενάριο θέλεις να δούμε στην ολομέλεια.
             </p>
@@ -2940,7 +3251,7 @@
       <section class="section" id="sec-run">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.1) Εκτέλεση κάθε animation ξεχωριστά</h2>
+            <h2>11.1) Εκτέλεση κάθε animation ξεχωριστά</h2>
             <p>
               Η παρουσίαση πλέον είναι 100% web-native με JavaScript + Canvas.
             </p>
@@ -2954,7 +3265,7 @@
       <section class="section" id="sec-ocean">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.2) Θάλασσα κυμάτων (τελική εικόνα)</h2>
+            <h2>11.2) Θάλασσα κυμάτων (τελική εικόνα)</h2>
             <p>
               Η ίδια ιδέα του στόχου κλείνει την παρουσίαση: από θεμελιώδη κύματα και ήχο,
               σε μια δυναμική επιφάνεια θάλασσας με επάλληλους κυματισμούς.
@@ -2985,16 +3296,81 @@
   </div>
 
   <script>
+    const DEFAULT_PRESENTATION_CONFIG = {
+      accordions: {
+        intro: true,
+        waves: true,
+        sound: true,
+        euler: true,
+        rod: true,
+        transform: true,
+        complexity: true,
+        pipeline: true,
+        closing: true,
+      },
+      classroomPanels: {
+        contents: true,
+        studentJoin: true,
+        chat: true,
+        qr: true,
+        users: true,
+        scores: true,
+      },
+    };
+
+    const PAGE_PRESENTATION_CONFIG = window.SharedPresentationConfig
+      ? SharedPresentationConfig.getAppConfig("fourier-lab", DEFAULT_PRESENTATION_CONFIG)
+      : DEFAULT_PRESENTATION_CONFIG;
+
+    const UI_FEATURES = {
+      showLeftSidebar: false,
+      showMenuButton: true,
+      showHomeButton: true,
+      showEdgeNavigation: true,
+      enableTocAccordions: true,
+      sidebarInitiallyOpen: false,
+    };
+
     const menuBtn = document.getElementById("menuBtn");
+    const homeBtn = document.getElementById("homeBtn");
     const prevSlideBtn = document.getElementById("prevSlideBtn");
     const nextSlideBtn = document.getElementById("nextSlideBtn");
     const sidebar = document.getElementById("sidebar");
+    const classroomDock = document.getElementById("classroomDock");
     const content = document.getElementById("content");
     const slides = Array.from(document.querySelectorAll("main .section"));
-    let currentSlideIndex = 0;
-    let navigationSettleTimer = null;
-    let ignoreObserverUntil = 0;
-    let pendingNavigationIndex = -1;
+
+    if (!UI_FEATURES.showLeftSidebar && sidebar) {
+      sidebar.style.display = "none";
+    }
+
+    if (!UI_FEATURES.showMenuButton && menuBtn) {
+      menuBtn.style.display = "none";
+    }
+
+    if (!UI_FEATURES.showHomeButton && homeBtn) {
+      homeBtn.style.display = "none";
+    }
+
+    if (window.SharedPresentationConfig && sidebar) {
+      SharedPresentationConfig.applyAccordionVisibility(sidebar, PAGE_PRESENTATION_CONFIG.accordions);
+    }
+
+    if (window.SharedPresentationConfig && classroomDock) {
+      SharedPresentationConfig.applyClassroomPanelVisibility(
+        classroomDock,
+        PAGE_PRESENTATION_CONFIG.classroomPanels,
+      );
+    }
+
+    if (!UI_FEATURES.showEdgeNavigation) {
+      if (prevSlideBtn) {
+        prevSlideBtn.style.display = "none";
+      }
+      if (nextSlideBtn) {
+        nextSlideBtn.style.display = "none";
+      }
+    }
 
     const referenceWaveCanvas = document.getElementById("referenceWaveCanvas");
     const interactiveWaveCanvas = document.getElementById("interactiveWaveCanvas");
@@ -3072,9 +3448,7 @@
     const sumAmp4Value = document.getElementById("sumAmp4Value");
     const sumFreq4Value = document.getElementById("sumFreq4Value");
 
-    const classroomDock = document.getElementById("classroomDock");
     const classTocContainer = document.getElementById("classTocContainer");
-    const classAccordionButtons = Array.from(document.querySelectorAll("[data-class-accordion-toggle]"));
 
     const speakerOne = document.getElementById("speakerOne");
     const speakerTwo = document.getElementById("speakerTwo");
@@ -3147,6 +3521,11 @@
     const classFftDuelSolved = document.getElementById("classFftDuelSolved");
     const classFftDuelTotal = document.getElementById("classFftDuelTotal");
     const classFftDuelRoundLabel = document.getElementById("classFftDuelRoundLabel");
+    const heatSineWaveCanvas = document.getElementById("heatSineWaveCanvas");
+    const heatSineRodCanvas = document.getElementById("heatSineRodCanvas");
+    const heatSineTimeSlider = document.getElementById("heatSineTimeSlider");
+    const heatSineTimeValue = document.getElementById("heatSineTimeValue");
+    const heatSineMath = document.getElementById("heatSineMath");
     const heatRodCanvas = document.getElementById("heatRodCanvas");
     const heatTimeSlider = document.getElementById("heatTimeSlider");
     const heatTimeValue = document.getElementById("heatTimeValue");
@@ -3179,6 +3558,35 @@
     const filterStop = document.getElementById("filterStop");
     const fftExplainCanvas = document.getElementById("fftExplainCanvas");
     const fftExplainMath = document.getElementById("fftExplainMath");
+    const polyCoeffCanvas = document.getElementById("polyCoeffCanvas");
+    const polyPointsCanvas = document.getElementById("polyPointsCanvas");
+    const polyMultiplyCanvas = document.getElementById("polyMultiplyCanvas");
+    const polyA0 = document.getElementById("polyA0");
+    const polyA1 = document.getElementById("polyA1");
+    const polyA2 = document.getElementById("polyA2");
+    const polyA3 = document.getElementById("polyA3");
+    const polyA0Value = document.getElementById("polyA0Value");
+    const polyA1Value = document.getElementById("polyA1Value");
+    const polyA2Value = document.getElementById("polyA2Value");
+    const polyA3Value = document.getElementById("polyA3Value");
+    const polyPointOffset = document.getElementById("polyPointOffset");
+    const polyPointStep = document.getElementById("polyPointStep");
+    const polyPointOffsetValue = document.getElementById("polyPointOffsetValue");
+    const polyPointStepValue = document.getElementById("polyPointStepValue");
+    const polyPointsTable = document.getElementById("polyPointsTable");
+    const polyRecoveredFormula = document.getElementById("polyRecoveredFormula");
+    const polyRecoveryError = document.getElementById("polyRecoveryError");
+    const polyCoeffFormula = document.getElementById("polyCoeffFormula");
+    const polyB0 = document.getElementById("polyB0");
+    const polyB1 = document.getElementById("polyB1");
+    const polyB2 = document.getElementById("polyB2");
+    const polyB3 = document.getElementById("polyB3");
+    const polyB0Value = document.getElementById("polyB0Value");
+    const polyB1Value = document.getElementById("polyB1Value");
+    const polyB2Value = document.getElementById("polyB2Value");
+    const polyB3Value = document.getElementById("polyB3Value");
+    const polyMultiplyFormula = document.getElementById("polyMultiplyFormula");
+    const polyConvolutionSteps = document.getElementById("polyConvolutionSteps");
     const fftComplexityCanvas = document.getElementById("fftComplexityCanvas");
     const fftComplexityPower = document.getElementById("fftComplexityPower");
     const fftComplexityPowerValue = document.getElementById("fftComplexityPowerValue");
@@ -3224,7 +3632,35 @@
     const ifftCanvas = document.getElementById("ifftCanvas");
     const finalRenderCanvas = document.getElementById("finalRenderCanvas");
 
+    const taylorPolyfitCanvas = document.getElementById("taylorPolyfitCanvas");
+    const taylorPolyC0Slider = document.getElementById("taylorPolyC0Slider");
+    const taylorPolyC1Slider = document.getElementById("taylorPolyC1Slider");
+    const taylorPolyC2Slider = document.getElementById("taylorPolyC2Slider");
+    const taylorPolyC3Slider = document.getElementById("taylorPolyC3Slider");
+    const taylorPolyC0Value = document.getElementById("taylorPolyC0Value");
+    const taylorPolyC1Value = document.getElementById("taylorPolyC1Value");
+    const taylorPolyC2Value = document.getElementById("taylorPolyC2Value");
+    const taylorPolyC3Value = document.getElementById("taylorPolyC3Value");
+    const taylorPolyfitFormulaBox = document.getElementById("taylorPolyfitFormulaBox");
+
+    const taylorCosCanvas = document.getElementById("taylorCosCanvas");
+    const taylorCosTermsSlider = document.getElementById("taylorCosTermsSlider");
+    const taylorCosTermsValue = document.getElementById("taylorCosTermsValue");
+    const taylorCosMath = document.getElementById("taylorCosMath");
+
+    const taylorSinCanvas = document.getElementById("taylorSinCanvas");
+    const taylorSinTermsSlider = document.getElementById("taylorSinTermsSlider");
+    const taylorSinTermsValue = document.getElementById("taylorSinTermsValue");
+    const taylorSinMath = document.getElementById("taylorSinMath");
+
+    const taylorExpCanvas = document.getElementById("taylorExpCanvas");
+    const taylorExpTermsSlider = document.getElementById("taylorExpTermsSlider");
+    const taylorExpTermsValue = document.getElementById("taylorExpTermsValue");
+    const taylorExpMath = document.getElementById("taylorExpMath");
     const eulerPlaneCanvas = document.getElementById("eulerPlaneCanvas");
+    const iRotationCanvas = document.getElementById("iRotationCanvas");
+    const iRotThetaSlider = document.getElementById("iRotThetaSlider");
+    const iRotThetaValue = document.getElementById("iRotThetaValue");
     const thetaSlider = document.getElementById("thetaSlider");
     const radiusSlider = document.getElementById("radiusSlider");
     const thetaValue = document.getElementById("thetaValue");
@@ -3283,124 +3719,29 @@
     let heatClassroomProfile = null;
     const classroomOscillators = new Map();
     let teacherAudioUnlockInstalled = false;
-    let classroomContentShiftPx = 0;
+    window.SharedPresentationUi.initAccordions();
 
-    function updateClassroomLayoutShift() {
-      if (!content || !classroomDock) {
-        classroomContentShiftPx = 0;
-        document.documentElement.style.setProperty("--classroom-content-shift", "0px");
-        return;
-      }
-
-      const isDockOpen = classroomDock.classList.contains("open");
-      if (!isDockOpen || window.innerWidth <= 900) {
-        classroomContentShiftPx = 0;
-      } else {
-        const dockWidth = Math.max(0, classroomDock.getBoundingClientRect().width || 0);
-        const maxShift = Math.max(0, window.innerWidth - 320);
-        classroomContentShiftPx = Math.round(Math.min(dockWidth, maxShift));
-      }
-
-      document.documentElement.style.setProperty("--classroom-content-shift", `${classroomContentShiftPx}px`);
-      content.classList.toggle("sidebar-open-shift", classroomContentShiftPx > 0);
-    }
-
-    function updateEdgeNavPosition() {
-      if (window.innerWidth <= 900) {
-        prevSlideBtn.style.left = "10px";
-        return;
-      }
-
-      prevSlideBtn.style.left = `${Math.max(14, 14 + classroomContentShiftPx)}px`;
-    }
-
-    window.addEventListener("resize", () => {
-      updateClassroomLayoutShift();
-      updateEdgeNavPosition();
+    const classroomDockUi = window.SharedPresentationUi.initDock({
+      dockSelector: "#classroomDock",
+      menuButtonSelector: "#menuBtn",
+      contentSelector: "#content",
+      prevButtonSelector: "#prevSlideBtn",
+      mobileBreakpoint: 900,
+      shiftVariableName: "--classroom-content-shift",
+      toggleEventName: "fourier:classroom-dock-toggle",
     });
 
-    function setClassAccordionOpen(button, forceOpen = null) {
-      const targetId = String(button?.dataset?.target || "").trim();
-      const target = targetId ? document.getElementById(targetId) : null;
-      const arrow = button?.querySelector(".class-accordion-arrow") || null;
-
-      if (!target) {
-        return;
-      }
-
-      const shouldOpen = forceOpen === null
-        ? !target.classList.contains("open")
-        : Boolean(forceOpen);
-
-      target.classList.toggle("open", shouldOpen);
-      arrow?.classList.toggle("open", shouldOpen);
-      button.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
-    }
-
-    classAccordionButtons.forEach((button) => {
-      setClassAccordionOpen(button, button.getAttribute("aria-expanded") !== "false");
-      button.addEventListener("click", () => {
-        setClassAccordionOpen(button, null);
-      });
-    });
-
-    function emitClassroomDockState(open) {
-      document.dispatchEvent(
-        new CustomEvent("fourier:classroom-dock-toggle", {
-          detail: {
-            open,
-          },
-        })
-      );
-    }
-
+    // @util UI — ανοίγει/κλείνει το classroom dock panel. Καλείται από navigation events.
     function setClassroomDockOpen(forceOpen = null) {
-      if (!classroomDock) {
-        return false;
+      return classroomDockUi ? classroomDockUi.setOpen(forceOpen) : false;
+    }
+
+    // @util UI — ρυθμίζει θέση ◀▶ navigation buttons ανάλογα με dock πλάτος.
+    function updateEdgeNavPosition() {
+      if (classroomDockUi) {
+        classroomDockUi.updateEdgeNavPosition();
       }
-
-      const shouldOpen = forceOpen === null
-        ? !classroomDock.classList.contains("open")
-        : Boolean(forceOpen);
-
-      classroomDock.classList.toggle("open", shouldOpen);
-      menuBtn.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
-      menuBtn.setAttribute("aria-label", shouldOpen ? "Κλείσιμο classroom panel" : "Άνοιγμα classroom panel");
-      updateClassroomLayoutShift();
-      updateEdgeNavPosition();
-      emitClassroomDockState(shouldOpen);
-      return shouldOpen;
     }
-
-    if (classroomDock && menuBtn) {
-      menuBtn.addEventListener("click", (event) => {
-        event.stopPropagation();
-        setClassroomDockOpen(null);
-      });
-
-      document.addEventListener("click", (event) => {
-        if (!classroomDock.classList.contains("open")) {
-          return;
-        }
-
-        const target = event.target;
-        if (classroomDock.contains(target) || menuBtn.contains(target)) {
-          return;
-        }
-
-        setClassroomDockOpen(false);
-      });
-
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-          setClassroomDockOpen(false);
-        }
-      });
-    }
-
-    emitClassroomDockState(Boolean(classroomDock && classroomDock.classList.contains("open")));
-  updateClassroomLayoutShift();
-  updateEdgeNavPosition();
 
     if (classTocContainer && sidebar) {
       classTocContainer.innerHTML = "";
@@ -3418,13 +3759,10 @@
     const tocGroupTitles = Array.from(tocRoot.querySelectorAll(".toc-group-title"));
     const tocLinks = Array.from(tocRoot.querySelectorAll('a[href^="#"]'));
 
-    tocLinks.forEach((link) => {
-      link.addEventListener("click", () => {
-        if (window.innerWidth <= 900) {
-          setClassroomDockOpen(false);
-        }
-      });
-    });
+    if (UI_FEATURES.enableTocAccordions && window.SharedPresentationToc) {
+      SharedPresentationToc.initGroupAccordions({ root: tocRoot });
+    }
+
     const tocLinkBySlideId = new Map(
       tocLinks
         .map((link) => {
@@ -3436,6 +3774,7 @@
     );
     let activeTocSlideId = "";
 
+    // @util TOC — επιστρέφει την .toc-group-title που ανήκει ένα TOC link.
     function findTocGroupTitleForElement(element) {
       let pointer = element?.previousElementSibling || null;
       while (pointer && !pointer.classList.contains("toc-group-title")) {
@@ -3444,6 +3783,7 @@
       return pointer;
     }
 
+    // @util TOC — σημαίνει το ενεργό slide στον πίνακα περιεχομένων και κάνει scroll.
     function updateActiveTocSlide(index, shouldScrollIntoView = true) {
       const slide = slides[index];
       const slideId = slide?.id || "";
@@ -3471,193 +3811,33 @@
       }
     }
 
-    let classroomNavigationLocked = false;
-    let lastSlideBroadcast = { index: -1, source: "" };
-
-    function refreshNavButtons() {
-      prevSlideBtn.disabled = classroomNavigationLocked || currentSlideIndex === 0;
-      nextSlideBtn.disabled = classroomNavigationLocked || currentSlideIndex === slides.length - 1;
-    }
-
-    function emitSlideChanged(source = "local") {
-      const slide = slides[currentSlideIndex];
-      if (!slide) {
-        return;
-      }
-
-      if (lastSlideBroadcast.index === currentSlideIndex && lastSlideBroadcast.source === source) {
-        return;
-      }
-
-      lastSlideBroadcast = { index: currentSlideIndex, source };
-      document.dispatchEvent(
-        new CustomEvent("fourier:slide-changed", {
-          detail: {
-            index: currentSlideIndex,
-            slideId: slide.id || "",
-            source,
-          },
-        })
-      );
-    }
-
-    function beginProgrammaticNavigation(targetIndex, smooth) {
-      pendingNavigationIndex = targetIndex;
-      ignoreObserverUntil = performance.now() + (smooth ? 700 : 120);
-
-      if (navigationSettleTimer) {
-        clearTimeout(navigationSettleTimer);
-      }
-
-      navigationSettleTimer = window.setTimeout(() => {
-        pendingNavigationIndex = -1;
-        navigationSettleTimer = null;
-      }, smooth ? 720 : 140);
-    }
-
-    function goToSlide(index, options = {}) {
-      const boundedIndex = Math.max(0, Math.min(slides.length - 1, index));
-      const source = options.source || "local";
-      const force = Boolean(options.force);
-      const smooth = options.smooth !== false;
-
-      if (classroomNavigationLocked && !force && source !== "remote") {
-        return false;
-      }
-
-      if (!force && boundedIndex === currentSlideIndex && pendingNavigationIndex !== -1) {
-        return true;
-      }
-
-      currentSlideIndex = boundedIndex;
-      beginProgrammaticNavigation(boundedIndex, smooth);
-      if (contentEl) {
-        contentEl.scrollTo({
-          top: slides[boundedIndex].offsetTop,
-          behavior: smooth ? "smooth" : "auto",
-        });
-      } else {
-        slides[boundedIndex].scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "start" });
-      }
-      refreshNavButtons();
-      updateActiveTocSlide(boundedIndex);
-      emitSlideChanged(source);
-      return true;
-    }
-
-    prevSlideBtn.addEventListener("click", () => goToSlide(currentSlideIndex - 1));
-    nextSlideBtn.addEventListener("click", () => goToSlide(currentSlideIndex + 1));
-
-    document.addEventListener("keydown", (event) => {
-      const target = event.target;
-      const tagName = target?.tagName?.toLowerCase?.() || "";
-      if (tagName === "input" || tagName === "textarea" || target?.isContentEditable) {
-        return;
-      }
-      if (event.key === "ArrowLeft") {
-        event.preventDefault();
-        goToSlide(currentSlideIndex - 1);
-      } else if (event.key === "ArrowRight") {
-        event.preventDefault();
-        goToSlide(currentSlideIndex + 1);
-      }
+    window.SharedPresentationDeck.init({
+      contentSelector: "#content",
+      slides,
+      links: tocLinks,
+      prevButtonSelector: "#prevSlideBtn",
+      nextButtonSelector: "#nextSlideBtn",
+      menuButtonSelector: "#menuBtn",
+      sidebarSelector: "#sidebar",
+      homeButtonSelector: UI_FEATURES.showHomeButton ? "#homeBtn" : null,
+      menuButtonTogglesSidebar: false,
+      initialSidebarOpen: UI_FEATURES.showLeftSidebar && UI_FEATURES.sidebarInitiallyOpen,
+      exposeAs: "fourierSlideDeck",
+      setActiveLink(index, slide, options = {}) {
+        updateActiveTocSlide(index, options.shouldScrollIntoView !== false);
+      },
+      onLinkNavigate() {
+        if (window.innerWidth <= 900) {
+          setClassroomDockOpen(false);
+        }
+      },
     });
 
-    const contentEl = document.getElementById("content");
-
-    function applyNavigationLockEffects() {
-      if (!contentEl) {
-        return;
-      }
-
-      contentEl.style.overflowY = classroomNavigationLocked ? "hidden" : "auto";
+    if (!UI_FEATURES.showLeftSidebar && UI_FEATURES.showHomeButton && homeBtn) {
+      homeBtn.classList.add("visible");
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (performance.now() < ignoreObserverUntil) {
-          return;
-        }
-
-        let bestEntry = null;
-
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting || entry.intersectionRatio <= 0.55) {
-            return;
-          }
-
-          if (!bestEntry || entry.intersectionRatio > bestEntry.intersectionRatio) {
-            bestEntry = entry;
-          }
-        });
-
-        if (!bestEntry) {
-          return;
-        }
-
-        const idx = slides.indexOf(bestEntry.target);
-        if (idx < 0 || idx === currentSlideIndex) {
-          return;
-        }
-
-        pendingNavigationIndex = -1;
-        currentSlideIndex = idx;
-        refreshNavButtons();
-        updateActiveTocSlide(idx);
-        emitSlideChanged("scroll");
-      },
-      {
-        root: contentEl,
-        threshold: [0.55, 0.7],
-      }
-    );
-
-    slides.forEach((slide) => observer.observe(slide));
-    applyNavigationLockEffects();
-    refreshNavButtons();
-    updateActiveTocSlide(0, false);
-    emitSlideChanged("init");
-
-    window.fourierSlideDeck = {
-      getSlides() {
-        return slides.map((slide, index) => ({ index, id: slide.id || "" }));
-      },
-      getCurrentSlideIndex() {
-        return currentSlideIndex;
-      },
-      getCurrentSlideId() {
-        return slides[currentSlideIndex]?.id || "";
-      },
-      goToSlide(index, options = {}) {
-        return goToSlide(index, options);
-      },
-      goToSlideById(slideId, options = {}) {
-        const targetIndex = slides.findIndex((slide) => slide.id === slideId);
-        if (targetIndex < 0) {
-          return false;
-        }
-        return goToSlide(targetIndex, options);
-      },
-      setNavigationLocked(locked) {
-        classroomNavigationLocked = Boolean(locked);
-        applyNavigationLockEffects();
-        refreshNavButtons();
-      },
-      isNavigationLocked() {
-        return classroomNavigationLocked;
-      },
-      refreshNavButtons,
-    };
-
-    document.dispatchEvent(
-      new CustomEvent("fourier:deck-ready", {
-        detail: {
-          currentSlideIndex,
-          currentSlideId: slides[currentSlideIndex]?.id || "",
-        },
-      })
-    );
-
+    // @util Canvas — προσαρμόζει ανάλυση canvas στο devicePixelRatio της οθόνης.
     function fitCanvasToDisplaySize(canvas) {
       if (!canvas) {
         return;
@@ -3671,6 +3851,56 @@
       }
     }
 
+    function drawWaveGridAndAxes(ctx, width, height, midY, ratio) {
+      const leftPad = Math.round(width * 0.06);
+      const rightPad = Math.round(width * 0.02);
+      const topPad = Math.round(height * 0.1);
+      const bottomPad = Math.round(height * 0.12);
+      const plotLeft = leftPad;
+      const plotRight = width - rightPad;
+      const plotTop = topPad;
+      const plotBottom = height - bottomPad;
+
+      ctx.strokeStyle = "rgba(53, 80, 125, 0.58)";
+      ctx.lineWidth = Math.max(1, ratio);
+      for (let step = 0; step <= 6; step += 1) {
+        const x = plotLeft + ((plotRight - plotLeft) * step) / 6;
+        ctx.beginPath();
+        ctx.moveTo(x, plotTop);
+        ctx.lineTo(x, plotBottom);
+        ctx.stroke();
+      }
+
+      for (let step = 0; step <= 4; step += 1) {
+        const y = plotTop + ((plotBottom - plotTop) * step) / 4;
+        ctx.beginPath();
+        ctx.moveTo(plotLeft, y);
+        ctx.lineTo(plotRight, y);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = "#8ab6ff";
+      ctx.lineWidth = Math.max(1.4, ratio * 1.4);
+      ctx.beginPath();
+      ctx.moveTo(plotLeft, midY);
+      ctx.lineTo(plotRight, midY);
+      ctx.moveTo(plotLeft, plotTop);
+      ctx.lineTo(plotLeft, plotBottom);
+      ctx.stroke();
+
+      ctx.fillStyle = "#b8d6ff";
+      ctx.font = `${Math.max(10, 10 * ratio)}px Segoe UI, sans-serif`;
+      ctx.fillText("y", plotLeft + 6, plotTop + 12);
+      ctx.fillText("x", plotRight - 12, midY - 6);
+
+      return {
+        plotLeft,
+        plotRight,
+        plotWidth: Math.max(1, plotRight - plotLeft),
+      };
+    }
+
+    // @slide 2.1 — σχεδιάζει στατικό ημίτονο y = A·sin(2πfx + φ) σε canvas.
     function drawWave(canvas, amplitude, frequency, phase, color) {
       if (!canvas) {
         return;
@@ -3685,22 +3915,7 @@
       context.clearRect(0, 0, width, height);
       context.fillStyle = "#000";
       context.fillRect(0, 0, width, height);
-
-      context.strokeStyle = "#23406f";
-      context.lineWidth = Math.max(1, ratio);
-      context.beginPath();
-      context.moveTo(0, midY);
-      context.lineTo(width, midY);
-      context.stroke();
-
-      context.strokeStyle = "#36507f";
-      for (let step = 0; step <= 4; step += 1) {
-        const x = (width / 4) * step;
-        context.beginPath();
-        context.moveTo(x, 0);
-        context.lineTo(x, height);
-        context.stroke();
-      }
+      const plot = drawWaveGridAndAxes(context, width, height, midY, ratio);
 
       const baseAmplitude = height * 0.30;
       const cyclesAcrossScreen = 2.2;
@@ -3708,11 +3923,11 @@
       context.strokeStyle = color;
       context.lineWidth = Math.max(2, ratio * 2);
       context.beginPath();
-      for (let pixelX = 0; pixelX <= width; pixelX += 2) {
-        const normalizedX = pixelX / width;
+      for (let pixelX = plot.plotLeft; pixelX <= plot.plotRight; pixelX += 2) {
+        const normalizedX = (pixelX - plot.plotLeft) / plot.plotWidth;
         const angle = 2 * Math.PI * (frequency * cyclesAcrossScreen * normalizedX) + phase;
         const y = midY - baseAmplitude * amplitude * Math.sin(angle);
-        if (pixelX === 0) {
+        if (pixelX === plot.plotLeft) {
           context.moveTo(pixelX, y);
         } else {
           context.lineTo(pixelX, y);
@@ -3721,6 +3936,7 @@
       context.stroke();
     }
 
+    // @slide 2.2 — σχεδιάζει κινούμενο κύμα sin(kx − ωt) ανιμέ με χρόνο t.
     function drawTravelingWave(canvas, k, omega, time, color) {
       if (!canvas) {
         return;
@@ -3735,32 +3951,17 @@
       context.clearRect(0, 0, width, height);
       context.fillStyle = "#000";
       context.fillRect(0, 0, width, height);
-
-      context.strokeStyle = "#264575";
-      context.lineWidth = Math.max(1, ratio);
-      context.beginPath();
-      context.moveTo(0, midY);
-      context.lineTo(width, midY);
-      context.stroke();
-
-      context.strokeStyle = "#345886";
-      for (let step = 0; step <= 4; step += 1) {
-        const x = (width / 4) * step;
-        context.beginPath();
-        context.moveTo(x, 0);
-        context.lineTo(x, height);
-        context.stroke();
-      }
+      const plot = drawWaveGridAndAxes(context, width, height, midY, ratio);
 
       const baseAmplitude = height * 0.32;
       context.strokeStyle = color;
       context.lineWidth = Math.max(2, ratio * 2);
       context.beginPath();
-      for (let pixelX = 0; pixelX <= width; pixelX += 2) {
-        const normalizedX = pixelX / Math.max(1, width);
+      for (let pixelX = plot.plotLeft; pixelX <= plot.plotRight; pixelX += 2) {
+        const normalizedX = (pixelX - plot.plotLeft) / plot.plotWidth;
         const angle = 2 * Math.PI * (k * normalizedX) - omega * time;
         const y = midY - baseAmplitude * Math.sin(angle);
-        if (pixelX === 0) {
+        if (pixelX === plot.plotLeft) {
           context.moveTo(pixelX, y);
         } else {
           context.lineTo(pixelX, y);
@@ -3769,6 +3970,7 @@
       context.stroke();
     }
 
+    // @slide 2.1 — ενημερώνει labels πλάτους/συχνότητας/φάσης και MathJax τύπο.
     function updateSliderLabels() {
       if (!ampSlider) {
         return;
@@ -3779,8 +3981,12 @@
       if (waveParamMath) {
         const amplitude = Number(ampSlider.value).toFixed(2);
         const frequency = Number(freqSlider.value).toFixed(2);
-        const phase = Number(phaseSlider.value).toFixed(2);
-        waveParamMath.innerHTML = `\\[f(x)=\\sin(x),\\qquad y(x)=${amplitude}\\sin\\left(2\\pi\\cdot ${frequency}x + ${phase}\\right)\\]`;
+        const phaseRaw = Number(phaseSlider.value);
+        const phaseMagnitude = Math.abs(phaseRaw).toFixed(2);
+        const phaseTerm = Math.abs(phaseRaw) < 1e-9
+          ? ""
+          : (phaseRaw < 0 ? ` - ${phaseMagnitude}` : ` + ${phaseMagnitude}`);
+        waveParamMath.innerHTML = `\\[f(x)=\\sin(x),\\qquad y(x)=${amplitude}\\sin\\left(2\\pi\\cdot ${frequency}x${phaseTerm}\\right)\\]`;
         if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
           window.MathJax.typesetPromise([waveParamMath]).catch(() => {});
         }
@@ -3794,6 +4000,7 @@
     });
     updateSliderLabels();
 
+    // @slide 2.2 — ενημερώνει labels k, ω και MathJax τύπο διάδοσης κύματος.
     function updatePropagationLabels() {
       if (!kSlider || !omegaSlider) {
         return;
@@ -3819,6 +4026,7 @@
     });
     updatePropagationLabels();
 
+    // @slide 2.4 — επιστρέφει παραμέτρους 2D κύματος A, kx, kz, ω, φ από sliders.
     function getWave2DSettings() {
       return {
         amp: wave2DAmp ? Number(wave2DAmp.value) : 0.8,
@@ -3829,6 +4037,7 @@
       };
     }
 
+    // @slide 2.4 — ενημερώνει labels A, kx, kz, ω, φ του 2D κύματος.
     function updateWave2DLabels() {
       const settings = getWave2DSettings();
       if (wave2DAmpValue) wave2DAmpValue.textContent = settings.amp.toFixed(2);
@@ -3843,6 +4052,43 @@
     });
     updateWave2DLabels();
 
+    // @ui — τοποθετεί τα tooltips αριστερά/δεξιά όταν ο slider είναι στα άκρα του viewport.
+    function updateAdaptiveTooltipPlacement() {
+      const tipControls = document.querySelectorAll('.ocean-control[data-tip]');
+      const edgePadding = 14;
+      const minTipWidth = 180;
+      const maxTipWidth = 290;
+      const preferredTipWidth = window.innerWidth * 0.22;
+      const tipWidth = Math.min(Math.max(preferredTipWidth, minTipWidth), maxTipWidth);
+
+      tipControls.forEach((el) => {
+        el.removeAttribute("data-tip-pos");
+        const rect = el.getBoundingClientRect();
+        const hostRect = (el.closest(".slide-card") || document.documentElement).getBoundingClientRect();
+        const centeredLeft = rect.left + rect.width / 2 - tipWidth / 2;
+        const centeredRight = centeredLeft + tipWidth;
+
+        if (centeredLeft < hostRect.left + edgePadding) {
+          el.setAttribute("data-tip-pos", "left");
+        } else if (centeredRight > hostRect.right - edgePadding) {
+          el.setAttribute("data-tip-pos", "right");
+        }
+      });
+    }
+
+    function initAdaptiveSliderTooltips() {
+      const tipControls = document.querySelectorAll('.ocean-control[data-tip]');
+      tipControls.forEach((el) => {
+        el.addEventListener("mouseenter", updateAdaptiveTooltipPlacement);
+        el.addEventListener("focusin", updateAdaptiveTooltipPlacement);
+      });
+      updateAdaptiveTooltipPlacement();
+    }
+
+    initAdaptiveSliderTooltips();
+    window.addEventListener("resize", updateAdaptiveTooltipPlacement);
+
+    // @slide 2.5 — επιστρέφει παραμέτρους Gerstner wave A, Q, k, ω, dir από sliders.
     function getGerstnerSettings() {
       return {
         amp: gerstnerAmp ? Number(gerstnerAmp.value) : 0.7,
@@ -3853,6 +4099,7 @@
       };
     }
 
+    // @slide 2.5 — ενημερώνει labels A, Q, k, ω, dir Gerstner wave.
     function updateGerstnerLabels() {
       const settings = getGerstnerSettings();
       if (gerstnerAmpValue) gerstnerAmpValue.textContent = settings.amp.toFixed(2);
@@ -3867,16 +4114,18 @@
     });
     updateGerstnerLabels();
 
+    // @slide 2.6 — επιστρέφει παραμέτρους orbit Gerstner (A, Q, k, ω, depthFade).
     function getGerstnerOrbitSettings() {
       return {
-        amp: gerstnerOrbitAmp ? Number(gerstnerOrbitAmp.value) : 0.7,
-        q: gerstnerOrbitQ ? Number(gerstnerOrbitQ.value) : 0.55,
-        k: gerstnerOrbitK ? Number(gerstnerOrbitK.value) : 1.4,
-        omega: gerstnerOrbitOmega ? Number(gerstnerOrbitOmega.value) : 1.1,
+        amp: gerstnerAmp ? Number(gerstnerAmp.value) : 0.7,
+        q: gerstnerQ ? Number(gerstnerQ.value) : 0.55,
+        k: gerstnerK ? Number(gerstnerK.value) : 1.4,
+        omega: gerstnerOmega ? Number(gerstnerOmega.value) : 1.1,
         depthFade: gerstnerOrbitDepth ? Number(gerstnerOrbitDepth.value) : 0.85,
       };
     }
 
+    // @slide 2.6 — ενημερώνει labels A, Q, k, ω, depth orbit Gerstner.
     function updateGerstnerOrbitLabels() {
       const settings = getGerstnerOrbitSettings();
       if (gerstnerOrbitAmpValue) gerstnerOrbitAmpValue.textContent = settings.amp.toFixed(2);
@@ -3891,6 +4140,7 @@
     });
     updateGerstnerOrbitLabels();
 
+    // @slide 2.3 — ενημερώνει labels πλάτους/συχνότητας 4 συνιστωσών αθροίσματος.
     function updateSumLabels() {
       if (!sumAmp1) {
         return;
@@ -3910,6 +4160,7 @@
     });
     updateSumLabels();
 
+    // @slide 3.1 — ενημερώνει labels συχνότητας και πλάτους απλού ήχου.
     function updateSoundSimpleLabels() {
       if (!soundSimpleFreq) return;
       soundSimpleFreqValue.textContent = Number(soundSimpleFreq.value).toFixed(1);
@@ -3920,6 +4171,7 @@
     });
     updateSoundSimpleLabels();
 
+    // @slide 6.2 — ενημερώνει labels f_signal και k Euler bridge.
     function updateFFTBridgeLabels() {
       if (!fftSignalFreq) {
         return;
@@ -3933,6 +4185,7 @@
     });
     updateFFTBridgeLabels();
 
+    // @slide 6.3 | @util — σφηνώνει συχνότητα FFT Duel εντός [0, 8] Hz.
     function clampFftDuelFrequency(value, fallback = 2) {
       const numeric = Number(value);
       if (!Number.isFinite(numeric)) {
@@ -3941,6 +4194,7 @@
       return Math.max(0, Math.min(8, numeric));
     }
 
+    // @slide 6.3 | @util — συντομεύει roundId σε σύντομη επιγραφή.
     function formatFftDuelRound(roundId) {
       const safe = String(roundId || "").trim();
       if (!safe) {
@@ -3950,17 +4204,20 @@
       return compact.slice(-6);
     }
 
+    // @slide 6.3 | @util — επιστρέφει ετικέτα τύπου σήματος (sine/square/sawtooth/triangle).
     function getFftDuelSignalLabel(signalKind) {
       const safe = String(signalKind || "").trim();
       return fftDuelSignalLabels[safe] || "Sine";
     }
 
+    // @slide 6.3 — γράφει κατάσταση “Κλειδώθηκε / Αναμονή” στο FFT Duel UI.
     function setFftDuelStatus(message) {
       if (fftDuelLockLabel) {
         fftDuelLockLabel.textContent = message;
       }
     }
 
+    // @slide 6.3 — εμφανίζει πίνακα αποτελεσμάτων FFT Duel στο teacher dock.
     function renderTeacherFftDuelBoard(players) {
       if (!classFftDuelBoard) {
         return;
@@ -4026,6 +4283,7 @@
         .join("");
     }
 
+    // @slide 6.3 — ενημερώνει όλο το UI γύρου FFT Duel (κουμπιά, κατάσταση, αποτελέσματα).
     function renderFftDuelUi() {
       const own = fftDuelUiState.own || null;
       const roundLabel = formatFftDuelRound(fftDuelUiState.roundId);
@@ -4117,6 +4375,7 @@
       renderTeacherFftDuelBoard(fftDuelUiState.players);
     }
 
+    // @slide 6.3 — εφαρμόζει server payload κατάστασης FFT Duel και καλεί renderFftDuelUi.
     function applyFftDuelState(detail) {
       const payload = detail && typeof detail === "object" ? detail : {};
       fftDuelUiState.roundId = String(payload.roundId || "").trim();
@@ -4188,6 +4447,7 @@
 
     renderFftDuelUi();
 
+    // @slide 9.5 | @util — μορφοποιεί preview τυχαίων συχνοτήτων σε HTML string.
     function formatRandomFreqPreviewItems(items) {
       if (!Array.isArray(items) || !items.length) {
         return "-";
@@ -4197,11 +4457,13 @@
         .join(", ");
     }
 
+    // @slide 9.5 — επιλέγει μέγεθος pack (3 ή 4 συχνότητες) βάσει τους συμμετέχοντες.
     function chooseRandomPackSize() {
       const participantEstimate = Math.max(1, classroomRandomFreqPacks.length);
       return participantEstimate <= 10 ? 4 : 3;
     }
 
+    // @slide 9.5 — κατασκευάζει τυχαίας συχνότητες pack για ένα student.
     function buildRandomFreqPackItems(packSize) {
       const items = [];
       for (let i = 0; i < packSize; i += 1) {
@@ -4214,6 +4476,7 @@
       return items;
     }
 
+    // @slide 9.5 — εμφανίζει teacher πίνακα random pack συχνοτήτων ανά μαθητή.
     function renderRandomFreqTeacherTable() {
       if (!randomFreqTeacherTable) {
         return;
@@ -4246,6 +4509,7 @@
       randomFreqTeacherTable.innerHTML = rows.join("");
     }
 
+    // @slide 9.5 — εφαρμόζει server payload τυχαίων πακέτων συχνοτήτων classroom.
     function applyClassroomRandomFreqState(detail) {
       const payload = detail && typeof detail === "object" ? detail : {};
       classroomRandomFreqPacks = Array.isArray(payload.packs) ? payload.packs.slice(0, 140) : [];
@@ -4289,6 +4553,7 @@
       applyClassroomRandomFreqState(event && event.detail ? event.detail : null);
     });
 
+    // @slide 7.1 — επιστρέφει scale X/Y για άξονες καμπύλοτητας.
     function getComplexityAxisRatios() {
       return {
         x: fftAxisXRatio ? Number(fftAxisXRatio.value) : 1,
@@ -4296,6 +4561,7 @@
       };
     }
 
+    // @slide 7.1 — υπολογίζει N², N·log₂N, κέρδος και cutoff για τρέχουσα N.
     function getComplexityValues() {
       const exponent = fftComplexityPower ? Number(fftComplexityPower.value) : 10;
       const n = Math.pow(2, exponent);
@@ -4321,6 +4587,7 @@
       };
     }
 
+    // @slide 7.1 | @util — μορφοποιεί αριθμό operations ως T/B/M σε compact string.
     function formatOps(value) {
       if (value >= 1e12) {
         return `${(value / 1e12).toFixed(2)}T`;
@@ -4334,12 +4601,14 @@
       return Math.round(value).toLocaleString("el-GR");
     }
 
+    // @slide 7.1 — ενημερώνει labels X/Y scale (γραμμική/λογαριθμική κλίμακα).
     function updateComplexityAxisRatioLabels() {
       const axisRatios = getComplexityAxisRatios();
       if (fftAxisXRatioValue) fftAxisXRatioValue.textContent = axisRatios.x.toFixed(2);
       if (fftAxisYRatioValue) fftAxisYRatioValue.textContent = axisRatios.y.toFixed(2);
     }
 
+    // @slide 7.1 — ενημερώνει labels N, DFT πράξεις, FFT πράξεις, κέρδος.
     function updateComplexityLabels() {
       if (!fftComplexityPower) {
         return;
@@ -4362,11 +4631,13 @@
     });
     updateComplexityLabels();
 
+    // @slide 7.3 | @util — επικυρώνει κλειδί μοντέλου πολυπλοκότητας εντός επιτρεπτών επιλογών.
     function normalizeComplexityRaceChoice(value) {
       const safe = String(value || "").trim();
       return complexityRaceModelMap.has(safe) ? safe : "";
     }
 
+    // @slide 7.3 — υπολογίζει N = 10^step από το slider.
     function getComplexityRaceNFromStep() {
       const step = complexityRaceNStep ? Number(complexityRaceNStep.value) : 0;
       if (!Number.isFinite(step) || step <= 0) {
@@ -4376,6 +4647,7 @@
       return Math.pow(10, power);
     }
 
+    // @slide 7.3 — ενημερώνει label N για complexity race.
     function updateComplexityRaceNLabel() {
       if (!complexityRaceNValue) {
         return;
@@ -4384,6 +4656,7 @@
       complexityRaceNValue.textContent = n.toLocaleString("el-GR");
     }
 
+    // @slide 7.3 | @util — n! με cap στο Infinity για αποφυγή overflow.
     function factorialBounded(inputN) {
       const n = Math.max(0, Math.floor(inputN));
       if (n > 170) {
@@ -4400,6 +4673,7 @@
       return value;
     }
 
+    // @slide 7.3 — υπολογίζει αριθμό operations μοντέλου (linear/n2/nlogn/nfactorial) για δοσμένο N.
     function evaluateComplexityRace(modelKey, n) {
       const safeN = Math.max(0, Number(n) || 0);
 
@@ -4428,6 +4702,7 @@
       return 0;
     }
 
+    // @slide 7.3 — ελέγχει αν ένα event entry ανήκει στο complexity-race.
     function isComplexityRaceEntry(entry) {
       if (!entry || typeof entry !== "object") {
         return false;
@@ -4437,6 +4712,7 @@
         && String(entry.controlId || "") === "complexityChoice";
     }
 
+    // @slide 7.3 — καταχωρεί επιλογή μαθητή στο Map πολυπλοκότητας.
     function applyComplexityRaceSelection(name, selectionKey) {
       const safeName = String(name || "").trim().slice(0, 32);
       const safeSelection = normalizeComplexityRaceChoice(selectionKey);
@@ -4448,6 +4724,7 @@
       complexityRaceSelections.set(safeName, safeSelection);
     }
 
+    // @slide 7.3 — ξαναχτίζει Map επιλογών από classroom summary payload.
     function rebuildComplexityRaceSelections(summary) {
       const recent = Array.isArray(summary && summary.recent) ? summary.recent.slice() : [];
       complexityRaceSelections.clear();
@@ -4460,6 +4737,7 @@
         });
     }
 
+    // @slide 7.3 — επιστρέφει λίστα ονομάτων που επέλεξαν ένα κλειδί μοντέλου.
     function summarizeComplexityRaceUsers(selectionKey) {
       const selectedUsers = [];
 
@@ -4516,6 +4794,7 @@
 
     updateComplexityRaceNLabel();
 
+    // @slide 7.2 — υπολογίζει N, N², N·log₂N για δένδρο Cooley-Tukey.
     function getCooleyTreeValues() {
       const exponent = cooleyTreePower ? Number(cooleyTreePower.value) : 10;
       const n = Math.pow(2, exponent);
@@ -4532,6 +4811,7 @@
       };
     }
 
+    // @slide 7.2 — ενημερώνει labels N, N², N·log₂N του δένδρου.
     function updateCooleyTreeLabels() {
       if (!cooleyTreePower) {
         return;
@@ -4548,6 +4828,7 @@
     cooleyTreePower?.addEventListener("input", updateCooleyTreeLabels);
     updateCooleyTreeLabels();
 
+    // @slide 5.2 | @util — σφηνώνει αριθμητική τιμή (x ή t) εντός επιτρεπτού εύρους.
     function clampHeatValue(value, min, max, fallback) {
       const numeric = Number(value);
       if (!Number.isFinite(numeric)) {
@@ -4571,6 +4852,10 @@
     const HEAT_TEMPERATURE_MIN = 0;
     const HEAT_TEMPERATURE_MAX = 100;
     const HEAT_TEMPERATURE_DEFAULT = Math.round(HEAT_MEAN_TEMP * 100);
+    const HEAT_SINE_MEAN = 0.52;
+    const HEAT_SINE_AMPLITUDE = 0.45;
+    const HEAT_SINE_EPSILON_RATIO = 0.005;
+    const HEAT_SINE_MAX_TIME = Number((Math.log(1 / HEAT_SINE_EPSILON_RATIO) / (HEAT_KAPPA * Math.PI * Math.PI)).toFixed(1));
     const HEAT_DEFAULT_PROFILE = {
       source: "default",
       sourceCount: 0,
@@ -4578,6 +4863,7 @@
       coefficients: HEAT_COEFFICIENTS.slice(),
     };
 
+    // @slide 5.2 | @util — HTML escape για ονόματα μαθητών στο classroom board.
     function escapeHeatText(value) {
       return String(value || "")
         .replace(/&/g, "&amp;")
@@ -4587,6 +4873,7 @@
         .replace(/'/g, "&#39;");
     }
 
+    // @slide 5.2 | @util — επικυρώνει/κανονικοποιεί student επιλογή θέσης και θερμοκρασίας ράβδου.
     function normalizeHeatSelection(selection, index = 0) {
       const rawPosition = Number(selection && selection.position);
       const inferredPosition = Number.isFinite(rawPosition)
@@ -4624,6 +4911,7 @@
       };
     }
 
+    // @slide 5.2 — διαβάζει τοπική επιλογή θέσης/θερμοκρασίας από DOM sliders.
     function getLocalHeatSelectionFromDom() {
       const baseSelection = {
         socketId: "local-student",
@@ -4634,6 +4922,7 @@
       return normalizeHeatSelection(baseSelection);
     }
 
+    // @slide 5.2 — ενημερώνει labels θέσης/θερμοκρασίας και εκπέμπει event επιλογής.
     function updateHeatSelectionLabels(emitChange = false) {
       const localSelection = getLocalHeatSelectionFromDom();
 
@@ -4664,6 +4953,7 @@
       return localSelection;
     }
 
+    // @slide 5.2 — κατασκευάζει Fourier profile ∑a_n·sin(nπx) από classroom επιλογές.
     function buildHeatClassroomProfile(selections) {
       if (!Array.isArray(selections) || selections.length === 0) {
         return null;
@@ -4719,6 +5009,7 @@
       };
     }
 
+    // @slide 5.2 — κατασκευάζει τοπικό Fourier profile από ένα slider.
     function buildLocalHeatProfile() {
       const localSelection = getLocalHeatSelectionFromDom();
       const localProfile = buildHeatClassroomProfile([localSelection]);
@@ -4735,6 +5026,7 @@
       };
     }
 
+    // @slide 5.2 — αποφασίζει αν χρησιμοποιείται classroom profile ή τοπικό.
     function shouldUseClassroomHeatProfile() {
       if (!heatClassroomProfile || heatClassroomProfile.sourceCount <= 0) {
         return false;
@@ -4747,6 +5039,7 @@
       return true;
     }
 
+    // @slide 5.2 — επιστρέφει ενεργό profile θερμοκρασίας (classroom ή τοπικό).
     function getActiveHeatProfile() {
       if (shouldUseClassroomHeatProfile()) {
         return heatClassroomProfile;
@@ -4755,6 +5048,7 @@
       return buildLocalHeatProfile() || HEAT_DEFAULT_PROFILE;
     }
 
+    // @slide 5.2 — επιστρέφει τη λίστα markers για σχεδίαση στη ράβδο (classroom ή τοπικό).
     function getHeatMarkersForCurrentView() {
       if (classroomHeatRoster.length > 0) {
         return classroomHeatRoster.slice(0, 28);
@@ -4763,6 +5057,7 @@
       return [getLocalHeatSelectionFromDom()];
     }
 
+    // @slide 5.2 — ενημερώνει teacher feed με επιλογές θερμοκρασίας classroom.
     function renderHeatClassroomStatus() {
       const selections = classroomHeatRoster.slice();
       const count = selections.length;
@@ -4807,6 +5102,7 @@
         .join("");
     }
 
+    // @slide 5.2 — γράφει MathJax τύπο Fourier βαθμίδας και θερμοκρασίας.
     function renderHeatEquationMath(timeValue) {
       if (!heatEquationMath) {
         return;
@@ -4826,6 +5122,7 @@
       }
     }
 
+    // @slide 5.2 — ενημερώνει label χρόνου slider και μετά MathJax.
     function updateHeatSliderLabel(emitChange = false) {
       if (!heatTimeSlider || !heatTimeValue) {
         return;
@@ -4846,6 +5143,55 @@
         );
       }
     }
+
+    // @slide 5.1 | @util — διαβάζει ασφαλή τιμή χρόνου από heatSineTimeSlider.
+    function getHeatSineTime() {
+      return Number(clampHeatValue(heatSineTimeSlider ? heatSineTimeSlider.value : 0, 0, HEAT_SINE_MAX_TIME, 0).toFixed(1));
+    }
+
+    // @slide 5.1 | @util — υπολογίζει A(t) = A₀·e^(-κπ²t) εκθετικά απόσβεση πλάτους.
+    function getHeatSineAmplitude(timeValue) {
+      return HEAT_SINE_AMPLITUDE * Math.exp(-HEAT_KAPPA * Math.PI * Math.PI * timeValue);
+    }
+
+    // @slide 5.1 — γράφει εξίσωση διάχυσης μαζί με επεξήγηση συμβόλων.
+    function renderHeatSineMath(timeValue) {
+      if (!heatSineMath) {
+        return;
+      }
+
+      heatSineMath.innerHTML = `
+        <p style="margin:0 0 8px;color:#ffcc66;font-weight:bold;">Εξίσωση διάχυσης</p>
+        <p style="margin:0 0 10px;font-family:'Segoe UI',sans-serif;">∂u/∂t = k·∂²u/∂x²</p>
+        <p style="margin:0 0 8px;color:#ffcc66;font-weight:bold;">Επεξήγηση συμβόλων</p>
+        <p style="margin:0 0 6px;">u(x,t): θερμοκρασία</p>
+        <p style="margin:0;">k: θερμική αγωγιμότητα</p>
+      `;
+    }
+
+    // @slide 5.1 — ενημερώνει label χρόνου slider και καλεί renderHeatSineMath.
+    function updateHeatSineTimeLabel() {
+      if (!heatSineTimeSlider || !heatSineTimeValue) {
+        return;
+      }
+
+      const timeValue = getHeatSineTime();
+      heatSineTimeSlider.value = timeValue.toFixed(1);
+      heatSineTimeValue.textContent = `${timeValue.toFixed(1)} / ${HEAT_SINE_MAX_TIME.toFixed(1)}`;
+      renderHeatSineMath(timeValue);
+    }
+
+    if (heatSineTimeSlider) {
+      heatSineTimeSlider.min = "0";
+      heatSineTimeSlider.max = HEAT_SINE_MAX_TIME.toFixed(1);
+      heatSineTimeSlider.step = "0.1";
+    }
+
+    [heatSineTimeSlider].forEach((slider) => {
+      slider?.addEventListener("input", updateHeatSineTimeLabel);
+      slider?.addEventListener("change", updateHeatSineTimeLabel);
+    });
+    updateHeatSineTimeLabel();
 
     heatTimeSlider?.addEventListener("input", () => {
       updateHeatSliderLabel(true);
@@ -4906,6 +5252,7 @@
     renderHeatClassroomStatus();
     updateHeatSliderLabel();
 
+    // @slide 5.3 — γράφει MathJax σειρά Fourier step function με n όρους.
     function renderStepSeriesMath(terms) {
       if (!stepSeriesMath) {
         return;
@@ -4930,6 +5277,7 @@
       }
     }
 
+    // @slide 5.3 — ενημερώνει label αριθμού όρων Fourier από slider.
     function updateStepTermsLabel() {
       if (!stepTermsSlider || !stepTermsValue) {
         return;
@@ -4942,6 +5290,7 @@
     stepTermsSlider?.addEventListener("input", updateStepTermsLabel);
     updateStepTermsLabel();
 
+    // @slide 6.7 — ενημερώνει labels f1, f2, f3, probe για demo φίλτρου.
     function updateFFTMixLabels() {
       if (!fftMixFreq1) {
         return;
@@ -4957,6 +5306,7 @@
     });
     updateFFTMixLabels();
 
+    // @slide 6.5, 6.6 — γράφει MathJax DFT + IDFT τύπους.
     function renderFFTExplainMath() {
       if (fftExplainMath) {
         fftExplainMath.innerHTML = `\\[X_k=\\sum_{n=0}^{N-1}x_n\\,e^{-i\\frac{2\\pi kn}{N}},\\quad k=0,1,\\dots,N-1\\]`;
@@ -4973,6 +5323,7 @@
 
     renderFFTExplainMath();
 
+    // @slide 9.1 — γράφει MathJax τύπους bridge 1D→2D.
     function renderBridgeDimMath() {
       if (!bridgeDimMath) {
         return;
@@ -4987,6 +5338,7 @@
 
     renderBridgeDimMath();
 
+    // @slide 9.7 — γράφει MathJax τύπο IFFT θαλάσσιας.
     function renderOceanIFFTMath() {
       if (!ifftOceanMath) {
         return;
@@ -5001,6 +5353,7 @@
 
     renderOceanIFFTMath();
 
+    // @util — σχεδιάζει κατακόρυφες γραμμές ανά durationSec στον άξονα χ.
     function drawSecondGuides(ctx, xStart, xEnd, yStart, yEnd, durationSec = 2) {
       const majorStep = 0.5;
       const epsilon = 1e-6;
@@ -5024,6 +5377,7 @@
       ctx.restore();
     }
 
+    // @slide 1.3, 10.2 — επιστρέφει N, amp, speed, choppy από ocean sliders.
     function getOceanSettings() {
       return {
         n: oceanN ? Number(oceanN.value) : (oceanNEnd ? Number(oceanNEnd.value) : 40),
@@ -5033,6 +5387,7 @@
       };
     }
 
+    // @slide 1.3, 10.2 — συγχρονίζει یείγη slider pairs μεταξύ των δύο ocean sections.
     function syncOceanSliderPairs(sourceSet, targetSet) {
       sourceSet.forEach((slider, index) => {
         slider?.addEventListener("input", () => {
@@ -5045,6 +5400,7 @@
       });
     }
 
+    // @slide 1.3, 10.2 — ενημερώνει labels N, amp, speed, choppy ocean sliderών.
     function updateOceanLabels() {
       const settings = getOceanSettings();
       if (oceanNValue) {
@@ -5098,6 +5454,7 @@
     let wave2DState = null;
     let gerstnerState = null;
 
+    // @slide 2.4 — αρχικοποιεί WebGL state για 2D κύμα (Three.js).
     function createWave2DState(canvas) {
       if (!hasThree || !canvas) {
         return null;
@@ -5158,6 +5515,7 @@
       }
     }
 
+    // @slide 2.4 — επανασχεδιάζει geometry/camera όταν αλλάζει μέγεθος canvas 2D.
     function resizeWave2DState(state) {
       const width = Math.max(1, Math.floor(state.canvas.clientWidth));
       const height = Math.max(1, Math.floor(state.canvas.clientHeight));
@@ -5171,6 +5529,7 @@
       state.lastHeight = height;
     }
 
+    // @slide 2.4 — ενημερώνει shader uniforms και καλεί render για 2D κύμα.
     function updateWave2DScene(state, time, settings) {
       if (!state) {
         return;
@@ -5194,6 +5553,7 @@
       state.renderer.render(state.scene, state.camera);
     }
 
+    // @slide 2.5 — αρχικοποιεί WebGL state για Gerstner wave (Three.js).
     function createGerstnerState(canvas) {
       if (!hasThree || !canvas) {
         return null;
@@ -5253,6 +5613,7 @@
       }
     }
 
+    // @slide 2.5 — επανασχεδιάζει geometry/camera όταν αλλάζει μέγεθος Gerstner canvas.
     function resizeGerstnerState(state) {
       const width = Math.max(1, Math.floor(state.canvas.clientWidth));
       const height = Math.max(1, Math.floor(state.canvas.clientHeight));
@@ -5266,6 +5627,7 @@
       state.lastHeight = height;
     }
 
+    // @slide 2.5 — ενημερώνει shader uniforms και καλεί render για Gerstner wave.
     function updateGerstnerScene(state, time, settings) {
       if (!state) {
         return;
@@ -5304,6 +5666,7 @@
     const ocean3DStates = [];
     const ocean3DCanvasSet = new Set();
 
+    // @slide 1.3, 10.2 — δημιουργεί ή επεκτείνει grid για 3D ocean WebGL.
     function ensureOceanGrid(state, n) {
       const grid = Math.max(12, Math.min(120, Math.round(n)));
       if (state.mesh && state.lastGrid === grid) {
@@ -5326,6 +5689,7 @@
       state.lastGrid = grid;
     }
 
+    // @slide 1.3, 10.2 — επεκτείνει WebGL renderer όταν αλλάζει μέγεθος canvas 3D ocean.
     function resizeOceanRenderer(state) {
       const width = Math.max(1, Math.floor(state.canvas.clientWidth));
       const height = Math.max(1, Math.floor(state.canvas.clientHeight));
@@ -5341,6 +5705,7 @@
       state.lastHeight = height;
     }
 
+    // @slide 1.3, 10.2 — αρχικοποιεί το συνολικό 3D ocean WebGL state (scene, camera, shaders).
     function createOcean3DState(canvas) {
       if (!hasThree || !canvas) {
         return null;
@@ -5424,6 +5789,7 @@
       }
     }
 
+    // @slide 1.3, 10.2 — ενημερώνει IFFT uniforms και render του 3D ocean.
     function updateOcean3DState(state, time, settings) {
       ensureOceanGrid(state, settings.n);
       resizeOceanRenderer(state);
@@ -5463,6 +5829,7 @@
       state.renderer.render(state.scene, state.camera);
     }
 
+    // @slide 1.3, 10.2 — λαμβάνει μοχλοδότηδες Three.js και αρχικοποιεί τα δύο 3D ocean scenes.
     function initOcean3DScenes() {
       [oceanWaveCanvasMain, oceanWaveCanvas].forEach((canvas) => {
         const state = createOcean3DState(canvas);
@@ -5482,6 +5849,217 @@
 
     initOcean3DScenes();
 
+    // @slide 4.1 | @util — παραγοντικό n! για Taylor όρους.
+    function factorial(value) {
+      let result = 1;
+      for (let i = 2; i <= value; i += 1) {
+        result *= i;
+      }
+      return result;
+    }
+
+    // @slide 4.* | @util — χτίζει πεπερασμένο ανάπτυγμα Taylor για συγκεκριμένη συνάρτηση.
+    function taylorPartialLatex(kind, terms) {
+      const pieces = [];
+      const shownTerms = Math.min(terms, 5);
+      for (let n = 0; n < shownTerms; n += 1) {
+        if (kind === "cos") {
+          const power = 2 * n;
+          const sign = n % 2 === 0 ? "+" : "-";
+          const term = power === 0 ? "1" : `\\frac{x^{${power}}}{${power}!}`;
+          pieces.push(n === 0 ? term : `${sign} ${term}`);
+        } else if (kind === "sin") {
+          const power = 2 * n + 1;
+          const sign = n % 2 === 0 ? "+" : "-";
+          const term = power === 1 ? "x" : `\\frac{x^{${power}}}{${power}!}`;
+          pieces.push(n === 0 ? term : `${sign} ${term}`);
+        } else {
+          const sign = n === 0 ? "" : "+ ";
+          const term = n === 0 ? "1" : n === 1 ? "x" : `\\frac{x^{${n}}}{${n}!}`;
+          pieces.push(`${sign}${term}`.trim());
+        }
+      }
+      if (terms > 5) {
+        pieces.push("\\cdots");
+      }
+      return pieces.join(" ");
+    }
+
+    // @slide 4.1 — ενημερώνει labels συντελεστών και τον δυναμικό τύπο p3(x).
+    function updateTaylorPolyfitUI() {
+      const c0 = taylorPolyC0Slider ? Number(taylorPolyC0Slider.value) : 0;
+      const c1 = taylorPolyC1Slider ? Number(taylorPolyC1Slider.value) : 0;
+      const c2 = taylorPolyC2Slider ? Number(taylorPolyC2Slider.value) : 0;
+      const c3 = taylorPolyC3Slider ? Number(taylorPolyC3Slider.value) : 0;
+      if (taylorPolyC0Value) taylorPolyC0Value.textContent = c0.toFixed(2);
+      if (taylorPolyC1Value) taylorPolyC1Value.textContent = c1.toFixed(2);
+      if (taylorPolyC2Value) taylorPolyC2Value.textContent = c2.toFixed(2);
+      if (taylorPolyC3Value) taylorPolyC3Value.textContent = c3.toFixed(2);
+
+      if (taylorPolyfitFormulaBox) {
+        const c1Term = `${c1 < 0 ? "-" : "+"}${Math.abs(c1).toFixed(2)}x`;
+        const c2Term = `${c2 < 0 ? "-" : "+"}${Math.abs(c2).toFixed(2)}x^2`;
+        const c3Term = `${c3 < 0 ? "-" : "+"}${Math.abs(c3).toFixed(2)}x^3`;
+        taylorPolyfitFormulaBox.innerHTML = String.raw`\[p_3(x)=${c0.toFixed(2)}${c1Term}${c2Term}${c3Term}\]`;
+      }
+
+      if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+        window.MathJax.typesetPromise([taylorPolyfitFormulaBox]).catch(() => {});
+      }
+    }
+
+    // @slide 4.2 — ενημερώνει όρους και MathJax για Taylor του cos(x).
+    function updateTaylorCosUI() {
+      const terms = taylorCosTermsSlider ? Number(taylorCosTermsSlider.value) : 0;
+      if (taylorCosTermsValue) taylorCosTermsValue.textContent = String(terms);
+      const upper = Math.max(0, terms - 1);
+      const cosDerivList = document.getElementById("taylorCosDerivList");
+      if (cosDerivList) {
+        cosDerivList.innerHTML = String.raw`
+          <div class="deriv-list-row">
+            <table>
+              <tr><td>\(f(x)=\cos x\)</td><td class="deriv-val">\(f(0)=1\)</td></tr>
+              <tr><td>\(f'(x)=-\sin x\)</td><td class="deriv-val">\(f'(0)=0\)</td></tr>
+              <tr><td>\(f''(x)=-\cos x\)</td><td class="deriv-val">\(f''(0)=-1\)</td></tr>
+              <tr><td>\(f^{(3)}(x)=\sin x\)</td><td class="deriv-val">\(f^{(3)}(0)=0\)</td></tr>
+              <tr><td>\(f^{(4)}(x)=\cos x\)</td><td class="deriv-val">\(f^{(4)}(0)=1\)</td></tr>
+            </table>
+            <div class="deriv-taylor">
+              <p>Γενικός τύπος Taylor:</p>
+              \[T_N(x)=\sum_{n=0}^{N}\frac{f^{(n)}(x_0)}{n!}(x-x_0)^n,\quad x_0=0\]
+              \[T_N(x)=\sum_{n=0}^{N}\frac{f^{(n)}(0)}{n!}x^n\]
+            </div>
+          </div>
+        `;
+        if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+          window.MathJax.typesetPromise([cosDerivList]).catch(() => {});
+        }
+      }
+      if (!taylorCosMath) return;
+      taylorCosMath.innerHTML = String.raw`
+        \[c_n=\frac{f^{(n)}(0)}{n!}\Rightarrow c_0=1,\ c_1=0,\ c_2=-\frac{1}{2},\ c_3=0,\ c_4=\frac{1}{24}\]
+        \[\cos x\approx\sum_{n=0}^{${upper}}(-1)^n\frac{x^{2n}}{(2n)!}=${taylorPartialLatex("cos", terms)}\]
+      `;
+      if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+        window.MathJax.typesetPromise([taylorCosMath]).catch(() => {});
+      }
+    }
+
+    // @slide 4.3 — ενημερώνει όρους και MathJax για Taylor του sin(x).
+    function updateTaylorSinUI() {
+      const terms = taylorSinTermsSlider ? Number(taylorSinTermsSlider.value) : 0;
+      if (taylorSinTermsValue) taylorSinTermsValue.textContent = String(terms);
+      const upper = Math.max(0, terms - 1);
+      const sinDerivList = document.getElementById("taylorSinDerivList");
+      if (sinDerivList) {
+        sinDerivList.innerHTML = String.raw`
+          <div class="deriv-list-row">
+            <table>
+              <tr><td>\(f(x)=\sin x\)</td><td class="deriv-val">\(f(0)=0\)</td></tr>
+              <tr><td>\(f'(x)=\cos x\)</td><td class="deriv-val">\(f'(0)=1\)</td></tr>
+              <tr><td>\(f''(x)=-\sin x\)</td><td class="deriv-val">\(f''(0)=0\)</td></tr>
+              <tr><td>\(f^{(3)}(x)=-\cos x\)</td><td class="deriv-val">\(f^{(3)}(0)=-1\)</td></tr>
+              <tr><td>\(f^{(4)}(x)=\sin x\)</td><td class="deriv-val">\(f^{(4)}(0)=0\)</td></tr>
+            </table>
+            <div class="deriv-taylor">
+              <p>Γενικός τύπος Taylor:</p>
+              \[T_N(x)=\sum_{n=0}^{N}\frac{f^{(n)}(x_0)}{n!}(x-x_0)^n,\quad x_0=0\]
+              \[T_N(x)=\sum_{n=0}^{N}\frac{f^{(n)}(0)}{n!}x^n\]
+            </div>
+          </div>
+        `;
+        if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+          window.MathJax.typesetPromise([sinDerivList]).catch(() => {});
+        }
+      }
+      if (!taylorSinMath) return;
+      taylorSinMath.innerHTML = String.raw`
+        \[c_n=\frac{f^{(n)}(0)}{n!}\Rightarrow c_0=0,\ c_1=1,\ c_2=0,\ c_3=-\frac{1}{6},\ c_4=0\]
+        \[\sin x\approx\sum_{n=0}^{${upper}}(-1)^n\frac{x^{2n+1}}{(2n+1)!}=${taylorPartialLatex("sin", terms)}\]
+      `;
+      if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+        window.MathJax.typesetPromise([taylorSinMath]).catch(() => {});
+      }
+    }
+
+    // @slide 4.4 — ενημερώνει όρους και MathJax για Taylor του e^x.
+    function updateTaylorExpUI() {
+      const terms = taylorExpTermsSlider ? Number(taylorExpTermsSlider.value) : 0;
+      if (taylorExpTermsValue) taylorExpTermsValue.textContent = String(terms);
+      const upper = Math.max(0, terms - 1);
+      const expDerivList = document.getElementById("taylorExpDerivList");
+      if (expDerivList) {
+        expDerivList.innerHTML = String.raw`
+          <div class="deriv-list-row">
+            <table>
+              <tr><td>\(f(x)=e^x\)</td><td class="deriv-val">\(f(0)=1\)</td></tr>
+              <tr><td>\(f'(x)=e^x\)</td><td class="deriv-val">\(f'(0)=1\)</td></tr>
+              <tr><td>\(f''(x)=e^x\)</td><td class="deriv-val">\(f''(0)=1\)</td></tr>
+              <tr><td>\(f^{(3)}(x)=e^x\)</td><td class="deriv-val">\(f^{(3)}(0)=1\)</td></tr>
+              <tr><td>\(f^{(4)}(x)=e^x\)</td><td class="deriv-val">\(f^{(4)}(0)=1\)</td></tr>
+            </table>
+            <div class="deriv-taylor">
+              <p>Γενικός τύπος Taylor:</p>
+              \[T_N(x)=\sum_{n=0}^{N}\frac{f^{(n)}(x_0)}{n!}(x-x_0)^n,\quad x_0=0\]
+              \[T_N(x)=\sum_{n=0}^{N}\frac{f^{(n)}(0)}{n!}x^n\]
+            </div>
+          </div>
+        `;
+        if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+          window.MathJax.typesetPromise([expDerivList]).catch(() => {});
+        }
+      }
+      if (!taylorExpMath) return;
+      taylorExpMath.innerHTML = String.raw`
+        \[c_n=\frac{f^{(n)}(0)}{n!}=\frac{1}{n!}\]
+        \[e^x\approx\sum_{n=0}^{${upper}}\frac{x^n}{n!}=${taylorPartialLatex("exp", terms)}\]
+      `;
+      if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+        window.MathJax.typesetPromise([taylorExpMath]).catch(() => {});
+      }
+    }
+
+    [taylorPolyC0Slider, taylorPolyC1Slider, taylorPolyC2Slider, taylorPolyC3Slider].forEach((slider) => {
+      slider?.addEventListener("input", updateTaylorPolyfitUI);
+      slider?.addEventListener("change", updateTaylorPolyfitUI);
+    });
+    [taylorCosTermsSlider].forEach((slider) => {
+      slider?.addEventListener("input", updateTaylorCosUI);
+      slider?.addEventListener("change", updateTaylorCosUI);
+    });
+    [taylorSinTermsSlider].forEach((slider) => {
+      slider?.addEventListener("input", updateTaylorSinUI);
+      slider?.addEventListener("change", updateTaylorSinUI);
+    });
+    [taylorExpTermsSlider].forEach((slider) => {
+      slider?.addEventListener("input", updateTaylorExpUI);
+      slider?.addEventListener("change", updateTaylorExpUI);
+    });
+
+    // Βέλτιστες λύσεις για e^(x/2)cos(x): c0=1, c1=0.5, c2=-0.375, c3=-11/48
+    document.getElementById("taylorPolyC0Best")?.addEventListener("click", () => {
+      if (taylorPolyC0Slider) taylorPolyC0Slider.value = "1";
+      updateTaylorPolyfitUI();
+    });
+    document.getElementById("taylorPolyC1Best")?.addEventListener("click", () => {
+      if (taylorPolyC1Slider) taylorPolyC1Slider.value = "0.5";
+      updateTaylorPolyfitUI();
+    });
+    document.getElementById("taylorPolyC2Best")?.addEventListener("click", () => {
+      if (taylorPolyC2Slider) taylorPolyC2Slider.value = "-0.375";
+      updateTaylorPolyfitUI();
+    });
+    document.getElementById("taylorPolyC3Best")?.addEventListener("click", () => {
+      if (taylorPolyC3Slider) taylorPolyC3Slider.value = "-0.2291667";
+      updateTaylorPolyfitUI();
+    });
+
+    updateTaylorPolyfitUI();
+    updateTaylorCosUI();
+    updateTaylorSinUI();
+    updateTaylorExpUI();
+
+    // @slide 5.2 — ενημερώνει labels θ, r και MathJax μιγαδικού επιπέδου.
     function updateEulerLabels() {
       if (thetaValue && thetaSlider) {
         thetaValue.textContent = Number(thetaSlider.value).toFixed(2);
@@ -5495,6 +6073,136 @@
       slider?.addEventListener("input", updateEulerLabels);
     });
     updateEulerLabels();
+
+    // @slide 5.1 — drag στο σημείο του μιγαδικού επιπέδου για άμεσο έλεγχο θ και r.
+    let eulerPointDragActive = false;
+    let eulerPointPointerId = null;
+
+    function getEulerPlaneGeometry() {
+      if (!eulerPlaneCanvas) {
+        return null;
+      }
+      const width = eulerPlaneCanvas.width;
+      const height = eulerPlaneCanvas.height;
+      const cx = width * 0.5;
+      const cy = height * 0.52;
+      const baseRadius = Math.min(width, height) * 0.30;
+      return { width, height, cx, cy, baseRadius };
+    }
+
+    function getEulerPointCanvasCoords() {
+      const geometry = getEulerPlaneGeometry();
+      if (!geometry) {
+        return null;
+      }
+      const theta = thetaSlider ? Number(thetaSlider.value) : 0;
+      const radius = radiusSlider ? Number(radiusSlider.value) : 1;
+      return {
+        x: geometry.cx + geometry.baseRadius * radius * Math.cos(theta),
+        y: geometry.cy - geometry.baseRadius * radius * Math.sin(theta),
+      };
+    }
+
+    function isPointerNearEulerPoint(clientX, clientY) {
+      if (!eulerPlaneCanvas) {
+        return false;
+      }
+      const rect = eulerPlaneCanvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) {
+        return false;
+      }
+      const point = getEulerPointCanvasCoords();
+      if (!point) {
+        return false;
+      }
+      const pxClient = rect.left + point.x * (rect.width / Math.max(1, eulerPlaneCanvas.width));
+      const pyClient = rect.top + point.y * (rect.height / Math.max(1, eulerPlaneCanvas.height));
+      const distance = Math.hypot(clientX - pxClient, clientY - pyClient);
+      return distance <= 26;
+    }
+
+    function updateEulerFromPointer(clientX, clientY) {
+      if (!eulerPlaneCanvas) {
+        return;
+      }
+      const rect = eulerPlaneCanvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) {
+        return;
+      }
+      const geometry = getEulerPlaneGeometry();
+      if (!geometry) {
+        return;
+      }
+
+      const sx = eulerPlaneCanvas.width / rect.width;
+      const sy = eulerPlaneCanvas.height / rect.height;
+      const x = (clientX - rect.left) * sx;
+      const y = (clientY - rect.top) * sy;
+
+      const dx = x - geometry.cx;
+      const dyUp = geometry.cy - y;
+
+      let nextTheta = Math.atan2(dyUp, dx);
+      let nextRadius = Math.hypot(dx, dyUp) / Math.max(1e-6, geometry.baseRadius);
+
+      if (thetaSlider) {
+        const minTheta = Number(thetaSlider.min);
+        const maxTheta = Number(thetaSlider.max);
+        nextTheta = Math.min(maxTheta, Math.max(minTheta, nextTheta));
+        thetaSlider.value = nextTheta.toFixed(2);
+      }
+
+      if (radiusSlider) {
+        const minRadius = Number(radiusSlider.min);
+        const maxRadius = Number(radiusSlider.max);
+        nextRadius = Math.min(maxRadius, Math.max(minRadius, nextRadius));
+        radiusSlider.value = nextRadius.toFixed(2);
+      }
+
+      updateEulerLabels();
+    }
+
+    eulerPlaneCanvas?.addEventListener("pointerdown", (event) => {
+      if (!isPointerNearEulerPoint(event.clientX, event.clientY)) {
+        return;
+      }
+      eulerPointDragActive = true;
+      eulerPointPointerId = event.pointerId;
+      eulerPlaneCanvas.setPointerCapture(event.pointerId);
+      updateEulerFromPointer(event.clientX, event.clientY);
+      event.preventDefault();
+    });
+
+    eulerPlaneCanvas?.addEventListener("pointermove", (event) => {
+      if (!eulerPointDragActive || event.pointerId !== eulerPointPointerId) {
+        return;
+      }
+      updateEulerFromPointer(event.clientX, event.clientY);
+      event.preventDefault();
+    });
+
+    function stopEulerPointDrag(event) {
+      if (!eulerPointDragActive || event.pointerId !== eulerPointPointerId) {
+        return;
+      }
+      eulerPointDragActive = false;
+      eulerPointPointerId = null;
+      if (eulerPlaneCanvas?.hasPointerCapture(event.pointerId)) {
+        eulerPlaneCanvas.releasePointerCapture(event.pointerId);
+      }
+    }
+
+    eulerPlaneCanvas?.addEventListener("pointerup", stopEulerPointDrag);
+    eulerPlaneCanvas?.addEventListener("pointercancel", stopEulerPointDrag);
+
+    // @slide 5.2 — ενημερώνει label θ slider περιστροφής.
+    function updateIRotThetaLabel() {
+      if (iRotThetaValue && iRotThetaSlider) {
+        iRotThetaValue.textContent = Number(iRotThetaSlider.value).toFixed(2);
+      }
+    }
+    iRotThetaSlider?.addEventListener("input", updateIRotThetaLabel);
+    updateIRotThetaLabel();
 
     const proofStepsTaylor = [
       {
@@ -5571,6 +6279,7 @@
     let proofTaylorIndex = 0;
     let proofDerivIndex = 0;
 
+    // @slide 5.3 — εμφανίζει βήμα-βήμα αποδείξεις Euler/Taylor με MathJax.
     function renderProofPanels() {
       if (proofStepBoxTaylor) {
         const stepTaylor = proofStepsTaylor[proofTaylorIndex];
@@ -5610,6 +6319,13 @@
     });
     renderProofPanels();
 
+    // Typeset static proof steps in 5.1
+    const eulerProofStepsEl = document.querySelector(".euler-proof-steps");
+    if (eulerProofStepsEl && window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+      window.MathJax.typesetPromise([eulerProofStepsEl]).catch(() => {});
+    }
+
+    // @util ήχου — σφηνώνει αριθμητική τιμή ήχου εντός επιτρεπτού εύρους.
     function clampSoundNumber(value, min, max, fallback) {
       const parsed = Number(value);
       if (!Number.isFinite(parsed)) {
@@ -5618,6 +6334,7 @@
       return Math.max(min, Math.min(max, parsed));
     }
 
+    // @slide 3.2 | @util — επικυρώνει/κανονικοποιεί μία classroom ηχητική πηγή {freq, amp, phase, name}.
     function normalizeClassroomSoundSource(source, index = 0) {
       const frequency = Number(clampSoundNumber(source && source.frequency, 80, 1400, 440).toFixed(2));
       const amplitude = Number(clampSoundNumber(source && source.amplitude, 0, 1, 0).toFixed(3));
@@ -5644,12 +6361,14 @@
       };
     }
 
+    // @slide 3.2 — φιλτράρει ενεργές (amp > 0) classroom ηχητικές πηγές από roster.
     function getClassroomRosterSoundSources() {
       return classroomSoundRoster
         .map((source, index) => normalizeClassroomSoundSource(source, index))
         .filter((source) => source.amplitude > 0.001);
     }
 
+    // @slide 3.2 — επιστρέφει teacher f1/f2 ως δύο ηχητικές πηγές.
     function getTeacherToneSources() {
       if (!isTeacherMode) {
         return [];
@@ -5689,10 +6408,12 @@
       return teacherSources;
     }
 
+    // @slide 3.2 — επιστρέφει συνδυασμένες ενεργές classroom πηγές.
     function getActiveClassroomSoundSources() {
       return [...getClassroomRosterSoundSources(), ...getTeacherToneSources()];
     }
 
+    // @slide 3.2 — επιστρέφει πηγές για wave view (teacher ή student preview).
     function getSourcesForWaveView() {
       const classroomSources = getClassroomRosterSoundSources();
 
@@ -5707,6 +6428,7 @@
       return getStudentPreviewSoundSources();
     }
 
+    // @slide 3.1, 3.2 — επιστρέφει student preview ηχητικής πηγής.
     function getStudentPreviewSoundSources() {
       if (!studentSoundFrequency || !studentSoundAmplitude) {
         return [];
@@ -5723,6 +6445,7 @@
       ];
     }
 
+    // @slide 3.2 — ενημερώνει labels συχνότητας/πλάτους student ήχου και εκπέμπει event επιλογής.
     function updateStudentSoundLabels(emitChange = false) {
       if (!studentSoundFrequency || !studentSoundAmplitude) {
         return;
@@ -5768,6 +6491,7 @@
       });
     });
 
+    // @slide 3.2 — ενημερώνει labels teacher f1/f2 και συγχρονίζει oscillators.
     function updateTeacherFrequencyLabels(syncAudio = false) {
       if (teacherSoundFreqOneValue && teacherSoundFreqOne) {
         teacherSoundFreqOneValue.textContent = `${Math.round(Number(teacherSoundFreqOne.value))} Hz`;
@@ -5800,6 +6524,7 @@
       });
     });
 
+    // @slide 3.2 — ενημερώνει pill κατάστασης classroom ήχου (ενεργός/ανενεργός/σε εξέλιξη).
     function updateTeacherSoundStatus() {
       if (!teacherSoundStateLabel) {
         return;
@@ -5828,6 +6553,7 @@
       teacherSoundActivateBtn?.classList.toggle("active", classroomSoundEnabled);
     }
 
+    // @slide 3.2 — σταματά έναν oscillator classroom και αφαιρεί τον από το Map.
     function stopClassroomTone(key, tone) {
       if (!tone) {
         return;
@@ -5860,12 +6586,14 @@
       classroomOscillators.delete(key);
     }
 
+    // @slide 3.2 — σταματά όλους τους classroom oscillators.
     function stopClassroomSoundEngine() {
       [...classroomOscillators.entries()].forEach(([key, tone]) => {
         stopClassroomTone(key, tone);
       });
     }
 
+    // @slide 3.2 — δημιουργεί/επιστρέφει master gain node classroom.
     function ensureClassroomMasterGain() {
       if (!audioContext) {
         return null;
@@ -5880,6 +6608,7 @@
       return classroomMasterGain;
     }
 
+    // @slide 3.2 — συγχρονίζει Web Audio oscillators με το classroom roster.
     function syncClassroomSoundEngine() {
       if (!isTeacherMode) {
         return;
@@ -5977,6 +6706,7 @@
       syncClassroomSoundEngine();
     }
 
+    // @slide 5.3 — σχεδιάζει animated μονάδα κύκλο με τη γεωμετρική Euler απόδειξη.
     function drawEulerProofSketch(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const cx = width * 0.48;
@@ -6034,6 +6764,7 @@
       });
     }
 
+    // @util ήχου — δημιουργεί/ξυπνά το Web Audio API context.
     function ensureAudioContext() {
       if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -6044,6 +6775,7 @@
       }
     }
 
+    // @util ήχου — ξεκλειδώνει AudioContext μετά από user gesture (autoplay policy).
     function installTeacherAudioUnlock() {
       if (!isTeacherMode || teacherAudioUnlockInstalled) {
         return;
@@ -6072,6 +6804,7 @@
       window.addEventListener("touchstart", tryUnlock, { passive: true });
     }
 
+    // @slide 3.1 — σταματά όλους τους speaker demo oscillators.
     function stopCurrentSound() {
       activeOscillators.forEach((oscillator) => {
         try {
@@ -6087,6 +6820,7 @@
       });
     }
 
+    // @slide 6.7 | @util — επιστρέφει σύνθετο σήμα 6 συχνοτήτων για demo φίλτρου.
     function getFilterComponents() {
       return [
         { frequency: 220, amplitude: 0.17 },
@@ -6098,6 +6832,7 @@
       ];
     }
 
+    // @slide 6.7 — σταματά filter demo oscillators.
     function stopFilterSound() {
       filterOscillators.forEach((oscillator) => {
         try {
@@ -6111,11 +6846,13 @@
       filterPlayClean?.classList.remove("active");
     }
 
+    // @slide 6.7 — συγχρονίζει active state κουμπιών raw/clean φίλτρου.
     function refreshFilterButtons() {
       filterPlayRaw?.classList.toggle("active", filterMode === "raw");
       filterPlayClean?.classList.toggle("active", filterMode === "clean");
     }
 
+    // @slide 6.7 — παίζει raw ή clean σήμα μέσω Web Audio oscillators.
     function startFilterSound(mode) {
       ensureAudioContext();
       stopCurrentSound();
@@ -6148,6 +6885,7 @@
       });
     }
 
+    // @slide 3.1 — συγχρονίζει active state κουμπιών επιλογής ήχου.
     function refreshToneButtons() {
       if (speakerOne) {
         speakerOne.classList.toggle("active", selectedTones.one);
@@ -6163,6 +6901,7 @@
       activeMode = toneCount > 0 ? "active" : "none";
     }
 
+    // @slide 3.1 — αρχίζει oscillators για κάθε επιλεγμένο tone.
     function startSelectedTones() {
       ensureAudioContext();
       stopFilterSound();
@@ -6234,6 +6973,7 @@
       stopFilterSound();
     });
 
+    // @slide 3.2, 3.3 | @util — κανονικοποιεί είσοδο πηγών (array ή legacy arguments) σε ενιαία μορφή.
     function normalizeCompositeSourcesInput(sourcesOrLegacy, includeSecond, includeThird) {
       if (Array.isArray(sourcesOrLegacy)) {
         return sourcesOrLegacy
@@ -6255,6 +6995,7 @@
       return legacy.map((source, index) => normalizeClassroomSoundSource(source, index));
     }
 
+    // @slide 3.2, 3.3 | @util — επιστρέφει χρώμα RGBA ανά ηχητική πηγή (hash-based).
     function getCompositeSourceColor(source, index, alpha = 0.45) {
       const sourceLabel = String(source && source.label ? source.label : "").trim().toLowerCase();
       if (sourceLabel === "f1") {
@@ -6273,6 +7014,7 @@
       return `hsla(${hue}, 88%, 72%, ${alpha})`;
     }
 
+    // @slide 3.2, 3.3 | @util — επιστρέφει label (όνομα ή Index+1) ανά ηχητική πηγή.
     function getCompositeSourceLabel(source, index) {
       const raw = String((source && source.label) || (source && source.name) || `πηγή ${index + 1}`)
         .trim()
@@ -6283,6 +7025,7 @@
       return `${raw.slice(0, 17)}…`;
     }
 
+    // @slide 3.2 — σχεδιάζει άθροισμα classroom ηχητικών πηγών βάσει roster.
     function drawCompositeWave(canvas, time, sourcesOrLegacy, includeSecond, includeThird) {
       if (!canvas) {
         return;
@@ -6411,6 +7154,7 @@
       context.stroke();
     }
 
+    // @slide 3.1 — σχεδιάζει απλό ημίτονο + μόρια αέρα και label συχνότητας/πλάτους.
     function drawSoundSimple(waveCanvas, molCanvas, time) {
       if (!waveCanvas || !molCanvas) return;
       fitCanvasToDisplaySize(waveCanvas);
@@ -6509,6 +7253,7 @@
       }
     }
 
+    // @slide 3.3 | @util — επιστρέφει 3 σταθερές πηγές αποσύνθεσης ήχου.
     function getSoundDecompositionSources() {
       return [
         { key: "decompose-1", name: "f1", frequency: 180, amplitude: 0.95 },
@@ -6517,6 +7262,7 @@
       ];
     }
 
+    // @slide 3.3 — σχεδιάζει σύνθετο + 3 συνιστώσες αποσύνθεσης.
     function drawSoundDecomposition(time) {
       const sources = getSoundDecompositionSources();
       drawCompositeWave(soundDecomposeMixCanvas, time, sources);
@@ -6525,6 +7271,7 @@
       drawCompositeWave(soundDecomposePartThreeCanvas, time, [sources[2]]);
     }
 
+    // @slide 3.1, 3.2 — ανιμάρει μόρια αέρα ανάλογα με τη συνολική πίεση του κύματος.
     function drawAirMolecules(canvas, time, sourcesOrLegacy) {
       if (!canvas) {
         return;
@@ -6587,6 +7334,414 @@
       }
     }
 
+    // @slide 4.* | @util — κοινό renderer σύγκρισης πραγματικής και πολυωνυμικής καμπύλης.
+    function drawTaylorComparison(canvas, options) {
+      if (!canvas) {
+        return;
+      }
+      drawAxesCanvas(canvas, (ctx, width, height) => {
+        const left = 56;
+        const right = width - 24;
+        const top = 20;
+        const bottom = height - 20;
+        const xMin = options.xMin;
+        const xMax = options.xMax;
+        const yMin = options.yMin;
+        const yMax = options.yMax;
+        const samples = options.samples || 420;
+
+        const mapX = (x) => left + ((x - xMin) / (xMax - xMin)) * (right - left);
+        const mapY = (y) => bottom - ((y - yMin) / (yMax - yMin)) * (bottom - top);
+        const zeroX = mapX(0);
+        const zeroY = mapY(0);
+
+        ctx.strokeStyle = "#3f5f88";
+        ctx.lineWidth = 1.2;
+        ctx.strokeRect(left, top, right - left, bottom - top);
+
+        if (zeroY >= top && zeroY <= bottom) {
+          ctx.strokeStyle = "#8fc0ff";
+          ctx.lineWidth = 2.1;
+          ctx.beginPath();
+          ctx.moveTo(left, zeroY);
+          ctx.lineTo(right, zeroY);
+          ctx.stroke();
+        }
+        if (zeroX >= left && zeroX <= right) {
+          ctx.strokeStyle = "#8fc0ff";
+          ctx.lineWidth = 2.1;
+          ctx.beginPath();
+          ctx.moveTo(zeroX, top);
+          ctx.lineTo(zeroX, bottom);
+          ctx.stroke();
+        }
+
+        ctx.setLineDash([6, 4]);
+        ctx.strokeStyle = options.trueColor;
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        for (let i = 0; i < samples; i += 1) {
+          const x = xMin + (i / (samples - 1)) * (xMax - xMin);
+          const px = mapX(x);
+          const py = mapY(options.trueFn(x));
+          if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        ctx.setLineDash([]);
+        ctx.strokeStyle = options.approxColor;
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        for (let i = 0; i < samples; i += 1) {
+          const x = xMin + (i / (samples - 1)) * (xMax - xMin);
+          const px = mapX(x);
+          const py = mapY(options.approxFn(x));
+          if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        if (typeof options.expansionX === "number" && options.expansionX >= xMin && options.expansionX <= xMax) {
+          const x0 = options.expansionX;
+          const px0 = mapX(x0);
+          const py0 = mapY(options.trueFn(x0));
+
+          ctx.save();
+          ctx.setLineDash([4, 4]);
+          ctx.strokeStyle = "rgba(255, 232, 160, 0.7)";
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(px0, top);
+          ctx.lineTo(px0, bottom);
+          ctx.stroke();
+          ctx.restore();
+
+          if (py0 >= top && py0 <= bottom) {
+            ctx.beginPath();
+            ctx.fillStyle = "#ffe8a0";
+            ctx.arc(px0, py0, 5.2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = "#0a1424";
+            ctx.lineWidth = 1.4;
+            ctx.stroke();
+          }
+
+          ctx.fillStyle = "#ffe8a0";
+          ctx.font = "12px Segoe UI, sans-serif";
+          ctx.fillText("x0 = 0", Math.min(right - 48, px0 + 8), top + 14);
+        }
+
+        const legendTitle = options.legendTitle || options.title || "";
+        const trueLabel = options.trueLabel || "Αρχική συνάρτηση";
+        const approxLabel = options.approxLabel || "Προσέγγιση Taylor";
+        ctx.font = "12px Segoe UI, sans-serif";
+        const titleWidth = legendTitle ? ctx.measureText(legendTitle).width : 0;
+        const trueWidth = ctx.measureText(trueLabel).width;
+        const approxWidth = ctx.measureText(approxLabel).width;
+        const legendWidth = Math.max(170, Math.ceil(Math.max(titleWidth, trueWidth, approxWidth)) + 52);
+        const legendHeight = legendTitle ? 64 : 48;
+        const legendX = left + 10;
+        const legendY = top + 10;
+
+        ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.7)";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(legendX + 8, legendY);
+        ctx.lineTo(legendX + legendWidth - 8, legendY);
+        ctx.quadraticCurveTo(legendX + legendWidth, legendY, legendX + legendWidth, legendY + 8);
+        ctx.lineTo(legendX + legendWidth, legendY + legendHeight - 8);
+        ctx.quadraticCurveTo(legendX + legendWidth, legendY + legendHeight, legendX + legendWidth - 8, legendY + legendHeight);
+        ctx.lineTo(legendX + 8, legendY + legendHeight);
+        ctx.quadraticCurveTo(legendX, legendY + legendHeight, legendX, legendY + legendHeight - 8);
+        ctx.lineTo(legendX, legendY + 8);
+        ctx.quadraticCurveTo(legendX, legendY, legendX + 8, legendY);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        let rowY = legendY + 16;
+        if (legendTitle) {
+          ctx.fillStyle = "#111";
+          ctx.fillText(legendTitle, legendX + 10, rowY);
+          rowY += 14;
+        }
+
+        ctx.save();
+        ctx.setLineDash([6, 4]);
+        ctx.strokeStyle = options.trueColor;
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.moveTo(legendX + 10, rowY + 8);
+        ctx.lineTo(legendX + 34, rowY + 8);
+        ctx.stroke();
+        ctx.restore();
+        ctx.fillStyle = "#111";
+        ctx.fillText(trueLabel, legendX + 40, rowY + 12);
+
+        rowY += 16;
+        ctx.strokeStyle = options.approxColor;
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        ctx.moveTo(legendX + 10, rowY + 8);
+        ctx.lineTo(legendX + 34, rowY + 8);
+        ctx.stroke();
+        ctx.fillStyle = "#111";
+        ctx.fillText(approxLabel, legendX + 40, rowY + 12);
+
+        ctx.fillStyle = "#111";
+        ctx.fillText(options.xLabel || "x", right - 10, zeroY >= top && zeroY <= bottom ? zeroY - 6 : bottom - 6);
+      });
+    }
+
+    // @slide 4.1 — σχεδιάζει cos(x) και το πολυώνυμο c0+c1x+c2x^2 στο [-4π,4π].
+    function drawTaylorPolyfit(canvas, c0, c1, c2, c3) {
+      const limit = Math.PI * 4;
+      drawTaylorComparison(canvas, {
+        legendTitle: "Σύγκριση στο x0 = 0",
+        xMin: -limit,
+        xMax: limit,
+        yMin: -2.6,
+        yMax: 2.6,
+        trueColor: "rgba(140, 190, 255, 0.75)",
+        approxColor: "#ffb15f",
+        trueLabel: "f(x)=e^(x/2)cos(x)",
+        approxLabel: "p3(x)",
+        trueFn: (x) => Math.exp(x / 2) * Math.cos(x),
+        approxFn: (x) => c0 + c1 * x + c2 * x * x + c3 * x * x * x,
+        expansionX: 0,
+        xLabel: "x"
+      });
+    }
+
+    // @slide 4.2/4.3/4.4 | @util — υπολογίζει τιμή πεπερασμένου Taylor όρου για kind.
+    function evaluateTaylor(kind, x, terms) {
+      let total = 0;
+      if (kind === "cos") {
+        for (let n = 0; n < terms; n += 1) {
+          total += (n % 2 === 0 ? 1 : -1) * (x ** (2 * n)) / factorial(2 * n);
+        }
+      } else if (kind === "sin") {
+        for (let n = 0; n < terms; n += 1) {
+          total += (n % 2 === 0 ? 1 : -1) * (x ** (2 * n + 1)) / factorial(2 * n + 1);
+        }
+      } else {
+        for (let n = 0; n < terms; n += 1) {
+          total += (x ** n) / factorial(n);
+        }
+      }
+      return total;
+    }
+
+    // @slide 4.2 — σχεδιάζει cos(x) και Taylor στο [-4π,4π].
+    function drawTaylorCos(canvas, terms) {
+      const limit = Math.PI * 4;
+      drawTaylorComparison(canvas, {
+        legendTitle: `cos(x) | N=${terms}`,
+        xMin: -limit,
+        xMax: limit,
+        yMin: -2.8,
+        yMax: 2.8,
+        trueColor: "rgba(140, 190, 255, 0.75)",
+        approxColor: "#6fd8ff",
+        trueLabel: "f(x)=cos(x)",
+        approxLabel: "Taylor",
+        trueFn: (x) => Math.cos(x),
+        approxFn: (x) => evaluateTaylor("cos", x, terms),
+        expansionX: 0,
+        xLabel: "x"
+      });
+    }
+
+    // @slide 4.3 — σχεδιάζει sin(x) και Taylor στο [-4π,4π].
+    function drawTaylorSin(canvas, terms) {
+      const limit = Math.PI * 4;
+      drawTaylorComparison(canvas, {
+        legendTitle: `sin(x) | N=${terms}`,
+        xMin: -limit,
+        xMax: limit,
+        yMin: -16,
+        yMax: 16,
+        trueColor: "rgba(170, 230, 180, 0.75)",
+        approxColor: "#8dffaf",
+        trueLabel: "f(x)=sin(x)",
+        approxLabel: "Taylor",
+        trueFn: (x) => Math.sin(x),
+        approxFn: (x) => evaluateTaylor("sin", x, terms),
+        expansionX: 0,
+        xLabel: "x"
+      });
+    }
+
+    // @slide 4.4 — σχεδιάζει e^x και Taylor στο [-4,4].
+    function drawTaylorExp(canvas, terms) {
+      drawTaylorComparison(canvas, {
+        legendTitle: `e^x | N=${terms}`,
+        xMin: -4,
+        xMax: 4,
+        yMin: -5,
+        yMax: 60,
+        trueColor: "rgba(255, 220, 160, 0.78)",
+        approxColor: "#ffbf68",
+        trueLabel: "f(x)=e^x",
+        approxLabel: "Taylor",
+        trueFn: (x) => Math.exp(x),
+        approxFn: (x) => evaluateTaylor("exp", x, terms),
+        expansionX: 0,
+        xLabel: "x"
+      });
+    }
+
+    // @slide 5.2 — δείχνει πώς ο i περιστρέφει κατά 90° και για θέση από slider.
+    function drawIRotation(canvas, t) {
+      const theta = iRotThetaSlider ? Number(iRotThetaSlider.value) : t * Math.PI * 2 / 8;
+      if (!canvas) return;
+      const ratio = window.devicePixelRatio || 1;
+      const w = canvas.width, h = canvas.height;
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, w, h);
+
+      const cx = w * 0.5;
+      const cy = h * 0.54;
+      const R = Math.min(w, h) * 0.30;
+
+      // Unit circle
+      ctx.strokeStyle = "rgba(100,150,255,0.22)";
+      ctx.lineWidth = 1.5 * ratio;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Axes
+      ctx.strokeStyle = "#8ab6ff";
+      ctx.lineWidth = 1.5 * ratio;
+      ctx.beginPath(); ctx.moveTo(cx - R * 1.38, cy); ctx.lineTo(cx + R * 1.5, cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy + R * 1.3); ctx.lineTo(cx, cy - R * 1.42); ctx.stroke();
+
+      // Axis labels
+      ctx.font = `${13 * ratio}px sans-serif`;
+      ctx.fillStyle = "#8ab6ff";
+      ctx.textAlign = "left"; ctx.textBaseline = "middle";
+      ctx.fillText("Re", cx + R * 1.47, cy - 12 * ratio);
+      ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+      ctx.fillText("Im", cx + 16 * ratio, cy - R * 1.4);
+
+      // 4 i^n positions (canvas angles: 0=right, -PI/2=top, PI=left, PI/2=bottom)
+      const powers = [
+        { angle: 0,             label: "1"  },
+        { angle: -Math.PI / 2,  label: "i"  },
+        { angle: Math.PI,       label: "-1" },
+        { angle: Math.PI / 2,   label: "-i" },
+      ];
+
+      // Dot: angle from slider (CCW)
+      const animAngle = -theta; // negative = CCW in canvas coords
+      const normAnim = ((animAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+
+      // Which step (i^k) is the dot closest to?
+      let step = 0, minDist = Infinity;
+      const canonAngles = [0, 3 * Math.PI / 2, Math.PI, Math.PI / 2];
+      for (let k = 0; k < 4; k++) {
+        let d = Math.abs(normAnim - canonAngles[k]);
+        if (d > Math.PI) d = Math.PI * 2 - d;
+        if (d < minDist) { minDist = d; step = k; }
+      }
+
+      // Quarter-arc arrows between consecutive i^n points (CCW = anticlockwise=true)
+      const arcAngles = [
+        { start: 0,           end: -Math.PI / 2 },
+        { start: -Math.PI/2,  end: Math.PI      },
+        { start: Math.PI,     end: Math.PI / 2  },
+        { start: Math.PI/2,   end: 0            },
+      ];
+      // midpoint angles for "×i" label placement (midpoints of each CCW quarter arc)
+      const midAngles = [-Math.PI/4, -3*Math.PI/4, 3*Math.PI/4, Math.PI/4];
+      const arcR = R * 0.77;
+
+      for (let k = 0; k < 4; k++) {
+        const isActive = k === step;
+        ctx.save();
+        ctx.strokeStyle = isActive ? "rgba(255,185,60,0.95)" : "rgba(130,182,255,0.3)";
+        ctx.lineWidth = isActive ? 3 * ratio : 1.5 * ratio;
+        ctx.beginPath();
+        ctx.arc(cx, cy, arcR, arcAngles[k].start, arcAngles[k].end, true);
+        ctx.stroke();
+
+        // Arrowhead at end of arc
+        const endA = arcAngles[k].end;
+        const ex = cx + arcR * Math.cos(endA);
+        const ey = cy + arcR * Math.sin(endA);
+        // Tangent for CCW (decreasing angle): (sin(a), -cos(a))
+        const tanX = Math.sin(endA);
+        const tanY = -Math.cos(endA);
+        const perpX = -tanY;
+        const perpY = tanX;
+        const as = 9 * ratio, ps = 4 * ratio;
+        ctx.fillStyle = isActive ? "rgba(255,185,60,0.95)" : "rgba(130,182,255,0.3)";
+        ctx.beginPath();
+        ctx.moveTo(ex, ey);
+        ctx.lineTo(ex - tanX * as + perpX * ps, ey - tanY * as + perpY * ps);
+        ctx.lineTo(ex - tanX * as - perpX * ps, ey - tanY * as - perpY * ps);
+        ctx.closePath();
+        ctx.fill();
+
+        // "×i" label
+        const labelR = arcR * 0.62;
+        ctx.font = `bold ${13 * ratio}px sans-serif`;
+        ctx.fillStyle = isActive ? "rgba(255,185,60,0.95)" : "rgba(130,182,255,0.3)";
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText("×i",
+          cx + labelR * Math.cos(midAngles[k]),
+          cy + labelR * Math.sin(midAngles[k]));
+        ctx.restore();
+      }
+
+      // Draw the 4 i^n labeled points
+      for (let k = 0; k < 4; k++) {
+        const p = powers[k];
+        const px = cx + R * Math.cos(p.angle);
+        const py = cy + R * Math.sin(p.angle);
+        const isHighlighted = k === step;
+        ctx.beginPath();
+        ctx.arc(px, py, 7 * ratio, 0, Math.PI * 2);
+        ctx.fillStyle = isHighlighted ? "#ffcc55" : "#3b6aaa";
+        ctx.fill();
+        ctx.strokeStyle = isHighlighted ? "#ffe080" : "#5a8ac8";
+        ctx.lineWidth = 2 * ratio;
+        ctx.stroke();
+        // Point label
+        ctx.fillStyle = "#ddeeff";
+        ctx.font = `bold ${17 * ratio}px sans-serif`;
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        const off = 26 * ratio;
+        let lx = px, ly = py;
+        if (k === 0) lx += off;
+        else if (k === 1) ly -= off;
+        else if (k === 2) lx -= off * 1.1;
+        else ly += off;
+        ctx.fillText(p.label, lx, ly);
+      }
+
+      // Animated orange dot on unit circle
+      const ax = cx + R * Math.cos(animAngle);
+      const ay = cy + R * Math.sin(animAngle);
+      ctx.beginPath();
+      ctx.arc(ax, ay, 10 * ratio, 0, Math.PI * 2);
+      ctx.fillStyle = "#ff8833";
+      ctx.fill();
+      ctx.strokeStyle = "#ffcc88";
+      ctx.lineWidth = 2 * ratio;
+      ctx.stroke();
+
+      // Top-of-canvas caption
+      ctx.font = `${13 * ratio}px sans-serif`;
+      ctx.fillStyle = "rgba(200,225,255,0.75)";
+      ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ctx.fillText("Κάθε ×i = περιστροφή 90° αντίθετα από τους δείκτες του ρολογιού", cx, 8 * ratio);
+    }
+
+    // @slide 5.1 — σχεδιάζει r·e^{iθ} στο μιγαδικό επίπεδο me άξονες, βέλος, ετικέτα.
     function drawEulerPlane(canvas, theta, radius) {
       if (!canvas) {
         return;
@@ -6607,6 +7762,8 @@
       const pointRadius = baseRadius * radius;
       const px = cx + pointRadius * Math.cos(theta);
       const py = cy - pointRadius * Math.sin(theta);
+      const twoPi = Math.PI * 2;
+      const thetaCCW = ((theta % twoPi) + twoPi) % twoPi;
 
       context.strokeStyle = "#35598a";
       context.lineWidth = Math.max(1, ratio);
@@ -6622,12 +7779,34 @@
       context.arc(cx, cy, baseRadius, 0, 2 * Math.PI);
       context.stroke();
 
+      context.fillStyle = "#b9d6ff";
+      context.font = `${Math.max(14, 14 * ratio)}px Segoe UI`;
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+      context.fillText("1", cx + baseRadius + 18 * ratio, cy);
+      context.fillText("-1", cx - baseRadius - 20 * ratio, cy);
+      context.fillText("i", cx, cy - baseRadius - 16 * ratio);
+      context.fillText("-i", cx, cy + baseRadius + 16 * ratio);
+
       context.strokeStyle = "#7fd0ff";
       context.lineWidth = Math.max(2, ratio * 2);
       context.beginPath();
       context.moveTo(cx, cy);
       context.lineTo(px, py);
       context.stroke();
+
+      const thetaArcRadius = Math.max(18 * ratio, Math.min(baseRadius * 0.35, 58 * ratio));
+      context.strokeStyle = "#ffd67f";
+      context.lineWidth = Math.max(1.6, ratio * 1.6);
+      context.beginPath();
+      context.arc(cx, cy, thetaArcRadius, 0, -thetaCCW, true);
+      context.stroke();
+
+      const thetaLabelX = cx + (thetaArcRadius + 12 * ratio) * Math.cos(-thetaCCW * 0.5);
+      const thetaLabelY = cy + (thetaArcRadius + 12 * ratio) * Math.sin(-thetaCCW * 0.5);
+      context.fillStyle = "#ffe4a6";
+      context.font = `${Math.max(11, 11 * ratio)}px Segoe UI`;
+      context.fillText("θ", thetaLabelX, thetaLabelY);
 
       context.strokeStyle = "#5ca8ff";
       context.lineWidth = Math.max(1.5, ratio * 1.5);
@@ -6643,13 +7822,21 @@
       context.arc(px, py, Math.max(3, ratio * 3), 0, 2 * Math.PI);
       context.fill();
 
+      context.font = `${Math.max(10, 10 * ratio)}px Segoe UI`;
+      context.fillStyle = "#9fd3ff";
+      context.textAlign = "left";
+      context.fillText("cos(θ)", px + 8 * ratio, cy - 10 * ratio);
+      context.fillStyle = "#b8f0c6";
+      context.fillText("i·sin(θ)", cx + 10 * ratio, py - 8 * ratio);
+
       const re = radius * Math.cos(theta);
       const im = radius * Math.sin(theta);
       if (eulerFormulaText) {
-        eulerFormulaText.textContent = `re^{iθ} = ${re.toFixed(3)} + i·${im.toFixed(3)}`;
+        eulerFormulaText.textContent = `r·e^{iθ} = ${re.toFixed(3)} + i·${im.toFixed(3)} = r(cos(θ) + i·sin(θ))`;
       }
     }
 
+    // @util — wrapper που καθαρίζει canvas και καλεί drawCallback. Χρησιμοποιείται από όλες τις draw functions.
     function drawAxesCanvas(canvas, drawCallback) {
       if (!canvas) {
         return;
@@ -6664,15 +7851,12 @@
       drawCallback(context, width, height);
     }
 
+    // @slide 2.3 — σχεδιάζει άθροισμα 4 ημιτόνων με λαμπνερες συνιστώσεις.
     function drawSignalDemo(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
+        const ratio = window.devicePixelRatio || 1;
         const mid = height * 0.55;
-        ctx.strokeStyle = "#2f4f85";
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(0, mid);
-        ctx.lineTo(width, mid);
-        ctx.stroke();
+        const plot = drawWaveGridAndAxes(ctx, width, height, mid, ratio);
 
         const components = [
           { on: sumOn1 ? sumOn1.checked : true, amp: sumAmp1 ? Number(sumAmp1.value) : 1, freq: sumFreq1 ? Number(sumFreq1.value) : 1.2, phase: 0.00, color: "rgba(129, 184, 255, 0.72)" },
@@ -6689,10 +7873,10 @@
           ctx.strokeStyle = component.color;
           ctx.lineWidth = 1.5;
           ctx.beginPath();
-          for (let x = 0; x <= width; x += 2) {
-            const nx = x / width;
+          for (let x = plot.plotLeft; x <= plot.plotRight; x += 2) {
+            const nx = (x - plot.plotLeft) / plot.plotWidth;
             const y = mid - componentScale * component.amp * Math.sin(2 * Math.PI * component.freq * nx + component.phase);
-            if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            if (x === plot.plotLeft) ctx.moveTo(x, y); else ctx.lineTo(x, y);
           }
           ctx.stroke();
         });
@@ -6701,8 +7885,8 @@
         ctx.strokeStyle = "#b5ff9e";
         ctx.lineWidth = 4.2;
         ctx.beginPath();
-        for (let x = 0; x <= width; x += 2) {
-          const nx = x / width;
+        for (let x = plot.plotLeft; x <= plot.plotRight; x += 2) {
+          const nx = (x - plot.plotLeft) / plot.plotWidth;
           let sum = 0;
           components.forEach((component) => {
             if (!component.on) {
@@ -6711,12 +7895,13 @@
             sum += component.amp * Math.sin(2 * Math.PI * component.freq * nx + component.phase);
           });
           const y = mid - componentScale * sumGain * sum;
-          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          if (x === plot.plotLeft) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
         ctx.stroke();
       });
     }
 
+    // @slide 5.1, 5.2 | @util — τιμή [0,1] → χρώμα σκάλας κρύο-θερμό (μπλε→κίτρινο→κόκκινο).
     function temperatureToColor(value) {
       const temp = Math.max(0, Math.min(1, value));
       const stops = [
@@ -6741,6 +7926,7 @@
       return `rgb(${r}, ${g}, ${b})`;
     }
 
+    // @slide 5.2 — σχεδιάζει καμπύλη θερμοκρασίας Fourier και χρωματιστή ράβδο με gradient.
     function drawHeatRod(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const ratio = window.devicePixelRatio || 1;
@@ -6863,6 +8049,84 @@
       });
     }
 
+    // @slide 5.1 — σχεδιάζει ημίτονο θερμοκρασίας sin(2πx) και λεπτή ράβδο με fixed range χρώματος.
+    function drawHeatSineIntro(waveCanvas, rodCanvas, t) {
+      const timeValue = getHeatSineTime();
+      const amplitudeNow = getHeatSineAmplitude(timeValue);
+
+      drawAxesCanvas(waveCanvas, (ctx, width, height) => {
+        const left = 40;
+        const right = width - 24;
+        const top = 16;
+        const bottom = height - 24;
+        const graphW = right - left;
+        const graphH = bottom - top;
+        const midY = top + graphH * 0.5;
+        const yScale = graphH * 0.44;
+
+        ctx.strokeStyle = "#345886";
+        ctx.strokeRect(left, top, graphW, graphH);
+        ctx.strokeStyle = "#274364";
+        ctx.beginPath();
+        ctx.moveTo(left, midY);
+        ctx.lineTo(right, midY);
+        ctx.stroke();
+
+        ctx.strokeStyle = "#8fd3ff";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let i = 0; i <= 300; i += 1) {
+          const xNorm = i / 300;
+          const x = left + xNorm * graphW;
+          const y = midY - yScale * amplitudeNow * Math.sin(2 * Math.PI * xNorm);
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        ctx.fillStyle = "#c7dcff";
+        ctx.font = "12px Segoe UI, sans-serif";
+        ctx.fillText("u(x,t)", left + 8, top + 14);
+        ctx.fillText(`A(t)=${amplitudeNow.toFixed(3)}`, right - 72, top + 14);
+      });
+
+      drawAxesCanvas(rodCanvas, (ctx, width, height) => {
+        const left = 40;
+        const right = width - 24;
+        const top = 24;
+        const bottom = height - 22;
+        const rodW = right - left;
+        const rodH = bottom - top;
+        const segments = 320;
+        const absoluteMin = HEAT_SINE_MEAN - HEAT_SINE_AMPLITUDE;
+        const absoluteMax = HEAT_SINE_MEAN + HEAT_SINE_AMPLITUDE;
+        const values = [];
+
+        for (let i = 0; i < segments; i += 1) {
+          const xNorm = i / Math.max(1, segments - 1);
+          const tempNorm = HEAT_SINE_MEAN + amplitudeNow * Math.sin(2 * Math.PI * xNorm);
+          values.push(tempNorm);
+        }
+
+        const span = Math.max(1e-6, absoluteMax - absoluteMin);
+        const stripW = rodW / segments;
+        for (let i = 0; i < segments; i += 1) {
+          const normalized = (values[i] - absoluteMin) / span;
+          ctx.fillStyle = temperatureToColor(normalized);
+          ctx.fillRect(left + i * stripW, top, stripW + 1, rodH);
+        }
+
+        ctx.strokeStyle = "#345886";
+        ctx.strokeRect(left, top, rodW, rodH);
+        ctx.fillStyle = "#c7dcff";
+        ctx.font = "12px Segoe UI, sans-serif";
+        ctx.fillText("Ράβδος (χρωματική θερμοκρασία)", left + 8, 16);
+        ctx.fillText("x=0", left - 2, bottom + 14);
+        ctx.fillText("x=1", right - 22, bottom + 14);
+        ctx.fillText(`t=${timeValue.toFixed(1)}`, right - 52, 16);
+      });
+    }
+
+    // @slide 5.3 — σχεδιάζει Fourier προσέγγιση step function με n όρους.
     function drawStepFourier(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const left = 40;
@@ -6952,6 +8216,7 @@
       });
     }
 
+    // @slide 6.2 — σχεδιάζει σήμα + bar graph φάσματος για demo FFT.
     function drawFFTDemo(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const split = width * 0.56;
@@ -7149,6 +8414,7 @@
       });
     }
 
+    // @slide 6.2 — σχεδιάζει FFT Euler bridge: σήμα + winding κύκλος + διάνυσμα στον άξονα k.
     function drawFFTEulerBridge(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const signalFreq = fftSignalFreq ? Number(fftSignalFreq.value) : 3;
@@ -7313,6 +8579,7 @@
       });
     }
 
+    // @slide 6.3 | @util — δίνει τιμή σήματος (sine/square/triangle/sawtooth) σε χρόνο u.
     function sampleFftDuelSignal(signalKind, signalFreq, u) {
       const phase = 2 * Math.PI * signalFreq * u;
       if (signalKind === "square") {
@@ -7328,6 +8595,7 @@
       return Math.sin(phase);
     }
 
+    // @slide 6.3 — σχεδιάζει FFT Duel: σήμα + winding + spectrogram βαρ.
     function drawFFTDuel(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const own = fftDuelUiState.own || null;
@@ -7505,6 +8773,7 @@
       });
     }
 
+    // @slide 9.2 — σχεδιάζει ενεργειακή κατανομή κυμάτων (μεγάλα/μικρά).
     function drawWaviness(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const pad = 16;
@@ -7651,6 +8920,7 @@
       });
     }
 
+    // @slide 9.1 — σχεδιάζει bridge 1D→2D: συχνότητες και 2D wavevectors.
     function drawDimensionalBridge(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const pad = 14;
@@ -7760,6 +9030,7 @@
       });
     }
 
+    // @slide 6.7 — σχεδιάζει raw/clean σήμα και φάσμα φίλτρου.
     function drawFilteredAudioDemo(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const components = getFilterComponents();
@@ -7873,11 +9144,12 @@
         drawSignal(leftX, leftW, rawTimeTop, components, "#ffb35c", "Χρόνος: αρχικό σήμα");
         drawSignal(leftX, leftW, cleanTimeTop, cleanComponents, "#8fe5ff", "Χρόνος: μετά το φίλτρο");
 
-        drawSpectrum(rightX, rightW, rawSpecTop, components, "rgba(255, 179, 92, 0.95)", "FFT: αρχικό");
-        drawSpectrum(rightX, rightW, cleanSpecTop, cleanComponents, "rgba(143, 229, 255, 0.95)", "FFT: φιλτραρισμένο", true);
+        drawSpectrum(rightX, rightW, rawSpecTop, components, "rgba(255, 179, 92, 0.95)", "DFT: αρχικό");
+        drawSpectrum(rightX, rightW, cleanSpecTop, cleanComponents, "rgba(143, 229, 255, 0.95)", "DFT: φιλτραρισμένο", true);
       });
     }
 
+    // @slide 6.5 — σχεδιάζει βήμα-βήμα εξήγηση DFT: X[k] = ∑ x[n]·e^(-2πikn/N).
     function drawFFTExplain(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const components = getFilterComponents();
@@ -7953,6 +9225,7 @@
       });
     }
 
+    // @slide 6.6 — σχεδιάζει βήμα-βήμα εξήγηση IDFT: x[n] = (1/N)∑ X[k]·e^(2πikn/N).
     function drawIFFTExplain(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const components = getFilterComponents();
@@ -8040,6 +9313,376 @@
       });
     }
 
+    // @slide 8.1, 8.3 — διαβάζει συντελεστές πολυωνύμου A από inputs.
+    function getPolynomialA() {
+      return [polyA0, polyA1, polyA2, polyA3].map((node, index) => {
+        const fallback = [1, -0.5, 0.75, 0][index];
+        return node ? Number(node.value) : fallback;
+      });
+    }
+
+    // @slide 8.1, 8.3 — διαβάζει συντελεστές πολυωνύμου B από inputs.
+    function getPolynomialB() {
+      return [polyB0, polyB1, polyB2, polyB3].map((node, index) => {
+        const fallback = [1, 1, 0, 0][index];
+        return node ? Number(node.value) : fallback;
+      });
+    }
+
+    // @slide 8.1–8.3 | @util — υπολογίζει τιμή πολυωνύμου σε δοσμένο x (Horner).
+    function evaluatePolynomial(coeffs, x) {
+      let sum = 0;
+      for (let i = 0; i < coeffs.length; i += 1) {
+        sum += coeffs[i] * (x ** i);
+      }
+      return sum;
+    }
+
+    // @slide 8.1–8.3 | @util — μορφοποιεί συντελεστή σε compact string (1k, 2.3, −π).
+    function formatNumberCompact(value) {
+      const rounded = Math.abs(value) < 1e-10 ? 0 : value;
+      return Number(rounded).toFixed(2).replace(/\.?0+$/, "");
+    }
+
+    // @slide 8.1–8.3 — μετατρέπει πίνακα συντελεστών σε LaTeX string πολυωνύμου.
+    function formatPolynomialLatex(coeffs, symbol = "x", name = "P") {
+      const terms = [];
+      for (let i = 0; i < coeffs.length; i += 1) {
+        const c = coeffs[i];
+        if (Math.abs(c) < 1e-10) {
+          continue;
+        }
+        const sign = c >= 0 ? "+" : "-";
+        const absValue = Math.abs(c);
+        let base = formatNumberCompact(absValue);
+
+        if (i === 0) {
+          base = formatNumberCompact(absValue);
+        } else if (Math.abs(absValue - 1) < 1e-10) {
+          base = i === 1 ? `${symbol}` : `${symbol}^{${i}}`;
+        } else {
+          base = i === 1 ? `${base}${symbol}` : `${base}${symbol}^{${i}}`;
+        }
+
+        terms.push({ sign, base });
+      }
+
+      if (!terms.length) {
+        return `${name}(${symbol})=0`;
+      }
+
+      const first = terms[0];
+      const firstToken = first.sign === "-" ? `-${first.base}` : first.base;
+      const rest = terms.slice(1).map((term) => ` ${term.sign} ${term.base}`).join("");
+      return `${name}(${symbol})=${firstToken}${rest}`;
+    }
+
+    // @slide 8.3 — συνέλιξη (A×B) πολυωνύμων.
+    function multiplyPolynomials(a, b) {
+      const out = new Array(a.length + b.length - 1).fill(0);
+      for (let i = 0; i < a.length; i += 1) {
+        for (let j = 0; j < b.length; j += 1) {
+          out[i + j] += a[i] * b[j];
+        }
+      }
+      return out;
+    }
+
+    // @slide 8.2 — Gaussian elimination για ανάκτηση πολυωνύμου από σημεία.
+    function solveLinearSystem(matrix, vector) {
+      const n = matrix.length;
+      const augmented = matrix.map((row, index) => [...row, vector[index]]);
+
+      for (let col = 0; col < n; col += 1) {
+        let pivot = col;
+        for (let row = col + 1; row < n; row += 1) {
+          if (Math.abs(augmented[row][col]) > Math.abs(augmented[pivot][col])) {
+            pivot = row;
+          }
+        }
+
+        if (Math.abs(augmented[pivot][col]) < 1e-12) {
+          return null;
+        }
+
+        if (pivot !== col) {
+          const tmp = augmented[col];
+          augmented[col] = augmented[pivot];
+          augmented[pivot] = tmp;
+        }
+
+        const pivotValue = augmented[col][col];
+        for (let j = col; j <= n; j += 1) {
+          augmented[col][j] /= pivotValue;
+        }
+
+        for (let row = 0; row < n; row += 1) {
+          if (row === col) {
+            continue;
+          }
+          const factor = augmented[row][col];
+          if (Math.abs(factor) < 1e-12) {
+            continue;
+          }
+          for (let j = col; j <= n; j += 1) {
+            augmented[row][j] -= factor * augmented[col][j];
+          }
+        }
+      }
+
+      return augmented.map((row) => row[n]);
+    }
+
+    // @slide 8.1, 8.2, 8.3 — σχεδιάζει καμπύλες + σημεία σε canvas πολυωνύμου.
+    function drawPolynomialPlot(canvas, curves = [], points = []) {
+      drawAxesCanvas(canvas, (ctx, width, height) => {
+        const left = 24;
+        const right = width - 16;
+        const top = 16;
+        const bottom = height - 20;
+        const xMin = -3;
+        const xMax = 3;
+        const yMin = -12;
+        const yMax = 12;
+
+        const toX = (x) => left + ((x - xMin) / (xMax - xMin)) * (right - left);
+        const toY = (y) => bottom - ((y - yMin) / (yMax - yMin)) * (bottom - top);
+
+        ctx.strokeStyle = "#2f4f85";
+        ctx.lineWidth = 1;
+        for (let gx = -3; gx <= 3; gx += 1) {
+          const px = toX(gx);
+          ctx.beginPath();
+          ctx.moveTo(px, top);
+          ctx.lineTo(px, bottom);
+          ctx.stroke();
+        }
+        for (let gy = -12; gy <= 12; gy += 3) {
+          const py = toY(gy);
+          ctx.beginPath();
+          ctx.moveTo(left, py);
+          ctx.lineTo(right, py);
+          ctx.stroke();
+        }
+
+        ctx.strokeStyle = "#9abdf0";
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.moveTo(toX(0), top);
+        ctx.lineTo(toX(0), bottom);
+        ctx.moveTo(left, toY(0));
+        ctx.lineTo(right, toY(0));
+        ctx.stroke();
+
+        curves.forEach((curve) => {
+          ctx.strokeStyle = curve.color;
+          ctx.lineWidth = 2.2;
+          ctx.beginPath();
+          for (let px = left; px <= right; px += 2) {
+            const x = xMin + ((px - left) / (right - left)) * (xMax - xMin);
+            const y = evaluatePolynomial(curve.coeffs, x);
+            const py = toY(y);
+            if (px === left) {
+              ctx.moveTo(px, py);
+            } else {
+              ctx.lineTo(px, py);
+            }
+          }
+          ctx.stroke();
+        });
+
+        points.forEach((point) => {
+          ctx.fillStyle = point.color || "#facc15";
+          ctx.beginPath();
+          ctx.arc(toX(point.x), toY(point.y), 4, 0, Math.PI * 2);
+          ctx.fill();
+        });
+
+        ctx.fillStyle = "#cde4ff";
+        ctx.font = "12px Segoe UI, sans-serif";
+        let labelY = top + 14;
+        curves.forEach((curve) => {
+          ctx.fillStyle = curve.color;
+          ctx.fillText(curve.label, left + 6, labelY);
+          labelY += 14;
+        });
+      });
+    }
+
+    // @slide 8.1, 8.2, 8.3 — ενημερώνει live LaTeX + draws πολυωνύμου.
+    function updatePolynomialBridge() {
+      if (!polyCoeffCanvas && !polyPointsCanvas && !polyMultiplyCanvas) {
+        return;
+      }
+
+      const a = getPolynomialA();
+      const b = getPolynomialB();
+      const c = multiplyPolynomials(a, b);
+
+      if (polyA0Value) polyA0Value.textContent = Number(a[0]).toFixed(2);
+      if (polyA1Value) polyA1Value.textContent = Number(a[1]).toFixed(2);
+      if (polyA2Value) polyA2Value.textContent = Number(a[2]).toFixed(2);
+      if (polyA3Value) polyA3Value.textContent = Number(a[3]).toFixed(2);
+      if (polyB0Value) polyB0Value.textContent = Number(b[0]).toFixed(2);
+      if (polyB1Value) polyB1Value.textContent = Number(b[1]).toFixed(2);
+      if (polyB2Value) polyB2Value.textContent = Number(b[2]).toFixed(2);
+      if (polyB3Value) polyB3Value.textContent = Number(b[3]).toFixed(2);
+
+      const offset = polyPointOffset ? Number(polyPointOffset.value) : 0;
+      const step = polyPointStep ? Number(polyPointStep.value) : 8;
+      if (polyPointOffsetValue) polyPointOffsetValue.textContent = offset.toFixed(2);
+      const sampleCount = Math.max(4, Math.round(step));
+      if (polyPointStepValue) polyPointStepValue.textContent = String(sampleCount);
+
+      const cAdd = (u, v) => ({ re: u.re + v.re, im: u.im + v.im });
+      const cMul = (u, v) => ({ re: u.re * v.re - u.im * v.im, im: u.re * v.im + u.im * v.re });
+      const cAbs = (u) => Math.hypot(u.re, u.im);
+      const cExp = (angle) => ({ re: Math.cos(angle), im: Math.sin(angle) });
+
+      const samples = [];
+      for (let k = 0; k < sampleCount; k += 1) {
+        const thetaK = offset + (2 * Math.PI * k) / sampleCount;
+        const x = cExp(thetaK);
+        const x2 = cExp(thetaK * 2);
+        const even = { re: a[0] + a[2] * x2.re, im: a[2] * x2.im };
+        const oddCore = { re: a[1] + a[3] * x2.re, im: a[3] * x2.im };
+        const oddTerm = cMul(x, oddCore);
+        const total = cAdd(even, oddTerm);
+        samples.push({
+          k,
+          theta: thetaK,
+          total,
+          even,
+          oddTerm,
+          absTotal: cAbs(total),
+          absEven: cAbs(even),
+          absOdd: cAbs(oddTerm),
+        });
+      }
+
+      const maxMag = Math.max(
+        1e-6,
+        ...samples.map((s) => Math.max(s.absTotal, s.absEven, s.absOdd))
+      );
+
+      drawPolynomialPlot(polyCoeffCanvas, [
+        { coeffs: a, color: "#8fe5ff", label: "A(x) από συντελεστές" },
+      ]);
+
+      drawAxesCanvas(polyPointsCanvas, (ctx, width, height) => {
+        const left = 56;
+        const right = width - 14;
+        const top = 16;
+        const bottom = height - 36;
+        const graphW = Math.max(20, right - left);
+        const graphH = Math.max(20, bottom - top);
+
+        ctx.strokeStyle = "#345886";
+        ctx.strokeRect(left, top, graphW, graphH);
+
+        ctx.strokeStyle = "#2e4f7f";
+        ctx.beginPath();
+        ctx.moveTo(left, bottom);
+        ctx.lineTo(right, bottom);
+        ctx.stroke();
+
+        const toX = (k) => left + (k / Math.max(1, sampleCount - 1)) * graphW;
+        const toY = (v) => bottom - (v / maxMag) * graphH;
+
+        const drawSeries = (color, key) => {
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 2.3;
+          ctx.beginPath();
+          samples.forEach((s, idx) => {
+            const x = toX(s.k);
+            const y = toY(s[key]);
+            if (idx === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          });
+          ctx.stroke();
+        };
+
+        drawSeries("#8fe5ff", "absTotal");
+        drawSeries("#facc15", "absEven");
+        drawSeries("#86efac", "absOdd");
+
+        ctx.fillStyle = "#cde4ff";
+        ctx.font = "12px Segoe UI, sans-serif";
+        ctx.fillText("|A(e^{iθ_k})|", left + 8, top + 14);
+        ctx.fillStyle = "#facc15";
+        ctx.fillText("|A_even(e^{i2θ_k})|", left + 120, top + 14);
+        ctx.fillStyle = "#86efac";
+        ctx.fillText("|e^{iθ_k}A_odd(e^{i2θ_k})|", left + 300, top + 14);
+        ctx.fillStyle = "#9db7dd";
+        ctx.fillText("k", right - 6, bottom + 16);
+        ctx.fillText("μέτρο", left - 42, top + 10);
+      });
+
+      drawPolynomialPlot(polyMultiplyCanvas, [
+        { coeffs: a, color: "#8fe5ff", label: "A(x)" },
+        { coeffs: b, color: "#facc15", label: "B(x)" },
+        { coeffs: c, color: "#4ade80", label: "C(x)=A(x)B(x)" },
+      ]);
+
+      if (polyCoeffFormula) {
+        polyCoeffFormula.innerHTML = `\\[${formatPolynomialLatex(a, "x", "A")}\\]`;
+      }
+
+      if (polyRecoveredFormula) {
+        polyRecoveredFormula.innerHTML = `
+          <div>Μπλε καμπύλη: το τελικό αποτέλεσμα (ολόκληρο πολυώνυμο).</div>
+          <div>Κίτρινη καμπύλη: άρτιο κομμάτι (τρέχει ανεξάρτητα).</div>
+          <div>Πράσινη καμπύλη: περιττό κομμάτι μετά την περιστροφή (τρέχει ανεξάρτητα).</div>
+          <div>Σε κάθε δείγμα k τα δύο κομμάτια συνδυάζονται και δίνουν το ίδιο τελικό σημείο.</div>
+        `;
+      }
+
+      if (polyRecoveryError) {
+        polyRecoveryError.textContent = `Οπτικά: το μπλε είναι το σύνολο και προκύπτει από το άθροισμα των δύο κομματιών (άρτιο + περιττό) για κάθε k.`;
+      }
+
+      if (polyPointsTable) {
+        polyPointsTable.innerHTML = samples.slice(0, Math.min(8, samples.length))
+          .map((s) => `k=${s.k}: |A|=${s.absTotal.toFixed(2)}, |Even|=${s.absEven.toFixed(2)}, |Odd|=${s.absOdd.toFixed(2)}`)
+          .join("<br />");
+      }
+
+      if (polyMultiplyFormula) {
+        polyMultiplyFormula.innerHTML = `\\[${formatPolynomialLatex(a, "x", "A")}\\quad ${formatPolynomialLatex(b, "x", "B")}\\quad ${formatPolynomialLatex(c, "x", "C")}\\]`;
+      }
+
+      if (polyConvolutionSteps) {
+        const pairCount = a.length * b.length;
+        const lines = [];
+        lines.push(`Αφελής συνέλιξη: ${a.length}×${b.length} ζεύγη όρων = ${pairCount} πράξεις (κλίμακα ~N²)`);
+        for (let k = 0; k < c.length; k += 1) {
+          const terms = [];
+          for (let i = 0; i < a.length; i += 1) {
+            const j = k - i;
+            if (j >= 0 && j < b.length) {
+              terms.push(`a${i}·b${j}`);
+            }
+          }
+          lines.push(`c${k} = ${terms.join(" + ")} = ${formatNumberCompact(c[k])}`);
+        }
+        polyConvolutionSteps.textContent = lines.join("\n");
+      }
+
+      const mathTargets = [polyCoeffFormula, polyRecoveredFormula, polyMultiplyFormula].filter(Boolean);
+      if (mathTargets.length && window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+        window.MathJax.typesetPromise(mathTargets).catch(() => {});
+      }
+    }
+
+    [
+      polyA0, polyA1, polyA2, polyA3,
+      polyB0, polyB1, polyB2, polyB3,
+      polyPointOffset, polyPointStep,
+    ].forEach((control) => {
+      control?.addEventListener("input", updatePolynomialBridge);
+    });
+    updatePolynomialBridge();
+
+    // @slide 7.1 — σχεδιάζει γράφο N² εναντίον N·log₂N με κυλιόμενο marker.
     function drawFFTComplexity(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const values = getComplexityValues();
@@ -8257,6 +9900,7 @@
       });
     }
 
+    // @slide 7.3 — σχεδιάζει histogram αγώνα πολυπλοκότητας ανά μοντέλο.
     function drawComplexityRace(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const left = 16;
@@ -8398,6 +10042,7 @@
       });
     }
 
+    // @slide 7.2 — σχεδιάζει δένδρο Cooley-Tukey FFT N=2^n και N² vs N·logN.
     function drawCooleyTree(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const values = getCooleyTreeValues();
@@ -8521,11 +10166,13 @@
       });
     }
 
+    // @util ocean — pseudo-random uniform [0,1] από αριθμητικό seed (αναπαραγώγιμο).
     function seededUniform(seed) {
       const value = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
       return value - Math.floor(value);
     }
 
+    // @slide 9.5 | @util — pseudo-random Gaussian με Box-Muller από 2 seeds.
     function seededGaussian(seedA, seedB) {
       const u1 = Math.max(1e-6, seededUniform(seedA));
       const u2 = seededUniform(seedB);
@@ -8534,6 +10181,7 @@
       return r * Math.cos(theta);
     }
 
+    // @slide 9.4 | @util — υπολογίζει τιμή Phillips ocean spectrum για wavenumber k.
     function phillipsValue(k) {
       const clampedK = Math.max(0.12, k);
       const L = 1.15;
@@ -8543,6 +10191,7 @@
       return base * smallWaveSuppress;
     }
 
+    // @slide 9.3, 9.4 — σχεδιάζει ενεργειακό φάσμα θαλάσσιας (shallow/deep/Phillips).
     function drawEnergyCurve(canvas, t, color = "#ffb35c") {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const pad = 14;
@@ -8704,6 +10353,7 @@
       });
     }
 
+    // @slide 9.5 — σχεδιάζει φάσμα τυχαίων φάσεων ανά συχνότητα.
     function drawRandomPhases(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const pad = 14;
@@ -8785,6 +10435,7 @@
       });
     }
 
+    // @slide 9.4 — σχεδιάζει φάσμα Phillips με επιλεγμένο βάρος ανά k.
     function drawPhillipsWeightedSpectrum(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const left = 16;
@@ -8863,6 +10514,7 @@
       });
     }
 
+    // @slide 9.6 — σχεδιάζει εξέλιξη φάσεων h(k,t) = H(k)·e^{iωt} στον χρόνο.
     function drawTimeEvolution(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const mid = height * 0.52;
@@ -8878,6 +10530,7 @@
       });
     }
 
+    // @slide 9.7 — σχεδιάζει ανακατασκευή ύψους θαλασσιού με IFFT.
     function drawIFFT(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const pad = 12;
@@ -8969,6 +10622,7 @@
       });
     }
 
+    // @slide 9.8 — σχεδιάζει τελικό 2D/3D render του κυματισμού.
     function drawFinalRender(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const grad = ctx.createLinearGradient(0, 0, 0, height);
@@ -8988,6 +10642,7 @@
       });
     }
 
+    // @slide 2.6 — σχεδιάζει κυκλικές τροχιές σωματιδίων σε Gerstner wave.
     function drawGerstnerParticleOrbits(canvas, t, settings) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const ySurface = height * 0.30;
@@ -9057,12 +10712,11 @@
           }
         }
 
-        ctx.fillStyle = "rgba(200, 226, 255, 0.95)";
-        ctx.font = "12px Segoe UI, sans-serif";
-        ctx.fillText("2D: κυκλικές τροχιές (με εξασθένηση σε βάθος)", 12, 18);
+        // Legend removed on purpose: keep the first graph visually cleaner.
       });
     }
 
+    // @slide 1.3, 10.2 — σχεδιάζει 2D fallback ocean κυμάτων (Canvas 2D API).
     function drawOceanWaves(canvas, time, settings) {
       if (!canvas) {
         return;
@@ -9135,6 +10789,7 @@
     }
 
     let animationStartTime = performance.now();
+    // @slide όλες — κύριος requestAnimationFrame loop που καλεί όλες τις draw functions.
     function animatePresentation() {
       const elapsedSeconds = (performance.now() - animationStartTime) / 1000;
       const oceanSettings = getOceanSettings();
@@ -9164,6 +10819,7 @@
         drawSoundSimple(soundSimpleWaveCanvas, soundSimpleMolCanvas, elapsedSeconds);
       drawSoundDecomposition(elapsedSeconds);
       drawSignalDemo(sumWavesCanvas, elapsedSeconds);
+        drawHeatSineIntro(heatSineWaveCanvas, heatSineRodCanvas, elapsedSeconds);
       drawHeatRod(heatRodCanvas, elapsedSeconds);
       drawStepFourier(stepFourierCanvas, elapsedSeconds);
       drawFFTEulerBridge(fftEulerBridgeCanvas, elapsedSeconds);
@@ -9181,8 +10837,19 @@
       drawTimeEvolution(timeEvolutionCanvas, elapsedSeconds);
       drawIFFT(ifftCanvas, elapsedSeconds);
       drawFinalRender(finalRenderCanvas, elapsedSeconds);
+      drawTaylorPolyfit(
+        taylorPolyfitCanvas,
+        taylorPolyC0Slider ? Number(taylorPolyC0Slider.value) : 0,
+        taylorPolyC1Slider ? Number(taylorPolyC1Slider.value) : 0,
+        taylorPolyC2Slider ? Number(taylorPolyC2Slider.value) : 0,
+        taylorPolyC3Slider ? Number(taylorPolyC3Slider.value) : 0
+      );
+      drawTaylorCos(taylorCosCanvas, taylorCosTermsSlider ? Number(taylorCosTermsSlider.value) : 0);
+      drawTaylorSin(taylorSinCanvas, taylorSinTermsSlider ? Number(taylorSinTermsSlider.value) : 0);
+      drawTaylorExp(taylorExpCanvas, taylorExpTermsSlider ? Number(taylorExpTermsSlider.value) : 0);
+      drawIRotation(iRotationCanvas, elapsedSeconds);
       drawEulerPlane(eulerPlaneCanvas, theta, radius);
-      drawEulerProofSketch(eulerProofSketchCanvas, elapsedSeconds);
+      drawEulerProofSketch(eulerProofSketchCanvas, elapsedSeconds); // still used in 5.1 proof sketch
       ocean3DStates.forEach((state) => {
         updateOcean3DState(state, elapsedSeconds, oceanSettings);
       });

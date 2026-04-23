@@ -569,6 +569,69 @@ def build_box_payload(track_id: int, left: float, top: float, width: float, heig
     }
 
 
+def denormalize_box(box: Dict[str, float], frame_width: int, frame_height: int):
+    if frame_width <= 0 or frame_height <= 0:
+        return None
+
+    try:
+        x = int(float(box.get("x", 0.0)) * frame_width)
+        y = int(float(box.get("y", 0.0)) * frame_height)
+        w = int(float(box.get("w", 0.0)) * frame_width)
+        h = int(float(box.get("h", 0.0)) * frame_height)
+    except Exception:
+        return None
+
+    if w <= 0 or h <= 0:
+        return None
+
+    x = max(0, min(frame_width - 1, x))
+    y = max(0, min(frame_height - 1, y))
+    w = max(1, min(frame_width - x, w))
+    h = max(1, min(frame_height - y, h))
+    return x, y, w, h
+
+
+def encode_image_to_base64(image, quality: int = 70) -> Optional[str]:
+    try:
+        bounded_quality = max(20, min(95, int(quality)))
+        ok, encoded = cv2.imencode(
+            ".jpg",
+            image,
+            [int(cv2.IMWRITE_JPEG_QUALITY), bounded_quality],
+        )
+        if not ok:
+            return None
+
+        return base64.b64encode(encoded.tobytes()).decode("ascii")
+    except Exception:
+        return None
+
+
+def build_annotated_image(image, boxes: List[Dict[str, float]]) -> Optional[str]:
+    if image is None:
+        return None
+
+    frame_h, frame_w = image.shape[:2]
+    canvas = image.copy()
+
+    for box in boxes:
+        denorm = denormalize_box(box, frame_w, frame_h)
+        if denorm is None:
+            continue
+
+        x, y, w, h = denorm
+        label = str(box.get("label") or "object")
+        track_id = int(box.get("id", 0) or 0)
+        confidence = float(box.get("confidence", 0.0) or 0.0)
+        text = f"#{track_id} {label} {confidence:.2f}"
+
+        cv2.rectangle(canvas, (x, y), (x + w, y + h), (0, 220, 30), 2)
+        cv2.rectangle(canvas, (x, max(0, y - 22)), (x + max(90, len(text) * 7), y), (0, 220, 30), -1)
+        cv2.putText(canvas, text, (x + 4, max(14, y - 6)), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 0), 1, cv2.LINE_AA)
+
+    return encode_image_to_base64(canvas, quality=72)
+
+
 def track_with_deepsort(image, detections: List[Dict[str, float]], frame_width: int, frame_height: int):
     deep_sort_inputs = []
     for detection in detections:
@@ -746,6 +809,7 @@ def process_request(payload):
 
     request_id = payload.get("id")
     image_b64 = payload.get("image")
+    include_annotated_image = bool(payload.get("includeAnnotatedImage"))
 
     if not image_b64:
         return build_empty_response(request_id=request_id)
@@ -755,12 +819,19 @@ def process_request(payload):
         return build_empty_response(request_id=request_id, tracking="decode-error")
 
     result = detect_targets(image)
-    return {
+    response = {
         "id": request_id,
         "points": result.get("points", []),
         "boxes": result.get("boxes", []),
         "tracking": ACTIVE_TRACKING_BACKEND
     }
+
+    if include_annotated_image:
+        annotated = build_annotated_image(image, response["boxes"])
+        if annotated:
+            response["annotatedImage"] = annotated
+
+    return response
 
 
 def run_stdio_loop():

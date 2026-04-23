@@ -13,6 +13,29 @@ SmarT classROoms for emBodied participatory lEarning
 - Teacher dashboard και Student launcher χωρίς login flow.
 - Legacy geometry canvas με real-time sync teacher-student.
 - Admin dashboard με live εικόνα χρηστών.
+## Επικοινωνία
+- Video: WebRTC (UDP)
+- coordinates / events: WebSockets (TCP)
+## Geometry
+Να δουλεύει στον browser
+### Χρήστες
+#### server
+Ερώτημα: 1 ή 2 server
+##### Deep Sort
+Δέχεται: video feed
+Επιστρέφει: json με θέσεις.
+= Τεχνολογίες: Yolo, DeepSort, OpenCV (GPU;;;)
+##### broadcasting
+#### teacher, που μπορεί να σχεδιάσει και μαθήματα
+Πώς θα αυτοματοποιεί το αν οι clients έχουν ολοκληρώσει την διαδικασία
+#### mouse client
+Αριθμός: πολλοί
+#### camera client
+Αριθμός: 1 primary camera client ανά session (αλλά architecture να υποστηρίζει πολλούς)
+Στέλνει: video (WebRTC)
+
+- Και οι mouse clients και ο camera client αλλά και ο teacher client, βλέπουν τον κοινό καμβά με τον χρήστη με κάμερα και τους χρήστες ως σημεία
+
 
 ## Απαιτήσεις
 
@@ -52,13 +75,13 @@ pip install opencv-python numpy ultralytics deep-sort-realtime setuptools==80.9.
 
 ### 4) Προαιρετικά DeepSORT με torch
 
-CPU-only:
+#### CPU-only:
 
 ```powershell
 & ".\.venv\Scripts\python.exe" -m pip install torch torchvision
 ```
 
-GPU (CUDA build):
+#### GPU (CUDA build):
 
 1. Επίλεξε το σωστό command από τον PyTorch selector: https://pytorch.org/get-started/locally/
 2. Παράδειγμα για CUDA 12.8:
@@ -157,6 +180,7 @@ start http://localhost:3000/user.html
 - Admin dashboard: http://localhost:3000/admin
 - Legacy Geometry teacher direct: http://localhost:3000/client.html
 - Legacy Geometry student direct: http://localhost:3000/user.html
+- Camera speed test: http://localhost:3000/camera-speed-test
 - Health check: http://localhost:3000/health
 
 ## Εφαρμογές
@@ -190,6 +214,8 @@ Teacher/Student entry: `/apps/fourier-lab/index.html?mode=teacher|client`
 - Slide sync teacher-client
 - Activity telemetry μέσω WebSocket (`fourier:*` events)
 - Classroom summary και participant feed
+- Νέα ενότητα "Polynomial Bridge" ανάμεσα σε Fourier Transform και Cooley-Tukey:
+    coeff -> value, value -> coeff (μέσω σημείων), και interactive multiplication με συνέλιξη συντελεστών
 
 ## REST Endpoints
 
