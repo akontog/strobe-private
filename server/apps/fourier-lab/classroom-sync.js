@@ -37,9 +37,12 @@
   const fftDuelProbeInput = document.getElementById("fftDuelProbeFreq");
   const fftDuelSubmitBtn = document.getElementById("fftDuelSubmitBtn");
   const fftDuelStartBtn = document.getElementById("fftDuelStartBtn");
+  const fftDuelRevealBtn = document.getElementById("fftDuelRevealBtn");
   const classFftDuelStartBtn = document.getElementById("classFftDuelStartBtn");
+  const classFftDuelRevealBtn = document.getElementById("classFftDuelRevealBtn");
   const randomFreqGenerateBtn = document.getElementById("randomFreqGenerateBtn");
   const randomFreqClearBtn = document.getElementById("randomFreqClearBtn");
+  const waveSumStudentFreqInput = document.getElementById("waveSumStudentFreq");
   const COMM_DEBUG = searchParams.get("debugWs") === "1";
 
   const metricNodes = {
@@ -68,6 +71,7 @@
     heatTime: 0,
     fftDuel: null,
     oceanRandom: null,
+    waveSum: null,
     chatMessages: [],
     unreadChatCount: 0,
   };
@@ -609,18 +613,18 @@
     const name = normalizeName(rawPlayer && rawPlayer.name, "Student");
     const team = normalizeTeam(rawPlayer && rawPlayer.team, "-");
     const signalKind = String((rawPlayer && rawPlayer.signalKind) || "sine").trim() || "sine";
-    const probeFreq = Number(clampValue(rawPlayer && rawPlayer.probeFreq, 0, 8, 2).toFixed(2));
+    const probeFreq = Number(clampValue(rawPlayer && rawPlayer.probeFreq, 0, 8, 2).toFixed(1));
     const targetFreqRaw = allowTarget ? rawPlayer && rawPlayer.targetFreq : null;
     const targetFreq = Number.isFinite(Number(targetFreqRaw))
-      ? Number(clampValue(targetFreqRaw, 0, 8, 2).toFixed(2))
+      ? Number(clampValue(targetFreqRaw, 0, 8, 2).toFixed(1))
       : null;
     const submitted = Boolean(rawPlayer && rawPlayer.submitted);
     const locked = Boolean(rawPlayer && rawPlayer.locked);
     const guessFreq = submitted && Number.isFinite(Number(rawPlayer && rawPlayer.guessFreq))
-      ? Number(clampValue(rawPlayer.guessFreq, 0, 8, 2).toFixed(2))
+      ? Number(clampValue(rawPlayer.guessFreq, 0, 8, 2).toFixed(1))
       : null;
     const error = submitted && Number.isFinite(Number(rawPlayer && rawPlayer.error))
-      ? Number(Math.max(0, Number(rawPlayer.error)).toFixed(3))
+      ? Number(Math.max(0, Number(rawPlayer.error)).toFixed(2))
       : null;
 
     return {
@@ -646,6 +650,7 @@
         status: "idle",
         solvedCount: 0,
         totalPlayers: 0,
+        revealResults: false,
         players: [],
         own: null,
         updatedAt: 0,
@@ -668,6 +673,7 @@
       status: String(rawState.status || "idle").trim() || "idle",
       solvedCount,
       totalPlayers,
+      revealResults: Boolean(rawState.revealResults),
       players,
       own,
       updatedAt: toFiniteNumber(rawState.updatedAt),
@@ -735,6 +741,39 @@
     document.dispatchEvent(
       new CustomEvent("fourier:classroom-ocean-random-state", {
         detail: state.oceanRandom,
+      })
+    );
+  }
+
+  function normalizeWaveSumEntries(rawEntries) {
+    if (!Array.isArray(rawEntries)) {
+      return [];
+    }
+    return rawEntries
+      .slice(0, 60)
+      .map((entry) => ({
+        name: normalizeName(entry && entry.name, "Student"),
+        freq: Number(clampValue(entry && entry.freq, 0.4, 6, 1.2).toFixed(2)),
+        updatedAt: toFiniteNumber(entry && entry.updatedAt),
+      }))
+      .filter((entry) => Number.isFinite(entry.freq));
+  }
+
+  function normalizeWaveSumState(rawState) {
+    if (!rawState || typeof rawState !== "object") {
+      return { entries: [], updatedAt: 0 };
+    }
+    return {
+      entries: normalizeWaveSumEntries(rawState.entries),
+      updatedAt: toFiniteNumber(rawState.updatedAt),
+    };
+  }
+
+  function applyWaveSumState(rawState) {
+    state.waveSum = normalizeWaveSumState(rawState);
+    document.dispatchEvent(
+      new CustomEvent("fourier:wave-sum-state", {
+        detail: state.waveSum,
       })
     );
   }
@@ -1442,12 +1481,25 @@
     socket.emit("fourier:fft-duel-start", payload);
   }
 
+  function emitFftDuelReveal() {
+    if (state.mode !== "teacher" || !socket.connected || !state.joined) {
+      return;
+    }
+
+    const payload = {
+      slideId: state.activeSlideId || "",
+    };
+
+    logComm("emit fourier:fft-duel-reveal", payload);
+    socket.emit("fourier:fft-duel-reveal", payload);
+  }
+
   function emitFftDuelProbe(detail, force = false) {
     if (state.mode !== "client") {
       return;
     }
 
-    const probeFreq = Number(clampValue(detail && detail.probeFreq, 0, 8, 2).toFixed(2));
+    const probeFreq = Number(clampValue(detail && detail.probeFreq, 0, 8, 2).toFixed(1));
 
     if (!socket.connected || !state.joined) {
       return;
@@ -1467,13 +1519,25 @@
       return;
     }
 
-    const guessFreq = Number(clampValue(detail && detail.guessFreq, 0, 8, 2).toFixed(2));
+    const guessFreq = Number(clampValue(detail && detail.guessFreq, 0, 8, 2).toFixed(1));
     const payload = {
       guessFreq,
     };
 
     logComm("emit fourier:fft-duel-submit", payload);
     socket.emit("fourier:fft-duel-submit", payload);
+  }
+
+  function emitWaveSumUpdate(detail) {
+    if (state.mode !== "client" || !socket.connected || !state.joined) {
+      return;
+    }
+
+    const freq = Number(clampValue(detail && detail.freq, 0.4, 6, 1.2).toFixed(2));
+    const payload = { freq };
+
+    logComm("emit fourier:wave-sum-update", payload);
+    socket.emit("fourier:wave-sum-update", payload);
   }
 
   function emitOceanRandomPack(detail) {
@@ -1521,6 +1585,10 @@
     emitFftDuelStart();
   });
 
+  document.addEventListener("fourier:fft-duel-reveal-local", () => {
+    emitFftDuelReveal();
+  });
+
   document.addEventListener("fourier:fft-duel-probe-local-change", (event) => {
     const detail = (event && event.detail) || {};
     emitFftDuelProbe(detail, Boolean(detail.force));
@@ -1536,6 +1604,10 @@
 
   document.addEventListener("fourier:ocean-random-pack-clear-local", () => {
     emitOceanRandomClear();
+  });
+
+  document.addEventListener("fourier:wave-sum-freq-local-change", (event) => {
+    emitWaveSumUpdate((event && event.detail) || {});
   });
 
   // Fallback bridge: directly listen to slider DOM events in this sync file too.
@@ -1575,6 +1647,12 @@
     });
   });
 
+  [fftDuelRevealBtn, classFftDuelRevealBtn].forEach((button) => {
+    button?.addEventListener("click", () => {
+      emitFftDuelReveal();
+    });
+  });
+
   fftDuelProbeInput?.addEventListener("change", () => {
     emitFftDuelProbe({ probeFreq: Number(fftDuelProbeInput.value) }, true);
   });
@@ -1585,10 +1663,20 @@
 
   randomFreqGenerateBtn?.addEventListener("click", () => {
     // UI dispatches custom payload; here we keep fallback click wiring no-op.
+
   });
 
   randomFreqClearBtn?.addEventListener("click", () => {
     emitOceanRandomClear();
+  });
+
+  // Fallback bridge for wave-sum student slider.
+  waveSumStudentFreqInput?.addEventListener("input", () => {
+    emitWaveSumUpdate({ freq: Number(waveSumStudentFreqInput.value) });
+  });
+
+  waveSumStudentFreqInput?.addEventListener("change", () => {
+    emitWaveSumUpdate({ freq: Number(waveSumStudentFreqInput.value) });
   });
 
   function emitInteraction(control, eventType) {
@@ -1774,6 +1862,10 @@
       studentTeamInput.value = state.userTeam;
     }
 
+    if (state.mode === "client" && state.userName) {
+      document.dispatchEvent(new CustomEvent("fourier:student-name-ready", { detail: { name: state.userName } }));
+    }
+
     if (payload && Array.isArray(payload.soundStates)) {
       applySoundStates(payload.soundStates);
     } else if (payload && payload.summary && Array.isArray(payload.summary.soundStates)) {
@@ -1802,6 +1894,10 @@
       applyOceanRandomState(payload.oceanRandom);
     } else if (payload && payload.summary && Object.prototype.hasOwnProperty.call(payload.summary, "oceanRandom")) {
       applyOceanRandomState(payload.summary.oceanRandom);
+    }
+
+    if (payload && Object.prototype.hasOwnProperty.call(payload, "waveSum")) {
+      applyWaveSumState(payload.waveSum);
     }
 
     if (payload && (payload.activeSlideId || Number.isInteger(payload.activeSlideIndex))) {
@@ -1912,6 +2008,11 @@
     logComm("recv fourier:ocean-random-state", payload);
     applyOceanRandomState(payload);
     updateMiniSummary();
+  });
+
+  socket.on("fourier:wave-sum-state", (payload) => {
+    logComm("recv fourier:wave-sum-state", payload);
+    applyWaveSumState(payload);
   });
 
   socket.on("fourier:chat-history", (payload) => {

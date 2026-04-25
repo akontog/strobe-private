@@ -637,10 +637,12 @@ const COMM_EVENT_CATALOG = Object.freeze([
   { app: 'fourier', direction: 'in', event: 'fourier:heat-control', description: 'Student/teacher heat sliders (position/temperature) to server.' },
   { app: 'fourier', direction: 'in', event: 'fourier:heat-time-control', description: 'Teacher heat time slider updates for section 3.5.' },
   { app: 'fourier', direction: 'in', event: 'fourier:fft-duel-start', description: 'Teacher starts competitive FFT duel round.' },
+  { app: 'fourier', direction: 'in', event: 'fourier:fft-duel-reveal', description: 'Teacher reveals submitted FFT duel guesses and errors.' },
   { app: 'fourier', direction: 'in', event: 'fourier:fft-duel-probe', description: 'Student updates current probe frequency for FFT duel.' },
   { app: 'fourier', direction: 'in', event: 'fourier:fft-duel-submit', description: 'Student submits and locks FFT duel guess.' },
   { app: 'fourier', direction: 'in', event: 'fourier:ocean-random-pack', description: 'Student submits a random frequency pack for section 6.3.' },
   { app: 'fourier', direction: 'in', event: 'fourier:ocean-random-clear', description: 'Teacher clears classroom random frequency packs.' },
+  { app: 'fourier', direction: 'in', event: 'fourier:wave-sum-update', description: 'Student updates their frequency slider for section 2.3.' },
   { app: 'fourier', direction: 'out', event: 'fourier:state', description: 'Server sends full initial/rehydration state.' },
   { app: 'fourier', direction: 'out', event: 'fourier:slide', description: 'Server broadcasts active slide state.' },
   { app: 'fourier', direction: 'out', event: 'fourier:participants', description: 'Server broadcasts participant roster counts/details.' },
@@ -651,6 +653,7 @@ const COMM_EVENT_CATALOG = Object.freeze([
   { app: 'fourier', direction: 'out', event: 'fourier:heat-time-state', description: 'Server broadcasts teacher-controlled heat time value.' },
   { app: 'fourier', direction: 'out', event: 'fourier:fft-duel-state', description: 'Server sends competitive FFT duel state (viewer-aware).' },
   { app: 'fourier', direction: 'out', event: 'fourier:ocean-random-state', description: 'Server broadcasts classroom random frequency packs for section 6.3.' },
+  { app: 'fourier', direction: 'out', event: 'fourier:wave-sum-state', description: 'Server broadcasts student frequency sliders for section 2.3.' },
 
   { app: 'buffon', direction: 'in', event: 'buffon:ws-connect', description: 'Buffon websocket connection established.' },
   { app: 'buffon', direction: 'in', event: 'buffon:ws-close', description: 'Buffon websocket connection closed.' },
@@ -1072,8 +1075,10 @@ const fourierFftDuelState = {
   status: 'idle',
   startedAt: 0,
   updatedAt: Date.now(),
+  revealResults: false,
   assignments: new Map()
 };
+const fourierWaveSumState = new Map(); // socketId -> { freq, updatedAt }
 const FOURIER_DEBUG = process.env.FOURIER_DEBUG === '1';
 
 function logFourier(eventName, payload) {
@@ -1288,7 +1293,8 @@ function buildFourierFftDuelAssignment(participant, socketId) {
   const signalKind = FOURIER_FFT_DUEL_SIGNAL_KINDS[
     Math.floor(Math.random() * FOURIER_FFT_DUEL_SIGNAL_KINDS.length)
   ];
-  const targetFreq = Number((0.6 + Math.random() * 7.2).toFixed(2));
+  const targetFreq = Number((0.5 + Math.random() * 7.5).toFixed(1));
+  const probeFreq = Number((Math.random() * 8).toFixed(1));
   const now = Date.now();
 
   return {
@@ -1298,7 +1304,7 @@ function buildFourierFftDuelAssignment(participant, socketId) {
     team: normalizeFourierTeam(participant && participant.team, 'client', participant && participant.name, socketId),
     signalKind,
     targetFreq,
-    probeFreq: Number(targetFreq.toFixed(2)),
+    probeFreq,
     submitted: false,
     locked: false,
     guessFreq: null,
@@ -1340,6 +1346,7 @@ function startFourierFftDuelRound() {
   const now = Date.now();
   fourierFftDuelState.roundId = `fft-${now}`;
   fourierFftDuelState.status = 'running';
+  fourierFftDuelState.revealResults = false;
   fourierFftDuelState.startedAt = now;
   fourierFftDuelState.updatedAt = now;
   resetFourierFftDuelAssignmentsForCurrentClients();
@@ -1356,22 +1363,24 @@ function buildFourierFftDuelPlayerView(socketId, viewerSocketId, viewerRole) {
     return null;
   }
 
-  const includeTarget = viewerRole === 'teacher' || socketId === viewerSocketId;
+  const revealForTeacher = viewerRole === 'teacher' && Boolean(fourierFftDuelState.revealResults);
+  const revealForOwnClient = socketId === viewerSocketId;
+  const showGuessAndError = revealForTeacher || revealForOwnClient;
 
   return {
     socketId,
     name: participant.name,
     team: participant.team,
     signalKind: normalizeFourierFftDuelSignalKind(assignment.signalKind),
-    probeFreq: Number(clampFourierNumber(assignment.probeFreq, 0, 8, 2).toFixed(2)),
-    targetFreq: includeTarget ? Number(clampFourierNumber(assignment.targetFreq, 0, 8, 2).toFixed(2)) : null,
+    probeFreq: Number(clampFourierNumber(assignment.probeFreq, 0, 8, 2).toFixed(1)),
+    targetFreq: revealForOwnClient ? Number(clampFourierNumber(assignment.targetFreq, 0, 8, 2).toFixed(1)) : null,
     submitted: Boolean(assignment.submitted),
     locked: Boolean(assignment.locked),
-    guessFreq: assignment.submitted && Number.isFinite(Number(assignment.guessFreq))
-      ? Number(clampFourierNumber(assignment.guessFreq, 0, 8, 2).toFixed(2))
+    guessFreq: showGuessAndError && assignment.submitted && Number.isFinite(Number(assignment.guessFreq))
+      ? Number(clampFourierNumber(assignment.guessFreq, 0, 8, 2).toFixed(1))
       : null,
-    error: assignment.submitted && Number.isFinite(Number(assignment.error))
-      ? Number(Math.max(0, Number(assignment.error)).toFixed(3))
+    error: showGuessAndError && assignment.submitted && Number.isFinite(Number(assignment.error))
+      ? Number(Math.max(0, Number(assignment.error)).toFixed(2))
       : null,
     submittedAt: assignment.submittedAt || 0,
     updatedAt: assignment.updatedAt || 0
@@ -1413,6 +1422,7 @@ function buildFourierFftDuelPayload(viewerSocketId = '', viewerRole = 'client') 
   return {
     roundId: fourierFftDuelState.roundId,
     status: fourierFftDuelState.status,
+    revealResults: Boolean(fourierFftDuelState.revealResults),
     startedAt: fourierFftDuelState.startedAt,
     updatedAt: fourierFftDuelState.updatedAt,
     solvedCount,
@@ -1863,6 +1873,43 @@ function emitFourierOceanRandomState(targetSocket = null) {
   io.to(FOURIER_ROOM).emit('fourier:ocean-random-state', payload);
 }
 
+function buildFourierWaveSumPayload() {
+  const entries = [];
+  fourierWaveSumState.forEach((data, socketId) => {
+    const participant = fourierParticipants.get(socketId);
+    if (!participant || participant.role !== 'client') {
+      return;
+    }
+    entries.push({
+      name: participant.name,
+      freq: Number(clampFourierNumber(data.freq, 0.4, 6, 1.2).toFixed(2)),
+      updatedAt: data.updatedAt || 0
+    });
+  });
+  entries.sort((a, b) => String(a.name).localeCompare(String(b.name)));
+  return { entries, updatedAt: Date.now() };
+}
+
+function emitFourierWaveSumState(targetSocket = null) {
+  const payload = buildFourierWaveSumPayload();
+
+  recordCommunication({
+    app: 'fourier',
+    direction: 'out',
+    event: 'fourier:wave-sum-state',
+    from: 'server',
+    to: targetSocket ? targetSocket.id : FOURIER_ROOM,
+    payload: { entries: payload.entries.length }
+  });
+
+  if (targetSocket) {
+    targetSocket.emit('fourier:wave-sum-state', payload);
+    return;
+  }
+
+  io.to(FOURIER_ROOM).emit('fourier:wave-sum-state', payload);
+}
+
 function emitUsersUpdate() {
   const users = buildUserList();
 
@@ -2252,6 +2299,7 @@ io.on('connection', (socket) => {
       heatTime: buildFourierHeatTimePayload(),
       fftDuel: buildFourierFftDuelPayload(socket.id, participant.role),
       oceanRandom: buildFourierOceanRandomPayload(),
+      waveSum: buildFourierWaveSumPayload(),
       summary: buildFourierSummary()
     });
 
@@ -2279,6 +2327,7 @@ io.on('connection', (socket) => {
     emitFourierHeatTimeState();
     emitFourierFftDuelState();
     emitFourierOceanRandomState();
+    emitFourierWaveSumState();
   });
 
   socket.on('fourier:request-state', () => {
@@ -2321,6 +2370,7 @@ io.on('connection', (socket) => {
       heatTime: buildFourierHeatTimePayload(),
       fftDuel: buildFourierFftDuelPayload(socket.id, participant.role),
       oceanRandom: buildFourierOceanRandomPayload(),
+      waveSum: buildFourierWaveSumPayload(),
       summary: buildFourierSummary()
     });
   });
@@ -2696,7 +2746,7 @@ io.on('connection', (socket) => {
       return;
     }
 
-    assignment.probeFreq = Number(clampFourierNumber(payload && payload.probeFreq, 0, 8, assignment.probeFreq).toFixed(2));
+    assignment.probeFreq = Number(clampFourierNumber(payload && payload.probeFreq, 0, 8, assignment.probeFreq).toFixed(1));
     assignment.updatedAt = Date.now();
     fourierFftDuelState.assignments.set(socket.id, assignment);
     fourierFftDuelState.updatedAt = assignment.updatedAt;
@@ -2732,8 +2782,8 @@ io.on('connection', (socket) => {
       return;
     }
 
-    const guessFreq = Number(clampFourierNumber(payload && payload.guessFreq, 0, 8, assignment.probeFreq).toFixed(2));
-    const error = Number(Math.abs(guessFreq - assignment.targetFreq).toFixed(3));
+    const guessFreq = Number(clampFourierNumber(payload && payload.guessFreq, 0, 8, assignment.probeFreq).toFixed(1));
+    const error = Number(Math.abs(guessFreq - assignment.targetFreq).toFixed(2));
     const now = Date.now();
 
     assignment.probeFreq = guessFreq;
@@ -2753,6 +2803,31 @@ io.on('connection', (socket) => {
 
     emitFourierParticipants();
     emitFourierSummary();
+    emitFourierFftDuelState();
+  });
+
+  socket.on('fourier:fft-duel-reveal', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:fft-duel-reveal',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'teacher') {
+      return;
+    }
+
+    if (fourierFftDuelState.status !== 'running') {
+      return;
+    }
+
+    fourierFftDuelState.revealResults = true;
+    fourierFftDuelState.updatedAt = Date.now();
     emitFourierFftDuelState();
   });
 
@@ -2813,6 +2888,32 @@ io.on('connection', (socket) => {
     emitFourierSummary();
   });
 
+  socket.on('fourier:wave-sum-update', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:wave-sum-update',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'client') {
+      return;
+    }
+
+    const freq = Number(clampFourierNumber((payload && payload.freq), 0.4, 6, 1.2).toFixed(2));
+    const now = Date.now();
+
+    fourierWaveSumState.set(socket.id, { freq, updatedAt: now });
+    participant.lastActionAt = now;
+    fourierParticipants.set(socket.id, participant);
+
+    emitFourierWaveSumState();
+  });
+
   socket.on('disconnect', () => {
     console.log('[geometry] socket disconnected:', socket.id);
     recordCommunication({
@@ -2830,11 +2931,13 @@ io.on('connection', (socket) => {
     const removedHeatState = fourierHeatState.delete(socket.id);
     const removedOceanRandomPack = fourierOceanRandomState.packs.delete(socket.id);
     const removedFftDuelState = fourierFftDuelState.assignments.delete(socket.id);
+    const removedWaveSumEntry = fourierWaveSumState.delete(socket.id);
 
     if (fourierFftDuelState.assignments.size === 0) {
       fourierFftDuelState.status = 'idle';
       fourierFftDuelState.roundId = '';
       fourierFftDuelState.startedAt = 0;
+      fourierFftDuelState.revealResults = false;
       fourierFftDuelState.updatedAt = Date.now();
     }
 
@@ -2859,6 +2962,10 @@ io.on('connection', (socket) => {
       fourierOceanRandomState.updatedAt = Date.now();
       emitFourierOceanRandomState();
       emitFourierSummary();
+    }
+
+    if (removedWaveSumEntry || removedParticipant) {
+      emitFourierWaveSumState();
     }
 
     emitUsersUpdate();
