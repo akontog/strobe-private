@@ -3126,7 +3126,7 @@
               </label>
               <label class="ocean-control-checkbox" data-tip="GRID: εμφανίζει ή αποκρύπτει το πλέγμα (wireframe) της επιφάνειας." title="GRID: εμφανίζει ή αποκρύπτει το πλέγμα (wireframe) της επιφάνειας.">
                 <span>GRID</span>
-                <input id="oceanShowGridEnd" type="checkbox" title="GRID: εμφανίζει ή αποκρύπτει το πλέγμα της επιφάνειας." />
+                <input id="oceanShowGridEnd" type="checkbox" autocomplete="off" title="GRID: εμφανίζει ή αποκρύπτει το πλέγμα της επιφάνειας." />
               </label>
             </div>
           </div>
@@ -3343,6 +3343,7 @@
     const oceanSpeedValueEnd = document.getElementById("oceanSpeedValueEnd");
     const oceanChoppyValueEnd = document.getElementById("oceanChoppyValueEnd");
     const oceanShowGridEnd = document.getElementById("oceanShowGridEnd");
+    if (oceanShowGridEnd) oceanShowGridEnd.checked = false;
 
     const fftEulerBridgeCanvas = document.getElementById("fftEulerBridgeCanvas");
     const fftSignalFreq = document.getElementById("fftSignalFreq");
@@ -5839,41 +5840,41 @@
         renderer.toneMappingExposure = 0.95;
 
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x030b16);
-        scene.fog = new THREE.Fog(0x041122, 10, 36);
+        scene.background = new THREE.Color(0x85b6de);
+        scene.fog = new THREE.Fog(0x6f9fc6, 10, 36);
 
         const camera = new THREE.PerspectiveCamera(52, 1, 0.1, 150);
         camera.position.set(0, 5.8, 11.5);
         camera.lookAt(0, 0, 0);
 
-        const hemisphere = new THREE.HemisphereLight(0xaad6ff, 0x0a1e2f, 1.05);
+        const hemisphere = new THREE.HemisphereLight(0xd8ecff, 0x23465f, 1.0);
         scene.add(hemisphere);
 
-        const sun = new THREE.DirectionalLight(0xffefca, 1.2);
+        const sun = new THREE.DirectionalLight(0xfff1d6, 1.05);
         sun.position.set(7, 9, -4);
         scene.add(sun);
 
         const sunGlow = new THREE.Mesh(
           new THREE.SphereGeometry(0.45, 16, 16),
-          new THREE.MeshBasicMaterial({ color: 0xffd18a, transparent: true, opacity: 0.55 })
+          new THREE.MeshBasicMaterial({ color: 0xffdf9d, transparent: true, opacity: 0.42 })
         );
         sunGlow.position.set(0, 5.6, -18);
         scene.add(sunGlow);
 
         const sky = new THREE.Mesh(
           new THREE.SphereGeometry(62, 24, 12),
-          new THREE.MeshBasicMaterial({ color: 0x0b2c52, side: THREE.BackSide })
+          new THREE.MeshBasicMaterial({ color: 0x7fb2de, side: THREE.BackSide })
         );
         scene.add(sky);
 
         const waterMaterial = new THREE.MeshStandardMaterial({
-          color: 0x1a6eb7,
-          roughness: 0.42,
-          metalness: 0.08,
+          color: 0x2e86c6,
+          roughness: 0.28,
+          metalness: 0.05,
           transparent: true,
-          opacity: 0.95,
-          emissive: 0x04172c,
-          emissiveIntensity: 0.3,
+          opacity: 0.96,
+          emissive: 0x0f3f63,
+          emissiveIntensity: 0.12,
         });
 
         const state = {
@@ -10030,7 +10031,7 @@
         const graphWidth = Math.max(10, gx2 - gx1);
         const graphHeight = Math.max(10, gy2 - gy1);
 
-        const selectedN = getComplexityRaceNFromStep();
+        const selectedN = getComplexityRaceNCurrent();
         const axisN = Math.max(1, selectedN);
 
         const xToCanvas = (nValue) => gx1 + (Math.max(0, Math.min(axisN, nValue)) / axisN) * graphWidth;
@@ -10843,8 +10844,9 @@
       const ratio = window.devicePixelRatio || 1;
 
       const gradient = context.createLinearGradient(0, 0, 0, height);
-      gradient.addColorStop(0, "#071a33");
-      gradient.addColorStop(1, "#000000");
+      gradient.addColorStop(0, "#8dbde2");
+      gradient.addColorStop(0.38, "#4b90c2");
+      gradient.addColorStop(1, "#1e5c87");
       context.fillStyle = gradient;
       context.fillRect(0, 0, width, height);
 
@@ -10880,10 +10882,10 @@
         context.closePath();
 
         const alpha = 0.05 + depth * 0.2;
-        context.fillStyle = `rgba(72, 150, 255, ${alpha.toFixed(3)})`;
+        context.fillStyle = `rgba(61, 136, 186, ${alpha.toFixed(3)})`;
         context.fill();
 
-        context.strokeStyle = `rgba(155, 214, 255, ${(0.12 + depth * 0.38).toFixed(3)})`;
+        context.strokeStyle = `rgba(214, 241, 255, ${(0.14 + depth * 0.32).toFixed(3)})`;
         context.lineWidth = Math.max(1, ratio * (0.5 + depth * 1.1));
         context.beginPath();
         for (let col = 0; col <= cols; col += 1) {
