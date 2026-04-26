@@ -43,6 +43,7 @@
   const randomFreqGenerateBtn = document.getElementById("randomFreqGenerateBtn");
   const randomFreqClearBtn = document.getElementById("randomFreqClearBtn");
   const waveSumStudentFreqInput = document.getElementById("waveSumStudentFreq");
+  const waveSumStudentPhiInput = document.getElementById("waveSumStudentPhi");
   const COMM_DEBUG = searchParams.get("debugWs") === "1";
 
   const metricNodes = {
@@ -754,6 +755,7 @@
       .map((entry) => ({
         name: normalizeName(entry && entry.name, "Student"),
         freq: Number(clampValue(entry && entry.freq, 0.4, 6, 1.2).toFixed(2)),
+        phi: Number(clampValue(entry && entry.phi, -3.14, 3.14, 0).toFixed(2)),
         updatedAt: toFiniteNumber(entry && entry.updatedAt),
       }))
       .filter((entry) => Number.isFinite(entry.freq));
@@ -1534,7 +1536,8 @@
     }
 
     const freq = Number(clampValue(detail && detail.freq, 0.4, 6, 1.2).toFixed(2));
-    const payload = { freq };
+    const phi = Number(clampValue(detail && detail.phi, -3.14, 3.14, 0).toFixed(2));
+    const payload = { freq, phi };
 
     logComm("emit fourier:wave-sum-update", payload);
     socket.emit("fourier:wave-sum-update", payload);
@@ -1671,12 +1674,20 @@
   });
 
   // Fallback bridge for wave-sum student slider.
-  waveSumStudentFreqInput?.addEventListener("input", () => {
-    emitWaveSumUpdate({ freq: Number(waveSumStudentFreqInput.value) });
-  });
+  [waveSumStudentFreqInput, waveSumStudentPhiInput].forEach((control) => {
+    control?.addEventListener("input", () => {
+      emitWaveSumUpdate({
+        freq: Number(waveSumStudentFreqInput ? waveSumStudentFreqInput.value : 1.2),
+        phi: Number(waveSumStudentPhiInput ? waveSumStudentPhiInput.value : 0),
+      });
+    });
 
-  waveSumStudentFreqInput?.addEventListener("change", () => {
-    emitWaveSumUpdate({ freq: Number(waveSumStudentFreqInput.value) });
+    control?.addEventListener("change", () => {
+      emitWaveSumUpdate({
+        freq: Number(waveSumStudentFreqInput ? waveSumStudentFreqInput.value : 1.2),
+        phi: Number(waveSumStudentPhiInput ? waveSumStudentPhiInput.value : 0),
+      });
+    });
   });
 
   function emitInteraction(control, eventType) {

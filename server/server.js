@@ -1883,6 +1883,7 @@ function buildFourierWaveSumPayload() {
     entries.push({
       name: participant.name,
       freq: Number(clampFourierNumber(data.freq, 0.4, 6, 1.2).toFixed(2)),
+      phi: Number(clampFourierNumber(data.phi, -3.14, 3.14, 0).toFixed(2)),
       updatedAt: data.updatedAt || 0
     });
   });
@@ -2905,9 +2906,10 @@ io.on('connection', (socket) => {
     }
 
     const freq = Number(clampFourierNumber((payload && payload.freq), 0.4, 6, 1.2).toFixed(2));
+    const phi = Number(clampFourierNumber((payload && payload.phi), -3.14, 3.14, 0).toFixed(2));
     const now = Date.now();
 
-    fourierWaveSumState.set(socket.id, { freq, updatedAt: now });
+    fourierWaveSumState.set(socket.id, { freq, phi, updatedAt: now });
     participant.lastActionAt = now;
     fourierParticipants.set(socket.id, participant);
 

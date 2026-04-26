@@ -163,6 +163,46 @@
       accent-color: var(--accent);
     }
 
+    .wave-build-grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .wave-build-item {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px;
+      background: #060d17;
+    }
+
+    .wave-build-row {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 8px;
+      align-items: center;
+    }
+
+    .wave-build-toggle {
+      justify-self: start;
+      font-weight: 600;
+      letter-spacing: 0.35px;
+    }
+
+    .wave-build-toggle span {
+      min-width: 16px;
+      text-align: center;
+    }
+
+    .wave-build-slider[hidden] {
+      display: none;
+    }
+
+    .wave-canvas.wave-canvas-tall {
+      height: 200px;
+    }
+
     .sum-legend {
       margin-top: 10px;
       display: flex;
@@ -205,7 +245,7 @@
 
     .sum-row {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 6px;
     }
 
@@ -1984,19 +2024,18 @@
       <a href="#sec-goal" data-accordion-group="intro">1.3 Θάλασσα κυμάτων</a>
 
       <div class="toc-group-title" data-accordion-group="waves">2. Θεμέλια κυμάτων</div>
-      <a href="#sec-intro" data-accordion-group="waves">2.1 Παράμετροι κύματος</a>
-      <a href="#sec-propagation" data-accordion-group="waves">2.2 Διάδοση κύματος sin(kx-ωt)</a>
-      <a href="#sec-sum" data-accordion-group="waves">2.3 Δραστηριότητα: Άθροισμα κυμάτων διαφορετικών συχνοτήτων</a>
-      <a href="#sec-wave2d" data-accordion-group="waves">2.4 2D κύμα A·sin(kx·x+kz·z+ωt+φ)</a>
-      <a href="#sec-gerstner" data-accordion-group="waves">2.5 Gerstner waves</a>
+      <a href="#sec-intro" data-accordion-group="waves">2.1 Κύμα f(x)=sin(x)</a>
+      <a href="#sec-wave2d" data-accordion-group="waves">2.2 2D κύμα: A·sin(kx·x+kz·z+ωt+φ)</a>
+      <a href="#sec-gerstner" data-accordion-group="waves">2.3 Gerstner waves</a>
+      <a href="#sec-sum" data-accordion-group="waves">2.4 Δραστηριότητα: Άθροισμα κυμάτων</a>
 
       <div class="toc-group-title" data-accordion-group="sound">3. Ήχος</div>
       <a href="#sec-sound-simple" data-accordion-group="sound">3.1 Το παράδειγμα του ήχου</a>
-      <a href="#sec-sound" data-accordion-group="sound">3.2 Παράδειγμα ήχου τάξης</a>
+      <a href="#sec-sound" data-accordion-group="sound">3.2 Δραστηριότητα: ήχος τάξης</a>
       <a href="#sec-sound-decompose" data-accordion-group="sound">3.3 Από σύνθετο ήχο σε 3 καθαρούς</a>
 
       <div class="toc-group-title" data-accordion-group="taylor">4. Taylor</div>
-      <a href="#sec-taylor-polyfit" data-accordion-group="taylor">4.1 cos(x) με πολυώνυμο 2ου βαθμού</a>
+      <a href="#sec-taylor-polyfit" data-accordion-group="taylor">4.1 Προσέγγιση συνάρτησης</a>
       <a href="#sec-taylor-cos" data-accordion-group="taylor">4.2 Taylor του cos(x)</a>
       <a href="#sec-taylor-sin" data-accordion-group="taylor">4.3 Taylor του sin(x)</a>
       <a href="#sec-taylor-exp" data-accordion-group="taylor">4.4 Taylor του e^x</a>
@@ -2090,27 +2129,52 @@
       <section class="section" id="sec-intro">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>2.1) Παράμετροι κύματος: πλάτος, συχνότητα, φάση</h2>
+            <h2>2.1) Κύμα: \(f(x) = \sin(x)\)</h2>
+            <p>
+              Τσέκαρε διαδοχικά τα κουτιά για να εμφανίζεται κάθε νέος όρος της ίδιας συνάρτησης:
+              πρώτα το <strong>k</strong>, μετά το <strong>A</strong>, μετά η <strong>φάση</strong> και στο τέλος ο <strong>χρόνος</strong>.
+            </p>
             <div class="wave-panel">
-              <p class="wave-title">f(x)=sin(x)</p>
-              <canvas id="referenceWaveCanvas" class="wave-canvas" width="940" height="130"></canvas>
-            </div>
+              <canvas id="interactiveWaveCanvas" class="wave-canvas wave-canvas-tall" width="940" height="200"></canvas>
+              <div class="wave-build-grid">
+                <div class="wave-build-item">
+                  <div class="wave-build-row">
+                    <label class="sum-toggle wave-build-toggle" title="k: πολλαπλασιάζει το x και αυξάνει/μειώνει τον αριθμό κυματώσεων στο ίδιο διάστημα."><input id="enableK" type="checkbox" /> <span>k</span></label>
+                    <div class="slider-group wave-build-slider" id="kControlWrap" hidden>
+                      <div class="slider-label"><span>k</span><span id="kValue">1.00</span></div>
+                      <input id="kSlider" type="range" min="0.4" max="6" step="0.01" value="1" title="k: αλλάζει την πυκνότητα/συχνότητα του κύματος στον χώρο." />
+                    </div>
+                  </div>
+                </div>
 
-            <div class="wave-panel">
-              <p class="wave-title">y(x)=Asin(2πfx+φ)</p>
-              <canvas id="interactiveWaveCanvas" class="wave-canvas" width="940" height="130"></canvas>
-              <div class="slider-grid">
-                <div class="slider-group">
-                  <div class="slider-label"><span>Πλάτος</span><span id="ampValue">1.00</span></div>
-                  <input id="ampSlider" type="range" min="0" max="2" step="0.01" value="1" />
+                <div class="wave-build-item">
+                  <div class="wave-build-row">
+                    <label class="sum-toggle wave-build-toggle" title="A: κλιμακώνει το πλάτος, δηλαδή το ύψος της ταλάντωσης."><input id="enableA" type="checkbox" /> <span>A</span></label>
+                    <div class="slider-group wave-build-slider" id="aControlWrap" hidden>
+                      <div class="slider-label"><span>A</span><span id="ampValue">1.00</span></div>
+                      <input id="ampSlider" type="range" min="0" max="2" step="0.01" value="1" title="A: αλλάζει το ύψος (πλάτος) του κύματος." />
+                    </div>
+                  </div>
                 </div>
-                <div class="slider-group">
-                  <div class="slider-label"><span>Συχνότητα</span><span id="freqValue">1.00</span></div>
-                  <input id="freqSlider" type="range" min="0.2" max="3" step="0.01" value="1" />
+
+                <div class="wave-build-item">
+                  <div class="wave-build-row">
+                    <label class="sum-toggle wave-build-toggle" title="φ: μετατοπίζει οριζόντια τη συνάρτηση χωρίς να αλλάζει σχήμα."><input id="enablePhase" type="checkbox" /> <span>φ</span></label>
+                    <div class="slider-group wave-build-slider" id="phaseControlWrap" hidden>
+                      <div class="slider-label"><span>φ</span><span id="phaseValue">0.00</span></div>
+                      <input id="phaseSlider" type="range" min="-3.14" max="3.14" step="0.01" value="0" title="φ: οριζόντια μετατόπιση (phase shift) του κύματος." />
+                    </div>
+                  </div>
                 </div>
-                <div class="slider-group">
-                  <div class="slider-label"><span>Φάση</span><span id="phaseValue">0.00</span></div>
-                  <input id="phaseSlider" type="range" min="-3.14" max="3.14" step="0.01" value="0" />
+
+                <div class="wave-build-item">
+                  <div class="wave-build-row">
+                    <label class="sum-toggle wave-build-toggle" title="t: εισάγει χρονική εξέλιξη και κάνει το κύμα να διαδίδεται."><input id="enableTime" type="checkbox" /> <span>t</span></label>
+                    <div class="slider-group wave-build-slider" id="timeControlWrap" hidden>
+                      <div class="slider-label"><span>ω (ταχύτητα)</span><span id="timeValue">1.00</span></div>
+                      <input id="timeSlider" type="range" min="0.1" max="4" step="0.01" value="1" title="ω: ελέγχει την ταχύτητα χρονικής κίνησης του κύματος." />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2119,123 +2183,13 @@
         </div>
       </section>
 
-      <section class="section" id="sec-propagation">
-        <div class="slide-card">
-          <div class="slide-content">
-            <h2>2.2) Κινούμενο κύμα: \(\sin(kx-\omega t)\)</h2>
-            <div class="wave-panel">
-              <p class="wave-title">f(x,t)</p>
-              <canvas id="propagationTopCanvas" class="wave-canvas" width="940" height="130"></canvas>
-            </div>
-            <div class="wave-panel">
-              <p class="wave-title">g(x,t)</p>
-              <canvas id="propagationBottomCanvas" class="wave-canvas" width="940" height="130"></canvas>
-              <div class="slider-grid">
-                <div class="slider-group">
-                  <div class="slider-label"><span>k</span><span id="kValue">1.00</span></div>
-                  <input id="kSlider" type="range" min="0.4" max="6" step="0.01" value="1" />
-                </div>
-                <div class="slider-group">
-                  <div class="slider-label"><span>ω</span><span id="omegaValue">1.00</span></div>
-                  <input id="omegaSlider" type="range" min="0.2" max="4" step="0.01" value="1" />
-                </div>
-              </div>
-            </div>
-            <div id="propagationMath" class="mathjax-box"></div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="sec-sum">
-        <div class="slide-card">
-          <div class="slide-content">
-            <h2>2.3 Δραστηριότητα: Άθροισμα κυμάτων διαφορετικών συχνοτήτων</h2>
-            <p class="teacher-only">
-              Ρύθμισε πλάτος και συχνότητα για τέσσερις συνιστώσες. Το τελικό κύμα
-              προκύπτει από το άθροισμα των 4 συνιστωσών. Οι συχνότητες των students
-              εμφανίζονται στο legend παρακάτω.
-            </p>
-            <p class="student-only">
-              Επίλεξε τη συχνότητα του κύματός σου. Η επιλογή σου εμφανίζεται live στον δάσκαλο.
-            </p>
-            <canvas id="sumWavesCanvas" class="demo-canvas" width="940" height="250"></canvas>
-            <div class="sum-legend" id="waveSumLegend">
-              <span class="sum-legend-item teacher-only"><span class="sum-chip" style="background:#81b8ff"></span>Κύμα 1</span>
-              <span class="sum-legend-item teacher-only"><span class="sum-chip" style="background:#ffb65c"></span>Κύμα 2</span>
-              <span class="sum-legend-item teacher-only"><span class="sum-chip" style="background:#c796ff"></span>Κύμα 3</span>
-              <span class="sum-legend-item teacher-only"><span class="sum-chip" style="background:#6aecb0"></span>Κύμα 4</span>
-              <span class="sum-legend-item teacher-only"><span class="sum-chip" style="background:#b5ff9e"></span>Άθροισμα</span>
-            </div>
-            <div class="student-only wave-sum-student-controls">
-              <label class="sound-slider">
-                <div class="slider-label"><span id="waveSumStudentName">Συχνότητα κύματος</span><span id="waveSumStudentFreqValue">1.20</span></div>
-                <input id="waveSumStudentFreq" type="range" min="0.4" max="6" step="0.01" value="1.2" />
-              </label>
-            </div>
-            <div class="sum-controls teacher-only">
-              <div class="sum-component">
-                <label class="sum-toggle"><input id="sumOn1" type="checkbox" checked /> <span class="sum-chip" style="background:#81b8ff"></span>Κύμα 1</label>
-                <div class="sum-row">
-                  <div class="sum-cell">
-                    <div class="slider-label"><span>Πλάτος</span><span id="sumAmp1Value">1.00</span></div>
-                    <input id="sumAmp1" type="range" min="0" max="1.8" step="0.01" value="1" />
-                  </div>
-                  <div class="sum-cell">
-                    <div class="slider-label"><span>Συχνότητα</span><span id="sumFreq1Value">1.20</span></div>
-                    <input id="sumFreq1" type="range" min="0.4" max="6" step="0.01" value="1.2" />
-                  </div>
-                </div>
-              </div>
-              <div class="sum-component">
-                <label class="sum-toggle"><input id="sumOn2" type="checkbox" checked /> <span class="sum-chip" style="background:#ffb65c"></span>Κύμα 2</label>
-                <div class="sum-row">
-                  <div class="sum-cell">
-                    <div class="slider-label"><span>Πλάτος</span><span id="sumAmp2Value">0.70</span></div>
-                    <input id="sumAmp2" type="range" min="0" max="1.8" step="0.01" value="0.7" />
-                  </div>
-                  <div class="sum-cell">
-                    <div class="slider-label"><span>Συχνότητα</span><span id="sumFreq2Value">2.00</span></div>
-                    <input id="sumFreq2" type="range" min="0.4" max="6" step="0.01" value="2" />
-                  </div>
-                </div>
-              </div>
-              <div class="sum-component">
-                <label class="sum-toggle"><input id="sumOn3" type="checkbox" checked /> <span class="sum-chip" style="background:#c796ff"></span>Κύμα 3</label>
-                <div class="sum-row">
-                  <div class="sum-cell">
-                    <div class="slider-label"><span>Πλάτος</span><span id="sumAmp3Value">0.50</span></div>
-                    <input id="sumAmp3" type="range" min="0" max="1.8" step="0.01" value="0.5" />
-                  </div>
-                  <div class="sum-cell">
-                    <div class="slider-label"><span>Συχνότητα</span><span id="sumFreq3Value">3.20</span></div>
-                    <input id="sumFreq3" type="range" min="0.4" max="6" step="0.01" value="3.2" />
-                  </div>
-                </div>
-              </div>
-              <div class="sum-component">
-                <label class="sum-toggle"><input id="sumOn4" type="checkbox" checked /> <span class="sum-chip" style="background:#6aecb0"></span>Κύμα 4</label>
-                <div class="sum-row">
-                  <div class="sum-cell">
-                    <div class="slider-label"><span>Πλάτος</span><span id="sumAmp4Value">0.35</span></div>
-                    <input id="sumAmp4" type="range" min="0" max="1.8" step="0.01" value="0.35" />
-                  </div>
-                  <div class="sum-cell">
-                    <div class="slider-label"><span>Συχνότητα</span><span id="sumFreq4Value">4.40</span></div>
-                    <input id="sumFreq4" type="range" min="0.4" max="6" step="0.01" value="4.4" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section class="section" id="sec-wave2d">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>2.4) 2D κύμα: \(A\sin(k_xx+k_zz+\omega t+\phi)\)</h2>
+            <h2>2.2) 2D κύμα: \(A\sin(k_xx+k_zz+\omega t+\phi)\)</h2>
             <canvas id="wave2DCanvas" class="demo-canvas" width="940" height="345"></canvas>
             <div class="wave2d-controls">
+              <label class="sum-toggle" style="grid-column:1/-1;margin-bottom:4px;"><input id="wave2DAnimate" type="checkbox" /> <span>▶ κίνηση</span></label>
               <label class="ocean-control" data-tip="A: αυξάνει ή μειώνει το πλάτος του 2D κύματος.">
                 <span>A <strong id="wave2DAmpValue">0.80</strong></span>
                 <input id="wave2DAmp" type="range" min="0.1" max="1.8" step="0.01" value="0.8" title="A: αυξάνει ή μειώνει το πλάτος του 2D κύματος." />
@@ -2264,10 +2218,10 @@
       <section class="section" id="sec-gerstner">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>2.5) Gerstner waves</h2>
-            <canvas id="gerstnerOrbitCanvas" class="demo-canvas" width="940" height="210"></canvas>
-            <canvas id="gerstnerCanvas" class="demo-canvas" width="940" height="250" style="margin-top:6px;"></canvas>
-            <div class="wave2d-controls">
+            <h2>2.3) Gerstner waves</h2>
+            <canvas id="gerstnerOrbitCanvas" class="demo-canvas" width="940" height="210" style="height:170px;"></canvas>
+            <canvas id="gerstnerCanvas" class="demo-canvas" width="940" height="250" style="height:200px; margin-top:6px;"></canvas>
+            <div class="wave2d-controls" style="grid-template-columns: repeat(6, 1fr);">
               <label class="ocean-control" data-tip="A: αυξάνει το ύψος του κύματος και το μέγεθος των τροχιών." title="A: αυξάνει το ύψος του κύματος και το μέγεθος των τροχιών.">
                 <span>A <strong id="gerstnerAmpValue">0.70</strong></span>
                 <input id="gerstnerAmp" type="range" min="0.1" max="1.6" step="0.01" value="0.7" title="A: αυξάνει το ύψος του κύματος και το μέγεθος των τροχιών." />
@@ -2292,6 +2246,111 @@
                 <span>depth fade <strong id="gerstnerOrbitDepthValue">0.85</strong></span>
                 <input id="gerstnerOrbitDepth" type="range" min="0.2" max="1.5" step="0.01" value="0.85" title="depth fade: πόσο γρήγορα μικραίνουν οι τροχιές όσο αυξάνει το βάθος." />
               </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-sum">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>2.4) Δραστηριότητα: Άθροισμα κυμάτων</h2>
+            <p class="teacher-only">
+              Ρύθμισε πλάτος και συχνότητα για τέσσερις συνιστώσες. Το τελικό κύμα
+              προκύπτει από το άθροισμα των 4 συνιστωσών. Οι συχνότητες των students
+              εμφανίζονται στο legend παρακάτω.
+            </p>
+            <p class="student-only">
+              Επίλεξε τη συχνότητα του κύματός σου. Η επιλογή σου εμφανίζεται live στον δάσκαλο.
+            </p>
+            <canvas id="sumWavesCanvas" class="demo-canvas" width="940" height="250"></canvas>
+            <label class="sum-toggle" style="display:block;margin:4px 0 8px;"><input id="sumAnimate" type="checkbox" /> <span>▶ κίνηση</span></label>
+            <div class="sum-legend" id="waveSumLegend">
+              <span class="sum-legend-item teacher-only"><span class="sum-chip" style="background:#81b8ff"></span>Κύμα 1</span>
+              <span class="sum-legend-item teacher-only"><span class="sum-chip" style="background:#ffb65c"></span>Κύμα 2</span>
+              <span class="sum-legend-item teacher-only"><span class="sum-chip" style="background:#c796ff"></span>Κύμα 3</span>
+              <span class="sum-legend-item teacher-only"><span class="sum-chip" style="background:#6aecb0"></span>Κύμα 4</span>
+              <span class="sum-legend-item teacher-only"><span class="sum-chip" style="background:#1e90ff"></span>Άθροισμα</span>
+            </div>
+            <div class="student-only wave-sum-student-controls">
+              <label class="sound-slider">
+                <div class="slider-label"><span id="waveSumStudentName">Συχνότητα κύματος</span><span id="waveSumStudentFreqValue">1.20</span></div>
+                <input id="waveSumStudentFreq" type="range" min="0.4" max="6" step="0.01" value="1.2" title="Συχνότητα: αλλάζει πόσο πυκνό είναι το κύμα σου." />
+              </label>
+              <label class="sound-slider">
+                <div class="slider-label"><span>Φάση φ</span><span id="waveSumStudentPhiValue">0.00</span></div>
+                <input id="waveSumStudentPhi" type="range" min="-3.14" max="3.14" step="0.01" value="0" title="Φάση φ: μετατοπίζει το προσωπικό σου κύμα οριζόντια." />
+              </label>
+            </div>
+            <div class="sum-controls teacher-only">
+              <div class="sum-component">
+                <label class="sum-toggle"><input id="sumOn1" type="checkbox" checked /> <span class="sum-chip" style="background:#81b8ff"></span>Κύμα 1</label>
+                <div class="sum-row">
+                  <div class="sum-cell">
+                    <div class="slider-label"><span>Πλάτος</span><span id="sumAmp1Value">1.00</span></div>
+                    <input id="sumAmp1" type="range" min="0" max="1.8" step="0.01" value="1" title="Πλάτος: αλλάζει το ύψος του κύματος 1." />
+                  </div>
+                  <div class="sum-cell">
+                    <div class="slider-label"><span>Συχνότητα</span><span id="sumFreq1Value">1.20</span></div>
+                    <input id="sumFreq1" type="range" min="0.4" max="6" step="0.01" value="1.2" title="Συχνότητα: αλλάζει την πυκνότητα κυματώσεων του κύματος 1." />
+                  </div>
+                  <div class="sum-cell">
+                    <div class="slider-label"><span>Φάση φ</span><span id="sumPhi1Value">0.00</span></div>
+                    <input id="sumPhi1" type="range" min="-3.14" max="3.14" step="0.01" value="0" title="Φάση φ: οριζόντια μετατόπιση του κύματος 1." />
+                  </div>
+                </div>
+              </div>
+              <div class="sum-component">
+                <label class="sum-toggle"><input id="sumOn2" type="checkbox" checked /> <span class="sum-chip" style="background:#ffb65c"></span>Κύμα 2</label>
+                <div class="sum-row">
+                  <div class="sum-cell">
+                    <div class="slider-label"><span>Πλάτος</span><span id="sumAmp2Value">0.70</span></div>
+                    <input id="sumAmp2" type="range" min="0" max="1.8" step="0.01" value="0.7" title="Πλάτος: αλλάζει το ύψος του κύματος 2." />
+                  </div>
+                  <div class="sum-cell">
+                    <div class="slider-label"><span>Συχνότητα</span><span id="sumFreq2Value">2.00</span></div>
+                    <input id="sumFreq2" type="range" min="0.4" max="6" step="0.01" value="2" title="Συχνότητα: αλλάζει την πυκνότητα κυματώσεων του κύματος 2." />
+                  </div>
+                  <div class="sum-cell">
+                    <div class="slider-label"><span>Φάση φ</span><span id="sumPhi2Value">0.35</span></div>
+                    <input id="sumPhi2" type="range" min="-3.14" max="3.14" step="0.01" value="0.35" title="Φάση φ: οριζόντια μετατόπιση του κύματος 2." />
+                  </div>
+                </div>
+              </div>
+              <div class="sum-component">
+                <label class="sum-toggle"><input id="sumOn3" type="checkbox" checked /> <span class="sum-chip" style="background:#c796ff"></span>Κύμα 3</label>
+                <div class="sum-row">
+                  <div class="sum-cell">
+                    <div class="slider-label"><span>Πλάτος</span><span id="sumAmp3Value">0.50</span></div>
+                    <input id="sumAmp3" type="range" min="0" max="1.8" step="0.01" value="0.5" title="Πλάτος: αλλάζει το ύψος του κύματος 3." />
+                  </div>
+                  <div class="sum-cell">
+                    <div class="slider-label"><span>Συχνότητα</span><span id="sumFreq3Value">3.20</span></div>
+                    <input id="sumFreq3" type="range" min="0.4" max="6" step="0.01" value="3.2" title="Συχνότητα: αλλάζει την πυκνότητα κυματώσεων του κύματος 3." />
+                  </div>
+                  <div class="sum-cell">
+                    <div class="slider-label"><span>Φάση φ</span><span id="sumPhi3Value">0.70</span></div>
+                    <input id="sumPhi3" type="range" min="-3.14" max="3.14" step="0.01" value="0.7" title="Φάση φ: οριζόντια μετατόπιση του κύματος 3." />
+                  </div>
+                </div>
+              </div>
+              <div class="sum-component">
+                <label class="sum-toggle"><input id="sumOn4" type="checkbox" checked /> <span class="sum-chip" style="background:#6aecb0"></span>Κύμα 4</label>
+                <div class="sum-row">
+                  <div class="sum-cell">
+                    <div class="slider-label"><span>Πλάτος</span><span id="sumAmp4Value">0.35</span></div>
+                    <input id="sumAmp4" type="range" min="0" max="1.8" step="0.01" value="0.35" title="Πλάτος: αλλάζει το ύψος του κύματος 4." />
+                  </div>
+                  <div class="sum-cell">
+                    <div class="slider-label"><span>Συχνότητα</span><span id="sumFreq4Value">4.40</span></div>
+                    <input id="sumFreq4" type="range" min="0.4" max="6" step="0.01" value="4.4" title="Συχνότητα: αλλάζει την πυκνότητα κυματώσεων του κύματος 4." />
+                  </div>
+                  <div class="sum-cell">
+                    <div class="slider-label"><span>Φάση φ</span><span id="sumPhi4Value">1.10</span></div>
+                    <input id="sumPhi4" type="range" min="-3.14" max="3.14" step="0.01" value="1.1" title="Φάση φ: οριζόντια μετατόπιση του κύματος 4." />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -2326,7 +2385,7 @@
       <section class="section" id="sec-sound">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>3.2) Παράδειγμα ήχου: συχνότητες και πυκνώσεις/αραιώσεις</h2>
+            <h2>3.2) Δραστηριότητα: συχνότητες ήχου και πυκνώσεις/αραιώσεις</h2>
             <p class="teacher-only">
               Ομαδική, μη ανταγωνιστική δραστηριότητα: κάθε student ρυθμίζει συχνότητα και πλάτος,
               ενώ εδώ φαίνονται αχνά οι ατομικές συνεισφορές και εντονότερα το συνολικό άθροισμα.
@@ -2363,6 +2422,7 @@
                 <label class="sum-toggle"><input id="teacherSoundFreqTwoOn" type="checkbox" /> ενεργή f2</label>
               </div>
             </div>
+            <div class="sum-legend" id="soundFreqLegend"></div>
             <div class="sound-wave-item">
               <p>Τελικό κύμα (ενεργές συχνότητες)</p>
               <canvas id="soundWaveSumCanvas" class="sound-wave-canvas" width="940" height="110"></canvas>
@@ -2405,7 +2465,7 @@
       <section class="section" id="sec-taylor-polyfit">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>4.1) Προσέγγιση του \(e^{x/2}\cos(x)\) με πολυώνυμο \(c_0 + c_1x + c_2x^2 + c_3x^3\) στο \(x_0=0\)</h2>
+            <h2>4.1) Προσέγγιση του \(e^{x/2}\cos(x)\) με πολυώνυμο</h2>
             <p>
               Ρύθμισε τους συντελεστές με τα sliders και δες πώς αλλάζει η προσέγγιση του \(e^{x/2}\cos(x)\).
               Η μπλε καμπύλη είναι η αρχική συνάρτηση και η πορτοκαλί το πολυώνυμο Taylor.
@@ -3212,23 +3272,24 @@
       }
     }
 
-    const referenceWaveCanvas = document.getElementById("referenceWaveCanvas");
     const interactiveWaveCanvas = document.getElementById("interactiveWaveCanvas");
-    const ampSlider = document.getElementById("ampSlider");
-    const freqSlider = document.getElementById("freqSlider");
-    const phaseSlider = document.getElementById("phaseSlider");
-    const ampValue = document.getElementById("ampValue");
-    const freqValue = document.getElementById("freqValue");
-    const phaseValue = document.getElementById("phaseValue");
-    const waveParamMath = document.getElementById("waveParamMath");
-
-    const propagationTopCanvas = document.getElementById("propagationTopCanvas");
-    const propagationBottomCanvas = document.getElementById("propagationBottomCanvas");
+    const enableK = document.getElementById("enableK");
+    const enableA = document.getElementById("enableA");
+    const enablePhase = document.getElementById("enablePhase");
+    const enableTime = document.getElementById("enableTime");
+    const kControlWrap = document.getElementById("kControlWrap");
+    const aControlWrap = document.getElementById("aControlWrap");
+    const phaseControlWrap = document.getElementById("phaseControlWrap");
+    const timeControlWrap = document.getElementById("timeControlWrap");
     const kSlider = document.getElementById("kSlider");
-    const omegaSlider = document.getElementById("omegaSlider");
+    const ampSlider = document.getElementById("ampSlider");
+    const phaseSlider = document.getElementById("phaseSlider");
+    const timeSlider = document.getElementById("timeSlider");
     const kValue = document.getElementById("kValue");
-    const omegaValue = document.getElementById("omegaValue");
-    const propagationMath = document.getElementById("propagationMath");
+    const ampValue = document.getElementById("ampValue");
+    const phaseValue = document.getElementById("phaseValue");
+    const timeValue = document.getElementById("timeValue");
+    const waveParamMath = document.getElementById("waveParamMath");
 
     const wave2DCanvas = document.getElementById("wave2DCanvas");
     const wave2DAmp = document.getElementById("wave2DAmp");
@@ -3267,6 +3328,8 @@
     const gerstnerOrbitDepthValue = document.getElementById("gerstnerOrbitDepthValue");
 
     const sumWavesCanvas = document.getElementById("sumWavesCanvas");
+    const sumAnimate = document.getElementById("sumAnimate");
+    let sumTime = 0;
     const sumAmp1 = document.getElementById("sumAmp1");
     const sumFreq1 = document.getElementById("sumFreq1");
     const sumAmp2 = document.getElementById("sumAmp2");
@@ -3275,6 +3338,10 @@
     const sumFreq3 = document.getElementById("sumFreq3");
     const sumAmp4 = document.getElementById("sumAmp4");
     const sumFreq4 = document.getElementById("sumFreq4");
+    const sumPhi1 = document.getElementById("sumPhi1");
+    const sumPhi2 = document.getElementById("sumPhi2");
+    const sumPhi3 = document.getElementById("sumPhi3");
+    const sumPhi4 = document.getElementById("sumPhi4");
     const sumOn1 = document.getElementById("sumOn1");
     const sumOn2 = document.getElementById("sumOn2");
     const sumOn3 = document.getElementById("sumOn3");
@@ -3287,8 +3354,14 @@
     const sumFreq3Value = document.getElementById("sumFreq3Value");
     const sumAmp4Value = document.getElementById("sumAmp4Value");
     const sumFreq4Value = document.getElementById("sumFreq4Value");
+    const sumPhi1Value = document.getElementById("sumPhi1Value");
+    const sumPhi2Value = document.getElementById("sumPhi2Value");
+    const sumPhi3Value = document.getElementById("sumPhi3Value");
+    const sumPhi4Value = document.getElementById("sumPhi4Value");
     const waveSumStudentFreq = document.getElementById("waveSumStudentFreq");
     const waveSumStudentFreqValue = document.getElementById("waveSumStudentFreqValue");
+    const waveSumStudentPhi = document.getElementById("waveSumStudentPhi");
+    const waveSumStudentPhiValue = document.getElementById("waveSumStudentPhiValue");
     const waveSumStudentName = document.getElementById("waveSumStudentName");
     const waveSumLegend = document.getElementById("waveSumLegend");
 
@@ -3798,8 +3871,8 @@
       context.stroke();
     }
 
-    // @slide 2.2 — σχεδιάζει κινούμενο κύμα sin(kx − ωt) ανιμέ με χρόνο t.
-    function drawTravelingWave(canvas, k, omega, time, color) {
+    // @slide 2.1 — σχεδιάζει την ενιαία f(x)=sin(x) που εμπλουτίζεται με k, A, φ, t.
+    function drawWaveBuild(canvas, color) {
       if (!canvas) {
         return;
       }
@@ -3816,13 +3889,18 @@
       const plot = drawWaveGridAndAxes(context, width, height, midY, ratio);
 
       const baseAmplitude = height * 0.32;
+      const settings = getWaveBuildSettings();
       context.strokeStyle = color;
       context.lineWidth = Math.max(2, ratio * 2);
       context.beginPath();
       for (let pixelX = plot.plotLeft; pixelX <= plot.plotRight; pixelX += 2) {
         const normalizedX = (pixelX - plot.plotLeft) / plot.plotWidth;
-        const angle = 2 * Math.PI * (k * normalizedX) - omega * time;
-        const y = midY - baseAmplitude * Math.sin(angle);
+        const kFactor = settings.useK ? settings.k : 1;
+        const amplitude = settings.useA ? settings.a : 1;
+        const phase = settings.usePhase ? settings.phase : 0;
+        const timeTerm = settings.useTime ? settings.omega * waveBuildTime : 0;
+        const angle = 2 * Math.PI * (kFactor * normalizedX) + phase - timeTerm;
+        const y = midY - baseAmplitude * amplitude * Math.sin(angle);
         if (pixelX === plot.plotLeft) {
           context.moveTo(pixelX, y);
         } else {
@@ -3832,61 +3910,89 @@
       context.stroke();
     }
 
-    // @slide 2.1 — ενημερώνει labels πλάτους/συχνότητας/φάσης και MathJax τύπο.
-    function updateSliderLabels() {
-      if (!ampSlider) {
-        return;
+    let waveBuildTime = 0;
+
+    // @slide 2.1 — επιστρέφει την τρέχουσα κατάσταση του builder f(x) → A·sin(kx+φ−ωt).
+    function getWaveBuildSettings() {
+      return {
+        useK: Boolean(enableK?.checked),
+        useA: Boolean(enableA?.checked),
+        usePhase: Boolean(enablePhase?.checked),
+        useTime: Boolean(enableTime?.checked),
+        k: kSlider ? Number(kSlider.value) : 1,
+        a: ampSlider ? Number(ampSlider.value) : 1,
+        phase: phaseSlider ? Number(phaseSlider.value) : 0,
+        omega: timeSlider ? Number(timeSlider.value) : 1,
+      };
+    }
+
+    // @slide 2.1 — συγχρονίζει checkbox sequence, ορατότητα sliders και MathJax εξίσωση.
+    function updateWaveBuildUI() {
+      if (enableA && !enableK?.checked) {
+        enableA.checked = false;
       }
-      ampValue.textContent = Number(ampSlider.value).toFixed(2);
-      freqValue.textContent = Number(freqSlider.value).toFixed(2);
-      phaseValue.textContent = Number(phaseSlider.value).toFixed(2);
+      if (enablePhase && !enableA?.checked) {
+        enablePhase.checked = false;
+      }
+      if (enableTime && !enablePhase?.checked) {
+        enableTime.checked = false;
+      }
+
+      if (enableA) {
+        enableA.disabled = !enableK?.checked;
+      }
+      if (enablePhase) {
+        enablePhase.disabled = !enableA?.checked;
+      }
+      if (enableTime) {
+        enableTime.disabled = !enablePhase?.checked;
+      }
+
+      if (kControlWrap) {
+        kControlWrap.hidden = !enableK?.checked;
+      }
+      if (aControlWrap) {
+        aControlWrap.hidden = !enableA?.checked;
+      }
+      if (phaseControlWrap) {
+        phaseControlWrap.hidden = !enablePhase?.checked;
+      }
+      if (timeControlWrap) {
+        timeControlWrap.hidden = !enableTime?.checked;
+      }
+
+      const settings = getWaveBuildSettings();
+      if (kValue) {
+        kValue.textContent = settings.k.toFixed(2);
+      }
+      if (ampValue) {
+        ampValue.textContent = settings.a.toFixed(2);
+      }
+      if (phaseValue) {
+        phaseValue.textContent = settings.phase.toFixed(2);
+      }
+      if (timeValue) {
+        timeValue.textContent = settings.omega.toFixed(2);
+      }
+
       if (waveParamMath) {
-        const amplitude = Number(ampSlider.value).toFixed(2);
-        const frequency = Number(freqSlider.value).toFixed(2);
-        const phaseRaw = Number(phaseSlider.value);
-        const phaseMagnitude = Math.abs(phaseRaw).toFixed(2);
-        const phaseTerm = Math.abs(phaseRaw) < 1e-9
-          ? ""
-          : (phaseRaw < 0 ? ` - ${phaseMagnitude}` : ` + ${phaseMagnitude}`);
-        waveParamMath.innerHTML = `\\[f(x)=\\sin(x),\\qquad y(x)=${amplitude}\\sin\\left(2\\pi\\cdot ${frequency}x${phaseTerm}\\right)\\]`;
+        const kTerm = settings.useK ? "kx" : "x";
+        const phaseTerm = settings.usePhase ? " + \\varphi" : "";
+        const timeTerm = settings.useTime ? " - \\omega t" : "";
+        const prefix = settings.useA ? "A\\," : "";
+        const lhs = settings.useTime ? "f(x,t)" : "f(x)";
+        waveParamMath.innerHTML = `\\[${lhs}=${prefix}\\sin\\left(${kTerm}${phaseTerm}${timeTerm}\\right)\\]`;
         if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
           window.MathJax.typesetPromise([waveParamMath]).catch(() => {});
         }
       }
     }
 
-    [ampSlider, freqSlider, phaseSlider].forEach((slider) => {
-      if (slider) {
-        slider.addEventListener("input", updateSliderLabels);
-      }
+    [enableK, enableA, enablePhase, enableTime, kSlider, ampSlider, phaseSlider, timeSlider].forEach((control) => {
+      control?.addEventListener("input", updateWaveBuildUI);
+      control?.addEventListener("change", updateWaveBuildUI);
     });
-    updateSliderLabels();
-
-    // @slide 2.2 — ενημερώνει labels k, ω και MathJax τύπο διάδοσης κύματος.
-    function updatePropagationLabels() {
-      if (!kSlider || !omegaSlider) {
-        return;
-      }
-      if (kValue) {
-        kValue.textContent = Number(kSlider.value).toFixed(2);
-      }
-      if (omegaValue) {
-        omegaValue.textContent = Number(omegaSlider.value).toFixed(2);
-      }
-      if (propagationMath) {
-        const k = Number(kSlider.value).toFixed(2);
-        const omega = Number(omegaSlider.value).toFixed(2);
-        propagationMath.innerHTML = `\\[f(x,t)=\\sin(x-t),\\qquad g(x,t)=\\sin(${k}x - ${omega}t)\\]`;
-        if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
-          window.MathJax.typesetPromise([propagationMath]).catch(() => {});
-        }
-      }
-    }
-
-    [kSlider, omegaSlider].forEach((slider) => {
-      slider?.addEventListener("input", updatePropagationLabels);
-    });
-    updatePropagationLabels();
+    updateWaveBuildUI();
 
     // @slide 2.4 — επιστρέφει παραμέτρους 2D κύματος A, kx, kz, ω, φ από sliders.
     function getWave2DSettings() {
@@ -4015,9 +4121,13 @@
       sumFreq3Value.textContent = Number(sumFreq3.value).toFixed(2);
       sumAmp4Value.textContent = Number(sumAmp4.value).toFixed(2);
       sumFreq4Value.textContent = Number(sumFreq4.value).toFixed(2);
+      if (sumPhi1Value && sumPhi1) sumPhi1Value.textContent = Number(sumPhi1.value).toFixed(2);
+      if (sumPhi2Value && sumPhi2) sumPhi2Value.textContent = Number(sumPhi2.value).toFixed(2);
+      if (sumPhi3Value && sumPhi3) sumPhi3Value.textContent = Number(sumPhi3.value).toFixed(2);
+      if (sumPhi4Value && sumPhi4) sumPhi4Value.textContent = Number(sumPhi4.value).toFixed(2);
     }
 
-    [sumAmp1, sumFreq1, sumAmp2, sumFreq2, sumAmp3, sumFreq3, sumAmp4, sumFreq4, sumOn1, sumOn2, sumOn3, sumOn4].forEach((slider) => {
+    [sumAmp1, sumFreq1, sumPhi1, sumAmp2, sumFreq2, sumPhi2, sumAmp3, sumFreq3, sumPhi3, sumAmp4, sumFreq4, sumPhi4, sumOn1, sumOn2, sumOn3, sumOn4].forEach((slider) => {
       slider?.addEventListener("input", updateSumLabels);
     });
     updateSumLabels();
@@ -4026,13 +4136,17 @@
     function updateWaveSumStudentFreqLabel() {
       if (!waveSumStudentFreq) return;
       if (waveSumStudentFreqValue) waveSumStudentFreqValue.textContent = Number(waveSumStudentFreq.value).toFixed(2);
+      if (waveSumStudentPhiValue && waveSumStudentPhi) waveSumStudentPhiValue.textContent = Number(waveSumStudentPhi.value).toFixed(2);
     }
-    waveSumStudentFreq?.addEventListener("input", () => {
+    [waveSumStudentFreq, waveSumStudentPhi].forEach((control) => control?.addEventListener("input", () => {
       updateWaveSumStudentFreqLabel();
       document.dispatchEvent(new CustomEvent("fourier:wave-sum-freq-local-change", {
-        detail: { freq: Number(waveSumStudentFreq.value) }
+        detail: {
+          freq: Number(waveSumStudentFreq ? waveSumStudentFreq.value : 1.2),
+          phi: Number(waveSumStudentPhi ? waveSumStudentPhi.value : 0),
+        }
       }));
-    });
+    }));
     updateWaveSumStudentFreqLabel();
 
     // @slide 2.3 — teacher: σχεδιάζει sum-legend-items για κάθε student στο waveSumLegend.
@@ -4048,7 +4162,7 @@
         const color = WAVE_SUM_STUDENT_PALETTE[index % WAVE_SUM_STUDENT_PALETTE.length];
         const span = document.createElement("span");
         span.className = "sum-legend-item wave-sum-entry";
-        span.innerHTML = `<span class="sum-chip" style="background:${color}"></span>${escapeWaveSumHtml(entry.name)} <span style="opacity:0.6">${Number(entry.freq).toFixed(2)}</span>`;
+        span.innerHTML = `<span class="sum-chip" style="background:${color}"></span>${escapeWaveSumHtml(entry.name)} <span style="opacity:0.6">f=${Number(entry.freq).toFixed(2)}, φ=${Number(entry.phi || 0).toFixed(2)}</span>`;
         waveSumLegend.appendChild(span);
       });
     });
@@ -5564,6 +5678,8 @@
     }
 
     let wave2DState = null;
+    let wave2DTime = 0;
+    const wave2DAnimate = document.getElementById("wave2DAnimate");
     let gerstnerState = null;
 
     // @slide 2.4 — αρχικοποιεί WebGL state για 2D κύμα (Three.js).
@@ -6790,6 +6906,55 @@
     // Communication bridge #2 (sync layer -> rendering/audio layer):
     // classroom-sync.js dispatches this after receiving `fourier:sound-state`
     // (or summary/state snapshots) from the server.
+    const soundFreqLegend = document.getElementById("soundFreqLegend");
+    const SOUND_STUDENT_PALETTE = ['#f472b6', '#fb923c', '#facc15', '#a3e635', '#34d399', '#22d3ee', '#818cf8', '#e879f9'];
+
+    function escapeHtmlSound(str) {
+      return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    }
+
+    function updateSoundFreqLegend(studentList) {
+      if (!soundFreqLegend) return;
+      soundFreqLegend.innerHTML = "";
+      // Teacher f1
+      if (teacherSoundFreqOne) {
+        const f1On = teacherSoundFreqOneOn?.checked;
+        const f1Val = Math.round(Number(teacherSoundFreqOne.value));
+        const span = document.createElement("span");
+        span.className = "sum-legend-item";
+        span.style.opacity = f1On ? "1" : "0.4";
+        span.innerHTML = `<span class="sum-chip" style="background:#81b8ff"></span>f1 = ${f1Val} Hz`;
+        soundFreqLegend.appendChild(span);
+      }
+      // Teacher f2
+      if (teacherSoundFreqTwo) {
+        const f2On = teacherSoundFreqTwoOn?.checked;
+        const f2Val = Math.round(Number(teacherSoundFreqTwo.value));
+        const span = document.createElement("span");
+        span.className = "sum-legend-item";
+        span.style.opacity = f2On ? "1" : "0.4";
+        span.innerHTML = `<span class="sum-chip" style="background:#ffb65c"></span>f2 = ${f2Val} Hz`;
+        soundFreqLegend.appendChild(span);
+      }
+      // Students
+      const activeList = Array.isArray(studentList) ? studentList : [];
+      activeList.forEach((entry, index) => {
+        const color = SOUND_STUDENT_PALETTE[index % SOUND_STUDENT_PALETTE.length];
+        const span = document.createElement("span");
+        span.className = "sum-legend-item";
+        span.style.opacity = entry.amplitude > 0.01 ? "1" : "0.35";
+        span.innerHTML = `<span class="sum-chip" style="background:${color}"></span>${escapeHtmlSound(entry.name)} <span style="opacity:0.6">${Math.round(entry.frequency)} Hz</span>`;
+        soundFreqLegend.appendChild(span);
+      });
+    }
+
+    // Re-render legend when teacher sliders/checkboxes change
+    [teacherSoundFreqOne, teacherSoundFreqTwo, teacherSoundFreqOneOn, teacherSoundFreqTwoOn].forEach((el) => {
+      el?.addEventListener("input", () => updateSoundFreqLegend(classroomSoundRoster));
+      el?.addEventListener("change", () => updateSoundFreqLegend(classroomSoundRoster));
+    });
+    updateSoundFreqLegend([]);
+
     document.addEventListener("fourier:classroom-sound-state", (event) => {
       const payload = (event && event.detail) || {};
       const list = Array.isArray(payload.soundStates) ? payload.soundStates : [];
@@ -6797,6 +6962,7 @@
       classroomSoundRoster = list.map((source, index) => normalizeClassroomSoundSource(source, index));
       syncClassroomSoundEngine();
       updateTeacherSoundStatus();
+      updateSoundFreqLegend(classroomSoundRoster);
     });
 
     teacherSoundActivateBtn?.addEventListener("click", () => {
@@ -7975,11 +8141,21 @@
         const plot = drawWaveGridAndAxes(ctx, width, height, mid, ratio);
 
         const components = [
-          { on: sumOn1 ? sumOn1.checked : true, amp: sumAmp1 ? Number(sumAmp1.value) : 1, freq: sumFreq1 ? Number(sumFreq1.value) : 1.2, phase: 0.00, color: "rgba(129, 184, 255, 0.72)" },
-          { on: sumOn2 ? sumOn2.checked : true, amp: sumAmp2 ? Number(sumAmp2.value) : 0.7, freq: sumFreq2 ? Number(sumFreq2.value) : 2.0, phase: 0.35, color: "rgba(255, 182, 92, 0.72)" },
-          { on: sumOn3 ? sumOn3.checked : true, amp: sumAmp3 ? Number(sumAmp3.value) : 0.5, freq: sumFreq3 ? Number(sumFreq3.value) : 3.2, phase: 0.70, color: "rgba(199, 150, 255, 0.72)" },
-          { on: sumOn4 ? sumOn4.checked : true, amp: sumAmp4 ? Number(sumAmp4.value) : 0.35, freq: sumFreq4 ? Number(sumFreq4.value) : 4.4, phase: 1.10, color: "rgba(106, 236, 176, 0.72)" },
+          { on: sumOn1 ? sumOn1.checked : true, amp: sumAmp1 ? Number(sumAmp1.value) : 1, freq: sumFreq1 ? Number(sumFreq1.value) : 1.2, phase: sumPhi1 ? Number(sumPhi1.value) : 0.00, color: "rgba(129, 184, 255, 0.72)" },
+          { on: sumOn2 ? sumOn2.checked : true, amp: sumAmp2 ? Number(sumAmp2.value) : 0.7, freq: sumFreq2 ? Number(sumFreq2.value) : 2.0, phase: sumPhi2 ? Number(sumPhi2.value) : 0.35, color: "rgba(255, 182, 92, 0.72)" },
+          { on: sumOn3 ? sumOn3.checked : true, amp: sumAmp3 ? Number(sumAmp3.value) : 0.5, freq: sumFreq3 ? Number(sumFreq3.value) : 3.2, phase: sumPhi3 ? Number(sumPhi3.value) : 0.70, color: "rgba(199, 150, 255, 0.72)" },
+          { on: sumOn4 ? sumOn4.checked : true, amp: sumAmp4 ? Number(sumAmp4.value) : 0.35, freq: sumFreq4 ? Number(sumFreq4.value) : 4.4, phase: sumPhi4 ? Number(sumPhi4.value) : 1.10, color: "rgba(106, 236, 176, 0.72)" },
         ];
+
+        if (!isTeacherMode && waveSumStudentFreq) {
+          components.push({
+            on: true,
+            amp: 0.9,
+            freq: Number(waveSumStudentFreq.value),
+            phase: waveSumStudentPhi ? Number(waveSumStudentPhi.value) : 0,
+            color: "rgba(108, 208, 255, 0.82)",
+          });
+        }
 
         const componentScale = 48;
         components.forEach((component) => {
@@ -7991,14 +8167,14 @@
           ctx.beginPath();
           for (let x = plot.plotLeft; x <= plot.plotRight; x += 2) {
             const nx = (x - plot.plotLeft) / plot.plotWidth;
-            const y = mid - componentScale * component.amp * Math.sin(2 * Math.PI * component.freq * nx + component.phase);
+            const y = mid - componentScale * component.amp * Math.sin(2 * Math.PI * component.freq * nx + component.phase - t * component.freq);
             if (x === plot.plotLeft) ctx.moveTo(x, y); else ctx.lineTo(x, y);
           }
           ctx.stroke();
         });
 
         const sumGain = 1.18;
-        ctx.strokeStyle = "#b5ff9e";
+        ctx.strokeStyle = "#1e90ff";
         ctx.lineWidth = 4.2;
         ctx.beginPath();
         for (let x = plot.plotLeft; x <= plot.plotRight; x += 2) {
@@ -8008,7 +8184,7 @@
             if (!component.on) {
               return;
             }
-            sum += component.amp * Math.sin(2 * Math.PI * component.freq * nx + component.phase);
+            sum += component.amp * Math.sin(2 * Math.PI * component.freq * nx + component.phase - t * component.freq);
           });
           const y = mid - componentScale * sumGain * sum;
           if (x === plot.plotLeft) ctx.moveTo(x, y); else ctx.lineTo(x, y);
@@ -10914,19 +11090,13 @@
       const theta = thetaSlider ? Number(thetaSlider.value) : Math.PI / 2;
       const radius = radiusSlider ? Number(radiusSlider.value) : 1;
 
-      drawWave(referenceWaveCanvas, 1, 1, 0, "#67aaff");
+      if (enableTime?.checked) {
+        waveBuildTime += 0.03;
+      }
+      drawWaveBuild(interactiveWaveCanvas, "#9bd3ff");
 
-      const amp = ampSlider ? Number(ampSlider.value) : 1;
-      const freq = freqSlider ? Number(freqSlider.value) : 1;
-      const phase = phaseSlider ? Number(phaseSlider.value) : 0;
-      drawWave(interactiveWaveCanvas, amp, freq, phase, "#9bd3ff");
-
-      const k = kSlider ? Number(kSlider.value) : 1;
-      const omega = omegaSlider ? Number(omegaSlider.value) : 1;
-      drawTravelingWave(propagationTopCanvas, 1, 1, elapsedSeconds, "#82c8ff");
-      drawTravelingWave(propagationBottomCanvas, k, omega, elapsedSeconds, "#9cffb4");
-
-      updateWave2DScene(wave2DState, elapsedSeconds, getWave2DSettings());
+      if (wave2DAnimate?.checked) wave2DTime += 0.016;
+      updateWave2DScene(wave2DState, wave2DTime, getWave2DSettings());
       updateGerstnerScene(gerstnerState, elapsedSeconds, getGerstnerSettings());
       drawGerstnerParticleOrbits(gerstnerOrbitCanvas, elapsedSeconds, getGerstnerOrbitSettings());
 
@@ -10936,7 +11106,8 @@
       drawAirMolecules(airMoleculesCanvas, elapsedSeconds, soundSourcesForView);
         drawSoundSimple(soundSimpleWaveCanvas, soundSimpleMolCanvas, elapsedSeconds);
       drawSoundDecomposition(elapsedSeconds);
-      drawSignalDemo(sumWavesCanvas, elapsedSeconds);
+      if (sumAnimate?.checked) sumTime += 0.16;
+      drawSignalDemo(sumWavesCanvas, sumTime);
         drawHeatSineIntro(heatSineWaveCanvas, heatSineRodCanvas, elapsedSeconds);
       drawHeatRod(heatRodCanvas, elapsedSeconds);
       drawStepFourier(stepFourierCanvas, elapsedSeconds);
