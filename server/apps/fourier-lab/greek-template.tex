@@ -1,0 +1,80 @@
+%!TEX TS-program = xelatex
+\documentclass[
+  a4paper,
+  11pt,
+]{article}
+
+% Ελληνικά
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{greek}
+\setotherlanguage{english}
+
+% Γραμματοσειρές
+\setmainfont{DejaVu Serif}[Script=Greek, Language=Greek]
+\setsansfont{DejaVu Sans}[Script=Greek, Language=Greek]
+\setmonofont{DejaVu Sans Mono}[Script=Greek, Language=Greek]
+
+% Μαθηματικά, TikZ, χρώματα
+\usepackage{amsmath, amssymb}
+\usepackage{unicode-math}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning}
+\usepackage{color}
+\usepackage{xcolor}
+
+% Γεωμετρία
+\usepackage[a4paper, margin=2.5cm]{geometry}
+
+% Εικόνες
+\usepackage{graphicx}
+
+% Υπερσύνδεσμοι
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, urlcolor=blue, linkcolor=black}
+
+% Header / Footer
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\thepage}
+\lhead{\leftmark}
+\cfoot{}
+
+% ---------------------------------------------------
+% Ορισμοί που χρειάζεται η Pandoc
+% ---------------------------------------------------
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\newcommand{\pandocbounded}[1]{#1}
+\newcommand{\passthrough}[1]{#1}
+
+% Μεταβλητές Pandoc
+$if(title)$
+\title{$title$}
+$endif$
+$if(author)$
+\author{$for(author)$$author$$sep$ \and $endfor$}
+$endif$
+$if(date)$
+\date{$date$}
+$else$
+\date{\today}
+$endif$
+
+\begin{document}
+$if(title)$
+\maketitle
+$endif$
+
+$if(abstract)$
+\begin{abstract}
+$abstract$
+\end{abstract}
+$endif$
+
+$body$
+
+\end{document}
