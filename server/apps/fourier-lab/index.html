@@ -2060,6 +2060,7 @@
       <a href="#sec-heat-sine-intro" data-accordion-group="rod">6.1 Θερμοκρασία ράβδου</a>
       <a href="#sec-heat-rod" data-accordion-group="rod">6.2 Δραστηριότητα: Fourier και θερμοκρασία ράβδου</a>
       <a href="#sec-step-function" data-accordion-group="rod">6.3 Step function σε ράβδο 1 m</a>
+      <a href="#sec-fourier-line-synthesis" data-accordion-group="rod">6.4 Σύνθεση Fourier σε ευθεία</a>
 
       <div class="toc-group-title" data-accordion-group="transform">7. Μετασχηματισμός Fourier</div>
       <a href="#sec-fft" data-accordion-group="transform">7.1 Από το σήμα στο φάσμα (Fourier Transform)</a>
@@ -2820,6 +2821,29 @@
         </div>
       </section>
 
+      <section class="section" id="sec-fourier-line-synthesis">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>6.4) Σύνθεση Fourier: ζωγράφισε συνάρτηση → άθροισμα ημιτόνων</h2>
+            <p>
+              Αριστερά κάνε κλικ ή σύρε για να ορίσεις τιμές y σε διάφορα x (αρχικά είναι ο άξονας xx').
+              Δεξιά βλέπεις πόσο καλά το άθροισμα ημιτόνων Fourier προσεγγίζει τη συνάρτησή σου.
+            </p>
+            <canvas id="fourierLineCanvas" class="demo-canvas" width="940" height="320"></canvas>
+            <div class="slider-grid">
+              <div class="slider-group">
+                <div class="slider-label">
+                  <span>Όροι Fourier</span>
+                  <span id="fourierLineTermsValue">1</span>
+                </div>
+                <input id="fourierLineTermsSlider" type="range" min="1" max="30" step="1" value="1" />
+              </div>
+            </div>
+            <div id="fourierLineMath" class="mathjax-box"></div>
+          </div>
+        </div>
+      </section>
+
       <section class="section" id="sec-fft">
         <div class="slide-card">
           <div class="slide-content">
@@ -3508,6 +3532,10 @@
     const stepTermsSlider = document.getElementById("stepTermsSlider");
     const stepTermsValue = document.getElementById("stepTermsValue");
     const stepSeriesMath = document.getElementById("stepSeriesMath");
+    const fourierLineCanvas = document.getElementById("fourierLineCanvas");
+    const fourierLineTermsSlider = document.getElementById("fourierLineTermsSlider");
+    const fourierLineTermsValue = document.getElementById("fourierLineTermsValue");
+    const fourierLineMath = document.getElementById("fourierLineMath");
     const fftDemoCanvas = document.getElementById("fftDemoCanvas");
     const fftMixFreq1 = document.getElementById("fftMixFreq1");
     const fftMixFreq2 = document.getElementById("fftMixFreq2");
@@ -5589,6 +5617,160 @@
 
     stepTermsSlider?.addEventListener("input", updateStepTermsLabel);
     updateStepTermsLabel();
+
+    const FOURIER_LINE_Y_MIN = -1.2;
+    const FOURIER_LINE_Y_MAX = 1.2;
+    const FOURIER_LINE_N_POINTS = 64;
+    let fourierLinePoints = new Array(FOURIER_LINE_N_POINTS).fill(0);
+    let fourierLineDragActive = false;
+    let fourierLinePointerId = null;
+  let fourierLineLastDragIdx = -1;
+
+    function getFourierLineGeometry() {
+      if (!fourierLineCanvas) {
+        return null;
+      }
+      const width = fourierLineCanvas.width;
+      const height = fourierLineCanvas.height;
+      const pad = 14;
+      const gap = 18;
+      const panelWidth = (width - pad * 2 - gap) * 0.5;
+      const leftPanelLeft = pad;
+      const leftPanelRight = leftPanelLeft + panelWidth;
+      const plotLeft = leftPanelLeft + 14;
+      const plotRight = leftPanelRight - 14;
+      const plotTop = 22;
+      const plotBottom = height - 22;
+      return { plotLeft, plotRight, plotTop, plotBottom };
+    }
+
+    function computeFourierCoeffs(maxN) {
+      const N = FOURIER_LINE_N_POINTS;
+      let sumA0 = 0;
+      for (let i = 0; i < N; i++) sumA0 += fourierLinePoints[i];
+      const a0 = (2 / N) * sumA0;
+      const an = [], bn = [];
+      for (let n = 1; n <= maxN; n++) {
+        let sa = 0, sb = 0;
+        for (let i = 0; i < N; i++) {
+          const xi = -1 + (2 * i + 1) / N;
+          sa += fourierLinePoints[i] * Math.cos(n * Math.PI * xi);
+          sb += fourierLinePoints[i] * Math.sin(n * Math.PI * xi);
+        }
+        an.push((2 / N) * sa);
+        bn.push((2 / N) * sb);
+      }
+      return { a0, an, bn };
+    }
+
+    function renderFourierLineMath() {
+      if (!fourierLineMath) return;
+      const terms = fourierLineTermsSlider ? Number(fourierLineTermsSlider.value) : 1;
+      const { a0, an, bn } = computeFourierCoeffs(terms);
+      const MAX_VISIBLE = 6;
+      const THRESH = 0.005;
+      const parts = [];
+      const a0half = a0 / 2;
+      if (Math.abs(a0half) >= THRESH) parts.push(a0half.toFixed(2));
+      for (let n = 1; n <= terms && parts.length < MAX_VISIBLE; n++) {
+        const a = an[n - 1], b = bn[n - 1];
+        const nPre = n === 1 ? "" : String(n);
+        if (Math.abs(a) >= THRESH) {
+          const sign = (parts.length > 0 && a >= 0) ? "+" : "";
+          parts.push(`${sign}${a.toFixed(2)}\\cos(${nPre}\\pi x)`);
+        }
+        if (Math.abs(b) >= THRESH && parts.length < MAX_VISIBLE) {
+          const sign = (parts.length > 0 && b >= 0) ? "+" : "";
+          parts.push(`${sign}${b.toFixed(2)}\\sin(${nPre}\\pi x)`);
+        }
+      }
+      const needDots = terms > MAX_VISIBLE;
+      if (parts.length === 0) parts.push("0");
+      const body = parts.join(" ") + (needDots ? " + \\cdots" : "");
+      fourierLineMath.innerHTML = `\\[f_N(x) = ${body}\\]`;
+      if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+        window.MathJax.typesetPromise([fourierLineMath]).catch(() => {});
+      }
+    }
+
+    function updateFourierLineLabels() {
+      if (fourierLineTermsValue && fourierLineTermsSlider) {
+        fourierLineTermsValue.textContent = String(Number(fourierLineTermsSlider.value));
+      }
+      renderFourierLineMath();
+    }
+
+    function updateFourierLinePointsFromPointer(clientX, clientY) {
+      if (!fourierLineCanvas) return;
+      const rect = fourierLineCanvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const geometry = getFourierLineGeometry();
+      if (!geometry) return;
+      const sx = fourierLineCanvas.width / rect.width;
+      const sy = fourierLineCanvas.height / rect.height;
+      const canvasX = (clientX - rect.left) * sx;
+      const canvasY = (clientY - rect.top) * sy;
+      if (canvasX < geometry.plotLeft || canvasX > geometry.plotRight) return;
+      const xNorm = (canvasX - geometry.plotLeft) / Math.max(1, geometry.plotRight - geometry.plotLeft);
+      const yNorm = 1 - (canvasY - geometry.plotTop) / Math.max(1, geometry.plotBottom - geometry.plotTop);
+      const yValue = Math.max(FOURIER_LINE_Y_MIN, Math.min(FOURIER_LINE_Y_MAX,
+        FOURIER_LINE_Y_MIN + yNorm * (FOURIER_LINE_Y_MAX - FOURIER_LINE_Y_MIN)));
+      const N = FOURIER_LINE_N_POINTS;
+      const idx = Math.min(N - 1, Math.max(0, Math.round(xNorm * (N - 1))));
+      if (fourierLineLastDragIdx >= 0 && Math.abs(fourierLineLastDragIdx - idx) > 1) {
+        const i0 = Math.min(fourierLineLastDragIdx, idx);
+        const i1 = Math.max(fourierLineLastDragIdx, idx);
+        const y0 = fourierLinePoints[fourierLineLastDragIdx];
+        for (let i = i0; i <= i1; i++) {
+          const t = (i1 === i0) ? 1 : (i - i0) / (i1 - i0);
+          fourierLinePoints[i] = (fourierLineLastDragIdx < idx)
+            ? y0 + t * (yValue - y0)
+            : yValue + t * (y0 - yValue);
+        }
+      } else {
+        fourierLinePoints[idx] = yValue;
+      }
+      fourierLineLastDragIdx = idx;
+      renderFourierLineMath();
+    }
+
+    fourierLineTermsSlider?.addEventListener("input", updateFourierLineLabels);
+
+    fourierLineCanvas?.addEventListener("pointerdown", (event) => {
+      const geometry = getFourierLineGeometry();
+      if (!geometry || !fourierLineCanvas) return;
+      const rect = fourierLineCanvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const sx = fourierLineCanvas.width / rect.width;
+      const canvasX = (event.clientX - rect.left) * sx;
+      if (canvasX < geometry.plotLeft || canvasX > geometry.plotRight) return;
+      fourierLineDragActive = true;
+      fourierLinePointerId = event.pointerId;
+      fourierLineLastDragIdx = -1;
+      fourierLineCanvas.setPointerCapture(event.pointerId);
+      updateFourierLinePointsFromPointer(event.clientX, event.clientY);
+      event.preventDefault();
+    });
+
+    fourierLineCanvas?.addEventListener("pointermove", (event) => {
+      if (!fourierLineDragActive || event.pointerId !== fourierLinePointerId) return;
+      updateFourierLinePointsFromPointer(event.clientX, event.clientY);
+      event.preventDefault();
+    });
+
+    function stopFourierLineDrag(event) {
+      if (!fourierLineDragActive || event.pointerId !== fourierLinePointerId) return;
+      fourierLineDragActive = false;
+      fourierLinePointerId = null;
+      fourierLineLastDragIdx = -1;
+      if (fourierLineCanvas?.hasPointerCapture(event.pointerId)) {
+        fourierLineCanvas.releasePointerCapture(event.pointerId);
+      }
+    }
+
+    fourierLineCanvas?.addEventListener("pointerup", stopFourierLineDrag);
+    fourierLineCanvas?.addEventListener("pointercancel", stopFourierLineDrag);
+    updateFourierLineLabels();
 
     // @slide 6.7 — ενημερώνει labels f1, f2, f3, probe για demo φίλτρου.
     function updateFFTMixLabels() {
@@ -8726,6 +8908,35 @@
         ctx.setLineDash([]);
 
         ctx.strokeStyle = "#86d0ff";
+        // Αχνές ατομικές αρμονικές
+        const HARMONIC_COLORS = [
+          "rgba(255, 180, 80, 0.30)",
+          "rgba(180, 140, 255, 0.28)",
+          "rgba(100, 230, 160, 0.26)",
+          "rgba(255, 120, 120, 0.24)",
+          "rgba(80, 210, 255, 0.22)",
+          "rgba(255, 230, 80, 0.20)",
+          "rgba(200, 110, 255, 0.18)",
+          "rgba(80, 255, 180, 0.16)",
+        ];
+        let harmonicIndex = 0;
+        for (let n = 1; n <= maxOdd; n += 2) {
+          const coeff = 2 / (Math.PI * n);
+          ctx.strokeStyle = HARMONIC_COLORS[harmonicIndex % HARMONIC_COLORS.length];
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          for (let i = 0; i < points; i += 1) {
+            const xNorm = -1 + (2 * i) / (points - 1);
+            const val = 0.5 + coeff * Math.sin(n * Math.PI * xNorm);
+            const x = xToCanvas(xNorm);
+            const y = yToCanvas(val);
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+          harmonicIndex += 1;
+        }
+
+        ctx.strokeStyle = "#86d0ff";
         ctx.lineWidth = 2.2;
         ctx.beginPath();
         for (let i = 0; i < approxSamples.length; i += 1) {
@@ -8756,6 +8967,127 @@
         ctx.fillText("+0.5 m", right - 36, rodBottom + 14);
         ctx.fillText(`y_min=${yMin.toFixed(2)}  y_max=${yMax.toFixed(2)}`, right - 160, graphTop + 14);
         ctx.fillText(`S_N με N=${terms} περιττές αρμονικές`, left + 8, graphTop + 14);
+      });
+    }
+
+    // @slide 6.4 — προσέγγιση γραμμικής συνάρτησης με άθροισμα ημιτόνων Fourier.
+    function drawFourierLineSynthesis(canvas, t) {
+      drawAxesCanvas(canvas, (ctx, width, height) => {
+        const pad = 14, gap = 18;
+        const panelWidth = (width - pad * 2 - gap) * 0.5;
+        const panelTop = 14, panelBottom = height - 14, panelHeight = panelBottom - panelTop;
+        const leftPanelLeft = pad;
+        const rightPanelLeft = leftPanelLeft + panelWidth + gap;
+        const plotInsetX = 14, plotInsetY = 22;
+        const xMin = -1, xMax = 1;
+        const yMin = FOURIER_LINE_Y_MIN, yMax = FOURIER_LINE_Y_MAX;
+        const plotPts = 320;
+        const N = FOURIER_LINE_N_POINTS;
+        const terms = fourierLineTermsSlider ? Number(fourierLineTermsSlider.value) : 1;
+
+        const HARM_RGB = [
+          [232, 112, 112], [232, 168, 112], [224, 224, 112],
+          [112, 232, 120], [112, 200, 232], [176, 112, 232], [232, 112, 200]
+        ];
+
+        function drawPanelBox(panelLeft, title) {
+          const panelRight = panelLeft + panelWidth;
+          const plotLeft = panelLeft + plotInsetX;
+          const plotRight = panelRight - plotInsetX;
+          const plotTop = panelTop + plotInsetY;
+          const plotBottom = panelBottom - plotInsetY;
+          const plotW = plotRight - plotLeft, plotH = plotBottom - plotTop;
+          const mapX = (x) => plotLeft + (x - xMin) / (xMax - xMin) * plotW;
+          const mapY = (y) => plotBottom - (y - yMin) / (yMax - yMin) * plotH;
+          ctx.strokeStyle = "#345886";
+          ctx.lineWidth = 1;
+          ctx.strokeRect(panelLeft, panelTop, panelWidth, panelHeight);
+          const xAxisY = mapY(0), yAxisX = mapX(0);
+          ctx.strokeStyle = "#3b5f90";
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(plotLeft, xAxisY); ctx.lineTo(plotRight, xAxisY);
+          ctx.moveTo(yAxisX, plotTop); ctx.lineTo(yAxisX, plotBottom);
+          ctx.stroke();
+          ctx.fillStyle = "#c7dcff";
+          ctx.font = "11px Segoe UI, sans-serif";
+          ctx.fillText(title, plotLeft + 2, panelTop + 14);
+          return { mapX, mapY, plotLeft, plotRight, plotTop, plotBottom };
+        }
+
+        // LEFT panel — user-drawn function
+        const L = drawPanelBox(leftPanelLeft, "Συνάρτηση-στόχος (σύρε για να ζωγραφίσεις)");
+        ctx.strokeStyle = "#ffbe76";
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        for (let i = 0; i < N; i++) {
+          const x = -1 + 2 * i / (N - 1);
+          const px = L.mapX(x), py = L.mapY(fourierLinePoints[i]);
+          if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+        ctx.fillStyle = "#ffdd99";
+        for (let i = 0; i < N; i++) {
+          if (Math.abs(fourierLinePoints[i]) > 0.02) {
+            const x = -1 + 2 * i / (N - 1);
+            ctx.beginPath();
+            ctx.arc(L.mapX(x), L.mapY(fourierLinePoints[i]), 2.2, 0, 2 * Math.PI);
+            ctx.fill();
+          }
+        }
+
+        // RIGHT panel — Fourier approximation
+        const R = drawPanelBox(rightPanelLeft, `Προσέγγιση Fourier (N=${terms})`);
+        const { a0, an, bn } = computeFourierCoeffs(terms);
+
+        // faint individual harmonics
+        for (let n = 1; n <= terms; n++) {
+          const [r, g, b] = HARM_RGB[(n - 1) % HARM_RGB.length];
+          const alpha = Math.max(0.07, 0.32 - n * 0.008);
+          ctx.strokeStyle = `rgba(${r},${g},${b},${alpha.toFixed(3)})`;
+          ctx.lineWidth = 1.1;
+          ctx.beginPath();
+          for (let i = 0; i < plotPts; i++) {
+            const x = xMin + (xMax - xMin) * i / (plotPts - 1);
+            const y = an[n - 1] * Math.cos(n * Math.PI * x) + bn[n - 1] * Math.sin(n * Math.PI * x);
+            const px = R.mapX(x), py = R.mapY(y);
+            if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+          }
+          ctx.stroke();
+        }
+
+        // dashed reference (original user function)
+        ctx.setLineDash([5, 4]);
+        ctx.strokeStyle = "rgba(255, 190, 118, 0.8)";
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        for (let i = 0; i < N; i++) {
+          const x = -1 + 2 * i / (N - 1);
+          const px = R.mapX(x), py = R.mapY(fourierLinePoints[i]);
+          if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // bright Fourier sum
+        ctx.strokeStyle = "#86d0ff";
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let i = 0; i < plotPts; i++) {
+          const x = xMin + (xMax - xMin) * i / (plotPts - 1);
+          let y = a0 / 2;
+          for (let n = 1; n <= terms; n++) {
+            y += an[n - 1] * Math.cos(n * Math.PI * x) + bn[n - 1] * Math.sin(n * Math.PI * x);
+          }
+          const px = R.mapX(x), py = R.mapY(y);
+          if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        ctx.fillStyle = "#a6c6ea";
+        ctx.font = "11px Segoe UI, sans-serif";
+        ctx.fillText("αχνά: επιμέρους ημίτονα", R.plotLeft + 4, panelBottom - 26);
+        ctx.fillText("μπλε: άθροισμα Fourier", R.plotLeft + 4, panelBottom - 12);
       });
     }
 
@@ -11429,6 +11761,7 @@
         drawHeatSineIntro(heatSineWaveCanvas, heatSineRodCanvas, elapsedSeconds);
       drawHeatRod(heatRodCanvas, elapsedSeconds);
       drawStepFourier(stepFourierCanvas, elapsedSeconds);
+        drawFourierLineSynthesis(fourierLineCanvas, elapsedSeconds);
       drawFFTEulerBridge(fftEulerBridgeCanvas, elapsedSeconds);
       drawFFTDuel(fftDuelCanvas, elapsedSeconds);
       drawFFTDemo(fftDemoCanvas, elapsedSeconds);
