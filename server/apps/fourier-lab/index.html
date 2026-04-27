@@ -747,6 +747,18 @@
       overflow-x: auto;
     }
 
+    .fft-formula-box {
+      margin-top: 8px;
+      padding: 6px 10px;
+      min-height: 0;
+      font-size: 0.9rem;
+      line-height: 1.25;
+    }
+
+    .fft-formula-box .MathJax {
+      font-size: 0.98em !important;
+    }
+
     .deriv-list {
       margin-top: 10px;
       border: 1px solid var(--line);
@@ -2254,7 +2266,13 @@
               Επίλεξε τη συχνότητα του κύματός σου. Η επιλογή σου εμφανίζεται live στον δάσκαλο.
             </p>
             <canvas id="sumWavesCanvas" class="demo-canvas" width="940" height="250"></canvas>
-            <label class="sum-toggle" style="display:block;margin:4px 0 8px;"><input id="sumAnimate" type="checkbox" /> <span>▶ κίνηση</span></label>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:4px 0 8px;">
+              <label class="sum-toggle" style="display:block;margin:0;"><input id="sumAnimate" type="checkbox" /> <span>▶ κίνηση</span></label>
+              <label class="sound-slider" style="margin:0;min-width:260px;max-width:360px;" title="ω (omega): αλλάζει την ταχύτητα χρονικής εξέλιξης όλων των ημιτονοειδών στο άθροισμα.">
+                <div class="slider-label"><span>Ταχύτητα ω</span><span id="sumMotionSpeedValue">1.00</span></div>
+                <input id="sumMotionSpeed" type="range" min="0.2" max="3" step="0.01" value="1" disabled title="ω (omega): παράγοντας χρόνου στο sin(kx - ωt + φ). Μεγαλύτερο ω => πιο γρήγορη κίνηση." />
+              </label>
+            </div>
             <div class="sum-legend" id="waveSumLegend">
               <span class="sum-legend-item teacher-only"><span class="sum-chip" style="background:#81b8ff"></span>Κύμα 1</span>
               <span class="sum-legend-item teacher-only"><span class="sum-chip" style="background:#ffb65c"></span>Κύμα 2</span>
@@ -2837,6 +2855,13 @@
                 <input id="fftProbeFreq" type="range" min="0" max="8" step="0.01" value="2" />
               </div>
             </div>
+            <div class="mathjax-box fft-formula-box">
+              $$\begin{split}
+              X_k &= \sum_{n=0}^{N-1} x_n \cdot e^{-i\frac{2\pi kn}{N}} \\[6pt]
+                  &= \sum_{n=0}^{N-1} x_n \left[\cos\!\left(\frac{2\pi kn}{N}\right) - i\sin\!\left(\frac{2\pi kn}{N}\right)\right] \\
+              \operatorname{Re}(X_k) &= \sum_{n=0}^{N-1} x_n\cos\!\left(\frac{2\pi kn}{N}\right),\quad \operatorname{Im}(X_k) = -\sum_{n=0}^{N-1} x_n\sin\!\left(\frac{2\pi kn}{N}\right).
+              \end{split}$$
+            </div>
           </div>
         </div>
       </section>
@@ -3360,6 +3385,8 @@
 
     const sumWavesCanvas = document.getElementById("sumWavesCanvas");
     const sumAnimate = document.getElementById("sumAnimate");
+    const sumMotionSpeed = document.getElementById("sumMotionSpeed");
+    const sumMotionSpeedValue = document.getElementById("sumMotionSpeedValue");
     let sumTime = 0;
     const sumAmp1 = document.getElementById("sumAmp1");
     const sumFreq1 = document.getElementById("sumFreq1");
@@ -4178,6 +4205,15 @@
       slider?.addEventListener("input", updateSumLabels);
     });
     updateSumLabels();
+
+    function updateSumMotionControls() {
+      const speed = Number(sumMotionSpeed?.value || 1);
+      if (sumMotionSpeedValue) sumMotionSpeedValue.textContent = speed.toFixed(2);
+      if (sumMotionSpeed) sumMotionSpeed.disabled = !(sumAnimate && sumAnimate.checked);
+    }
+    sumAnimate?.addEventListener("change", updateSumMotionControls);
+    sumMotionSpeed?.addEventListener("input", updateSumMotionControls);
+    updateSumMotionControls();
 
     // @slide 2.3 — student: ενημερώνει label συχνότητας και στέλνει event σε classroom-sync.
     function updateWaveSumStudentFreqLabel() {
@@ -11272,9 +11308,9 @@
       const ratio = window.devicePixelRatio || 1;
 
       const gradient = context.createLinearGradient(0, 0, 0, height);
-      gradient.addColorStop(0, "#8dbde2");
-      gradient.addColorStop(0.38, "#4b90c2");
-      gradient.addColorStop(1, "#1e5c87");
+      gradient.addColorStop(0, "#030d1a");
+      gradient.addColorStop(0.5, "#071b35");
+      gradient.addColorStop(1, "#0a2848");
       context.fillStyle = gradient;
       context.fillRect(0, 0, width, height);
 
@@ -11287,49 +11323,93 @@
 
       for (let row = rows; row >= 0; row -= 1) {
         const depth = row / rows;
-        const baseY = height * (0.28 + depth * 0.66);
+        const baseY = height * depth;
         const depthFade = 1 - depth * 0.7;
         const rowAmp = amplitude * (0.12 + depth * 0.88);
 
-        context.beginPath();
+        // Precompute wave points and crest values for this row
+        const pts = new Float32Array(cols + 1);
+        const crests = new Float32Array(cols + 1);
         for (let col = 0; col <= cols; col += 1) {
           const nx = col / cols;
-          const x = nx * width;
           const w1 = Math.sin(2 * Math.PI * (1.9 * nx - 0.36 * speed * time + depth * 0.6));
           const w2 = 0.7 * Math.sin(2 * Math.PI * (3.3 * nx - 0.62 * speed * time + depth * 1.4));
           const crest = Math.sign(w1 + w2) * Math.pow(Math.abs(w1 + w2), choppy);
-          const y = baseY + rowAmp * crest * depthFade;
-          if (col === 0) {
-            context.moveTo(x, y);
-          } else {
-            context.lineTo(x, y);
-          }
+          crests[col] = crest;
+          pts[col] = baseY + rowAmp * crest * depthFade;
+        }
+
+        // --- Wave fill ---
+        context.beginPath();
+        for (let col = 0; col <= cols; col += 1) {
+          const x = (col / cols) * width;
+          if (col === 0) context.moveTo(x, pts[col]); else context.lineTo(x, pts[col]);
         }
         context.lineTo(width, height);
         context.lineTo(0, height);
         context.closePath();
-
-        const alpha = 0.05 + depth * 0.2;
-        context.fillStyle = `rgba(61, 136, 186, ${alpha.toFixed(3)})`;
+        const alpha = 0.10 + depth * 0.30;
+        context.fillStyle = `rgba(5, 20, 50, ${alpha.toFixed(3)})`;
         context.fill();
 
-        context.strokeStyle = `rgba(214, 241, 255, ${(0.14 + depth * 0.32).toFixed(3)})`;
-        context.lineWidth = Math.max(1, ratio * (0.5 + depth * 1.1));
+        // --- Base wave line (dim) ---
+        context.strokeStyle = `rgba(40, 100, 170, ${(0.18 + depth * 0.22).toFixed(3)})`;
+        context.lineWidth = Math.max(0.8, ratio * (0.5 + depth * 0.9));
         context.beginPath();
         for (let col = 0; col <= cols; col += 1) {
-          const nx = col / cols;
-          const x = nx * width;
-          const w1 = Math.sin(2 * Math.PI * (1.9 * nx - 0.36 * speed * time + depth * 0.6));
-          const w2 = 0.7 * Math.sin(2 * Math.PI * (3.3 * nx - 0.62 * speed * time + depth * 1.4));
-          const crest = Math.sign(w1 + w2) * Math.pow(Math.abs(w1 + w2), choppy);
-          const y = baseY + rowAmp * crest * depthFade;
-          if (col === 0) {
-            context.moveTo(x, y);
-          } else {
-            context.lineTo(x, y);
-          }
+          const x = (col / cols) * width;
+          if (col === 0) context.moveTo(x, pts[col]); else context.lineTo(x, pts[col]);
         }
         context.stroke();
+
+        // --- Highlight pass: bright strokes only on lit crests (crest > 0.25) ---
+        const highlightAlpha = 0.22 + depth * 0.55;
+        context.lineWidth = Math.max(1, ratio * (0.8 + depth * 1.4));
+        let inHighlight = false;
+        for (let col = 0; col <= cols; col += 1) {
+          const x = (col / cols) * width;
+          const lit = crests[col] > 0.25;
+          if (lit && !inHighlight) {
+            context.beginPath();
+            context.moveTo(x, pts[col]);
+            inHighlight = true;
+          } else if (lit && inHighlight) {
+            // Brightness scales with crest height — peak crests get white tinge
+            const brightness = Math.min(1, (crests[col] - 0.25) / 1.2);
+            const r = Math.round(160 + brightness * 95);
+            const g = Math.round(220 + brightness * 35);
+            const b = 255;
+            context.strokeStyle = `rgba(${r},${g},${b},${highlightAlpha.toFixed(3)})`;
+            context.lineTo(x, pts[col]);
+          } else if (!lit && inHighlight) {
+            context.stroke();
+            inHighlight = false;
+          }
+        }
+        if (inHighlight) context.stroke();
+
+        // --- Specular shimmer: a second very thin, bright stroke only on sharp peaks ---
+        if (depth > 0.3) {
+          const shimmerAlpha = (depth - 0.3) * 0.7;
+          context.lineWidth = ratio * 0.8;
+          context.strokeStyle = `rgba(220, 245, 255, ${shimmerAlpha.toFixed(3)})`;
+          let inShimmer = false;
+          for (let col = 0; col <= cols; col += 1) {
+            const x = (col / cols) * width;
+            const bright = crests[col] > 0.65;
+            if (bright && !inShimmer) {
+              context.beginPath();
+              context.moveTo(x, pts[col]);
+              inShimmer = true;
+            } else if (bright && inShimmer) {
+              context.lineTo(x, pts[col]);
+            } else if (!bright && inShimmer) {
+              context.stroke();
+              inShimmer = false;
+            }
+          }
+          if (inShimmer) context.stroke();
+        }
       }
     }
 
@@ -11358,7 +11438,7 @@
       drawAirMolecules(airMoleculesCanvas, elapsedSeconds, soundSourcesForView);
         drawSoundSimple(soundSimpleWaveCanvas, soundSimpleMolCanvas, elapsedSeconds);
       drawSoundDecomposition(elapsedSeconds);
-      if (sumAnimate?.checked) sumTime += 0.16;
+      if (sumAnimate?.checked) sumTime += 0.16 * Number(sumMotionSpeed?.value || 1);
       drawSignalDemo(sumWavesCanvas, sumTime);
         drawHeatSineIntro(heatSineWaveCanvas, heatSineRodCanvas, elapsedSeconds);
       drawHeatRod(heatRodCanvas, elapsedSeconds);

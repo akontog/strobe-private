@@ -70,7 +70,8 @@ taskkill /PID 12345 /F
 
 ## Δραστηριότητες
 - 2.4) Δραστηριότητα: Άθροισμα κυμάτων
-- 3.2) Δραστηριότητα: συχνότητες ήχου και πυκνώσεις/αραιώσεις
+- 3.2) Δραστηριότητα: Συχνότητες ήχου και πυκνώσεις/αραιώσεις
+- 4.5) Δραστηριότητα: 
 - 6.2) Δραστηριότητα: Fourier και θερμοκρασία ράβδου
 - 7.2) Δραστηριότητα: Βρες τη συχνότητα του σήματος
 - 8.3) Δραστηριότητα: Αγώνες πολυπλοκότητας
@@ -155,7 +156,7 @@ taskkill /PID 12345 /F
 ### 7. Μετασχηματισμός Fourier
 
 #### 7.1 Από το σήμα στο φάσμα
-Μετάβαση από χρονικό σήμα σε φασματικές κορυφές.
+Μετάβαση από χρονικό σήμα σε φασματικές κορυφές. Γίνεται η μετάβαση από time domain σε frequency domain. Τονίζεται ότι το σήμα και το φάσμα είναι δύο ισοδύναμες περιγραφές του ίδιου αντικειμένου.
 
 #### 7.2 FFT Duel (δραστηριότητα)
 Ο teacher παράγει κρυφή τυχαία συχνότητα (με ένα δεκαδικό), οι students την εκτιμούν με winding και στέλνουν απάντηση. Αρχικά φαίνεται μόνο ποιοι υπέβαλαν, και με reveal εμφανίζονται τιμή και σφάλμα.
@@ -217,6 +218,10 @@ Displacement, normals και shading.
 ### Ιστορία
 
 
+### Taylor
+- [Taylor Series - Explained](https://www.youtube.com/watch?v=5Iyah7Qd2Us)
+- [The Subtle Reason Taylor Series Work | Smooth vs. Analytic Functions](https://www.youtube.com/watch?v=0HaBNdmUWXY)
+- [khanacademy](https://www.khanacademy.org/math/ap-calculus-bc/bc-series-new/bc-10-14/v/function-as-a-geometric-series)
 ### Euler
 - [Euler's identity](https://en.wikipedia.org/wiki/Euler%27s_identity)
 - [Euler's formula](https://en.wikipedia.org/wiki/Euler%27s_formula)
@@ -224,7 +229,9 @@ Displacement, normals και shading.
 - [The Physics of Euler's Formula - 3blue1brown](https://www.youtube.com/watch?v=-j8PzkZ70Lg)
 ### Ράβδος
 - [Solving the heat equation | DE3](https://www.youtube.com/watch?v=ToIXSwZ1pJU)
-- 
+### Fourier Series
+- [But what is a Fourier series? From heat flow to drawing with circles | DE4 - 3Blue1Brown](https://www.youtube.com/watch?v=r6sGWTCMz2k)
+
 ### Fourier Transform
 - [Wikipedia](https://el.wikipedia.org/wiki/%CE%9C%CE%B5%CF%84%CE%B1%CF%83%CF%87%CE%B7%CE%BC%CE%B1%CF%84%CE%B9%CF%83%CE%BC%CF%8C%CF%82_%CE%A6%CE%BF%CF%85%CF%81%CE%B9%CE%AD)
 - [Fourier Transform Best Explanation (for Beginners)](https://www.youtube.com/watch?v=PcYFnVBS_bg)
@@ -234,10 +241,13 @@ Displacement, normals και shading.
 - [An Interactive Introduction to Fourier Transforms](https://www.jezzamon.com/fourier/index.html)
 
 ### FFT
+- [How the Cooley-Tukey FFT Algorithm Works | Part 1 - Repeating Calculations - έχει και Links για τα επόμενα μέρη](https://www.dsprelated.com/showarticle/1709.php)
+- [The Original Cooley-Tukey FFT Algorithm](https://medium.com/@angelo.esteban/the-original-cooley-tukey-fft-algorithm-b04f6cc150b0)
 - [Wikipedia](https://en.wikipedia.org/wiki/Fast_Fourier_transform)
 - [Fast Fourier Transforms Part 1: Cooley-Tukey](https://connorboyle.io/2025/09/11/fft-cooley-tukey.html)
 - [How the Cooley-Tukey FFT Algorithm Works](https://www.dsprelated.com/showarticle/1709.php)
 - [The Fast Fourier Transform (FFT): Most Ingenious Algorithm Ever?](https://www.youtube.com/watch?v=h7apO7q16V0)
+- [FFT Example: Unraveling the Recursion](https://www.youtube.com/watch?v=Ty0JcR6Dvis)
 
 ### Νερό / Ocean
 - [Smoothed Particle Hydrodynamics](https://www.divecae.com/blog/sph-basics)

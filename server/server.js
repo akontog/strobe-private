@@ -1917,13 +1917,15 @@ function emitFourierTaylorGuessState(targetSocket = null) {
 }
 
 function emitFourierOceanRandomState(targetSocket = null) {
-      taylorGuess: {
-        roundId: fourierTaylorGuessState.roundId,
-        status: fourierTaylorGuessState.status,
-        submittedCount: fourierTaylorGuessState.submissions.size,
-        updatedAt: fourierTaylorGuessState.updatedAt,
-      },
-  const payload = buildFourierOceanRandomPayload();
+  const payload = {
+    ...buildFourierOceanRandomPayload(),
+    taylorGuess: {
+      roundId: fourierTaylorGuessState.roundId,
+      status: fourierTaylorGuessState.status,
+      submittedCount: fourierTaylorGuessState.submissions.size,
+      updatedAt: fourierTaylorGuessState.updatedAt,
+    }
+  };
 
   recordCommunication({
     app: 'fourier',
@@ -2374,8 +2376,7 @@ io.on('connection', (socket) => {
       fftDuel: buildFourierFftDuelPayload(socket.id, participant.role),
       oceanRandom: buildFourierOceanRandomPayload(),
       waveSum: buildFourierWaveSumPayload(),
-      summary: buildFourierSummary()
-      taylorGuess: buildFourierTaylorGuessPayload(socket.id, participant.role),
+      summary: buildFourierSummary(),
       taylorGuess: buildFourierTaylorGuessPayload(socket.id, participant.role),
     });
 
@@ -2398,9 +2399,7 @@ io.on('connection', (socket) => {
 
     emitFourierParticipants();
     emitFourierSummary();
-      taylorGuess: buildFourierTaylorGuessPayload(socket.id, participant.role),
     emitFourierSoundState();
-      taylorGuess: buildFourierTaylorGuessPayload(socket.id, participant.role),
     emitFourierHeatState();
     emitFourierHeatTimeState();
     emitFourierFftDuelState();
