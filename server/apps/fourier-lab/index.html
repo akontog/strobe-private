@@ -2039,6 +2039,7 @@
       <a href="#sec-taylor-cos" data-accordion-group="taylor">4.2 Taylor του cos(x)</a>
       <a href="#sec-taylor-sin" data-accordion-group="taylor">4.3 Taylor του sin(x)</a>
       <a href="#sec-taylor-exp" data-accordion-group="taylor">4.4 Taylor του e^x</a>
+  <a href="#sec-taylor-guess" data-accordion-group="taylor">4.5 Δραστηριότητα: Μάντεψε τον συντελεστή</a>
 
       <div class="toc-group-title" data-accordion-group="euler">5. Euler</div>
       <a href="#sec-euler-plane" data-accordion-group="euler">5.1 Τύπος του Euler</a>
@@ -2590,6 +2591,54 @@
           </div>
         </div>
       </section>
+
+        <section class="section" id="sec-taylor-guess">
+          <div class="slide-card">
+            <div class="slide-content">
+              <h2>4.5) Δραστηριότητα: Μάντεψε τον συντελεστή</h2>
+              <p class="teacher-only">
+                Εμφανίζεται η συνάρτηση-στόχος \(f(x)=e^{2x}\). Μόλις υποβάλουν οι φοιτητές, πάτα
+                <em>Reveal</em> για να εμφανιστούν όλες οι καμπύλες.
+              </p>
+              <p class="student-only">
+                Ρύθμισε τους συντελεστές \(c_0,\,c_1,\,c_2,\,c_3\) ώστε το πολυώνυμο
+                \(P(x)=c_0+c_1 x+c_2 x^2+c_3 x^3\) να προσεγγίζει τη συνάρτηση.
+              </p>
+              <canvas id="taylorGuessCanvas" class="demo-canvas" width="940" height="300"></canvas>
+              <div class="sum-legend" id="taylorGuessLegend"></div>
+              <div class="teacher-only" style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                <div class="fft-duel-toolbar" style="margin:0;">
+                  <span class="fft-duel-pill">Υποβολές: <strong id="taylorGuessProgressLabel">0/0</strong></span>
+                </div>
+                <button id="taylorGuessStartBtn" class="fft-duel-submit" type="button">Νέος γύρος</button>
+                <button id="taylorGuessRevealBtn" class="fft-duel-submit" type="button">Reveal αποτελεσμάτων</button>
+              </div>
+              <div class="student-only" style="margin-top:12px;">
+                <div class="slider-grid">
+                  <div class="slider-group">
+                    <div class="slider-label"><span>\(c_0\)</span><span id="taylorGuessC0Value">0.00</span></div>
+                    <input id="taylorGuessC0" type="range" min="-4" max="4" step="0.05" value="0" />
+                  </div>
+                  <div class="slider-group">
+                    <div class="slider-label"><span>\(c_1\)</span><span id="taylorGuessC1Value">0.00</span></div>
+                    <input id="taylorGuessC1" type="range" min="-4" max="4" step="0.05" value="0" />
+                  </div>
+                  <div class="slider-group">
+                    <div class="slider-label"><span>\(c_2\)</span><span id="taylorGuessC2Value">0.00</span></div>
+                    <input id="taylorGuessC2" type="range" min="-4" max="4" step="0.05" value="0" />
+                  </div>
+                  <div class="slider-group">
+                    <div class="slider-label"><span>\(c_3\)</span><span id="taylorGuessC3Value">0.00</span></div>
+                    <input id="taylorGuessC3" type="range" min="-4" max="4" step="0.05" value="0" />
+                  </div>
+                </div>
+                <div id="taylorGuessLockLabel" class="fft-duel-lock" style="display:none;">Έχεις ήδη υποβάλει!</div>
+                <button id="taylorGuessSubmitBtn" class="fft-duel-submit" type="button" style="margin-top:8px;">Submit συντελεστών</button>
+              </div>
+              <div id="taylorGuessMath" class="mathjax-box student-only" style="margin-top:8px;"></div>
+            </div>
+          </div>
+        </section>
 
       <section class="section" id="sec-euler-plane">
         <div class="slide-card">
@@ -3567,6 +3616,22 @@
     const taylorExpTermsSlider = document.getElementById("taylorExpTermsSlider");
     const taylorExpTermsValue = document.getElementById("taylorExpTermsValue");
     const taylorExpMath = document.getElementById("taylorExpMath");
+    const taylorGuessCanvas = document.getElementById("taylorGuessCanvas");
+    const taylorGuessLegend = document.getElementById("taylorGuessLegend");
+    const taylorGuessProgressLabel = document.getElementById("taylorGuessProgressLabel");
+    const taylorGuessStartBtn = document.getElementById("taylorGuessStartBtn");
+    const taylorGuessRevealBtn = document.getElementById("taylorGuessRevealBtn");
+    const taylorGuessC0 = document.getElementById("taylorGuessC0");
+    const taylorGuessC1 = document.getElementById("taylorGuessC1");
+    const taylorGuessC2 = document.getElementById("taylorGuessC2");
+    const taylorGuessC3 = document.getElementById("taylorGuessC3");
+    const taylorGuessC0Value = document.getElementById("taylorGuessC0Value");
+    const taylorGuessC1Value = document.getElementById("taylorGuessC1Value");
+    const taylorGuessC2Value = document.getElementById("taylorGuessC2Value");
+    const taylorGuessC3Value = document.getElementById("taylorGuessC3Value");
+    const taylorGuessSubmitBtn = document.getElementById("taylorGuessSubmitBtn");
+    const taylorGuessLockLabel = document.getElementById("taylorGuessLockLabel");
+    const taylorGuessMath = document.getElementById("taylorGuessMath");
     const eulerPlaneCanvas = document.getElementById("eulerPlaneCanvas");
     const iRotationCanvas = document.getElementById("iRotationCanvas");
     const iRotThetaSlider = document.getElementById("iRotThetaSlider");
@@ -6272,6 +6337,183 @@
       if (taylorPolyC3Slider) taylorPolyC3Slider.value = "-0.2291667";
       updateTaylorPolyfitUI();
     });
+
+    // @slide 4.5 — Δραστηριότητα: Μάντεψε τον συντελεστή (Taylor guess activity).
+    const TAYLOR_GUESS_PALETTE = ['#f472b6', '#fb923c', '#facc15', '#a3e635', '#34d399', '#22d3ee', '#818cf8', '#e879f9'];
+    let taylorGuessLocalState = { status: 'idle', revealResults: false, players: [], submittedCount: 0, totalPlayers: 0, ownSubmitted: false, ownCoeffs: null };
+
+    function evalTaylorPoly(coeffs, x) {
+      let y = 0, xn = 1;
+      for (let i = 0; i < coeffs.length; i++) { y += coeffs[i] * xn; xn *= x; }
+      return y;
+    }
+
+    function drawTaylorGuessCanvas(canvas) {
+      if (!canvas) return;
+      fitCanvasToDisplaySize(canvas);
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      const xMin = -1.5, xMax = 1.5, yMin = -4, yMax = 20;
+      const toX = x => ((x - xMin) / (xMax - xMin)) * W;
+      const toY = y => H - ((Math.min(yMax, Math.max(yMin, y)) - yMin) / (yMax - yMin)) * H;
+
+      const bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0, '#07172b'); bg.addColorStop(1, '#031022');
+      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+      ctx.strokeStyle = 'rgba(100,150,200,0.35)'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(toX(0), 0); ctx.lineTo(toX(0), H);
+      ctx.moveTo(0, toY(0)); ctx.lineTo(W, toY(0));
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(100,150,200,0.55)'; ctx.font = '11px monospace'; ctx.textAlign = 'center';
+      for (let x = -1; x <= 1; x++) { if (x !== 0) ctx.fillText(x, toX(x), toY(0) + 13); }
+
+      // Target: e^(2x) always visible
+      ctx.strokeStyle = '#87cdff'; ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let px = 0; px < W; px++) {
+        const x = xMin + (px / W) * (xMax - xMin);
+        const cy = toY(Math.exp(2 * x));
+        if (px === 0) ctx.moveTo(px, cy); else ctx.lineTo(px, cy);
+      }
+      ctx.stroke();
+
+      // Student's own polynomial (live)
+      if (!isTeacherMode) {
+        const c0 = Number(taylorGuessC0?.value || 0);
+        const c1 = Number(taylorGuessC1?.value || 0);
+        const c2 = Number(taylorGuessC2?.value || 0);
+        const c3 = Number(taylorGuessC3?.value || 0);
+        ctx.strokeStyle = '#ffe040'; ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        for (let px = 0; px < W; px++) {
+          const x = xMin + (px / W) * (xMax - xMin);
+          const cy = toY(evalTaylorPoly([c0, c1, c2, c3], x));
+          if (px === 0) ctx.moveTo(px, cy); else ctx.lineTo(px, cy);
+        }
+        ctx.stroke();
+      }
+
+      // Revealed player curves (teacher after reveal)
+      if (isTeacherMode && taylorGuessLocalState.revealResults) {
+        taylorGuessLocalState.players.forEach((player, index) => {
+          if (!Array.isArray(player.coeffs)) return;
+          const color = TAYLOR_GUESS_PALETTE[index % TAYLOR_GUESS_PALETTE.length];
+          ctx.strokeStyle = color; ctx.lineWidth = 1.7; ctx.globalAlpha = 0.82;
+          ctx.beginPath();
+          for (let px = 0; px < W; px++) {
+            const x = xMin + (px / W) * (xMax - xMin);
+            const cy = toY(evalTaylorPoly(player.coeffs, x));
+            if (px === 0) ctx.moveTo(px, cy); else ctx.lineTo(px, cy);
+          }
+          ctx.stroke();
+        });
+        ctx.globalAlpha = 1;
+      }
+
+      ctx.fillStyle = '#87cdff'; ctx.font = 'bold 12px monospace'; ctx.textAlign = 'left';
+      ctx.fillText('e^(2x) — στόχος', 8, 16);
+      if (!isTeacherMode) { ctx.fillStyle = '#ffe040'; ctx.fillText('P(x) — εκτίμησή σου', 8, 32); }
+    }
+
+    function updateTaylorGuessSliderLabels() {
+      if (taylorGuessC0Value) taylorGuessC0Value.textContent = Number(taylorGuessC0?.value || 0).toFixed(2);
+      if (taylorGuessC1Value) taylorGuessC1Value.textContent = Number(taylorGuessC1?.value || 0).toFixed(2);
+      if (taylorGuessC2Value) taylorGuessC2Value.textContent = Number(taylorGuessC2?.value || 0).toFixed(2);
+      if (taylorGuessC3Value) taylorGuessC3Value.textContent = Number(taylorGuessC3?.value || 0).toFixed(2);
+    }
+
+    function updateTaylorGuessMath() {
+      if (!taylorGuessMath) return;
+      const c0 = Number(taylorGuessC0?.value || 0).toFixed(2);
+      const c1 = Number(taylorGuessC1?.value || 0).toFixed(2);
+      const c2 = Number(taylorGuessC2?.value || 0).toFixed(2);
+      const c3 = Number(taylorGuessC3?.value || 0).toFixed(2);
+      taylorGuessMath.innerHTML = `\\[P(x)=${c0}+${c1}x+${c2}x^2+${c3}x^3\\]`;
+      if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+        window.MathJax.typesetPromise([taylorGuessMath]).catch(() => {});
+      }
+    }
+
+    function updateTaylorGuessLegend() {
+      if (!taylorGuessLegend) return;
+      taylorGuessLegend.innerHTML = '';
+      const targetSpan = document.createElement('span');
+      targetSpan.className = 'sum-legend-item';
+      targetSpan.innerHTML = '<span class="sum-chip" style="background:#87cdff"></span>e^{2x} — στόχος';
+      taylorGuessLegend.appendChild(targetSpan);
+      if (!isTeacherMode) {
+        const mySpan = document.createElement('span');
+        mySpan.className = 'sum-legend-item';
+        mySpan.innerHTML = '<span class="sum-chip" style="background:#ffe040"></span>P(x) — εκτίμησή σου';
+        taylorGuessLegend.appendChild(mySpan);
+      }
+      if (isTeacherMode && taylorGuessLocalState.revealResults) {
+        taylorGuessLocalState.players.forEach((player, index) => {
+          if (!Array.isArray(player.coeffs)) return;
+          const color = TAYLOR_GUESS_PALETTE[index % TAYLOR_GUESS_PALETTE.length];
+          const span = document.createElement('span');
+          span.className = 'sum-legend-item';
+          const coeffStr = player.coeffs.map(v => Number(v).toFixed(2)).join(', ');
+          const errStr = player.error != null ? ` · σφάλμα ${Number(player.error).toFixed(2)}` : '';
+          span.innerHTML = `<span class="sum-chip" style="background:${color}"></span>${escapeWaveSumHtml(player.name)} <span style="opacity:0.6">[${coeffStr}]${errStr}</span>`;
+          taylorGuessLegend.appendChild(span);
+        });
+      }
+    }
+
+    function updateTaylorGuessUI() {
+      const s = taylorGuessLocalState;
+      if (taylorGuessProgressLabel) taylorGuessProgressLabel.textContent = `${s.submittedCount}/${s.totalPlayers}`;
+      if (taylorGuessLockLabel) taylorGuessLockLabel.style.display = s.ownSubmitted ? 'block' : 'none';
+      if (taylorGuessSubmitBtn) {
+        taylorGuessSubmitBtn.disabled = s.ownSubmitted || s.status !== 'running';
+        taylorGuessSubmitBtn.textContent = s.ownSubmitted ? 'Υποβλήθηκε ✓' : 'Submit συντελεστών';
+      }
+      if (taylorGuessRevealBtn) taylorGuessRevealBtn.disabled = s.status !== 'running' || s.revealResults;
+      if (taylorGuessStartBtn) taylorGuessStartBtn.disabled = false;
+      updateTaylorGuessLegend();
+    }
+
+    [taylorGuessC0, taylorGuessC1, taylorGuessC2, taylorGuessC3].forEach(el => {
+      el?.addEventListener('input', () => { updateTaylorGuessSliderLabels(); updateTaylorGuessMath(); });
+    });
+
+    taylorGuessStartBtn?.addEventListener('click', () => {
+      document.dispatchEvent(new CustomEvent('fourier:taylor-guess-start-local'));
+    });
+    taylorGuessRevealBtn?.addEventListener('click', () => {
+      document.dispatchEvent(new CustomEvent('fourier:taylor-guess-reveal-local'));
+    });
+    taylorGuessSubmitBtn?.addEventListener('click', () => {
+      document.dispatchEvent(new CustomEvent('fourier:taylor-guess-submit-local', {
+        detail: {
+          c0: Number(taylorGuessC0?.value || 0),
+          c1: Number(taylorGuessC1?.value || 0),
+          c2: Number(taylorGuessC2?.value || 0),
+          c3: Number(taylorGuessC3?.value || 0)
+        }
+      }));
+    });
+
+    document.addEventListener('fourier:taylor-guess-state', (event) => {
+      const p = (event && event.detail) || {};
+      taylorGuessLocalState = {
+        status: p.status || 'idle',
+        revealResults: Boolean(p.revealResults),
+        players: Array.isArray(p.players) ? p.players : [],
+        submittedCount: Number(p.submittedCount) || 0,
+        totalPlayers: Number(p.totalPlayers) || 0,
+        ownSubmitted: Boolean(p.ownSubmitted),
+        ownCoeffs: Array.isArray(p.ownCoeffs) ? p.ownCoeffs : null,
+      };
+      updateTaylorGuessUI();
+    });
+
+    updateTaylorGuessSliderLabels();
+    updateTaylorGuessMath();
+    updateTaylorGuessUI();
 
     updateTaylorPolyfitUI();
     updateTaylorCosUI();
@@ -11146,6 +11388,7 @@
       drawTaylorCos(taylorCosCanvas, taylorCosTermsSlider ? Number(taylorCosTermsSlider.value) : 0);
       drawTaylorSin(taylorSinCanvas, taylorSinTermsSlider ? Number(taylorSinTermsSlider.value) : 0);
       drawTaylorExp(taylorExpCanvas, taylorExpTermsSlider ? Number(taylorExpTermsSlider.value) : 0);
+        drawTaylorGuessCanvas(taylorGuessCanvas);
       drawIRotation(iRotationCanvas, elapsedSeconds);
       drawEulerPlane(eulerPlaneCanvas, theta, radius);
       drawEulerProofSketch(eulerProofSketchCanvas, elapsedSeconds); // still used in 5.1 proof sketch

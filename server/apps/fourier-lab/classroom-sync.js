@@ -71,6 +71,7 @@
     heatStates: [],
     heatTime: 0,
     fftDuel: null,
+      taylorGuess: null,
     oceanRandom: null,
     waveSum: null,
     chatMessages: [],
@@ -1530,6 +1531,58 @@
     socket.emit("fourier:fft-duel-submit", payload);
   }
 
+    function normalizeTaylorGuessState(rawState) {
+      if (!rawState || typeof rawState !== 'object') {
+        return { status: 'idle', revealResults: false, players: [], submittedCount: 0, totalPlayers: 0, ownSubmitted: false, ownCoeffs: null };
+      }
+      const players = Array.isArray(rawState.players) ? rawState.players.map((p, i) => ({
+        socketId: String((p && p.socketId) || `p-${i}`),
+        name: normalizeName(p && p.name, 'Student'),
+        submitted: Boolean(p && p.submitted),
+        coeffs: Array.isArray(p && p.coeffs) ? p.coeffs.slice(0, 4).map(Number) : null,
+        error: (p && p.error != null) ? Number(p.error) : null,
+      })) : [];
+      return {
+        status: String(rawState.status || 'idle'),
+        revealResults: Boolean(rawState.revealResults),
+        players,
+        submittedCount: Number(rawState.submittedCount) || 0,
+        totalPlayers: Number(rawState.totalPlayers) || 0,
+        ownSubmitted: Boolean(rawState.ownSubmitted),
+        ownCoeffs: Array.isArray(rawState.ownCoeffs) ? rawState.ownCoeffs.slice(0, 4).map(Number) : null,
+      };
+    }
+
+    function applyTaylorGuessState(rawState) {
+      state.taylorGuess = normalizeTaylorGuessState(rawState);
+      document.dispatchEvent(new CustomEvent('fourier:taylor-guess-state', { detail: state.taylorGuess }));
+    }
+
+    function emitTaylorGuessStart() {
+      if (state.mode !== 'teacher' || !socket.connected || !state.joined) return;
+      const payload = { slideId: state.activeSlideId || '' };
+      logComm('emit fourier:taylor-guess-start', payload);
+      socket.emit('fourier:taylor-guess-start', payload);
+    }
+
+    function emitTaylorGuessReveal() {
+      if (state.mode !== 'teacher' || !socket.connected || !state.joined) return;
+      const payload = { slideId: state.activeSlideId || '' };
+      logComm('emit fourier:taylor-guess-reveal', payload);
+      socket.emit('fourier:taylor-guess-reveal', payload);
+    }
+
+    function emitTaylorGuessSubmit(detail) {
+      if (state.mode !== 'client' || !socket.connected || !state.joined) return;
+      const c0 = Number(clampValue(detail && detail.c0, -4, 4, 0).toFixed(2));
+      const c1 = Number(clampValue(detail && detail.c1, -4, 4, 0).toFixed(2));
+      const c2 = Number(clampValue(detail && detail.c2, -4, 4, 0).toFixed(2));
+      const c3 = Number(clampValue(detail && detail.c3, -4, 4, 0).toFixed(2));
+      const payload = { c0, c1, c2, c3 };
+      logComm('emit fourier:taylor-guess-submit', payload);
+      socket.emit('fourier:taylor-guess-submit', payload);
+    }
+
   function emitWaveSumUpdate(detail) {
     if (state.mode !== "client" || !socket.connected || !state.joined) {
       return;
@@ -1851,6 +1904,7 @@
     applyHeatTimeState(0);
     applyFftDuelState(null);
     applyOceanRandomState(null);
+      applyTaylorGuessState(null);
     dispatchClassroomSummary(null);
     setConnectionState(false);
     setStudentJoined(false);
@@ -1909,6 +1963,10 @@
 
     if (payload && Object.prototype.hasOwnProperty.call(payload, "waveSum")) {
       applyWaveSumState(payload.waveSum);
+
+        if (payload && Object.prototype.hasOwnProperty.call(payload, "taylorGuess")) {
+          applyTaylorGuessState(payload.taylorGuess);
+        }
     }
 
     if (payload && (payload.activeSlideId || Number.isInteger(payload.activeSlideIndex))) {
@@ -1984,6 +2042,10 @@
 
     if (payload && (payload.activeSlideId || Number.isInteger(payload.activeSlideIndex))) {
       state.activeSlideId = payload.activeSlideId || state.activeSlideId;
+
+          if (payload && Object.prototype.hasOwnProperty.call(payload, "taylorGuess")) {
+            applyTaylorGuessState(payload.taylorGuess);
+          }
       state.activeSlideIndex = Number.isInteger(payload.activeSlideIndex) ? payload.activeSlideIndex : state.activeSlideIndex;
     }
 
@@ -2024,6 +2086,24 @@
   socket.on("fourier:wave-sum-state", (payload) => {
     logComm("recv fourier:wave-sum-state", payload);
     applyWaveSumState(payload);
+
+    socket.on("fourier:taylor-guess-state", (payload) => {
+      logComm("recv fourier:taylor-guess-state", payload);
+      applyTaylorGuessState(payload);
+      updateMiniSummary();
+    });
+
+    document.addEventListener("fourier:taylor-guess-start-local", () => {
+      emitTaylorGuessStart();
+    });
+
+    document.addEventListener("fourier:taylor-guess-reveal-local", () => {
+      emitTaylorGuessReveal();
+    });
+
+    document.addEventListener("fourier:taylor-guess-submit-local", (event) => {
+      emitTaylorGuessSubmit((event && event.detail) || {});
+    });
   });
 
   socket.on("fourier:chat-history", (payload) => {
