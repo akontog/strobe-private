@@ -5483,13 +5483,17 @@
         return;
       }
 
+      const A = getHeatSineAmplitude(timeValue);
       heatSineMath.innerHTML = `
-        <p style="margin:0 0 8px;color:#ffcc66;font-weight:bold;">Εξίσωση διάχυσης</p>
-        <p style="margin:0 0 10px;font-family:'Segoe UI',sans-serif;">∂u/∂t = k·∂²u/∂x²</p>
-        <p style="margin:0 0 8px;color:#ffcc66;font-weight:bold;">Επεξήγηση συμβόλων</p>
-        <p style="margin:0 0 6px;">u(x,t): θερμοκρασία</p>
-        <p style="margin:0;">k: θερμική αγωγιμότητα</p>
+        <p style="margin:0 0 4px;color:#ffcc66;font-weight:bold;">Εξίσωση διάχυσης θερμότητας</p>
+        \\[\\frac{\\partial u}{\\partial t} = \\kappa\\,\\frac{\\partial^2 u}{\\partial x^2}\\]
+        <p style="margin:4px 0 2px;color:#aac8ff;font-size:0.92em;">Λύση με ημίτονο (1ος όρος Fourier):</p>
+        \\[u(x,t)=A_0\\,e^{-\\kappa\\pi^2 t}\\sin(2\\pi x)\\]
+        <p style="margin:2px 0;font-size:0.88em;">\\(A_0=${HEAT_SINE_AMPLITUDE},\\;\\kappa=${HEAT_KAPPA},\\;A(t)=${A.toFixed(3)}\\)</p>
       `;
+      if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+        window.MathJax.typesetPromise([heatSineMath]).catch(() => {});
+      }
     }
 
     // @slide 5.1 — ενημερώνει label χρόνου slider και καλεί renderHeatSineMath.
@@ -8807,6 +8811,38 @@
           if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
         ctx.stroke();
+
+        // Vertical arrows showing ∂u/∂t at 7 evenly-spaced positions
+        const arrowXNorms = [1/8, 2/8, 3/8, 4/8, 5/8, 6/8, 7/8];
+        const arrowScale = yScale * 0.55;
+        const arrowHeadLen = 6;
+        const arrowHeadW = 3;
+        ctx.strokeStyle = "#ff9955";
+        ctx.fillStyle = "#ff9955";
+        ctx.lineWidth = 1.5;
+        for (const xNorm of arrowXNorms) {
+          const sineVal = Math.sin(2 * Math.PI * xNorm);
+          const dy = arrowScale * amplitudeNow * sineVal;
+          if (Math.abs(dy) < 2) { continue; }
+          const cx = left + xNorm * graphW;
+          const cy = midY - yScale * amplitudeNow * sineVal;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx, cy + dy);
+          ctx.stroke();
+          const sign = dy > 0 ? 1 : -1;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy + dy);
+          ctx.lineTo(cx - arrowHeadW, cy + dy - sign * arrowHeadLen);
+          ctx.lineTo(cx + arrowHeadW, cy + dy - sign * arrowHeadLen);
+          ctx.closePath();
+          ctx.fill();
+        }
+        ctx.lineWidth = 1;
+
+        ctx.fillStyle = "#ff9955";
+        ctx.font = "11px Segoe UI, sans-serif";
+        ctx.fillText("\u2202u/\u2202t", right - 44, bottom - 6);
 
         ctx.fillStyle = "#c7dcff";
         ctx.font = "12px Segoe UI, sans-serif";
