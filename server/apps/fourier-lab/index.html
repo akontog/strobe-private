@@ -2665,8 +2665,8 @@
           <div class="slide-content">
             <h2>5.1) Τύπος του Euler</h2>
             <p>
-              Ρύθμισε την γωνία θ και το μέτρο r και δες το διάνυσμα στο μιγαδικό επίπεδο:
-              η προβολή στον άξονα Re είναι r cosθ και στον άξονα Im είναι r sinθ.
+              Ρύθμισε μόνο τη γωνία θ και δες το διάνυσμα πάνω στον μοναδιαίο κύκλο:
+              η προβολή στον άξονα Re είναι cosθ και στον άξονα Im είναι sinθ.
             </p>
             <div class="euler-proof-main">
               <div class="euler-proof-left">
@@ -2676,12 +2676,8 @@
                     <span>θ (radians) <strong id="thetaValue">1.57</strong></span>
                     <input id="thetaSlider" type="range" min="-6.28" max="6.28" step="0.01" value="1.57" />
                   </label>
-                  <label class="ocean-control">
-                    <span>r (μέτρο) <strong id="radiusValue">1.00</strong></span>
-                    <input id="radiusSlider" type="range" min="0.2" max="2.2" step="0.01" value="1" />
-                  </label>
                 </div>
-                <p id="eulerFormulaText" style="color:#9fd0ff;margin:4px 0 0;">re^{iθ} = 0.00 + i·0.00</p>
+                <p id="eulerFormulaText" style="color:#9fd0ff;margin:4px 0 0;">e^{iθ} = 0.00 + i·0.00</p>
                 <div class="euler-i-powers">
                   <table>
                     <tr>
@@ -3679,9 +3675,7 @@
     const taylorGuessMath = document.getElementById("taylorGuessMath");
     const eulerPlaneCanvas = document.getElementById("eulerPlaneCanvas");
     const thetaSlider = document.getElementById("thetaSlider");
-    const radiusSlider = document.getElementById("radiusSlider");
     const thetaValue = document.getElementById("thetaValue");
-    const radiusValue = document.getElementById("radiusValue");
     const eulerFormulaText = document.getElementById("eulerFormulaText");
 
     const proofStepBoxTaylor = document.getElementById("proofStepBoxTaylor");
@@ -6729,22 +6723,19 @@
     updateTaylorSinUI();
     updateTaylorExpUI();
 
-    // @slide 5.2 — ενημερώνει labels θ, r και MathJax μιγαδικού επιπέδου.
+    // @slide 5.1 — ενημερώνει label θ για το Euler plane.
     function updateEulerLabels() {
       if (thetaValue && thetaSlider) {
         thetaValue.textContent = Number(thetaSlider.value).toFixed(2);
       }
-      if (radiusValue && radiusSlider) {
-        radiusValue.textContent = Number(radiusSlider.value).toFixed(2);
-      }
     }
 
-    [thetaSlider, radiusSlider].forEach((slider) => {
+    [thetaSlider].forEach((slider) => {
       slider?.addEventListener("input", updateEulerLabels);
     });
     updateEulerLabels();
 
-    // @slide 5.1 — drag στο σημείο του μιγαδικού επιπέδου για άμεσο έλεγχο θ και r.
+    // @slide 5.1 — drag στο σημείο του μοναδιαίου κύκλου για άμεσο έλεγχο θ.
     let eulerPointDragActive = false;
     let eulerPointPointerId = null;
 
@@ -6766,10 +6757,9 @@
         return null;
       }
       const theta = thetaSlider ? Number(thetaSlider.value) : 0;
-      const radius = radiusSlider ? Number(radiusSlider.value) : 1;
       return {
-        x: geometry.cx + geometry.baseRadius * radius * Math.cos(theta),
-        y: geometry.cy - geometry.baseRadius * radius * Math.sin(theta),
+        x: geometry.cx + geometry.baseRadius * Math.cos(theta),
+        y: geometry.cy - geometry.baseRadius * Math.sin(theta),
       };
     }
 
@@ -6813,20 +6803,21 @@
       const dyUp = geometry.cy - y;
 
       let nextTheta = Math.atan2(dyUp, dx);
-      let nextRadius = Math.hypot(dx, dyUp) / Math.max(1e-6, geometry.baseRadius);
+
+      // Snap κοντά στα βασικά σημεία του μοναδιαίου κύκλου: 0, π/2, π, 3π/2.
+      const snapStep = Math.PI / 2;
+      const snapThreshold = 0.14;
+      const snappedTheta = Math.round(nextTheta / snapStep) * snapStep;
+      const snapDelta = Math.atan2(Math.sin(nextTheta - snappedTheta), Math.cos(nextTheta - snappedTheta));
+      if (Math.abs(snapDelta) <= snapThreshold) {
+        nextTheta = snappedTheta;
+      }
 
       if (thetaSlider) {
         const minTheta = Number(thetaSlider.min);
         const maxTheta = Number(thetaSlider.max);
         nextTheta = Math.min(maxTheta, Math.max(minTheta, nextTheta));
         thetaSlider.value = nextTheta.toFixed(2);
-      }
-
-      if (radiusSlider) {
-        const minRadius = Number(radiusSlider.min);
-        const maxRadius = Number(radiusSlider.max);
-        nextRadius = Math.min(maxRadius, Math.max(minRadius, nextRadius));
-        radiusSlider.value = nextRadius.toFixed(2);
       }
 
       updateEulerLabels();
@@ -8603,7 +8594,7 @@
       });
     }
 
-    // @slide 5.1 — σχεδιάζει r·e^{iθ} στο μιγαδικό επίπεδο me άξονες, βέλος, ετικέτα.
+    // @slide 5.1 — σχεδιάζει e^{iθ} στον μοναδιαίο κύκλο με άξονες, βέλος, ετικέτα.
     function drawEulerPlane(canvas, theta, radius) {
       if (!canvas) {
         return;
@@ -8694,7 +8685,7 @@
       const re = radius * Math.cos(theta);
       const im = radius * Math.sin(theta);
       if (eulerFormulaText) {
-        eulerFormulaText.textContent = `r·e^{iθ} = ${re.toFixed(3)} + i·${im.toFixed(3)} = r(cos(θ) + i·sin(θ))`;
+        eulerFormulaText.textContent = `e^{iθ} = ${re.toFixed(3)} + i·${im.toFixed(3)} = cos(θ) + i·sin(θ)`;
       }
     }
 
@@ -11917,7 +11908,7 @@
       const elapsedSeconds = (performance.now() - animationStartTime) / 1000;
       const oceanSettings = getOceanSettings();
       const theta = thetaSlider ? Number(thetaSlider.value) : Math.PI / 2;
-      const radius = radiusSlider ? Number(radiusSlider.value) : 1;
+      const radius = 1;
 
       if (enableTime?.checked) {
         waveBuildTime += 0.03;
