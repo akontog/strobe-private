@@ -12,26 +12,27 @@ header-includes:
 \centering
 \begin{tikzpicture}
   \begin{axis}[
+    trig format plots=rad,
     axis lines=middle,
     xlabel={$x$},
     ylabel={$y$},
-    domain=-2:2,
-    samples=200,
-    ymin=-1,
+    domain=-1.5*pi:1.5*pi,
+    samples=300,
+    ymin=-8,
     ymax=8,
-    xtick={-2,-1.5,-1,-0.5,0,0.5,1,1.5,2},
-    ytick={0,2,4,6,8},
-    legend pos=north west,
-    legend style={font=\small}
+    clip=false,
+    xtick={-6.28318, -4.71239, -3.14159, -1.5708, 0, 1.5708, 3.14159, 4.71239, 6.28318},
+    xticklabels={$-2\pi$, $-\frac{3\pi}{2}$, $-\pi$, $-\frac{\pi}{2}$, $0$, $\frac{\pi}{2}$, $\pi$, $\frac{3\pi}{2}$, $2\pi$},
+    ytick={-8,-6,-4,-2,0,2,4,6,8},
   ]
-    \addplot[green!50!black, thick] {exp(x)};
-    \addlegendentry{$e^x$}
+    \addplot[red, thick] {exp(x/2)*cos(x)};
+    \addplot[blue, thick] {1 + 0.5*x};
     
-    \addplot[orange, thick] {1 + x + x^2/2 + x^3/6 + x^4/24 + x^5/120};
-    \addlegendentry{$T_5(x)$ (6 όροι)}
+    % Τοποθέτηση ετικετών
+    \node[red, anchor=west] at (axis cs:3.14, {exp(3.14/2)*cos(3.14)-8}) {$e^{x/2}\cos x$};
+    \node[blue, anchor=west] at (axis cs:3., {1 + 0.5*3.-0.5}) {$Τ_1(x)=1+\frac{x}{2}$};
   \end{axis}
 \end{tikzpicture}
-\caption{Σύγκριση $e^x$ με το πολυώνυμο Taylor 5ου βαθμού (6 όροι).}
-\label{fig:exptaylor}
-\par
+\caption{Σύγκριση $e^{x/2}\cos x$ με γραμμική προσέγγιση $1+x/2$}
+\label{fig:expcoslinear}
 \end{figure}
