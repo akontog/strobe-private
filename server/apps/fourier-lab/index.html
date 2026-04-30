@@ -493,12 +493,14 @@
       gap: 4px;
     }
 
-    .ocean-control[data-tip] {
+    .ocean-control[data-tip],
+    .wave-tip[data-tip] {
       position: relative;
       cursor: help;
     }
 
-    .ocean-control[data-tip]::after {
+    .ocean-control[data-tip]::after,
+    .wave-tip[data-tip]::after {
       content: attr(data-tip);
       position: absolute;
       left: 50%;
@@ -521,7 +523,8 @@
       box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
     }
 
-    .ocean-control[data-tip]::before {
+    .ocean-control[data-tip]::before,
+    .wave-tip[data-tip]::before {
       content: "";
       position: absolute;
       left: 50%;
@@ -537,45 +540,57 @@
     }
 
     .ocean-control[data-tip]:hover::after,
-    .ocean-control[data-tip]:focus-within::after {
+    .ocean-control[data-tip]:focus-within::after,
+    .wave-tip[data-tip]:hover::after,
+    .wave-tip[data-tip]:focus-within::after {
       opacity: 1;
       visibility: visible;
       transform: translateX(-50%) translateY(0);
     }
 
     .ocean-control[data-tip]:hover::before,
-    .ocean-control[data-tip]:focus-within::before {
+    .ocean-control[data-tip]:focus-within::before,
+    .wave-tip[data-tip]:hover::before,
+    .wave-tip[data-tip]:focus-within::before {
       opacity: 1;
       visibility: visible;
     }
 
-    .ocean-control[data-tip][data-tip-pos="left"]::after {
+    .ocean-control[data-tip][data-tip-pos="left"]::after,
+    .wave-tip[data-tip][data-tip-pos="left"]::after {
       left: 10px;
       transform: translateY(4px) !important;
     }
 
     .ocean-control[data-tip][data-tip-pos="left"]:hover::after,
-    .ocean-control[data-tip][data-tip-pos="left"]:focus-within::after {
+    .ocean-control[data-tip][data-tip-pos="left"]:focus-within::after,
+    .wave-tip[data-tip][data-tip-pos="left"]:hover::after,
+    .wave-tip[data-tip][data-tip-pos="left"]:focus-within::after {
       transform: translateY(0) !important;
     }
 
-    .ocean-control[data-tip][data-tip-pos="left"]::before {
+    .ocean-control[data-tip][data-tip-pos="left"]::before,
+    .wave-tip[data-tip][data-tip-pos="left"]::before {
       left: 24px;
       transform: none;
     }
 
-    .ocean-control[data-tip][data-tip-pos="right"]::after {
+    .ocean-control[data-tip][data-tip-pos="right"]::after,
+    .wave-tip[data-tip][data-tip-pos="right"]::after {
       left: auto;
       right: 10px;
       transform: translateY(4px) !important;
     }
 
     .ocean-control[data-tip][data-tip-pos="right"]:hover::after,
-    .ocean-control[data-tip][data-tip-pos="right"]:focus-within::after {
+    .ocean-control[data-tip][data-tip-pos="right"]:focus-within::after,
+    .wave-tip[data-tip][data-tip-pos="right"]:hover::after,
+    .wave-tip[data-tip][data-tip-pos="right"]:focus-within::after {
       transform: translateY(0) !important;
     }
 
-    .ocean-control[data-tip][data-tip-pos="right"]::before {
+    .ocean-control[data-tip][data-tip-pos="right"]::before,
+    .wave-tip[data-tip][data-tip-pos="right"]::before {
       left: auto;
       right: 24px;
       transform: none;
@@ -2054,7 +2069,7 @@
 
       <div class="toc-group-title" data-accordion-group="euler">5. Euler</div>
       <a href="#sec-euler-plane" data-accordion-group="euler">5.1 Τύπος του Euler</a>
-      <a href="#sec-euler-i-rotation" data-accordion-group="euler">5.2 Ο i ως περιστροφή και ανάπτυγμα</a>
+      <a href="#sec-euler-i-rotation" data-accordion-group="euler">5.2 Περιστροφή με πολλαπλασιασμό μιγαδικού</a>
 
       <div class="toc-group-title" data-accordion-group="rod">6. Fourier ράβδος</div>
       <a href="#sec-heat-sine-intro" data-accordion-group="rod">6.1 Θερμοκρασία ράβδου</a>
@@ -2128,8 +2143,8 @@
               <div class="wave-build-grid">
                 <div class="wave-build-item">
                   <div class="wave-build-row">
-                    <label class="sum-toggle wave-build-toggle" title="k: πολλαπλασιάζει το x και αυξάνει/μειώνει τον αριθμό κυματώσεων στο ίδιο διάστημα."><input id="enableK" type="checkbox" /> <span>k</span></label>
-                    <div class="slider-group wave-build-slider" id="kControlWrap" hidden>
+                    <label class="sum-toggle wave-build-toggle wave-tip" data-tip="k: πολλαπλασιάζει το x και αυξάνει ή μειώνει τον αριθμό κυματώσεων στο ίδιο διάστημα." title="k: πολλαπλασιάζει το x και αυξάνει ή μειώνει τον αριθμό κυματώσεων στο ίδιο διάστημα."><input id="enableK" type="checkbox" /> <span>k</span></label>
+                    <div class="slider-group wave-build-slider wave-tip" id="kControlWrap" data-tip="k: αλλάζει την πυκνότητα του κύματος στον χώρο. Μεγαλύτερο |k| σημαίνει πιο πυκνές κυματώσεις." title="k: αλλάζει την πυκνότητα του κύματος στον χώρο. Μεγαλύτερο |k| σημαίνει πιο πυκνές κυματώσεις." hidden>
                       <div class="slider-label"><span>k</span><span id="kValue">1.00</span></div>
                       <input id="kSlider" type="range" min="0.4" max="6" step="0.01" value="1" title="k: αλλάζει την πυκνότητα/συχνότητα του κύματος στον χώρο." />
                     </div>
@@ -2138,8 +2153,8 @@
 
                 <div class="wave-build-item">
                   <div class="wave-build-row">
-                    <label class="sum-toggle wave-build-toggle" title="A: κλιμακώνει το πλάτος, δηλαδή το ύψος της ταλάντωσης."><input id="enableA" type="checkbox" /> <span>A</span></label>
-                    <div class="slider-group wave-build-slider" id="aControlWrap" hidden>
+                    <label class="sum-toggle wave-build-toggle wave-tip" data-tip="A: κλιμακώνει το πλάτος, δηλαδή το ύψος της ταλάντωσης." title="A: κλιμακώνει το πλάτος, δηλαδή το ύψος της ταλάντωσης."><input id="enableA" type="checkbox" /> <span>A</span></label>
+                    <div class="slider-group wave-build-slider wave-tip" id="aControlWrap" data-tip="A: αλλάζει το ύψος του κύματος χωρίς να αλλάζει την πυκνότητά του." title="A: αλλάζει το ύψος του κύματος χωρίς να αλλάζει την πυκνότητά του." hidden>
                       <div class="slider-label"><span>A</span><span id="ampValue">1.00</span></div>
                       <input id="ampSlider" type="range" min="0" max="2" step="0.01" value="1" title="A: αλλάζει το ύψος (πλάτος) του κύματος." />
                     </div>
@@ -2148,8 +2163,8 @@
 
                 <div class="wave-build-item">
                   <div class="wave-build-row">
-                    <label class="sum-toggle wave-build-toggle" title="φ: μετατοπίζει οριζόντια τη συνάρτηση χωρίς να αλλάζει σχήμα."><input id="enablePhase" type="checkbox" /> <span>φ</span></label>
-                    <div class="slider-group wave-build-slider" id="phaseControlWrap" hidden>
+                    <label class="sum-toggle wave-build-toggle wave-tip" data-tip="φ: μετατοπίζει οριζόντια τη συνάρτηση χωρίς να αλλάζει το σχήμα της." title="φ: μετατοπίζει οριζόντια τη συνάρτηση χωρίς να αλλάζει το σχήμα της."><input id="enablePhase" type="checkbox" /> <span>φ</span></label>
+                    <div class="slider-group wave-build-slider wave-tip" id="phaseControlWrap" data-tip="φ: οριζόντια μετατόπιση του κύματος. Το σχήμα μένει ίδιο, αλλάζει μόνο η θέση του μοτίβου." title="φ: οριζόντια μετατόπιση του κύματος. Το σχήμα μένει ίδιο, αλλάζει μόνο η θέση του μοτίβου." hidden>
                       <div class="slider-label"><span>φ</span><span id="phaseValue">0.00</span></div>
                       <input id="phaseSlider" type="range" min="-3.14" max="3.14" step="0.01" value="0" title="φ: οριζόντια μετατόπιση (phase shift) του κύματος." />
                     </div>
@@ -2158,10 +2173,10 @@
 
                 <div class="wave-build-item">
                   <div class="wave-build-row">
-                    <label class="sum-toggle wave-build-toggle" title="t: εισάγει χρονική εξέλιξη και κάνει το κύμα να διαδίδεται."><input id="enableTime" type="checkbox" /> <span>t</span></label>
-                    <div class="slider-group wave-build-slider" id="timeControlWrap" hidden>
-                      <div class="slider-label"><span>ω (ταχύτητα)</span><span id="timeValue">1.00</span></div>
-                      <input id="timeSlider" type="range" min="0.1" max="4" step="0.01" value="1" title="ω: ελέγχει την ταχύτητα χρονικής κίνησης του κύματος." />
+                    <label class="sum-toggle wave-build-toggle wave-tip" data-tip="t: εισάγει χρονική εξέλιξη και κάνει το κύμα να διαδίδεται." title="t: εισάγει χρονική εξέλιξη και κάνει το κύμα να διαδίδεται."><input id="enableTime" type="checkbox" /> <span>t</span></label>
+                    <div class="slider-group wave-build-slider wave-tip" id="timeControlWrap" data-tip="ω: ελέγχει τη χρονική εξέλιξη του κύματος. Αρνητικό ω αντιστρέφει τη φορά κίνησης." title="ω: ελέγχει τη χρονική εξέλιξη του κύματος. Αρνητικό ω αντιστρέφει τη φορά κίνησης." hidden>
+                      <div class="slider-label"><span>ω</span><span id="timeValue">1.00</span></div>
+                      <input id="timeSlider" type="range" min="-25" max="25" step="0.01" value="1" title="ω: ελέγχει τη χρονική εξέλιξη του κύματος. Αρνητικό ω αντιστρέφει τη φορά κίνησης." />
                     </div>
                   </div>
                 </div>
@@ -2191,13 +2206,13 @@
                 <span>k<sub>z</sub> <strong id="wave2DKzValue">1.00</strong></span>
                 <input id="wave2DKz" type="range" min="0.2" max="5" step="0.01" value="1.0" title="k_z: πόσο γρήγορα αλλάζει το κύμα κατά μήκος του άξονα z." />
               </label>
-              <label class="ocean-control" data-tip="ω: πόσο γρήγορα εξελίσσεται χρονικά το κύμα.">
-                <span>ω <strong id="wave2DOmegaValue">1.20</strong></span>
-                <input id="wave2DOmega" type="range" min="0.1" max="4" step="0.01" value="1.2" title="ω: πόσο γρήγορα εξελίσσεται χρονικά το κύμα." />
-              </label>
               <label class="ocean-control" data-tip="φ: μετατοπίζει τη φάση, δηλαδή οριζόντια μετακίνηση του μοτίβου.">
                 <span>φ <strong id="wave2DPhiValue">0.00</strong></span>
                 <input id="wave2DPhi" type="range" min="-3.14" max="3.14" step="0.01" value="0" title="φ: μετατοπίζει τη φάση, δηλαδή οριζόντια μετακίνηση του μοτίβου." />
+              </label>
+              <label class="ocean-control" data-tip="ω: ελέγχει τη χρονική εξέλιξη του κύματος. Αρνητικό ω αντιστρέφει τη φορά κίνησης.">
+                <span>ω <strong id="wave2DOmegaValue">1.20</strong></span>
+                <input id="wave2DOmega" type="range" min="-25" max="25" step="0.01" value="1.2" title="ω: ελέγχει τη χρονική εξέλιξη του κύματος. Αρνητικό ω αντιστρέφει τη φορά κίνησης." />
               </label>
             </div>
           </div>
@@ -2707,26 +2722,15 @@
       <section class="section" id="sec-euler-i-rotation">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>5.2) Ο i ως περιστροφή και το ανάπτυγμα \(e^{i\theta}\)</h2>
-            <p>
-              Πολλαπλασιασμός ενός μιγαδικού αριθμού με <strong>i</strong> ισοδυναμεί με
-              περιστροφή κατά <strong>90°</strong> αντίθετα από τους δείκτες του ρολογιού.
-              Με τον slider ελέγξεις την γωνία θ.
+            <h2>5.2) Περιστροφή με πολλαπλασιασμό μιγαδικού</h2>
+            <p style="margin:4px 0 6px;">
+              Ο μοναδιαίος κύκλος είναι σχεδιασμένος στο μιγαδικό επίπεδο.
+              Κάνε κλικ <strong>πάνω στον κύκλο</strong> για να ορίσεις τη γωνία <strong>θ</strong>,
+              και κλικ <strong>αλλού</strong> για να ορίσεις σημείο <strong>z</strong>.
+              Ο πολλαπλασιασμός \(z \cdot e^{i\theta}\) περιστρέφει το z κατά θ.
             </p>
-            <div class="euler-grid">
-              <canvas id="iRotationCanvas" class="euler-canvas" width="940" height="340"></canvas>
-              <div class="euler-panel">
-                <label class="ocean-control">
-                  <span>θ (radians) <strong id="iRotThetaValue">0.00</strong></span>
-                  <input id="iRotThetaSlider" type="range" min="0" max="6.28" step="0.01" value="0" />
-                </label>
-                <div class="mathjax-box">
-                  <p style="margin:0 0 8px;color:#ffcc66;font-weight:bold;">Ο i ως περιστροφή:</p>
-                  \[i \cdot z \;\Longrightarrow\; \text{στροφή } 90°\ (\text{αντίθετα ρολόι})\]
-                  \[i^0=1,\quad i^1=i,\quad i^2=-1,\quad i^3=-i,\quad i^4=1,\;\ldots\]
-                </div>
-              </div>
-            </div>
+            <canvas id="rotMultCanvas" class="euler-canvas" style="cursor:crosshair;height:320px;width:100%;"></canvas>
+            <div id="rotMultFormula" class="mathjax-box" style="margin-top:8px;min-height:36px;text-align:center;font-size:1.05em;"></div>
           </div>
         </div>
       </section>
@@ -3674,9 +3678,6 @@
     const taylorGuessLockLabel = document.getElementById("taylorGuessLockLabel");
     const taylorGuessMath = document.getElementById("taylorGuessMath");
     const eulerPlaneCanvas = document.getElementById("eulerPlaneCanvas");
-    const iRotationCanvas = document.getElementById("iRotationCanvas");
-    const iRotThetaSlider = document.getElementById("iRotThetaSlider");
-    const iRotThetaValue = document.getElementById("iRotThetaValue");
     const thetaSlider = document.getElementById("thetaSlider");
     const radiusSlider = document.getElementById("radiusSlider");
     const thetaValue = document.getElementById("thetaValue");
@@ -4110,7 +4111,7 @@
 
     // @ui — τοποθετεί τα tooltips αριστερά/δεξιά όταν ο slider είναι στα άκρα του viewport.
     function updateAdaptiveTooltipPlacement() {
-      const tipControls = document.querySelectorAll('.ocean-control[data-tip]');
+      const tipControls = document.querySelectorAll('.ocean-control[data-tip], .wave-tip[data-tip]');
       const edgePadding = 14;
       const minTipWidth = 180;
       const maxTipWidth = 290;
@@ -4133,7 +4134,7 @@
     }
 
     function initAdaptiveSliderTooltips() {
-      const tipControls = document.querySelectorAll('.ocean-control[data-tip]');
+      const tipControls = document.querySelectorAll('.ocean-control[data-tip], .wave-tip[data-tip]');
       tipControls.forEach((el) => {
         el.addEventListener("mouseenter", updateAdaptiveTooltipPlacement);
         el.addEventListener("focusin", updateAdaptiveTooltipPlacement);
@@ -6864,14 +6865,306 @@
     eulerPlaneCanvas?.addEventListener("pointerup", stopEulerPointDrag);
     eulerPlaneCanvas?.addEventListener("pointercancel", stopEulerPointDrag);
 
-    // @slide 5.2 — ενημερώνει label θ slider περιστροφής.
-    function updateIRotThetaLabel() {
-      if (iRotThetaValue && iRotThetaSlider) {
-        iRotThetaValue.textContent = Number(iRotThetaSlider.value).toFixed(2);
+    // @slide 5.2 — Περιστροφή με πολλαπλασιασμό μιγαδικού (single canvas)
+    const rotMultCanvas  = document.getElementById("rotMultCanvas");
+    const rotMultFormula = document.getElementById("rotMultFormula");
+
+    let rotMult_z        = null;   // {a, b} or null
+    let rotMult_theta    = null;   // number (radians) or null
+    let rotMult_dragging = null;   // "z" | "theta" | null
+
+    function canvasPointerXY(canvas, evt) {
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      return { x: (evt.clientX - rect.left) * ratio, y: (evt.clientY - rect.top) * ratio };
+    }
+
+    // R in pixel coords for the single unified canvas
+    function _rotMultR(w, h) { return Math.min(w, h) * 0.34; }
+
+    function drawRotMult() {
+      const canvas = rotMultCanvas;
+      if (!canvas) return;
+      fitCanvasToDisplaySize(canvas);
+      const ratio = window.devicePixelRatio || 1;
+      const w = canvas.width, h = canvas.height;
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, w, h);
+
+      const cx = w * 0.5, cy = h * 0.5;
+      const R = _rotMultR(w, h);
+
+      // --- Faint grid ---
+      ctx.strokeStyle = "rgba(50,80,130,0.28)"; ctx.lineWidth = 1;
+      for (let g = -3; g <= 3; g++) {
+        if (g === 0) continue;
+        ctx.beginPath(); ctx.moveTo(cx + g*R, 0); ctx.lineTo(cx + g*R, h); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, cy + g*R); ctx.lineTo(w, cy + g*R); ctx.stroke();
+      }
+
+      // --- Axes ---
+      ctx.strokeStyle = "#6a9de8"; ctx.lineWidth = 1.5 * ratio;
+      ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
+      ctx.font = `${11*ratio}px sans-serif`; ctx.fillStyle = "#6a9de8";
+      ctx.textAlign = "left";  ctx.textBaseline = "middle";
+      ctx.fillText("Re", w - 20*ratio, cy - 12*ratio);
+      ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+      ctx.fillText("Im", cx + 14*ratio, 18*ratio);
+
+      // Tick labels
+      ctx.fillStyle = "rgba(140,180,255,0.55)"; ctx.font = `${9*ratio}px sans-serif`;
+      for (const v of [-2,-1,1,2]) {
+        ctx.textAlign = "center"; ctx.textBaseline = "top";
+        ctx.fillText(v, cx + v*R, cy + 3*ratio);
+        ctx.textAlign = "right"; ctx.textBaseline = "middle";
+        ctx.fillText(v===1?"i":v===-1?"−i":v+"i", cx - 4*ratio, cy - v*R);
+      }
+
+      // --- Unit circle (prominent) ---
+      ctx.strokeStyle = "rgba(88,166,255,0.55)"; ctx.lineWidth = 2 * ratio;
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.stroke();
+
+      // Cardinal dots + labels on unit circle
+      ctx.font = `bold ${11*ratio}px sans-serif`; ctx.fillStyle = "#8ab6ff";
+      const ucL = [{t:0,l:"1"},{t:Math.PI,l:"−1"},{t:Math.PI/2,l:"i"},{t:-Math.PI/2,l:"−i"}];
+      for (const {t, l} of ucL) {
+        const lx = cx + R*Math.cos(-t), ly = cy + R*Math.sin(-t);
+        const off = 16*ratio;
+        let ox=0, oy=0;
+        if (t===0){ox=off;} else if(t===Math.PI){ox=-off;} else if(t>0){oy=off;} else{oy=-off;}
+        ctx.textAlign="center"; ctx.textBaseline="middle";
+        ctx.fillText(l, lx+ox, ly+oy);
+        ctx.beginPath(); ctx.arc(lx, ly, 3*ratio, 0, Math.PI*2);
+        ctx.fillStyle="rgba(90,150,255,0.6)"; ctx.fill(); ctx.fillStyle="#8ab6ff";
+      }
+
+      // --- Hint if nothing set ---
+      if (!rotMult_z && rotMult_theta === null) {
+        ctx.fillStyle = "rgba(180,210,255,0.40)"; ctx.font = `${12*ratio}px sans-serif`;
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText("Κλικ κοντά στον κύκλο → γωνία θ  |  Κλικ αλλού → σημείο z  (drag για μετακίνηση)", cx, h - 18*ratio);
+        return;
+      }
+
+      // --- e^{iθ}: green arrow + arc on unit circle ---
+      if (rotMult_theta !== null) {
+        const t = rotMult_theta;
+        const px = cx + R * Math.cos(-t), py = cy + R * Math.sin(-t);
+
+        // Arc from 0 to θ (at ~55% of R so it doesn't clash)
+        const arcR = R * 0.45;
+        ctx.strokeStyle = "rgba(255,200,60,0.70)"; ctx.lineWidth = 2 * ratio;
+        ctx.beginPath(); ctx.arc(cx, cy, arcR, 0, -t, t < 0); ctx.stroke();
+        const midT = -t * 0.5, tlR = arcR + 14*ratio;
+        ctx.fillStyle = "#ffcc44"; ctx.font = `italic bold ${13*ratio}px serif`;
+        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText("θ", cx + tlR*Math.cos(midT), cy + tlR*Math.sin(midT));
+
+        // Green arrow from origin to unit-circle point
+        ctx.strokeStyle = "#58d68d"; ctx.lineWidth = 2 * ratio;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
+        const angG = Math.atan2(py-cy, px-cx), asG=8*ratio, psG=3.5*ratio;
+        ctx.fillStyle = "#58d68d"; ctx.beginPath();
+        ctx.moveTo(px, py);
+        ctx.lineTo(px-Math.cos(angG)*asG+Math.sin(angG)*psG, py-Math.sin(angG)*asG-Math.cos(angG)*psG);
+        ctx.lineTo(px-Math.cos(angG)*asG-Math.sin(angG)*psG, py-Math.sin(angG)*asG+Math.cos(angG)*psG);
+        ctx.closePath(); ctx.fill();
+        ctx.beginPath(); ctx.arc(px, py, 5.5*ratio, 0, Math.PI*2);
+        ctx.fillStyle = "#2ecc71"; ctx.fill();
+        ctx.strokeStyle = "#aaffd4"; ctx.lineWidth = 1.2*ratio; ctx.stroke();
+
+        // e^{iθ} label
+        const cosT = Math.cos(t), sinT = Math.sin(t);
+        const sSign = sinT >= 0 ? "+" : "−";
+        ctx.fillStyle = "#aaffd4"; ctx.font = `${10*ratio}px sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = py < cy ? "bottom" : "top";
+        ctx.fillText(`e^{iθ}=${cosT.toFixed(2)}${sSign}${Math.abs(sinT).toFixed(2)}i`,
+          px, py + (py < cy ? -7 : 7)*ratio);
+
+        // θ value bottom-right
+        ctx.fillStyle = "rgba(200,230,255,0.65)"; ctx.font = `${10*ratio}px sans-serif`;
+        ctx.textAlign = "right"; ctx.textBaseline = "bottom";
+        ctx.fillText(`θ = ${t.toFixed(2)} rad (${(t*180/Math.PI).toFixed(1)}°)`, w - 8*ratio, h - 5*ratio);
+      }
+
+      // --- z: blue arrow ---
+      if (rotMult_z) {
+        const {a, b} = rotMult_z;
+        const zx = cx + a*R, zy = cy - b*R;
+
+        // If θ set, also draw rotated result
+        if (rotMult_theta !== null) {
+          const cosT = Math.cos(rotMult_theta), sinT = Math.sin(rotMult_theta);
+          const ra = a*cosT - b*sinT, rb = a*sinT + b*cosT;
+          const rx = cx + ra*R, ry = cy - rb*R;
+          const modZ = Math.sqrt(a*a + b*b);
+
+          // Arc showing rotation of z
+          if (modZ > 0.05) {
+            const angZ = Math.atan2(b, a);
+            ctx.strokeStyle = "rgba(255,200,60,0.50)"; ctx.lineWidth = 1.5 * ratio;
+            ctx.setLineDash([4*ratio, 4*ratio]);
+            ctx.beginPath(); ctx.arc(cx, cy, modZ*R, -angZ, -(angZ + rotMult_theta), rotMult_theta < 0); ctx.stroke();
+            ctx.setLineDash([]);
+            const midAng = -(angZ + rotMult_theta * 0.5);
+            const labR = modZ * R * 0.55 + 12*ratio;
+            ctx.fillStyle = "#ffdd88"; ctx.font = `italic ${11*ratio}px serif`;
+            ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            ctx.fillText("θ", cx + labR*Math.cos(midAng), cy + labR*Math.sin(midAng));
+          }
+
+          // Orange arrow: z·e^{iθ}
+          ctx.strokeStyle = "#ff8833"; ctx.lineWidth = 2.5 * ratio;
+          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(rx, ry); ctx.stroke();
+          const ang2 = Math.atan2(ry-cy, rx-cx), as2=9*ratio, ps2=4*ratio;
+          ctx.fillStyle = "#ff8833"; ctx.beginPath();
+          ctx.moveTo(rx, ry);
+          ctx.lineTo(rx-Math.cos(ang2)*as2+Math.sin(ang2)*ps2, ry-Math.sin(ang2)*as2-Math.cos(ang2)*ps2);
+          ctx.lineTo(rx-Math.cos(ang2)*as2-Math.sin(ang2)*ps2, ry-Math.sin(ang2)*as2+Math.cos(ang2)*ps2);
+          ctx.closePath(); ctx.fill();
+          ctx.beginPath(); ctx.arc(rx, ry, 6*ratio, 0, Math.PI*2);
+          ctx.fillStyle = "#ff8833"; ctx.fill();
+          ctx.strokeStyle = "#ffcc88"; ctx.lineWidth = 1.5*ratio; ctx.stroke();
+          ctx.fillStyle = "#ffcc88"; ctx.font = `bold ${10*ratio}px sans-serif`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = ry < cy ? "bottom" : "top";
+          ctx.fillText(`z·e^{iθ}=(${ra.toFixed(2)},${rb.toFixed(2)})`, rx, ry+(ry<cy?-8:8)*ratio);
+        }
+
+        // Blue arrow: z
+        ctx.strokeStyle = "#58a6ff"; ctx.lineWidth = 2.5 * ratio;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(zx, zy); ctx.stroke();
+        const ang1 = Math.atan2(zy-cy, zx-cx), as1=9*ratio, ps1=4*ratio;
+        ctx.fillStyle = "#58a6ff"; ctx.beginPath();
+        ctx.moveTo(zx, zy);
+        ctx.lineTo(zx-Math.cos(ang1)*as1+Math.sin(ang1)*ps1, zy-Math.sin(ang1)*as1-Math.cos(ang1)*ps1);
+        ctx.lineTo(zx-Math.cos(ang1)*as1-Math.sin(ang1)*ps1, zy-Math.sin(ang1)*as1+Math.cos(ang1)*ps1);
+        ctx.closePath(); ctx.fill();
+        ctx.beginPath(); ctx.arc(zx, zy, 6*ratio, 0, Math.PI*2);
+        ctx.fillStyle = "#3a80ee"; ctx.fill();
+        ctx.strokeStyle = "#80bfff"; ctx.lineWidth = 1.5*ratio; ctx.stroke();
+        const bSign = b >= 0 ? "+" : "−";
+        ctx.fillStyle = "#80c8ff"; ctx.font = `bold ${10*ratio}px sans-serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = zy < cy ? "bottom" : "top";
+        ctx.fillText(`z=${a.toFixed(2)}${bSign}${Math.abs(b).toFixed(2)}i`, zx, zy+(zy<cy?-8:8)*ratio);
+      } else {
+        // Hint for z
+        ctx.fillStyle = "rgba(180,210,255,0.38)"; ctx.font = `${11*ratio}px sans-serif`;
+        ctx.textAlign = "left"; ctx.textBaseline = "top";
+        ctx.fillText("← κλικ εδώ για z", 8*ratio, 8*ratio);
+      }
+
+      // Hint for θ when no theta yet
+      if (rotMult_theta === null) {
+        ctx.fillStyle = "rgba(130,220,160,0.38)"; ctx.font = `${11*ratio}px sans-serif`;
+        ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+        ctx.fillText("κλικ στον κύκλο για θ", cx, h - 8*ratio);
       }
     }
-    iRotThetaSlider?.addEventListener("input", updateIRotThetaLabel);
-    updateIRotThetaLabel();
+
+    function updateRotMultFormula() {
+      if (!rotMultFormula) return;
+      if (!rotMult_z && rotMult_theta === null) { rotMultFormula.innerHTML = ""; return; }
+      if (!rotMult_z) { rotMultFormula.innerHTML = "Κάνε κλικ ή drag στο επίπεδο για να ορίσεις <strong>z</strong>."; return; }
+      if (rotMult_theta === null) { rotMultFormula.innerHTML = "Κάνε κλικ ή drag πάνω στον κύκλο για να ορίσεις γωνία <strong>θ</strong>."; return; }
+      const {a, b} = rotMult_z, t = rotMult_theta;
+      const cosT = Math.cos(t), sinT = Math.sin(t);
+      const ra = a*cosT - b*sinT, rb = a*sinT + b*cosT;
+      const bSign  = b   >= 0 ? "+" : "-";
+      const sSign  = sinT >= 0 ? "+" : "-";
+      const rbSign = rb  >= 0 ? "+" : "-";
+      rotMultFormula.innerHTML =
+        `\\[z \\cdot e^{i\\theta} = (${a.toFixed(2)}${bSign}${Math.abs(b).toFixed(2)}i)` +
+        `\\,(${cosT.toFixed(2)}${sSign}${Math.abs(sinT).toFixed(2)}i)` +
+        ` = ${ra.toFixed(2)}${rbSign}${Math.abs(rb).toFixed(2)}i\\]`;
+      if (window.MathJax && MathJax.typesetPromise) { MathJax.typesetPromise([rotMultFormula]).catch(()=>{}); }
+    }
+
+    // Hit-test: returns "theta", "z", "new_theta", or "new_z"
+    function _rotMultHitTest(x, y) {
+      fitCanvasToDisplaySize(rotMultCanvas);
+      const w = rotMultCanvas.width, h = rotMultCanvas.height;
+      const cx = w * 0.5, cy = h * 0.5;
+      const R = _rotMultR(w, h);
+      const ratio = window.devicePixelRatio || 1;
+      const HIT = 20 * ratio;
+      const dx = x - cx, dy = y - cy;
+      // Existing θ point?
+      if (rotMult_theta !== null) {
+        const px = cx + R * Math.cos(-rotMult_theta);
+        const py = cy + R * Math.sin(-rotMult_theta);
+        if (Math.hypot(x - px, y - py) < HIT) return "theta";
+      }
+      // Existing z point?
+      if (rotMult_z) {
+        const zx = cx + rotMult_z.a * R, zy = cy - rotMult_z.b * R;
+        if (Math.hypot(x - zx, y - zy) < HIT) return "z";
+      }
+      // New point — near circle → θ, elsewhere → z
+      const distFromCircle = Math.abs(Math.sqrt(dx*dx + dy*dy) - R);
+      return distFromCircle < 22 * ratio ? "new_theta" : "new_z";
+    }
+
+    rotMultCanvas?.addEventListener("pointerdown", function(evt) {
+      evt.preventDefault();
+      fitCanvasToDisplaySize(rotMultCanvas);
+      const w = rotMultCanvas.width, h = rotMultCanvas.height;
+      const cx = w * 0.5, cy = h * 0.5;
+      const R = _rotMultR(w, h);
+      const {x, y} = canvasPointerXY(rotMultCanvas, evt);
+      const hit = _rotMultHitTest(x, y);
+      if (hit === "theta") {
+        rotMult_dragging = "theta";
+      } else if (hit === "z") {
+        rotMult_dragging = "z";
+      } else if (hit === "new_theta") {
+        rotMult_theta = Math.atan2(cy - y, x - cx);
+        rotMult_dragging = "theta";
+        drawRotMult(); updateRotMultFormula();
+      } else {
+        rotMult_z = { a: (x - cx) / R, b: (cy - y) / R };
+        rotMult_dragging = "z";
+        drawRotMult(); updateRotMultFormula();
+      }
+      rotMultCanvas.setPointerCapture(evt.pointerId);
+      rotMultCanvas.style.cursor = "grabbing";
+    });
+
+    rotMultCanvas?.addEventListener("pointermove", function(evt) {
+      const {x, y} = canvasPointerXY(rotMultCanvas, evt);
+      if (!rotMult_dragging) {
+        const hit = _rotMultHitTest(x, y);
+        rotMultCanvas.style.cursor = (hit === "z" || hit === "theta") ? "grab" : "crosshair";
+        return;
+      }
+      evt.preventDefault();
+      fitCanvasToDisplaySize(rotMultCanvas);
+      const w = rotMultCanvas.width, h = rotMultCanvas.height;
+      const cx = w * 0.5, cy = h * 0.5;
+      const R = _rotMultR(w, h);
+      if (rotMult_dragging === "theta") {
+        rotMult_theta = Math.atan2(cy - y, x - cx);
+      } else if (rotMult_dragging === "z") {
+        rotMult_z = { a: (x - cx) / R, b: (cy - y) / R };
+      }
+      drawRotMult(); updateRotMultFormula();
+    });
+
+    rotMultCanvas?.addEventListener("pointerup", function(evt) {
+      rotMult_dragging = null;
+      rotMultCanvas.style.cursor = "crosshair";
+    });
+
+    rotMultCanvas?.addEventListener("pointercancel", function(evt) {
+      rotMult_dragging = null;
+      rotMultCanvas.style.cursor = "crosshair";
+    });
+
+    drawRotMult();
 
     const proofStepsTaylor = [
       {
@@ -8308,156 +8601,6 @@
         expansionX: 0,
         xLabel: "x"
       });
-    }
-
-    // @slide 5.2 — δείχνει πώς ο i περιστρέφει κατά 90° και για θέση από slider.
-    function drawIRotation(canvas, t) {
-      const theta = iRotThetaSlider ? Number(iRotThetaSlider.value) : t * Math.PI * 2 / 8;
-      if (!canvas) return;
-      const ratio = window.devicePixelRatio || 1;
-      const w = canvas.width, h = canvas.height;
-      const ctx = canvas.getContext("2d");
-      ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = "#000";
-      ctx.fillRect(0, 0, w, h);
-
-      const cx = w * 0.5;
-      const cy = h * 0.54;
-      const R = Math.min(w, h) * 0.30;
-
-      // Unit circle
-      ctx.strokeStyle = "rgba(100,150,255,0.22)";
-      ctx.lineWidth = 1.5 * ratio;
-      ctx.beginPath();
-      ctx.arc(cx, cy, R, 0, Math.PI * 2);
-      ctx.stroke();
-
-      // Axes
-      ctx.strokeStyle = "#8ab6ff";
-      ctx.lineWidth = 1.5 * ratio;
-      ctx.beginPath(); ctx.moveTo(cx - R * 1.38, cy); ctx.lineTo(cx + R * 1.5, cy); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx, cy + R * 1.3); ctx.lineTo(cx, cy - R * 1.42); ctx.stroke();
-
-      // Axis labels
-      ctx.font = `${13 * ratio}px sans-serif`;
-      ctx.fillStyle = "#8ab6ff";
-      ctx.textAlign = "left"; ctx.textBaseline = "middle";
-      ctx.fillText("Re", cx + R * 1.47, cy - 12 * ratio);
-      ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
-      ctx.fillText("Im", cx + 16 * ratio, cy - R * 1.4);
-
-      // 4 i^n positions (canvas angles: 0=right, -PI/2=top, PI=left, PI/2=bottom)
-      const powers = [
-        { angle: 0,             label: "1"  },
-        { angle: -Math.PI / 2,  label: "i"  },
-        { angle: Math.PI,       label: "-1" },
-        { angle: Math.PI / 2,   label: "-i" },
-      ];
-
-      // Dot: angle from slider (CCW)
-      const animAngle = -theta; // negative = CCW in canvas coords
-      const normAnim = ((animAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
-
-      // Which step (i^k) is the dot closest to?
-      let step = 0, minDist = Infinity;
-      const canonAngles = [0, 3 * Math.PI / 2, Math.PI, Math.PI / 2];
-      for (let k = 0; k < 4; k++) {
-        let d = Math.abs(normAnim - canonAngles[k]);
-        if (d > Math.PI) d = Math.PI * 2 - d;
-        if (d < minDist) { minDist = d; step = k; }
-      }
-
-      // Quarter-arc arrows between consecutive i^n points (CCW = anticlockwise=true)
-      const arcAngles = [
-        { start: 0,           end: -Math.PI / 2 },
-        { start: -Math.PI/2,  end: Math.PI      },
-        { start: Math.PI,     end: Math.PI / 2  },
-        { start: Math.PI/2,   end: 0            },
-      ];
-      // midpoint angles for "×i" label placement (midpoints of each CCW quarter arc)
-      const midAngles = [-Math.PI/4, -3*Math.PI/4, 3*Math.PI/4, Math.PI/4];
-      const arcR = R * 0.77;
-
-      for (let k = 0; k < 4; k++) {
-        const isActive = k === step;
-        ctx.save();
-        ctx.strokeStyle = isActive ? "rgba(255,185,60,0.95)" : "rgba(130,182,255,0.3)";
-        ctx.lineWidth = isActive ? 3 * ratio : 1.5 * ratio;
-        ctx.beginPath();
-        ctx.arc(cx, cy, arcR, arcAngles[k].start, arcAngles[k].end, true);
-        ctx.stroke();
-
-        // Arrowhead at end of arc
-        const endA = arcAngles[k].end;
-        const ex = cx + arcR * Math.cos(endA);
-        const ey = cy + arcR * Math.sin(endA);
-        // Tangent for CCW (decreasing angle): (sin(a), -cos(a))
-        const tanX = Math.sin(endA);
-        const tanY = -Math.cos(endA);
-        const perpX = -tanY;
-        const perpY = tanX;
-        const as = 9 * ratio, ps = 4 * ratio;
-        ctx.fillStyle = isActive ? "rgba(255,185,60,0.95)" : "rgba(130,182,255,0.3)";
-        ctx.beginPath();
-        ctx.moveTo(ex, ey);
-        ctx.lineTo(ex - tanX * as + perpX * ps, ey - tanY * as + perpY * ps);
-        ctx.lineTo(ex - tanX * as - perpX * ps, ey - tanY * as - perpY * ps);
-        ctx.closePath();
-        ctx.fill();
-
-        // "×i" label
-        const labelR = arcR * 0.62;
-        ctx.font = `bold ${13 * ratio}px sans-serif`;
-        ctx.fillStyle = isActive ? "rgba(255,185,60,0.95)" : "rgba(130,182,255,0.3)";
-        ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        ctx.fillText("×i",
-          cx + labelR * Math.cos(midAngles[k]),
-          cy + labelR * Math.sin(midAngles[k]));
-        ctx.restore();
-      }
-
-      // Draw the 4 i^n labeled points
-      for (let k = 0; k < 4; k++) {
-        const p = powers[k];
-        const px = cx + R * Math.cos(p.angle);
-        const py = cy + R * Math.sin(p.angle);
-        const isHighlighted = k === step;
-        ctx.beginPath();
-        ctx.arc(px, py, 7 * ratio, 0, Math.PI * 2);
-        ctx.fillStyle = isHighlighted ? "#ffcc55" : "#3b6aaa";
-        ctx.fill();
-        ctx.strokeStyle = isHighlighted ? "#ffe080" : "#5a8ac8";
-        ctx.lineWidth = 2 * ratio;
-        ctx.stroke();
-        // Point label
-        ctx.fillStyle = "#ddeeff";
-        ctx.font = `bold ${17 * ratio}px sans-serif`;
-        ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        const off = 26 * ratio;
-        let lx = px, ly = py;
-        if (k === 0) lx += off;
-        else if (k === 1) ly -= off;
-        else if (k === 2) lx -= off * 1.1;
-        else ly += off;
-        ctx.fillText(p.label, lx, ly);
-      }
-
-      // Animated orange dot on unit circle
-      const ax = cx + R * Math.cos(animAngle);
-      const ay = cy + R * Math.sin(animAngle);
-      ctx.beginPath();
-      ctx.arc(ax, ay, 10 * ratio, 0, Math.PI * 2);
-      ctx.fillStyle = "#ff8833";
-      ctx.fill();
-      ctx.strokeStyle = "#ffcc88";
-      ctx.lineWidth = 2 * ratio;
-      ctx.stroke();
-
-      // Top-of-canvas caption
-      ctx.font = `${13 * ratio}px sans-serif`;
-      ctx.fillStyle = "rgba(200,225,255,0.75)";
-      ctx.textAlign = "center"; ctx.textBaseline = "top";
-      ctx.fillText("Κάθε ×i = περιστροφή 90° αντίθετα από τους δείκτες του ρολογιού", cx, 8 * ratio);
     }
 
     // @slide 5.1 — σχεδιάζει r·e^{iθ} στο μιγαδικό επίπεδο me άξονες, βέλος, ετικέτα.
@@ -11824,7 +11967,7 @@
       drawTaylorSin(taylorSinCanvas, taylorSinTermsSlider ? Number(taylorSinTermsSlider.value) : 0);
       drawTaylorExp(taylorExpCanvas, taylorExpTermsSlider ? Number(taylorExpTermsSlider.value) : 0);
         drawTaylorGuessCanvas(taylorGuessCanvas);
-      drawIRotation(iRotationCanvas, elapsedSeconds);
+      drawRotMult();
       drawEulerPlane(eulerPlaneCanvas, theta, radius);
       drawEulerProofSketch(eulerProofSketchCanvas, elapsedSeconds); // still used in 5.1 proof sketch
       ocean3DStates.forEach((state) => {
