@@ -228,24 +228,31 @@ Displacement, normals και shading.
 
 ### Ιστορία
 - [waterworld - abyss](https://beforesandafters.com/2021/06/09/vfx-firsts-what-was-the-first-ocean-simulation-in-a-film)
-
+- [oscar](https://jtessen.people.clemson.edu/graphics/technical-oscar-gang.jpg)
 
 
 ### Taylor
 - [Taylor Series - Explained](https://www.youtube.com/watch?v=5Iyah7Qd2Us)
 - [The Subtle Reason Taylor Series Work | Smooth vs. Analytic Functions](https://www.youtube.com/watch?v=0HaBNdmUWXY)
 - [khanacademy](https://www.khanacademy.org/math/ap-calculus-bc/bc-series-new/bc-10-14/v/function-as-a-geometric-series)
+- [Taylor series 3blue1brown](https://www.youtube.com/watch?v=3d6DsjIBzJ4)
+### Complex
+- [Complex Numbers Have More Uses Than You Think](https://www.youtube.com/watch?v=4KlvI_uK9zs)
 ### Euler
+- [Euler's Formula Beyond Complex Numbers](https://www.youtube.com/watch?v=Y1gOYtQYRXo)
 - [Euler's identity](https://en.wikipedia.org/wiki/Euler%27s_identity)
 - [Euler's formula](https://en.wikipedia.org/wiki/Euler%27s_formula)
 - [Most Elegant Proof of The Most Beautiful Equation Ever!](https://www.youtube.com/watch?v=cIL5ZN7dOXY)
 - [The Physics of Euler's Formula - 3blue1brown](https://www.youtube.com/watch?v=-j8PzkZ70Lg)
 ### Ράβδος
 - [Solving the heat equation | DE3](https://www.youtube.com/watch?v=ToIXSwZ1pJU)
+- [Heat Diffusion in a Thin Metal Rod](https://medium.com/data-science/heat-diffusion-in-a-thin-metal-rod-faab655cb02c)
 ### Fourier Series
-- [But what is a Fourier series? From heat flow to drawing with circles | DE4 - 3Blue1Brown](https://www.youtube.com/watch?v=r6sGWTCMz2k)
-
+- [But what is a Fourier series? From heat flow to drawing with circles | DE4 - [3Blue1Brown](https://www.youtube.com/watch?v=r6sGWTCMz2k)
+- [σημειώσεις - videoμαθήματα Τσολομύτη](https://myria.math.aegean.gr/~atsol/newpage/lecturenotes/onlinecourses/index.html#fourier)
+- [Assorted Flavors of Fourier Series on a Finite Domain](https://medium.com/data-science/assorted-flavors-of-fourier-series-on-a-finite-domain-8c93904df6ae)
 ### Fourier Transform
+- [ Fourier Transform, Fourier Series, and frequency spectrum ](https://www.youtube.com/watch?v=r18Gi8lSkfM)
 - [Wikipedia](https://el.wikipedia.org/wiki/%CE%9C%CE%B5%CF%84%CE%B1%CF%83%CF%87%CE%B7%CE%BC%CE%B1%CF%84%CE%B9%CF%83%CE%BC%CF%8C%CF%82_%CE%A6%CE%BF%CF%85%CF%81%CE%B9%CE%AD)
 - [Fourier Transform Best Explanation (for Beginners)](https://www.youtube.com/watch?v=PcYFnVBS_bg)
 - [But what is the Fourier Transform?](https://www.youtube.com/watch?v=spUNpyF58BY)

@@ -1524,6 +1524,12 @@
       gap: 10px;
     }
 
+    body.teacher-mode #sec-activity-complexity-check .activity-grid,
+    body.client-mode #sec-activity-complexity-check .activity-grid {
+      grid-template-columns: minmax(320px, 980px);
+      justify-content: center;
+    }
+
     .activity-card {
       border: 1px solid #334155;
       border-radius: 12px;
@@ -11901,74 +11907,194 @@
       }
     }
 
+    function getVisibleSlideId() {
+      if (activeTocSlideId) {
+        return activeTocSlideId;
+      }
+      const activeSlide = slides.find((slide) => slide.classList.contains("active"));
+      return activeSlide?.id || slides[0]?.id || "";
+    }
+
+    function getSlidesToDraw(visibleSlideId) {
+      const slideIds = new Set();
+      if (!visibleSlideId) {
+        return slideIds;
+      }
+      const visibleIndex = slides.findIndex((slide) => slide.id === visibleSlideId);
+      if (visibleIndex < 0) {
+        slideIds.add(visibleSlideId);
+        return slideIds;
+      }
+      const prevId = slides[visibleIndex - 1]?.id;
+      const nextId = slides[visibleIndex + 1]?.id;
+      slideIds.add(visibleSlideId);
+      if (prevId) slideIds.add(prevId);
+      if (nextId) slideIds.add(nextId);
+      return slideIds;
+    }
+
+    function shouldDrawForVisibleSlides(slidesToDraw, canvas) {
+      if (!canvas) {
+        return false;
+      }
+      const section = canvas.closest(".section");
+      if (!section?.id) {
+        return true;
+      }
+      return slidesToDraw.has(section.id);
+    }
+
     let animationStartTime = performance.now();
-    // @slide όλες — κύριος requestAnimationFrame loop που καλεί όλες τις draw functions.
+    // @slide όλες — κύριος requestAnimationFrame loop που σχεδιάζει το ορατό section και τα γειτονικά του.
     function animatePresentation() {
       window.requestAnimationFrame(animatePresentation);
       const elapsedSeconds = (performance.now() - animationStartTime) / 1000;
       const oceanSettings = getOceanSettings();
       const theta = thetaSlider ? Number(thetaSlider.value) : Math.PI / 2;
       const radius = 1;
+      const visibleSlideId = getVisibleSlideId();
+      const slidesToDraw = getSlidesToDraw(visibleSlideId);
+      const canDraw = (canvas) => shouldDrawForVisibleSlides(slidesToDraw, canvas);
 
-      if (enableTime?.checked) {
-        waveBuildTime += 0.03;
+      if (canDraw(interactiveWaveCanvas)) {
+        if (enableTime?.checked) {
+          waveBuildTime += 0.03;
+        }
+        drawWaveBuild(interactiveWaveCanvas, "#9bd3ff");
       }
-      drawWaveBuild(interactiveWaveCanvas, "#9bd3ff");
 
-      if (wave2DAnimate?.checked) wave2DTime += 0.016;
-      updateWave2DScene(wave2DState, wave2DTime, getWave2DSettings());
-      updateGerstnerScene(gerstnerState, elapsedSeconds, getGerstnerSettings());
-      drawGerstnerParticleOrbits(gerstnerOrbitCanvas, elapsedSeconds, getGerstnerOrbitSettings());
+      if (canDraw(wave2DCanvas)) {
+        if (wave2DAnimate?.checked) wave2DTime += 0.016;
+        updateWave2DScene(wave2DState, wave2DTime, getWave2DSettings());
+      }
+
+      if (canDraw(gerstnerCanvas)) {
+        updateGerstnerScene(gerstnerState, elapsedSeconds, getGerstnerSettings());
+      }
+      if (canDraw(gerstnerOrbitCanvas)) {
+        drawGerstnerParticleOrbits(gerstnerOrbitCanvas, elapsedSeconds, getGerstnerOrbitSettings());
+      }
 
       const soundSourcesForView = getSourcesForWaveView();
 
-      drawCompositeWave(soundWaveSumCanvas, elapsedSeconds, soundSourcesForView);
-      drawAirMolecules(airMoleculesCanvas, elapsedSeconds, soundSourcesForView);
+      if (canDraw(soundWaveSumCanvas)) {
+        drawCompositeWave(soundWaveSumCanvas, elapsedSeconds, soundSourcesForView);
+      }
+      if (canDraw(airMoleculesCanvas)) {
+        drawAirMolecules(airMoleculesCanvas, elapsedSeconds, soundSourcesForView);
+      }
+      if (canDraw(soundSimpleWaveCanvas) || canDraw(soundSimpleMolCanvas)) {
         drawSoundSimple(soundSimpleWaveCanvas, soundSimpleMolCanvas, elapsedSeconds);
-      drawSoundDecomposition(elapsedSeconds);
-      if (sumAnimate?.checked) sumTime += 0.16 * Number(sumMotionSpeed?.value || 1);
-      drawSignalDemo(sumWavesCanvas, sumTime);
+      }
+      if (canDraw(soundDecomposeMixCanvas)) {
+        drawSoundDecomposition(elapsedSeconds);
+      }
+
+      if (canDraw(sumWavesCanvas)) {
+        if (sumAnimate?.checked) sumTime += 0.16 * Number(sumMotionSpeed?.value || 1);
+        drawSignalDemo(sumWavesCanvas, sumTime);
+      }
+
+      if (canDraw(heatSineWaveCanvas) || canDraw(heatSineRodCanvas)) {
         drawHeatSineIntro(heatSineWaveCanvas, heatSineRodCanvas, elapsedSeconds);
-      drawHeatRod(heatRodCanvas, elapsedSeconds);
-      drawStepFourier(stepFourierCanvas, elapsedSeconds);
+      }
+      if (canDraw(heatRodCanvas)) {
+        drawHeatRod(heatRodCanvas, elapsedSeconds);
+      }
+      if (canDraw(stepFourierCanvas)) {
+        drawStepFourier(stepFourierCanvas, elapsedSeconds);
+      }
+      if (canDraw(fourierLineCanvas)) {
         drawFourierLineSynthesis(fourierLineCanvas, elapsedSeconds);
-      drawFFTEulerBridge(fftEulerBridgeCanvas, elapsedSeconds);
-      drawFFTDuel(fftDuelCanvas, elapsedSeconds);
-      drawFFTDemo(fftDemoCanvas, elapsedSeconds);
-      drawFilteredAudioDemo(soundFilterCanvas, elapsedSeconds);
-      drawComplexityRace(complexityRaceCanvas, elapsedSeconds);
-      drawFFTExplain(fftExplainCanvas, elapsedSeconds);
-      drawIFFTExplain(ifftExplainCanvas, elapsedSeconds);
-      drawDimensionalBridge(bridgeDimCanvas, elapsedSeconds);
-      drawWaviness(wavinessCanvas, elapsedSeconds);
-      drawEnergyCurve(energySpectrumCanvas, elapsedSeconds, "#ffb35c");
-      drawPhillipsWeightedSpectrum(phillipsCanvas, elapsedSeconds);
-      drawRandomPhases(randomPhaseCanvas, elapsedSeconds);
-      drawTimeEvolution(timeEvolutionCanvas, elapsedSeconds);
-      drawIFFT(ifftCanvas, elapsedSeconds);
-      drawFinalRender(finalRenderCanvas, elapsedSeconds);
-      drawTaylorPolyfit(
-        taylorPolyfitCanvas,
-        taylorPolyC0Slider ? Number(taylorPolyC0Slider.value) : 0,
-        taylorPolyC1Slider ? Number(taylorPolyC1Slider.value) : 0,
-        taylorPolyC2Slider ? Number(taylorPolyC2Slider.value) : 0,
-        taylorPolyC3Slider ? Number(taylorPolyC3Slider.value) : 0
-      );
-      drawTaylorCos(taylorCosCanvas, taylorCosTermsSlider ? Number(taylorCosTermsSlider.value) : 0);
-      drawTaylorSin(taylorSinCanvas, taylorSinTermsSlider ? Number(taylorSinTermsSlider.value) : 0);
-      drawTaylorExp(taylorExpCanvas, taylorExpTermsSlider ? Number(taylorExpTermsSlider.value) : 0);
+      }
+      if (canDraw(fftEulerBridgeCanvas)) {
+        drawFFTEulerBridge(fftEulerBridgeCanvas, elapsedSeconds);
+      }
+      if (canDraw(fftDuelCanvas)) {
+        drawFFTDuel(fftDuelCanvas, elapsedSeconds);
+      }
+      if (canDraw(fftDemoCanvas)) {
+        drawFFTDemo(fftDemoCanvas, elapsedSeconds);
+      }
+      if (canDraw(soundFilterCanvas)) {
+        drawFilteredAudioDemo(soundFilterCanvas, elapsedSeconds);
+      }
+      if (canDraw(complexityRaceCanvas)) {
+        drawComplexityRace(complexityRaceCanvas, elapsedSeconds);
+      }
+      if (canDraw(fftExplainCanvas)) {
+        drawFFTExplain(fftExplainCanvas, elapsedSeconds);
+      }
+      if (canDraw(ifftExplainCanvas)) {
+        drawIFFTExplain(ifftExplainCanvas, elapsedSeconds);
+      }
+      if (canDraw(bridgeDimCanvas)) {
+        drawDimensionalBridge(bridgeDimCanvas, elapsedSeconds);
+      }
+      if (canDraw(wavinessCanvas)) {
+        drawWaviness(wavinessCanvas, elapsedSeconds);
+      }
+      if (canDraw(energySpectrumCanvas)) {
+        drawEnergyCurve(energySpectrumCanvas, elapsedSeconds, "#ffb35c");
+      }
+      if (canDraw(phillipsCanvas)) {
+        drawPhillipsWeightedSpectrum(phillipsCanvas, elapsedSeconds);
+      }
+      if (canDraw(randomPhaseCanvas)) {
+        drawRandomPhases(randomPhaseCanvas, elapsedSeconds);
+      }
+      if (canDraw(timeEvolutionCanvas)) {
+        drawTimeEvolution(timeEvolutionCanvas, elapsedSeconds);
+      }
+      if (canDraw(ifftCanvas)) {
+        drawIFFT(ifftCanvas, elapsedSeconds);
+      }
+      if (canDraw(finalRenderCanvas)) {
+        drawFinalRender(finalRenderCanvas, elapsedSeconds);
+      }
+
+      if (canDraw(taylorPolyfitCanvas)) {
+        drawTaylorPolyfit(
+          taylorPolyfitCanvas,
+          taylorPolyC0Slider ? Number(taylorPolyC0Slider.value) : 0,
+          taylorPolyC1Slider ? Number(taylorPolyC1Slider.value) : 0,
+          taylorPolyC2Slider ? Number(taylorPolyC2Slider.value) : 0,
+          taylorPolyC3Slider ? Number(taylorPolyC3Slider.value) : 0
+        );
+      }
+      if (canDraw(taylorCosCanvas)) {
+        drawTaylorCos(taylorCosCanvas, taylorCosTermsSlider ? Number(taylorCosTermsSlider.value) : 0);
+      }
+      if (canDraw(taylorSinCanvas)) {
+        drawTaylorSin(taylorSinCanvas, taylorSinTermsSlider ? Number(taylorSinTermsSlider.value) : 0);
+      }
+      if (canDraw(taylorExpCanvas)) {
+        drawTaylorExp(taylorExpCanvas, taylorExpTermsSlider ? Number(taylorExpTermsSlider.value) : 0);
+      }
+      if (canDraw(taylorGuessCanvas)) {
         drawTaylorGuessCanvas(taylorGuessCanvas);
-      drawRotMult();
-      drawEulerPlane(eulerPlaneCanvas, theta, radius);
-      drawEulerProofSketch(eulerProofSketchCanvas, elapsedSeconds); // still used in 5.1 proof sketch
+      }
+
+      if (canDraw(rotMultCanvas)) {
+        drawRotMult();
+      }
+      if (canDraw(eulerPlaneCanvas)) {
+        drawEulerPlane(eulerPlaneCanvas, theta, radius);
+      }
+      if (canDraw(eulerProofSketchCanvas)) {
+        drawEulerProofSketch(eulerProofSketchCanvas, elapsedSeconds); // still used in 5.1 proof sketch
+      }
+
       ocean3DStates.forEach((state) => {
-        updateOcean3DState(state, elapsedSeconds, oceanSettings);
+        if (canDraw(state.canvas)) {
+          updateOcean3DState(state, elapsedSeconds, oceanSettings);
+        }
       });
 
-      if (!ocean3DCanvasSet.has(oceanWaveCanvasMain)) {
+      if (!ocean3DCanvasSet.has(oceanWaveCanvasMain) && canDraw(oceanWaveCanvasMain)) {
         drawOceanWaves(oceanWaveCanvasMain, elapsedSeconds, oceanSettings);
       }
-      if (!ocean3DCanvasSet.has(oceanWaveCanvas)) {
+      if (!ocean3DCanvasSet.has(oceanWaveCanvas) && canDraw(oceanWaveCanvas)) {
         drawOceanWaves(oceanWaveCanvas, elapsedSeconds, oceanSettings);
       }
 
