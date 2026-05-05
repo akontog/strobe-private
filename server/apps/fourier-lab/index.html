@@ -460,6 +460,13 @@
       margin-top: 12px;
     }
 
+    .sound-decompose-duo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
     .sound-wave-canvas {
       width: 100%;
       height: 110px;
@@ -2567,20 +2574,32 @@
             </p>
             <div class="sound-decomposition-main sound-wave-item">
               <strong>Σύνθετος ήχος</strong>
-              <canvas id="soundDecomposeMixCanvas" class="sound-wave-canvas" width="940" height="130"></canvas>
+              <div class="sound-decompose-duo">
+                <canvas id="soundDecomposeMixCanvas" class="sound-wave-canvas" width="940" height="130"></canvas>
+                <canvas id="soundDecomposeMixSpectrumCanvas" class="sound-wave-canvas" width="940" height="130"></canvas>
+              </div>
             </div>
             <div class="sound-decomposition-grid">
               <div class="sound-decomposition-card">
                 <strong>Συνιστώσα 1</strong>
-                <canvas id="soundDecomposePartOneCanvas" class="sound-wave-canvas" width="300" height="120"></canvas>
+                <div class="sound-decompose-duo">
+                  <canvas id="soundDecomposePartOneCanvas" class="sound-wave-canvas" width="300" height="120"></canvas>
+                  <canvas id="soundDecomposePartOneSpectrumCanvas" class="sound-wave-canvas" width="300" height="120"></canvas>
+                </div>
               </div>
               <div class="sound-decomposition-card">
                 <strong>Συνιστώσα 2</strong>
-                <canvas id="soundDecomposePartTwoCanvas" class="sound-wave-canvas" width="300" height="120"></canvas>
+                <div class="sound-decompose-duo">
+                  <canvas id="soundDecomposePartTwoCanvas" class="sound-wave-canvas" width="300" height="120"></canvas>
+                  <canvas id="soundDecomposePartTwoSpectrumCanvas" class="sound-wave-canvas" width="300" height="120"></canvas>
+                </div>
               </div>
               <div class="sound-decomposition-card">
                 <strong>Συνιστώσα 3</strong>
-                <canvas id="soundDecomposePartThreeCanvas" class="sound-wave-canvas" width="300" height="120"></canvas>
+                <div class="sound-decompose-duo">
+                  <canvas id="soundDecomposePartThreeCanvas" class="sound-wave-canvas" width="300" height="120"></canvas>
+                  <canvas id="soundDecomposePartThreeSpectrumCanvas" class="sound-wave-canvas" width="300" height="120"></canvas>
+                </div>
               </div>
             </div>
           </div>
@@ -2595,12 +2614,34 @@
               Ρύθμισε τους συντελεστές με τα sliders και δες πώς αλλάζει η προσέγγιση του \(e^{x/2}\cos(x)\).
               Η μπλε καμπύλη είναι η αρχική συνάρτηση και η πορτοκαλί το πολυώνυμο Taylor.
             </p>
-            <div style="display: flex; flex-direction: column; gap: 16px;">
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch;">
-                <div style="display: flex; flex-direction: column;">
-                  <canvas id="taylorPolyfitCanvas" class="euler-canvas" width="500" height="450"></canvas>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;">
+              <!-- LEFT: canvas + παράγωγοι -->
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                <canvas id="taylorPolyfitCanvas" class="euler-canvas" width="500" height="340"></canvas>
+                <div style="background:#050b16; border:1px solid var(--line); border-radius:10px; padding:8px 14px; color:#cfe6ff; font-size:0.9em;">
+                  <div style="font-weight:700; color:#fff; margin-bottom:6px;">Παράγωγοι στο \(x_0=0\)</div>
+                  <table style="border-collapse:collapse; width:100%;">
+                    <tr>
+                      <td style="padding:2px 18px 2px 0; white-space:nowrap;">\(f(x)=e^{x/2}\cos x\)</td>
+                      <td style="padding:2px 0; color:#ffcc66; white-space:nowrap;">\(f(0)=1\)</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:2px 18px 2px 0; white-space:nowrap;">\(f'(x)=\cdots\)</td>
+                      <td style="padding:2px 0; color:#ffcc66; white-space:nowrap;">\(f'(0)=\tfrac{1}{2}\)</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:2px 18px 2px 0; white-space:nowrap;">\(f''(x)=\cdots\)</td>
+                      <td style="padding:2px 0; color:#ffcc66; white-space:nowrap;">\(f''(0)=-\tfrac{3}{4}\)</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:2px 18px 2px 0; white-space:nowrap;">\(f^{(3)}(x)=\cdots\)</td>
+                      <td style="padding:2px 0; color:#ffcc66; white-space:nowrap;">\(f^{(3)}(0)=-\tfrac{11}{8}\)</td>
+                    </tr>
+                  </table>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 16px;">
+              </div>
+              <!-- RIGHT: sliders + τύποι -->
+              <div style="display: flex; flex-direction: column; gap: 12px;">
                 <div style="display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px;">
                   <div>
                     <label class="ocean-control">
@@ -2637,21 +2678,10 @@
                   </div>
                   <button id="taylorPolyC3Best" style="padding: 6px 10px; font-size: 12px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Βέλτιστη</button>
                 </div>
-                </div>
-              </div>
-
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding-top: 12px; border-top: 1px solid #666;">
-                <div style="font-size: 14px; line-height: 1.7; color: #f0f4ff;">
-                  <div style="margin-bottom: 8px; font-weight: 700; color: #ffffff;">Παράγωγοι στο x₀=0</div>
-                  <div>\(f(0) = 1\)</div>
-                  <div>\(f'(0) = \frac{1}{2}\)</div>
-                  <div>\(f''(0) = -\frac{3}{4}\)</div>
-                  <div>\(f'''(0) = -\frac{11}{8}\)</div>
-                </div>
-                <div style="font-size: 13px; line-height: 1.7; color: #f0f4ff;">
-                  <div style="margin-bottom: 8px; font-weight: 700; color: #ffffff;">Τύποι</div>
-                  <div style="margin-bottom: 8px;">\(T_3(x)=f(0)+f'(0)x+\frac{f''(0)}{2!}x^2+\frac{f'''(0)}{3!}x^3\)</div>
-                  <div id="taylorPolyfitFormulaBox" style="background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px; border-left: 2px solid #ffb15f;"></div>
+                <div style="padding-top: 10px; border-top: 1px solid #444; font-size: 0.9em; color: #f0f4ff;">
+                  <div style="margin-bottom: 6px; font-weight: 700; color: #fff;">Τύποι</div>
+                  <div>\(T_3(x)=f(0)+f'(0)x+\frac{f''(0)}{2!}x^2+\frac{f'''(0)}{3!}x^3\)</div>
+                  <div id="taylorPolyfitFormulaBox" style="margin-top:8px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 4px; border-left: 2px solid #ffb15f;"></div>
                 </div>
               </div>
             </div>
@@ -2873,10 +2903,14 @@
             <h2>6.2) Δραστηριότητα: Fourier και θερμοκρασία ράβδου</h2>
             
             <canvas id="heatRodCanvas" class="demo-canvas" width="940" height="320"></canvas>
-            <div class="slider-grid">
+            <div class="slider-grid teacher-only">
               <div class="slider-group">
-                <div class="slider-label"><span>Χρόνος εξέλιξης t (μόνο teacher)</span><span id="heatTimeValue">0.00</span></div>
+                <div class="slider-label"><span>Χρόνος εξέλιξης t</span><span id="heatTimeValue">0.00</span></div>
                 <input id="heatTimeSlider" type="range" min="0" max="8" step="0.02" value="0" />
+              </div>
+              <div class="slider-group">
+                <div class="slider-label"><span>Συντελεστής διάχυσης κ</span><span id="heatKappaValue">0.00040</span></div>
+                <input id="heatKappaSlider" type="range" min="0.00005" max="0.002" step="0.00001" value="0.0004" />
               </div>
             </div>
             <div class="heat-control-grid">
@@ -2891,10 +2925,6 @@
                   <div class="slider-label"><span>Θερμοκρασία</span><span id="heatStudentTemperatureValue">53 °C</span></div>
                   <input id="heatStudentTemperature" type="range" min="0" max="100" step="1" value="53"
                     data-activity-control="heat-rod-control" data-control-key="temperatureC" />
-                </div>
-                <div class="heat-student-note student-only">
-                  Η επιλογή σου στέλνεται αυτόματα στον server. Ο teacher μπορεί να δείξει την εξέλιξη
-                  της ράβδου με βάση όλες τις επιλογές της τάξης.
                 </div>
                 <div class="heat-student-note teacher-only">
                   Αν δεν υπάρχουν μαθητές, όρισε εσύ Σημείο και Θερμοκρασία από τους παραπάνω sliders.
@@ -2941,7 +2971,7 @@
       <section class="section" id="sec-fourier-line-synthesis">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.4) Σύνθεση Fourier: ζωγράφισε συνάρτηση → άθροισμα ημιτόνων</h2>
+            <h2>6.4) Σύνθεση Fourier</h2>
             <p>
               Αριστερά κάνε κλικ ή σύρε για να ορίσεις τιμές y σε διάφορα x (αρχικά είναι ο άξονας xx').
               Δεξιά βλέπεις πόσο καλά το άθροισμα ημιτόνων Fourier προσεγγίζει τη συνάρτησή σου.
@@ -3595,9 +3625,13 @@
     const studentSoundStringState = createPluckStringState();
     // (slide 3.1 string canvas — no teacher string canvases in 3.2)
     const soundDecomposeMixCanvas = document.getElementById("soundDecomposeMixCanvas");
+    const soundDecomposeMixSpectrumCanvas = document.getElementById("soundDecomposeMixSpectrumCanvas");
     const soundDecomposePartOneCanvas = document.getElementById("soundDecomposePartOneCanvas");
+    const soundDecomposePartOneSpectrumCanvas = document.getElementById("soundDecomposePartOneSpectrumCanvas");
     const soundDecomposePartTwoCanvas = document.getElementById("soundDecomposePartTwoCanvas");
+    const soundDecomposePartTwoSpectrumCanvas = document.getElementById("soundDecomposePartTwoSpectrumCanvas");
     const soundDecomposePartThreeCanvas = document.getElementById("soundDecomposePartThreeCanvas");
+    const soundDecomposePartThreeSpectrumCanvas = document.getElementById("soundDecomposePartThreeSpectrumCanvas");
     const oceanWaveCanvasMain = document.getElementById("oceanWaveCanvasMain");
     const oceanWaveCanvas = document.getElementById("oceanWaveCanvas");
 
@@ -3652,6 +3686,8 @@
     const heatRodCanvas = document.getElementById("heatRodCanvas");
     const heatTimeSlider = document.getElementById("heatTimeSlider");
     const heatTimeValue = document.getElementById("heatTimeValue");
+    const heatKappaSlider = document.getElementById("heatKappaSlider");
+    const heatKappaValue = document.getElementById("heatKappaValue");
     const heatEquationMath = document.getElementById("heatEquationMath");
     const heatStudentPosition = document.getElementById("heatStudentPosition");
     const heatStudentPositionValue = document.getElementById("heatStudentPositionValue");
@@ -5367,6 +5403,8 @@
     const HEAT_SINE_AMPLITUDE = 0.45;
     const HEAT_SINE_EPSILON_RATIO = 0.005;
     const HEAT_SINE_MAX_TIME = Number((Math.log(1 / HEAT_SINE_EPSILON_RATIO) / (HEAT_KAPPA * Math.PI * Math.PI)).toFixed(1));
+    const HEAT_ROD_KAPPA_MIN = 0.00005;
+    const HEAT_ROD_KAPPA_MAX = 0.002;
     const HEAT_DEFAULT_PROFILE = {
       source: "default",
       sourceCount: 0,
@@ -5538,16 +5576,9 @@
     }
 
     // @slide 5.2 — αποφασίζει αν χρησιμοποιείται classroom profile ή τοπικό.
+    // Όταν υπάρχουν classroom επιλογές, χρησιμοποιούνται αυτόματα και από τον teacher.
     function shouldUseClassroomHeatProfile() {
-      if (!heatClassroomProfile || heatClassroomProfile.sourceCount <= 0) {
-        return false;
-      }
-
-      if (isTeacherMode) {
-        return Boolean(heatTeacherUseClassroom && heatTeacherUseClassroom.checked);
-      }
-
-      return true;
+      return Boolean(heatClassroomProfile && heatClassroomProfile.sourceCount > 0);
     }
 
     // @slide 5.2 — επιστρέφει ενεργό profile θερμοκρασίας (classroom ή τοπικό).
@@ -5619,6 +5650,7 @@
         return;
       }
 
+      const kappa = getHeatRodKappa();
       const profile = getActiveHeatProfile();
       const modeCount = profile.coefficients.length;
       const sourceText = profile.source === "classroom"
@@ -5627,10 +5659,17 @@
           ? "\\text{τοπική επιλογή (teacher/student)}"
         : "\\text{preset profile}";
 
-      heatEquationMath.innerHTML = `\\[u(x,t)=${profile.mean.toFixed(2)}+\\sum_{n=1}^{${modeCount}} a_n e^{-${HEAT_KAPPA.toFixed(4)} n^2\\pi^2 t}\\cos(n\\pi x),\\quad ${sourceText}\\]`;
+      heatEquationMath.innerHTML = `\\[u(x,t)=${profile.mean.toFixed(2)}+\\sum_{n=1}^{${modeCount}} a_n e^{-${kappa.toFixed(5)} n^2\\pi^2 t}\\cos(n\\pi x),\\quad ${sourceText}\\]`;
       if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
         window.MathJax.typesetPromise([heatEquationMath]).catch(() => {});
       }
+    }
+
+    // @slide 5.2 | @util — διαβάζει ασφαλή τιμή κ για τη ράβδο από το slider teacher.
+    function getHeatRodKappa() {
+      const fallback = HEAT_KAPPA;
+      const sliderValue = heatKappaSlider ? Number(heatKappaSlider.value) : fallback;
+      return Number(clampHeatValue(sliderValue, HEAT_ROD_KAPPA_MIN, HEAT_ROD_KAPPA_MAX, fallback).toFixed(5));
     }
 
     // @slide 5.2 — ενημερώνει label χρόνου slider και μετά MathJax.
@@ -5642,6 +5681,13 @@
       const normalizedTime = Number(clampHeatValue(heatTimeSlider.value, 0, 8, 0).toFixed(2));
       heatTimeSlider.value = normalizedTime.toFixed(2);
       heatTimeValue.textContent = normalizedTime.toFixed(2);
+      const kappa = getHeatRodKappa();
+      if (heatKappaSlider) {
+        heatKappaSlider.value = kappa.toFixed(5);
+      }
+      if (heatKappaValue) {
+        heatKappaValue.textContent = kappa.toFixed(5);
+      }
       renderHeatEquationMath(normalizedTime);
 
       if (emitChange && isTeacherMode) {
@@ -5716,6 +5762,14 @@
       updateHeatSliderLabel(true);
     });
 
+    heatKappaSlider?.addEventListener("input", () => {
+      updateHeatSliderLabel(false);
+    });
+
+    heatKappaSlider?.addEventListener("change", () => {
+      updateHeatSliderLabel(false);
+    });
+
     [heatStudentPosition, heatStudentTemperature].forEach((control) => {
       control?.addEventListener("input", () => {
         updateHeatSelectionLabels(true);
@@ -5732,6 +5786,9 @@
 
     if (heatTimeSlider) {
       heatTimeSlider.disabled = !isTeacherMode;
+    }
+    if (heatKappaSlider) {
+      heatKappaSlider.disabled = !isTeacherMode;
     }
 
     heatTeacherUseClassroom?.addEventListener("change", () => {
@@ -8661,6 +8718,12 @@
       context.strokeStyle = "rgba(181, 255, 158, 0.38)";
       context.lineWidth = Math.max(4, ratio * 4.5);
       context.stroke();
+
+      // Axis labels: A (vertical) and t (horizontal)
+      context.fillStyle = "#8fb0da";
+      context.font = `${Math.max(10, 10 * ratio)}px Segoe UI`;
+      context.fillText("A", 4 * ratio, 13 * ratio);
+      context.fillText("t \u2192", width - 22 * ratio, height - 4 * ratio);
     }
 
     // @slide 3.2 — σχεδιάζει φάσμα συχνοτήτων: θέση=f, ύψος bar=A.
@@ -8910,6 +8973,12 @@
       }
       wCtx.stroke();
 
+      // Axis labels: A (vertical) and t (horizontal)
+      wCtx.fillStyle = "#8fb0da";
+      wCtx.font = `${Math.max(10, 10 * ratio)}px Segoe UI, sans-serif`;
+      wCtx.fillText("A", 4 * ratio, 13 * ratio);
+      wCtx.fillText("t \u2192", wW - 22 * ratio, wH - 4 * ratio);
+
       // ── air molecules panel ───────────────────────────────────────
       const mCtx = molCanvas.getContext("2d");
       const mW = molCanvas.width;
@@ -9007,9 +9076,13 @@
     function drawSoundDecomposition(time) {
       const sources = getSoundDecompositionSources();
       drawCompositeWave(soundDecomposeMixCanvas, time, sources);
+      drawSoundSpectrum(soundDecomposeMixSpectrumCanvas, sources);
       drawCompositeWave(soundDecomposePartOneCanvas, time, [sources[0]]);
+      drawSoundSpectrum(soundDecomposePartOneSpectrumCanvas, [sources[0]]);
       drawCompositeWave(soundDecomposePartTwoCanvas, time, [sources[1]]);
+      drawSoundSpectrum(soundDecomposePartTwoSpectrumCanvas, [sources[1]]);
       drawCompositeWave(soundDecomposePartThreeCanvas, time, [sources[2]]);
+      drawSoundSpectrum(soundDecomposePartThreeSpectrumCanvas, [sources[2]]);
     }
 
     // @slide 3.1, 3.2 — ανιμάρει μόρια αέρα ανάλογα με τη συνολική πίεση του κύματος.
@@ -9661,6 +9734,7 @@
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const ratio = window.devicePixelRatio || 1;
         const timeValue = heatTimeSlider ? Number(heatTimeSlider.value) : 0;
+        const kappa = getHeatRodKappa();
         const activeProfile = getActiveHeatProfile();
         const activeCoefficients = Array.isArray(activeProfile.coefficients) ? activeProfile.coefficients : HEAT_COEFFICIENTS;
         const left = 40;
@@ -9684,7 +9758,7 @@
 
           for (let n = 1; n <= activeCoefficients.length; n += 1) {
             const coefficient = activeCoefficients[n - 1];
-            const decay = Math.exp(-HEAT_KAPPA * n * n * Math.PI * Math.PI * timeValue);
+            const decay = Math.exp(-kappa * n * n * Math.PI * Math.PI * timeValue);
             value += coefficient * Math.cos(n * Math.PI * x) * decay;
           }
 
@@ -9774,7 +9848,7 @@
             ? "profile: local point/temperature"
             : "profile: preset";
         ctx.fillText(profileLabel, left + 6, graphTop + 14);
-        ctx.fillText(`y_min=${yMin.toFixed(2)}  y_max=${yMax.toFixed(2)}`, right - 160, graphTop + 14);
+        ctx.fillText(`y_min=${yMin.toFixed(2)}  y_max=${yMax.toFixed(2)}  κ=${kappa.toFixed(5)}`, right - 260, graphTop + 14);
         ctx.fillText(`t = ${timeValue.toFixed(2)}`, right - 64, graphTop + 14);
       });
     }
