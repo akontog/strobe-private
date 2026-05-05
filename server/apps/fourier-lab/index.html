@@ -2146,9 +2146,11 @@
       <a href="#sec-audio-smooth" data-accordion-group="transform">7.6 DFT → IDFT</a>
 
       <div class="toc-group-title" data-accordion-group="complexity">8. Πολυπλοκότητα</div>
-      <a href="#sec-fft-complexity" data-accordion-group="complexity">8.1 Από τον απλό DFT στον FFT (Cooley-Tukey)</a>
-      <a href="#sec-cooley-tukey" data-accordion-group="complexity">8.2 Cooley-Tukey FFT βήμα-βήμα</a>
-      <a href="#sec-activity-complexity-check" data-accordion-group="complexity">8.3 Δραστηριότητα: Αγώνες πολυπλοκότητας</a>
+      <a href="#sec-sort-compare" data-accordion-group="complexity">8.1 Divide &amp; Conquer</a>
+      <a href="#sec-cooley-interactive" data-accordion-group="complexity">8.2 Cooley-Tukey για n σημεία (διαδραστικό)</a>
+      <a href="#sec-fft-complexity" data-accordion-group="complexity">8.3 Από τον απλό DFT στον FFT (Cooley-Tukey)</a>
+      <a href="#sec-cooley-tukey" data-accordion-group="complexity">8.4 Cooley-Tukey FFT βήμα-βήμα</a>
+      <a href="#sec-activity-complexity-check" data-accordion-group="complexity">8.5 Δραστηριότητα: Αγώνες πολυπλοκότητας</a>
 
       <div class="toc-group-title" data-accordion-group="pipeline">9. Pipeline θάλασσας</div>
       <a href="#sec-bridge-1d2d" data-accordion-group="pipeline">9.1 Από 1D ήχο σε 2D θάλασσα</a>
@@ -2504,14 +2506,6 @@
         <div class="slide-card">
           <div class="slide-content">
             <h2>3.2) Δραστηριότητα: συχνότητες ήχου και πυκνώσεις/αραιώσεις</h2>
-            <p class="teacher-only">
-              Ομαδική, μη ανταγωνιστική δραστηριότητα: κάθε student ρυθμίζει συχνότητα και πλάτος,
-              ενώ εδώ φαίνονται αχνά οι ατομικές συνεισφορές και εντονότερα το συνολικό άθροισμα.
-              Οι teacher συνιστώσες εμφανίζονται ως <strong>f1</strong> και <strong>f2</strong>.
-            </p>
-            <p class="student-only">
-              Ρύθμισε τη συχνότητα και την ένταση και πάτα <strong>Ενεργή</strong> για να ξεκινήσει ο ήχος.
-            </p>
             <div class="student-only sound-student-controls">
               <label class="sound-slider">
                 <div class="slider-label"><span>Συχνότητα (Hz)</span><span id="studentSoundFrequencyValue">440 Hz</span></div>
@@ -2523,38 +2517,35 @@
               </label>
               <label class="sum-toggle"><input id="studentSoundActive" type="checkbox" /> ενεργή</label>
             </div>
-            <div class="teacher-only sound-teacher-controls">
-              <button id="teacherSoundActivateBtn" class="speaker-btn" type="button"><span class="icon">🔊</span> Ενεργοποίηση classroom ήχου</button>
-              <button id="teacherSoundMuteBtn" class="speaker-stop" type="button">⏹ Σίγαση classroom ήχου</button>
-              <span id="teacherSoundStateLabel" class="sound-state-pill">Classroom ήχος: ενεργός (χωρίς ενεργές πηγές)</span>
-            </div>
-            <div class="teacher-only sound-teacher-frequency-grid">
-              <div class="sound-slider teacher-tone-card">
-                <div class="slider-label"><span>Teacher f1 (Hz)</span><span id="teacherSoundFreqOneValue">330 Hz</span></div>
-                <input id="teacherSoundFreqOne" type="range" min="120" max="1200" step="1" value="330" />
-                <div class="slider-label"><span>Ένταση f1</span><span id="teacherSoundAmpOneValue">70%</span></div>
-                <input id="teacherSoundAmpOne" type="range" min="0" max="100" step="1" value="70" />
-                <label class="sum-toggle"><input id="teacherSoundFreqOneOn" type="checkbox" /> ενεργή f1</label>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="teacher-only" style="display:flex; flex-direction:column; gap:8px; flex-shrink:0;">
+                <button id="teacherSoundActivateBtn" class="speaker-btn" type="button" style="padding:5px 10px; font-size:0.8em;">▶ Play</button>
+                <button id="teacherSoundMuteBtn" class="speaker-stop" type="button" style="padding:5px 10px; font-size:0.8em;">🔇 Mute</button>
+                <span id="teacherSoundStateLabel" class="sound-state-pill" style="font-size:0.72em; text-align:center;"></span>
               </div>
-              <div class="sound-slider teacher-tone-card">
-                <div class="slider-label"><span>Teacher f2 (Hz)</span><span id="teacherSoundFreqTwoValue">550 Hz</span></div>
-                <input id="teacherSoundFreqTwo" type="range" min="120" max="1200" step="1" value="550" />
-                <div class="slider-label"><span>Ένταση f2</span><span id="teacherSoundAmpTwoValue">70%</span></div>
-                <input id="teacherSoundAmpTwo" type="range" min="0" max="100" step="1" value="70" />
-                <label class="sum-toggle"><input id="teacherSoundFreqTwoOn" type="checkbox" /> ενεργή f2</label>
+              <div style="flex:1; min-width:0;">
+                <p style="margin:0 0 2px 0; font-size:0.82em;">Τελικό κύμα</p>
+                <canvas id="soundWaveSumCanvas" class="sound-wave-canvas" style="width:100%; display:block;" width="940" height="110"></canvas>
+              </div>
+              <div style="flex:1; min-width:0;">
+                <p style="margin:0 0 2px 0; font-size:0.82em;">Φάσμα συχνοτήτων (f, A)</p>
+                <canvas id="soundSpectrumCanvas" class="sound-wave-canvas" style="width:100%; display:block;" width="940" height="110"></canvas>
               </div>
             </div>
-            <div class="sum-legend" id="soundFreqLegend"></div>
-            <div class="sound-wave-duo">
-              <div class="sound-wave-item" style="margin-top:0;">
-                <p>Τελικό κύμα (ενεργές συχνότητες)</p>
-                <canvas id="soundWaveSumCanvas" class="sound-wave-canvas" width="940" height="110"></canvas>
-              </div>
-              <div class="sound-wave-item" style="margin-top:0;">
-                <p>Φάσμα συχνοτήτων (f, A)</p>
-                <canvas id="soundSpectrumCanvas" class="sound-wave-canvas" width="940" height="110"></canvas>
-              </div>
+            <!-- hidden teacher tone inputs kept for JS compatibility -->
+            <div style="display:none;">
+              <input id="teacherSoundFreqOne" type="range" min="120" max="1200" step="1" value="330" />
+              <input id="teacherSoundAmpOne" type="range" min="0" max="100" step="1" value="70" />
+              <input id="teacherSoundFreqOneOn" type="checkbox" />
+              <input id="teacherSoundFreqTwo" type="range" min="120" max="1200" step="1" value="550" />
+              <input id="teacherSoundAmpTwo" type="range" min="0" max="100" step="1" value="70" />
+              <input id="teacherSoundFreqTwoOn" type="checkbox" />
+              <span id="teacherSoundFreqOneValue"></span>
+              <span id="teacherSoundAmpOneValue"></span>
+              <span id="teacherSoundFreqTwoValue"></span>
+              <span id="teacherSoundAmpTwoValue"></span>
             </div>
+            <div style="display:none;" id="soundFreqLegend"></div>
             <div class="sound-air-strings-row">
               <div class="sound-air-stage">
                 <canvas id="airMoleculesCanvas" class="air-canvas air-canvas-compact" width="940" height="170"></canvas>
@@ -3122,13 +3113,121 @@
         <div class="slide-card">
           <div class="slide-content">
             <h2>7.6) DFT → IFFT σε ήχο</h2>
-            
-            <div class="speaker-row">
-              <button id="filterPlayRaw" class="speaker-btn" type="button"><span class="icon">🔊</span> Παίξε αρχικό (με 3200 Hz)</button>
-              <button id="filterPlayClean" class="speaker-btn" type="button"><span class="icon">🎚️</span> Παίξε φιλτραρισμένο</button>
-              <button id="filterStop" class="speaker-stop" type="button">⏹ Σταμάτα ήχο</button>
+            <div style="display:flex; align-items:center; gap:14px;">
+              <div style="display:flex; flex-direction:column; gap:10px; flex-shrink:0;">
+                <button id="filterPlayRaw" class="speaker-btn" type="button"><span class="icon">▶</span> Play αρχικό</button>
+                <button id="filterPlayClean" class="speaker-btn" type="button"><span class="icon">🎚️</span> Play φιλτρ.</button>
+                <button id="filterStop" class="speaker-stop" type="button">🔇 Mute</button>
+              </div>
+              <canvas id="soundFilterCanvas" class="demo-canvas" style="flex:1; min-width:0;" width="940" height="320"></canvas>
             </div>
-            <canvas id="soundFilterCanvas" class="demo-canvas" width="940" height="320"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-sort-compare">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>8.1) Divide &amp; Conquer</h2>
+            <p>
+              Αριστερά: κάνεις click στο ενεργό ζευγάρι του Bubble Sort και γίνεται αντιμετάθεση μόνο όταν χρειάζεται.
+              Δεξιά: με click προχωρά το Merge Sort: divide (σπάσιμο προς τα κάτω) και conquer (σύνθεση προς τα πάνω).
+            </p>
+            <canvas id="sortCompareCanvas" class="demo-canvas" width="940" height="320"></canvas>
+            <div class="slider-grid" style="margin-top:10px;">
+              <div class="slider-group">
+                <div class="slider-label"><span>Bubble status</span><span id="sortCompareBubbleStatus">-</span></div>
+                <button id="sortCompareRefreshBtn" class="fft-duel-submit" type="button">Refresh</button>
+              </div>
+              <div class="slider-group">
+                <div class="slider-label"><span>Merge status</span><span id="sortCompareMergeStatus">-</span></div>
+                <div class="fft-duel-note" style="margin-top:8px;">Click σε ενεργό στοιχείο δεξιά για επόμενο βήμα merge.</div>
+              </div>
+            </div>
+            <div style="margin-top:10px; overflow:auto;">
+              <table style="width:100%; border-collapse:collapse; font-size:0.92em;">
+                <thead>
+                  <tr>
+                    <th style="text-align:left; border-bottom:1px solid rgba(190,220,255,0.3); padding:6px;">Στατιστικό</th>
+                    <th style="text-align:center; border-bottom:1px solid rgba(190,220,255,0.3); padding:6px;">Bubble Sort</th>
+                    <th style="text-align:center; border-bottom:1px solid rgba(190,220,255,0.3); padding:6px;">Merge Sort</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">Συγκρίσεις</td>
+                    <td id="sortStatsBubbleComparisons" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">0</td>
+                    <td id="sortStatsMergeComparisons" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">0</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">Αντιμεταθέσεις</td>
+                    <td id="sortStatsBubbleSwaps" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">0</td>
+                    <td style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">-</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">Writes/Τοποθετήσεις</td>
+                    <td style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">-</td>
+                    <td id="sortStatsMergeWrites" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">0</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px;">Βήματα αλγορίθμου</td>
+                    <td id="sortStatsBubbleSteps" style="text-align:center; padding:6px;">0</td>
+                    <td id="sortStatsMergeSteps" style="text-align:center; padding:6px;">0</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-cooley-interactive">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>8.2) Cooley-Tukey για n σημεία (διαδραστικό)</h2>
+            <p>
+              Κάνε click στο γράφημα για να προχωρήσει ένα στάδιο: πρώτα divide (διάσπαση σε άρτια/περιττά),
+              μετά conquer (συνδυασμός butterfly). Το n δίνεται ως δύναμη του 2.
+            </p>
+            <canvas id="cooleyInteractiveCanvas" class="demo-canvas" width="940" height="330"></canvas>
+            <div class="slider-grid" style="margin-top:10px;">
+              <div class="slider-group">
+                <div class="slider-label"><span>Εκθέτης m στο n=2^m</span><span id="cooleyInteractivePowerValue">4</span></div>
+                <input id="cooleyInteractivePower" type="range" min="3" max="5" step="1" value="4" />
+              </div>
+              <div class="slider-group">
+                <div class="slider-label"><span>Κατάσταση</span><span id="cooleyInteractiveStatus">-</span></div>
+                <button id="cooleyInteractiveRefreshBtn" class="fft-duel-submit" type="button">Refresh</button>
+              </div>
+            </div>
+            <div style="margin-top:10px; overflow:auto;">
+              <table style="width:100%; border-collapse:collapse; font-size:0.92em;">
+                <thead>
+                  <tr>
+                    <th style="text-align:left; border-bottom:1px solid rgba(190,220,255,0.3); padding:6px;">Μετρική</th>
+                    <th style="text-align:center; border-bottom:1px solid rgba(190,220,255,0.3); padding:6px;">Τιμή</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">n σημεία</td>
+                    <td id="cooleyInteractiveNValue" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">16</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">Στάδιο</td>
+                    <td id="cooleyInteractiveStageValue" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">0</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">Butterflies (συνολικά)</td>
+                    <td id="cooleyInteractiveButterfliesValue" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">0</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:6px;">Επίπεδα (log2 n)</td>
+                    <td id="cooleyInteractiveLevelsValue" style="text-align:center; padding:6px;">4</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>
@@ -3136,7 +3235,7 @@
       <section class="section" id="sec-fft-complexity">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.1) Από τον απλό DFT στον FFT (Cooley-Tukey)</h2>
+            <h2>8.3) Από τον απλό DFT στον FFT (Cooley-Tukey)</h2>
             <p>
               Στον απλό DFT, για κάθε συχνότητα κάνουμε άθροισμα σε όλα τα \(N\) δείγματα,
               άρα ο συνολικός κόπος μεγαλώνει σαν \(N^2\). Η ιδέα Cooley-Tukey είναι να
@@ -3178,7 +3277,7 @@
       <section class="section" id="sec-cooley-tukey">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.2) Cooley-Tukey FFT: αναδρομή και επίπεδα</h2>
+            <h2>8.4) Cooley-Tukey FFT: αναδρομή και επίπεδα</h2>
             <p>
               Ιδέα Cooley-Tukey: χωρίζουμε το σήμα σε άρτιες/περιττές θέσεις και λύνουμε δύο
               μικρότερα προβλήματα, ξανά και ξανά. Η σχέση είναι
@@ -3205,7 +3304,7 @@
       <section class="section activity-slide" id="sec-activity-complexity-check" data-activity-id="complexity-check">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.3) Δραστηριότητα: Αγώνες πολυπλοκότητας</h2>
+            <h2>8.5) Δραστηριότητα: Αγώνες πολυπλοκότητας</h2>
             <p class="student-only">
               Επίλεξε μία πολυπλοκότητα και πάτα «Υποβολή επιλογής». Ο teacher θα κάνει reveal όταν
               μαζευτούν αρκετές υποβολές.
@@ -3767,6 +3866,15 @@
     const cooleyTreeDirectValue = document.getElementById("cooleyTreeDirectValue");
     const cooleyTreeFftValue = document.getElementById("cooleyTreeFftValue");
     const cooleyTreeGainValue = document.getElementById("cooleyTreeGainValue");
+    const cooleyInteractiveCanvas = document.getElementById("cooleyInteractiveCanvas");
+    const cooleyInteractivePower = document.getElementById("cooleyInteractivePower");
+    const cooleyInteractivePowerValue = document.getElementById("cooleyInteractivePowerValue");
+    const cooleyInteractiveStatus = document.getElementById("cooleyInteractiveStatus");
+    const cooleyInteractiveRefreshBtn = document.getElementById("cooleyInteractiveRefreshBtn");
+    const cooleyInteractiveNValue = document.getElementById("cooleyInteractiveNValue");
+    const cooleyInteractiveStageValue = document.getElementById("cooleyInteractiveStageValue");
+    const cooleyInteractiveButterfliesValue = document.getElementById("cooleyInteractiveButterfliesValue");
+    const cooleyInteractiveLevelsValue = document.getElementById("cooleyInteractiveLevelsValue");
     const complexityRaceCanvas = document.getElementById("complexityRaceCanvas");
     const complexityRaceNValue = document.getElementById("complexityRaceNValue");
     const complexityRaceChoiceButtons = Array.from(document.querySelectorAll(".complexity-choice-button"));
@@ -3778,6 +3886,16 @@
     const complexityRaceResetBtn = document.getElementById("complexityRaceResetBtn");
     const complexityRaceTeacherStatus = document.getElementById("complexityRaceTeacherStatus");
     const complexityRaceScoreboard = document.getElementById("complexityRaceScoreboard");
+    const sortCompareCanvas = document.getElementById("sortCompareCanvas");
+    const sortCompareBubbleStatus = document.getElementById("sortCompareBubbleStatus");
+    const sortCompareMergeStatus = document.getElementById("sortCompareMergeStatus");
+    const sortCompareRefreshBtn = document.getElementById("sortCompareRefreshBtn");
+    const sortStatsBubbleComparisons = document.getElementById("sortStatsBubbleComparisons");
+    const sortStatsMergeComparisons = document.getElementById("sortStatsMergeComparisons");
+    const sortStatsBubbleSwaps = document.getElementById("sortStatsBubbleSwaps");
+    const sortStatsMergeWrites = document.getElementById("sortStatsMergeWrites");
+    const sortStatsBubbleSteps = document.getElementById("sortStatsBubbleSteps");
+    const sortStatsMergeSteps = document.getElementById("sortStatsMergeSteps");
     const bridgeDimCanvas = document.getElementById("bridgeDimCanvas");
     const bridgeDimMath = document.getElementById("bridgeDimMath");
     const ifftExplainCanvas = document.getElementById("ifftExplainCanvas");
@@ -3870,6 +3988,41 @@
       n: 10,
       revealResults: false,
       totalStudents: 0,
+    };
+    const SORT_COMPARE_SIZE = 8;
+    const SORT_COMPARE_BASE_ARRAY = [41, 12, 68, 27, 33, 19, 85, 56];
+    const sortCompareState = {
+      baseArray: SORT_COMPARE_BASE_ARRAY.slice(),
+      bubbleArray: SORT_COMPARE_BASE_ARRAY.slice(),
+      bubblePass: 0,
+      bubbleIndex: 0,
+      bubbleDone: false,
+      mergeStages: [],
+      mergeStageIndex: 0,
+      mergeStageReveal: 0,
+      mergeCountedStages: new Set(),
+      mergeAnimStartAt: 0,
+      mergeAnimDuration: 0.32,
+      mergeAnimValue: null,
+      mergeAnimTargetIndex: -1,
+      bubbleHint: "",
+      mergeHint: "",
+      bubbleHitRects: [],
+      mergeHitRects: [],
+      bubbleComparisons: 0,
+      bubbleSwaps: 0,
+      mergeComparisons: 0,
+      mergeWrites: 0,
+      bubbleSteps: 0,
+      mergeSteps: 0,
+    };
+    const cooleyInteractiveState = {
+      exponent: 4,
+      n: 16,
+      stages: [],
+      stageIndex: 0,
+      butterflies: 0,
+      hint: "",
     };
     const fftDuelSignalLabels = {
       sine: "Sine",
@@ -4975,6 +5128,500 @@
       slider?.addEventListener("input", updateComplexityLabels);
     });
     updateComplexityLabels();
+
+    function mergeSortedArraysWithMetrics(left, right) {
+      const merged = [];
+      let i = 0;
+      let j = 0;
+      let comparisons = 0;
+      let writes = 0;
+      while (i < left.length || j < right.length) {
+        if (i < left.length && j < right.length) {
+          comparisons += 1;
+        }
+        if (j >= right.length || (i < left.length && left[i] <= right[j])) {
+          merged.push(left[i]);
+          i += 1;
+          writes += 1;
+        } else {
+          merged.push(right[j]);
+          j += 1;
+          writes += 1;
+        }
+      }
+      return { merged, comparisons, writes };
+    }
+
+    function getSortCompareMaxDepth() {
+      return Math.round(Math.log2(SORT_COMPARE_SIZE));
+    }
+
+    function buildMergeSortStages(baseArray) {
+      const stages = [];
+      let groups = [baseArray.slice()];
+      let depth = 0;
+      const maxDepth = getSortCompareMaxDepth();
+
+      stages.push({
+        type: "start",
+        depth,
+        groups: groups.map((group) => group.slice()),
+        comparisons: 0,
+        writes: 0,
+      });
+
+      while (groups.some((group) => group.length > 1)) {
+        const next = [];
+        groups.forEach((group) => {
+          if (group.length <= 1) {
+            next.push(group.slice());
+            return;
+          }
+          const mid = Math.floor(group.length / 2);
+          next.push(group.slice(0, mid));
+          next.push(group.slice(mid));
+        });
+        groups = next;
+        depth += 1;
+        stages.push({
+          type: "split",
+          depth: Math.min(maxDepth, depth),
+          groups: groups.map((group) => group.slice()),
+          comparisons: 0,
+          writes: 0,
+        });
+      }
+
+      while (groups.length > 1) {
+        const next = [];
+        let stageComparisons = 0;
+        let stageWrites = 0;
+        for (let i = 0; i < groups.length; i += 2) {
+          const left = groups[i];
+          const right = groups[i + 1];
+          if (!right) {
+            next.push(left.slice());
+            continue;
+          }
+          const merged = mergeSortedArraysWithMetrics(left, right);
+          next.push(merged.merged);
+          stageComparisons += merged.comparisons;
+          stageWrites += merged.writes;
+        }
+        groups = next;
+        depth = Math.max(0, depth - 1);
+        stages.push({
+          type: "merge",
+          depth,
+          groups: groups.map((group) => group.slice()),
+          comparisons: stageComparisons,
+          writes: stageWrites,
+        });
+      }
+
+      stages.push({
+        type: "done",
+        depth: 0,
+        groups: groups.map((group) => group.slice()),
+        comparisons: 0,
+        writes: 0,
+      });
+
+      return stages;
+    }
+
+    function getSortCompareBubblePair() {
+      const n = sortCompareState.bubbleArray.length;
+      if (sortCompareState.bubbleDone || n < 2) {
+        return null;
+      }
+      const safePass = Math.max(0, sortCompareState.bubblePass);
+      const safeIndex = Math.max(0, sortCompareState.bubbleIndex);
+      const rightBound = n - 1 - safePass;
+      if (safeIndex >= rightBound) {
+        return null;
+      }
+      return { i: safeIndex, j: safeIndex + 1 };
+    }
+
+    function advanceBubbleSortPointer() {
+      const n = sortCompareState.bubbleArray.length;
+      sortCompareState.bubbleIndex += 1;
+      if (sortCompareState.bubbleIndex >= n - 1 - sortCompareState.bubblePass) {
+        sortCompareState.bubblePass += 1;
+        sortCompareState.bubbleIndex = 0;
+      }
+      if (sortCompareState.bubblePass >= n - 1) {
+        sortCompareState.bubbleDone = true;
+      }
+    }
+
+    function advanceMergeSortPointer() {
+      const getFlatValueAt = (groups, flatIndex) => {
+        let idx = 0;
+        for (let g = 0; g < groups.length; g += 1) {
+          const group = groups[g];
+          for (let i = 0; i < group.length; i += 1) {
+            if (idx === flatIndex) {
+              return group[i];
+            }
+            idx += 1;
+          }
+        }
+        return null;
+      };
+      const triggerMergeAnimation = (stage, targetIndex) => {
+        if (!stage || stage.type !== "merge") {
+          return;
+        }
+        sortCompareState.mergeAnimStartAt = performance.now() / 1000;
+        sortCompareState.mergeAnimTargetIndex = targetIndex;
+        sortCompareState.mergeAnimValue = getFlatValueAt(stage.groups, targetIndex);
+      };
+
+      const getStageTarget = (stage) => (
+        stage && Array.isArray(stage.groups)
+          ? stage.groups.reduce((sum, group) => sum + group.length, 0)
+          : 0
+      );
+      const countStageIfNeeded = (stageIndex) => {
+        const stage = sortCompareState.mergeStages[stageIndex];
+        if (!stage || stage.type !== "merge" || sortCompareState.mergeCountedStages.has(stageIndex)) {
+          return;
+        }
+        sortCompareState.mergeComparisons += Number(stage.comparisons) || 0;
+        sortCompareState.mergeWrites += Number(stage.writes) || 0;
+        sortCompareState.mergeCountedStages.add(stageIndex);
+      };
+
+      if (sortCompareState.mergeStageIndex >= sortCompareState.mergeStages.length - 1) {
+        sortCompareState.mergeHint = "Το Merge Sort ολοκληρώθηκε.";
+        return;
+      }
+
+      const currentStage = sortCompareState.mergeStages[sortCompareState.mergeStageIndex];
+      if (currentStage && currentStage.type === "merge") {
+        const target = getStageTarget(currentStage);
+        if (sortCompareState.mergeStageReveal < target) {
+          const nextTargetIndex = sortCompareState.mergeStageReveal;
+          sortCompareState.mergeStageReveal += 1;
+          triggerMergeAnimation(currentStage, nextTargetIndex);
+          sortCompareState.mergeSteps += 1;
+          sortCompareState.mergeHint = "Conquer: μπαίνει ένα-ένα στοιχείο στον ταξινομημένο πίνακα.";
+          if (sortCompareState.mergeStageReveal >= target) {
+            countStageIfNeeded(sortCompareState.mergeStageIndex);
+          }
+          return;
+        }
+      }
+
+      const nextStage = sortCompareState.mergeStages[sortCompareState.mergeStageIndex + 1];
+      sortCompareState.mergeStageIndex += 1;
+      sortCompareState.mergeStageReveal = 0;
+
+      if (nextStage && nextStage.type === "merge") {
+        const target = getStageTarget(nextStage);
+        if (target > 0) {
+          sortCompareState.mergeStageReveal = 1;
+          triggerMergeAnimation(nextStage, 0);
+          sortCompareState.mergeSteps += 1;
+          sortCompareState.mergeHint = "Conquer: μπαίνει ένα-ένα στοιχείο στον ταξινομημένο πίνακα.";
+          if (sortCompareState.mergeStageReveal >= target) {
+            countStageIfNeeded(sortCompareState.mergeStageIndex);
+          }
+          return;
+        }
+      }
+
+      sortCompareState.mergeSteps += 1;
+      sortCompareState.mergeHint = nextStage && nextStage.type === "split"
+        ? "Divide: τα τμήματα άνοιξαν προς τα κάτω."
+        : "Merge Sort ολοκληρώθηκε.";
+    }
+
+    function updateSortStatsTable() {
+      if (sortStatsBubbleComparisons) {
+        sortStatsBubbleComparisons.textContent = String(sortCompareState.bubbleComparisons);
+      }
+      if (sortStatsMergeComparisons) {
+        sortStatsMergeComparisons.textContent = String(sortCompareState.mergeComparisons);
+      }
+      if (sortStatsBubbleSwaps) {
+        sortStatsBubbleSwaps.textContent = String(sortCompareState.bubbleSwaps);
+      }
+      if (sortStatsMergeWrites) {
+        sortStatsMergeWrites.textContent = String(sortCompareState.mergeWrites);
+      }
+      if (sortStatsBubbleSteps) {
+        sortStatsBubbleSteps.textContent = String(sortCompareState.bubbleSteps);
+      }
+      if (sortStatsMergeSteps) {
+        sortStatsMergeSteps.textContent = String(sortCompareState.mergeSteps);
+      }
+    }
+
+    function updateSortCompareStatusTexts() {
+      const pair = getSortCompareBubblePair();
+      if (sortCompareBubbleStatus) {
+        if (sortCompareState.bubbleDone) {
+          sortCompareBubbleStatus.textContent = "Ολοκληρώθηκε ✓";
+        } else if (pair) {
+          const leftValue = sortCompareState.bubbleArray[pair.i];
+          const rightValue = sortCompareState.bubbleArray[pair.j];
+          sortCompareBubbleStatus.textContent = `Σύγκριση ${leftValue} και ${rightValue} (pass ${sortCompareState.bubblePass + 1})`;
+        } else {
+          sortCompareBubbleStatus.textContent = "Περίμενε επόμενο βήμα";
+        }
+      }
+
+      if (sortCompareMergeStatus) {
+        const stage = sortCompareState.mergeStages[sortCompareState.mergeStageIndex];
+        const idx = sortCompareState.mergeStageIndex + 1;
+        const total = sortCompareState.mergeStages.length;
+        const stageName = stage ? stage.type : "-";
+        const hint = sortCompareState.mergeHint ? ` • ${sortCompareState.mergeHint}` : "";
+        sortCompareMergeStatus.textContent = `${idx}/${total} • ${stageName}${hint}`;
+      }
+
+      updateSortStatsTable();
+    }
+
+    function resetSortCompareState() {
+      const base = SORT_COMPARE_BASE_ARRAY.slice();
+      sortCompareState.baseArray = base.slice();
+      sortCompareState.bubbleArray = base.slice();
+      sortCompareState.bubblePass = 0;
+      sortCompareState.bubbleIndex = 0;
+      sortCompareState.bubbleDone = false;
+      sortCompareState.mergeStages = buildMergeSortStages(base);
+      sortCompareState.mergeStageIndex = 0;
+      sortCompareState.mergeStageReveal = 0;
+      sortCompareState.mergeCountedStages = new Set();
+      sortCompareState.mergeAnimStartAt = 0;
+      sortCompareState.mergeAnimValue = null;
+      sortCompareState.mergeAnimTargetIndex = -1;
+      sortCompareState.bubbleHint = "Click στο φωτισμένο ζευγάρι για το επόμενο βήμα.";
+      sortCompareState.mergeHint = "Click στα δεξιά στοιχεία για το επόμενο στάδιο.";
+      sortCompareState.bubbleHitRects = [];
+      sortCompareState.mergeHitRects = [];
+      sortCompareState.bubbleComparisons = 0;
+      sortCompareState.bubbleSwaps = 0;
+      sortCompareState.mergeComparisons = 0;
+      sortCompareState.mergeWrites = 0;
+      sortCompareState.bubbleSteps = 0;
+      sortCompareState.mergeSteps = 0;
+      updateSortCompareStatusTexts();
+    }
+
+    function onSortCompareCanvasClick(event) {
+      if (!sortCompareCanvas) {
+        return;
+      }
+      const rect = sortCompareCanvas.getBoundingClientRect();
+      const scaleX = sortCompareCanvas.width / Math.max(1, rect.width);
+      const scaleY = sortCompareCanvas.height / Math.max(1, rect.height);
+      const px = (event.clientX - rect.left) * scaleX;
+      const py = (event.clientY - rect.top) * scaleY;
+
+      const bubbleHit = sortCompareState.bubbleHitRects.find((box) => (
+        px >= box.x && px <= box.x + box.w && py >= box.y && py <= box.y + box.h
+      ));
+      if (bubbleHit) {
+        const pair = getSortCompareBubblePair();
+        if (!pair) {
+          sortCompareState.bubbleHint = "Το Bubble Sort ολοκληρώθηκε.";
+          updateSortCompareStatusTexts();
+          return;
+        }
+
+        if (bubbleHit.index !== pair.i && bubbleHit.index !== pair.j) {
+          sortCompareState.bubbleHint = `Διάλεξε ένα από τα τονισμένα στοιχεία (${pair.i + 1}, ${pair.j + 1}).`;
+          updateSortCompareStatusTexts();
+          return;
+        }
+
+        const leftValue = sortCompareState.bubbleArray[pair.i];
+        const rightValue = sortCompareState.bubbleArray[pair.j];
+        sortCompareState.bubbleComparisons += 1;
+        sortCompareState.bubbleSteps += 1;
+        if (leftValue > rightValue) {
+          sortCompareState.bubbleArray[pair.i] = rightValue;
+          sortCompareState.bubbleArray[pair.j] = leftValue;
+          sortCompareState.bubbleSwaps += 1;
+          sortCompareState.bubbleHint = `Swap: ${leftValue} ↔ ${rightValue}`;
+        } else {
+          sortCompareState.bubbleHint = `Χωρίς swap: ${leftValue} ≤ ${rightValue}`;
+        }
+
+        advanceBubbleSortPointer();
+        updateSortCompareStatusTexts();
+        return;
+      }
+
+      const mergeHit = sortCompareState.mergeHitRects.find((box) => (
+        px >= box.x && px <= box.x + box.w && py >= box.y && py <= box.y + box.h
+      ));
+      if (mergeHit) {
+        advanceMergeSortPointer();
+        updateSortCompareStatusTexts();
+      }
+    }
+
+    sortCompareCanvas?.addEventListener("click", onSortCompareCanvasClick);
+    sortCompareRefreshBtn?.addEventListener("click", () => {
+      resetSortCompareState();
+    });
+    resetSortCompareState();
+
+    function buildCooleyInteractiveStages(n) {
+      const stages = [];
+      const maxDepth = Math.round(Math.log2(n));
+      let groups = [Array.from({ length: n }, (_, i) => i)];
+
+      stages.push({
+        type: "start",
+        depth: 0,
+        groups: groups.map((group) => group.slice()),
+        butterflies: 0,
+      });
+
+      let depth = 0;
+      while (groups.some((group) => group.length > 1)) {
+        const next = [];
+        groups.forEach((group) => {
+          if (group.length <= 1) {
+            next.push(group.slice());
+            return;
+          }
+          const evens = [];
+          const odds = [];
+          group.forEach((value, index) => {
+            if (index % 2 === 0) {
+              evens.push(value);
+            } else {
+              odds.push(value);
+            }
+          });
+          next.push(evens, odds);
+        });
+        groups = next;
+        depth += 1;
+        stages.push({
+          type: "divide",
+          depth: Math.min(maxDepth, depth),
+          groups: groups.map((group) => group.slice()),
+          butterflies: 0,
+        });
+      }
+
+      while (groups.length > 1) {
+        const next = [];
+        let stageButterflies = 0;
+        for (let i = 0; i < groups.length; i += 2) {
+          const left = groups[i];
+          const right = groups[i + 1];
+          if (!right) {
+            next.push(left.slice());
+            continue;
+          }
+          const merged = left.concat(right);
+          stageButterflies += merged.length / 2;
+          next.push(merged);
+        }
+        groups = next;
+        depth = Math.max(0, depth - 1);
+        stages.push({
+          type: "conquer",
+          depth,
+          groups: groups.map((group) => group.slice()),
+          butterflies: stageButterflies,
+        });
+      }
+
+      stages.push({
+        type: "done",
+        depth: 0,
+        groups: groups.map((group) => group.slice()),
+        butterflies: 0,
+      });
+
+      return stages;
+    }
+
+    function updateCooleyInteractiveStats() {
+      const stage = cooleyInteractiveState.stages[cooleyInteractiveState.stageIndex];
+      if (cooleyInteractivePowerValue) {
+        cooleyInteractivePowerValue.textContent = String(cooleyInteractiveState.exponent);
+      }
+      if (cooleyInteractiveNValue) {
+        cooleyInteractiveNValue.textContent = String(cooleyInteractiveState.n);
+      }
+      if (cooleyInteractiveStageValue) {
+        cooleyInteractiveStageValue.textContent = `${cooleyInteractiveState.stageIndex}/${Math.max(0, cooleyInteractiveState.stages.length - 1)}`;
+      }
+      if (cooleyInteractiveButterfliesValue) {
+        cooleyInteractiveButterfliesValue.textContent = String(cooleyInteractiveState.butterflies);
+      }
+      if (cooleyInteractiveLevelsValue) {
+        cooleyInteractiveLevelsValue.textContent = String(Math.round(Math.log2(cooleyInteractiveState.n)));
+      }
+      if (cooleyInteractiveStatus) {
+        const typeLabel = {
+          start: "start",
+          divide: "divide",
+          conquer: "conquer",
+          done: "done",
+        }[(stage && stage.type) || "start"];
+        const hint = cooleyInteractiveState.hint ? ` • ${cooleyInteractiveState.hint}` : "";
+        cooleyInteractiveStatus.textContent = `${typeLabel}${hint}`;
+      }
+    }
+
+    function resetCooleyInteractiveState() {
+      const exponent = cooleyInteractivePower ? Number(cooleyInteractivePower.value) : 4;
+      const safeExponent = Math.max(3, Math.min(5, Number.isFinite(exponent) ? exponent : 4));
+      const n = Math.pow(2, safeExponent);
+      cooleyInteractiveState.exponent = safeExponent;
+      cooleyInteractiveState.n = n;
+      cooleyInteractiveState.stages = buildCooleyInteractiveStages(n);
+      cooleyInteractiveState.stageIndex = 0;
+      cooleyInteractiveState.butterflies = 0;
+      cooleyInteractiveState.hint = "Click για επόμενο βήμα Cooley-Tukey.";
+      updateCooleyInteractiveStats();
+    }
+
+    function stepCooleyInteractive() {
+      if (cooleyInteractiveState.stageIndex >= cooleyInteractiveState.stages.length - 1) {
+        cooleyInteractiveState.hint = "Ολοκληρώθηκε η αναδρομή Cooley-Tukey.";
+        updateCooleyInteractiveStats();
+        return;
+      }
+
+      cooleyInteractiveState.stageIndex += 1;
+      const stage = cooleyInteractiveState.stages[cooleyInteractiveState.stageIndex];
+      cooleyInteractiveState.butterflies += Number(stage && stage.butterflies) || 0;
+
+      if (stage && stage.type === "divide") {
+        cooleyInteractiveState.hint = "Divide: split σε άρτια/περιττά blocks.";
+      } else if (stage && stage.type === "conquer") {
+        cooleyInteractiveState.hint = "Conquer: butterfly συνδυασμός των blocks.";
+      } else if (stage && stage.type === "done") {
+        cooleyInteractiveState.hint = "Έτοιμο: FFT ολοκληρώθηκε.";
+      }
+
+      updateCooleyInteractiveStats();
+    }
+
+    cooleyInteractiveCanvas?.addEventListener("click", () => {
+      stepCooleyInteractive();
+    });
+    cooleyInteractivePower?.addEventListener("input", () => {
+      resetCooleyInteractiveState();
+    });
+    cooleyInteractiveRefreshBtn?.addEventListener("click", () => {
+      resetCooleyInteractiveState();
+    });
+    resetCooleyInteractiveState();
 
     // @slide 8.3 | @util — επικυρώνει κλειδί μοντέλου πολυπλοκότητας εντός επιτρεπτών επιλογών.
     function normalizeComplexityRaceChoice(value) {
@@ -10397,6 +11044,11 @@
         ctx.fillStyle = "#c7dcff";
         ctx.font = "13px Segoe UI, sans-serif";
         ctx.fillText(`k = ${probeFreq.toFixed(2)}  μ(k) = ${muProbe.toFixed(3)}`, leftX + 12, windingTop + 20);
+
+        ctx.fillStyle = "#7fadcc";
+        ctx.font = "11px Segoe UI, sans-serif";
+        ctx.fillText("t (s)", signalX2 - 30, mid - 5);
+        ctx.fillText("f (Hz)", graphX + graphW - 36, graphY + graphH + 13);
       });
     }
 
@@ -10813,6 +11465,11 @@
         ctx.fillText(`signal: ${getFftDuelSignalLabel(signalKind)}`, topX1 + 8, pad + 18);
         ctx.fillText(`k = ${probeFreq.toFixed(1)} Hz`, pad + 12, bottomY + 22);
         ctx.fillText(`μ(k) = ${mu.toFixed(3)}`, gx1 + 8, gy1 + 18);
+
+        ctx.fillStyle = "#7fadcc";
+        ctx.font = "11px Segoe UI, sans-serif";
+        ctx.fillText("t (s)", topX2 - 30, topMidY - 5);
+        ctx.fillText("f (Hz)", gx1 + gw - 36, gy1 + gh + 13);
       });
     }
 
@@ -11189,6 +11846,18 @@
 
         drawSpectrum(rightX, rightW, rawSpecTop, components, "rgba(255, 179, 92, 0.95)", "DFT: αρχικό");
         drawSpectrum(rightX, rightW, cleanSpecTop, cleanComponents, "rgba(143, 229, 255, 0.95)", "DFT: φιλτραρισμένο", true);
+
+        // axis-end labels
+        const rawMid = rawTimeTop + rowH * 0.58;
+        const cleanMid = cleanTimeTop + rowH * 0.58;
+        const specBaseline1 = rawSpecTop + rowH - 8;
+        const specBaseline2 = cleanSpecTop + rowH - 8;
+        ctx.fillStyle = "#7fadcc";
+        ctx.font = "11px Segoe UI, sans-serif";
+        ctx.fillText("t (s)", leftX + leftW - 10 - 32, rawMid - 5);
+        ctx.fillText("t (s)", leftX + leftW - 10 - 32, cleanMid - 5);
+        ctx.fillText("f (Hz)", rightX + rightW - 10 - 36, specBaseline1 + 11);
+        ctx.fillText("f (Hz)", rightX + rightW - 10 - 36, specBaseline2 + 11);
       });
     }
 
@@ -11265,6 +11934,11 @@
         ctx.font = "13px Segoe UI, sans-serif";
         ctx.fillText("Σήμα στον χρόνο", lx + 12, top + 20);
         ctx.fillText("FFT → φάσμα συχνοτήτων", rx + 12, top + 20);
+
+        ctx.fillStyle = "#7fadcc";
+        ctx.font = "11px Segoe UI, sans-serif";
+        ctx.fillText("t (s)", x2 - 30, mid - 5);
+        ctx.fillText("f (Hz)", sx2 - 36, sy2 + 13);
       });
     }
 
@@ -11353,6 +12027,11 @@
         ctx.font = "13px Segoe UI, sans-serif";
         ctx.fillText("Φιλτραρισμένο φάσμα", lx + 12, top + 20);
         ctx.fillText("IFFT → ανακατασκευή στον χρόνο", rx + 12, top + 20);
+
+        ctx.fillStyle = "#7fadcc";
+        ctx.font = "11px Segoe UI, sans-serif";
+        ctx.fillText("f (Hz)", sx2 - 36, sy2 + 13);
+        ctx.fillText("t (s)", x2 - 30, mid - 5);
       });
     }
 
@@ -11724,6 +12403,363 @@
       control?.addEventListener("input", updatePolynomialBridge);
     });
     updatePolynomialBridge();
+
+    function drawSortCompare(canvas, t) {
+      drawAxesCanvas(canvas, (ctx, width, height) => {
+        const left = 14;
+        const right = width - 14;
+        const top = 12;
+        const bottom = height - 12;
+        const split = Math.floor(width * 0.50);
+        const gap = 8;
+        const lx = left;
+        const lw = split - left - gap;
+        const rx = split + gap;
+        const rw = right - rx;
+
+        ctx.strokeStyle = "#345886";
+        ctx.strokeRect(lx, top, lw, bottom - top);
+        ctx.strokeRect(rx, top, rw, bottom - top);
+
+        ctx.fillStyle = "#d8eeff";
+        ctx.font = "12px Segoe UI, sans-serif";
+        ctx.fillText("Bubble Sort (click στο ενεργό ζευγάρι)", lx + 10, top + 16);
+        ctx.fillText("Merge Sort (click δεξιά για βήμα)", rx + 10, top + 16);
+
+        const drawGroups = (x, y, w, groups, options = {}) => {
+          const totalItems = SORT_COMPARE_SIZE;
+          const groupGap = 10;
+          const innerPad = 10;
+          const boxH = 38;
+          const widthForCells = w - innerPad * 2 - groupGap * Math.max(0, groups.length - 1);
+          const boxW = Math.max(16, Math.min(42, widthForCells / Math.max(1, totalItems)));
+          const totalW = totalItems * boxW + groupGap * Math.max(0, groups.length - 1);
+          let cx = x + Math.max(innerPad, (w - totalW) * 0.5);
+          let globalIndex = 0;
+
+          const localHitRects = [];
+          const cellCenters = [];
+          const valueCenterMap = new Map();
+          groups.forEach((group, groupIndex) => {
+            const visibleLimit = Array.isArray(options.visibleCounts)
+              ? Math.max(0, Math.min(group.length, Number(options.visibleCounts[groupIndex]) || 0))
+              : group.length;
+
+            group.forEach((value, valueIndex) => {
+              const isPair = options.pair && (globalIndex === options.pair.i || globalIndex === options.pair.j);
+              const isVisible = valueIndex < visibleLimit;
+              ctx.fillStyle = isVisible
+                ? (isPair ? "rgba(255, 192, 100, 0.92)" : (options.boxColor || "rgba(112, 169, 255, 0.86)"))
+                : "rgba(92, 124, 170, 0.24)";
+              ctx.strokeStyle = isPair ? "rgba(255, 235, 168, 0.95)" : "rgba(194, 222, 255, 0.72)";
+              ctx.lineWidth = isPair ? 2.2 : 1.2;
+              ctx.fillRect(cx, y, boxW - 2, boxH);
+              ctx.strokeRect(cx, y, boxW - 2, boxH);
+
+              if (isVisible) {
+                ctx.fillStyle = "#081425";
+                ctx.font = "bold 13px Segoe UI, sans-serif";
+                ctx.fillText(String(value), cx + 8, y + 23);
+              }
+
+              localHitRects.push({ x: cx, y, w: boxW - 2, h: boxH, index: globalIndex });
+              const center = { x: cx + (boxW - 2) * 0.5, y: y + boxH * 0.5, value, index: globalIndex };
+              cellCenters.push(center);
+              if (!valueCenterMap.has(String(value))) {
+                valueCenterMap.set(String(value), center);
+              }
+              cx += boxW;
+              globalIndex += 1;
+            });
+            cx += groupGap;
+          });
+
+          const centers = [];
+          let walkX = x + Math.max(innerPad, (w - totalW) * 0.5);
+          groups.forEach((group) => {
+            const gStart = walkX;
+            const gWidth = group.length * boxW;
+            centers.push(gStart + gWidth * 0.5);
+            walkX += gWidth + groupGap;
+          });
+
+          return { hitRects: localHitRects, centers, cellCenters, valueCenterMap };
+        };
+
+        const pair = getSortCompareBubblePair();
+        const bubbleDraw = drawGroups(lx, top + 50, lw, [sortCompareState.bubbleArray], {
+          pair,
+          boxColor: "rgba(124, 183, 255, 0.86)",
+        });
+        sortCompareState.bubbleHitRects = bubbleDraw.hitRects;
+
+        const bubbleInfoY = top + 110;
+        ctx.fillStyle = "#9fc9f5";
+        ctx.font = "11px Segoe UI, sans-serif";
+        ctx.fillText(`pass: ${sortCompareState.bubblePass + 1}/${SORT_COMPARE_SIZE - 1}`, lx + 10, bubbleInfoY);
+        if (sortCompareState.bubbleHint) {
+          ctx.fillStyle = "#c7dcff";
+          ctx.fillText(sortCompareState.bubbleHint, lx + 10, bubbleInfoY + 18);
+        }
+
+        const stage = sortCompareState.mergeStages[sortCompareState.mergeStageIndex] || { type: "-", groups: [], depth: 0 };
+        const prevStage = sortCompareState.mergeStageIndex > 0
+          ? sortCompareState.mergeStages[sortCompareState.mergeStageIndex - 1]
+          : null;
+        const maxDepth = getSortCompareMaxDepth();
+        const levelY = (depth) => top + 52 + depth * 52;
+
+        const stageLabel = {
+          start: "εκκίνηση",
+          split: "διάσπαση",
+          merge: "σύνθεση",
+          done: "ταξινομημένο",
+        }[stage.type] || stage.type;
+        ctx.fillStyle = "#9fc9f5";
+        ctx.font = "11px Segoe UI, sans-serif";
+        ctx.fillText(
+          `στάδιο ${sortCompareState.mergeStageIndex + 1}/${Math.max(1, sortCompareState.mergeStages.length)}: ${stageLabel}`,
+          rx + 10,
+          top + 36,
+        );
+
+        for (let depth = 0; depth <= maxDepth; depth += 1) {
+          const y = levelY(depth);
+          ctx.strokeStyle = "rgba(132, 169, 219, 0.18)";
+          ctx.beginPath();
+          ctx.moveTo(rx + 8, y + 19);
+          ctx.lineTo(rx + rw - 8, y + 19);
+          ctx.stroke();
+        }
+
+        const prevDraw = prevStage
+          ? drawGroups(
+              rx,
+              levelY(prevStage.depth),
+              rw,
+              prevStage.groups,
+              {
+                boxColor: stage.type === "merge"
+                  ? "rgba(255, 191, 113, 0.90)"
+                  : "rgba(119, 149, 194, 0.58)",
+              },
+            )
+          : null;
+
+        const mergeColor = stage.type === "merge" || stage.type === "done"
+          ? "rgba(126, 228, 170, 0.90)"
+          : "rgba(129, 195, 255, 0.88)";
+        let visibleCounts = null;
+        if (stage.type === "merge") {
+          let revealLeft = sortCompareState.mergeStageReveal;
+          visibleCounts = stage.groups.map((group) => {
+            const shown = Math.max(0, Math.min(group.length, revealLeft));
+            revealLeft -= shown;
+            return shown;
+          });
+        }
+        const mergeDraw = drawGroups(rx, levelY(stage.depth), rw, stage.groups, {
+          boxColor: mergeColor,
+          visibleCounts,
+        });
+        sortCompareState.mergeHitRects = mergeDraw.hitRects;
+
+        if (stage.type === "merge" && prevDraw && sortCompareState.mergeAnimValue !== null) {
+          const elapsed = t - sortCompareState.mergeAnimStartAt;
+          const progress = Math.max(0, Math.min(1, elapsed / Math.max(0.05, sortCompareState.mergeAnimDuration)));
+          const valueKey = String(sortCompareState.mergeAnimValue);
+          const from = prevDraw.valueCenterMap.get(valueKey);
+          const to = mergeDraw.cellCenters[sortCompareState.mergeAnimTargetIndex];
+          if (from && to && progress < 1) {
+            // Keep source clearly visible while value is moving upward.
+            ctx.strokeStyle = "rgba(255, 244, 193, 0.98)";
+            ctx.lineWidth = 2.4;
+            ctx.beginPath();
+            ctx.arc(from.x, from.y, 17, 0, 2 * Math.PI);
+            ctx.stroke();
+
+            const x = from.x + (to.x - from.x) * progress;
+            const y = from.y + (to.y - from.y) * progress;
+            const wBox = 24;
+            const hBox = 24;
+            ctx.fillStyle = "rgba(255, 231, 141, 0.95)";
+            ctx.strokeStyle = "rgba(255, 246, 198, 0.98)";
+            ctx.lineWidth = 1.6;
+            ctx.fillRect(x - wBox * 0.5, y - hBox * 0.5, wBox, hBox);
+            ctx.strokeRect(x - wBox * 0.5, y - hBox * 0.5, wBox, hBox);
+            ctx.fillStyle = "#15243b";
+            ctx.font = "bold 12px Segoe UI, sans-serif";
+            ctx.fillText(String(sortCompareState.mergeAnimValue), x - 8, y + 4);
+          }
+          if (progress >= 1) {
+            sortCompareState.mergeAnimValue = null;
+            sortCompareState.mergeAnimTargetIndex = -1;
+          }
+        }
+
+        if (prevStage && prevDraw) {
+          ctx.strokeStyle = "rgba(200, 226, 255, 0.45)";
+          ctx.lineWidth = 1.3;
+          ctx.beginPath();
+          if (stage.type === "split") {
+            let childIdx = 0;
+            for (let p = 0; p < prevStage.groups.length; p += 1) {
+              const childCount = prevStage.groups[p].length > 1 ? 2 : 1;
+              for (let c = 0; c < childCount; c += 1) {
+                const toIdx = childIdx + c;
+                if (toIdx < mergeDraw.centers.length) {
+                  ctx.moveTo(prevDraw.centers[p], levelY(prevStage.depth) + 38);
+                  ctx.lineTo(mergeDraw.centers[toIdx], levelY(stage.depth) - 2);
+                }
+              }
+              childIdx += childCount;
+            }
+          } else if (stage.type === "merge") {
+            let parentIdx = 0;
+            for (let g = 0; g < stage.groups.length; g += 1) {
+              const toX = mergeDraw.centers[g];
+              const fromA = prevDraw.centers[parentIdx];
+              const fromB = prevDraw.centers[parentIdx + 1];
+              if (Number.isFinite(fromA)) {
+                ctx.moveTo(fromA, levelY(prevStage.depth) + 38);
+                ctx.lineTo(toX, levelY(stage.depth) - 2);
+              }
+              if (Number.isFinite(fromB)) {
+                ctx.moveTo(fromB, levelY(prevStage.depth) + 38);
+                ctx.lineTo(toX, levelY(stage.depth) - 2);
+                parentIdx += 2;
+              } else {
+                parentIdx += 1;
+              }
+            }
+          }
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = "#7fadcc";
+        ctx.font = "10px Segoe UI, sans-serif";
+        ctx.fillText("Divide: κατεβαίνει επίπεδα • Conquer: ανεβαίνει και κλείνει.", rx + 10, top + 260);
+      });
+    }
+
+    function drawCooleyInteractive(canvas, t) {
+      drawAxesCanvas(canvas, (ctx, width, height) => {
+        const left = 14;
+        const right = width - 14;
+        const top = 12;
+        const bottom = height - 12;
+        const stage = cooleyInteractiveState.stages[cooleyInteractiveState.stageIndex] || { type: "start", depth: 0, groups: [] };
+        const prevStage = cooleyInteractiveState.stageIndex > 0
+          ? cooleyInteractiveState.stages[cooleyInteractiveState.stageIndex - 1]
+          : null;
+        const maxDepth = Math.max(1, Math.round(Math.log2(cooleyInteractiveState.n)));
+        const levelY = (depth) => top + 40 + depth * ((bottom - top - 64) / maxDepth);
+
+        ctx.strokeStyle = "#345886";
+        ctx.strokeRect(left, top, right - left, bottom - top);
+
+        ctx.fillStyle = "#d8eeff";
+        ctx.font = "12px Segoe UI, sans-serif";
+        ctx.fillText(`Cooley-Tukey βήμα ${cooleyInteractiveState.stageIndex}/${Math.max(0, cooleyInteractiveState.stages.length - 1)}`, left + 8, top + 16);
+        ctx.fillText(`n=${cooleyInteractiveState.n}, επίπεδα=${maxDepth}, butterflies=${cooleyInteractiveState.butterflies}`, left + 8, top + 32);
+
+        const drawGroups = (y, groups, color) => {
+          const totalItems = cooleyInteractiveState.n;
+          const groupGap = 10;
+          const boxH = 30;
+          const innerPad = 10;
+          const widthForCells = (right - left) - innerPad * 2 - groupGap * Math.max(0, groups.length - 1);
+          const boxW = Math.max(12, Math.min(30, widthForCells / Math.max(1, totalItems)));
+          const totalW = totalItems * boxW + groupGap * Math.max(0, groups.length - 1);
+          let x = left + Math.max(innerPad, ((right - left) - totalW) * 0.5);
+          const centers = [];
+
+          groups.forEach((group) => {
+            const gStart = x;
+            group.forEach((value) => {
+              ctx.fillStyle = color;
+              ctx.strokeStyle = "rgba(207, 232, 255, 0.75)";
+              ctx.lineWidth = 1.0;
+              ctx.fillRect(x, y, boxW - 2, boxH);
+              ctx.strokeRect(x, y, boxW - 2, boxH);
+
+              ctx.fillStyle = "#081425";
+              ctx.font = boxW <= 14 ? "9px Segoe UI, sans-serif" : "10px Segoe UI, sans-serif";
+              ctx.fillText(String(value), x + 3, y + 18);
+              x += boxW;
+            });
+            const gEnd = x;
+            centers.push((gStart + gEnd) * 0.5);
+            x += groupGap;
+          });
+
+          return { centers, y, boxH };
+        };
+
+        for (let d = 0; d <= maxDepth; d += 1) {
+          const y = levelY(d) + 15;
+          ctx.strokeStyle = "rgba(132, 169, 219, 0.18)";
+          ctx.beginPath();
+          ctx.moveTo(left + 8, y);
+          ctx.lineTo(right - 8, y);
+          ctx.stroke();
+        }
+
+        const prevDraw = prevStage
+          ? drawGroups(levelY(prevStage.depth), prevStage.groups, "rgba(104, 137, 183, 0.40)")
+          : null;
+
+        const stageColor = stage.type === "conquer"
+          ? "rgba(126, 228, 170, 0.90)"
+          : (stage.type === "done"
+              ? "rgba(255, 210, 126, 0.94)"
+              : "rgba(129, 195, 255, 0.88)");
+        const stageDraw = drawGroups(levelY(stage.depth), stage.groups, stageColor);
+
+        if (prevStage && prevDraw) {
+          ctx.strokeStyle = "rgba(200, 226, 255, 0.48)";
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          if (stage.type === "divide") {
+            let childIndex = 0;
+            for (let p = 0; p < prevStage.groups.length; p += 1) {
+              const count = prevStage.groups[p].length > 1 ? 2 : 1;
+              for (let c = 0; c < count; c += 1) {
+                const to = childIndex + c;
+                if (to < stageDraw.centers.length) {
+                  ctx.moveTo(prevDraw.centers[p], prevDraw.y + prevDraw.boxH);
+                  ctx.lineTo(stageDraw.centers[to], stageDraw.y);
+                }
+              }
+              childIndex += count;
+            }
+          } else if (stage.type === "conquer") {
+            let sourceIndex = 0;
+            for (let g = 0; g < stage.groups.length; g += 1) {
+              const toX = stageDraw.centers[g];
+              const fromA = prevDraw.centers[sourceIndex];
+              const fromB = prevDraw.centers[sourceIndex + 1];
+              if (Number.isFinite(fromA)) {
+                ctx.moveTo(fromA, prevDraw.y + prevDraw.boxH);
+                ctx.lineTo(toX, stageDraw.y);
+              }
+              if (Number.isFinite(fromB)) {
+                ctx.moveTo(fromB, prevDraw.y + prevDraw.boxH);
+                ctx.lineTo(toX, stageDraw.y);
+                sourceIndex += 2;
+              } else {
+                sourceIndex += 1;
+              }
+            }
+          }
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = "#7fadcc";
+        ctx.font = "10px Segoe UI, sans-serif";
+        ctx.fillText("Click για επόμενο στάδιο: divide -> conquer (butterfly).", left + 8, bottom - 8);
+      });
+    }
 
     // @slide 7.1 — σχεδιάζει γράφο N² εναντίον N·log₂N με κυλιόμενο marker.
     function drawFFTComplexity(canvas, t) {
@@ -13407,6 +14443,12 @@
       }
       if (canDraw(soundFilterCanvas)) {
         drawFilteredAudioDemo(soundFilterCanvas, elapsedSeconds);
+      }
+      if (canDraw(sortCompareCanvas)) {
+        drawSortCompare(sortCompareCanvas, elapsedSeconds);
+      }
+      if (canDraw(cooleyInteractiveCanvas)) {
+        drawCooleyInteractive(cooleyInteractiveCanvas, elapsedSeconds);
       }
       if (canDraw(complexityRaceCanvas)) {
         drawComplexityRace(complexityRaceCanvas, elapsedSeconds);
