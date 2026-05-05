@@ -382,6 +382,43 @@
       margin-top: 8px;
     }
 
+    .air-canvas.air-canvas-compact {
+      margin-top: 0;
+    }
+
+    .sound-wave-duo {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .sound-air-strings-row {
+      margin-top: 8px;
+      display: block;
+    }
+
+    .sound-air-stage {
+      position: relative;
+      width: 100%;
+    }
+
+    .sound-strings-overlay {
+      display: none;
+    }
+
+    .sound-string-overlay-item {
+      display: none;
+    }
+
+    .sound-string-overlay-label {
+      display: none;
+    }
+
+    .sound-string-overlay-canvas {
+      display: none;
+    }
+
     .sound-wave-item {
       border: 1px solid var(--line);
       border-radius: 10px;
@@ -1859,6 +1896,14 @@
         grid-template-columns: 1fr;
       }
 
+      .sound-wave-duo {
+        grid-template-columns: 1fr;
+      }
+
+      .sound-air-strings-row {
+        display: block;
+      }
+
       .class-table-users .class-table-header,
       .class-table-users .class-table-row {
         grid-template-columns: 1.4rem 1.6fr 1.2fr 0.7fr 0.9fr 0.8fr;
@@ -2058,8 +2103,10 @@
       <div class="toc-group-title" data-accordion-group="waves">2. Θεμέλια κυμάτων</div>
       <a href="#sec-intro" data-accordion-group="waves">2.1 Κύμα f(x)=sin(x)</a>
       <a href="#sec-wave2d" data-accordion-group="waves">2.2 2D κύμα: A·sin(kx·x+kz·z+ωt+φ)</a>
-      <a href="#sec-gerstner" data-accordion-group="waves">2.3 Gerstner waves</a>
-      <a href="#sec-sum" data-accordion-group="waves">2.4 Δραστηριότητα: Άθροισμα κυμάτων</a>
+      <a href="#sec-why-gerstner" data-accordion-group="waves">2.3 Κυκλική τροχιά σωματιδίων</a>
+      <a href="#sec-wave1d-arrows" data-accordion-group="waves">2.4 Κίνηση σωματιδίων (1D, x μόνο)</a>
+      <a href="#sec-compare-sine-gerstner" data-accordion-group="waves">2.5 Σύγκριση: Ημιτονοειδές vs Gerstner</a>
+      <a href="#sec-sum" data-accordion-group="waves">2.6 Δραστηριότητα: Άθροισμα κυμάτων</a>
 
       <div class="toc-group-title" data-accordion-group="sound">3. Ήχος</div>
       <a href="#sec-sound-simple" data-accordion-group="sound">3.1 Το παράδειγμα του ήχου</a>
@@ -2225,37 +2272,88 @@
         </div>
       </section>
 
-      <section class="section" id="sec-gerstner">
+      <section class="section" id="sec-why-gerstner">
         <div class="slide-card">
-          <div class="slide-content">
-            <h2>2.3) Gerstner waves</h2>
-            <canvas id="gerstnerOrbitCanvas" class="demo-canvas" width="940" height="210" style="height:170px;"></canvas>
-            <canvas id="gerstnerCanvas" class="demo-canvas" width="940" height="250" style="height:200px; margin-top:6px;"></canvas>
-            <div class="wave2d-controls" style="grid-template-columns: repeat(6, 1fr);">
-              <label class="ocean-control" data-tip="A: αυξάνει το ύψος του κύματος και το μέγεθος των τροχιών." title="A: αυξάνει το ύψος του κύματος και το μέγεθος των τροχιών.">
-                <span>A <strong id="gerstnerAmpValue">0.70</strong></span>
-                <input id="gerstnerAmp" type="range" min="0.1" max="1.6" step="0.01" value="0.7" title="A: αυξάνει το ύψος του κύματος και το μέγεθος των τροχιών." />
+          <div class="slide-content" style="display:flex;flex-direction:column;gap:8px;">
+            <h2 style="margin:0;">2.3) Κυκλική τροχιά σωματιδίων</h2>
+            <canvas id="whyGerstnerCanvas" class="demo-canvas" style="flex:1;width:100%;min-height:0;"></canvas>
+            <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;align-items:center;padding:2px 0;">
+              <label class="ocean-control" style="min-width:280px;max-width:400px;" data-tip="Αλλάζει το πλάτος A της κυκλικής τροχιάς.">
+                <span>A (πλάτος) <strong id="whyGerstnerAmpValue">0.40</strong></span>
+                <input id="whyGerstnerAmp" type="range" min="0.05" max="1.50" step="0.01" value="0.4" />
               </label>
-              <label class="ocean-control" data-tip="Q (steepness): κάνει την κορυφή πιο αιχμηρή και ενισχύει την οριζόντια μετατόπιση." title="Q (steepness): κάνει την κορυφή πιο αιχμηρή και ενισχύει την οριζόντια μετατόπιση.">
-                <span>Q (steepness) <strong id="gerstnerQValue">0.55</strong></span>
-                <input id="gerstnerQ" type="range" min="0" max="1" step="0.01" value="0.55" title="Q (steepness): κάνει την κορυφή πιο αιχμηρή και ενισχύει την οριζόντια μετατόπιση." />
+            </div>
+            <div style="text-align:center;background:rgba(255,140,80,0.07);border:1px solid rgba(255,140,80,0.22);border-radius:8px;padding:6px 14px;font-size:0.88rem;">
+              \[\vec{r}(x_0,t) = \begin{pmatrix} x_0 + A\sin(kx_0 - \omega t) \\ -A\cos(kx_0 - \omega t) \end{pmatrix}\]
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-wave1d-arrows">
+        <div class="slide-card">
+          <div class="slide-content" style="display:flex;flex-direction:column;gap:6px;">
+            <h2 style="margin:0;">2.4) Ημιτονοειδές vs Gerstner</h2>
+            <div style="display:flex;gap:8px;flex:1;min-height:0;">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-height:0;">
+                <div style="text-align:center;font-size:0.83rem;color:#9fb0d1;">Ημιτονοειδές</div>
+                <canvas id="arrow1DSineCanvas" class="demo-canvas" style="flex:1;width:100%;min-height:0;"></canvas>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-height:0;">
+                <div style="text-align:center;font-size:0.83rem;color:#9fb0d1;">Gerstner</div>
+                <canvas id="arrow1DGerstnerCanvas" class="demo-canvas" style="flex:1;width:100%;min-height:0;"></canvas>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;align-items:center;padding:2px 0;">
+              <label class="ocean-control" style="min-width:280px;max-width:400px;" data-tip="Αλλάζει το πλάτος A. Στο Gerstner για A·k·Q > 1 η κυματοειδής επιφάνεια αναδιπλώνεται.">
+                <span>A (πλάτος) <strong id="arrow1DAmpValue">0.40</strong></span>
+                <input id="arrow1DAmp" type="range" min="0.05" max="1.6" step="0.01" value="0.4" title="Αλλάζει το πλάτος A. Μεγάλο A φανερώνει το πρόβλημα του Gerstner." />
               </label>
-              <label class="ocean-control" data-tip="k: αυξάνει τον κυματικό αριθμό, άρα μικρότερο μήκος κύματος (πιο πυκνά κύματα)." title="k: αυξάνει τον κυματικό αριθμό, άρα μικρότερο μήκος κύματος (πιο πυκνά κύματα).">
-                <span>k <strong id="gerstnerKValue">1.40</strong></span>
-                <input id="gerstnerK" type="range" min="0.2" max="4.5" step="0.01" value="1.4" title="k: αυξάνει τον κυματικό αριθμό, άρα μικρότερο μήκος κύματος (πιο πυκνά κύματα)." />
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <div style="flex:1;min-width:200px;text-align:center;background:rgba(58,137,255,0.08);border:1px solid rgba(58,137,255,0.22);border-radius:8px;padding:6px 10px;">
+                <div style="font-size:0.78rem;color:#9fb0d1;margin-bottom:2px;">Ημιτονοειδές — <span style="color:#ffdd44;">↕ κατακόρυφη κίνηση</span> </div>
+                \[y = A\sin(kx)\]
+              </div>
+              <div style="flex:1;min-width:200px;text-align:center;background:rgba(255,140,80,0.07);border:1px solid rgba(255,140,80,0.22);border-radius:8px;padding:6px 10px;">
+                <div style="font-size:0.78rem;color:#9fb0d1;margin-bottom:2px;">Gerstner — <span style="color:#ffaa44;">⟳ κυκλική τροχιά</span></div>
+                \[\vec{r}(x_0) = \begin{pmatrix} x_0 + QA\cos(kx_0) \\\ A\sin(kx_0) \end{pmatrix}\]
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-compare-sine-gerstner">
+        <div class="slide-card">
+          <div class="slide-content" style="display:flex;flex-direction:column;gap:6px;">
+            <h2 style="margin:0;">2.5) Σύγκριση: Ημιτονοειδές vs Gerstner</h2>
+            <div style="display:flex;gap:8px;flex:1;min-height:0;">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-height:0;">
+                <div style="text-align:center;font-size:0.83rem;color:#9fb0d1;letter-spacing:0.02em;">Ημιτονοειδές κύμα</div>
+                <canvas id="compareSineCanvas" class="demo-canvas" style="flex:1;width:100%;min-height:0;"></canvas>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-height:0;">
+                <div style="text-align:center;font-size:0.83rem;color:#9fb0d1;letter-spacing:0.02em;">Gerstner κύμα</div>
+                <canvas id="compareGerstnerCanvas" class="demo-canvas" style="flex:1;width:100%;min-height:0;"></canvas>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:center;align-items:center;gap:20px;flex-wrap:wrap;padding:4px 0;">
+              <label class="ocean-control" style="min-width:300px;max-width:440px;" data-tip="Αλλάζει το πλάτος Α και στα δύο κύματα ταυτόχρονα. Στο Gerstner, όταν A·k > 1 (steepness > 1) η επιφάνεια αναδιπλώνεται — φυσικά αδύνατο!">
+                <span>A (κοινό πλάτος) <strong id="compareAmpValue">0.50</strong></span>
+                <input id="compareAmp" type="range" min="0.05" max="1.6" step="0.01" value="0.5" title="Αλλάζει το πλάτος Α και στα δύο κύματα. Μεγάλο Α φανερώνει το πρόβλημα του Gerstner." />
               </label>
-              <label class="ocean-control" data-tip="ω: αλλάζει την ταχύτητα χρονικής κίνησης (πιο γρήγορη/αργή ταλάντωση)." title="ω: αλλάζει την ταχύτητα χρονικής κίνησης (πιο γρήγορη/αργή ταλάντωση).">
-                <span>ω <strong id="gerstnerOmegaValue">1.10</strong></span>
-                <input id="gerstnerOmega" type="range" min="0.1" max="4" step="0.01" value="1.1" title="ω: αλλάζει την ταχύτητα χρονικής κίνησης (πιο γρήγορη/αργή ταλάντωση)." />
-              </label>
-              <label class="ocean-control" data-tip="dir θ: στρέφει τη διεύθυνση διάδοσης του κύματος." title="dir θ: στρέφει τη διεύθυνση διάδοσης του κύματος.">
-                <span>dir θ <strong id="gerstnerDirValue">35°</strong></span>
-                <input id="gerstnerDir" type="range" min="0" max="360" step="1" value="35" title="dir θ: στρέφει τη διεύθυνση διάδοσης του κύματος." />
-              </label>
-              <label class="ocean-control" data-tip="depth fade: πόσο γρήγορα μικραίνουν οι τροχιές όσο αυξάνει το βάθος." title="depth fade: πόσο γρήγορα μικραίνουν οι τροχιές όσο αυξάνει το βάθος.">
-                <span>depth fade <strong id="gerstnerOrbitDepthValue">0.85</strong></span>
-                <input id="gerstnerOrbitDepth" type="range" min="0.2" max="1.5" step="0.01" value="0.85" title="depth fade: πόσο γρήγορα μικραίνουν οι τροχιές όσο αυξάνει το βάθος." />
-              </label>
+              <label class="sum-toggle" style="margin:0;"><input id="compareAnimate" type="checkbox" checked /> <span>▶ κίνηση</span></label>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <div style="flex:1;min-width:220px;text-align:center;background:rgba(58,137,255,0.08);border:1px solid rgba(58,137,255,0.22);border-radius:8px;padding:6px 10px;">
+                <div style="font-size:0.78rem;color:#9fb0d1;margin-bottom:2px;">Ημιτονοειδές</div>
+                \[y = A\sin(k_x x + k_z z + \omega t)\]
+              </div>
+              <div style="flex:1;min-width:220px;text-align:center;background:rgba(255,140,80,0.07);border:1px solid rgba(255,140,80,0.22);border-radius:8px;padding:6px 10px;">
+                <div style="font-size:0.78rem;color:#9fb0d1;margin-bottom:2px;">Gerstner — <span style="color:#ffaa55;">πρόβλημα για A·k &gt; 1</span></div>
+                \[\begin{cases}x = x_0 + QA\cos(\mathbf{k}\cdot\mathbf{x}_0 - \omega t)\\ y = A\sin(\mathbf{k}\cdot\mathbf{x}_0 - \omega t)\end{cases}\]
+              </div>
             </div>
           </div>
         </div>
@@ -2264,7 +2362,7 @@
       <section class="section" id="sec-sum">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>2.4) Δραστηριότητα: Άθροισμα κυμάτων</h2>
+            <h2>2.6) Δραστηριότητα: Άθροισμα κυμάτων</h2>
             <p class="teacher-only">
               Ρύθμισε πλάτος και συχνότητα για τέσσερις συνιστώσες. Το τελικό κύμα
               προκύπτει από το άθροισμα των 4 συνιστωσών. Οι συχνότητες των students
@@ -2384,15 +2482,12 @@
             </p>
             <canvas id="soundSimpleWaveCanvas" class="demo-canvas" width="940" height="160"></canvas>
             <canvas id="soundSimpleMolCanvas" class="air-canvas" width="940" height="130"></canvas>
-            <div class="slider-grid">
-              <div class="slider-group">
-                <div class="slider-label"><span>Συχνότητα f</span><span id="soundSimpleFreqValue">2.0</span></div>
-                <input id="soundSimpleFreq" type="range" min="0.5" max="6" step="0.1" value="2" />
+            <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;margin-top:8px;font-size:0.88rem;color:#8fb0c8;">
+              <div style="display:flex;gap:12px;">
+                <label class="sum-toggle" style="margin:0;"><input id="soundSimpleAudioOn" type="checkbox" /> <span>🔊 Ήχος χορδής</span></label>
+                <label class="sum-toggle" style="margin:0;"><input id="soundSimpleSustain" type="checkbox" /> σταθερή</label>
               </div>
-              <div class="slider-group">
-                <div class="slider-label"><span>Πλάτος A</span><span id="soundSimpleAmpValue">1.00</span></div>
-                <input id="soundSimpleAmp" type="range" min="0.1" max="1.8" step="0.01" value="1" />
-              </div>
+              <span>f ≈ <strong id="soundSimpleFreqValue">0.0</strong> Hz • A = <strong id="soundSimpleAmpValue">0.00</strong></span>
             </div>
           </div>
         </div>
@@ -2408,7 +2503,7 @@
               Οι teacher συνιστώσες εμφανίζονται ως <strong>f1</strong> και <strong>f2</strong>.
             </p>
             <p class="student-only">
-              Ρύθμισε συχνότητα και πλάτος. Η επιλογή σου στέλνεται live για τη δημιουργία του κεντρικού ήχου της τάξης.
+              Ρύθμισε τη συχνότητα και την ένταση και πάτα <strong>Ενεργή</strong> για να ξεκινήσει ο ήχος.
             </p>
             <div class="student-only sound-student-controls">
               <label class="sound-slider">
@@ -2416,11 +2511,11 @@
                 <input id="studentSoundFrequency" type="range" min="120" max="1200" step="1" value="440" />
               </label>
               <label class="sound-slider">
-                <div class="slider-label"><span>Πλάτος</span><span id="studentSoundAmplitudeValue">0%</span></div>
-                <input id="studentSoundAmplitude" type="range" min="0" max="1" step="0.01" value="0" />
+                <div class="slider-label"><span>Ένταση</span><span id="studentSoundAmpValue">70%</span></div>
+                <input id="studentSoundAmp" type="range" min="0" max="100" step="1" value="70" />
               </label>
+              <label class="sum-toggle"><input id="studentSoundActive" type="checkbox" /> ενεργή</label>
             </div>
-            <p class="student-only sound-student-note">Το κύμα και τα μόρια παρακάτω δείχνουν προεπισκόπηση των δικών σου ρυθμίσεων.</p>
             <div class="teacher-only sound-teacher-controls">
               <button id="teacherSoundActivateBtn" class="speaker-btn" type="button"><span class="icon">🔊</span> Ενεργοποίηση classroom ήχου</button>
               <button id="teacherSoundMuteBtn" class="speaker-stop" type="button">⏹ Σίγαση classroom ήχου</button>
@@ -2430,20 +2525,34 @@
               <div class="sound-slider teacher-tone-card">
                 <div class="slider-label"><span>Teacher f1 (Hz)</span><span id="teacherSoundFreqOneValue">330 Hz</span></div>
                 <input id="teacherSoundFreqOne" type="range" min="120" max="1200" step="1" value="330" />
+                <div class="slider-label"><span>Ένταση f1</span><span id="teacherSoundAmpOneValue">70%</span></div>
+                <input id="teacherSoundAmpOne" type="range" min="0" max="100" step="1" value="70" />
                 <label class="sum-toggle"><input id="teacherSoundFreqOneOn" type="checkbox" /> ενεργή f1</label>
               </div>
               <div class="sound-slider teacher-tone-card">
                 <div class="slider-label"><span>Teacher f2 (Hz)</span><span id="teacherSoundFreqTwoValue">550 Hz</span></div>
                 <input id="teacherSoundFreqTwo" type="range" min="120" max="1200" step="1" value="550" />
+                <div class="slider-label"><span>Ένταση f2</span><span id="teacherSoundAmpTwoValue">70%</span></div>
+                <input id="teacherSoundAmpTwo" type="range" min="0" max="100" step="1" value="70" />
                 <label class="sum-toggle"><input id="teacherSoundFreqTwoOn" type="checkbox" /> ενεργή f2</label>
               </div>
             </div>
             <div class="sum-legend" id="soundFreqLegend"></div>
-            <div class="sound-wave-item">
-              <p>Τελικό κύμα (ενεργές συχνότητες)</p>
-              <canvas id="soundWaveSumCanvas" class="sound-wave-canvas" width="940" height="110"></canvas>
+            <div class="sound-wave-duo">
+              <div class="sound-wave-item" style="margin-top:0;">
+                <p>Τελικό κύμα (ενεργές συχνότητες)</p>
+                <canvas id="soundWaveSumCanvas" class="sound-wave-canvas" width="940" height="110"></canvas>
+              </div>
+              <div class="sound-wave-item" style="margin-top:0;">
+                <p>Φάσμα συχνοτήτων (f, A)</p>
+                <canvas id="soundSpectrumCanvas" class="sound-wave-canvas" width="940" height="110"></canvas>
+              </div>
             </div>
-            <canvas id="airMoleculesCanvas" class="air-canvas" width="940" height="170"></canvas>
+            <div class="sound-air-strings-row">
+              <div class="sound-air-stage">
+                <canvas id="airMoleculesCanvas" class="air-canvas air-canvas-compact" width="940" height="170"></canvas>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -2694,6 +2803,8 @@
                       <td class="i-pow-label">\(i^4\)</td><td class="i-pow-val">\(=1\)</td>
                     </tr>
                   </table>
+                  <p style="margin:10px 0 2px;font-size:0.85rem;color:#8fb0c8;">Ειδική περίπτωση \(\theta=\pi\):</p>
+                  \[e^{i\pi}+1=0\]
                 </div>
               </div>
               <div class="euler-proof-steps">
@@ -3375,30 +3486,6 @@
     const wave2DOmegaValue = document.getElementById("wave2DOmegaValue");
     const wave2DPhiValue = document.getElementById("wave2DPhiValue");
 
-    const gerstnerCanvas = document.getElementById("gerstnerCanvas");
-    const gerstnerAmp = document.getElementById("gerstnerAmp");
-    const gerstnerQ = document.getElementById("gerstnerQ");
-    const gerstnerK = document.getElementById("gerstnerK");
-    const gerstnerOmega = document.getElementById("gerstnerOmega");
-    const gerstnerDir = document.getElementById("gerstnerDir");
-    const gerstnerAmpValue = document.getElementById("gerstnerAmpValue");
-    const gerstnerQValue = document.getElementById("gerstnerQValue");
-    const gerstnerKValue = document.getElementById("gerstnerKValue");
-    const gerstnerOmegaValue = document.getElementById("gerstnerOmegaValue");
-    const gerstnerDirValue = document.getElementById("gerstnerDirValue");
-
-    const gerstnerOrbitCanvas = document.getElementById("gerstnerOrbitCanvas");
-    const gerstnerOrbitAmp = document.getElementById("gerstnerOrbitAmp");
-    const gerstnerOrbitQ = document.getElementById("gerstnerOrbitQ");
-    const gerstnerOrbitK = document.getElementById("gerstnerOrbitK");
-    const gerstnerOrbitOmega = document.getElementById("gerstnerOrbitOmega");
-    const gerstnerOrbitDepth = document.getElementById("gerstnerOrbitDepth");
-    const gerstnerOrbitAmpValue = document.getElementById("gerstnerOrbitAmpValue");
-    const gerstnerOrbitQValue = document.getElementById("gerstnerOrbitQValue");
-    const gerstnerOrbitKValue = document.getElementById("gerstnerOrbitKValue");
-    const gerstnerOrbitOmegaValue = document.getElementById("gerstnerOrbitOmegaValue");
-    const gerstnerOrbitDepthValue = document.getElementById("gerstnerOrbitDepthValue");
-
     const sumWavesCanvas = document.getElementById("sumWavesCanvas");
     const sumAnimate = document.getElementById("sumAnimate");
     const sumMotionSpeed = document.getElementById("sumMotionSpeed");
@@ -3446,26 +3533,67 @@
     const speakerThree = document.getElementById("speakerThree");
     const speakerStop = document.getElementById("speakerStop");
     const studentSoundFrequency = document.getElementById("studentSoundFrequency");
-    const studentSoundAmplitude = document.getElementById("studentSoundAmplitude");
     const studentSoundFrequencyValue = document.getElementById("studentSoundFrequencyValue");
-    const studentSoundAmplitudeValue = document.getElementById("studentSoundAmplitudeValue");
+    const studentSoundAmp = document.getElementById("studentSoundAmp");
+    const studentSoundAmpValue = document.getElementById("studentSoundAmpValue");
+    const studentSoundActive = document.getElementById("studentSoundActive");
+    const studentSoundStringCanvas = document.getElementById("studentSoundStringCanvas");
     const teacherSoundActivateBtn = document.getElementById("teacherSoundActivateBtn");
     const teacherSoundMuteBtn = document.getElementById("teacherSoundMuteBtn");
     const teacherSoundStateLabel = document.getElementById("teacherSoundStateLabel");
     const teacherSoundFreqOne = document.getElementById("teacherSoundFreqOne");
     const teacherSoundFreqOneValue = document.getElementById("teacherSoundFreqOneValue");
+    const teacherSoundAmpOne = document.getElementById("teacherSoundAmpOne");
+    const teacherSoundAmpOneValue = document.getElementById("teacherSoundAmpOneValue");
     const teacherSoundFreqOneOn = document.getElementById("teacherSoundFreqOneOn");
     const teacherSoundFreqTwo = document.getElementById("teacherSoundFreqTwo");
     const teacherSoundFreqTwoValue = document.getElementById("teacherSoundFreqTwoValue");
+    const teacherSoundAmpTwo = document.getElementById("teacherSoundAmpTwo");
+    const teacherSoundAmpTwoValue = document.getElementById("teacherSoundAmpTwoValue");
     const teacherSoundFreqTwoOn = document.getElementById("teacherSoundFreqTwoOn");
     const airMoleculesCanvas = document.getElementById("airMoleculesCanvas");
     const soundWaveSumCanvas = document.getElementById("soundWaveSumCanvas");
+    const soundSpectrumCanvas = document.getElementById("soundSpectrumCanvas");
     const soundSimpleWaveCanvas = document.getElementById("soundSimpleWaveCanvas");
     const soundSimpleMolCanvas = document.getElementById("soundSimpleMolCanvas");
-    const soundSimpleFreq = document.getElementById("soundSimpleFreq");
-    const soundSimpleAmp = document.getElementById("soundSimpleAmp");
+    const soundSimpleAudioOn = document.getElementById("soundSimpleAudioOn");
+    const soundSimpleSustain = document.getElementById("soundSimpleSustain");
     const soundSimpleFreqValue = document.getElementById("soundSimpleFreqValue");
     const soundSimpleAmpValue = document.getElementById("soundSimpleAmpValue");
+    const soundSimpleStringState = {
+      displacement: 0,
+      velocity: 0,
+      omega: 8,
+      dampingRatio: 0.1,
+      dragging: false,
+      pointerId: null,
+      lastTime: 0,
+      lastDragTime: 0,
+      lastDragDisplacement: 0,
+      sustained: false,
+      sustainedAmplitude: null,
+    };
+    let soundSimpleToneOsc = null;
+    let soundSimpleToneGain = null;
+    if (soundSimpleMolCanvas) {
+      soundSimpleMolCanvas.style.touchAction = "none";
+    }
+
+    const createPluckStringState = () => ({
+      displacement: 0,
+      velocity: 0,
+      omega: 14,
+      dampingRatio: 0.065,
+      dragging: false,
+      pointerId: null,
+      lastTime: 0,
+      lastDragTime: 0,
+      lastEmitTime: 0,
+      sustained: false,
+      sustainedAmplitude: null,
+    });
+    const studentSoundStringState = createPluckStringState();
+    // (slide 3.1 string canvas — no teacher string canvases in 3.2)
     const soundDecomposeMixCanvas = document.getElementById("soundDecomposeMixCanvas");
     const soundDecomposePartOneCanvas = document.getElementById("soundDecomposePartOneCanvas");
     const soundDecomposePartTwoCanvas = document.getElementById("soundDecomposePartTwoCanvas");
@@ -4145,58 +4273,6 @@
     initAdaptiveSliderTooltips();
     window.addEventListener("resize", updateAdaptiveTooltipPlacement);
 
-    // @slide 2.5 — επιστρέφει παραμέτρους Gerstner wave A, Q, k, ω, dir από sliders.
-    function getGerstnerSettings() {
-      return {
-        amp: gerstnerAmp ? Number(gerstnerAmp.value) : 0.7,
-        q: gerstnerQ ? Number(gerstnerQ.value) : 0.55,
-        k: gerstnerK ? Number(gerstnerK.value) : 1.4,
-        omega: gerstnerOmega ? Number(gerstnerOmega.value) : 1.1,
-        dirDeg: gerstnerDir ? Number(gerstnerDir.value) : 35,
-      };
-    }
-
-    // @slide 2.5 — ενημερώνει labels A, Q, k, ω, dir Gerstner wave.
-    function updateGerstnerLabels() {
-      const settings = getGerstnerSettings();
-      if (gerstnerAmpValue) gerstnerAmpValue.textContent = settings.amp.toFixed(2);
-      if (gerstnerQValue) gerstnerQValue.textContent = settings.q.toFixed(2);
-      if (gerstnerKValue) gerstnerKValue.textContent = settings.k.toFixed(2);
-      if (gerstnerOmegaValue) gerstnerOmegaValue.textContent = settings.omega.toFixed(2);
-      if (gerstnerDirValue) gerstnerDirValue.textContent = `${Math.round(settings.dirDeg)}°`;
-    }
-
-    [gerstnerAmp, gerstnerQ, gerstnerK, gerstnerOmega, gerstnerDir].forEach((slider) => {
-      slider?.addEventListener("input", updateGerstnerLabels);
-    });
-    updateGerstnerLabels();
-
-    // @slide 2.6 — επιστρέφει παραμέτρους orbit Gerstner (A, Q, k, ω, depthFade).
-    function getGerstnerOrbitSettings() {
-      return {
-        amp: gerstnerAmp ? Number(gerstnerAmp.value) : 0.7,
-        q: gerstnerQ ? Number(gerstnerQ.value) : 0.55,
-        k: gerstnerK ? Number(gerstnerK.value) : 1.4,
-        omega: gerstnerOmega ? Number(gerstnerOmega.value) : 1.1,
-        depthFade: gerstnerOrbitDepth ? Number(gerstnerOrbitDepth.value) : 0.85,
-      };
-    }
-
-    // @slide 2.6 — ενημερώνει labels A, Q, k, ω, depth orbit Gerstner.
-    function updateGerstnerOrbitLabels() {
-      const settings = getGerstnerOrbitSettings();
-      if (gerstnerOrbitAmpValue) gerstnerOrbitAmpValue.textContent = settings.amp.toFixed(2);
-      if (gerstnerOrbitQValue) gerstnerOrbitQValue.textContent = settings.q.toFixed(2);
-      if (gerstnerOrbitKValue) gerstnerOrbitKValue.textContent = settings.k.toFixed(2);
-      if (gerstnerOrbitOmegaValue) gerstnerOrbitOmegaValue.textContent = settings.omega.toFixed(2);
-      if (gerstnerOrbitDepthValue) gerstnerOrbitDepthValue.textContent = settings.depthFade.toFixed(2);
-    }
-
-    [gerstnerOrbitAmp, gerstnerOrbitQ, gerstnerOrbitK, gerstnerOrbitOmega, gerstnerOrbitDepth].forEach((slider) => {
-      slider?.addEventListener("input", updateGerstnerOrbitLabels);
-    });
-    updateGerstnerOrbitLabels();
-
     // @slide 2.3 — ενημερώνει labels πλάτους/συχνότητας 4 συνιστωσών αθροίσματος.
     function updateSumLabels() {
       if (!sumAmp1) {
@@ -4273,16 +4349,127 @@
       }
     });
 
-    // @slide 3.1 — ενημερώνει labels συχνότητας και πλάτους απλού ήχου.
-    function updateSoundSimpleLabels() {
-      if (!soundSimpleFreq) return;
-      soundSimpleFreqValue.textContent = Number(soundSimpleFreq.value).toFixed(1);
-      soundSimpleAmpValue.textContent = Number(soundSimpleAmp.value).toFixed(2);
+    // @slide 3.1 — drag & release σε χορδή: ορίζει αρχική εκτροπή/ταχύτητα για ταλάντωση.
+    function getSoundSimpleStringGeometry(canvas) {
+      if (!canvas) return null;
+      fitCanvasToDisplaySize(canvas);
+      const ratio = window.devicePixelRatio || 1;
+      const width = canvas.width;
+      const height = canvas.height;
+      const anchorX = width * 0.5;
+      const yTop = 24 * ratio;
+      const yBottom = height - 14 * ratio;
+      const maxPull = Math.max(42 * ratio, Math.min(width * 0.2, 120 * ratio));
+      return { ratio, width, height, anchorX, yTop, yBottom, maxPull };
     }
-    [soundSimpleFreq, soundSimpleAmp].forEach((slider) => {
-      slider?.addEventListener("input", updateSoundSimpleLabels);
+
+    function getSoundSimpleStringProfileAtY(geom, y) {
+      if (!geom) return 0;
+      const span = Math.max(1, geom.yBottom - geom.yTop);
+      const yNorm = Math.max(0, Math.min(1, (y - geom.yTop) / span));
+      return Math.sin(Math.PI * yNorm); // 0 στα άκρα, 1 στο κέντρο
+    }
+
+    function getSoundSimpleStringXAtY(geom, displacement, y) {
+      const profile = getSoundSimpleStringProfileAtY(geom, y);
+      return geom.anchorX + displacement * geom.maxPull * profile;
+    }
+
+    function updateSoundSimpleReadouts() {
+      const ampNorm = Math.min(1, Math.abs(soundSimpleStringState.displacement));
+      const amp = 0.08 + 1.72 * ampNorm;
+      const freq = Math.max(0.3, Math.min(6.0, soundSimpleStringState.omega / (2 * Math.PI)));
+      if (soundSimpleFreqValue) soundSimpleFreqValue.textContent = freq.toFixed(2);
+      if (soundSimpleAmpValue) soundSimpleAmpValue.textContent = amp.toFixed(2);
+    }
+
+    function updateSoundSimpleDragFromEvent(event) {
+      if (!soundSimpleMolCanvas) return;
+      const geom = getSoundSimpleStringGeometry(soundSimpleMolCanvas);
+      if (!geom) return;
+      const { x, y } = canvasPointerXY(soundSimpleMolCanvas, event);
+      const profile = Math.max(0.16, getSoundSimpleStringProfileAtY(geom, y));
+      const previous = soundSimpleStringState.displacement;
+      const next = Math.max(-1, Math.min(1, (x - geom.anchorX) / (geom.maxPull * profile)));
+      const now = performance.now() / 1000;
+      const dt = Math.max(1e-3, now - (soundSimpleStringState.lastDragTime || now));
+      soundSimpleStringState.displacement = next;
+      soundSimpleStringState.velocity = (next - previous) / dt;
+      soundSimpleStringState.lastDragTime = now;
+      soundSimpleStringState.lastDragDisplacement = next;
+      updateSoundSimpleReadouts();
+    }
+
+    function stopSoundSimpleStringDrag(event) {
+      if (!soundSimpleMolCanvas || !soundSimpleStringState.dragging) return;
+      if (event && soundSimpleStringState.pointerId !== null) {
+        try { soundSimpleMolCanvas.releasePointerCapture(soundSimpleStringState.pointerId); } catch (_) { }
+      }
+      soundSimpleStringState.dragging = false;
+      soundSimpleStringState.pointerId = null;
+      const pull = Math.min(1, Math.abs(soundSimpleStringState.displacement));
+      soundSimpleStringState.omega = 6 + 16 * pull;
+      soundSimpleStringState.dampingRatio = 0.08 + 0.08 * (1 - pull);
+      soundSimpleStringState.velocity *= 1.2;
+      soundSimpleMolCanvas.style.cursor = "grab";
+      updateSoundSimpleReadouts();
+    }
+
+    soundSimpleMolCanvas?.addEventListener("pointerdown", (event) => {
+      const geom = getSoundSimpleStringGeometry(soundSimpleMolCanvas);
+      if (!geom) return;
+      const { x, y } = canvasPointerXY(soundSimpleMolCanvas, event);
+      const stringX = getSoundSimpleStringXAtY(geom, soundSimpleStringState.displacement, y);
+      const profile = getSoundSimpleStringProfileAtY(geom, y);
+      const nearString = Math.abs(x - stringX) <= 18 * geom.ratio
+        && profile > 0.08
+        && y >= geom.yTop - 10 * geom.ratio
+        && y <= geom.yBottom + 10 * geom.ratio;
+      if (!nearString) return;
+      event.preventDefault();
+      soundSimpleStringState.dragging = true;
+      soundSimpleStringState.pointerId = event.pointerId;
+      soundSimpleStringState.lastDragTime = performance.now() / 1000;
+      soundSimpleStringState.velocity = 0;
+      try { soundSimpleMolCanvas.setPointerCapture(event.pointerId); } catch (_) { }
+      soundSimpleMolCanvas.style.cursor = "grabbing";
+      updateSoundSimpleDragFromEvent(event);
     });
-    updateSoundSimpleLabels();
+
+    soundSimpleMolCanvas?.addEventListener("pointermove", (event) => {
+      if (!soundSimpleStringState.dragging || soundSimpleStringState.pointerId !== event.pointerId) return;
+      event.preventDefault();
+      updateSoundSimpleDragFromEvent(event);
+    });
+
+    soundSimpleMolCanvas?.addEventListener("pointerup", stopSoundSimpleStringDrag);
+    soundSimpleMolCanvas?.addEventListener("pointercancel", stopSoundSimpleStringDrag);
+    soundSimpleMolCanvas?.addEventListener("pointerleave", (event) => {
+      if (soundSimpleStringState.dragging && soundSimpleStringState.pointerId === event.pointerId) {
+        stopSoundSimpleStringDrag(event);
+      }
+    });
+    soundSimpleMolCanvas?.addEventListener("mouseenter", () => {
+      if (!soundSimpleStringState.dragging && soundSimpleMolCanvas) soundSimpleMolCanvas.style.cursor = "grab";
+    });
+
+    soundSimpleAudioOn?.addEventListener("change", () => {
+      if (!soundSimpleAudioOn.checked) {
+        stopSoundSimpleTone(true);
+        return;
+      }
+      ensureAudioContext();
+      const params = getSoundSimpleParameters();
+      syncSoundSimpleTone(params);
+    });
+
+    soundSimpleSustain?.addEventListener("change", () => {
+      if (!soundSimpleSustain.checked) {
+        soundSimpleStringState.sustainedAmplitude = null;
+      }
+    });
+
+    updateSoundSimpleReadouts();
 
     // @slide 6.2 — ενημερώνει labels f_signal και k Euler bridge.
     function updateFFTBridgeLabels() {
@@ -6151,7 +6338,62 @@
     }
 
     wave2DState = createWave2DState(wave2DCanvas);
-    gerstnerState = createGerstnerState(gerstnerCanvas);
+
+    // @slide 2.2β — αρχικοποίηση των δύο comparison canvases (ημιτονοειδές και Gerstner).
+    const compareSineCanvas = document.getElementById("compareSineCanvas");
+    const compareGerstnerCanvas = document.getElementById("compareGerstnerCanvas");
+    const compareAmp = document.getElementById("compareAmp");
+    const compareAmpValue = document.getElementById("compareAmpValue");
+    const compareAnimate = document.getElementById("compareAnimate");
+    let compareSineState = createWave2DState(compareSineCanvas);
+    let compareGerstnerState = createGerstnerState(compareGerstnerCanvas);
+    let compareTime = 0;
+
+    function getCompareAmp() {
+      return compareAmp ? Number(compareAmp.value) : 0.5;
+    }
+
+    compareAmp?.addEventListener("input", () => {
+      if (compareAmpValue) compareAmpValue.textContent = getCompareAmp().toFixed(2);
+    });
+    if (compareAmpValue) compareAmpValue.textContent = getCompareAmp().toFixed(2);
+
+    function getCompareSineSettings() {
+      const A = getCompareAmp();
+      return { amp: A, kx: 1.4, kz: 1.0, omega: 1.2, phi: 0 };
+    }
+
+    function getCompareGerstnerSettings() {
+      const A = getCompareAmp();
+      return { amp: A, q: 0.55, k: 1.4, omega: 1.1, dirDeg: 35 };
+    }
+
+    // @slide 2.3 — κυκλική τροχιά σωματιδίων Gerstner (canvas 2D).
+    const whyGerstnerCanvas = document.getElementById("whyGerstnerCanvas");
+    const whyGerstnerAmp = document.getElementById("whyGerstnerAmp");
+    const whyGerstnerAmpValue = document.getElementById("whyGerstnerAmpValue");
+    let whyGerstnerTime = 0;
+    function getWhyGerstnerAmp() { return whyGerstnerAmp ? Number(whyGerstnerAmp.value) : 0.4; }
+    whyGerstnerAmp?.addEventListener("input", () => {
+      if (whyGerstnerAmpValue) whyGerstnerAmpValue.textContent = getWhyGerstnerAmp().toFixed(2);
+    });
+    if (whyGerstnerAmpValue) whyGerstnerAmpValue.textContent = getWhyGerstnerAmp().toFixed(2);
+
+    // @slide 2.4 — ανάλυση κίνησης σωματιδίων 1D με βελάκια (canvas 2D).
+    const arrow1DSineCanvas = document.getElementById("arrow1DSineCanvas");
+    const arrow1DGerstnerCanvas = document.getElementById("arrow1DGerstnerCanvas");
+    const arrow1DAmp = document.getElementById("arrow1DAmp");
+    const arrow1DAmpValue = document.getElementById("arrow1DAmpValue");
+    let arrow1DTime = 0;
+
+    function getArrow1DAmp() {
+      return arrow1DAmp ? Number(arrow1DAmp.value) : 0.4;
+    }
+    arrow1DAmp?.addEventListener("input", () => {
+      if (arrow1DAmpValue) arrow1DAmpValue.textContent = getArrow1DAmp().toFixed(2);
+    });
+    if (arrow1DAmpValue) arrow1DAmpValue.textContent = getArrow1DAmp().toFixed(2);
+
     const ocean3DStates = [];
     const ocean3DCanvasSet = new Set();
 
@@ -6741,9 +6983,10 @@
     });
     updateEulerLabels();
 
-    // @slide 5.1 — drag στο σημείο του μοναδιαίου κύκλου για άμεσο έλεγχο θ.
+    // @slide 5.1 — drag στο σημείο του μοναδιαίου κύκλου για άμεσο έλεγχο θ και r.
     let eulerPointDragActive = false;
     let eulerPointPointerId = null;
+    let eulerRadius = 1;
 
     function getEulerPlaneGeometry() {
       if (!eulerPlaneCanvas) {
@@ -6764,8 +7007,8 @@
       }
       const theta = thetaSlider ? Number(thetaSlider.value) : 0;
       return {
-        x: geometry.cx + geometry.baseRadius * Math.cos(theta),
-        y: geometry.cy - geometry.baseRadius * Math.sin(theta),
+        x: geometry.cx + geometry.baseRadius * eulerRadius * Math.cos(theta),
+        y: geometry.cy - geometry.baseRadius * eulerRadius * Math.sin(theta),
       };
     }
 
@@ -6784,7 +7027,7 @@
       const pxClient = rect.left + point.x * (rect.width / Math.max(1, eulerPlaneCanvas.width));
       const pyClient = rect.top + point.y * (rect.height / Math.max(1, eulerPlaneCanvas.height));
       const distance = Math.hypot(clientX - pxClient, clientY - pyClient);
-      return distance <= 26;
+      return distance <= 32;
     }
 
     function updateEulerFromPointer(clientX, clientY) {
@@ -6807,10 +7050,19 @@
 
       const dx = x - geometry.cx;
       const dyUp = geometry.cy - y;
+      const dist = Math.hypot(dx, dyUp);
+
+      // Radius: compute normalized distance from center, sticky near 1
+      let nextRadius = dist / geometry.baseRadius;
+      const stickyThreshold = 0.12; // in unit-circle units
+      if (Math.abs(nextRadius - 1) < stickyThreshold) {
+        nextRadius = 1;
+      }
+      eulerRadius = Math.max(0, Math.min(3, nextRadius));
 
       let nextTheta = Math.atan2(dyUp, dx);
 
-      // Snap κοντά στα βασικά σημεία του μοναδιαίου κύκλου: 0, π/2, π, 3π/2.
+      // Snap κοντά στα βασικά σημεία: 0, π/2, π, 3π/2.
       const snapStep = Math.PI / 2;
       const snapThreshold = 0.14;
       const snappedTheta = Math.round(nextTheta / snapStep) * snapStep;
@@ -6830,9 +7082,6 @@
     }
 
     eulerPlaneCanvas?.addEventListener("pointerdown", (event) => {
-      if (!isPointerNearEulerPoint(event.clientX, event.clientY)) {
-        return;
-      }
       eulerPointDragActive = true;
       eulerPointPointerId = event.pointerId;
       eulerPlaneCanvas.setPointerCapture(event.pointerId);
@@ -7334,7 +7583,8 @@
       }
 
       const teacherSources = [];
-      if (teacherSoundFreqOneOn?.checked && teacherSoundFreqOne) {
+      if (teacherSoundFreqOne && teacherSoundFreqOneOn?.checked) {
+        const amp = Number(teacherSoundAmpOne?.value ?? 70) / 100;
         teacherSources.push(
           normalizeClassroomSoundSource({
             key: "teacher-f1",
@@ -7344,12 +7594,13 @@
             role: "teacher",
             origin: "teacher",
             frequency: Number(teacherSoundFreqOne.value),
-            amplitude: 0.36,
+            amplitude: amp,
           })
         );
       }
 
-      if (teacherSoundFreqTwoOn?.checked && teacherSoundFreqTwo) {
+      if (teacherSoundFreqTwo && teacherSoundFreqTwoOn?.checked) {
+        const amp = Number(teacherSoundAmpTwo?.value ?? 70) / 100;
         teacherSources.push(
           normalizeClassroomSoundSource({
             key: "teacher-f2",
@@ -7359,7 +7610,7 @@
             role: "teacher",
             origin: "teacher",
             frequency: Number(teacherSoundFreqTwo.value),
-            amplitude: 0.36,
+            amplitude: amp,
           })
         );
       }
@@ -7387,68 +7638,304 @@
       return getStudentPreviewSoundSources();
     }
 
-    // @slide 3.1, 3.2 — επιστρέφει student preview ηχητικής πηγής.
+    function clampUnit(value) {
+      return Math.max(-1, Math.min(1, Number(value) || 0));
+    }
+
+    // @slide 3.2 — γεωμετρία κατακόρυφης χορδής (δεμένη πάνω/κάτω).
+    function getPluckStringGeometry(canvas) {
+      if (!canvas) return null;
+      fitCanvasToDisplaySize(canvas);
+      const ratio = window.devicePixelRatio || 1;
+      const width = canvas.width;
+      const height = canvas.height;
+      const xMid = width * 0.5;
+      const top = 14 * ratio;
+      const bottom = height - 14 * ratio;
+      const maxPull = Math.max(12 * ratio, Math.min(width * 0.30, 30 * ratio));
+      return { ratio, width, height, xMid, top, bottom, maxPull };
+    }
+
+    function getPluckStringProfileAtY(geom, y) {
+      if (!geom) return 0;
+      const span = Math.max(1, geom.bottom - geom.top);
+      const yNorm = Math.max(0, Math.min(1, (y - geom.top) / span));
+      return Math.sin(Math.PI * yNorm);
+    }
+
+    function getPluckStringAmplitude(state) {
+      return Math.max(0, Math.min(1, Math.abs(state && state.displacement ? state.displacement : 0)));
+    }
+
+    function updatePluckStringPhysics(state, nowSec, sustain = false) {
+      if (!state) return;
+      if (!Number.isFinite(state.lastTime) || state.lastTime <= 0) {
+        state.lastTime = nowSec;
+        return;
+      }
+      const dt = Math.min(0.05, Math.max(1e-3, nowSec - state.lastTime));
+      state.lastTime = nowSec;
+      const omega = Math.max(4, Number(state.omega) || 12);
+      if (state.dragging) {
+        // While dragging with sustain on, track pull so we know the target amplitude on release
+        if (sustain) {
+          state.sustainedAmplitude = Math.abs(Number(state.displacement) || 0);
+        }
+        return;
+      }
+      const x = Number(state.displacement) || 0;
+      const v = Number(state.velocity) || 0;
+      if (sustain) {
+        // Sustained mode: undamped oscillator with amplitude renormalization
+        // Lazily capture amplitude if user enabled sustain while string was already oscillating
+        if (!state.sustainedAmplitude) {
+          const A = Math.sqrt(x * x + (v / omega) * (v / omega));
+          state.sustainedAmplitude = A > 0.001 ? A : 0;
+        }
+        // Only sustain if there's a non-zero target amplitude
+        if (state.sustainedAmplitude > 0.001) {
+          // Undamped harmonic motion
+          const a = -(omega * omega) * x;
+          state.velocity = v + a * dt;
+          state.displacement = x + state.velocity * dt;
+          // Renormalize every frame to eliminate numerical drift
+          const A = Math.sqrt(state.displacement * state.displacement + (state.velocity / omega) * (state.velocity / omega));
+          if (A > 0.0005) {
+            const scale = state.sustainedAmplitude / A;
+            state.displacement *= scale;
+            state.velocity *= scale;
+          }
+        }
+      } else {
+        // Normal damped oscillator
+        state.sustainedAmplitude = null; // Clear sustained amplitude when not sustaining
+        const zeta = Math.max(0.01, Number(state.dampingRatio) || 0.06);
+        const a = -(omega * omega) * x - (2 * zeta * omega) * v;
+        state.velocity = v + a * dt;
+        state.displacement = x + state.velocity * dt;
+        if (Math.abs(state.displacement) < 0.0007 && Math.abs(state.velocity) < 0.001) {
+          state.displacement = 0;
+          state.velocity = 0;
+        }
+      }
+    }
+
+    function updateAllPluckStrings(nowSec) {
+      updatePluckStringPhysics(studentSoundStringState, nowSec, soundSimpleSustain?.checked || false);
+    }
+
+    function drawPluckString(canvas, state, strokeColor = "#ffcf6a") {
+      if (!canvas || !state) return;
+      fitCanvasToDisplaySize(canvas);
+      const geom = getPluckStringGeometry(canvas);
+      if (!geom) return;
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, geom.width, geom.height);
+
+      ctx.strokeStyle = "rgba(130,170,210,0.28)";
+      ctx.lineWidth = 1.1 * geom.ratio;
+      ctx.setLineDash([4 * geom.ratio, 5 * geom.ratio]);
+      ctx.beginPath();
+      ctx.moveTo(geom.xMid, geom.top);
+      ctx.lineTo(geom.xMid, geom.bottom);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      const span = Math.max(1, geom.bottom - geom.top);
+      ctx.strokeStyle = strokeColor;
+      ctx.lineWidth = 2.8 * geom.ratio;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      const steps = 72;
+      for (let i = 0; i <= steps; i++) {
+        const t = i / steps;
+        const y = geom.top + t * span;
+        const profile = Math.sin(Math.PI * t);
+        const x = geom.xMid + state.displacement * geom.maxPull * profile;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      ctx.fillStyle = "#c6d7ea";
+      ctx.fillRect(geom.xMid - 11 * geom.ratio, geom.top - 5 * geom.ratio, 22 * geom.ratio, 5 * geom.ratio);
+      ctx.fillRect(geom.xMid - 11 * geom.ratio, geom.bottom, 22 * geom.ratio, 5 * geom.ratio);
+      ctx.fillStyle = "#eef6ff";
+      ctx.beginPath(); ctx.arc(geom.xMid, geom.top, 2 * geom.ratio, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(geom.xMid, geom.bottom, 2 * geom.ratio, 0, Math.PI * 2); ctx.fill();
+    }
+
+    function installPluckStringHandlers(canvas, state, options = {}) {
+      if (!canvas || !state) return;
+      const onChange = typeof options.onChange === "function" ? options.onChange : () => {};
+      const onRelease = typeof options.onRelease === "function" ? options.onRelease : () => {};
+
+      function updateFromPointer(event) {
+        const geom = getPluckStringGeometry(canvas);
+        if (!geom) return;
+        const { x, y } = canvasPointerXY(canvas, event);
+        const profile = Math.max(0.18, getPluckStringProfileAtY(geom, y));
+        const previous = state.displacement;
+        const next = clampUnit((x - geom.xMid) / (geom.maxPull * profile));
+        const now = performance.now() / 1000;
+        const dt = Math.max(1e-3, now - (state.lastDragTime || now));
+        state.displacement = next;
+        state.velocity = (next - previous) / dt;
+        state.lastDragTime = now;
+        onChange();
+      }
+
+      function stopDrag(event) {
+        if (!state.dragging) return;
+        if (event && state.pointerId !== null) {
+          try { canvas.releasePointerCapture(state.pointerId); } catch (_) { }
+        }
+        state.dragging = false;
+        state.pointerId = null;
+        const pluck = getPluckStringAmplitude(state);
+        state.omega = 9 + 20 * pluck;
+        state.dampingRatio = 0.055 + 0.07 * (1 - pluck);
+        state.velocity *= 1.15;
+        canvas.style.cursor = "grab";
+        onRelease();
+      }
+
+      canvas.addEventListener("pointerdown", (event) => {
+        const geom = getPluckStringGeometry(canvas);
+        if (!geom) return;
+        const { x, y } = canvasPointerXY(canvas, event);
+        const profile = Math.max(0.08, getPluckStringProfileAtY(geom, y));
+        const xOnString = geom.xMid + state.displacement * geom.maxPull * profile;
+        const inVerticalSpan = y >= geom.top - 8 * geom.ratio && y <= geom.bottom + 8 * geom.ratio;
+        if (!inVerticalSpan || Math.abs(x - xOnString) > 14 * geom.ratio) {
+          return;
+        }
+        event.preventDefault();
+        state.dragging = true;
+        state.pointerId = event.pointerId;
+        state.velocity = 0;
+        state.lastDragTime = performance.now() / 1000;
+        try { canvas.setPointerCapture(event.pointerId); } catch (_) { }
+        canvas.style.cursor = "grabbing";
+        updateFromPointer(event);
+      });
+
+      canvas.addEventListener("pointermove", (event) => {
+        if (!state.dragging || state.pointerId !== event.pointerId) return;
+        event.preventDefault();
+        updateFromPointer(event);
+      });
+      canvas.addEventListener("pointerup", stopDrag);
+      canvas.addEventListener("pointercancel", stopDrag);
+      canvas.addEventListener("pointerleave", (event) => {
+        if (state.dragging && state.pointerId === event.pointerId) {
+          stopDrag(event);
+        }
+      });
+      canvas.addEventListener("mouseenter", () => {
+        if (!state.dragging) canvas.style.cursor = "grab";
+      });
+    }
+
     function getStudentPreviewSoundSources() {
-      if (!studentSoundFrequency || !studentSoundAmplitude) {
+      if (!studentSoundFrequency) {
+        return [];
+      }
+      if (!studentSoundActive?.checked) {
         return [];
       }
 
+      const amp = Number(studentSoundAmp?.value ?? 70) / 100;
       return [
         normalizeClassroomSoundSource({
           key: "local-student",
           socketId: "local-student",
           name: "Εσύ",
           frequency: Number(studentSoundFrequency.value),
-          amplitude: Number(studentSoundAmplitude.value),
+          amplitude: amp,
         }),
       ];
     }
 
-    // @slide 3.2 — ενημερώνει labels συχνότητας/πλάτους student ήχου και εκπέμπει event επιλογής.
-    function updateStudentSoundLabels(emitChange = false) {
-      if (!studentSoundFrequency || !studentSoundAmplitude) {
+    function emitStudentStringSource(force = false) {
+      if (isTeacherMode || !studentSoundFrequency) {
         return;
       }
 
+      const now = performance.now() / 1000;
+      if (!force && now - (studentSoundStringState.lastEmitTime || 0) < 0.08) {
+        return;
+      }
+      studentSoundStringState.lastEmitTime = now;
+
+      const amp = Number(studentSoundAmp?.value ?? 70) / 100;
       const source = normalizeClassroomSoundSource({
         socketId: "local-student",
         name: "Εσύ",
         frequency: Number(studentSoundFrequency.value),
-        amplitude: Number(studentSoundAmplitude.value),
+        amplitude: studentSoundActive?.checked ? amp : 0,
       });
 
+      document.dispatchEvent(
+        new CustomEvent("fourier:sound-control-local-change", {
+          detail: {
+            frequency: source.frequency,
+            amplitude: source.amplitude,
+          },
+        })
+      );
+    }
+
+    function updateStudentSoundLabels(emitChange = false) {
+      if (!studentSoundFrequency) {
+        return;
+      }
+      const freq = Number(studentSoundFrequency.value);
+      const amp = Number(studentSoundAmp?.value ?? 70);
+
       if (studentSoundFrequencyValue) {
-        studentSoundFrequencyValue.textContent = `${Math.round(source.frequency)} Hz`;
+        studentSoundFrequencyValue.textContent = `${Math.round(freq)} Hz`;
+      }
+      if (studentSoundAmpValue) {
+        studentSoundAmpValue.textContent = `${amp}%`;
       }
 
-      if (studentSoundAmplitudeValue) {
-        studentSoundAmplitudeValue.textContent = `${Math.round(source.amplitude * 100)}%`;
-      }
-
-      if (emitChange && !isTeacherMode) {
-        // Communication bridge #1 (UI -> sync layer):
-        // classroom-sync.js listens to this event and forwards data through
-        // WebSocket as `fourier:sound-control`.
-        document.dispatchEvent(
-          new CustomEvent("fourier:sound-control-local-change", {
-            detail: {
-              frequency: source.frequency,
-              amplitude: source.amplitude,
-            },
-          })
-        );
+      if (emitChange) {
+        emitStudentStringSource(true);
       }
     }
 
-    [studentSoundFrequency, studentSoundAmplitude].forEach((slider) => {
-      slider?.addEventListener("input", () => {
-        updateStudentSoundLabels(true);
-      });
+    function updateTeacherStringLabels() {
+      if (teacherSoundAmpOneValue) {
+        teacherSoundAmpOneValue.textContent = `${Math.round(Number(teacherSoundAmpOne?.value ?? 70))}%`;
+      }
+      if (teacherSoundAmpTwoValue) {
+        teacherSoundAmpTwoValue.textContent = `${Math.round(Number(teacherSoundAmpTwo?.value ?? 70))}%`;
+      }
+    }
 
-      slider?.addEventListener("change", () => {
-        updateStudentSoundLabels(true);
-      });
+    studentSoundFrequency?.addEventListener("input", () => {
+      updateStudentSoundLabels(true);
     });
+    studentSoundFrequency?.addEventListener("change", () => {
+      updateStudentSoundLabels(true);
+    });
+    studentSoundAmp?.addEventListener("input", () => {
+      updateStudentSoundLabels(true);
+    });
+    studentSoundAmp?.addEventListener("change", () => {
+      updateStudentSoundLabels(true);
+    });
+    studentSoundActive?.addEventListener("change", () => {
+      emitStudentStringSource(true);
+    });
+
+    installPluckStringHandlers(studentSoundStringCanvas, studentSoundStringState, {
+      onChange: () => updateStudentSoundLabels(true),
+      onRelease: () => updateStudentSoundLabels(true),
+    });
+    // Teacher pluck string handlers removed — replaced by slider+checkbox controls
 
     // @slide 3.2 — ενημερώνει labels teacher f1/f2 και συγχρονίζει oscillators.
     function updateTeacherFrequencyLabels(syncAudio = false) {
@@ -7464,10 +7951,11 @@
         syncClassroomSoundEngine();
       }
 
+      updateTeacherStringLabels();
       updateTeacherSoundStatus();
     }
 
-    [teacherSoundFreqOne, teacherSoundFreqTwo].forEach((control) => {
+    [teacherSoundFreqOne, teacherSoundFreqTwo, teacherSoundAmpOne, teacherSoundAmpTwo].forEach((control) => {
       control?.addEventListener("input", () => {
         updateTeacherFrequencyLabels(true);
       });
@@ -7628,6 +8116,18 @@
       });
 
       updateTeacherSoundStatus();
+    }
+
+    let lastClassroomSoundEngineSync = 0;
+    function syncClassroomSoundEngineThrottled(nowSec) {
+      if (!isTeacherMode || !classroomSoundEnabled) {
+        return;
+      }
+      if (nowSec - lastClassroomSoundEngineSync < 0.06) {
+        return;
+      }
+      lastClassroomSoundEngineSync = nowSec;
+      syncClassroomSoundEngine();
     }
 
     // Communication bridge #2 (sync layer -> rendering/audio layer):
@@ -8163,14 +8663,197 @@
       context.stroke();
     }
 
-    // @slide 3.1 — σχεδιάζει απλό ημίτονο + μόρια αέρα και label συχνότητας/πλάτους.
+    // @slide 3.2 — σχεδιάζει φάσμα συχνοτήτων: θέση=f, ύψος bar=A.
+    function drawSoundSpectrum(canvas, sourcesOrLegacy) {
+      if (!canvas) return;
+      fitCanvasToDisplaySize(canvas);
+      const ctx = canvas.getContext("2d");
+      const W = canvas.width;
+      const H = canvas.height;
+      const ratio = window.devicePixelRatio || 1;
+      const padL = 34 * ratio;
+      const padR = 10 * ratio;
+      const padT = 14 * ratio;
+      const padB = 24 * ratio;
+      const plotW = Math.max(1, W - padL - padR);
+      const plotH = Math.max(1, H - padT - padB);
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, W, H);
+
+      const sources = normalizeCompositeSourcesInput(sourcesOrLegacy).filter((source) => source.amplitude > 0.001);
+      const maxFreq = 1400;
+      const maxAmp = Math.max(0.25, ...sources.map((s) => s.amplitude));
+
+      // Grid and axes.
+      ctx.strokeStyle = "rgba(72,110,158,0.28)";
+      ctx.lineWidth = Math.max(1, ratio * 1.0);
+      for (let f = 0; f <= 1400; f += 200) {
+        const x = padL + (f / maxFreq) * plotW;
+        ctx.beginPath();
+        ctx.moveTo(x, padT);
+        ctx.lineTo(x, H - padB);
+        ctx.stroke();
+        ctx.fillStyle = "rgba(165,189,224,0.72)";
+        ctx.font = `${Math.max(9, 9 * ratio)}px Segoe UI`;
+        ctx.fillText(String(f), x - 8 * ratio, H - 7 * ratio);
+      }
+      ctx.strokeStyle = "#31517f";
+      ctx.beginPath();
+      ctx.moveTo(padL, H - padB);
+      ctx.lineTo(W - padR, H - padB);
+      ctx.moveTo(padL, H - padB);
+      ctx.lineTo(padL, padT);
+      ctx.stroke();
+
+      ctx.fillStyle = "#8fb0da";
+      ctx.font = `${Math.max(10, 10 * ratio)}px Segoe UI`;
+      ctx.fillText("f (Hz)", W - 44 * ratio, H - 8 * ratio);
+      ctx.fillText("A", 8 * ratio, padT + 2 * ratio);
+
+      if (!sources.length) {
+        ctx.fillStyle = "rgba(159,186,224,0.7)";
+        ctx.font = `${Math.max(10, 10 * ratio)}px Segoe UI`;
+        ctx.fillText("Καμία ενεργή πηγή", padL + 8 * ratio, padT + 14 * ratio);
+        return;
+      }
+
+      // Bars by active source.
+      sources.forEach((source, index) => {
+        const x = padL + (Math.max(0, Math.min(maxFreq, source.frequency)) / maxFreq) * plotW;
+        const barH = (Math.max(0, source.amplitude) / maxAmp) * plotH;
+        const y = H - padB - barH;
+        const color = getCompositeSourceColor(source, index, 0.95);
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = Math.max(2.2, ratio * 2.4);
+        ctx.beginPath();
+        ctx.moveTo(x, H - padB);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x, y, Math.max(2.5, ratio * 2.7), 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "rgba(220,236,255,0.90)";
+        ctx.font = `${Math.max(9, 9 * ratio)}px Segoe UI`;
+        const label = `${Math.round(source.frequency)}Hz • ${(source.amplitude).toFixed(2)}`;
+        ctx.fillText(label, Math.min(W - 78 * ratio, x + 4 * ratio), Math.max(10 * ratio, y - 4 * ratio));
+      });
+    }
+
+    // @slide 3.1 — ενημερώνει τη χορδή ως αποσβεννυόμενη ταλάντωση μετά το release.
+    function updateSoundSimpleStringPhysics(time) {
+      if (!Number.isFinite(soundSimpleStringState.lastTime) || soundSimpleStringState.lastTime <= 0) {
+        soundSimpleStringState.lastTime = time;
+        return;
+      }
+      const dt = Math.min(0.04, Math.max(1e-3, time - soundSimpleStringState.lastTime));
+      soundSimpleStringState.lastTime = time;
+      if (soundSimpleStringState.dragging) {
+        return;
+      }
+      const x = soundSimpleStringState.displacement;
+      const v = soundSimpleStringState.velocity;
+      const omega = Math.max(2, soundSimpleStringState.omega);
+      const zeta = Math.max(0.01, soundSimpleStringState.dampingRatio);
+      const a = -(omega * omega) * x - (2 * zeta * omega) * v;
+      soundSimpleStringState.velocity = v + a * dt;
+      soundSimpleStringState.displacement = x + soundSimpleStringState.velocity * dt;
+      if (Math.abs(soundSimpleStringState.displacement) < 0.0008 && Math.abs(soundSimpleStringState.velocity) < 0.0015) {
+        soundSimpleStringState.displacement = 0;
+        soundSimpleStringState.velocity = 0;
+      }
+    }
+
+    // @slide 3.1 — επιστρέφει παραμέτρους κύματος από την τρέχουσα εκτροπή της χορδής.
+    function getSoundSimpleParameters() {
+      const pull = Math.min(1, Math.abs(soundSimpleStringState.displacement));
+      const amp = 0.08 + 1.72 * pull;
+      const freq = Math.max(0.3, Math.min(6.0, soundSimpleStringState.omega / (2 * Math.PI)));
+      return { amp, freq };
+    }
+
+    // @slide 3.1 — σταματά tone oscillator της χορδής με σύντομο fade-out.
+    function stopSoundSimpleTone(fast = false) {
+      if (!soundSimpleToneOsc || !soundSimpleToneGain || !audioContext) {
+        soundSimpleToneOsc = null;
+        soundSimpleToneGain = null;
+        return;
+      }
+      const now = audioContext.currentTime;
+      const tau = fast ? 0.015 : 0.045;
+      try {
+        soundSimpleToneGain.gain.cancelScheduledValues(now);
+        soundSimpleToneGain.gain.setTargetAtTime(0.0001, now, tau);
+      } catch {
+      }
+      const osc = soundSimpleToneOsc;
+      const gain = soundSimpleToneGain;
+      soundSimpleToneOsc = null;
+      soundSimpleToneGain = null;
+      setTimeout(() => {
+        try { osc.stop(); } catch { }
+        try { osc.disconnect(); } catch { }
+        try { gain.disconnect(); } catch { }
+      }, fast ? 70 : 180);
+    }
+
+    // @slide 3.1 — συγχρονίζει tone με f/A χορδής όταν είναι ενεργό το checkbox.
+    function syncSoundSimpleTone(params, forceMute = false) {
+      if (forceMute || !soundSimpleAudioOn?.checked || !params) {
+        stopSoundSimpleTone();
+        return;
+      }
+
+      const amplitudeNorm = Math.max(0, Math.min(1, params.amp / 1.8));
+      if (amplitudeNorm < 0.02) {
+        stopSoundSimpleTone();
+        return;
+      }
+
+      ensureAudioContext();
+      if (!audioContext) {
+        return;
+      }
+
+      const now = audioContext.currentTime;
+      const targetHz = Math.max(90, Math.min(1400, 90 + params.freq * 220));
+      const targetGain = 0.015 + amplitudeNorm * 0.08;
+
+      if (!soundSimpleToneOsc || !soundSimpleToneGain) {
+        soundSimpleToneOsc = audioContext.createOscillator();
+        soundSimpleToneOsc.type = "sine";
+        soundSimpleToneGain = audioContext.createGain();
+        soundSimpleToneGain.gain.value = 0.0001;
+        soundSimpleToneOsc.connect(soundSimpleToneGain);
+        soundSimpleToneGain.connect(audioContext.destination);
+        soundSimpleToneOsc.start(now);
+      }
+
+      try {
+        soundSimpleToneOsc.frequency.cancelScheduledValues(now);
+        soundSimpleToneOsc.frequency.setTargetAtTime(targetHz, now, 0.03);
+        soundSimpleToneGain.gain.cancelScheduledValues(now);
+        soundSimpleToneGain.gain.setTargetAtTime(targetGain, now, 0.04);
+      } catch {
+      }
+    }
+
+    // @slide 3.1 — σχεδιάζει κύμα πίεσης + μόρια αέρα από draggable χορδή.
     function drawSoundSimple(waveCanvas, molCanvas, time) {
       if (!waveCanvas || !molCanvas) return;
       fitCanvasToDisplaySize(waveCanvas);
       fitCanvasToDisplaySize(molCanvas);
+      updateSoundSimpleStringPhysics(time);
+      updateSoundSimpleReadouts();
       const ratio = window.devicePixelRatio || 1;
-      const freq = parseFloat(soundSimpleFreq?.value ?? 2);
-      const amp = parseFloat(soundSimpleAmp?.value ?? 1);
+      const { freq, amp } = getSoundSimpleParameters();
+      syncSoundSimpleTone({ freq, amp });
+      const omegaTime = 2 * Math.PI * freq * 0.75;
 
       // ── sine wave panel ──────────────────────────────────────────
       const wCtx = waveCanvas.getContext("2d");
@@ -8191,9 +8874,8 @@
       // label
       wCtx.fillStyle = "#7dcfcf";
       wCtx.font = `${11 * ratio}px Segoe UI, sans-serif`;
-      wCtx.fillText(`f = ${freq.toFixed(1)}   A = ${amp.toFixed(2)}`, 12 * ratio, 18 * ratio);
+      wCtx.fillText(`f = ${freq.toFixed(2)} Hz   A = ${amp.toFixed(2)}`, 12 * ratio, 18 * ratio);
 
-      const omega = 2 * Math.PI * freq * 0.3;
       const maxAmp = (wH / 2 - 14 * ratio) * Math.min(1, amp / 1.8);
 
       // gradient fill under wave
@@ -8205,7 +8887,9 @@
       wCtx.beginPath();
       for (let px = 0; px <= wW; px++) {
         const nx = px / wW;
-        const y = wH / 2 - maxAmp * Math.sin(2 * Math.PI * freq * nx - omega * time);
+        const dist = Math.abs(nx - 0.5);
+        const envelope = Math.exp(-1.3 * dist);
+        const y = wH / 2 - maxAmp * envelope * Math.sin(2 * Math.PI * (freq * 2.5 * dist) - omegaTime * time);
         if (px === 0) wCtx.moveTo(px, y); else wCtx.lineTo(px, y);
       }
       wCtx.lineTo(wW, wH / 2);
@@ -8219,7 +8903,9 @@
       wCtx.beginPath();
       for (let px = 0; px <= wW; px++) {
         const nx = px / wW;
-        const y = wH / 2 - maxAmp * Math.sin(2 * Math.PI * freq * nx - omega * time);
+        const dist = Math.abs(nx - 0.5);
+        const envelope = Math.exp(-1.3 * dist);
+        const y = wH / 2 - maxAmp * envelope * Math.sin(2 * Math.PI * (freq * 2.5 * dist) - omegaTime * time);
         if (px === 0) wCtx.moveTo(px, y); else wCtx.lineTo(px, y);
       }
       wCtx.stroke();
@@ -8241,16 +8927,19 @@
       const lp = 15 * ratio, rp = 15 * ratio, tp = 28 * ratio;
       const uw = mW - lp - rp;
       const rGap = (mH - tp - 8 * ratio) / rows;
-      const spatial = 2 * Math.PI * (1.4 + freq * 0.32);
+      const spatial = 2 * Math.PI * (1.6 + freq * 0.45);
 
       for (let row = 0; row < rows; row++) {
         const y = tp + row * rGap + rGap / 2;
         for (let i = 0; i < columns; i++) {
           const nx = i / (columns - 1);
           const baseX = lp + nx * uw;
-          const phase = spatial * nx - omega * time;
-          const density = amp * Math.cos(phase);
-          const displacement = amp * 7 * ratio * Math.sin(phase);
+          const sideSign = nx >= 0.5 ? 1 : -1;
+          const dist = Math.abs(nx - 0.5);
+          const envelope = Math.exp(-1.25 * dist);
+          const phase = spatial * dist - omegaTime * time;
+          const density = amp * envelope * Math.cos(phase);
+          const displacement = sideSign * amp * envelope * 8.5 * ratio * Math.sin(phase);
           const x = baseX + displacement;
           const r = Math.max(0.4, (1.8 + density * 1.4) * ratio);
           const bright = Math.min(255, Math.max(50, Math.round(130 + density * 110)));
@@ -8259,6 +8948,49 @@
           mCtx.arc(x, y, r, 0, Math.PI * 2);
           mCtx.fill();
         }
+      }
+
+      const geom = getSoundSimpleStringGeometry(molCanvas);
+      if (geom) {
+        const yMid = (geom.yTop + geom.yBottom) * 0.5;
+        const stringXMid = getSoundSimpleStringXAtY(geom, soundSimpleStringState.displacement, yMid);
+
+        // Guitar-like fixed anchors (nut/bridge) and center guide.
+        mCtx.strokeStyle = "rgba(130,170,210,0.35)";
+        mCtx.lineWidth = 1.2 * geom.ratio;
+        mCtx.setLineDash([4 * geom.ratio, 5 * geom.ratio]);
+        mCtx.beginPath();
+        mCtx.moveTo(geom.anchorX, geom.yTop);
+        mCtx.lineTo(geom.anchorX, geom.yBottom);
+        mCtx.stroke();
+        mCtx.setLineDash([]);
+
+        mCtx.strokeStyle = soundSimpleStringState.dragging ? "#ffd277" : "#ffba4a";
+        mCtx.lineWidth = 3.9 * geom.ratio;
+        mCtx.lineCap = "round";
+        mCtx.lineJoin = "round";
+        mCtx.beginPath();
+        const steps = 48;
+        for (let si = 0; si <= steps; si++) {
+          const t = si / steps;
+          const y = geom.yTop + t * (geom.yBottom - geom.yTop);
+          const x = getSoundSimpleStringXAtY(geom, soundSimpleStringState.displacement, y);
+          if (si === 0) mCtx.moveTo(x, y);
+          else mCtx.lineTo(x, y);
+        }
+        mCtx.stroke();
+
+        mCtx.fillStyle = "#bfd0df";
+        mCtx.fillRect(geom.anchorX - 12 * geom.ratio, geom.yTop - 5 * geom.ratio, 24 * geom.ratio, 5 * geom.ratio);
+        mCtx.fillRect(geom.anchorX - 12 * geom.ratio, geom.yBottom, 24 * geom.ratio, 5 * geom.ratio);
+        mCtx.fillStyle = "#e8f2ff";
+        mCtx.beginPath(); mCtx.arc(geom.anchorX, geom.yTop, 2.4 * geom.ratio, 0, Math.PI * 2); mCtx.fill();
+        mCtx.beginPath(); mCtx.arc(geom.anchorX, geom.yBottom, 2.4 * geom.ratio, 0, Math.PI * 2); mCtx.fill();
+
+        mCtx.fillStyle = "#fff1cc";
+        mCtx.beginPath();
+        mCtx.arc(stringXMid, yMid, 5.2 * geom.ratio, 0, Math.PI * 2);
+        mCtx.fill();
       }
     }
 
@@ -8299,10 +9031,13 @@
       context.font = `${12 * ratio}px Segoe UI`;
       context.fillText("Πυκνώσεις / Αραιώσεις αέρα", 12 * ratio, 20 * ratio);
 
+      // Reserve right area for speaker
+      const speakerAreaWidth = 52 * ratio;
+
       const columns = 70;
       const rows = 5;
       const leftPadding = 20 * ratio;
-      const rightPadding = 20 * ratio;
+      const rightPadding = speakerAreaWidth + 8 * ratio;
       const topPadding = 36 * ratio;
       const usableWidth = width - leftPadding - rightPadding;
       const rowGap = (height - topPadding - 18 * ratio) / rows;
@@ -8340,6 +9075,78 @@
           context.arc(baseX + displacement, y, radius, 0, Math.PI * 2);
           context.fill();
         }
+      }
+
+      // Draw speaker on right edge
+      {
+        // Compute aggregate vibration
+        let speakerVib = 0;
+        let totalAmp = 0;
+        for (let si = 0; si < sources.length; si += 1) {
+          const s = sources[si];
+          const omega = 2 * Math.PI * s.frequency;
+          speakerVib += s.amplitude * Math.sin(omega * time + si * 0.6);
+          totalAmp += s.amplitude;
+        }
+
+        const speakerActive = hasAny && totalAmp > 0.01;
+        const cx = width - speakerAreaWidth * 0.5;
+        const cy = height * 0.5;
+        const bodyH = height * 0.52;
+        const bodyW = 14 * ratio;
+        const coneDepth = speakerAreaWidth * 0.42;
+        // vibration offset
+        const vibOffset = speakerActive ? speakerVib * 3.5 * ratio * Math.min(1, totalAmp / 0.6) : 0;
+
+        // Speaker body (rectangle on the right edge)
+        const bodyX = cx + coneDepth * 0.5 + vibOffset;
+        context.fillStyle = speakerActive ? "#4a90d9" : "#2a4060";
+        context.strokeStyle = speakerActive ? "#7ab8ff" : "#3a5878";
+        context.lineWidth = 1.5 * ratio;
+        context.beginPath();
+        context.roundRect(bodyX - bodyW * 0.5, cy - bodyH * 0.5, bodyW, bodyH, 3 * ratio);
+        context.fill();
+        context.stroke();
+
+        // Speaker cone (trapezoid pointing left)
+        const coneTopHalf = bodyH * 0.5;
+        const coneTipHalf = bodyH * 0.14;
+        const coneBaseX = bodyX - bodyW * 0.5 + vibOffset * 0.6;
+        const coneTipX = coneBaseX - coneDepth;
+
+        context.fillStyle = speakerActive ? "rgba(100, 170, 255, 0.22)" : "rgba(60, 100, 150, 0.15)";
+        context.strokeStyle = speakerActive ? "#6ab0ff" : "#3a6080";
+        context.lineWidth = 1.2 * ratio;
+        context.beginPath();
+        context.moveTo(coneBaseX, cy - coneTopHalf);
+        context.lineTo(coneBaseX, cy + coneTopHalf);
+        context.lineTo(coneTipX, cy + coneTipHalf);
+        context.lineTo(coneTipX, cy - coneTipHalf);
+        context.closePath();
+        context.fill();
+        context.stroke();
+
+        // Sound waves arcs (emitted to the left when active)
+        if (speakerActive) {
+          const numWaves = 3;
+          for (let wi = 0; wi < numWaves; wi += 1) {
+            const phase = ((time * 1.8 + wi * 0.38) % 1);
+            const waveR = (coneDepth * 0.6 + phase * coneDepth * 1.4);
+            const waveAlpha = (1 - phase) * 0.55 * Math.min(1, totalAmp * 1.5);
+            context.strokeStyle = `rgba(100, 180, 255, ${waveAlpha.toFixed(3)})`;
+            context.lineWidth = 1.4 * ratio;
+            context.beginPath();
+            context.arc(coneTipX + vibOffset * 0.3, cy, waveR, -Math.PI * 0.35, Math.PI * 0.35);
+            context.stroke();
+          }
+        }
+
+        // Label
+        context.fillStyle = speakerActive ? "#a0d4ff" : "#506a88";
+        context.font = `${10 * ratio}px Segoe UI`;
+        context.textAlign = "center";
+        context.fillText("ηχείο", cx + vibOffset * 0.1, cy + bodyH * 0.5 + 14 * ratio);
+        context.textAlign = "left";
       }
     }
 
@@ -8681,6 +9488,18 @@
       context.arc(px, py, Math.max(3, ratio * 3), 0, 2 * Math.PI);
       context.fill();
 
+      // Coordinates label next to the point
+      const reVal = radius * Math.cos(theta);
+      const imVal = radius * Math.sin(theta);
+      const coordText = `(${reVal.toFixed(2)}, ${imVal.toFixed(2)})`;
+      const labelOffX = px > cx ? 10 * ratio : -10 * ratio;
+      const labelOffY = py < cy ? -14 * ratio : 14 * ratio;
+      context.font = `bold ${Math.max(11, 11 * ratio)}px Segoe UI`;
+      context.fillStyle = "#9be2ff";
+      context.textAlign = px > cx ? "left" : "right";
+      context.textBaseline = "middle";
+      context.fillText(coordText, px + labelOffX, py + labelOffY);
+
       context.font = `${Math.max(10, 10 * ratio)}px Segoe UI`;
       context.fillStyle = "#9fd3ff";
       context.textAlign = "left";
@@ -8688,8 +9507,50 @@
       context.fillStyle = "#b8f0c6";
       context.fillText("i·sin(θ)", cx + 10 * ratio, py - 8 * ratio);
 
-      const re = radius * Math.cos(theta);
-      const im = radius * Math.sin(theta);
+      const re = reVal;
+      const im = imVal;
+
+      // Corner box: rectangular + polar form
+      const thetaDeg = (theta * 180 / Math.PI);
+      const thetaNorm = ((thetaDeg % 360) + 360) % 360;
+      const reStr = re >= 0 ? re.toFixed(3) : re.toFixed(3);
+      const imStr = im >= 0 ? `+ ${im.toFixed(3)}i` : `− ${Math.abs(im).toFixed(3)}i`;
+      const thetaStr = theta.toFixed(3);
+      const rStr = radius.toFixed(3);
+      const rPrefix = Math.abs(radius - 1) < 0.001 ? `` : `${rStr}·`;
+      const rectStr = `z = ${reStr} ${imStr}`;
+      const polarStr = `z = ${rPrefix}cos(${thetaStr}) + i·${rPrefix}sin(${thetaStr})`;
+      const expStr = `z = ${rStr}·e^(i·${thetaStr})`;
+      
+
+      const boxPad = 10 * ratio;
+      const boxX = 10 * ratio;
+      const boxY = 10 * ratio;
+      context.font = `${Math.max(11, 11 * ratio)}px Segoe UI`;
+      const w1 = context.measureText(rectStr).width;
+      const w2 = context.measureText(polarStr).width;
+      const w3 = context.measureText(expStr).width;
+      const boxW = Math.max(w1, w2, w3) + boxPad * 2;
+      const lineH = 17 * ratio;
+      const boxH = lineH * 3 + boxPad * 2;
+
+      context.fillStyle = "rgba(0,20,40,0.72)";
+      context.strokeStyle = "rgba(100,160,255,0.35)";
+      context.lineWidth = ratio;
+      context.beginPath();
+      context.roundRect(boxX, boxY, boxW, boxH, 6 * ratio);
+      context.fill();
+      context.stroke();
+
+      context.textAlign = "left";
+      context.textBaseline = "top";
+      context.fillStyle = "#9be2ff";
+      context.fillText(rectStr, boxX + boxPad, boxY + boxPad);
+      context.fillStyle = "#ffe4a6";
+      context.fillText(polarStr, boxX + boxPad, boxY + boxPad + lineH);
+      context.fillStyle = "#b8f0c6";
+      context.fillText(expStr, boxX + boxPad, boxY + boxPad + lineH * 2);
+
       if (eulerFormulaText) {
         eulerFormulaText.textContent = `e^{iθ} = ${re.toFixed(3)} + i·${im.toFixed(3)} = cos(θ) + i·sin(θ)`;
       }
@@ -11945,13 +12806,378 @@
     }
 
     let animationStartTime = performance.now();
+
+    // @slide 2.2α — βοηθητική: σχεδιάζει βέλος με κεφαλή σε 2D canvas.
+    function draw1DArrowHead(ctx, x1, y1, x2, y2, color, lw) {
+      const dx = x2 - x1, dy = y2 - y1;
+      const len = Math.hypot(dx, dy);
+      if (len < 2) return;
+      const angle = Math.atan2(dy, dx);
+      const hs = Math.min(11, len * 0.55);
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = lw || 2;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2 - Math.cos(angle) * hs * 0.55, y2 - Math.sin(angle) * hs * 0.55);
+      ctx.stroke();
+      ctx.save();
+      ctx.translate(x2, y2);
+      ctx.rotate(angle);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(-hs, -hs * 0.38);
+      ctx.lineTo(-hs, hs * 0.38);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+      ctx.restore();
+    }
+
+    // @slide 2.2α — σχεδιάζει ημιτονοειδές κύμα 1D με κατακόρυφα βελάκια κίνησης.
+    function draw1DSineWithArrows(canvas, t, A) {
+      if (!canvas) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const displayW = Math.max(1, canvas.clientWidth);
+      const displayH = Math.max(1, canvas.clientHeight);
+      const W = Math.round(displayW * dpr);
+      const H = Math.round(displayH * dpr);
+      if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = "#030a16";
+      ctx.fillRect(0, 0, W, H);
+
+      const k = 1.0, omega = 1.0;
+      const xRange = 2 * Math.PI;
+      const padX = 28 * dpr, padY = 28 * dpr;
+      const plotW = W - 2 * padX;
+      const midY = H / 2;
+      const scaleX = plotW / xRange;
+      const scaleY = (H / 2 - padY) * 0.82;
+
+      // Grid
+      ctx.strokeStyle = "rgba(80,130,220,0.14)";
+      ctx.lineWidth = dpr;
+      ctx.setLineDash([4 * dpr, 6 * dpr]);
+      for (let gi = 0; gi <= 4; gi++) {
+        const gx = padX + (gi / 4) * plotW;
+        ctx.beginPath(); ctx.moveTo(gx, padY); ctx.lineTo(gx, H - padY); ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      // x-axis
+      ctx.strokeStyle = "rgba(140,180,255,0.28)";
+      ctx.lineWidth = dpr;
+      ctx.beginPath(); ctx.moveTo(padX, midY); ctx.lineTo(W - padX, midY); ctx.stroke();
+
+      // Wave curve
+      ctx.strokeStyle = "#5ba4ff";
+      ctx.lineWidth = 2.5 * dpr;
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      for (let i = 0; i <= 400; i++) {
+        const x0 = (i / 400) * xRange;
+        const px = padX + x0 * scaleX;
+        const py = midY - A * Math.sin(k * x0 - omega * t) * scaleY;
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      // Sample points: orbit trace + particle dot + velocity arrow
+      const nSamp = 10;
+      const maxArrowPx = 30 * dpr;
+      const maxSpeed = A * omega * scaleY;
+      for (let si = 0; si < nSamp; si++) {
+        const x0 = ((si + 0.5) / nSamp) * xRange;
+        const theta = k * x0 - omega * t;
+        const yPhys = A * Math.sin(theta);
+        const vyPhys = -A * omega * Math.cos(theta); // dy/dt
+        const px = padX + x0 * scaleX;
+        const py = midY - yPhys * scaleY;
+        // Vertical oscillation trace
+        const orbitTop = midY - A * scaleY;
+        const orbitBottom = midY + A * scaleY;
+        const orbitGradient = ctx.createLinearGradient(px, orbitTop, px, orbitBottom);
+        orbitGradient.addColorStop(0, "rgba(91,164,255,0.05)");
+        orbitGradient.addColorStop(0.5, "rgba(91,164,255,0.22)");
+        orbitGradient.addColorStop(1, "rgba(91,164,255,0.05)");
+        ctx.strokeStyle = orbitGradient;
+        ctx.lineWidth = 1.2 * dpr;
+        ctx.setLineDash([2 * dpr, 2.5 * dpr]);
+        ctx.beginPath(); ctx.moveTo(px, orbitTop); ctx.lineTo(px, orbitBottom); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = "rgba(91,164,255,0.08)";
+        ctx.beginPath();
+        ctx.ellipse(px, midY, 4.5 * dpr, Math.max(5 * dpr, A * scaleY), 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(91,164,255,0.10)";
+        ctx.lineWidth = 0.8 * dpr;
+        ctx.beginPath(); ctx.moveTo(px, midY - A * scaleY); ctx.lineTo(px, midY + A * scaleY); ctx.stroke();
+        ctx.setLineDash([]);
+        // Particle dot
+        ctx.fillStyle = "#ffdd44";
+        ctx.beginPath(); ctx.arc(px, py, 3.5 * dpr, 0, Math.PI * 2); ctx.fill();
+        // Velocity arrow (purely vertical)
+        const dpy = -vyPhys * scaleY; // canvas direction
+        if (Math.abs(dpy) < 3 * dpr) continue;
+        const scale = Math.min(1, maxArrowPx / Math.max(maxSpeed, 0.01));
+        draw1DArrowHead(ctx, px, py, px, py + dpy * scale, "#ffdd44", 2 * dpr);
+      }
+
+      // Labels
+      ctx.fillStyle = "rgba(140,180,255,0.5)";
+      ctx.font = `${11 * dpr}px Segoe UI, sans-serif`;
+      ctx.fillText("x →", W - padX + 2 * dpr, midY - 4 * dpr);
+      ctx.fillStyle = "rgba(255,220,68,0.65)";
+      ctx.fillText("↕ κατακόρυφη κίνηση", padX + 4 * dpr, padY - 8 * dpr);
+    }
+
+    // @slide 2.2α — σχεδιάζει Gerstner κύμα 1D με κυκλικά βελάκια κίνησης.
+    function draw1DGerstnerWithArrows(canvas, t, A) {
+      if (!canvas) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const displayW = Math.max(1, canvas.clientWidth);
+      const displayH = Math.max(1, canvas.clientHeight);
+      const W = Math.round(displayW * dpr);
+      const H = Math.round(displayH * dpr);
+      if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = "#020810";
+      ctx.fillRect(0, 0, W, H);
+
+      const k = 1.0, omega = 1.0, Q = 0.75;
+      const xRange = 2 * Math.PI;
+      const padX = 28 * dpr, padY = 28 * dpr;
+      const plotW = W - 2 * padX;
+      const midY = H / 2;
+      const scaleX = plotW / xRange;
+      const scaleY = (H / 2 - padY) * 0.82;
+
+      // Grid
+      ctx.strokeStyle = "rgba(80,130,220,0.14)";
+      ctx.lineWidth = dpr;
+      ctx.setLineDash([4 * dpr, 6 * dpr]);
+      for (let gi = 0; gi <= 4; gi++) {
+        const gx = padX + (gi / 4) * plotW;
+        ctx.beginPath(); ctx.moveTo(gx, padY); ctx.lineTo(gx, H - padY); ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      // x-axis
+      ctx.strokeStyle = "rgba(140,180,255,0.28)";
+      ctx.lineWidth = dpr;
+      ctx.beginPath(); ctx.moveTo(padX, midY); ctx.lineTo(W - padX, midY); ctx.stroke();
+
+      // Gerstner wave curve
+      ctx.strokeStyle = "#ff9055";
+      ctx.lineWidth = 2.5 * dpr;
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      for (let i = 0; i <= 400; i++) {
+        const x0 = (i / 400) * xRange;
+        const theta = k * x0 - omega * t;
+        const px = padX + (x0 + Q * A * Math.cos(theta)) * scaleX;
+        const py = midY - A * Math.sin(theta) * scaleY;
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      // Sample points: orbit ellipse + particle dot + velocity arrow
+      const nSamp = 8;
+      const maxArrowPx = 30 * dpr;
+      const maxSpeed_canvas = A * omega * Math.hypot(Q * scaleX, scaleY);
+      for (let si = 0; si < nSamp; si++) {
+        const x0 = ((si + 0.5) / nSamp) * xRange;
+        const theta = k * x0 - omega * t;
+        const xPhys = x0 + Q * A * Math.cos(theta);
+        const yPhys = A * Math.sin(theta);
+        const vxPhys = Q * A * omega * Math.sin(theta);  // dx/dt
+        const vyPhys = -A * omega * Math.cos(theta);     // dy/dt
+        const px = padX + xPhys * scaleX;
+        const py = midY - yPhys * scaleY;
+        const restPx = padX + x0 * scaleX;
+        // Circular orbit ellipse centered at rest position
+        const orbitRx = Q * A * scaleX;
+        const orbitRy = A * scaleY;
+        ctx.fillStyle = "rgba(255,144,85,0.07)";
+        ctx.beginPath();
+        ctx.ellipse(restPx, midY, Math.max(1, orbitRx), Math.max(1, orbitRy), 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255,144,85,0.20)";
+        ctx.lineWidth = 1.05 * dpr;
+        ctx.setLineDash([2 * dpr, 2.5 * dpr]);
+        ctx.beginPath();
+        ctx.ellipse(restPx, midY, Math.max(1, orbitRx), Math.max(1, orbitRy), 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        // Particle dot
+        ctx.fillStyle = "#ffaa44";
+        ctx.beginPath(); ctx.arc(px, py, 3.5 * dpr, 0, Math.PI * 2); ctx.fill();
+        // Velocity arrow (rotates in canvas space)
+        const dpx = vxPhys * scaleX;
+        const dpy = -vyPhys * scaleY;
+        const speed_canvas = Math.hypot(dpx, dpy);
+        if (speed_canvas < 2 * dpr) continue;
+        const scale = maxArrowPx / Math.max(maxSpeed_canvas, 0.01);
+        draw1DArrowHead(ctx, px, py, px + dpx * scale, py + dpy * scale, "#ffaa44", 2 * dpr);
+      }
+
+      // Labels
+      ctx.fillStyle = "rgba(140,180,255,0.5)";
+      ctx.font = `${11 * dpr}px Segoe UI, sans-serif`;
+      ctx.fillText("x →", W - padX + 2 * dpr, midY - 4 * dpr);
+      ctx.fillStyle = "rgba(255,170,68,0.65)";
+      ctx.fillText("⟳ κυκλική τροχιά", padX + 4 * dpr, padY - 8 * dpr);
+    }
+
+    // @slide 2.3 — σχεδιάζει Gerstner κύμα με μεγάλες κυκλικές τροχιές σωματιδίων.
+    function drawWhyGerstner(canvas, t, A) {
+      if (!canvas) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const displayW = Math.max(1, canvas.clientWidth);
+      const displayH = Math.max(1, canvas.clientHeight);
+      const W = Math.round(displayW * dpr);
+      const H = Math.round(displayH * dpr);
+      if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = "#020810";
+      ctx.fillRect(0, 0, W, H);
+
+      const k = 1.0, omega = 0.9;
+      const xRange = 2 * Math.PI;
+      const padX = 30 * dpr;
+      const plotW = W - 2 * padX;
+      const midY = H * 0.48;
+      // Scale so orbit radius = ~22% of canvas height
+      const scaleY = Math.min((H * 0.22) / Math.max(A, 0.01), H * 0.4 / Math.max(A, 0.01));
+      const scaleX = plotW / xRange;
+
+      // --- Water fill below wave ---
+      ctx.save();
+      ctx.beginPath();
+      for (let i = 0; i <= 400; i++) {
+        const x0 = (i / 400) * xRange;
+        const theta = k * x0 - omega * t;
+        const px = padX + (x0 + A * Math.cos(theta)) * scaleX;
+        const py = midY - A * Math.sin(theta) * scaleY;
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.lineTo(W - padX, H); ctx.lineTo(padX, H); ctx.closePath();
+      const grad = ctx.createLinearGradient(0, midY, 0, H);
+      grad.addColorStop(0, "rgba(20,60,120,0.38)");
+      grad.addColorStop(1, "rgba(5,18,50,0.18)");
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.restore();
+
+      // --- Wave surface ---
+      ctx.strokeStyle = "#58b4ff";
+      ctx.lineWidth = 2.8 * dpr;
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      for (let i = 0; i <= 500; i++) {
+        const x0 = (i / 500) * xRange;
+        const theta = k * x0 - omega * t;
+        const px = padX + (x0 + A * Math.cos(theta)) * scaleX;
+        const py = midY - A * Math.sin(theta) * scaleY;
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      // --- Particles: orbit ellipse + 3 clockwise arc-arrows + particle dot ---
+      const nP = 6;
+      for (let si = 0; si < nP; si++) {
+        const x0 = ((si + 0.5) / nP) * xRange;
+        const theta  = k * x0 - omega * t;
+        const orbitRx = A * scaleX;
+        const orbitRy = A * scaleY;
+        const restPx = padX + x0 * scaleX;
+        const restPy = midY;
+
+        // Faint orbit ellipse
+        ctx.strokeStyle = "rgba(255,165,70,0.25)";
+        ctx.lineWidth = 1.1 * dpr;
+        ctx.setLineDash([3 * dpr, 3.5 * dpr]);
+        ctx.beginPath();
+        ctx.ellipse(restPx, restPy, Math.max(1, orbitRx), Math.max(1, orbitRy), 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // 3 clockwise arc-arrows evenly spaced, rotating with animation
+        // particle maps to ellipse angle = -theta (cos matches, sin inverted between physics and ellipse param)
+        const baseAng = -theta;
+        const arcSpan = Math.PI * 0.40;   // ~72° arc body
+        const headSize = Math.min(14 * dpr, Math.max(orbitRx, orbitRy) * 0.45);
+        for (let ai = 0; ai < 3; ai++) {
+          const arcStart = baseAng + ai * (Math.PI * 2 / 3);
+          const arcEnd   = arcStart + arcSpan;  // increasing ang = clockwise in canvas
+
+          // Arc body
+          ctx.strokeStyle = "rgba(255,190,80,0.88)";
+          ctx.lineWidth = 2.4 * dpr;
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+          ctx.beginPath();
+          const arcSteps = 24;
+          for (let s = 0; s <= arcSteps; s++) {
+            const ang = arcStart + (arcEnd - arcStart) * (s / arcSteps);
+            const ex = restPx + Math.cos(ang) * orbitRx;
+            const ey = restPy + Math.sin(ang) * orbitRy;
+            s === 0 ? ctx.moveTo(ex, ey) : ctx.lineTo(ex, ey);
+          }
+          ctx.stroke();
+
+          // Sharp arrowhead at arcEnd, tangent = clockwise on ellipse
+          // tangent direction: d/dang (cos*Rx, sin*Ry) = (-sin*Rx, cos*Ry) → atan2
+          const tangAngle = Math.atan2(Math.cos(arcEnd) * orbitRy, -Math.sin(arcEnd) * orbitRx);
+          const tipX = restPx + Math.cos(arcEnd) * orbitRx;
+          const tipY = restPy + Math.sin(arcEnd) * orbitRy;
+          const hs = headSize;
+          ctx.save();
+          ctx.translate(tipX, tipY);
+          ctx.rotate(tangAngle);
+          ctx.fillStyle = "rgba(255,190,80,0.95)";
+          ctx.beginPath();
+          ctx.moveTo(0, 0);                     // tip
+          ctx.lineTo(-hs, -hs * 0.20);          // upper wing (sharp: 0.20 ratio)
+          ctx.lineTo(-hs * 0.68, 0);            // notch
+          ctx.lineTo(-hs, hs * 0.20);           // lower wing
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+        }
+
+        // Current position on orbit
+        const px = restPx + A * Math.cos(theta) * scaleX;
+        const py = restPy - A * Math.sin(theta) * scaleY;
+
+        // Particle dot
+        ctx.fillStyle = "#ffcc55";
+        ctx.beginPath(); ctx.arc(px, py, 4.5 * dpr, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "#fff3c0";
+        ctx.lineWidth = 1.0 * dpr;
+        ctx.beginPath(); ctx.arc(px, py, 4.5 * dpr, 0, Math.PI * 2); ctx.stroke();
+      }
+
+      // --- Labels ---
+      ctx.font = `bold ${12 * dpr}px Segoe UI, sans-serif`;
+      ctx.fillStyle = "rgba(255,195,90,0.80)";
+      ctx.fillText("⟳ κυκλική τροχιά σωματιδίων", padX + 4 * dpr, 18 * dpr);
+      ctx.font = `${11 * dpr}px Segoe UI, sans-serif`;
+      ctx.fillStyle = "rgba(140,180,255,0.5)";
+      ctx.fillText("x →", W - padX + 2 * dpr, midY - 4 * dpr);
+    }
+
     // @slide όλες — κύριος requestAnimationFrame loop που σχεδιάζει το ορατό section και τα γειτονικά του.
     function animatePresentation() {
       window.requestAnimationFrame(animatePresentation);
       const elapsedSeconds = (performance.now() - animationStartTime) / 1000;
       const oceanSettings = getOceanSettings();
       const theta = thetaSlider ? Number(thetaSlider.value) : Math.PI / 2;
-      const radius = 1;
+      const radius = eulerRadius;
       const visibleSlideId = getVisibleSlideId();
       const slidesToDraw = getSlidesToDraw(visibleSlideId);
       const canDraw = (canvas) => shouldDrawForVisibleSlides(slidesToDraw, canvas);
@@ -11968,23 +13194,55 @@
         updateWave2DScene(wave2DState, wave2DTime, getWave2DSettings());
       }
 
-      if (canDraw(gerstnerCanvas)) {
-        updateGerstnerScene(gerstnerState, elapsedSeconds, getGerstnerSettings());
+      if (canDraw(whyGerstnerCanvas)) {
+        whyGerstnerTime += 0.013;
+        drawWhyGerstner(whyGerstnerCanvas, whyGerstnerTime, getWhyGerstnerAmp());
       }
-      if (canDraw(gerstnerOrbitCanvas)) {
-        drawGerstnerParticleOrbits(gerstnerOrbitCanvas, elapsedSeconds, getGerstnerOrbitSettings());
+
+      if (canDraw(arrow1DSineCanvas) || canDraw(arrow1DGerstnerCanvas)) {
+        arrow1DTime += 0.014;
+        const a1d = getArrow1DAmp();
+        draw1DSineWithArrows(arrow1DSineCanvas, arrow1DTime, a1d);
+        draw1DGerstnerWithArrows(arrow1DGerstnerCanvas, arrow1DTime, a1d);
       }
+
+      if (canDraw(compareSineCanvas) || canDraw(compareGerstnerCanvas)) {
+        if (compareAnimate?.checked) compareTime += 0.016;
+        if (canDraw(compareSineCanvas)) {
+          updateWave2DScene(compareSineState, compareTime, getCompareSineSettings());
+        }
+        if (canDraw(compareGerstnerCanvas)) {
+          updateGerstnerScene(compareGerstnerState, compareTime, getCompareGerstnerSettings());
+        }
+      }
+
+      updateAllPluckStrings(elapsedSeconds);
+      if (canDraw(studentSoundStringCanvas)) {
+        drawPluckString(studentSoundStringCanvas, studentSoundStringState, "#ffd273");
+      }
+
+      updateStudentSoundLabels(false);
+      updateTeacherStringLabels();
+      if (!isTeacherMode) {
+        emitStudentStringSource(false);
+      }
+      syncClassroomSoundEngineThrottled(elapsedSeconds);
 
       const soundSourcesForView = getSourcesForWaveView();
 
       if (canDraw(soundWaveSumCanvas)) {
         drawCompositeWave(soundWaveSumCanvas, elapsedSeconds, soundSourcesForView);
       }
+      if (canDraw(soundSpectrumCanvas)) {
+        drawSoundSpectrum(soundSpectrumCanvas, soundSourcesForView);
+      }
       if (canDraw(airMoleculesCanvas)) {
         drawAirMolecules(airMoleculesCanvas, elapsedSeconds, soundSourcesForView);
       }
       if (canDraw(soundSimpleWaveCanvas) || canDraw(soundSimpleMolCanvas)) {
         drawSoundSimple(soundSimpleWaveCanvas, soundSimpleMolCanvas, elapsedSeconds);
+      } else {
+        syncSoundSimpleTone(null, true);
       }
       if (canDraw(soundDecomposeMixCanvas)) {
         drawSoundDecomposition(elapsedSeconds);
