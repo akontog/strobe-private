@@ -2140,10 +2140,10 @@
       <div class="toc-group-title" data-accordion-group="transform">7. Μετασχηματισμός Fourier</div>
       <a href="#sec-fft" data-accordion-group="transform">7.1 Από το σήμα στο φάσμα (Fourier Transform)</a>
       <a href="#sec-fft-duel" data-accordion-group="transform">7.2 Δραστηριότητα: Βρες τη συχνότητα</a>
-      <a href="#sec-fft-spikes" data-accordion-group="transform">7.3 Σύνθετο σήμα και spikes</a>
-      <a href="#sec-fft-explain" data-accordion-group="transform">7.4 Τι κάνει ο απλός Fourier Transform (DFT)</a>
-      <a href="#sec-ifft-explain" data-accordion-group="transform">7.5 Τι κάνει ο αντίστροφος μετασχηματισμός (IDFT/IFFT)</a>
-      <a href="#sec-audio-smooth" data-accordion-group="transform">7.6 Παράδειγμα απλού DFT → IFFT σε ήχο</a>
+      <a href="#sec-fft-spikes" data-accordion-group="transform">7.3 Σύνθετο σήμα</a>
+      <a href="#sec-fft-explain" data-accordion-group="transform">7.4 Απλός Fourier Transform (DFT)</a>
+      <a href="#sec-ifft-explain" data-accordion-group="transform">7.5 Αντίστροφος μετασχηματισμός (IDFT)</a>
+      <a href="#sec-audio-smooth" data-accordion-group="transform">7.6 DFT → IDFT</a>
 
       <div class="toc-group-title" data-accordion-group="complexity">8. Πολυπλοκότητα</div>
       <a href="#sec-fft-complexity" data-accordion-group="complexity">8.1 Από τον απλό DFT στον FFT (Cooley-Tukey)</a>
@@ -3004,6 +3004,10 @@
             <canvas id="fftEulerBridgeCanvas" class="demo-canvas" width="940" height="320"></canvas>
             <div class="slider-grid">
               <div class="slider-group">
+                <div class="slider-label"><span>Δείκτης x (χρόνος)</span><span id="fftBridgeSampleXValue">0.00 s</span></div>
+                <input id="fftBridgeSampleX" type="range" min="0" max="2" step="0.01" value="0.5" />
+              </div>
+              <div class="slider-group">
                 <div class="slider-label"><span>Συχνότητα σήματος f<sub>signal</sub></span><span id="fftSignalFreqValue">2.00</span></div>
                 <input id="fftSignalFreq" type="range" min="0.5" max="6" step="0.01" value="2" />
               </div>
@@ -3063,7 +3067,7 @@
       <section class="section" id="sec-fft-spikes">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>7.3) Σύνθετο σήμα 2-3 συχνοτήτων και spikes</h2>
+            <h2>7.3) Σύνθετο σήμα</h2>
             <p>
               Διαδραστική απεικόνιση μετάβασης από το πεδίο χρόνου στο πεδίο συχνοτήτων, όπου οι
               κορυφές δείχνουν ποιες συχνότητες υπάρχουν περισσότερο. Εδώ βλέπεις και το τύλιγμα
@@ -3095,11 +3099,8 @@
       <section class="section" id="sec-fft-explain">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>7.4) Τι κάνει ο απλός Fourier Transform (DFT)</h2>
-            <p>
-              Ο Fourier Transform παίρνει ένα σήμα στον χρόνο και υπολογίζει πόση ενέργεια έχει σε κάθε συχνότητα.
-              Έτσι από το «κυματάκι» περνάμε σε spikes που δείχνουν καθαρά ποιες συχνότητες συμμετέχουν.
-            </p>
+            <h2>7.4) Απλός Fourier Transform (DFT)</h2>
+            
             <canvas id="fftExplainCanvas" class="demo-canvas" width="940" height="320"></canvas>
             <div id="fftExplainMath" class="mathjax-box"></div>
           </div>
@@ -3109,11 +3110,8 @@
       <section class="section" id="sec-ifft-explain">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>7.5) Τι κάνει ο αντίστροφος μετασχηματισμός (IDFT/IFFT)</h2>
-            <p>
-              Το IFFT κάνει το αντίστροφο: από το φάσμα επιστρέφει στο σήμα χρόνου.
-              Αν αφαιρέσουμε τη πολύ υψηλή συχνότητα στο φάσμα, το ανακατασκευασμένο σήμα γίνεται πιο ομαλό.
-            </p>
+            <h2>7.5) Αντίστροφος μετασχηματισμός (IDFT)</h2>
+            
             <canvas id="ifftExplainCanvas" class="demo-canvas" width="940" height="320"></canvas>
             <div id="ifftExplainMath" class="mathjax-box"></div>
           </div>
@@ -3123,12 +3121,8 @@
       <section class="section" id="sec-audio-smooth">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>7.6) Παράδειγμα απλού DFT → IFFT σε ήχο (φιλτράρισμα)</h2>
-            <p>
-              Εδώ εφαρμόζουμε το pipeline στην πράξη: Fourier transform για ανάλυση του ήχου,
-              αφαίρεση της πολύ υψηλής συνιστώσας (3200 Hz), και IFFT για ανακατασκευή
-              πιο ομαλού σήματος στον χρόνο.
-            </p>
+            <h2>7.6) DFT → IFFT σε ήχο</h2>
+            
             <div class="speaker-row">
               <button id="filterPlayRaw" class="speaker-btn" type="button"><span class="icon">🔊</span> Παίξε αρχικό (με 3200 Hz)</button>
               <button id="filterPlayClean" class="speaker-btn" type="button"><span class="icon">🎚️</span> Παίξε φιλτραρισμένο</button>
@@ -3655,6 +3649,8 @@
     if (oceanShowGridEnd) oceanShowGridEnd.checked = false;
 
     const fftEulerBridgeCanvas = document.getElementById("fftEulerBridgeCanvas");
+    const fftBridgeSampleX = document.getElementById("fftBridgeSampleX");
+    const fftBridgeSampleXValue = document.getElementById("fftBridgeSampleXValue");
     const fftSignalFreq = document.getElementById("fftSignalFreq");
     const fftProbeFreq = document.getElementById("fftProbeFreq");
     const fftSignalFreqValue = document.getElementById("fftSignalFreqValue");
@@ -4512,11 +4508,15 @@
       if (!fftSignalFreq) {
         return;
       }
+      const sampleX = fftBridgeSampleX ? Number(fftBridgeSampleX.value) : 0;
+      if (fftBridgeSampleXValue) {
+        fftBridgeSampleXValue.textContent = `${sampleX.toFixed(2)} s`;
+      }
       fftSignalFreqValue.textContent = Number(fftSignalFreq.value).toFixed(2);
       fftProbeFreqValue.textContent = Number(fftProbeFreq.value).toFixed(2);
     }
 
-    [fftSignalFreq, fftProbeFreq].forEach((slider) => {
+    [fftBridgeSampleX, fftSignalFreq, fftProbeFreq].forEach((slider) => {
       slider?.addEventListener("input", updateFFTBridgeLabels);
     });
     updateFFTBridgeLabels();
@@ -10431,11 +10431,22 @@
         const topX1 = pad + 8;
         const topX2 = width - pad - 8;
         const durationSec = 2;
+        const sampleTime = Math.max(0, Math.min(durationSec, fftBridgeSampleX ? Number(fftBridgeSampleX.value) : 0));
+        const sampleU = sampleTime / durationSec;
         ctx.strokeStyle = "#3f5f90";
         ctx.beginPath();
         ctx.moveTo(topX1, topMidY);
         ctx.lineTo(topX2, topMidY);
         ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(topX1, pad + 6);
+        ctx.lineTo(topX1, topH - 6);
+        ctx.stroke();
+
+        ctx.fillStyle = "#c7dcff";
+        ctx.font = "12px Segoe UI, sans-serif";
+        ctx.fillText("x(t)", topX1 + 6, pad + 16);
+        ctx.fillText("t (s)", topX2 - 30, topMidY - 6);
 
         drawSecondGuides(ctx, topX1, topX2, pad + 6, topH - 6, durationSec);
 
@@ -10449,6 +10460,34 @@
           if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
         ctx.stroke();
+
+        const sampleSignal = Math.sin(2 * Math.PI * signalFreq * sampleU);
+        const samplePx = topX1 + sampleU * (topX2 - topX1);
+        const samplePy = topMidY - sampleSignal * (topH * 0.26);
+        const topArrowColor = "#ff9a4d";
+        const arrowDir = samplePy < topMidY ? -1 : 1;
+        const arrowSize = 7;
+
+        ctx.strokeStyle = topArrowColor;
+        ctx.fillStyle = topArrowColor;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(samplePx, topMidY);
+        ctx.lineTo(samplePx, samplePy);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(samplePx, samplePy);
+        ctx.lineTo(samplePx - 4, samplePy + arrowDir * arrowSize);
+        ctx.lineTo(samplePx + 4, samplePy + arrowDir * arrowSize);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(samplePx, samplePy, 3, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillStyle = "#ffd9b3";
+        ctx.font = "11px Segoe UI, sans-serif";
+        ctx.fillText(`x=${sampleTime.toFixed(2)}s`, samplePx + 6, topMidY + 14);
+        ctx.fillText(`f(x)=${sampleSignal.toFixed(2)}`, samplePx + 6, samplePy - 8);
 
         const cx = pad + (leftW - 2 * pad) * 0.50;
         const cy = bottomY + (bottomH - 12) * 0.51;
@@ -10492,6 +10531,24 @@
 
         const mx = cx + meanRe * radius;
         const my = cy - meanIm * radius;
+
+        const sampleTheta = 2 * Math.PI * probeFreq * sampleU;
+        const sampleRe = sampleSignal * Math.cos(sampleTheta);
+        const sampleIm = -sampleSignal * Math.sin(sampleTheta);
+        const sampleCx = cx + sampleRe * radius;
+        const sampleCy = cy - sampleIm * radius;
+
+        ctx.strokeStyle = "#ff9a4d";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(sampleCx, sampleCy);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(sampleCx, sampleCy, 4, 0, 2 * Math.PI);
+        ctx.fillStyle = "#ff9a4d";
+        ctx.fill();
+
         ctx.strokeStyle = "#ff7f7f";
         ctx.lineWidth = 3;
         ctx.beginPath();
@@ -10559,7 +10616,7 @@
 
         ctx.fillStyle = "#c7dcff";
         ctx.font = "13px Segoe UI, sans-serif";
-        ctx.fillText(`${signalFreq.toFixed(2)} cycles/sec`, topX1 + 8, pad + 18);
+        ctx.fillText(`${signalFreq.toFixed(2)} cycles/sec`, topX1 + 66, pad + 18);
         ctx.fillText(`k = ${probeFreq.toFixed(2)} cycles/sec`, pad + 12, bottomY + 22);
         ctx.fillText(`μ(k) = ${mu.toFixed(3)}`, gx1 + 8, gy1 + 18);
       });
