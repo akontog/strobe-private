@@ -818,6 +818,64 @@
       font-size: 0.98em !important;
     }
 
+    .taylor-guess-controls {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr) auto;
+      gap: 8px;
+      align-items: end;
+      margin-top: 8px;
+    }
+
+    .taylor-guess-slider {
+      margin: 0;
+    }
+
+    .taylor-guess-slider .slider-label {
+      font-size: 0.83rem;
+      margin-bottom: 4px;
+    }
+
+    .unity-roots-layout {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: start;
+      margin-top: 8px;
+    }
+
+    .unity-roots-canvas {
+      width: 100%;
+      height: 420px;
+    }
+
+    .unity-roots-side {
+      width: 220px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .unity-roots-props {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #050b16;
+      padding: 8px 12px;
+      color: #cfe6ff;
+      font-size: 0.88rem;
+    }
+
+    .unity-roots-props p {
+      margin: 0 0 4px;
+      color: #9dc9ff;
+      font-weight: 600;
+    }
+
+    .unity-roots-props ul {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.7;
+    }
+
     .deriv-list {
       margin-top: 10px;
       border: 1px solid var(--line);
@@ -2147,10 +2205,11 @@
 
       <div class="toc-group-title" data-accordion-group="complexity">8. Πολυπλοκότητα</div>
       <a href="#sec-sort-compare" data-accordion-group="complexity">8.1 Divide &amp; Conquer</a>
-      <a href="#sec-cooley-interactive" data-accordion-group="complexity">8.2 Cooley-Tukey για n σημεία (διαδραστικό)</a>
-      <a href="#sec-fft-complexity" data-accordion-group="complexity">8.3 Από τον απλό DFT στον FFT (Cooley-Tukey)</a>
-      <a href="#sec-cooley-tukey" data-accordion-group="complexity">8.4 Cooley-Tukey FFT βήμα-βήμα</a>
-      <a href="#sec-activity-complexity-check" data-accordion-group="complexity">8.5 Δραστηριότητα: Αγώνες πολυπλοκότητας</a>
+      <a href="#sec-unity-roots" data-accordion-group="complexity">8.2 N-ες ρίζες του 1</a>
+      <a href="#sec-cooley-interactive" data-accordion-group="complexity">8.3 Cooley-Tukey για n σημεία (διαδραστικό)</a>
+      <a href="#sec-fft-complexity" data-accordion-group="complexity">8.4 Από τον απλό DFT στον FFT (Cooley-Tukey)</a>
+      <a href="#sec-cooley-tukey" data-accordion-group="complexity">8.5 Cooley-Tukey FFT βήμα-βήμα</a>
+      <a href="#sec-activity-complexity-check" data-accordion-group="complexity">8.6 Δραστηριότητα: Αγώνες πολυπλοκότητας</a>
 
       <div class="toc-group-title" data-accordion-group="pipeline">9. Pipeline θάλασσας</div>
       <a href="#sec-bridge-1d2d" data-accordion-group="pipeline">9.1 Από 1D ήχο σε 2D θάλασσα</a>
@@ -2751,47 +2810,38 @@
         <section class="section" id="sec-taylor-guess">
           <div class="slide-card">
             <div class="slide-content">
-              <h2>4.5) Δραστηριότητα: Εύρεση συντελεστών</h2>
+              <h2>4.5) Δραστηριότητα: Εύρεση συντελεστών για το \(e^{2x}\)</h2>
               <p class="teacher-only">
-                Εμφανίζεται η συνάρτηση-στόχος \(f(x)=e^{2x}\). Μόλις υποβάλουν οι φοιτητές, πάτα
-                <em>Reveal</em> για να εμφανιστούν όλες οι καμπύλες.
+                Εμφανίζονται live οι καμπύλες όλων των φοιτητών.
+                Πάτα <em>Βέλτιστη</em> για να αποκαλυφθεί το ακριβές Taylor ανάπτυγμα του \(e^{2x}\).
               </p>
               <p class="student-only">
                 Ρύθμισε τους συντελεστές \(c_0,\,c_1,\,c_2,\,c_3\) ώστε το πολυώνυμο
-                \(P(x)=c_0+c_1 x+c_2 x^2+c_3 x^3\) να προσεγγίζει τη συνάρτηση.
+                \(P(x)=c_0+c_1 x+c_2 x^2+c_3 x^3\) να προσεγγίζει τη συνάρτηση \(e^{2x}\).
               </p>
-              <canvas id="taylorGuessCanvas" class="demo-canvas" width="940" height="300"></canvas>
-              <div class="sum-legend" id="taylorGuessLegend"></div>
-              <div class="teacher-only" style="margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-                <div class="fft-duel-toolbar" style="margin:0;">
-                  <span class="fft-duel-pill">Υποβολές: <strong id="taylorGuessProgressLabel">0/0</strong></span>
+              <canvas id="taylorGuessCanvas" class="euler-canvas" style="width:100%;height:270px;" width="940" height="270"></canvas>
+              <div id="taylorGuessMath" class="mathjax-box" style="margin-top:5px;padding:4px 12px;min-height:auto;font-size:0.93em;text-align:center;"></div>
+              <div id="taylorGuessLegend" class="sum-legend" style="margin-top:8px;"></div>
+              <div class="taylor-guess-controls">
+                <div class="slider-group taylor-guess-slider">
+                  <div class="slider-label"><span>\(c_0\)</span><span id="taylorGuessC0Value">0.00</span></div>
+                  <input id="taylorGuessC0" type="range" min="-4" max="4" step="0.05" value="0" />
                 </div>
-                <button id="taylorGuessStartBtn" class="fft-duel-submit" type="button">Νέος γύρος</button>
-                <button id="taylorGuessRevealBtn" class="fft-duel-submit" type="button">Reveal αποτελεσμάτων</button>
-              </div>
-              <div class="student-only" style="margin-top:12px;">
-                <div class="slider-grid">
-                  <div class="slider-group">
-                    <div class="slider-label"><span>\(c_0\)</span><span id="taylorGuessC0Value">0.00</span></div>
-                    <input id="taylorGuessC0" type="range" min="-4" max="4" step="0.05" value="0" />
-                  </div>
-                  <div class="slider-group">
-                    <div class="slider-label"><span>\(c_1\)</span><span id="taylorGuessC1Value">0.00</span></div>
-                    <input id="taylorGuessC1" type="range" min="-4" max="4" step="0.05" value="0" />
-                  </div>
-                  <div class="slider-group">
-                    <div class="slider-label"><span>\(c_2\)</span><span id="taylorGuessC2Value">0.00</span></div>
-                    <input id="taylorGuessC2" type="range" min="-4" max="4" step="0.05" value="0" />
-                  </div>
-                  <div class="slider-group">
-                    <div class="slider-label"><span>\(c_3\)</span><span id="taylorGuessC3Value">0.00</span></div>
-                    <input id="taylorGuessC3" type="range" min="-4" max="4" step="0.05" value="0" />
-                  </div>
+                <div class="slider-group taylor-guess-slider">
+                  <div class="slider-label"><span>\(c_1\)</span><span id="taylorGuessC1Value">0.00</span></div>
+                  <input id="taylorGuessC1" type="range" min="-4" max="4" step="0.05" value="0" />
                 </div>
-                <div id="taylorGuessLockLabel" class="fft-duel-lock" style="display:none;">Έχεις ήδη υποβάλει!</div>
-                <button id="taylorGuessSubmitBtn" class="fft-duel-submit" type="button" style="margin-top:8px;">Submit συντελεστών</button>
+                <div class="slider-group taylor-guess-slider">
+                  <div class="slider-label"><span>\(c_2\)</span><span id="taylorGuessC2Value">0.00</span></div>
+                  <input id="taylorGuessC2" type="range" min="-4" max="4" step="0.05" value="0" />
+                </div>
+                <div class="slider-group taylor-guess-slider">
+                  <div class="slider-label"><span>\(c_3\)</span><span id="taylorGuessC3Value">0.00</span></div>
+                  <input id="taylorGuessC3" type="range" min="-4" max="4" step="0.05" value="0" />
+                </div>
+                <button id="taylorGuessBestBtn" class="fft-duel-submit teacher-only" type="button" style="align-self:stretch;padding:0 14px;font-size:0.82rem;white-space:nowrap;">Βέλτιστη</button>
               </div>
-              <div id="taylorGuessMath" class="mathjax-box student-only" style="margin-top:8px;"></div>
+              <div id="taylorGuessBestDerivBox" class="deriv-list teacher-only" style="display:none;margin-top:8px;"></div>
             </div>
           </div>
         </section>
@@ -2830,22 +2880,24 @@
               </div>
               <div class="euler-proof-steps">
                 <div class="euler-proof-step">
-                  <p>Γνωστές σειρές:</p>
-                  \[\cos x=\sum_{k=0}^{\infty}(-1)^k\frac{x^{2k}}{(2k)!},\qquad
-                  \sin x=\sum_{k=0}^{\infty}(-1)^k\frac{x^{2k+1}}{(2k+1)!}\]
+                  <p>Γνωστή σειρά του \(e^x\):</p>
+                  \[e^x=1+x+\frac{x^2}{2!}+\frac{x^3}{3!}+\frac{x^4}{4!}+\frac{x^5}{5!}+\cdots\]
                 </div>
                 <div class="euler-proof-step">
-                  \[e^x=\sum_{n=0}^{\infty}\frac{x^n}{n!},\qquad
-                  e^{i\theta}=\sum_{n=0}^{\infty}\frac{(i\theta)^n}{n!}\]
+                  <p>Αντικαθιστούμε \(x \to ix\) και υπολογίζουμε κάθε δύναμη του \(i\):</p>
+                  \[e^{ix}=1+(ix)+\frac{(ix)^2}{2!}+\frac{(ix)^3}{3!}+\frac{(ix)^4}{4!}+\frac{(ix)^5}{5!}+\cdots\]
                 </div>
                 <div class="euler-proof-step">
-                  <p>Αρτιοι/περιττοί εκθέτες:</p>
-                  \[(i\theta)^{2k}=(-1)^k\theta^{2k},\qquad (i\theta)^{2k+1}=i(-1)^k\theta^{2k+1}\]
-                  \[e^{i\theta}=\underbrace{\sum_{k=0}^{\infty}(-1)^k\frac{\theta^{2k}}{(2k)!}}_{\cos\theta}
-                  +i\underbrace{\sum_{k=0}^{\infty}(-1)^k\frac{\theta^{2k+1}}{(2k+1)!}}_{\sin\theta}\]
+                  <p>Χρησιμοποιούμε \(i^2=-1,\;i^3=-i,\;i^4=1,\;i^5=i,\;\ldots\):</p>
+                  \[e^{ix}=1+ix-\frac{x^2}{2!}-i\frac{x^3}{3!}+\frac{x^4}{4!}+i\frac{x^5}{5!}-\cdots\]
                 </div>
                 <div class="euler-proof-step">
-                  \[\boxed{e^{i\theta}=\cos\theta+i\sin\theta}\]
+                  <p>Ομαδοποιούμε πραγματικούς και φανταστικούς όρους:</p>
+                  \[e^{ix}=\underbrace{\left(1-\frac{x^2}{2!}+\frac{x^4}{4!}-\cdots\right)}_{\cos x}
+                  +\,i\underbrace{\left(x-\frac{x^3}{3!}+\frac{x^5}{5!}-\cdots\right)}_{\sin x}\]
+                </div>
+                <div class="euler-proof-step" style="text-align:center;">
+                  \[\boxed{e^{ix}=\cos x+i\sin x}\]
                 </div>
               </div>
             </div>
@@ -2857,8 +2909,26 @@
         <div class="slide-card">
           <div class="slide-content">
             <h2>5.2) Περιστροφή με πολλαπλασιασμό μιγαδικού</h2>
+
+            <div style="display:flex;gap:24px;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;">
+              <div class="mathjax-box" style="flex:1;min-width:220px;padding:12px 16px;">
+                <p style="margin:0 0 6px;color:#9fd0ff;font-weight:600;">Πολλαπλασιασμός μιγαδικών</p>
+                <p style="margin:0 0 4px;font-size:0.92rem;">Αν \(z_1=r_1 e^{i\theta_1}\) και \(z_2=r_2 e^{i\theta_2}\), τότε:</p>
+                \[z_1 z_2 = r_1 r_2\, e^{i(\theta_1+\theta_2)}\]
+                <p style="margin:6px 0 0;font-size:0.88rem;color:#8fb0c8;">
+                  Τα μέτρα <strong>πολλαπλασιάζονται</strong> και οι γωνίες <strong>αθροίζονται</strong>.
+                </p>
+              </div>
+              <div class="mathjax-box" style="flex:1;min-width:220px;padding:12px 16px;">
+                <p style="margin:0 0 6px;color:#9fd0ff;font-weight:600;">Πολλαπλασιασμός με \(i\) = περιστροφή κατά \(90°\)</p>
+                <p style="margin:0 0 4px;font-size:0.92rem;">Αφού \(i=e^{i\pi/2}\), πολλαπλασιασμός με \(i\) προσθέτει \(90°\) στη γωνία:</p>
+                \[1\cdot i = i \quad(0°\to 90°)\]
+                \[i\cdot i = -1 \quad(90°\to 180°)\]
+                \[(-1)\cdot i = -i \quad(180°\to 270°)\]
+              </div>
+            </div>
+
             <p style="margin:4px 0 6px;">
-              Ο μοναδιαίος κύκλος είναι σχεδιασμένος στο μιγαδικό επίπεδο.
               Κάνε κλικ <strong>πάνω στον κύκλο</strong> για να ορίσεις τη γωνία <strong>θ</strong>,
               και κλικ <strong>αλλού</strong> για να ορίσεις σημείο <strong>z</strong>.
               Ο πολλαπλασιασμός \(z \cdot e^{i\theta}\) περιστρέφει το z κατά θ.
@@ -3181,10 +3251,48 @@
         </div>
       </section>
 
+      <section class="section" id="sec-unity-roots">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>8.2) N-ες ρίζες του 1</h2>
+            <p>
+              Οι <strong>N-ες ρίζες της μονάδας</strong> είναι οι λύσεις της εξίσωσης \(z^N=1\).
+              Στο μιγαδικό επίπεδο είναι <strong>N ισαπέχοντα σημεία στον μοναδιαίο κύκλο</strong>:
+              \[\omega_N^k = e^{\,i\,2\pi k/N}, \quad k=0,1,\ldots,N-1\]
+              Η <em>πρωτεύουσα ρίζα</em> \(\omega_N = e^{i2\pi/N}\) γεννά όλες τις υπόλοιπες.
+              Ο Cooley-Tukey FFT εκμεταλλεύεται τη <strong>συμμετρία</strong> και την <strong>περιοδικότητα</strong> αυτών των ριζών.
+            </p>
+            <div class="unity-roots-layout">
+              <canvas id="unityRootsCanvas" class="euler-canvas unity-roots-canvas" width="600" height="520"></canvas>
+              <div class="unity-roots-side">
+                <div class="slider-group" style="margin:0 0 10px;">
+                  <div class="slider-label"><span>N (αριθμός ριζών)</span><span id="unityRootsNValue">8</span></div>
+                  <input id="unityRootsN" type="range" min="2" max="16" step="1" value="8" />
+                </div>
+                <div class="slider-group" style="margin:0 0 10px;">
+                  <div class="slider-label"><span>Ανάδειξη ρίζας k</span><span id="unityRootsKValue">0</span></div>
+                  <input id="unityRootsK" type="range" min="0" max="7" step="1" value="0" />
+                </div>
+                <div id="unityRootsMath" class="mathjax-box" style="margin:0;"></div>
+                <div class="unity-roots-props">
+                  <p>Ιδιότητες:</p>
+                  <ul>
+                    <li>\(\omega_N^N = 1\) (περιοδικότητα)</li>
+                    <li>\(\omega_N^{k+N} = \omega_N^k\)</li>
+                    <li>\(\omega_N^{k+N/2} = -\omega_N^k\) (συμμετρία)</li>
+                    <li>\(\sum_{k=0}^{N-1}\omega_N^{jk}=0\) για \(j\neq 0\)</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="section" id="sec-cooley-interactive">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.2) Cooley-Tukey για n σημεία (διαδραστικό)</h2>
+            <h2>8.3) Cooley-Tukey για n σημεία (διαδραστικό)</h2>
             <p>
               Κάνε click στο γράφημα για να προχωρήσει ένα στάδιο: πρώτα divide (διάσπαση σε άρτια/περιττά),
               μετά conquer (συνδυασμός butterfly). Το n δίνεται ως δύναμη του 2.
@@ -3867,6 +3975,12 @@
     const cooleyTreeFftValue = document.getElementById("cooleyTreeFftValue");
     const cooleyTreeGainValue = document.getElementById("cooleyTreeGainValue");
     const cooleyInteractiveCanvas = document.getElementById("cooleyInteractiveCanvas");
+    const unityRootsCanvas = document.getElementById("unityRootsCanvas");
+    const unityRootsN = document.getElementById("unityRootsN");
+    const unityRootsK = document.getElementById("unityRootsK");
+    const unityRootsNValue = document.getElementById("unityRootsNValue");
+    const unityRootsKValue = document.getElementById("unityRootsKValue");
+    const unityRootsMath = document.getElementById("unityRootsMath");
     const cooleyInteractivePower = document.getElementById("cooleyInteractivePower");
     const cooleyInteractivePowerValue = document.getElementById("cooleyInteractivePowerValue");
     const cooleyInteractiveStatus = document.getElementById("cooleyInteractiveStatus");
@@ -7496,6 +7610,9 @@
     // @slide 4.5 — Δραστηριότητα: Μάντεψε τον συντελεστή (Taylor guess activity).
     const TAYLOR_GUESS_PALETTE = ['#f472b6', '#fb923c', '#facc15', '#a3e635', '#34d399', '#22d3ee', '#818cf8', '#e879f9'];
     let taylorGuessLocalState = { status: 'idle', revealResults: false, players: [], submittedCount: 0, totalPlayers: 0, ownSubmitted: false, ownCoeffs: null };
+    let taylorGuessBestShown = false;
+    const taylorGuessBestBtn = document.getElementById('taylorGuessBestBtn');
+    const taylorGuessBestDerivBox = document.getElementById('taylorGuessBestDerivBox');
 
     function evalTaylorPoly(coeffs, x) {
       let y = 0, xn = 1;
@@ -7534,42 +7651,96 @@
       }
       ctx.stroke();
 
-      // Student's own polynomial (live)
+      // Student's own polynomial (live) with name label
       if (!isTeacherMode) {
         const c0 = Number(taylorGuessC0?.value || 0);
         const c1 = Number(taylorGuessC1?.value || 0);
         const c2 = Number(taylorGuessC2?.value || 0);
         const c3 = Number(taylorGuessC3?.value || 0);
+        const ratio = window.devicePixelRatio || 1;
         ctx.strokeStyle = '#ffe040'; ctx.lineWidth = 2.2;
         ctx.beginPath();
+        let lastCy = H / 2;
         for (let px = 0; px < W; px++) {
           const x = xMin + (px / W) * (xMax - xMin);
           const cy = toY(evalTaylorPoly([c0, c1, c2, c3], x));
           if (px === 0) ctx.moveTo(px, cy); else ctx.lineTo(px, cy);
+          if (px === W - 1) lastCy = cy;
         }
         ctx.stroke();
+        const labelY = Math.max(10, Math.min(H - 10, lastCy));
+        ctx.fillStyle = '#ffe040';
+        ctx.font = `bold ${11 * ratio}px sans-serif`;
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('P(x)', W - 4, labelY);
       }
 
-      // Revealed player curves (teacher after reveal)
-      if (isTeacherMode && taylorGuessLocalState.revealResults) {
+      // Teacher's own polynomial from sliders — visible in teacher mode with label
+      if (isTeacherMode) {
+        const c0t = Number(taylorGuessC0?.value || 0);
+        const c1t = Number(taylorGuessC1?.value || 0);
+        const c2t = Number(taylorGuessC2?.value || 0);
+        const c3t = Number(taylorGuessC3?.value || 0);
+        const ratio = window.devicePixelRatio || 1;
+        ctx.strokeStyle = '#ffe040'; ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        let lastCyT = H / 2;
+        for (let px = 0; px < W; px++) {
+          const x = xMin + (px / W) * (xMax - xMin);
+          const cy = toY(evalTaylorPoly([c0t, c1t, c2t, c3t], x));
+          if (px === 0) ctx.moveTo(px, cy); else ctx.lineTo(px, cy);
+          if (px === W - 1) lastCyT = cy;
+        }
+        ctx.stroke();
+        const labelYT = Math.max(10, Math.min(H - 10, lastCyT));
+        ctx.fillStyle = '#ffe040';
+        ctx.font = `bold ${11 * ratio}px sans-serif`;
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('P(x)', W - 4, labelYT);
+      }
+
+      // Player curves — always visible on teacher, with name label at right end
+      if (isTeacherMode) {
+        const ratio = window.devicePixelRatio || 1;
         taylorGuessLocalState.players.forEach((player, index) => {
           if (!Array.isArray(player.coeffs)) return;
           const color = TAYLOR_GUESS_PALETTE[index % TAYLOR_GUESS_PALETTE.length];
           ctx.strokeStyle = color; ctx.lineWidth = 1.7; ctx.globalAlpha = 0.82;
           ctx.beginPath();
+          let lastCy = H / 2;
           for (let px = 0; px < W; px++) {
             const x = xMin + (px / W) * (xMax - xMin);
             const cy = toY(evalTaylorPoly(player.coeffs, x));
             if (px === 0) ctx.moveTo(px, cy); else ctx.lineTo(px, cy);
+            if (px === W - 1) lastCy = cy;
           }
           ctx.stroke();
+          ctx.globalAlpha = 1;
+          // Name label at right edge
+          const labelY = Math.max(10, Math.min(H - 10, lastCy));
+          ctx.fillStyle = color;
+          ctx.font = `bold ${11 * ratio}px sans-serif`;
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(player.name || `#${index + 1}`, W - 4, labelY);
         });
         ctx.globalAlpha = 1;
       }
 
-      ctx.fillStyle = '#87cdff'; ctx.font = 'bold 12px monospace'; ctx.textAlign = 'left';
-      ctx.fillText('e^(2x) — στόχος', 8, 16);
-      if (!isTeacherMode) { ctx.fillStyle = '#ffe040'; ctx.fillText('P(x) — εκτίμησή σου', 8, 32); }
+      // Optimal Taylor polynomial for e^(2x) when Βέλτιστη is toggled
+      if (taylorGuessBestShown) {
+        ctx.strokeStyle = '#4ade80'; ctx.lineWidth = 2.5; ctx.setLineDash([6, 3]);
+        ctx.beginPath();
+        for (let px = 0; px < W; px++) {
+          const x = xMin + (px / W) * (xMax - xMin);
+          const cy = toY(evalTaylorPoly([1, 2, 2, 4/3], x));
+          if (px === 0) ctx.moveTo(px, cy); else ctx.lineTo(px, cy);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
     }
 
     function updateTaylorGuessSliderLabels() {
@@ -7593,28 +7764,49 @@
 
     function updateTaylorGuessLegend() {
       if (!taylorGuessLegend) return;
-      taylorGuessLegend.innerHTML = '';
-      const targetSpan = document.createElement('span');
-      targetSpan.className = 'sum-legend-item';
-      targetSpan.innerHTML = '<span class="sum-chip" style="background:#87cdff"></span>e^{2x} — στόχος';
-      taylorGuessLegend.appendChild(targetSpan);
-      if (!isTeacherMode) {
-        const mySpan = document.createElement('span');
-        mySpan.className = 'sum-legend-item';
-        mySpan.innerHTML = '<span class="sum-chip" style="background:#ffe040"></span>P(x) — εκτίμησή σου';
-        taylorGuessLegend.appendChild(mySpan);
-      }
-      if (isTeacherMode && taylorGuessLocalState.revealResults) {
+      taylorGuessLegend.textContent = '';
+
+      const appendLegendItem = (label, color, extra = '', dashed = false) => {
+        const item = document.createElement('span');
+        item.className = 'sum-legend-item';
+
+        const chip = document.createElement('span');
+        chip.className = 'sum-chip';
+        chip.style.background = color;
+        if (dashed) {
+          chip.style.background = 'transparent';
+          chip.style.border = `2px dashed ${color}`;
+          chip.style.boxSizing = 'border-box';
+        }
+
+        item.appendChild(chip);
+        item.appendChild(document.createTextNode(label));
+
+        if (extra) {
+          const suffix = document.createElement('span');
+          suffix.style.opacity = '0.7';
+          suffix.textContent = ` ${extra}`;
+          item.appendChild(suffix);
+        }
+
+        taylorGuessLegend.appendChild(item);
+      };
+
+      appendLegendItem('Στόχος: e^(2x)', '#87cdff');
+
+      if (isTeacherMode) {
+        appendLegendItem('P(x)', '#ffe040', '(δικό σου)');
         taylorGuessLocalState.players.forEach((player, index) => {
           if (!Array.isArray(player.coeffs)) return;
           const color = TAYLOR_GUESS_PALETTE[index % TAYLOR_GUESS_PALETTE.length];
-          const span = document.createElement('span');
-          span.className = 'sum-legend-item';
-          const coeffStr = player.coeffs.map(v => Number(v).toFixed(2)).join(', ');
-          const errStr = player.error != null ? ` · σφάλμα ${Number(player.error).toFixed(2)}` : '';
-          span.innerHTML = `<span class="sum-chip" style="background:${color}"></span>${escapeWaveSumHtml(player.name)} <span style="opacity:0.6">[${coeffStr}]${errStr}</span>`;
-          taylorGuessLegend.appendChild(span);
+          appendLegendItem(player.name || `#${index + 1}`, color, '(student)');
         });
+      } else {
+        appendLegendItem('P(x)', '#ffe040', '(δικό σου)');
+      }
+
+      if (taylorGuessBestShown) {
+        appendLegendItem('Βέλτιστη Taylor', '#4ade80', '', true);
       }
     }
 
@@ -7632,7 +7824,18 @@
     }
 
     [taylorGuessC0, taylorGuessC1, taylorGuessC2, taylorGuessC3].forEach(el => {
-      el?.addEventListener('input', () => { updateTaylorGuessSliderLabels(); updateTaylorGuessMath(); });
+      el?.addEventListener('input', () => {
+        updateTaylorGuessSliderLabels();
+        updateTaylorGuessMath();
+        document.dispatchEvent(new CustomEvent('fourier:taylor-guess-live-local', {
+          detail: {
+            c0: Number(taylorGuessC0?.value || 0),
+            c1: Number(taylorGuessC1?.value || 0),
+            c2: Number(taylorGuessC2?.value || 0),
+            c3: Number(taylorGuessC3?.value || 0)
+          }
+        }));
+      });
     });
 
     taylorGuessStartBtn?.addEventListener('click', () => {
@@ -7652,6 +7855,37 @@
       }));
     });
 
+    taylorGuessBestBtn?.addEventListener('click', () => {
+      taylorGuessBestShown = !taylorGuessBestShown;
+      if (taylorGuessBestBtn) taylorGuessBestBtn.textContent = taylorGuessBestShown ? 'Απόκρυψη βέλτιστης' : 'Βέλτιστη';
+      if (taylorGuessBestDerivBox) {
+        if (taylorGuessBestShown) {
+          taylorGuessBestDerivBox.style.display = '';
+          taylorGuessBestDerivBox.innerHTML = String.raw`
+            <div class="deriv-list-row">
+              <table>
+                <tr><td>\(f(x)=e^{2x}\)</td><td class="deriv-val">\(f(0)=1\)</td></tr>
+                <tr><td>\(f'(x)=2e^{2x}\)</td><td class="deriv-val">\(f'(0)=2\)</td></tr>
+                <tr><td>\(f''(x)=4e^{2x}\)</td><td class="deriv-val">\(f''(0)=4\)</td></tr>
+                <tr><td>\(f^{(3)}(x)=8e^{2x}\)</td><td class="deriv-val">\(f^{(3)}(0)=8\)</td></tr>
+              </table>
+              <div class="deriv-taylor">
+                <p>Συντελεστές Taylor \(c_n=\dfrac{f^{(n)}(0)}{n!}\):</p>
+                \[c_0=\frac{1}{0!}=1,\quad c_1=\frac{2}{1!}=2,\quad c_2=\frac{4}{2!}=2,\quad c_3=\frac{8}{3!}=\frac{4}{3}\]
+                \[e^{2x}\approx 1+2x+2x^2+\tfrac{4}{3}x^3\]
+              </div>
+            </div>
+          `;
+          if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+            window.MathJax.typesetPromise([taylorGuessBestDerivBox]).catch(() => {});
+          }
+        } else {
+          taylorGuessBestDerivBox.style.display = 'none';
+        }
+      }
+      updateTaylorGuessLegend();
+    });
+
     document.addEventListener('fourier:taylor-guess-state', (event) => {
       const p = (event && event.detail) || {};
       taylorGuessLocalState = {
@@ -7664,6 +7898,16 @@
         ownCoeffs: Array.isArray(p.ownCoeffs) ? p.ownCoeffs : null,
       };
       updateTaylorGuessUI();
+      if (!isTeacherMode) {
+        document.dispatchEvent(new CustomEvent('fourier:taylor-guess-live-local', {
+          detail: {
+            c0: Number(taylorGuessC0?.value || 0),
+            c1: Number(taylorGuessC1?.value || 0),
+            c2: Number(taylorGuessC2?.value || 0),
+            c3: Number(taylorGuessC3?.value || 0)
+          }
+        }));
+      }
     });
 
     updateTaylorGuessSliderLabels();
@@ -8019,18 +8263,33 @@
     function updateRotMultFormula() {
       if (!rotMultFormula) return;
       if (!rotMult_z && rotMult_theta === null) { rotMultFormula.innerHTML = ""; return; }
-      if (!rotMult_z) { rotMultFormula.innerHTML = "Κάνε κλικ ή drag στο επίπεδο για να ορίσεις <strong>z</strong>."; return; }
-      if (rotMult_theta === null) { rotMultFormula.innerHTML = "Κάνε κλικ ή drag πάνω στον κύκλο για να ορίσεις γωνία <strong>θ</strong>."; return; }
+      if (!rotMult_z) {
+        rotMultFormula.innerHTML =
+          `Κάνε κλικ ή drag στο επίπεδο για να ορίσεις <strong style="color:#58a6ff;">z</strong>.`;
+        return;
+      }
+      if (rotMult_theta === null) {
+        rotMultFormula.innerHTML =
+          `Κάνε κλικ ή drag πάνω στον κύκλο για να ορίσεις γωνία <strong style="color:#ffcc44;">θ</strong>.`;
+        return;
+      }
       const {a, b} = rotMult_z, t = rotMult_theta;
       const cosT = Math.cos(t), sinT = Math.sin(t);
       const ra = a*cosT - b*sinT, rb = a*sinT + b*cosT;
       const bSign  = b   >= 0 ? "+" : "-";
       const sSign  = sinT >= 0 ? "+" : "-";
       const rbSign = rb  >= 0 ? "+" : "-";
+      // Coloured formula — use HTML spans + inline MathJax to avoid # in math mode
       rotMultFormula.innerHTML =
-        `\\[z \\cdot e^{i\\theta} = (${a.toFixed(2)}${bSign}${Math.abs(b).toFixed(2)}i)` +
-        `\\,(${cosT.toFixed(2)}${sSign}${Math.abs(sinT).toFixed(2)}i)` +
-        ` = ${ra.toFixed(2)}${rbSign}${Math.abs(rb).toFixed(2)}i\\]`;
+        `<div style="font-size:1.1em;text-align:center;margin:4px 0;">` +
+        `<span style="color:#ff8833;">\\(z \\cdot e^{i\\theta}\\)</span>` +
+        ` &nbsp;=&nbsp; ` +
+        `<span style="color:#58a6ff;">\\(${a.toFixed(2)}${bSign}${Math.abs(b).toFixed(2)}i\\)</span>` +
+        ` &nbsp;&middot;&nbsp; ` +
+        `<span style="color:#58d68d;">\\(${cosT.toFixed(2)}${sSign}${Math.abs(sinT).toFixed(2)}i\\)</span>` +
+        ` &nbsp;=&nbsp; ` +
+        `<span style="color:#ff8833;">\\(${ra.toFixed(2)}${rbSign}${Math.abs(rb).toFixed(2)}i\\)</span>` +
+        `</div>`;
       if (window.MathJax && MathJax.typesetPromise) { MathJax.typesetPromise([rotMultFormula]).catch(()=>{}); }
     }
 
@@ -12404,6 +12663,138 @@
     });
     updatePolynomialBridge();
 
+    function updateUnityRootsMath() {
+      if (!unityRootsMath) return;
+      const N = Number(unityRootsN?.value || 8);
+      const k = Number(unityRootsK?.value || 0);
+      const angle = (2 * Math.PI * k / N);
+      const re = Math.cos(angle).toFixed(4);
+      const im = Math.sin(angle).toFixed(4);
+      const sign = Number(im) >= 0 ? '+' : '';
+      unityRootsMath.innerHTML =
+        `\\[\\omega_${N}^{${k}} = e^{i\\cdot 2\\pi\\cdot ${k}/${N}} = ${re}${sign}${im}\\,i\\]`;
+      if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+        window.MathJax.typesetPromise([unityRootsMath]).catch(() => {});
+      }
+    }
+
+    function drawUnityRoots(canvas) {
+      if (!canvas) return;
+      fitCanvasToDisplaySize(canvas);
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      const N = Number(unityRootsN?.value || 8);
+      const kHighlight = Number(unityRootsK?.value || 0);
+      const cx = W / 2, cy = H / 2;
+      const R = Math.min(W, H) * 0.38;
+      const ratio = window.devicePixelRatio || 1;
+
+      // Background
+      ctx.fillStyle = '#07172b';
+      ctx.fillRect(0, 0, W, H);
+
+      // Grid circle
+      ctx.strokeStyle = 'rgba(100,150,210,0.25)';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2 * Math.PI); ctx.stroke();
+
+      // Axes
+      ctx.strokeStyle = 'rgba(100,150,210,0.4)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx - R * 1.15, cy); ctx.lineTo(cx + R * 1.15, cy);
+      ctx.moveTo(cx, cy - R * 1.15); ctx.lineTo(cx, cy + R * 1.15);
+      ctx.stroke();
+
+      // Axis labels
+      ctx.fillStyle = 'rgba(160,190,230,0.6)';
+      ctx.font = `${11 * ratio}px monospace`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('Re', cx + R * 1.18, cy);
+      ctx.fillText('Im', cx, cy - R * 1.18);
+
+      // Polygon connecting all roots (faint)
+      ctx.strokeStyle = 'rgba(88,166,255,0.18)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let k = 0; k <= N; k++) {
+        const a = 2 * Math.PI * k / N - Math.PI / 2;
+        const px = cx + R * Math.cos(a), py = cy + R * Math.sin(a);
+        if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      // Spoke + dot for each root
+      for (let k = 0; k < N; k++) {
+        const a = 2 * Math.PI * k / N - Math.PI / 2;
+        const px = cx + R * Math.cos(a), py = cy + R * Math.sin(a);
+        const isHL = k === kHighlight;
+        const isConj = (N - k) % N === kHighlight && kHighlight !== 0 && kHighlight !== N / 2;
+
+        // Spoke
+        ctx.strokeStyle = isHL ? '#ffe040' : isConj ? '#f472b6' : 'rgba(88,166,255,0.35)';
+        ctx.lineWidth = isHL ? 2 : 1;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
+
+        // Dot
+        ctx.beginPath(); ctx.arc(px, py, isHL ? 7 * ratio : 4.5 * ratio, 0, 2 * Math.PI);
+        ctx.fillStyle = isHL ? '#ffe040' : isConj ? '#f472b6' : '#58a6ff';
+        ctx.fill();
+
+        // Label
+        const labelR = R + 18 * ratio;
+        const lx = cx + labelR * Math.cos(a), ly = cy + labelR * Math.sin(a);
+        ctx.fillStyle = isHL ? '#ffe040' : isConj ? '#f472b6' : 'rgba(160,200,255,0.8)';
+        ctx.font = `${isHL ? 'bold ' : ''}${11 * ratio}px monospace`;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(`ω^${k}`, lx, ly);
+      }
+
+      // Highlighted root: Re/Im projection lines
+      if (kHighlight < N) {
+        const a = 2 * Math.PI * kHighlight / N - Math.PI / 2;
+        const px = cx + R * Math.cos(a), py = cy + R * Math.sin(a);
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = 'rgba(255,224,64,0.5)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, cy); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(cx, py); ctx.stroke();
+        ctx.setLineDash([]);
+        // Re / Im value labels
+        const reV = Math.cos(a).toFixed(2), imV = Math.sin(a).toFixed(2);
+        ctx.fillStyle = '#ffe040';
+        ctx.font = `${10 * ratio}px monospace`;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+        ctx.fillText(`Re=${reV}`, px, cy + 4 * ratio);
+        ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+        ctx.fillText(`Im=${imV}`, cx - 4 * ratio, py);
+      }
+
+      // Center dot
+      ctx.beginPath(); ctx.arc(cx, cy, 3 * ratio, 0, 2 * Math.PI);
+      ctx.fillStyle = 'rgba(160,200,255,0.5)'; ctx.fill();
+
+      // Title
+      ctx.fillStyle = 'rgba(160,200,255,0.55)';
+      ctx.font = `${11 * ratio}px monospace`;
+      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      ctx.fillText(`N=${N}  ω_N = e^(i·2π/N)`, 8 * ratio, 6 * ratio);
+    }
+
+    [unityRootsN, unityRootsK].forEach(el => el?.addEventListener('input', () => {
+      if (unityRootsNValue) unityRootsNValue.textContent = unityRootsN?.value || 8;
+      if (unityRootsK && unityRootsN) {
+        const N = Number(unityRootsN.value);
+        unityRootsK.max = N - 1;
+        if (Number(unityRootsK.value) >= N) unityRootsK.value = 0;
+      }
+      if (unityRootsKValue) unityRootsKValue.textContent = unityRootsK?.value || 0;
+      updateUnityRootsMath();
+    }));
+    if (unityRootsNValue) unityRootsNValue.textContent = unityRootsN?.value || 8;
+    if (unityRootsKValue) unityRootsKValue.textContent = unityRootsK?.value || 0;
+    updateUnityRootsMath();
+
     function drawSortCompare(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const left = 14;
@@ -13814,7 +14205,7 @@
         ctx.beginPath();
         ctx.arc(hlPx, hlPy, 6.5, 0, Math.PI * 2);
         ctx.fill();
-        ctx.shadowBlur = 0;
+        ctx.fillText('P(x)', W - 4, labelYT);
       });
     }
 
@@ -14330,9 +14721,7 @@
       }
 
       // --- Labels ---
-      ctx.font = `bold ${12 * dpr}px Segoe UI, sans-serif`;
-      ctx.fillStyle = "rgba(255,195,90,0.80)";
-      ctx.fillText("⟳ κυκλική τροχιά σωματιδίων", padX + 4 * dpr, 18 * dpr);
+
       ctx.font = `${11 * dpr}px Segoe UI, sans-serif`;
       ctx.fillStyle = "rgba(140,180,255,0.5)";
       ctx.fillText("x →", W - padX + 2 * dpr, midY - 4 * dpr);
@@ -14416,7 +14805,7 @@
       }
 
       if (canDraw(sumWavesCanvas)) {
-        if (sumAnimate?.checked) sumTime += 0.16 * Number(sumMotionSpeed?.value || 1);
+        if (sumAnimate?.checked) sumTime += 0.06 * Number(sumMotionSpeed?.value || 1);
         drawSignalDemo(sumWavesCanvas, sumTime);
       }
 
@@ -14446,6 +14835,9 @@
       }
       if (canDraw(sortCompareCanvas)) {
         drawSortCompare(sortCompareCanvas, elapsedSeconds);
+      }
+      if (canDraw(unityRootsCanvas)) {
+        drawUnityRoots(unityRootsCanvas);
       }
       if (canDraw(cooleyInteractiveCanvas)) {
         drawCooleyInteractive(cooleyInteractiveCanvas, elapsedSeconds);

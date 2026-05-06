@@ -1572,6 +1572,15 @@
       socket.emit('fourier:taylor-guess-reveal', payload);
     }
 
+    function emitTaylorGuessLive(detail) {
+      if (state.mode !== 'client' || !socket.connected || !state.joined) return;
+      const c0 = Number(clampValue(detail && detail.c0, -4, 4, 0).toFixed(2));
+      const c1 = Number(clampValue(detail && detail.c1, -4, 4, 0).toFixed(2));
+      const c2 = Number(clampValue(detail && detail.c2, -4, 4, 0).toFixed(2));
+      const c3 = Number(clampValue(detail && detail.c3, -4, 4, 0).toFixed(2));
+      socket.emit('fourier:taylor-guess-live', { c0, c1, c2, c3 });
+    }
+
     function emitTaylorGuessSubmit(detail) {
       if (state.mode !== 'client' || !socket.connected || !state.joined) return;
       const c0 = Number(clampValue(detail && detail.c0, -4, 4, 0).toFixed(2));
@@ -2086,24 +2095,29 @@
   socket.on("fourier:wave-sum-state", (payload) => {
     logComm("recv fourier:wave-sum-state", payload);
     applyWaveSumState(payload);
+    updateMiniSummary();
+  });
 
-    socket.on("fourier:taylor-guess-state", (payload) => {
-      logComm("recv fourier:taylor-guess-state", payload);
-      applyTaylorGuessState(payload);
-      updateMiniSummary();
-    });
+  socket.on("fourier:taylor-guess-state", (payload) => {
+    logComm("recv fourier:taylor-guess-state", payload);
+    applyTaylorGuessState(payload);
+    updateMiniSummary();
+  });
 
-    document.addEventListener("fourier:taylor-guess-start-local", () => {
-      emitTaylorGuessStart();
-    });
+  document.addEventListener("fourier:taylor-guess-start-local", () => {
+    emitTaylorGuessStart();
+  });
 
-    document.addEventListener("fourier:taylor-guess-reveal-local", () => {
-      emitTaylorGuessReveal();
-    });
+  document.addEventListener("fourier:taylor-guess-reveal-local", () => {
+    emitTaylorGuessReveal();
+  });
 
-    document.addEventListener("fourier:taylor-guess-submit-local", (event) => {
-      emitTaylorGuessSubmit((event && event.detail) || {});
-    });
+  document.addEventListener("fourier:taylor-guess-submit-local", (event) => {
+    emitTaylorGuessSubmit((event && event.detail) || {});
+  });
+
+  document.addEventListener("fourier:taylor-guess-live-local", (event) => {
+    emitTaylorGuessLive((event && event.detail) || {});
   });
 
   socket.on("fourier:chat-history", (payload) => {

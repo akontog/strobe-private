@@ -1087,6 +1087,7 @@ const fourierTaylorGuessState = {
   updatedAt: Date.now(),
   submissions: new Map()
 };
+const fourierTaylorGuessLiveCoeffs = new Map(); // socketId -> {c0,c1,c2,c3}
 const FOURIER_DEBUG = process.env.FOURIER_DEBUG === '1';
 
 function logFourier(eventName, payload) {
@@ -1877,11 +1878,15 @@ function buildFourierTaylorGuessPayload(viewerSocketId = '', viewerRole = 'clien
     const sub = fourierTaylorGuessState.submissions.get(socketId);
     const isOwn = socketId === viewerSocketId;
     const showCoeffs = revealForTeacher || (isOwn && Boolean(sub));
+    const live = fourierTaylorGuessLiveCoeffs.get(socketId);
+    const teacherCoeffs = sub
+      ? [sub.c0, sub.c1, sub.c2, sub.c3]
+      : (live ? [live.c0, live.c1, live.c2, live.c3] : null);
     players.push({
       socketId,
       name: participant.name,
       submitted: Boolean(sub),
-      coeffs: showCoeffs && sub ? [sub.c0, sub.c1, sub.c2, sub.c3] : null,
+      coeffs: viewerRole === 'teacher' ? teacherCoeffs : (showCoeffs && sub ? [sub.c0, sub.c1, sub.c2, sub.c3] : null),
       error: revealForTeacher && sub ? sub.error : null,
     });
   });
@@ -2994,6 +2999,24 @@ io.on('connection', (socket) => {
         startFourierTaylorGuessRound();
         emitFourierTaylorGuessState();
         emitFourierSummary();
+      });
+
+      socket.on('fourier:taylor-guess-live', (payload) => {
+        touchGeometryConnection(socket.id);
+        const participant = fourierParticipants.get(socket.id);
+        if (!participant || participant.role !== 'client') return;
+        const c0 = Number(clampFourierNumber(payload && payload.c0, -4, 4, 0).toFixed(2));
+        const c1 = Number(clampFourierNumber(payload && payload.c1, -4, 4, 0).toFixed(2));
+        const c2 = Number(clampFourierNumber(payload && payload.c2, -4, 4, 0).toFixed(2));
+        const c3 = Number(clampFourierNumber(payload && payload.c3, -4, 4, 0).toFixed(2));
+        fourierTaylorGuessLiveCoeffs.set(socket.id, { c0, c1, c2, c3 });
+        // Emit state update only to teacher sockets
+        fourierParticipants.forEach((p, sid) => {
+          if (p && p.role === 'teacher') {
+            const pl = buildFourierTaylorGuessPayload(sid, 'teacher');
+            io.to(sid).emit('fourier:taylor-guess-state', pl);
+          }
+        });
       });
 
       socket.on('fourier:taylor-guess-submit', (payload) => {
