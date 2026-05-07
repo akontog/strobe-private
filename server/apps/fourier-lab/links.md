@@ -49,6 +49,9 @@
 - [Master the Fourier Transform visually and intuitively - Mark Newman](https://howthefouriertransformworks.com/)
 - [How the Cooley-Tukey FFT Algorithm Works | Part 1 - Repeating Calculations - έχει και Links για τα επόμενα μέρη](https://www.dsprelated.com/showarticle/1709.php)
 - [The Original Cooley-Tukey FFT Algorithm](https://medium.com/@angelo.esteban/the-original-cooley-tukey-fft-algorithm-b04f6cc150b0)
+### Επεξήγηση με πολυώνυμα (αυτήν θέλω)
+- [The Fast Fourier Transform (FFT): Most Ingenious Algorithm Ever? - Reducible](https://www.youtube.com/watch?v=h7apO7q16V0)
+- [Divide & Conquer: FFT - MIT Demaine](https://www.youtube.com/watch?v=iTMn0Kt18tg)
 ## άρθρα
 - [Wikipedia](https://en.wikipedia.org/wiki/Fast_Fourier_transform)
 - [Cooley–Tukey FFT algorithm](https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm)
