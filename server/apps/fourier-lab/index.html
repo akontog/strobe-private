@@ -2203,24 +2203,26 @@
       <a href="#sec-ifft-explain" data-accordion-group="transform">7.5 Αντίστροφος μετασχηματισμός (IDFT)</a>
       <a href="#sec-audio-smooth" data-accordion-group="transform">7.6 DFT → IDFT</a>
 
-      <div class="toc-group-title" data-accordion-group="complexity">8. FFT</div>
+      <div class="toc-group-title" data-accordion-group="complexity">8. Πολυπλοκότητα</div>
       <a href="#sec-sort-compare" data-accordion-group="complexity">8.1 Divide &amp; Conquer</a>
-      <a href="#sec-unity-roots" data-accordion-group="complexity">8.2 N-ες ρίζες του 1</a>
-      <a href="#sec-cooley-interactive" data-accordion-group="complexity">8.3 Cooley-Tukey για n σημεία (διαδραστικό)</a>
-      <a href="#sec-fft-complexity" data-accordion-group="complexity">8.4 Από τον απλό DFT στον FFT (Cooley-Tukey)</a>
-      <a href="#sec-cooley-tukey" data-accordion-group="complexity">8.5 Cooley-Tukey FFT βήμα-βήμα</a>
-      <a href="#sec-activity-complexity-check" data-accordion-group="complexity">8.6 Δραστηριότητα: Αγώνες πολυπλοκότητας</a>
+      <a href="#sec-activity-complexity-check" data-accordion-group="complexity">8.2 Δραστηριότητα: Αγώνες πολυπλοκότητας</a>
 
-      <div class="toc-group-title" data-accordion-group="pipeline">9. Pipeline θάλασσας</div>
-      <a href="#sec-bridge-1d2d" data-accordion-group="pipeline">9.1 Από 1D ήχο σε 2D θάλασσα</a>
-      <a href="#sec-wave" data-accordion-group="pipeline">9.2 Τι είναι ο κυματισμός</a>
-      <a href="#sec-spectrum" data-accordion-group="pipeline">9.3 Ενεργειακό φάσμα</a>
-      <a href="#sec-phillips" data-accordion-group="pipeline">9.4 Φάσμα Phillips</a>
-      <a href="#sec-random" data-accordion-group="pipeline">9.5 Τυχαίες φάσεις</a>
-      <a href="#sec-time" data-accordion-group="pipeline">9.6 Εξέλιξη στον χρόνο</a>
-      <a href="#sec-ifft" data-accordion-group="pipeline">9.7 IFFT ανακατασκευή</a>
-      <a href="#sec-final" data-accordion-group="pipeline">9.8 Τελικό rendering</a>
-      <a href="#sec-activity-ocean-config" data-accordion-group="pipeline">9.9 Θάλασσα κυμάτων (τελική εικόνα)</a>
+      <div class="toc-group-title" data-accordion-group="fft">9. FFT</div>
+      <a href="#sec-unity-roots" data-accordion-group="fft">9.1 N-ες ρίζες του 1</a>
+      <a href="#sec-cooley-interactive" data-accordion-group="fft">9.2 Cooley-Tukey για n σημεία (διαδραστικό)</a>
+      <a href="#sec-fft-complexity" data-accordion-group="fft">9.3 Από τον απλό DFT στον FFT (Cooley-Tukey)</a>
+      <a href="#sec-cooley-tukey" data-accordion-group="fft">9.4 Cooley-Tukey FFT βήμα-βήμα</a>
+
+      <div class="toc-group-title" data-accordion-group="pipeline">10. Θάλασσα</div>
+      <a href="#sec-bridge-1d2d" data-accordion-group="pipeline">10.1 Από 1D ήχο σε 2D θάλασσα</a>
+      <a href="#sec-wave" data-accordion-group="pipeline">10.2 Τι είναι ο κυματισμός</a>
+      <a href="#sec-spectrum" data-accordion-group="pipeline">10.3 Ενεργειακό φάσμα</a>
+      <a href="#sec-phillips" data-accordion-group="pipeline">10.4 Φάσμα Phillips</a>
+      <a href="#sec-random" data-accordion-group="pipeline">10.5 Τυχαίες φάσεις</a>
+      <a href="#sec-time" data-accordion-group="pipeline">10.6 Εξέλιξη στον χρόνο</a>
+      <a href="#sec-ifft" data-accordion-group="pipeline">10.7 IFFT ανακατασκευή</a>
+      <a href="#sec-final" data-accordion-group="pipeline">10.8 Τελικό rendering</a>
+      <a href="#sec-activity-ocean-config" data-accordion-group="pipeline">10.9 Θάλασσα κυμάτων (τελική εικόνα)</a>
     </aside>
 
     <main class="content" id="content">
@@ -2439,7 +2441,16 @@
             <p class="student-only">
               Επίλεξε τη συχνότητα του κύματός σου. Η επιλογή σου εμφανίζεται live στον δάσκαλο.
             </p>
-            <canvas id="sumWavesCanvas" class="demo-canvas" width="940" height="250"></canvas>
+            <div style="display:flex;gap:8px;height:190px;margin-bottom:4px;">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-height:0;">
+                <div style="text-align:center;font-size:0.83rem;color:#9fb0d1;">Ημιτονοειδές άθροισμα</div>
+                <canvas id="sumWavesCanvas" class="demo-canvas" style="flex:1;width:100%;min-height:0;"></canvas>
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-height:0;">
+                <div style="text-align:center;font-size:0.83rem;color:#ffaa55;">Gerstner άθροισμα</div>
+                <canvas id="sumGerstnerCanvas" class="demo-canvas" style="flex:1;width:100%;min-height:0;"></canvas>
+              </div>
+            </div>
             <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:4px 0 8px;">
               <label class="sum-toggle" style="display:block;margin:0;"><input id="sumAnimate" type="checkbox" /> <span>▶ κίνηση</span></label>
               <label class="sound-slider" style="margin:0;min-width:260px;max-width:360px;" title="ω (omega): αλλάζει την ταχύτητα χρονικής εξέλιξης όλων των ημιτονοειδών στο άθροισμα.">
@@ -3254,7 +3265,7 @@
       <section class="section" id="sec-unity-roots">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.2) N-ες ρίζες του 1</h2>
+            <h2>9.1) N-ες ρίζες του 1</h2>
             <p>
               Οι <strong>N-ες ρίζες της μονάδας</strong> είναι οι λύσεις της εξίσωσης \(z^N=1\).
               Στο μιγαδικό επίπεδο είναι <strong>N ισαπέχοντα σημεία στον μοναδιαίο κύκλο</strong>:
@@ -3292,7 +3303,7 @@
       <section class="section" id="sec-cooley-interactive">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.3) Cooley-Tukey για n σημεία (διαδραστικό)</h2>
+            <h2>9.2) Cooley-Tukey για n σημεία (διαδραστικό)</h2>
             <p>
               Κάνε click στο γράφημα για να προχωρήσει ένα στάδιο: πρώτα divide (διάσπαση σε άρτια/περιττά),
               μετά conquer (συνδυασμός butterfly). Το n δίνεται ως δύναμη του 2.
@@ -3343,7 +3354,7 @@
       <section class="section" id="sec-fft-complexity">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.3) Από τον απλό DFT στον FFT (Cooley-Tukey)</h2>
+            <h2>9.3) Από τον απλό DFT στον FFT (Cooley-Tukey)</h2>
             <p>
               Στον απλό DFT, για κάθε συχνότητα κάνουμε άθροισμα σε όλα τα \(N\) δείγματα,
               άρα ο συνολικός κόπος μεγαλώνει σαν \(N^2\). Η ιδέα Cooley-Tukey είναι να
@@ -3385,7 +3396,7 @@
       <section class="section" id="sec-cooley-tukey">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.4) Cooley-Tukey FFT: αναδρομή και επίπεδα</h2>
+            <h2>9.4) Cooley-Tukey FFT: αναδρομή και επίπεδα</h2>
             <p>
               Ιδέα Cooley-Tukey: χωρίζουμε το σήμα σε άρτιες/περιττές θέσεις και λύνουμε δύο
               μικρότερα προβλήματα, ξανά και ξανά. Η σχέση είναι
@@ -3412,7 +3423,7 @@
       <section class="section activity-slide" id="sec-activity-complexity-check" data-activity-id="complexity-check">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.5) Δραστηριότητα: Αγώνες πολυπλοκότητας</h2>
+            <h2>8.2) Δραστηριότητα: Αγώνες πολυπλοκότητας</h2>
             <p class="student-only">
               Επίλεξε μία πολυπλοκότητα και πάτα «Υποβολή επιλογής». Ο teacher θα κάνει reveal όταν
               μαζευτούν αρκετές υποβολές.
@@ -3461,7 +3472,7 @@
       <section class="section" id="sec-bridge-1d2d">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.1) Από 1D ήχο σε 2D θάλασσα</h2>
+            <h2>10.1) Από 1D ήχο σε 2D θάλασσα</h2>
             <canvas id="bridgeDimCanvas" class="demo-canvas" width="940" height="300"></canvas>
             <div id="bridgeDimMath" class="mathjax-box"></div>
           </div>
@@ -3471,7 +3482,7 @@
       <section class="section" id="sec-wave">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.2) Τι είναι ο κυματισμός</h2>
+            <h2>10.2) Τι είναι ο κυματισμός</h2>
             <p>
               Στον ωκεανό, το ύψος της επιφάνειας είναι ένα πεδίο τιμών που μπορεί επίσης να αναλυθεί
               φασματικά, όπως και ένα ηχητικό σήμα.
@@ -3484,7 +3495,7 @@
       <section class="section" id="sec-spectrum">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.3) Ενεργειακό φάσμα</h2>
+            <h2>10.3) Ενεργειακό φάσμα</h2>
             <p>
               Classroom έκδοση: κάθε student στέλνει 3 ή 4 τυχαίες συχνότητες.
               Ο server φτιάχνει ένα κοινό set ~40 όρων (όχι απαραίτητα Gaussian) και από αυτό
@@ -3509,7 +3520,7 @@
       <section class="section" id="sec-phillips">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.4) Φάσμα Phillips</h2>
+            <h2>10.4) Φάσμα Phillips</h2>
             <p>
               Τώρα βάζουμε φυσική: πολλαπλασιάζουμε τις Gaussian τιμές με \(\sqrt{P(k)}\), όπου \(P(k)\)
               είναι το Phillips spectrum. Έτσι ενισχύονται/καταστέλλονται συγκεκριμένα μήκη κύματος.
@@ -3522,7 +3533,7 @@
       <section class="section" id="sec-random">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.5) Τυχαίες φάσεις</h2>
+            <h2>10.5) Τυχαίες φάσεις</h2>
             <p>
               Από το μέτρο και την τυχαία φάση φτιάχνουμε τους μιγαδικούς συντελεστές \(H_0(k)\).
               Αυτό δίνει ρεαλισμό: η επιφάνεια δεν επαναλαμβάνεται μηχανικά, αλλά παραμένει στατιστικά σωστή.
@@ -3535,7 +3546,7 @@
       <section class="section" id="sec-time">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.6) Εξέλιξη στον χρόνο</h2>
+            <h2>10.6) Εξέλιξη στον χρόνο</h2>
             <p>
               Κάθε mode ταλαντώνεται με δική του γωνιακή συχνότητα. Το άθροισμα όλων των modes είναι η
               τελική δυναμική κίνηση του νερού.
@@ -3548,7 +3559,7 @@
       <section class="section" id="sec-ifft">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.7) IFFT: από \(H(k_x,k_z)\) σε \(h(x,z,t)\)</h2>
+            <h2>10.7) IFFT: από \(H(k_x,k_z)\) σε \(h(x,z,t)\)</h2>
             <p>
               Με IFFT γυρίζουμε από το spectral domain στο spatial domain και παίρνουμε ξανά ύψος επιφάνειας
               ανά σημείο πλέγματος.
@@ -3562,7 +3573,7 @@
       <section class="section" id="sec-final">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.8) Τελικό rendering</h2>
+            <h2>10.8) Τελικό rendering</h2>
             <p>
               Το τελικό αποτέλεσμα προκύπτει από displacement + normals + shading και μπορεί να χρησιμοποιηθεί
               για πλάνα μεγάλης κλίμακας.
@@ -3575,7 +3586,7 @@
       <section class="section" id="sec-activity-ocean-config">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.9) Θάλασσα κυμάτων (τελική εικόνα)</h2>
+            <h2>10.9) Θάλασσα κυμάτων (τελική εικόνα)</h2>
             <p>
               Η ίδια ιδέα του στόχου κλείνει την παρουσίαση: από θεμελιώδη κύματα και ήχο,
               σε μια δυναμική επιφάνεια θάλασσας με επάλληλους κυματισμούς.
@@ -3718,6 +3729,7 @@
     const wave2DPhiValue = document.getElementById("wave2DPhiValue");
 
     const sumWavesCanvas = document.getElementById("sumWavesCanvas");
+    const sumGerstnerCanvas = document.getElementById("sumGerstnerCanvas");
     const sumAnimate = document.getElementById("sumAnimate");
     const sumMotionSpeed = document.getElementById("sumMotionSpeed");
     const sumMotionSpeedValue = document.getElementById("sumMotionSpeedValue");
@@ -5059,7 +5071,7 @@
 
     renderFftDuelUi();
 
-    // @slide 9.5 | @util — μορφοποιεί preview τυχαίων συχνοτήτων σε HTML string.
+    // @slide 10.5 | @util — μορφοποιεί preview τυχαίων συχνοτήτων σε HTML string.
     function formatRandomFreqPreviewItems(items) {
       if (!Array.isArray(items) || !items.length) {
         return "-";
@@ -5069,13 +5081,13 @@
         .join(", ");
     }
 
-    // @slide 9.5 — επιλέγει μέγεθος pack (3 ή 4 συχνότητες) βάσει τους συμμετέχοντες.
+    // @slide 10.5 — επιλέγει μέγεθος pack (3 ή 4 συχνότητες) βάσει τους συμμετέχοντες.
     function chooseRandomPackSize() {
       const participantEstimate = Math.max(1, classroomRandomFreqPacks.length);
       return participantEstimate <= 10 ? 4 : 3;
     }
 
-    // @slide 9.5 — κατασκευάζει τυχαίας συχνότητες pack για ένα student.
+    // @slide 10.5 — κατασκευάζει τυχαίας συχνότητες pack για ένα student.
     function buildRandomFreqPackItems(packSize) {
       const items = [];
       for (let i = 0; i < packSize; i += 1) {
@@ -5088,7 +5100,7 @@
       return items;
     }
 
-    // @slide 9.5 — εμφανίζει teacher πίνακα random pack συχνοτήτων ανά μαθητή.
+    // @slide 10.5 — εμφανίζει teacher πίνακα random pack συχνοτήτων ανά μαθητή.
     function renderRandomFreqTeacherTable() {
       if (!randomFreqTeacherTable) {
         return;
@@ -5121,7 +5133,7 @@
       randomFreqTeacherTable.innerHTML = rows.join("");
     }
 
-    // @slide 9.5 — εφαρμόζει server payload τυχαίων πακέτων συχνοτήτων classroom.
+    // @slide 10.5 — εφαρμόζει server payload τυχαίων πακέτων συχνοτήτων classroom.
     function applyClassroomRandomFreqState(detail) {
       const payload = detail && typeof detail === "object" ? detail : {};
       classroomRandomFreqPacks = Array.isArray(payload.packs) ? payload.packs.slice(0, 140) : [];
@@ -5737,13 +5749,13 @@
     });
     resetCooleyInteractiveState();
 
-    // @slide 8.3 | @util — επικυρώνει κλειδί μοντέλου πολυπλοκότητας εντός επιτρεπτών επιλογών.
+    // @slide 8.2 | @util — επικυρώνει κλειδί μοντέλου πολυπλοκότητας εντός επιτρεπτών επιλογών.
     function normalizeComplexityRaceChoice(value) {
       const safe = String(value || "").trim();
       return complexityRaceModelMap.has(safe) ? safe : "";
     }
 
-    // @slide 8.3 — επιστρέφει το τρέχον N για τον αγώνα πολυπλοκότητας.
+    // @slide 8.2 — επιστρέφει το τρέχον N για τον αγώνα πολυπλοκότητας.
     function getComplexityRaceNCurrent() {
       const safeN = Number(complexityRaceUiState.n);
       if (!Number.isFinite(safeN) || safeN < 10) {
@@ -5752,7 +5764,7 @@
       return Math.min(1000000, Math.round(safeN));
     }
 
-    // @slide 8.3 — ενημερώνει label N για complexity race.
+    // @slide 8.2 — ενημερώνει label N για complexity race.
     function updateComplexityRaceNLabel() {
       if (!complexityRaceNValue) {
         return;
@@ -5805,7 +5817,7 @@
       });
     }
 
-    // @slide 8.3 | @util — n! με cap στο Infinity για αποφυγή overflow.
+    // @slide 8.2 | @util — n! με cap στο Infinity για αποφυγή overflow.
     function factorialBounded(inputN) {
       const n = Math.max(0, Math.floor(inputN));
       if (n > 170) {
@@ -5822,7 +5834,7 @@
       return value;
     }
 
-    // @slide 8.3 — υπολογίζει αριθμό operations μοντέλου για δοσμένο N.
+    // @slide 8.2 — υπολογίζει αριθμό operations μοντέλου για δοσμένο N.
     function evaluateComplexityRace(modelKey, n) {
       const safeN = Math.max(0, Number(n) || 0);
 
@@ -5851,7 +5863,7 @@
       return 0;
     }
 
-    // @slide 8.3 — ελέγχει αν ένα event entry ανήκει στο complexity-race.
+    // @slide 8.2 — ελέγχει αν ένα event entry ανήκει στο complexity-race.
     function isComplexityRaceEntry(entry) {
       if (!entry || typeof entry !== "object") {
         return false;
@@ -5861,7 +5873,7 @@
         && String(entry.controlId || "") === "complexityChoice";
     }
 
-    // @slide 8.3 — καταχωρεί επιλογή μαθητή στο Map πολυπλοκότητας.
+    // @slide 8.2 — καταχωρεί επιλογή μαθητή στο Map πολυπλοκότητας.
     function applyComplexityRaceSelection(name, selectionKey) {
       const safeName = String(name || "").trim().slice(0, 32);
       const safeSelection = normalizeComplexityRaceChoice(selectionKey);
@@ -5873,7 +5885,7 @@
       complexityRaceSelections.set(safeName, safeSelection);
     }
 
-    // @slide 8.3 — ξαναχτίζει Map επιλογών από classroom summary payload.
+    // @slide 8.2 — ξαναχτίζει Map επιλογών από classroom summary payload.
     function rebuildComplexityRaceSelections(summary) {
       const recent = Array.isArray(summary && summary.recent) ? summary.recent.slice() : [];
       complexityRaceSelections.clear();
@@ -5886,7 +5898,7 @@
         });
     }
 
-    // @slide 8.3 — επιστρέφει λίστα ονομάτων/μετρήσεων για κάθε μοντέλο.
+    // @slide 8.2 — επιστρέφει λίστα ονομάτων/μετρήσεων για κάθε μοντέλο.
     function summarizeComplexityRaceUsers(selectionKey) {
       const selectedUsers = [];
 
@@ -6815,7 +6827,7 @@
 
     renderFFTExplainMath();
 
-    // @slide 9.1 — γράφει MathJax τύπους bridge 1D→2D.
+    // @slide 10.1 — γράφει MathJax τύπους bridge 1D→2D.
     function renderBridgeDimMath() {
       if (!bridgeDimMath) {
         return;
@@ -6830,7 +6842,7 @@
 
     renderBridgeDimMath();
 
-    // @slide 9.7 — γράφει MathJax τύπο IFFT θαλάσσιας.
+    // @slide 10.7 — γράφει MathJax τύπο IFFT θαλάσσιας.
     function renderOceanIFFTMath() {
       if (!ifftOceanMath) {
         return;
@@ -7398,6 +7410,21 @@
       } else {
         console.info(`[Ocean3D] 3D active on ${ocean3DStates.length} canvas(es).`);
       }
+    }
+
+    // @slide 1.3, 10.2 | @util — lazy επαναπροσπάθεια 3D init για συγκεκριμένο ocean canvas.
+    function ensureOcean3DState(canvas) {
+      if (!hasThree || !canvas || ocean3DCanvasSet.has(canvas)) {
+        return;
+      }
+      const state = createOcean3DState(canvas);
+      if (!state) {
+        return;
+      }
+      ocean3DStates.push(state);
+      ocean3DCanvasSet.add(canvas);
+      canvas.dataset.renderMode = "3d";
+      console.info("[Ocean3D] Recovered 3D rendering on:", canvas.id || "unknown-canvas");
     }
 
     initOcean3DScenes();
@@ -10610,6 +10637,61 @@
       });
     }
 
+    // @slide 2.6 — σχεδιάζει άθροισμα Gerstner κυμάτων (2D canvas, side-by-side με sumWavesCanvas).
+    function drawGerstnerSumDemo(canvas, t) {
+      drawAxesCanvas(canvas, (ctx, width, height) => {
+        const ratio = window.devicePixelRatio || 1;
+        const mid = height * 0.55;
+        const plot = drawWaveGridAndAxes(ctx, width, height, mid, ratio);
+        const Q = 0.55;
+        const xRange = 2 * Math.PI;
+        const componentScale = 48;
+        const components = [
+          { on: sumOn1 ? sumOn1.checked : true, amp: sumAmp1 ? Number(sumAmp1.value) : 1, freq: sumFreq1 ? Number(sumFreq1.value) : 1.2, phase: sumPhi1 ? Number(sumPhi1.value) : 0.00, color: "rgba(129, 184, 255, 0.72)" },
+          { on: sumOn2 ? sumOn2.checked : true, amp: sumAmp2 ? Number(sumAmp2.value) : 0.7, freq: sumFreq2 ? Number(sumFreq2.value) : 2.0, phase: sumPhi2 ? Number(sumPhi2.value) : 0.35, color: "rgba(255, 182, 92, 0.72)" },
+          { on: sumOn3 ? sumOn3.checked : true, amp: sumAmp3 ? Number(sumAmp3.value) : 0.5, freq: sumFreq3 ? Number(sumFreq3.value) : 3.2, phase: sumPhi3 ? Number(sumPhi3.value) : 0.70, color: "rgba(199, 150, 255, 0.72)" },
+          { on: sumOn4 ? sumOn4.checked : true, amp: sumAmp4 ? Number(sumAmp4.value) : 0.35, freq: sumFreq4 ? Number(sumFreq4.value) : 4.4, phase: sumPhi4 ? Number(sumPhi4.value) : 1.10, color: "rgba(106, 236, 176, 0.72)" },
+        ];
+        if (!isTeacherMode && waveSumStudentFreq) {
+          components.push({ on: true, amp: 0.9, freq: Number(waveSumStudentFreq.value), phase: waveSumStudentPhi ? Number(waveSumStudentPhi.value) : 0, color: "rgba(108, 208, 255, 0.82)" });
+        }
+        components.forEach((comp) => {
+          if (!comp.on) return;
+          const k = comp.freq;
+          ctx.strokeStyle = comp.color;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          for (let xi = 0; xi <= 300; xi++) {
+            const x0 = (xi / 300) * xRange;
+            const theta = k * x0 + comp.phase - t * k;
+            const sx = plot.plotLeft + (x0 / xRange) * plot.plotWidth + Q * comp.amp * Math.cos(theta) * componentScale * 0.35;
+            const sy = mid - comp.amp * Math.sin(theta) * componentScale;
+            xi === 0 ? ctx.moveTo(sx, sy) : ctx.lineTo(sx, sy);
+          }
+          ctx.stroke();
+        });
+        const sumGain = 1.18;
+        ctx.strokeStyle = "#ff8c30";
+        ctx.lineWidth = 4.2;
+        ctx.beginPath();
+        for (let xi = 0; xi <= 300; xi++) {
+          const x0 = (xi / 300) * xRange;
+          let sumXDisp = 0, sumYDisp = 0;
+          components.forEach((comp) => {
+            if (!comp.on) return;
+            const k = comp.freq;
+            const theta = k * x0 + comp.phase - t * k;
+            sumXDisp += Q * comp.amp * Math.cos(theta) * 0.35;
+            sumYDisp += comp.amp * Math.sin(theta);
+          });
+          const sx = plot.plotLeft + (x0 / xRange) * plot.plotWidth + sumXDisp * componentScale;
+          const sy = mid - sumYDisp * componentScale * sumGain;
+          xi === 0 ? ctx.moveTo(sx, sy) : ctx.lineTo(sx, sy);
+        }
+        ctx.stroke();
+      });
+    }
+
     // @slide 5.1, 5.2 | @util — τιμή [0,1] → χρώμα σκάλας κρύο-θερμό (μπλε→κίτρινο→κόκκινο).
     function temperatureToColor(value) {
       const temp = Math.max(0, Math.min(1, value));
@@ -11732,7 +11814,7 @@
       });
     }
 
-    // @slide 9.2 — σχεδιάζει ενεργειακή κατανομή κυμάτων (μεγάλα/μικρά).
+    // @slide 10.2 — σχεδιάζει ενεργειακή κατανομή κυμάτων (μεγάλα/μικρά).
     function drawWaviness(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const pad = 16;
@@ -11879,7 +11961,7 @@
       });
     }
 
-    // @slide 9.1 — σχεδιάζει bridge 1D→2D: συχνότητες και 2D wavevectors.
+    // @slide 10.1 — σχεδιάζει bridge 1D→2D: συχνότητες και 2D wavevectors.
     function drawDimensionalBridge(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const pad = 14;
@@ -12294,7 +12376,7 @@
       });
     }
 
-    // @slide 8.1, 8.3 — διαβάζει συντελεστές πολυωνύμου A από inputs.
+    // @slide 8.1, 9.2 — διαβάζει συντελεστές πολυωνύμου A από inputs.
     function getPolynomialA() {
       return [polyA0, polyA1, polyA2, polyA3].map((node, index) => {
         const fallback = [1, -0.5, 0.75, 0][index];
@@ -12302,7 +12384,7 @@
       });
     }
 
-    // @slide 8.1, 8.3 — διαβάζει συντελεστές πολυωνύμου B από inputs.
+    // @slide 8.1, 9.2 — διαβάζει συντελεστές πολυωνύμου B από inputs.
     function getPolynomialB() {
       return [polyB0, polyB1, polyB2, polyB3].map((node, index) => {
         const fallback = [1, 1, 0, 0][index];
@@ -12310,7 +12392,7 @@
       });
     }
 
-    // @slide 8.1–8.3 | @util — υπολογίζει τιμή πολυωνύμου σε δοσμένο x (Horner).
+    // @slide 8.1, 9.1–9.2 | @util — υπολογίζει τιμή πολυωνύμου σε δοσμένο x (Horner).
     function evaluatePolynomial(coeffs, x) {
       let sum = 0;
       for (let i = 0; i < coeffs.length; i += 1) {
@@ -12319,13 +12401,13 @@
       return sum;
     }
 
-    // @slide 8.1–8.3 | @util — μορφοποιεί συντελεστή σε compact string (1k, 2.3, −π).
+    // @slide 8.1, 9.1–9.2 | @util — μορφοποιεί συντελεστή σε compact string (1k, 2.3, −π).
     function formatNumberCompact(value) {
       const rounded = Math.abs(value) < 1e-10 ? 0 : value;
       return Number(rounded).toFixed(2).replace(/\.?0+$/, "");
     }
 
-    // @slide 8.1–8.3 — μετατρέπει πίνακα συντελεστών σε LaTeX string πολυωνύμου.
+    // @slide 8.1, 9.1–9.2 — μετατρέπει πίνακα συντελεστών σε LaTeX string πολυωνύμου.
     function formatPolynomialLatex(coeffs, symbol = "x", name = "P") {
       const terms = [];
       for (let i = 0; i < coeffs.length; i += 1) {
@@ -12358,7 +12440,7 @@
       return `${name}(${symbol})=${firstToken}${rest}`;
     }
 
-    // @slide 8.3 — συνέλιξη (A×B) πολυωνύμων.
+    // @slide 9.2 — συνέλιξη (A×B) πολυωνύμων.
     function multiplyPolynomials(a, b) {
       const out = new Array(a.length + b.length - 1).fill(0);
       for (let i = 0; i < a.length; i += 1) {
@@ -12369,7 +12451,7 @@
       return out;
     }
 
-    // @slide 8.2 — Gaussian elimination για ανάκτηση πολυωνύμου από σημεία.
+    // @slide 9.1 — Gaussian elimination για ανάκτηση πολυωνύμου από σημεία.
     function solveLinearSystem(matrix, vector) {
       const n = matrix.length;
       const augmented = matrix.map((row, index) => [...row, vector[index]]);
@@ -12414,7 +12496,7 @@
       return augmented.map((row) => row[n]);
     }
 
-    // @slide 8.1, 8.2, 8.3 — σχεδιάζει καμπύλες + σημεία σε canvas πολυωνύμου.
+    // @slide 8.1, 9.1, 9.2 — σχεδιάζει καμπύλες + σημεία σε canvas πολυωνύμου.
     function drawPolynomialPlot(canvas, curves = [], points = []) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const left = 24;
@@ -12490,7 +12572,7 @@
       });
     }
 
-    // @slide 8.1, 8.2, 8.3 — ενημερώνει live LaTeX + draws πολυωνύμου.
+    // @slide 8.1, 9.1, 9.2 — ενημερώνει live LaTeX + draws πολυωνύμου.
     function updatePolynomialBridge() {
       if (!polyCoeffCanvas && !polyPointsCanvas && !polyMultiplyCanvas) {
         return;
@@ -13642,7 +13724,7 @@
       return value - Math.floor(value);
     }
 
-    // @slide 9.5 | @util — pseudo-random Gaussian με Box-Muller από 2 seeds.
+    // @slide 10.5 | @util — pseudo-random Gaussian με Box-Muller από 2 seeds.
     function seededGaussian(seedA, seedB) {
       const u1 = Math.max(1e-6, seededUniform(seedA));
       const u2 = seededUniform(seedB);
@@ -13651,7 +13733,7 @@
       return r * Math.cos(theta);
     }
 
-    // @slide 9.4 | @util — υπολογίζει τιμή Phillips ocean spectrum για wavenumber k.
+    // @slide 10.4 | @util — υπολογίζει τιμή Phillips ocean spectrum για wavenumber k.
     function phillipsValue(k) {
       const clampedK = Math.max(0.12, k);
       const L = 1.15;
@@ -13661,7 +13743,7 @@
       return base * smallWaveSuppress;
     }
 
-    // @slide 9.3, 9.4 — σχεδιάζει ενεργειακό φάσμα θαλάσσιας (shallow/deep/Phillips).
+    // @slide 10.3, 10.4 — σχεδιάζει ενεργειακό φάσμα θαλάσσιας (shallow/deep/Phillips).
     function drawEnergyCurve(canvas, t, color = "#ffb35c") {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const pad = 14;
@@ -13823,7 +13905,7 @@
       });
     }
 
-    // @slide 9.5 — σχεδιάζει φάσμα τυχαίων φάσεων ανά συχνότητα.
+    // @slide 10.5 — σχεδιάζει φάσμα τυχαίων φάσεων ανά συχνότητα.
     function drawRandomPhases(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const pad = 14;
@@ -13905,7 +13987,7 @@
       });
     }
 
-    // @slide 9.4 — σχεδιάζει φάσμα Phillips με επιλεγμένο βάρος ανά k.
+    // @slide 10.4 — σχεδιάζει φάσμα Phillips με επιλεγμένο βάρος ανά k.
     function drawPhillipsWeightedSpectrum(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const left = 16;
@@ -13984,7 +14066,7 @@
       });
     }
 
-    // @slide 9.6 — σχεδιάζει εξέλιξη φάσεων h(k,t) = H(k)·e^{iωt} στον χρόνο.
+    // @slide 10.6 — σχεδιάζει εξέλιξη φάσεων h(k,t) = H(k)·e^{iωt} στον χρόνο.
     function drawTimeEvolution(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const mid = height * 0.52;
@@ -14000,7 +14082,7 @@
       });
     }
 
-    // @slide 9.7 — σχεδιάζει ανακατασκευή ύψους θαλασσιού με IFFT.
+    // @slide 10.7 — σχεδιάζει ανακατασκευή ύψους θαλασσιού με IFFT.
     function drawIFFT(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const pad = 12;
@@ -14092,7 +14174,7 @@
       });
     }
 
-    // @slide 9.8 — σχεδιάζει τελικό 2D/3D render του κυματισμού.
+    // @slide 10.8 — σχεδιάζει τελικό 2D/3D render του κυματισμού.
     function drawFinalRender(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const grad = ctx.createLinearGradient(0, 0, 0, height);
@@ -14727,6 +14809,96 @@
       ctx.fillText("x →", W - padX + 2 * dpr, midY - 4 * dpr);
     }
 
+    // @slide 2.2, 2.5 | @util — 2D fallback surface όταν αποτύχει/λείπει WebGL.
+    function drawWaveSurfaceFallback(canvas, t, settings, isGerstner = false) {
+      if (!canvas) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const W = Math.round(Math.max(1, canvas.clientWidth) * dpr);
+      const H = Math.round(Math.max(1, canvas.clientHeight) * dpr);
+      if (canvas.width !== W || canvas.height !== H) {
+        canvas.width = W;
+        canvas.height = H;
+      }
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = "#020810";
+      ctx.fillRect(0, 0, W, H);
+
+      const numZ = 32;
+      const numX = 84;
+      const xRange = 4 * Math.PI;
+      const zRange = 3.1 * Math.PI;
+      const horizonY = H * 0.30;
+      const baseY = H * 0.88;
+      const padL = 18 * dpr;
+      const padR = 18 * dpr;
+      const plotW = W - padL - padR;
+      const A = Number(settings?.amp || 0.4);
+      const maxH = H * 0.18 * Math.min(A / 0.4 + 0.2, 2.4);
+
+      for (let zi = 0; zi < numZ; zi += 1) {
+        const z0 = (zi / (numZ - 1)) * zRange;
+        const perspT = zi / (numZ - 1);
+        const rowBaseY = horizonY + perspT * (baseY - horizonY);
+        const pts = [];
+
+        for (let xi = 0; xi <= numX; xi += 1) {
+          const x0 = (xi / numX) * xRange;
+          let sx = padL + (xi / numX) * plotW;
+          let yDisp = 0;
+
+          if (isGerstner) {
+            const dirDeg = Number(settings?.dirDeg || 35);
+            const dirRad = (dirDeg * Math.PI) / 180;
+            const dirX = Math.cos(dirRad);
+            const dirZ = Math.sin(dirRad);
+            const q = Number(settings?.q || 0.55);
+            const k = Number(settings?.k || 1.4);
+            const omega = Number(settings?.omega || 1.1);
+            const theta = k * (dirX * x0 + dirZ * z0) + omega * t;
+            const xDisp = q * A * dirX * Math.cos(theta) * 0.55;
+            sx = padL + ((x0 + xDisp) / xRange) * plotW;
+            yDisp = A * Math.sin(theta);
+          } else {
+            const kx = Number(settings?.kx || 1.4);
+            const kz = Number(settings?.kz || 1.0);
+            const omega = Number(settings?.omega || 1.2);
+            const phi = Number(settings?.phi || 0);
+            yDisp = A * Math.sin(kx * x0 + kz * z0 + omega * t + phi);
+          }
+
+          const sy = rowBaseY - yDisp * maxH * (0.25 + 0.75 * perspT);
+          pts.push([sx, sy]);
+        }
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(pts[0][0], pts[0][1]);
+        for (let i = 1; i < pts.length; i += 1) ctx.lineTo(pts[i][0], pts[i][1]);
+        ctx.lineTo(pts[pts.length - 1][0], rowBaseY + 1);
+        ctx.lineTo(pts[0][0], rowBaseY + 1);
+        ctx.closePath();
+        const fillGrad = ctx.createLinearGradient(0, rowBaseY - maxH, 0, rowBaseY);
+        fillGrad.addColorStop(0, isGerstner ? `rgba(18,60,110,${0.12 + 0.3 * perspT})` : `rgba(18,72,160,${0.12 + 0.3 * perspT})`);
+        fillGrad.addColorStop(1, isGerstner ? `rgba(4,14,46,${0.07 + 0.18 * perspT})` : `rgba(4,16,52,${0.07 + 0.18 * perspT})`);
+        ctx.fillStyle = fillGrad;
+        ctx.fill();
+        ctx.restore();
+
+        ctx.strokeStyle = isGerstner
+          ? `rgba(255,145,65,${0.2 + 0.8 * perspT})`
+          : `rgba(88,180,255,${0.2 + 0.8 * perspT})`;
+        ctx.lineWidth = (0.7 + 1.4 * perspT) * dpr;
+        ctx.lineJoin = "round";
+        ctx.beginPath();
+        ctx.moveTo(pts[0][0], pts[0][1]);
+        for (let i = 1; i < pts.length; i += 1) ctx.lineTo(pts[i][0], pts[i][1]);
+        ctx.stroke();
+      }
+    }
+
     // @slide όλες — κύριος requestAnimationFrame loop που σχεδιάζει το ορατό section και τα γειτονικά του.
     function animatePresentation() {
       window.requestAnimationFrame(animatePresentation);
@@ -14747,7 +14919,19 @@
 
       if (canDraw(wave2DCanvas)) {
         if (wave2DAnimate?.checked) wave2DTime += 0.016;
-        updateWave2DScene(wave2DState, wave2DTime, getWave2DSettings());
+        if (!wave2DState && hasThree) {
+          wave2DState = createWave2DState(wave2DCanvas);
+        }
+        if (wave2DState) {
+          try {
+            updateWave2DScene(wave2DState, wave2DTime, getWave2DSettings());
+          } catch {
+            wave2DState = null;
+            drawWaveSurfaceFallback(wave2DCanvas, wave2DTime, getWave2DSettings(), false);
+          }
+        } else {
+          drawWaveSurfaceFallback(wave2DCanvas, wave2DTime, getWave2DSettings(), false);
+        }
       }
 
       if (canDraw(whyGerstnerCanvas)) {
@@ -14764,11 +14948,35 @@
 
       if (canDraw(compareSineCanvas) || canDraw(compareGerstnerCanvas)) {
         if (compareAnimate?.checked) compareTime += 0.016;
+        if (!compareSineState && hasThree) {
+          compareSineState = createWave2DState(compareSineCanvas);
+        }
+        if (!compareGerstnerState && hasThree) {
+          compareGerstnerState = createGerstnerState(compareGerstnerCanvas);
+        }
         if (canDraw(compareSineCanvas)) {
-          updateWave2DScene(compareSineState, compareTime, getCompareSineSettings());
+          if (compareSineState) {
+            try {
+              updateWave2DScene(compareSineState, compareTime, getCompareSineSettings());
+            } catch {
+              compareSineState = null;
+              drawWaveSurfaceFallback(compareSineCanvas, compareTime, getCompareSineSettings(), false);
+            }
+          } else {
+            drawWaveSurfaceFallback(compareSineCanvas, compareTime, getCompareSineSettings(), false);
+          }
         }
         if (canDraw(compareGerstnerCanvas)) {
-          updateGerstnerScene(compareGerstnerState, compareTime, getCompareGerstnerSettings());
+          if (compareGerstnerState) {
+            try {
+              updateGerstnerScene(compareGerstnerState, compareTime, getCompareGerstnerSettings());
+            } catch {
+              compareGerstnerState = null;
+              drawWaveSurfaceFallback(compareGerstnerCanvas, compareTime, getCompareGerstnerSettings(), true);
+            }
+          } else {
+            drawWaveSurfaceFallback(compareGerstnerCanvas, compareTime, getCompareGerstnerSettings(), true);
+          }
         }
       }
 
@@ -14804,9 +15012,10 @@
         drawSoundDecomposition(elapsedSeconds);
       }
 
-      if (canDraw(sumWavesCanvas)) {
+      if (canDraw(sumWavesCanvas) || canDraw(sumGerstnerCanvas)) {
         if (sumAnimate?.checked) sumTime += 0.06 * Number(sumMotionSpeed?.value || 1);
-        drawSignalDemo(sumWavesCanvas, sumTime);
+        if (canDraw(sumWavesCanvas)) drawSignalDemo(sumWavesCanvas, sumTime);
+        if (canDraw(sumGerstnerCanvas)) drawGerstnerSumDemo(sumGerstnerCanvas, sumTime);
       }
 
       if (canDraw(heatSineWaveCanvas) || canDraw(heatSineRodCanvas)) {
@@ -14910,9 +15119,21 @@
 
       ocean3DStates.forEach((state) => {
         if (canDraw(state.canvas)) {
-          updateOcean3DState(state, elapsedSeconds, oceanSettings);
+          try {
+            updateOcean3DState(state, elapsedSeconds, oceanSettings);
+          } catch (error) {
+            console.warn("[Ocean3D] render failed, switching this canvas to 2D fallback:", state.canvas?.id, error);
+            ocean3DCanvasSet.delete(state.canvas);
+          }
         }
       });
+
+      if (canDraw(oceanWaveCanvasMain)) {
+        ensureOcean3DState(oceanWaveCanvasMain);
+      }
+      if (canDraw(oceanWaveCanvas)) {
+        ensureOcean3DState(oceanWaveCanvas);
+      }
 
       if (!ocean3DCanvasSet.has(oceanWaveCanvasMain) && canDraw(oceanWaveCanvasMain)) {
         drawOceanWaves(oceanWaveCanvasMain, elapsedSeconds, oceanSettings);
