@@ -10,6 +10,7 @@ SmarT classROoms for emBodied participatory lEarning
   - Geometry Live
   - Buffon Needle
   - Fourier Lab.
+  - neural lab
 - Teacher dashboard και Student launcher χωρίς login flow.
 - Legacy geometry canvas με real-time sync teacher-student.
 - Admin dashboard με live εικόνα χρηστών.
@@ -156,6 +157,17 @@ npm start
 start http://localhost:3000/client.html
 start http://localhost:3000/user.html
 ```
+
+### Σημειώσεις
+
+- Ο server τρέχει στο port `3000` ή στο `PORT` του περιβάλλοντος.
+- Τα πλήκτρα `←` και `→` αλλάζουν διαφάνεια.
+- Αν δεις πρόβλημα με `file:///js/realtime-socket.js`, άνοιξε τη σελίδα από `http://localhost:3000/...` και όχι ως τοπικό αρχείο.
+
+### Τερματισμός διεργασίας
+netstat -ano | findstr :3000
+taskkill /PID 12345 /F
+
 
 3. Στο student page επίλεξε Camera mode αν θες DeepSORT tracking.
 

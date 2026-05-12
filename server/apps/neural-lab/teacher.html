@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neural Lab - Teacher</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    background: radial-gradient(circle at top, #1f2937 0%, #0b1220 55%, #060b14 100%);
+    color: #e5e7eb;
+    height: 100vh;
+    padding: 8px 10px;
+    display: grid;
+    gap: 8px;
+    overflow: hidden;
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  h1 { font-size: 1.03rem; letter-spacing: 0.3px; }
+  .status {
+    font-size: 0.78rem;
+    color: #bfdbfe;
+    border: 1px solid #334155;
+    border-radius: 999px;
+    padding: 4px 9px;
+    background: rgba(15, 23, 42, 0.75);
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(290px, 0.95fr) minmax(420px, 1.3fr);
+    gap: 8px;
+    height: calc(100vh - 62px);
+    min-height: 0;
+  }
+  .panel {
+    background: rgba(15, 23, 42, 0.84);
+    border: 1px solid #263247;
+    border-radius: 12px;
+    padding: 8px;
+    min-height: 0;
+  }
+  .panel h2 {
+    font-size: 0.86rem;
+    color: #93c5fd;
+    margin-bottom: 6px;
+  }
+  .input-row {
+    border: 1px solid #2d3b54;
+    border-radius: 10px;
+    padding: 6px;
+    margin-bottom: 5px;
+    background: rgba(15, 23, 42, 0.55);
+    display: grid;
+    gap: 5px;
+  }
+  .input-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+  }
+  .value-text {
+    font-size: 0.75rem;
+    color: #cbd5e1;
+  }
+  input[type="range"] { width: 100%; accent-color: #38bdf8; }
+  .bool-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.78rem;
+  }
+  .out-grid {
+    display: grid;
+    gap: 8px;
+  }
+  .out-item {
+    border: 1px solid #2d3b54;
+    border-radius: 10px;
+    padding: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    background: rgba(15, 23, 42, 0.55);
+  }
+  .out-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.83rem;
+  }
+  .out-icon { font-size: 1.25rem; }
+  .out-pct {
+    min-width: 54px;
+    text-align: right;
+    font-weight: 700;
+    color: #bfdbfe;
+    font-size: 0.8rem;
+  }
+  .weights-list {
+    display: grid;
+    gap: 5px;
+  }
+  .weight-card {
+    border: 1px solid #2d3b54;
+    border-radius: 10px;
+    padding: 6px;
+    background: rgba(15, 23, 42, 0.55);
+    display: grid;
+    gap: 4px;
+  }
+  .weight-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.76rem;
+    color: #e2e8f0;
+  }
+  .weight-meta { color: #93c5fd; }
+  .hint { color: #94a3b8; font-size: 0.72rem; margin-top: 2px; }
+  #nnCanvas {
+    width: 100%;
+    height: 100%;
+    min-height: 260px;
+    border-radius: 12px;
+    border: 1px solid #24324a;
+    background: linear-gradient(180deg, #08111f 0%, #040913 100%);
+    display: block;
+  }
+
+  @media (max-width: 980px) {
+    body { height: auto; min-height: 100vh; overflow: auto; }
+    .layout { grid-template-columns: 1fr; height: auto; }
+    #nnCanvas { height: 300px; min-height: 220px; }
+  }
+
+  @media (max-height: 900px) {
+    body {
+      padding: 6px 8px;
+      gap: 6px;
+    }
+    .layout {
+      height: calc(100vh - 56px);
+      gap: 6px;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="top">
+    <h1>Neural Lab (Teacher)</h1>
+    <div class="status" id="statusText">Σύνδεση...</div>
+  </div>
+
+  <div class="layout">
+    <div class="panel">
+      <h2>Είσοδοι</h2>
+      <div id="inputsWrap"></div>
+
+      <h2 style="margin-top:7px;">Έξοδοι</h2>
+      <div class="out-grid" id="outputsWrap"></div>
+
+      <h2 style="margin-top:7px;">Weights Μαθητών</h2>
+      <div class="weights-list" id="weightsWrap"></div>
+      <p class="hint">Κάθε μαθητής ελέγχει μόνο ένα βάρος. Αν συνδεθούν πάνω από 4, οι επιπλέον μπαίνουν σε αναμονή.</p>
+    </div>
+
+    <div class="panel">
+      <h2>Οπτικοποίηση Νευρωνικού</h2>
+      <canvas id="nnCanvas" width="920" height="430"></canvas>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const INPUTS = [
+    { key: "wheels", label: "Αριθμός τροχών", type: "number", min: 0, max: 6, step: 1 },
+    { key: "hasEngine", label: "Έχει μηχανή", type: "boolean" },
+    { key: "seats", label: "Αριθμός θέσεων", type: "number", min: 1, max: 8, step: 1 },
+    { key: "hasPedals", label: "Έχει πετάλια", type: "boolean" }
+  ];
+
+  const OUTPUTS = [
+    { key: "car", label: "Αυτοκίνητο", icon: "🚗" },
+    { key: "bicycle", label: "Ποδήλατο", icon: "🚲" },
+    { key: "motorcycle", label: "Μοτοσυκλέτα", icon: "🏍️" },
+    { key: "scooter", label: "Πατίνι", icon: "🛴" }
+  ];
+
+  const OUTPUT_PROTOTYPES = {
+    car: { wheels: 1.0, hasEngine: 1.0, seats: 0.8, hasPedals: -0.8 },
+    bicycle: { wheels: 0.7, hasEngine: -1.1, seats: -0.4, hasPedals: 1.2 },
+    motorcycle: { wheels: 0.65, hasEngine: 1.0, seats: 0.2, hasPedals: -0.8 },
+    scooter: { wheels: 0.35, hasEngine: -0.8, seats: -0.9, hasPedals: -0.2 }
+  };
+
+  const statusText = document.getElementById("statusText");
+  const inputsWrap = document.getElementById("inputsWrap");
+  const outputsWrap = document.getElementById("outputsWrap");
+  const weightsWrap = document.getElementById("weightsWrap");
+  const canvas = document.getElementById("nnCanvas");
+  const ctx = canvas.getContext("2d");
+
+  let ws = null;
+  let reconnectTimer = null;
+
+  const state = {
+    model: {
+      inputs: {
+        wheels: { enabled: true, value: 4 },
+        hasEngine: { enabled: true, value: true },
+        seats: { enabled: true, value: 4 },
+        hasPedals: { enabled: true, value: false }
+      },
+      weights: {
+        wheels: 1,
+        hasEngine: 1,
+        seats: 1,
+        hasPedals: 1
+      },
+      outputsEnabled: {
+        car: true,
+        bicycle: false,
+        motorcycle: false,
+        scooter: false
+      }
+    },
+    participants: []
+  };
+
+  function clamp(n, min, max) {
+    return Math.max(min, Math.min(max, n));
+  }
+
+  function inputNormalized(inputKey) {
+    const cfg = state.model.inputs[inputKey];
+    if (!cfg || !cfg.enabled) return 0;
+
+    if (inputKey === "wheels") {
+      return clamp(Number(cfg.value) / 6, 0, 1.2);
+    }
+    if (inputKey === "seats") {
+      return clamp(Number(cfg.value) / 8, 0, 1.2);
+    }
+    return cfg.value ? 1 : 0;
+  }
+
+  function computeOutputScores() {
+    const scores = {};
+    let activeCount = 0;
+
+    OUTPUTS.forEach((o) => {
+      if (state.model.outputsEnabled[o.key]) activeCount += 1;
+    });
+
+    OUTPUTS.forEach((output) => {
+      if (!state.model.outputsEnabled[output.key]) {
+        scores[output.key] = 0;
+        return;
+      }
+
+      let sum = 0;
+      INPUTS.forEach((input) => {
+        const x = inputNormalized(input.key);
+        const w = Number(state.model.weights[input.key] || 0);
+        const proto = OUTPUT_PROTOTYPES[output.key][input.key] || 0;
+        sum += x * w * proto;
+      });
+      scores[output.key] = sum;
+    });
+
+    if (activeCount === 0) {
+      return OUTPUTS.reduce((acc, o) => {
+        acc[o.key] = 0;
+        return acc;
+      }, {});
+    }
+
+    const activeScores = OUTPUTS.filter((o) => state.model.outputsEnabled[o.key]).map((o) => scores[o.key]);
+    const maxScore = Math.max(...activeScores);
+
+    let total = 0;
+    const probs = {};
+
+    OUTPUTS.forEach((o) => {
+      if (!state.model.outputsEnabled[o.key]) {
+        probs[o.key] = 0;
+        return;
+      }
+      const expV = Math.exp(scores[o.key] - maxScore);
+      probs[o.key] = expV;
+      total += expV;
+    });
+
+    OUTPUTS.forEach((o) => {
+      probs[o.key] = total > 0 ? (probs[o.key] / total) * 100 : 0;
+    });
+
+    return probs;
+  }
+
+  function assignedStudentForInput(inputKey) {
+    return state.participants.find((p) => p.role === "client" && p.assignedInput === inputKey) || null;
+  }
+
+  function renderInputs() {
+    inputsWrap.innerHTML = "";
+
+    INPUTS.forEach((input) => {
+      const cfg = state.model.inputs[input.key] || { enabled: true, value: 0 };
+      const row = document.createElement("div");
+      row.className = "input-row";
+
+      const head = document.createElement("div");
+      head.className = "input-head";
+
+      const toggle = document.createElement("label");
+      toggle.className = "toggle";
+      const enabled = document.createElement("input");
+      enabled.type = "checkbox";
+      enabled.checked = Boolean(cfg.enabled);
+      enabled.addEventListener("change", () => {
+        sendTeacherConfig({
+          inputs: {
+            [input.key]: {
+              enabled: enabled.checked,
+              value: cfg.value
+            }
+          }
+        });
+      });
+      const tText = document.createElement("span");
+      tText.textContent = input.label;
+      toggle.append(enabled, tText);
+
+      const meta = document.createElement("span");
+      meta.className = "value-text";
+      meta.textContent = cfg.enabled ? "ενεργή" : "ανενεργή";
+
+      head.append(toggle, meta);
+      row.appendChild(head);
+
+      if (input.type === "number") {
+        const valueLabel = document.createElement("div");
+        valueLabel.className = "value-text";
+        valueLabel.textContent = `Τιμή: ${cfg.value}`;
+
+        const slider = document.createElement("input");
+        slider.type = "range";
+        slider.min = String(input.min);
+        slider.max = String(input.max);
+        slider.step = String(input.step);
+        slider.value = String(cfg.value);
+        slider.disabled = !cfg.enabled;
+        slider.addEventListener("input", () => {
+          valueLabel.textContent = `Τιμή: ${slider.value}`;
+        });
+        slider.addEventListener("change", () => {
+          sendTeacherConfig({
+            inputs: {
+              [input.key]: {
+                enabled: cfg.enabled,
+                value: Number(slider.value)
+              }
+            }
+          });
+        });
+
+        row.append(valueLabel, slider);
+      } else {
+        const boolLabel = document.createElement("label");
+        boolLabel.className = "bool-box";
+        const boolCheck = document.createElement("input");
+        boolCheck.type = "checkbox";
+        boolCheck.checked = Boolean(cfg.value);
+        boolCheck.disabled = !cfg.enabled;
+        boolCheck.addEventListener("change", () => {
+          sendTeacherConfig({
+            inputs: {
+              [input.key]: {
+                enabled: cfg.enabled,
+                value: boolCheck.checked
+              }
+            }
+          });
+        });
+        const txt = document.createElement("span");
+        txt.textContent = boolCheck.checked ? "Ναι" : "Όχι";
+        boolCheck.addEventListener("input", () => {
+          txt.textContent = boolCheck.checked ? "Ναι" : "Όχι";
+        });
+        boolLabel.append(boolCheck, txt);
+        row.appendChild(boolLabel);
+      }
+
+      inputsWrap.appendChild(row);
+    });
+  }
+
+  function renderOutputs() {
+    const probs = computeOutputScores();
+    outputsWrap.innerHTML = "";
+
+    OUTPUTS.forEach((output) => {
+      const item = document.createElement("div");
+      item.className = "out-item";
+
+      const left = document.createElement("label");
+      left.className = "out-left";
+      const check = document.createElement("input");
+      check.type = "checkbox";
+      check.checked = Boolean(state.model.outputsEnabled[output.key]);
+      check.addEventListener("change", () => {
+        sendTeacherConfig({
+          outputsEnabled: {
+            [output.key]: check.checked
+          }
+        });
+      });
+
+      const icon = document.createElement("span");
+      icon.className = "out-icon";
+      icon.textContent = output.icon;
+
+      const lbl = document.createElement("span");
+      lbl.textContent = output.label;
+
+      left.append(check, icon, lbl);
+
+      const pct = document.createElement("span");
+      pct.className = "out-pct";
+      pct.textContent = `${probs[output.key].toFixed(1)}%`;
+
+      item.append(left, pct);
+      outputsWrap.appendChild(item);
+    });
+  }
+
+  function renderWeights() {
+    weightsWrap.innerHTML = "";
+
+    INPUTS.forEach((input) => {
+      const student = assignedStudentForInput(input.key);
+      const value = Number(state.model.weights[input.key] || 0);
+
+      const card = document.createElement("div");
+      card.className = "weight-card";
+
+      const title = document.createElement("div");
+      title.className = "weight-title";
+
+      const left = document.createElement("span");
+      left.textContent = input.label;
+      const right = document.createElement("span");
+      right.className = "weight-meta";
+      right.textContent = student ? `${student.name} (${value.toFixed(2)})` : `χωρίς ανάθεση (${value.toFixed(2)})`;
+
+      title.append(left, right);
+
+      const slider = document.createElement("input");
+      slider.type = "range";
+      slider.min = "-2";
+      slider.max = "2";
+      slider.step = "0.01";
+      slider.value = String(value);
+      slider.disabled = true;
+
+      card.append(title, slider);
+      weightsWrap.appendChild(card);
+    });
+
+    const waiting = state.participants.filter((p) => p.role === "client" && !p.assignedInput);
+    if (waiting.length > 0) {
+      const note = document.createElement("div");
+      note.className = "hint";
+      note.textContent = `Αναμονή: ${waiting.map((w) => w.name).join(", ")}`;
+      weightsWrap.appendChild(note);
+    }
+  }
+
+  function drawNode(x, y, radius, label, fill, isIcon = false) {
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fillStyle = fill;
+    ctx.fill();
+    ctx.strokeStyle = "#93c5fd";
+    ctx.lineWidth = 1.4;
+    ctx.stroke();
+
+    ctx.fillStyle = "#dbeafe";
+  ctx.font = isIcon ? "26px Segoe UI Emoji" : "12px Segoe UI";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(label, x, y);
+  }
+
+  function drawNetwork() {
+    const width = canvas.width;
+    const height = canvas.height;
+    ctx.clearRect(0, 0, width, height);
+
+    const inputYs = INPUTS.map((_, i) => Math.round((i + 1) * height / (INPUTS.length + 1)));
+    const activeOutputs = OUTPUTS.filter((o) => state.model.outputsEnabled[o.key]);
+    const outputYs = OUTPUTS.map((_, i) => Math.round((i + 1) * height / (OUTPUTS.length + 1)));
+
+    const xIn = 150;
+    const xOut = width - 150;
+
+    OUTPUTS.forEach((output, outIdx) => {
+      const outY = outputYs[outIdx];
+
+      INPUTS.forEach((input, inIdx) => {
+        const inY = inputYs[inIdx];
+        const inputCfg = state.model.inputs[input.key] || { enabled: false, value: 0 };
+        const inputVal = inputNormalized(input.key);
+        const weight = Number(state.model.weights[input.key] || 0);
+        const proto = OUTPUT_PROTOTYPES[output.key][input.key] || 0;
+        const contrib = inputCfg.enabled && state.model.outputsEnabled[output.key]
+          ? inputVal * weight * proto
+          : 0;
+
+        const alpha = state.model.outputsEnabled[output.key] ? 0.3 + Math.min(0.7, Math.abs(contrib)) : 0.12;
+        const color = contrib >= 0
+          ? `rgba(34,197,94,${alpha.toFixed(3)})`
+          : `rgba(239,68,68,${alpha.toFixed(3)})`;
+
+        ctx.beginPath();
+        ctx.moveTo(xIn + 34, inY);
+        ctx.lineTo(xOut - 34, outY);
+        ctx.lineWidth = state.model.outputsEnabled[output.key] ? 1.2 + Math.abs(contrib) * 4.5 : 1;
+        ctx.strokeStyle = color;
+        ctx.stroke();
+      });
+    });
+
+    INPUTS.forEach((input, idx) => {
+      const cfg = state.model.inputs[input.key] || { enabled: false };
+      drawNode(xIn, inputYs[idx], 26, input.label.split(" ")[0], cfg.enabled ? "#1d4ed8" : "#1f2937");
+    });
+
+    OUTPUTS.forEach((output, idx) => {
+      const enabled = Boolean(state.model.outputsEnabled[output.key]);
+      drawNode(xOut, outputYs[idx], 38, output.icon, enabled ? "#7c3aed" : "#1f2937", true);
+    });
+
+    const probs = computeOutputScores();
+    ctx.fillStyle = "#e2e8f0";
+    ctx.font = "12px Segoe UI";
+    ctx.textAlign = "left";
+    OUTPUTS.forEach((output, idx) => {
+      const y = outputYs[idx] + 46;
+      const txt = `${output.label}: ${probs[output.key].toFixed(1)}%`;
+      ctx.fillText(txt, xOut - 60, y);
+    });
+
+    if (activeOutputs.length === 0) {
+      ctx.fillStyle = "#fca5a5";
+      ctx.font = "bold 14px Segoe UI";
+      ctx.textAlign = "center";
+      ctx.fillText("Επίλεξε τουλάχιστον μία έξοδο", width / 2, height - 24);
+    }
+  }
+
+  function renderAll() {
+    renderInputs();
+    renderOutputs();
+    renderWeights();
+    drawNetwork();
+  }
+
+  function applyServerState(payload) {
+    if (!payload || typeof payload !== "object") return;
+
+    if (payload.model && typeof payload.model === "object") {
+      state.model = payload.model;
+    }
+
+    if (Array.isArray(payload.participants)) {
+      state.participants = payload.participants;
+    }
+
+    renderAll();
+  }
+
+  function send(type, data = {}) {
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    ws.send(JSON.stringify({ type, ...data }));
+  }
+
+  function sendTeacherConfig(configPatch) {
+    send("teacher_config", { patch: configPatch });
+  }
+
+  function connect() {
+    const proto = location.protocol === "https:" ? "wss" : "ws";
+    ws = new WebSocket(`${proto}://${location.host}/ws/neural-lab`);
+
+    ws.addEventListener("open", () => {
+      statusText.textContent = "Συνδεδεμένος ως teacher";
+      send("register_teacher", { name: "Teacher" });
+    });
+
+    ws.addEventListener("message", (event) => {
+      let message;
+      try {
+        message = JSON.parse(event.data);
+      } catch {
+        return;
+      }
+
+      if (message.type === "canvas_state") {
+        applyServerState(message);
+      }
+    });
+
+    ws.addEventListener("close", () => {
+      statusText.textContent = "Αποσυνδέθηκε - επανασύνδεση...";
+      clearTimeout(reconnectTimer);
+      reconnectTimer = setTimeout(connect, 900);
+    });
+
+    ws.addEventListener("error", () => {
+      statusText.textContent = "Σφάλμα σύνδεσης";
+    });
+  }
+
+  function fitCanvasToContainer() {
+    const rect = canvas.getBoundingClientRect();
+    const width = Math.max(500, Math.round(rect.width));
+    const height = Math.max(260, Math.round(rect.height));
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+      drawNetwork();
+    }
+  }
+
+  const resizeObserver = new ResizeObserver(() => fitCanvasToContainer());
+  resizeObserver.observe(canvas);
+
+  fitCanvasToContainer();
+  renderAll();
+  connect();
+})();
+</script>
+</body>
+</html>

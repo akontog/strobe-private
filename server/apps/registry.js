@@ -31,6 +31,16 @@ const APPS = [
     clientEntry: 'index.html'
   },
   {
+    slug: 'neural-lab',
+    title: 'Neural Lab',
+    description: 'Collaborative neural-network weights activity with teacher/student live sync.',
+    roles: ['teacher', 'client'],
+    kind: 'static',
+    staticDir: path.join(__dirname, 'neural-lab'),
+    teacherEntry: 'teacher.html',
+    clientEntry: 'student.html'
+  },
+  {
     slug: 'chess',
     title: 'Chess Lab',
     description: 'Interactive chess presentation with board demos and puzzles.',

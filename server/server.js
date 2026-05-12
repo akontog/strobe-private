@@ -610,6 +610,7 @@ app.use('/client', clientRouter);
 const activeUsers = new Map();
 const geometryConnectionMeta = new Map();
 const buffonConnectionMeta = new WeakMap();
+const canvasNodeConnectionMeta = new WeakMap();
 const communicationLog = [];
 let communicationSeq = 0;
 const parsedCommLogLimit = Number.parseInt(process.env.ADMIN_COMM_LOG_LIMIT || '1200', 10);
@@ -666,7 +667,15 @@ const COMM_EVENT_CATALOG = Object.freeze([
   { app: 'buffon', direction: 'out', event: 'buffon:roster', description: 'Server sends current roster to teachers.' },
   { app: 'buffon', direction: 'out', event: 'buffon:round_start', description: 'Server pushes round start payload to students.' },
   { app: 'buffon', direction: 'out', event: 'buffon:round_end', description: 'Server pushes round end payload to students.' },
-  { app: 'buffon', direction: 'out', event: 'buffon:reset_tournament', description: 'Server pushes tournament reset payload to students.' }
+  { app: 'buffon', direction: 'out', event: 'buffon:reset_tournament', description: 'Server pushes tournament reset payload to students.' },
+
+  { app: 'neural-lab', direction: 'in', event: 'neural-lab:ws-connect', description: 'Neural-lab websocket connection established.' },
+  { app: 'neural-lab', direction: 'in', event: 'neural-lab:ws-close', description: 'Neural-lab websocket connection closed.' },
+  { app: 'neural-lab', direction: 'in', event: 'neural-lab:register_teacher', description: 'Teacher registers in neural-lab channel.' },
+  { app: 'neural-lab', direction: 'in', event: 'neural-lab:register_student', description: 'Student registers in neural-lab channel.' },
+  { app: 'neural-lab', direction: 'in', event: 'neural-lab:student_weight', description: 'Student updates assigned input weight.' },
+  { app: 'neural-lab', direction: 'in', event: 'neural-lab:teacher_config', description: 'Teacher updates input/output configuration.' },
+  { app: 'neural-lab', direction: 'out', event: 'neural-lab:canvas_state', description: 'Server pushes synchronized state to teachers/students.' }
 ]);
 
 function sanitizeCommString(value, maxLen = 200) {
@@ -896,6 +905,26 @@ function touchBuffonConnection(ws, patch = {}) {
   };
 
   buffonConnectionMeta.set(ws, next);
+  return next;
+}
+
+function touchCanvasNodeConnection(ws, patch = {}) {
+  const current = canvasNodeConnectionMeta.get(ws) || {
+    connectedAt: Date.now(),
+    lastSeenAt: Date.now(),
+    ip: 'unknown',
+    userAgent: 'unknown',
+    role: 'unknown',
+    name: 'Canvas participant'
+  };
+
+  const next = {
+    ...current,
+    ...patch,
+    lastSeenAt: Date.now()
+  };
+
+  canvasNodeConnectionMeta.set(ws, next);
   return next;
 }
 
@@ -3426,6 +3455,322 @@ buffonWss.on('connection', (ws, request) => {
   });
 });
 
+// Neural-lab websocket channel for neural-network classroom activity
+const canvasNodeWss = new WebSocketServer({ noServer: true });
+const canvasNodeTeachers = new Set();
+const canvasNodeStudents = new Map();
+
+const CANVAS_NODE_INPUTS = {
+  wheels: { key: 'wheels', type: 'number', min: 0, max: 6, fallback: 4 },
+  hasEngine: { key: 'hasEngine', type: 'boolean', fallback: true },
+  seats: { key: 'seats', type: 'number', min: 1, max: 8, fallback: 4 },
+  hasPedals: { key: 'hasPedals', type: 'boolean', fallback: false }
+};
+const CANVAS_NODE_INPUT_KEYS = Object.keys(CANVAS_NODE_INPUTS);
+const CANVAS_NODE_OUTPUT_KEYS = ['car', 'bicycle', 'motorcycle', 'scooter'];
+
+const canvasNodeModel = {
+  inputs: {
+    wheels: { enabled: true, value: 4 },
+    hasEngine: { enabled: true, value: true },
+    seats: { enabled: true, value: 4 },
+    hasPedals: { enabled: true, value: false }
+  },
+  weights: {
+    wheels: 1,
+    hasEngine: 1,
+    seats: 1,
+    hasPedals: 1
+  },
+  outputsEnabled: {
+    car: true,
+    bicycle: false,
+    motorcycle: false,
+    scooter: false
+  }
+};
+
+function clampCanvasNodeNumber(value, min, max, fallback) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.max(min, Math.min(max, parsed));
+}
+
+function buildCanvasNodeParticipants() {
+  const students = [...canvasNodeStudents.values()]
+    .sort((a, b) => (a.connectedAt - b.connectedAt) || a.name.localeCompare(b.name))
+    .map((student) => ({
+      id: student.id,
+      role: 'client',
+      name: student.name,
+      assignedInput: student.assignedInput,
+      weight: student.assignedInput ? Number(canvasNodeModel.weights[student.assignedInput] || 0) : 0
+    }));
+
+  return students;
+}
+
+function canvasNodeBroadcastTeachers(data) {
+  const message = JSON.stringify(data);
+
+  recordCommunication({
+    app: 'neural-lab',
+    direction: 'out',
+    event: 'neural-lab:canvas_state',
+    from: 'server',
+    to: 'neural-lab:teachers',
+    payload: {
+      participants: Array.isArray(data && data.participants) ? data.participants.length : 0
+    }
+  });
+
+  canvasNodeTeachers.forEach((teacherWs) => {
+    if (teacherWs.readyState === 1) {
+      teacherWs.send(message);
+    }
+  });
+}
+
+function canvasNodeSendStudentState(studentWs) {
+  const student = canvasNodeStudents.get(studentWs);
+  if (!student || studentWs.readyState !== 1) {
+    return;
+  }
+
+  const payload = {
+    type: 'canvas_state',
+    me: {
+      id: student.id,
+      name: student.name,
+      assignedInput: student.assignedInput,
+      weight: student.assignedInput ? Number(canvasNodeModel.weights[student.assignedInput] || 0) : 0
+    }
+  };
+
+  studentWs.send(JSON.stringify(payload));
+}
+
+function canvasNodeBroadcastState() {
+  const model = {
+    inputs: {
+      wheels: { ...canvasNodeModel.inputs.wheels },
+      hasEngine: { ...canvasNodeModel.inputs.hasEngine },
+      seats: { ...canvasNodeModel.inputs.seats },
+      hasPedals: { ...canvasNodeModel.inputs.hasPedals }
+    },
+    weights: { ...canvasNodeModel.weights },
+    outputsEnabled: { ...canvasNodeModel.outputsEnabled }
+  };
+
+  const participants = buildCanvasNodeParticipants();
+
+  canvasNodeBroadcastTeachers({
+    type: 'canvas_state',
+    model,
+    participants
+  });
+
+  canvasNodeStudents.forEach((_, studentWs) => {
+    canvasNodeSendStudentState(studentWs);
+  });
+}
+
+function canvasNodeReassignStudents() {
+  const sorted = [...canvasNodeStudents.values()].sort((a, b) => (a.connectedAt - b.connectedAt) || a.name.localeCompare(b.name));
+  let changed = false;
+
+  sorted.forEach((student, index) => {
+    const nextAssigned = CANVAS_NODE_INPUT_KEYS[index] || null;
+    if (student.assignedInput !== nextAssigned) {
+      student.assignedInput = nextAssigned;
+      changed = true;
+    }
+  });
+
+  return changed;
+}
+
+canvasNodeWss.on('connection', (ws, request) => {
+  const connectionInfo = getUpgradeClientInfo(request);
+
+  recordCommunication({
+    app: 'neural-lab',
+    direction: 'in',
+    event: 'neural-lab:ws-connect',
+    from: connectionInfo.ip || 'unknown',
+    to: 'server',
+    payload: {
+      userAgent: connectionInfo.userAgent || 'unknown'
+    }
+  });
+
+  canvasNodeConnectionMeta.set(ws, {
+    connectedAt: Date.now(),
+    lastSeenAt: Date.now(),
+    ip: connectionInfo.ip,
+    userAgent: connectionInfo.userAgent,
+    role: 'unknown',
+    name: 'Canvas participant'
+  });
+
+  ws.on('message', (raw) => {
+    touchCanvasNodeConnection(ws);
+
+    let message;
+    try {
+      message = JSON.parse(String(raw));
+    } catch {
+      return;
+    }
+
+    const meta = canvasNodeConnectionMeta.get(ws) || {};
+    const messageType = message && message.type ? String(message.type) : 'message';
+
+    recordCommunication({
+      app: 'neural-lab',
+      direction: 'in',
+      event: `neural-lab:${messageType}`,
+      from: meta.name || meta.ip || 'canvas-client',
+      to: 'server',
+      payload: message
+    });
+
+    if (message.type === 'register_teacher') {
+      const teacherName = coerceFourierString(message.name, 40) || 'Teacher';
+      canvasNodeTeachers.add(ws);
+      touchCanvasNodeConnection(ws, {
+        role: 'teacher',
+        name: teacherName
+      });
+      canvasNodeBroadcastState();
+      return;
+    }
+
+    if (message.type === 'register_student') {
+      const studentName = coerceFourierString(message.name, 40) || `Student-${Math.floor(Math.random() * 900 + 100)}`;
+      const existing = canvasNodeStudents.get(ws);
+
+      if (existing) {
+        existing.name = studentName;
+      } else {
+        canvasNodeStudents.set(ws, {
+          id: `canvas-${Date.now().toString(36)}-${Math.floor(Math.random() * 10000).toString(16)}`,
+          name: studentName,
+          connectedAt: Date.now(),
+          assignedInput: null
+        });
+      }
+
+      touchCanvasNodeConnection(ws, {
+        role: 'client',
+        name: studentName
+      });
+
+      canvasNodeReassignStudents();
+      canvasNodeBroadcastState();
+      return;
+    }
+
+    if (message.type === 'student_weight') {
+      const student = canvasNodeStudents.get(ws);
+      if (!student || !student.assignedInput) {
+        return;
+      }
+
+      const parsedWeight = clampCanvasNodeNumber(message.value, -2, 2, canvasNodeModel.weights[student.assignedInput] || 0);
+      canvasNodeModel.weights[student.assignedInput] = Number(parsedWeight.toFixed(2));
+      canvasNodeBroadcastState();
+      return;
+    }
+
+    if (message.type === 'teacher_config') {
+      if (!canvasNodeTeachers.has(ws)) {
+        return;
+      }
+
+      const patch = message && message.patch && typeof message.patch === 'object' ? message.patch : {};
+
+      if (patch.inputs && typeof patch.inputs === 'object') {
+        CANVAS_NODE_INPUT_KEYS.forEach((key) => {
+          if (!(key in patch.inputs)) {
+            return;
+          }
+
+          const next = patch.inputs[key];
+          if (!next || typeof next !== 'object') {
+            return;
+          }
+
+          const inputDef = CANVAS_NODE_INPUTS[key];
+          const current = canvasNodeModel.inputs[key];
+          const nextEnabled = typeof next.enabled === 'boolean' ? next.enabled : current.enabled;
+
+          let nextValue = current.value;
+          if (inputDef.type === 'boolean') {
+            if (typeof next.value === 'boolean') {
+              nextValue = next.value;
+            }
+          } else {
+            const fallback = Number.isFinite(Number(current.value)) ? Number(current.value) : inputDef.fallback;
+            nextValue = clampCanvasNodeNumber(next.value, inputDef.min, inputDef.max, fallback);
+            nextValue = Math.round(nextValue);
+          }
+
+          canvasNodeModel.inputs[key] = {
+            enabled: nextEnabled,
+            value: nextValue
+          };
+        });
+      }
+
+      if (patch.outputsEnabled && typeof patch.outputsEnabled === 'object') {
+        CANVAS_NODE_OUTPUT_KEYS.forEach((key) => {
+          if (Object.prototype.hasOwnProperty.call(patch.outputsEnabled, key)) {
+            canvasNodeModel.outputsEnabled[key] = Boolean(patch.outputsEnabled[key]);
+          }
+        });
+      }
+
+      canvasNodeBroadcastState();
+      return;
+    }
+
+    if (message.type === 'request_state') {
+      if (canvasNodeTeachers.has(ws)) {
+        canvasNodeBroadcastState();
+      } else {
+        canvasNodeSendStudentState(ws);
+      }
+    }
+  });
+
+  ws.on('close', () => {
+    const meta = canvasNodeConnectionMeta.get(ws) || {};
+
+    recordCommunication({
+      app: 'neural-lab',
+      direction: 'in',
+      event: 'neural-lab:ws-close',
+      from: meta.name || meta.ip || 'canvas-client',
+      to: 'server'
+    });
+
+    canvasNodeTeachers.delete(ws);
+
+    const removedStudent = canvasNodeStudents.delete(ws);
+    canvasNodeConnectionMeta.delete(ws);
+
+    if (removedStudent) {
+      canvasNodeReassignStudents();
+    }
+
+    canvasNodeBroadcastState();
+  });
+});
+
 httpServer.on('upgrade', (request, socket, head) => {
   if (request.url && request.url.startsWith(REALTIME_WS_PATH)) {
     io.handleUpgrade(request, socket, head);
@@ -3435,6 +3780,13 @@ httpServer.on('upgrade', (request, socket, head) => {
   if (request.url && request.url.startsWith('/ws/buffon')) {
     buffonWss.handleUpgrade(request, socket, head, (ws) => {
       buffonWss.emit('connection', ws, request);
+    });
+    return;
+  }
+
+  if (request.url && request.url.startsWith('/ws/neural-lab')) {
+    canvasNodeWss.handleUpgrade(request, socket, head, (ws) => {
+      canvasNodeWss.emit('connection', ws, request);
     });
     return;
   }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Παρουσίαση: Ήχος, Συχνότητες και Ocean Waves (Manim)</title>
+  <title>Παρουσίαση: Ήχος, Συχνότητες και Ocean Waves</title>
   <script src="assets/vendor/three.min.js"></script>
   <link rel="stylesheet" href="/apps/assets/css/presentation-shell.css" />
   <script src="/js/realtime-socket.js"></script>
@@ -841,6 +841,11 @@
       gap: 14px;
       align-items: start;
       margin-top: 8px;
+    }
+
+    .unity-roots-math {
+      grid-column: 1 / -1;
+      margin: 2px 0 0;
     }
 
     .unity-roots-canvas {
@@ -2208,10 +2213,13 @@
       <a href="#sec-activity-complexity-check" data-accordion-group="complexity">8.2 Δραστηριότητα: Αγώνες πολυπλοκότητας</a>
 
       <div class="toc-group-title" data-accordion-group="fft">9. FFT</div>
-      <a href="#sec-unity-roots" data-accordion-group="fft">9.1 N-ες ρίζες του 1</a>
-      <a href="#sec-cooley-interactive" data-accordion-group="fft">9.2 Cooley-Tukey για n σημεία (διαδραστικό)</a>
-      <a href="#sec-fft-complexity" data-accordion-group="fft">9.3 Από τον απλό DFT στον FFT (Cooley-Tukey)</a>
-      <a href="#sec-cooley-tukey" data-accordion-group="fft">9.4 Cooley-Tukey FFT βήμα-βήμα</a>
+      <a href="#sec-polynomial-mult" data-accordion-group="fft">9.1 Πράξεις πολυωνύμων O(n²)</a>
+      <a href="#sec-line-representation" data-accordion-group="fft">9.2 Αναπαράσταση</a>
+      <a href="#sec-points-representation" data-accordion-group="fft">9.3 Αναπαράσταση με σημεία</a>
+      <a href="#sec-unity-roots" data-accordion-group="fft">9.4 N-ες ρίζες του 1</a>
+      <a href="#sec-cooley-interactive" data-accordion-group="fft">9.5 Cooley-Tukey για n σημεία (διαδραστικό)</a>
+      <a href="#sec-fft-complexity" data-accordion-group="fft">9.6 Από τον απλό DFT στον FFT (Cooley-Tukey)</a>
+      <a href="#sec-cooley-tukey" data-accordion-group="fft">9.7 Cooley-Tukey FFT βήμα-βήμα</a>
 
       <div class="toc-group-title" data-accordion-group="pipeline">10. Θάλασσα</div>
       <a href="#sec-bridge-1d2d" data-accordion-group="pipeline">10.1 Από 1D ήχο σε 2D θάλασσα</a>
@@ -3262,16 +3270,102 @@
         </div>
       </section>
 
+      <section class="section" id="sec-polynomial-mult">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>9.1) Πράξεις πολυωνύμων</h2>
+            <p>Σύγκριση τριών βασικών πράξεων με διαφορετική πολυπλοκότητα:</p>
+            <table style="width:100%; margin-top:14px; border-collapse:collapse; font-size:0.9em; line-height:1.6;">
+              <thead>
+                <tr style="background: rgba(88, 166, 255, 0.15);">
+                  <th style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.3); text-align:left; font-weight:bold;">Πράξη</th>
+                  <th style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.3); text-align:left; font-weight:bold;">Παράδειγμα</th>
+                  <th style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.3); text-align:left; font-weight:bold;">Διαδικασία</th>
+                  <th style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.3); text-align:center; font-weight:bold;">Πολυπλοκότητα</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="background: rgba(88, 166, 255, 0.05);">
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-weight:bold;">Πρόσθεση</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-family:monospace; font-size:0.88em;">A(x) = x² + 2x + 1<br/>B(x) = 2x + 3<br/>A+B = x² + 4x + 4</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-size:0.87em;">Πρόσθεση κάθε συντελεστή: $a_i + b_i$</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); text-align:center; color: #90ee90; font-weight:bold;">O(n)</td>
+                </tr>
+                <tr style="background: rgba(58, 130, 200, 0.05);">
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-weight:bold;">Αποτίμηση<br/>(Horner)</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-family:monospace; font-size:0.88em;">A(x) = x² + 2x + 1<br/>A(2) = ?<br/>Βήματα: ((1·2+2)·2+1) = 9</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-size:0.87em;">$r = a_n$<br/>For $i=n-1$ to 0:<br/>$r = r·x + a_i$</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); text-align:center; color: #90ee90; font-weight:bold;">O(n)</td>
+                </tr>
+                <tr style="background: rgba(200, 130, 100, 0.05);">
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-weight:bold;">Πολλαπλασιασμός</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-family:monospace; font-size:0.88em;">A(x) = x² + 2x + 1<br/>B(x) = 2x + 3<br/>A·B = 2x³ + 7x² + 8x + 3</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-size:0.87em;">Κάθε όρος ⊗ κάθε όρο:<br/>$c_k = \sum_{i=0}^{k} a_i b_{k-i}$</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); text-align:center; color: #ff6b6b; font-weight:bold;">O(n²)</td>
+                </tr>
+              </tbody>
+            </table>
+            <p style="margin-top:12px; font-size:0.88em; color:var(--muted);">
+              Το FFT χρησιμοποιεί αποτίμηση (Horner) και DFT για να μετατρέψει πολλαπλασιασμό O(n²) → O(n log n)
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-line-representation">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>9.2) Αναπαράσταση</h2>
+            <p>
+              Δύο πολυώνυμα 1ου βαθμού (ευθείες) στο ίδιο διάγραμμα: η μπλε με sliders,
+              η ροζ από δύο σημεία που μετακινούνται με drag and drop.
+            </p>
+            <canvas id="lineRepresentationCanvas" class="demo-canvas" width="940" height="360" style="touch-action:none;"></canvas>
+            <div class="slider-grid" style="margin-top:10px;">
+              <div class="slider-group">
+                <div class="slider-label"><span>Κλίση m (μπλε)</span><span id="lineRepSlopeValue">1.00</span></div>
+                <input id="lineRepSlope" type="range" min="-3" max="3" step="0.01" value="1" />
+              </div>
+              <div class="slider-group">
+                <div class="slider-label"><span>Τομή b (μπλε)</span><span id="lineRepInterceptValue">0.00</span></div>
+                <input id="lineRepIntercept" type="range" min="-5" max="5" step="0.01" value="0" />
+              </div>
+            </div>
+            <div style="margin-top:10px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+              <div id="lineRepEqSlider" class="mathjax-box" style="margin:0;"></div>
+              <div id="lineRepEqPoints" class="mathjax-box" style="margin:0;"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-points-representation">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>9.3) Αναπαράσταση με σημεία</h2>
+            <p>
+              Διάλεξε πλήθος σημείων (2 έως 8) και σύρε τα σημεία πάνω στο διάγραμμα.
+              Σχεδιάζεται αυτόματα το μοναδικό παρεμβολικό πολυώνυμο βαθμού <strong>n-1</strong>.
+            </p>
+            <canvas id="pointsRepresentationCanvas" class="demo-canvas" width="940" height="360" style="touch-action:none;"></canvas>
+            <div class="slider-grid" style="margin-top:10px;">
+              <div class="slider-group">
+                <div class="slider-label"><span>Πλήθος σημείων n</span><span id="pointsRepCountValue">4</span></div>
+                <input id="pointsRepCount" type="range" min="2" max="8" step="1" value="4" />
+              </div>
+            </div>
+            <div id="pointsRepFormula" class="mathjax-box" style="margin-top:12px;"></div>
+          </div>
+        </div>
+      </section>
+
       <section class="section" id="sec-unity-roots">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.1) N-ες ρίζες του 1</h2>
+            <h2>9.4) N-ες ρίζες του 1</h2>
             <p>
-              Οι <strong>N-ες ρίζες της μονάδας</strong> είναι οι λύσεις της εξίσωσης \(z^N=1\).
-              Στο μιγαδικό επίπεδο είναι <strong>N ισαπέχοντα σημεία στον μοναδιαίο κύκλο</strong>:
-              \[\omega_N^k = e^{\,i\,2\pi k/N}, \quad k=0,1,\ldots,N-1\]
-              Η <em>πρωτεύουσα ρίζα</em> \(\omega_N = e^{i2\pi/N}\) γεννά όλες τις υπόλοιπες.
-              Ο Cooley-Tukey FFT εκμεταλλεύεται τη <strong>συμμετρία</strong> και την <strong>περιοδικότητα</strong> αυτών των ριζών.
+              Οι <strong>N-ες ρίζες της μονάδας</strong> είναι οι λύσεις της εξίσωσης $z^N = 1$.
+              Στο μιγαδικό επίπεδο είναι <strong>N ισαπέχοντα σημεία στον μοναδιαίο κύκλο</strong>.
             </p>
             <div class="unity-roots-layout">
               <canvas id="unityRootsCanvas" class="euler-canvas unity-roots-canvas" width="600" height="520"></canvas>
@@ -3284,17 +3378,19 @@
                   <div class="slider-label"><span>Ανάδειξη ρίζας k</span><span id="unityRootsKValue">0</span></div>
                   <input id="unityRootsK" type="range" min="0" max="7" step="1" value="0" />
                 </div>
-                <div id="unityRootsMath" class="mathjax-box" style="margin:0;"></div>
                 <div class="unity-roots-props">
                   <p>Ιδιότητες:</p>
                   <ul>
-                    <li>\(\omega_N^N = 1\) (περιοδικότητα)</li>
-                    <li>\(\omega_N^{k+N} = \omega_N^k\)</li>
-                    <li>\(\omega_N^{k+N/2} = -\omega_N^k\) (συμμετρία)</li>
-                    <li>\(\sum_{k=0}^{N-1}\omega_N^{jk}=0\) για \(j\neq 0\)</li>
+                    <li>$\omega_{N}^{N} = 1$ (περιοδικότητα)</li>
+                    <li>$\omega_{N}^{k+N} = \omega_{N}^{k}$</li>
+                    <li>$\omega_{N}^{k+N/2} = -\omega_{N}^{k}$ (συμμετρία)</li>
+                    <li>$\sum_{k=0}^{N-1} \omega_{N}^{jk} = 0$ για $j \neq 0$</li>
                   </ul>
                 </div>
               </div>
+            </div>
+            <div id="unityRootsMath" class="mathjax-box unity-roots-math" style="margin-top: 16px; text-align: center;">
+              $$\omega_N^k = e^{\,i\,2\pi k/N}, \quad k=0,1,\ldots,N-1$$
             </div>
           </div>
         </div>
@@ -3303,7 +3399,7 @@
       <section class="section" id="sec-cooley-interactive">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.2) Cooley-Tukey για n σημεία (διαδραστικό)</h2>
+            <h2>9.5) Cooley-Tukey για n σημεία (διαδραστικό)</h2>
             <p>
               Κάνε click στο γράφημα για να προχωρήσει ένα στάδιο: πρώτα divide (διάσπαση σε άρτια/περιττά),
               μετά conquer (συνδυασμός butterfly). Το n δίνεται ως δύναμη του 2.
@@ -3354,7 +3450,7 @@
       <section class="section" id="sec-fft-complexity">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.3) Από τον απλό DFT στον FFT (Cooley-Tukey)</h2>
+            <h2>9.6) Από τον απλό DFT στον FFT (Cooley-Tukey)</h2>
             <p>
               Στον απλό DFT, για κάθε συχνότητα κάνουμε άθροισμα σε όλα τα \(N\) δείγματα,
               άρα ο συνολικός κόπος μεγαλώνει σαν \(N^2\). Η ιδέα Cooley-Tukey είναι να
@@ -3396,7 +3492,7 @@
       <section class="section" id="sec-cooley-tukey">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.4) Cooley-Tukey FFT: αναδρομή και επίπεδα</h2>
+            <h2>9.7) Cooley-Tukey FFT: αναδρομή και επίπεδα</h2>
             <p>
               Ιδέα Cooley-Tukey: χωρίζουμε το σήμα σε άρτιες/περιττές θέσεις και λύνουμε δύο
               μικρότερα προβλήματα, ξανά και ξανά. Η σχέση είναι
@@ -3987,6 +4083,17 @@
     const cooleyTreeFftValue = document.getElementById("cooleyTreeFftValue");
     const cooleyTreeGainValue = document.getElementById("cooleyTreeGainValue");
     const cooleyInteractiveCanvas = document.getElementById("cooleyInteractiveCanvas");
+    const lineRepresentationCanvas = document.getElementById("lineRepresentationCanvas");
+    const lineRepSlope = document.getElementById("lineRepSlope");
+    const lineRepIntercept = document.getElementById("lineRepIntercept");
+    const lineRepSlopeValue = document.getElementById("lineRepSlopeValue");
+    const lineRepInterceptValue = document.getElementById("lineRepInterceptValue");
+    const lineRepEqSlider = document.getElementById("lineRepEqSlider");
+    const lineRepEqPoints = document.getElementById("lineRepEqPoints");
+    const pointsRepresentationCanvas = document.getElementById("pointsRepresentationCanvas");
+    const pointsRepCount = document.getElementById("pointsRepCount");
+    const pointsRepCountValue = document.getElementById("pointsRepCountValue");
+    const pointsRepFormula = document.getElementById("pointsRepFormula");
     const unityRootsCanvas = document.getElementById("unityRootsCanvas");
     const unityRootsN = document.getElementById("unityRootsN");
     const unityRootsK = document.getElementById("unityRootsK");
@@ -4149,6 +4256,22 @@
       stageIndex: 0,
       butterflies: 0,
       hint: "",
+    };
+    const lineRepresentationState = {
+      draggingPointIndex: -1,
+      points: [
+        { x: -3, y: -1.5 },
+        { x: 3, y: 2 },
+      ],
+      bounds: { xmin: -6, xmax: 6, ymin: -5, ymax: 5 },
+      plot: null,
+    };
+    const pointsRepresentationState = {
+      draggingPointIndex: -1,
+      points: [],
+      bounds: { xmin: -4, xmax: 4, ymin: -6, ymax: 6 },
+      plot: null,
+      coeffs: [0],
     };
     const fftDuelSignalLabels = {
       sine: "Sine",
@@ -12745,6 +12868,433 @@
     });
     updatePolynomialBridge();
 
+    function lineRepClamp(v, lo, hi) {
+      return Math.min(hi, Math.max(lo, v));
+    }
+
+    function lineRepGetPlotMetrics(canvas) {
+      const pad = 40 * (window.devicePixelRatio || 1);
+      return {
+        left: pad,
+        top: pad,
+        right: canvas.width - pad,
+        bottom: canvas.height - pad,
+      };
+    }
+
+    function lineRepWorldToCanvas(x, y, plot, bounds) {
+      const px = plot.left + ((x - bounds.xmin) / (bounds.xmax - bounds.xmin)) * (plot.right - plot.left);
+      const py = plot.bottom - ((y - bounds.ymin) / (bounds.ymax - bounds.ymin)) * (plot.bottom - plot.top);
+      return { x: px, y: py };
+    }
+
+    function lineRepCanvasToWorld(px, py, plot, bounds) {
+      const x = bounds.xmin + ((px - plot.left) / (plot.right - plot.left)) * (bounds.xmax - bounds.xmin);
+      const y = bounds.ymin + ((plot.bottom - py) / (plot.bottom - plot.top)) * (bounds.ymax - bounds.ymin);
+      return { x, y };
+    }
+
+    function lineRepGetPointsEquation() {
+      const p1 = lineRepresentationState.points[0];
+      const p2 = lineRepresentationState.points[1];
+      const dx = p2.x - p1.x;
+      const dy = p2.y - p1.y;
+      if (Math.abs(dx) < 1e-6) {
+        return { vertical: true, x: p1.x, m: null, b: null };
+      }
+      const m = dy / dx;
+      const b = p1.y - m * p1.x;
+      return { vertical: false, m, b };
+    }
+
+    function updateLineRepresentationText() {
+      const m = Number(lineRepSlope?.value || 1);
+      const b = Number(lineRepIntercept?.value || 0);
+      if (lineRepSlopeValue) lineRepSlopeValue.textContent = m.toFixed(2);
+      if (lineRepInterceptValue) lineRepInterceptValue.textContent = b.toFixed(2);
+
+      const eq = lineRepGetPointsEquation();
+      if (lineRepEqSlider) {
+        lineRepEqSlider.innerHTML = `\\[L_1(x)= ${m.toFixed(2)}x ${b >= 0 ? '+' : '-'} ${Math.abs(b).toFixed(2)}\\]`;
+      }
+      if (lineRepEqPoints) {
+        if (eq.vertical) {
+          lineRepEqPoints.innerHTML = `\\[L_2: x=${eq.x.toFixed(2)}\\]`;
+        } else {
+          lineRepEqPoints.innerHTML = `\\[L_2(x)= ${eq.m.toFixed(2)}x ${eq.b >= 0 ? '+' : '-'} ${Math.abs(eq.b).toFixed(2)}\\]`;
+        }
+      }
+      const mathTargets = [lineRepEqSlider, lineRepEqPoints].filter(Boolean);
+      if (mathTargets.length && window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+        window.MathJax.typesetPromise(mathTargets).catch(() => {});
+      }
+    }
+
+    function drawLineRepresentation(canvas) {
+      if (!canvas) return;
+      fitCanvasToDisplaySize(canvas);
+      const ctx = canvas.getContext("2d");
+      const W = canvas.width;
+      const H = canvas.height;
+      const ratio = window.devicePixelRatio || 1;
+      const bounds = lineRepresentationState.bounds;
+      const plot = lineRepGetPlotMetrics(canvas);
+      lineRepresentationState.plot = plot;
+
+      ctx.fillStyle = "#07172b";
+      ctx.fillRect(0, 0, W, H);
+
+      ctx.strokeStyle = "rgba(100,150,210,0.2)";
+      ctx.lineWidth = 1;
+      for (let gx = Math.ceil(bounds.xmin); gx <= Math.floor(bounds.xmax); gx++) {
+        const p0 = lineRepWorldToCanvas(gx, bounds.ymin, plot, bounds);
+        const p1 = lineRepWorldToCanvas(gx, bounds.ymax, plot, bounds);
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y);
+        ctx.lineTo(p1.x, p1.y);
+        ctx.stroke();
+      }
+      for (let gy = Math.ceil(bounds.ymin); gy <= Math.floor(bounds.ymax); gy++) {
+        const p0 = lineRepWorldToCanvas(bounds.xmin, gy, plot, bounds);
+        const p1 = lineRepWorldToCanvas(bounds.xmax, gy, plot, bounds);
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y);
+        ctx.lineTo(p1.x, p1.y);
+        ctx.stroke();
+      }
+
+      const xAxis0 = lineRepWorldToCanvas(bounds.xmin, 0, plot, bounds);
+      const xAxis1 = lineRepWorldToCanvas(bounds.xmax, 0, plot, bounds);
+      const yAxis0 = lineRepWorldToCanvas(0, bounds.ymin, plot, bounds);
+      const yAxis1 = lineRepWorldToCanvas(0, bounds.ymax, plot, bounds);
+      ctx.strokeStyle = "rgba(170,210,255,0.75)";
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(xAxis0.x, xAxis0.y);
+      ctx.lineTo(xAxis1.x, xAxis1.y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(yAxis0.x, yAxis0.y);
+      ctx.lineTo(yAxis1.x, yAxis1.y);
+      ctx.stroke();
+
+      const m = Number(lineRepSlope?.value || 1);
+      const b = Number(lineRepIntercept?.value || 0);
+      const l1a = lineRepWorldToCanvas(bounds.xmin, m * bounds.xmin + b, plot, bounds);
+      const l1b = lineRepWorldToCanvas(bounds.xmax, m * bounds.xmax + b, plot, bounds);
+      ctx.strokeStyle = "#58a6ff";
+      ctx.lineWidth = 2.6;
+      ctx.beginPath();
+      ctx.moveTo(l1a.x, l1a.y);
+      ctx.lineTo(l1b.x, l1b.y);
+      ctx.stroke();
+
+      const eq = lineRepGetPointsEquation();
+      let l2a;
+      let l2b;
+      if (eq.vertical) {
+        l2a = lineRepWorldToCanvas(eq.x, bounds.ymin, plot, bounds);
+        l2b = lineRepWorldToCanvas(eq.x, bounds.ymax, plot, bounds);
+      } else {
+        l2a = lineRepWorldToCanvas(bounds.xmin, eq.m * bounds.xmin + eq.b, plot, bounds);
+        l2b = lineRepWorldToCanvas(bounds.xmax, eq.m * bounds.xmax + eq.b, plot, bounds);
+      }
+      ctx.strokeStyle = "#f472b6";
+      ctx.lineWidth = 2.6;
+      ctx.beginPath();
+      ctx.moveTo(l2a.x, l2a.y);
+      ctx.lineTo(l2b.x, l2b.y);
+      ctx.stroke();
+
+      lineRepresentationState.points.forEach((p, idx) => {
+        const pc = lineRepWorldToCanvas(p.x, p.y, plot, bounds);
+        const active = idx === lineRepresentationState.draggingPointIndex;
+        ctx.beginPath();
+        ctx.arc(pc.x, pc.y, (active ? 8 : 6) * ratio, 0, 2 * Math.PI);
+        ctx.fillStyle = active ? "#ffd166" : "#ff9acb";
+        ctx.fill();
+        ctx.fillStyle = "#eef6ff";
+        ctx.font = `${10 * ratio}px monospace`;
+        ctx.textAlign = "left";
+        ctx.textBaseline = "bottom";
+        ctx.fillText(`P${idx + 1}(${p.x.toFixed(2)}, ${p.y.toFixed(2)})`, pc.x + 8 * ratio, pc.y - 8 * ratio);
+      });
+
+      ctx.fillStyle = "rgba(180,220,255,0.9)";
+      ctx.font = `${11 * ratio}px monospace`;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillText("L1: sliders (m, b)  |  L2: drag points P1, P2", plot.left + 2 * ratio, plot.top + 2 * ratio);
+    }
+
+    function lineRepGetPointerPos(canvas, event) {
+      const rect = canvas.getBoundingClientRect();
+      const sx = canvas.width / Math.max(1, rect.width);
+      const sy = canvas.height / Math.max(1, rect.height);
+      return {
+        x: (event.clientX - rect.left) * sx,
+        y: (event.clientY - rect.top) * sy,
+      };
+    }
+
+    lineRepSlope?.addEventListener("input", updateLineRepresentationText);
+    lineRepIntercept?.addEventListener("input", updateLineRepresentationText);
+
+    lineRepresentationCanvas?.addEventListener("pointerdown", (event) => {
+      if (!lineRepresentationState.plot) return;
+      const pos = lineRepGetPointerPos(lineRepresentationCanvas, event);
+      const ratio = window.devicePixelRatio || 1;
+      const hitRadius = 16 * ratio;
+      let hit = -1;
+      lineRepresentationState.points.forEach((p, idx) => {
+        const pc = lineRepWorldToCanvas(p.x, p.y, lineRepresentationState.plot, lineRepresentationState.bounds);
+        const dx = pc.x - pos.x;
+        const dy = pc.y - pos.y;
+        if (dx * dx + dy * dy <= hitRadius * hitRadius) {
+          hit = idx;
+        }
+      });
+      lineRepresentationState.draggingPointIndex = hit;
+      if (hit >= 0) {
+        lineRepresentationCanvas.setPointerCapture(event.pointerId);
+      }
+    });
+
+    lineRepresentationCanvas?.addEventListener("pointermove", (event) => {
+      const idx = lineRepresentationState.draggingPointIndex;
+      if (idx < 0 || !lineRepresentationState.plot) return;
+      const pos = lineRepGetPointerPos(lineRepresentationCanvas, event);
+      const world = lineRepCanvasToWorld(pos.x, pos.y, lineRepresentationState.plot, lineRepresentationState.bounds);
+      const b = lineRepresentationState.bounds;
+      lineRepresentationState.points[idx].x = lineRepClamp(world.x, b.xmin, b.xmax);
+      lineRepresentationState.points[idx].y = lineRepClamp(world.y, b.ymin, b.ymax);
+      updateLineRepresentationText();
+    });
+
+    function lineRepStopDrag(event) {
+      if (lineRepresentationState.draggingPointIndex >= 0 && lineRepresentationCanvas) {
+        try {
+          lineRepresentationCanvas.releasePointerCapture(event.pointerId);
+        } catch {}
+      }
+      lineRepresentationState.draggingPointIndex = -1;
+    }
+
+    lineRepresentationCanvas?.addEventListener("pointerup", lineRepStopDrag);
+    lineRepresentationCanvas?.addEventListener("pointercancel", lineRepStopDrag);
+    lineRepresentationCanvas?.addEventListener("pointerleave", lineRepStopDrag);
+
+    updateLineRepresentationText();
+
+    function createDefaultPointsRepPoints(count) {
+      const n = Math.max(2, Math.min(8, Number(count) || 4));
+      const out = [];
+      const xMin = pointsRepresentationState.bounds.xmin;
+      const xMax = pointsRepresentationState.bounds.xmax;
+      for (let i = 0; i < n; i += 1) {
+        const t = n === 1 ? 0 : i / (n - 1);
+        const x = xMin + t * (xMax - xMin);
+        const y = 0.18 * x * x - 0.6 * x + 0.8;
+        out.push({ x, y });
+      }
+      return out;
+    }
+
+    function fitPolynomialFromPoints(points) {
+      const n = points.length;
+      const matrix = [];
+      const vector = [];
+      for (let row = 0; row < n; row += 1) {
+        const p = points[row];
+        const rowVals = [];
+        for (let col = 0; col < n; col += 1) {
+          rowVals.push(p.x ** col);
+        }
+        matrix.push(rowVals);
+        vector.push(p.y);
+      }
+      return solveLinearSystem(matrix, vector);
+    }
+
+    function updatePointsRepresentationModel() {
+      const desiredCount = Math.max(2, Math.min(8, Number(pointsRepCount?.value || 4)));
+      if (pointsRepCountValue) pointsRepCountValue.textContent = String(desiredCount);
+
+      if (pointsRepresentationState.points.length !== desiredCount) {
+        pointsRepresentationState.points = createDefaultPointsRepPoints(desiredCount);
+      }
+
+      const coeffs = fitPolynomialFromPoints(pointsRepresentationState.points);
+      pointsRepresentationState.coeffs = coeffs || [0];
+
+      if (pointsRepFormula) {
+        const degree = Math.max(0, desiredCount - 1);
+        const latex = formatPolynomialLatex(pointsRepresentationState.coeffs, "x", "P");
+        pointsRepFormula.innerHTML = `\\[n=${desiredCount},\\;\\deg(P)=${degree},\\;${latex}\\]`;
+        if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+          window.MathJax.typesetPromise([pointsRepFormula]).catch(() => {});
+        }
+      }
+    }
+
+    function pointsRepGetPlotMetrics(canvas) {
+      const pad = 40 * (window.devicePixelRatio || 1);
+      return {
+        left: pad,
+        top: pad,
+        right: canvas.width - pad,
+        bottom: canvas.height - pad,
+      };
+    }
+
+    function pointsRepWorldToCanvas(x, y, plot, bounds) {
+      const px = plot.left + ((x - bounds.xmin) / (bounds.xmax - bounds.xmin)) * (plot.right - plot.left);
+      const py = plot.bottom - ((y - bounds.ymin) / (bounds.ymax - bounds.ymin)) * (plot.bottom - plot.top);
+      return { x: px, y: py };
+    }
+
+    function pointsRepCanvasToWorld(px, py, plot, bounds) {
+      const x = bounds.xmin + ((px - plot.left) / (plot.right - plot.left)) * (bounds.xmax - bounds.xmin);
+      const y = bounds.ymin + ((plot.bottom - py) / (plot.bottom - plot.top)) * (bounds.ymax - bounds.ymin);
+      return { x, y };
+    }
+
+    function pointsRepGetPointerPos(canvas, event) {
+      const rect = canvas.getBoundingClientRect();
+      const sx = canvas.width / Math.max(1, rect.width);
+      const sy = canvas.height / Math.max(1, rect.height);
+      return {
+        x: (event.clientX - rect.left) * sx,
+        y: (event.clientY - rect.top) * sy,
+      };
+    }
+
+    function drawPointsRepresentation(canvas) {
+      if (!canvas) return;
+      fitCanvasToDisplaySize(canvas);
+      const ctx = canvas.getContext("2d");
+      const W = canvas.width;
+      const H = canvas.height;
+      const ratio = window.devicePixelRatio || 1;
+      const bounds = pointsRepresentationState.bounds;
+      const plot = pointsRepGetPlotMetrics(canvas);
+      pointsRepresentationState.plot = plot;
+
+      ctx.fillStyle = "#07172b";
+      ctx.fillRect(0, 0, W, H);
+
+      ctx.strokeStyle = "rgba(100,150,210,0.2)";
+      ctx.lineWidth = 1;
+      for (let gx = Math.ceil(bounds.xmin); gx <= Math.floor(bounds.xmax); gx++) {
+        const p0 = pointsRepWorldToCanvas(gx, bounds.ymin, plot, bounds);
+        const p1 = pointsRepWorldToCanvas(gx, bounds.ymax, plot, bounds);
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y);
+        ctx.lineTo(p1.x, p1.y);
+        ctx.stroke();
+      }
+      for (let gy = Math.ceil(bounds.ymin); gy <= Math.floor(bounds.ymax); gy++) {
+        const p0 = pointsRepWorldToCanvas(bounds.xmin, gy, plot, bounds);
+        const p1 = pointsRepWorldToCanvas(bounds.xmax, gy, plot, bounds);
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y);
+        ctx.lineTo(p1.x, p1.y);
+        ctx.stroke();
+      }
+
+      const xAxis0 = pointsRepWorldToCanvas(bounds.xmin, 0, plot, bounds);
+      const xAxis1 = pointsRepWorldToCanvas(bounds.xmax, 0, plot, bounds);
+      const yAxis0 = pointsRepWorldToCanvas(0, bounds.ymin, plot, bounds);
+      const yAxis1 = pointsRepWorldToCanvas(0, bounds.ymax, plot, bounds);
+      ctx.strokeStyle = "rgba(170,210,255,0.75)";
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(xAxis0.x, xAxis0.y);
+      ctx.lineTo(xAxis1.x, xAxis1.y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(yAxis0.x, yAxis0.y);
+      ctx.lineTo(yAxis1.x, yAxis1.y);
+      ctx.stroke();
+
+      const coeffs = pointsRepresentationState.coeffs;
+      ctx.strokeStyle = "#60a5fa";
+      ctx.lineWidth = 2.8;
+      ctx.beginPath();
+      for (let px = plot.left; px <= plot.right; px += 2) {
+        const x = bounds.xmin + ((px - plot.left) / (plot.right - plot.left)) * (bounds.xmax - bounds.xmin);
+        const y = evaluatePolynomial(coeffs, x);
+        const py = pointsRepWorldToCanvas(0, y, plot, bounds).y;
+        if (px === plot.left) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+
+      pointsRepresentationState.points.forEach((p, idx) => {
+        const pc = pointsRepWorldToCanvas(p.x, p.y, plot, bounds);
+        const active = idx === pointsRepresentationState.draggingPointIndex;
+        ctx.beginPath();
+        ctx.arc(pc.x, pc.y, (active ? 8 : 6) * ratio, 0, 2 * Math.PI);
+        ctx.fillStyle = active ? "#ffd166" : "#f472b6";
+        ctx.fill();
+      });
+
+      ctx.fillStyle = "rgba(180,220,255,0.9)";
+      ctx.font = `${11 * ratio}px monospace`;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillText(`Σημεία: ${pointsRepresentationState.points.length}  |  Βαθμός: ${Math.max(0, pointsRepresentationState.points.length - 1)}`, plot.left + 2 * ratio, plot.top + 2 * ratio);
+    }
+
+    pointsRepCount?.addEventListener("input", () => {
+      pointsRepresentationState.draggingPointIndex = -1;
+      updatePointsRepresentationModel();
+    });
+
+    pointsRepresentationCanvas?.addEventListener("pointerdown", (event) => {
+      if (!pointsRepresentationState.plot) return;
+      const pos = pointsRepGetPointerPos(pointsRepresentationCanvas, event);
+      const ratio = window.devicePixelRatio || 1;
+      const hitRadius = 16 * ratio;
+      let hit = -1;
+      pointsRepresentationState.points.forEach((p, idx) => {
+        const pc = pointsRepWorldToCanvas(p.x, p.y, pointsRepresentationState.plot, pointsRepresentationState.bounds);
+        const dx = pc.x - pos.x;
+        const dy = pc.y - pos.y;
+        if (dx * dx + dy * dy <= hitRadius * hitRadius) hit = idx;
+      });
+      pointsRepresentationState.draggingPointIndex = hit;
+      if (hit >= 0) {
+        pointsRepresentationCanvas.setPointerCapture(event.pointerId);
+      }
+    });
+
+    pointsRepresentationCanvas?.addEventListener("pointermove", (event) => {
+      const idx = pointsRepresentationState.draggingPointIndex;
+      if (idx < 0 || !pointsRepresentationState.plot) return;
+      const pos = pointsRepGetPointerPos(pointsRepresentationCanvas, event);
+      const world = pointsRepCanvasToWorld(pos.x, pos.y, pointsRepresentationState.plot, pointsRepresentationState.bounds);
+      const b = pointsRepresentationState.bounds;
+      pointsRepresentationState.points[idx].x = lineRepClamp(world.x, b.xmin, b.xmax);
+      pointsRepresentationState.points[idx].y = lineRepClamp(world.y, b.ymin, b.ymax);
+      updatePointsRepresentationModel();
+    });
+
+    function pointsRepStopDrag(event) {
+      if (pointsRepresentationState.draggingPointIndex >= 0 && pointsRepresentationCanvas) {
+        try {
+          pointsRepresentationCanvas.releasePointerCapture(event.pointerId);
+        } catch {}
+      }
+      pointsRepresentationState.draggingPointIndex = -1;
+    }
+
+    pointsRepresentationCanvas?.addEventListener("pointerup", pointsRepStopDrag);
+    pointsRepresentationCanvas?.addEventListener("pointercancel", pointsRepStopDrag);
+    pointsRepresentationCanvas?.addEventListener("pointerleave", pointsRepStopDrag);
+
+    pointsRepresentationState.points = createDefaultPointsRepPoints(Number(pointsRepCount?.value || 4));
+    updatePointsRepresentationModel();
+
     function updateUnityRootsMath() {
       if (!unityRootsMath) return;
       const N = Number(unityRootsN?.value || 8);
@@ -12754,7 +13304,7 @@
       const im = Math.sin(angle).toFixed(4);
       const sign = Number(im) >= 0 ? '+' : '';
       unityRootsMath.innerHTML =
-        `\\[\\omega_${N}^{${k}} = e^{i\\cdot 2\\pi\\cdot ${k}/${N}} = ${re}${sign}${im}\\,i\\]`;
+        `\\[\\omega_{${N}}^{${k}} = e^{i\\cdot 2\\pi\\cdot ${k}/${N}} = ${re}${sign}${im}\\,i\\]`;
       if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
         window.MathJax.typesetPromise([unityRootsMath]).catch(() => {});
       }
@@ -15044,6 +15594,12 @@
       }
       if (canDraw(sortCompareCanvas)) {
         drawSortCompare(sortCompareCanvas, elapsedSeconds);
+      }
+      if (canDraw(lineRepresentationCanvas)) {
+        drawLineRepresentation(lineRepresentationCanvas);
+      }
+      if (canDraw(pointsRepresentationCanvas)) {
+        drawPointsRepresentation(pointsRepresentationCanvas);
       }
       if (canDraw(unityRootsCanvas)) {
         drawUnityRoots(unityRootsCanvas);
