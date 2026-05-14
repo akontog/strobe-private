@@ -2216,10 +2216,15 @@
       <a href="#sec-polynomial-mult" data-accordion-group="fft">9.1 Πράξεις πολυωνύμων O(n²)</a>
       <a href="#sec-line-representation" data-accordion-group="fft">9.2 Αναπαράσταση</a>
       <a href="#sec-points-representation" data-accordion-group="fft">9.3 Αναπαράσταση με σημεία</a>
-      <a href="#sec-unity-roots" data-accordion-group="fft">9.4 N-ες ρίζες του 1</a>
-      <a href="#sec-cooley-interactive" data-accordion-group="fft">9.5 Cooley-Tukey για n σημεία (διαδραστικό)</a>
-      <a href="#sec-fft-complexity" data-accordion-group="fft">9.6 Από τον απλό DFT στον FFT (Cooley-Tukey)</a>
-      <a href="#sec-cooley-tukey" data-accordion-group="fft">9.7 Cooley-Tukey FFT βήμα-βήμα</a>
+      <a href="#sec-sample-add-mul" data-accordion-group="fft">9.4 Πράξεις στα samples</a>
+      <a href="#sec-points-operations" data-accordion-group="fft">9.5 Πράξεις σε αναπαράσταση σημείων</a>
+      <a href="#sec-poly-mult-strategy" data-accordion-group="fft">9.6 Στρατηγική πολλαπλασιασμού</a>
+      <a href="#sec-eval-complexity" data-accordion-group="fft">9.7 Αποτίμηση σε n σημεία: O(n²)</a>
+      <a href="#sec-even-odd-eval" data-accordion-group="fft">9.8 Συμμετρία στην αποτίμηση: x² vs x³</a>
+      <a href="#sec-unity-roots" data-accordion-group="fft">9.9 N-ες ρίζες του 1</a>
+      <a href="#sec-cooley-interactive" data-accordion-group="fft">9.10 Cooley-Tukey για n σημεία (διαδραστικό)</a>
+      <a href="#sec-fft-complexity" data-accordion-group="fft">9.11 Από τον απλό DFT στον FFT (Cooley-Tukey)</a>
+      <a href="#sec-cooley-tukey" data-accordion-group="fft">9.12 Cooley-Tukey FFT βήμα-βήμα</a>
 
       <div class="toc-group-title" data-accordion-group="pipeline">10. Θάλασσα</div>
       <a href="#sec-bridge-1d2d" data-accordion-group="pipeline">10.1 Από 1D ήχο σε 2D θάλασσα</a>
@@ -3344,17 +3349,237 @@
           <div class="slide-content">
             <h2>9.3) Αναπαράσταση με σημεία</h2>
             <p>
-              Διάλεξε πλήθος σημείων (2 έως 8) και σύρε τα σημεία πάνω στο διάγραμμα.
-              Σχεδιάζεται αυτόματα το μοναδικό παρεμβολικό πολυώνυμο βαθμού <strong>n-1</strong>.
+              Διάλεξε πλήθος σημείων (2 έως 6) και σύρε τα σημεία πάνω στο διάγραμμα.
+              Σχεδιάζεται αυτόματα το μοναδικό παρεμβολικό πολυώνυμο βαθμού <strong>n-1</strong> (κόκκινη καμπύλη).
+              Φαίνονται και τα basis polynomials Lagrange που το αποτελούν (χρωματιστές καμπύλες).
             </p>
             <canvas id="pointsRepresentationCanvas" class="demo-canvas" width="940" height="360" style="touch-action:none;"></canvas>
             <div class="slider-grid" style="margin-top:10px;">
               <div class="slider-group">
                 <div class="slider-label"><span>Πλήθος σημείων n</span><span id="pointsRepCountValue">4</span></div>
-                <input id="pointsRepCount" type="range" min="2" max="8" step="1" value="4" />
+                <input id="pointsRepCount" type="range" min="2" max="6" step="1" value="4" />
               </div>
             </div>
             <div id="pointsRepFormula" class="mathjax-box" style="margin-top:12px;"></div>
+            <div id="pointsRepBasisFormula" class="mathjax-box" style="margin-top:12px; font-size:0.95em; color:var(--muted);"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-sample-add-mul">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>9.4) Πράξεις στα samples: πρόσθεση &amp; πολλαπλασιασμός</h2>
+            <p>
+              Σύρε τα σημεία των δύο πολυωνύμων <strong style="color:#58a6ff;">A(x)</strong> (μπλε)
+              και <strong style="color:#f472b6;">B(x)</strong> (ροζ).
+              Το <strong style="color:#4ade80;">άθροισμα A+B</strong> και το <strong style="color:#fbbf24;">γινόμενο A·B</strong>
+              προκύπτουν απλώς από τις πράξεις y<sub>A</sub>+y<sub>B</sub> και y<sub>A</sub>·y<sub>B</sub>
+              στα <em>ίδια</em> x<sub>i</sub>.
+            </p>
+            <canvas id="sampleAddMulCanvas" class="demo-canvas" width="940" height="400" style="touch-action:none;"></canvas>
+            <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:18px; font-size:0.88em; align-items:center;">
+              <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:24px;height:3px;background:#58a6ff;border-radius:2px;"></span> A(x)</span>
+              <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:24px;height:3px;background:#f472b6;border-radius:2px;"></span> B(x)</span>
+              <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:24px;height:3px;background:#4ade80;border-radius:2px;"></span> A(x)+B(x)</span>
+              <span style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:24px;height:3px;background:#fbbf24;border-radius:2px;"></span> A(x)·B(x)</span>
+            </div>
+            <div id="sampleAddMulFormula" class="mathjax-box" style="margin-top:12px;"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-points-operations">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>9.5) Πράξεις σε αναπαράσταση σημείων</h2>
+            <p>Όπως στο 9.1, αλλά τώρα στο point-value μοντέλο (Lagrange):</p>
+            <table style="width:100%; margin-top:14px; border-collapse:collapse; font-size:0.9em; line-height:1.6;">
+              <thead>
+                <tr style="background: rgba(88, 166, 255, 0.15);">
+                  <th style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.3); text-align:left; font-weight:bold;">Πράξη</th>
+                  <th style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.3); text-align:left; font-weight:bold;">Παράδειγμα</th>
+                  <th style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.3); text-align:left; font-weight:bold;">Διαδικασία</th>
+                  <th style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.3); text-align:center; font-weight:bold;">Πολυπλοκότητα</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="background: rgba(58, 130, 200, 0.05);">
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-weight:bold;">Αποτίμηση<br/>(Lagrange)</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-family:monospace; font-size:0.88em;">Δίνονται n σημεία<br/>(x<sub>i</sub>, y<sub>i</sub>)<br/>Υπολόγισε P(t)</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-size:0.87em;">$P(t)=\sum_{i=0}^{n-1} y_i L_i(t)$ με<br/>$L_i(t)=\prod_{j\ne i}\frac{t-x_j}{x_i-x_j}$</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); text-align:center; color: #ff6b6b; font-weight:bold;">O(n²)</td>
+                </tr>
+                <tr style="background: rgba(88, 166, 255, 0.05);">
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-weight:bold;">Πρόσθεση</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-family:monospace; font-size:0.88em;">A={(x<sub>i</sub>, a<sub>i</sub>)}<br/>B={(x<sub>i</sub>, b<sub>i</sub>)}<br/>A+B={(x<sub>i</sub>, a<sub>i</sub>+b<sub>i</sub>)}</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-size:0.87em;">Σημείο-προς-σημείο πράξη στα ίδια x<sub>i</sub></td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); text-align:center; color: #90ee90; font-weight:bold;">O(n)</td>
+                </tr>
+                <tr style="background: rgba(200, 130, 100, 0.05);">
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-weight:bold;">Πολλαπλασιασμός</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-family:monospace; font-size:0.88em;">A·B={(x<sub>i</sub>, a<sub>i</sub>b<sub>i</sub>)}</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-size:0.87em;">Σημείο-προς-σημείο γινόμενο στα ίδια x<sub>i</sub></td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); text-align:center; color: #90ee90; font-weight:bold;">O(n)</td>
+                </tr>
+              </tbody>
+            </table>
+            <p style="margin-top:12px; font-size:0.88em; color:var(--muted);">
+              Το κόστος μεταφέρεται από τις πράξεις (+, ×) στην αποτίμηση/παρεμβολή όταν δουλεύουμε με αναπαράσταση σημείων.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-poly-mult-strategy">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>9.6) Στρατηγική πολλαπλασιασμού χωρίς O(n²)</h2>
+            <p>Αντί να πολλαπλασιάζουμε απευθείας τα coefficients (O(n²)), μετατρέπουμε σε samples, πολλαπλασιάζουμε σημείο-προς-σημείο (O(n)), και επιστρέφουμε στα coefficients:</p>
+
+            <div style="margin-top: 28px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 0 20px; font-family: serif;">
+
+              <!-- Left column: Coeff A and B -->
+              <div style="display:flex; flex-direction:column; gap: 16px;">
+                <div style="border: 2px solid #ef4444; border-radius: 8px; padding: 14px 18px; color: #fca5a5; font-size:1.05em; line-height:1.7;">
+                  $$A(x) = a_0 + a_1 x + \cdots + a_d x^d$$
+                  $$B(x) = b_0 + b_1 x + \cdots + b_d x^d$$
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; color:#fca5a5;">
+                  <span style="font-size:0.85em; color:var(--muted);">Αποτίμηση</span>
+                  <span style="font-size:1.5em;">⇓</span>
+                  <span style="background:#ef4444; color:#fff; font-size:0.8em; padding:2px 10px; border-radius:4px; font-family:monospace;">O(n log n) με FFT</span>
+                </div>
+                <!-- Sample points A, B -->
+                <div style="border: 2px solid #ef4444; border-radius: 8px; padding: 14px 18px; display:grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; color:#fca5a5; font-size:0.95em;">
+                  <div>
+                    <div style="font-size:0.8em; color:var(--muted); margin-bottom:4px;">Samples A</div>
+                    $$A(x_0), A(x_1), \ldots, A(x_{2d})$$
+                  </div>
+                  <div>
+                    <div style="font-size:0.8em; color:var(--muted); margin-bottom:4px;">Samples B</div>
+                    $$B(x_0), B(x_1), \ldots, B(x_{2d})$$
+                  </div>
+                </div>
+              </div>
+
+              <!-- Middle: Multiply box -->
+              <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <div style="width:10px;"></div>
+                <div style="height: 60px;"></div>
+                <div style="border: 2px solid #eab308; border-radius: 8px; padding: 18px 28px; color:#fef08a; font-size:1.1em; text-align:center; white-space:nowrap;">
+                  Πολ/σμός<br/>
+                  <span style="font-family:monospace; font-size:0.85em; color:#86efac;">O(n)</span><br/>
+                  $$C(x_i) = A(x_i) \cdot B(x_i)$$
+                </div>
+                <div style="height: 60px;"></div>
+              </div>
+
+              <!-- Right column: Coeff C and samples C -->
+              <div style="display:flex; flex-direction:column; gap: 16px;">
+                <div style="border: 2px solid #22c55e; border-radius: 8px; padding: 14px 18px; color: #86efac; font-size:1.05em;">
+                  $$C(x) = c_0 + c_1 x + \cdots + c_{2d} x^{2d}$$
+                </div>
+                <div style="display:flex; flex-direction:column; align-items:center; gap:6px; color:#86efac;">
+                  <span style="font-size:1.5em;">⇑</span>
+                  <span style="font-size:0.85em; color:var(--muted);">Παρεμβολή</span>
+                  <span style="background:#22c55e; color:#000; font-size:0.8em; padding:2px 10px; border-radius:4px; font-family:monospace;">O(n log n) με FFT</span>
+                </div>
+                <!-- Sample points C -->
+                <div style="border: 2px solid #22c55e; border-radius: 8px; padding: 14px 18px; color:#86efac; font-size:0.95em;">
+                  <div style="font-size:0.8em; color:var(--muted); margin-bottom:4px;">Samples C</div>
+                  $$C(x_0), C(x_1), \ldots, C(x_{2d})$$
+                </div>
+              </div>
+
+            </div>
+
+            <table style="width:100%; margin-top:28px; border-collapse:collapse; font-size:0.88em;">
+              <thead>
+                <tr style="background: rgba(88,166,255,0.12);">
+                  <th style="padding:9px 12px; border:1px solid rgba(88,166,255,0.3); text-align:left;">Βήμα</th>
+                  <th style="padding:9px 12px; border:1px solid rgba(88,166,255,0.3); text-align:left;">Πράξη</th>
+                  <th style="padding:9px 12px; border:1px solid rgba(88,166,255,0.3); text-align:center;">Naïve</th>
+                  <th style="padding:9px 12px; border:1px solid rgba(88,166,255,0.3); text-align:center;">Με FFT</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2);">1</td>
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2);">Coeff → Samples (αποτίμηση Α, Β)</td>
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2); text-align:center; color:#ff6b6b;">O(n²)</td>
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2); text-align:center; color:#90ee90;">O(n log n)</td>
+                </tr>
+                <tr style="background:rgba(88,166,255,0.04);">
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2);">2</td>
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2);">Πολλαπλασιασμός C(xᵢ) = A(xᵢ)·B(xᵢ)</td>
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2); text-align:center; color:#90ee90;">O(n)</td>
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2); text-align:center; color:#90ee90;">O(n)</td>
+                </tr>
+                <tr>
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2);">3</td>
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2);">Samples → Coeff (παρεμβολή → C)</td>
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2); text-align:center; color:#ff6b6b;">O(n²)</td>
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2); text-align:center; color:#90ee90;">O(n log n)</td>
+                </tr>
+                <tr style="background:rgba(88,166,255,0.08); font-weight:bold;">
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.3);" colspan="2">Σύνολο</td>
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.3); text-align:center; color:#ff6b6b;">O(n²)</td>
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.3); text-align:center; color:#90ee90;">O(n log n)</td>
+                </tr>
+              </tbody>
+            </table>
+            <p style="margin-top:12px; font-size:0.88em; color:var(--muted);">Το κλειδί: η αποτίμηση και η παρεμβολή γίνονται γρήγορα αν διαλέξουμε σωστά τα σημεία — τις N-ες ρίζες του 1.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-eval-complexity">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>9.7) Αποτίμηση σε n σημεία: O(n²)</h2>
+            <div id="evalComplexityFormula" style="text-align:center; font-size:1.05em; margin:8px 0 12px;">
+              \[P(x) = p_0 + p_1 x + p_2 x^2 + \cdots + p_d x^d\]
+              <span style="color:var(--muted); font-size:0.9em;">Αποτιμούμε σε \(n \geq d+1\) σημεία — κάθε αποτίμηση: \(d+1\) πράξεις</span>
+            </div>
+            <div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap;">
+              <div style="display:flex; flex-direction:column; gap:8px; min-width:220px; max-width:260px;">
+                <div id="evalOpsDisplay" style="margin-top:10px; font-size:0.88em;"></div>
+                <div style="margin-top:6px; font-size:0.88em; color:var(--muted);">Σημεία:</div>
+                <div id="evalPointsList" style="font-family:monospace; font-size:0.86em; line-height:2; min-height:120px;"></div>
+              </div>
+              <canvas id="evalComplexityCanvas" width="600" height="370"
+                style="flex:1; min-width:280px; max-width:680px; border-radius:8px;"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-even-odd-eval">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>9.8) Συμμετρία στην αποτίμηση: \(x^2\) vs \(x^3\)</h2>
+            <p>
+              Διάλεξε πολυώνυμο και δες τι συμβαίνει στα συμμετρικά σημεία \((-x, P(-x))\) και \((x, P(x))\):
+              για \(x^2\) παίρνουμε ίσες τιμές, ενώ για \(x^3\) ίσα μέτρα με αντίθετο πρόσημο.
+            </p>
+            <div style="display:flex; gap:18px; align-items:flex-start; flex-wrap:wrap;">
+              <div style="display:flex; flex-direction:column; min-width:240px; max-width:300px; gap:10px;">
+                <div class="slider-group" style="margin:0;">
+                  <div class="slider-label">
+                    <span>Επιλογή πολυωνύμου</span>
+                    <span id="evenOddModeValue">x²</span>
+                  </div>
+                  <input id="evenOddModeSlider" type="range" min="2" max="3" step="1" value="2" />
+                </div>
+                <div id="evenOddFormula" style="font-size:0.95em; text-align:left;"></div>
+                <div style="font-size:0.88em; color:var(--muted);">Ζεύγη συμμετρικών σημείων:</div>
+                <div id="evenOddPairsList" style="font-family:monospace; font-size:0.88em; line-height:1.7;"></div>
+                <div id="evenOddSummary" style="font-size:0.92em; color:#fbbf24; font-weight:700;"></div>
+              </div>
+              <canvas id="evenOddCanvas" width="620" height="360"
+                style="flex:1; min-width:280px; max-width:700px; border-radius:8px;"></canvas>
+            </div>
           </div>
         </div>
       </section>
@@ -3362,7 +3587,7 @@
       <section class="section" id="sec-unity-roots">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.4) N-ες ρίζες του 1</h2>
+            <h2>9.9) N-ες ρίζες του 1</h2>
             <p>
               Οι <strong>N-ες ρίζες της μονάδας</strong> είναι οι λύσεις της εξίσωσης $z^N = 1$.
               Στο μιγαδικό επίπεδο είναι <strong>N ισαπέχοντα σημεία στον μοναδιαίο κύκλο</strong>.
@@ -3399,7 +3624,7 @@
       <section class="section" id="sec-cooley-interactive">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.5) Cooley-Tukey για n σημεία (διαδραστικό)</h2>
+            <h2>9.10) Cooley-Tukey για n σημεία (διαδραστικό)</h2>
             <p>
               Κάνε click στο γράφημα για να προχωρήσει ένα στάδιο: πρώτα divide (διάσπαση σε άρτια/περιττά),
               μετά conquer (συνδυασμός butterfly). Το n δίνεται ως δύναμη του 2.
@@ -3450,7 +3675,7 @@
       <section class="section" id="sec-fft-complexity">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.6) Από τον απλό DFT στον FFT (Cooley-Tukey)</h2>
+            <h2>9.11) Από τον απλό DFT στον FFT (Cooley-Tukey)</h2>
             <p>
               Στον απλό DFT, για κάθε συχνότητα κάνουμε άθροισμα σε όλα τα \(N\) δείγματα,
               άρα ο συνολικός κόπος μεγαλώνει σαν \(N^2\). Η ιδέα Cooley-Tukey είναι να
@@ -3492,7 +3717,7 @@
       <section class="section" id="sec-cooley-tukey">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.7) Cooley-Tukey FFT: αναδρομή και επίπεδα</h2>
+            <h2>9.12) Cooley-Tukey FFT: αναδρομή και επίπεδα</h2>
             <p>
               Ιδέα Cooley-Tukey: χωρίζουμε το σήμα σε άρτιες/περιττές θέσεις και λύνουμε δύο
               μικρότερα προβλήματα, ξανά και ξανά. Η σχέση είναι
@@ -4272,6 +4497,14 @@
       bounds: { xmin: -4, xmax: 4, ymin: -6, ymax: 6 },
       plot: null,
       coeffs: [0],
+    };
+    // @slide 9.4 — state για πράξεις στα samples (δύο σύνολα σημείων)
+    const sampleAddMulState = {
+      dragging: { poly: -1, idx: -1 }, // poly: 0=A, 1=B
+      pointsA: [],
+      pointsB: [],
+      bounds: { xmin: -4, xmax: 4, ymin: -8, ymax: 8 },
+      plot: null,
     };
     const fftDuelSignalLabels = {
       sine: "Sine",
@@ -13117,7 +13350,7 @@
     }
 
     function updatePointsRepresentationModel() {
-      const desiredCount = Math.max(2, Math.min(8, Number(pointsRepCount?.value || 4)));
+      const desiredCount = Math.max(2, Math.min(6, Number(pointsRepCount?.value || 4)));
       if (pointsRepCountValue) pointsRepCountValue.textContent = String(desiredCount);
 
       if (pointsRepresentationState.points.length !== desiredCount) {
@@ -13130,9 +13363,22 @@
       if (pointsRepFormula) {
         const degree = Math.max(0, desiredCount - 1);
         const latex = formatPolynomialLatex(pointsRepresentationState.coeffs, "x", "P");
-        pointsRepFormula.innerHTML = `\\[n=${desiredCount},\\;\\deg(P)=${degree},\\;${latex}\\]`;
+        const points = pointsRepresentationState.points;
+        const xVals = points.map(p => (p.x >= 0 ? '' : '−') + Math.abs(p.x).toFixed(2)).join(', ');
+        pointsRepFormula.innerHTML = `\\[n=${desiredCount},\\;x_i \\in \\{${xVals}\\},\\;P(x)=${latex}\\]`;
         if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
           window.MathJax.typesetPromise([pointsRepFormula]).catch(() => {});
+        }
+      }
+      
+      const basisFormula = document.getElementById("pointsRepBasisFormula");
+      if (basisFormula) {
+        const points = pointsRepresentationState.points;
+        const n = points.length;
+        let basis = `\\[P(x) = \\sum_{i=0}^{${n-1}} y_i \\, L_i(x) \\quad \\text{όπου} \\quad L_i(x) = \\prod_{j \\ne i} \\frac{x - x_j}{x_i - x_j}\\]`;
+        basisFormula.innerHTML = basis;
+        if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+          window.MathJax.typesetPromise([basisFormula]).catch(() => {});
         }
       }
     }
@@ -13217,8 +13463,75 @@
       ctx.lineTo(yAxis1.x, yAxis1.y);
       ctx.stroke();
 
+      // Draw Lagrange basis polynomials with subtle colors
+      const points = pointsRepresentationState.points;
+      const basisColors = [
+        "rgba(255, 107, 107, 0.35)",  // red
+        "rgba(107, 255, 107, 0.35)",  // green
+        "rgba(107, 107, 255, 0.35)",  // blue
+        "rgba(255, 255, 107, 0.35)",  // yellow
+        "rgba(255, 107, 255, 0.35)",  // magenta
+        "rgba(107, 255, 255, 0.35)"   // cyan
+      ];
+      
+      // Helper: compute Lagrange basis polynomial L_i(x)
+      function lagrangeBasis(i, x, pts) {
+        let result = 1;
+        for (let j = 0; j < pts.length; j++) {
+          if (i !== j) {
+            result *= (x - pts[j].x) / (pts[i].x - pts[j].x);
+          }
+        }
+        return result;
+      }
+      
+      // Draw each basis polynomial with X marks at zeros
+      points.forEach((p, idx) => {
+        ctx.strokeStyle = basisColors[idx % basisColors.length];
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        for (let px = plot.left; px <= plot.right; px += 2) {
+          const x = bounds.xmin + ((px - plot.left) / (plot.right - plot.left)) * (bounds.xmax - bounds.xmin);
+          const basis = lagrangeBasis(idx, x, points);
+          const y = basis * points[idx].y;  // Scale by actual point value
+          const py = pointsRepWorldToCanvas(0, y, plot, bounds).y;
+          if (px === plot.left) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+        
+        // Draw marker at point (x_i, y_i) where basis polynomial passes through
+        const pointMarker = pointsRepWorldToCanvas(points[idx].x, points[idx].y, plot, bounds);
+        ctx.beginPath();
+        ctx.arc(pointMarker.x, pointMarker.y, 4 * ratio, 0, 2 * Math.PI);
+        ctx.fillStyle = basisColors[idx % basisColors.length];
+        ctx.fill();
+        ctx.strokeStyle = basisColors[idx % basisColors.length];
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+        
+        // Draw X marks at zeros of this basis polynomial (all points except i)
+        for (let j = 0; j < points.length; j++) {
+          if (j !== idx) {
+            const pc = pointsRepWorldToCanvas(points[j].x, 0, plot, bounds);
+            const size = 5 * ratio;
+            ctx.strokeStyle = basisColors[idx % basisColors.length];
+            ctx.lineWidth = 1.8;
+            // Draw X
+            ctx.beginPath();
+            ctx.moveTo(pc.x - size, pc.y - size);
+            ctx.lineTo(pc.x + size, pc.y + size);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(pc.x + size, pc.y - size);
+            ctx.lineTo(pc.x - size, pc.y + size);
+            ctx.stroke();
+          }
+        }
+      });
+
+      // Draw final interpolation polynomial (bright line)
       const coeffs = pointsRepresentationState.coeffs;
-      ctx.strokeStyle = "#60a5fa";
+      ctx.strokeStyle = "#f472b6";
       ctx.lineWidth = 2.8;
       ctx.beginPath();
       for (let px = plot.left; px <= plot.right; px += 2) {
@@ -13295,6 +13608,233 @@
     pointsRepresentationState.points = createDefaultPointsRepPoints(Number(pointsRepCount?.value || 4));
     updatePointsRepresentationModel();
 
+    // ─── 9.4: Sample Add/Mul ──────────────────────────────────────────────────
+    const sampleAddMulCanvas = document.getElementById("sampleAddMulCanvas");
+    const sampleAddMulFormula = document.getElementById("sampleAddMulFormula");
+
+    function samCreateDefaultPoints(offsetY) {
+      // 4 equally-spaced x points in (-3, 3), random-ish y values
+      const xs = [-3, -1, 1, 3];
+      return xs.map((x, i) => ({ x, y: offsetY + (i % 2 === 0 ? 1.5 : -1.5) * (1 + i * 0.3) }));
+    }
+
+    function samGetPlot(canvas) {
+      const pad = 44 * (window.devicePixelRatio || 1);
+      return { left: pad, top: pad, right: canvas.width - pad, bottom: canvas.height - pad };
+    }
+
+    function samW2C(x, y, plot, bounds) {
+      const px = plot.left + ((x - bounds.xmin) / (bounds.xmax - bounds.xmin)) * (plot.right - plot.left);
+      const py = plot.bottom - ((y - bounds.ymin) / (bounds.ymax - bounds.ymin)) * (plot.bottom - plot.top);
+      return { x: px, y: py };
+    }
+
+    function samC2W(px, py, plot, bounds) {
+      return {
+        x: bounds.xmin + ((px - plot.left) / (plot.right - plot.left)) * (bounds.xmax - bounds.xmin),
+        y: bounds.ymin + ((plot.bottom - py) / (plot.bottom - plot.top)) * (bounds.ymax - bounds.ymin),
+      };
+    }
+
+    function samPointerPos(canvas, ev) {
+      const r = canvas.getBoundingClientRect();
+      const sx = canvas.width / Math.max(1, r.width);
+      const sy = canvas.height / Math.max(1, r.height);
+      return { x: (ev.clientX - r.left) * sx, y: (ev.clientY - r.top) * sy };
+    }
+
+    // Fit polynomial of degree n-1 through n points using Gaussian elimination (reuses fitPolynomialFromPoints)
+    function samEvalLagrange(pts, x) {
+      let sum = 0;
+      for (let i = 0; i < pts.length; i++) {
+        let term = pts[i].y;
+        for (let j = 0; j < pts.length; j++) {
+          if (i !== j) term *= (x - pts[j].x) / (pts[i].x - pts[j].x);
+        }
+        sum += term;
+      }
+      return sum;
+    }
+
+    function drawSampleAddMul(canvas) {
+      if (!canvas) return;
+      fitCanvasToDisplaySize(canvas);
+      const ctx = canvas.getContext("2d");
+      const W = canvas.width, H = canvas.height;
+      const ratio = window.devicePixelRatio || 1;
+      const bounds = sampleAddMulState.bounds;
+      const plot = samGetPlot(canvas);
+      sampleAddMulState.plot = plot;
+
+      ctx.fillStyle = "#07172b";
+      ctx.fillRect(0, 0, W, H);
+
+      // Grid
+      ctx.strokeStyle = "rgba(100,150,210,0.15)";
+      ctx.lineWidth = 1;
+      for (let gx = Math.ceil(bounds.xmin); gx <= Math.floor(bounds.xmax); gx++) {
+        const p0 = samW2C(gx, bounds.ymin, plot, bounds);
+        const p1 = samW2C(gx, bounds.ymax, plot, bounds);
+        ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
+      }
+      for (let gy = Math.ceil(bounds.ymin); gy <= Math.floor(bounds.ymax); gy++) {
+        const p0 = samW2C(bounds.xmin, gy, plot, bounds);
+        const p1 = samW2C(bounds.xmax, gy, plot, bounds);
+        ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
+      }
+
+      // Axes
+      ctx.strokeStyle = "rgba(170,210,255,0.6)";
+      ctx.lineWidth = 1.4;
+      const ax0 = samW2C(bounds.xmin, 0, plot, bounds), ax1 = samW2C(bounds.xmax, 0, plot, bounds);
+      const ay0 = samW2C(0, bounds.ymin, plot, bounds), ay1 = samW2C(0, bounds.ymax, plot, bounds);
+      ctx.beginPath(); ctx.moveTo(ax0.x, ax0.y); ctx.lineTo(ax1.x, ax1.y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(ay0.x, ay0.y); ctx.lineTo(ay1.x, ay1.y); ctx.stroke();
+
+      const ptsA = sampleAddMulState.pointsA;
+      const ptsB = sampleAddMulState.pointsB;
+
+      // Helper to draw a curve via Lagrange
+      function drawCurve(pts, color, width, dash = []) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.setLineDash(dash);
+        ctx.beginPath();
+        for (let px = plot.left; px <= plot.right; px += 2) {
+          const x = bounds.xmin + ((px - plot.left) / (plot.right - plot.left)) * (bounds.xmax - bounds.xmin);
+          const y = samEvalLagrange(pts, x);
+          const py = samW2C(0, y, plot, bounds).y;
+          if (px === plot.left) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Derived point sets (same x as A)
+      const ptsSum  = ptsA.map((p, i) => ({ x: p.x, y: p.y + ptsB[i].y }));
+      const ptsMul  = ptsA.map((p, i) => ({ x: p.x, y: p.y * ptsB[i].y }));
+
+      // Draw curves
+      drawCurve(ptsA,   "#58a6ff", 2.5);
+      drawCurve(ptsB,   "#f472b6", 2.5);
+      drawCurve(ptsSum, "#4ade80", 2, [8, 4]);
+      drawCurve(ptsMul, "#fbbf24", 2, [4, 4]);
+
+      // Helper: draw vertical dashed connector between y=0 and a point
+      function drawVerticalTick(x, yVal, color) {
+        const pc0 = samW2C(x, 0, plot, bounds);
+        const pc1 = samW2C(x, yVal, plot, bounds);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(pc0.x, pc0.y); ctx.lineTo(pc1.x, pc1.y); ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Draw sample dots + vertical ticks for each x_i
+      ptsA.forEach((p, i) => {
+        const yS = ptsSum[i].y, yM = ptsMul[i].y;
+
+        // Vertical ticks at x_i showing A, B, sum, product heights
+        drawVerticalTick(p.x, p.y,      "#58a6ff");
+        drawVerticalTick(ptsB[i].x, ptsB[i].y, "#f472b6");
+
+        // Sum & mul dots at (x_i, yS) and (x_i, yM)
+        [
+          { x: p.x, y: yS, col: "#4ade80" },
+          { x: p.x, y: yM, col: "#fbbf24" },
+        ].forEach(({ x, y, col }) => {
+          const pc = samW2C(x, y, plot, bounds);
+          ctx.beginPath(); ctx.arc(pc.x, pc.y, 4 * ratio, 0, 2 * Math.PI);
+          ctx.fillStyle = col; ctx.fill();
+        });
+      });
+
+      // Draw draggable points for A and B on top
+      [[ptsA, "#58a6ff", "A"], [ptsB, "#f472b6", "B"]].forEach(([pts, col, label], polyIdx) => {
+        pts.forEach((p, idx) => {
+          const pc = samW2C(p.x, p.y, plot, bounds);
+          const active = sampleAddMulState.dragging.poly === polyIdx && sampleAddMulState.dragging.idx === idx;
+          ctx.beginPath();
+          ctx.arc(pc.x, pc.y, (active ? 9 : 6) * ratio, 0, 2 * Math.PI);
+          ctx.fillStyle = active ? "#ffd166" : col;
+          ctx.fill();
+          ctx.strokeStyle = "#fff";
+          ctx.lineWidth = 1.2;
+          ctx.stroke();
+          ctx.fillStyle = "rgba(220,240,255,0.85)";
+          ctx.font = `${10 * ratio}px monospace`;
+          ctx.textAlign = "left";
+          ctx.textBaseline = "bottom";
+          ctx.fillText(`${label}${idx+1}(${p.x.toFixed(0)})=${p.y.toFixed(2)}`, pc.x + 8 * ratio, pc.y - 6 * ratio);
+        });
+      });
+
+      // Legend top-left
+      ctx.fillStyle = "rgba(180,220,255,0.7)";
+      ctx.font = `${10 * ratio}px monospace`;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillText("Σύρε τα σημεία A (●μπλε) ή B (●ροζ)", plot.left + 4 * ratio, plot.top + 4 * ratio);
+
+      // Update formula
+      if (sampleAddMulFormula) {
+        const rows = ptsA.map((p, i) => {
+          const aY = p.y.toFixed(2), bY = ptsB[i].y.toFixed(2);
+          const sY = ptsSum[i].y.toFixed(2), mY = ptsMul[i].y.toFixed(2);
+          return `x_{${i}} = ${p.x.toFixed(0)}: & \\; A=${aY},\\; B=${bY} \\quad \\Rightarrow \\quad A{+}B=${sY},\\; A{\\cdot}B=${mY}`;
+        }).join(" \\\\ ");
+        sampleAddMulFormula.innerHTML = `\\[\\begin{aligned} ${rows} \\end{aligned}\\]`;
+        if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+          window.MathJax.typesetPromise([sampleAddMulFormula]).catch(() => {});
+        }
+      }
+    }
+
+    // Pointer events
+    sampleAddMulCanvas?.addEventListener("pointerdown", (ev) => {
+      if (!sampleAddMulState.plot) return;
+      const pos = samPointerPos(sampleAddMulCanvas, ev);
+      const ratio = window.devicePixelRatio || 1;
+      const hitR2 = (18 * ratio) ** 2;
+      let found = { poly: -1, idx: -1 };
+      [[sampleAddMulState.pointsA, 0], [sampleAddMulState.pointsB, 1]].forEach(([pts, polyIdx]) => {
+        pts.forEach((p, idx) => {
+          const pc = samW2C(p.x, p.y, sampleAddMulState.plot, sampleAddMulState.bounds);
+          const dx = pc.x - pos.x, dy = pc.y - pos.y;
+          if (dx*dx + dy*dy <= hitR2) found = { poly: polyIdx, idx };
+        });
+      });
+      sampleAddMulState.dragging = found;
+      if (found.poly >= 0) sampleAddMulCanvas.setPointerCapture(ev.pointerId);
+    });
+
+    sampleAddMulCanvas?.addEventListener("pointermove", (ev) => {
+      const { poly, idx } = sampleAddMulState.dragging;
+      if (poly < 0 || !sampleAddMulState.plot) return;
+      const pos = samPointerPos(sampleAddMulCanvas, ev);
+      const world = samC2W(pos.x, pos.y, sampleAddMulState.plot, sampleAddMulState.bounds);
+      const b = sampleAddMulState.bounds;
+      const pts = poly === 0 ? sampleAddMulState.pointsA : sampleAddMulState.pointsB;
+      // Only allow y drag (x stays fixed to keep same sample positions)
+      pts[idx].y = Math.max(b.ymin, Math.min(b.ymax, world.y));
+    });
+
+    function samStopDrag(ev) {
+      if (sampleAddMulState.dragging.poly >= 0 && sampleAddMulCanvas) {
+        try { sampleAddMulCanvas.releasePointerCapture(ev.pointerId); } catch {}
+      }
+      sampleAddMulState.dragging = { poly: -1, idx: -1 };
+    }
+    sampleAddMulCanvas?.addEventListener("pointerup", samStopDrag);
+    sampleAddMulCanvas?.addEventListener("pointercancel", samStopDrag);
+    sampleAddMulCanvas?.addEventListener("pointerleave", samStopDrag);
+
+    // Init
+    sampleAddMulState.pointsA = samCreateDefaultPoints(2);
+    sampleAddMulState.pointsB = samCreateDefaultPoints(-1.5);
+    // ─────────────────────────────────────────────────────────────────────────
+
     function updateUnityRootsMath() {
       if (!unityRootsMath) return;
       const N = Number(unityRootsN?.value || 8);
@@ -13309,6 +13849,382 @@
         window.MathJax.typesetPromise([unityRootsMath]).catch(() => {});
       }
     }
+
+    // ─── 9.7: Evaluation Complexity ──────────────────────────────────────────
+    const evalComplexityCanvas = document.getElementById("evalComplexityCanvas");
+    const evalComplexityFormula = document.getElementById("evalComplexityFormula");
+    const evalOpsDisplay = document.getElementById("evalOpsDisplay");
+    const evalPointsList = document.getElementById("evalPointsList");
+
+    const evalComplexityState = {
+      // Static setting: visible points at x = 0,1,2,...,n
+      n: 6,
+      coeffs: [1.2, -1.15, 0.55, -0.08],
+    };
+
+    function evalPolyAt(coeffs, x) {
+      let val = 0;
+      for (let i = coeffs.length - 1; i >= 0; i--) val = val * x + coeffs[i];
+      return val;
+    }
+
+    function evalGetXPoints(n) {
+      return Array.from({ length: n + 1 }, (_, i) => i);
+    }
+
+    function updateEvalFormulaDisplay() {
+      if (!evalComplexityFormula) return;
+      const { n, coeffs } = evalComplexityState;
+      const terms = coeffs.map((c, i) => {
+        const s = c >= 0 ? "+" : "-";
+        const a = Math.abs(c).toFixed(2);
+        if (i === 0) return c.toFixed(2);
+        if (i === 1) return `${s} ${a}x`;
+        return `${s} ${a}x^{${i}}`;
+      }).join(" ");
+      evalComplexityFormula.innerHTML =
+        `\\[P(x) = ${terms}\\]<span style="color:var(--muted);font-size:0.9em;">Αποτιμούμε στα \\(x=0,1,2,\\ldots,n\\) με \\(n=${n}\\). Κόστος ανά αποτίμηση: \\(\\sim n\\) πράξεις.</span>`;
+      if (window.MathJax?.typesetPromise) window.MathJax.typesetPromise([evalComplexityFormula]).catch(() => {});
+    }
+
+    function updateEvalOpsDisplay() {
+      if (!evalOpsDisplay) return;
+      const { n } = evalComplexityState;
+      const evaluations = n + 1;
+      const opsPerEval = n;
+      const totalOps = evaluations * opsPerEval;
+      evalOpsDisplay.innerHTML = `
+        <div style="font-size:0.92em; color:var(--text); margin-bottom:8px; font-weight:600;">
+          Αποτίμηση σε σημεία x = 0,1,2,...,n
+        </div>
+        <div style="font-size:0.88em; color:var(--muted); margin-bottom:6px;">
+          Πλήθος αποτιμήσεων: <strong style="color:#58a6ff;">${evaluations}</strong>
+        </div>
+        <div style="font-size:0.88em; color:var(--muted); margin-bottom:6px;">
+          Πράξεις ανά αποτίμηση: <strong style="color:#fbbf24;">~ n = ${opsPerEval}</strong>
+        </div>
+        <div style="font-size:0.92em; color:#4ade80; margin-top:8px; font-weight:700;">
+          Σύνολο: ${evaluations} × ${opsPerEval} = ${totalOps} πράξεις <span style="color:#fbbf24;">= O(n²)</span>
+        </div>`;
+    }
+
+    function updateEvalPointsList() {
+      if (!evalPointsList) return;
+      const { n, coeffs } = evalComplexityState;
+      const xs = evalGetXPoints(n);
+      let html = "";
+      for (let i = 0; i <= n; i++) {
+        const x = xs[i];
+        const y = evalPolyAt(coeffs, x);
+        html += `<div style="color:#f0f560;">(${x}, ${y.toFixed(2)})</div>`;
+      }
+      evalPointsList.innerHTML = html;
+    }
+
+    function drawEvalComplexity(canvas) {
+      if (!canvas) return;
+      fitCanvasToDisplaySize(canvas);
+      const ctx = canvas.getContext("2d");
+      const W = canvas.width, H = canvas.height;
+      const ratio = window.devicePixelRatio || 1;
+      const { n, coeffs } = evalComplexityState;
+
+      const xs = evalGetXPoints(n);
+      const ys = xs.map(x => evalPolyAt(coeffs, x));
+      const yMin = Math.min(...ys), yMax = Math.max(...ys);
+      const yRange = Math.max(1, yMax - yMin);
+      const yPad = yRange * 0.45;
+      const bounds = { xmin: -0.4, xmax: n + 0.8, ymin: yMin - yPad, ymax: yMax + yPad };
+
+      const pad = 44 * ratio;
+      const plot = { left: pad, top: pad * 0.7, right: W - pad * 0.4, bottom: H - pad };
+
+      function w2c(x, y) {
+        return {
+          x: plot.left + ((x - bounds.xmin) / (bounds.xmax - bounds.xmin)) * (plot.right - plot.left),
+          y: plot.bottom - ((y - bounds.ymin) / (bounds.ymax - bounds.ymin)) * (plot.bottom - plot.top),
+        };
+      }
+
+      // Background
+      ctx.fillStyle = "#07172b";
+      ctx.fillRect(0, 0, W, H);
+
+      // Grid
+      ctx.strokeStyle = "rgba(100,150,210,0.12)";
+      ctx.lineWidth = 1;
+      const yStep = yRange > 4 ? 2 : 1;
+      for (let g = Math.ceil(bounds.ymin / yStep) * yStep; g <= bounds.ymax; g += yStep) {
+        const p0 = w2c(bounds.xmin, g), p1 = w2c(bounds.xmax, g);
+        ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
+      }
+
+      // Axes
+      ctx.strokeStyle = "rgba(170,210,255,0.5)";
+      ctx.lineWidth = 1.4;
+      { const p0 = w2c(bounds.xmin, 0), p1 = w2c(bounds.xmax, 0); ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke(); }
+      { const p0 = w2c(0, bounds.ymin), p1 = w2c(0, bounds.ymax); ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke(); }
+
+      // Axis labels
+      ctx.fillStyle = "rgba(180,210,255,0.65)";
+      ctx.font = `italic ${12 * ratio}px serif`;
+      const axEnd = w2c(bounds.xmax, 0); ctx.textAlign = "right"; ctx.textBaseline = "top"; ctx.fillText("x", axEnd.x - 2 * ratio, axEnd.y + 4 * ratio);
+      const ayEnd = w2c(0, bounds.ymax); ctx.textAlign = "left"; ctx.textBaseline = "bottom"; ctx.fillText("P(x)", ayEnd.x + 4 * ratio, ayEnd.y + 4 * ratio);
+
+      // X tick labels
+      ctx.fillStyle = "rgba(180,210,255,0.45)";
+      ctx.font = `${10 * ratio}px monospace`;
+      ctx.textAlign = "center"; ctx.textBaseline = "top";
+      for (let xi = 0; xi <= n; xi++) {
+        const pc = w2c(xi, 0);
+        ctx.fillText(String(xi), pc.x, pc.y + 4 * ratio);
+      }
+
+      // Polynomial curve
+      ctx.strokeStyle = "#58c4dc";
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      for (let s = 0; s <= 400; s++) {
+        const x = bounds.xmin + (s / 400) * (bounds.xmax - bounds.xmin);
+        const y = evalPolyAt(coeffs, x);
+        const pc = w2c(x, y);
+        if (s === 0) ctx.moveTo(pc.x, pc.y); else ctx.lineTo(pc.x, pc.y);
+      }
+      ctx.stroke();
+
+      // Evaluation dots + vertical guide lines at x = 0..n
+      for (let i = 0; i <= n; i++) {
+        const x = xs[i], y = ys[i];
+        const pc = w2c(x, y), pb = w2c(x, 0);
+
+        // Vertical dashed guide
+        ctx.strokeStyle = "rgba(251,191,36,0.35)";
+        ctx.lineWidth = 1.2;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath(); ctx.moveTo(pb.x, pb.y); ctx.lineTo(pc.x, pc.y); ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Dot
+        const dotR = 6 * ratio;
+        ctx.beginPath(); ctx.arc(pc.x, pc.y, dotR, 0, 2 * Math.PI);
+        ctx.fillStyle = "#f0f560";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,0.7)";
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      }
+
+      // Top-right annotation
+      ctx.fillStyle = "rgba(251,191,36,0.85)";
+      ctx.font = `bold ${12 * ratio}px monospace`;
+      ctx.textAlign = "right"; ctx.textBaseline = "top";
+      ctx.fillText(`${n + 1} αποτιμήσεις, ~n πράξεις η καθεμία => O(n²)`, plot.right - 4 * ratio, plot.top + 4 * ratio);
+
+      // Update side panels every frame (only when visible)
+      updateEvalOpsDisplay();
+      updateEvalPointsList();
+    }
+
+    updateEvalFormulaDisplay();
+    updateEvalOpsDisplay();
+    updateEvalPointsList();
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // ─── 9.8: Even/Odd Evaluation Symmetry ─────────────────────────────────
+    const evenOddCanvas = document.getElementById("evenOddCanvas");
+    const evenOddModeSlider = document.getElementById("evenOddModeSlider");
+    const evenOddModeValue = document.getElementById("evenOddModeValue");
+    const evenOddPairsList = document.getElementById("evenOddPairsList");
+    const evenOddSummary = document.getElementById("evenOddSummary");
+    const evenOddFormula = document.getElementById("evenOddFormula");
+
+    const evenOddState = {
+      degree: 2,
+      n: 4,
+    };
+
+    function evenOddEval(x) {
+      return evenOddState.degree === 2 ? x * x : x * x * x;
+    }
+
+    function updateEvenOddText() {
+      if (evenOddModeValue) {
+        evenOddModeValue.textContent = evenOddState.degree === 2 ? "x²" : "x³";
+      }
+
+      if (evenOddFormula) {
+        const relation = evenOddState.degree === 2
+          ? "\\(P(-x)=P(x)\\)"
+          : "\\(P(-x)=-P(x)\\)";
+        evenOddFormula.innerHTML = evenOddState.degree === 2
+          ? `\\[P(x)=x^2\\] <div style="margin-top:4px; color:var(--muted);">Άρτια συνάρτηση: ${relation}</div>`
+          : `\\[P(x)=x^3\\] <div style="margin-top:4px; color:var(--muted);">Περιττή συνάρτηση: ${relation}</div>`;
+        if (window.MathJax?.typesetPromise) window.MathJax.typesetPromise([evenOddFormula]).catch(() => {});
+      }
+
+      if (evenOddPairsList) {
+        let html = "";
+        for (let x = 1; x <= evenOddState.n; x++) {
+          const yp = evenOddEval(x);
+          const yn = evenOddEval(-x);
+          html += `<div><span style="color:#fb923c;">(-${x}, ${yn.toFixed(2)})</span>  ↔  <span style="color:#f0f560;">(${x}, ${yp.toFixed(2)})</span></div>`;
+        }
+        evenOddPairsList.innerHTML = html;
+      }
+
+      if (evenOddSummary) {
+        evenOddSummary.textContent = evenOddState.degree === 2
+          ? "Συμπέρασμα: στα ±x οι τιμές είναι ίδιες."
+          : "Συμπέρασμα: στα ±x τα μέτρα είναι ίδια, αλλά το πρόσημο αλλάζει.";
+      }
+    }
+
+    function drawEvenOddSymmetry(canvas) {
+      if (!canvas) return;
+      fitCanvasToDisplaySize(canvas);
+      const ctx = canvas.getContext("2d");
+      const W = canvas.width;
+      const H = canvas.height;
+      const ratio = window.devicePixelRatio || 1;
+
+      const n = evenOddState.n;
+      const yValues = [];
+      for (let x = -n; x <= n; x += 1) yValues.push(evenOddEval(x));
+      const yMin = Math.min(...yValues);
+      const yMax = Math.max(...yValues);
+      const yRange = Math.max(1, yMax - yMin);
+      const yPad = yRange * 0.25 + 1;
+      const bounds = { xmin: -n - 0.8, xmax: n + 0.8, ymin: yMin - yPad, ymax: yMax + yPad };
+
+      const pad = 42 * ratio;
+      const plot = { left: pad, top: pad * 0.7, right: W - pad * 0.5, bottom: H - pad };
+
+      function w2c(x, y) {
+        return {
+          x: plot.left + ((x - bounds.xmin) / (bounds.xmax - bounds.xmin)) * (plot.right - plot.left),
+          y: plot.bottom - ((y - bounds.ymin) / (bounds.ymax - bounds.ymin)) * (plot.bottom - plot.top),
+        };
+      }
+
+      ctx.fillStyle = "#07172b";
+      ctx.fillRect(0, 0, W, H);
+
+      ctx.strokeStyle = "rgba(100,150,210,0.12)";
+      ctx.lineWidth = 1;
+      for (let gx = -n; gx <= n; gx++) {
+        const p0 = w2c(gx, bounds.ymin);
+        const p1 = w2c(gx, bounds.ymax);
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y);
+        ctx.lineTo(p1.x, p1.y);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = "rgba(170,210,255,0.6)";
+      ctx.lineWidth = 1.5;
+      {
+        const p0 = w2c(bounds.xmin, 0);
+        const p1 = w2c(bounds.xmax, 0);
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y);
+        ctx.lineTo(p1.x, p1.y);
+        ctx.stroke();
+      }
+      {
+        const p0 = w2c(0, bounds.ymin);
+        const p1 = w2c(0, bounds.ymax);
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y);
+        ctx.lineTo(p1.x, p1.y);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = "rgba(180,210,255,0.7)";
+      ctx.font = `italic ${12 * ratio}px serif`;
+      ctx.textAlign = "right";
+      ctx.textBaseline = "top";
+      {
+        const p = w2c(bounds.xmax, 0);
+        ctx.fillText("x", p.x - 2 * ratio, p.y + 4 * ratio);
+      }
+      ctx.textAlign = "left";
+      ctx.textBaseline = "bottom";
+      {
+        const p = w2c(0, bounds.ymax);
+        ctx.fillText("P(x)", p.x + 4 * ratio, p.y + 4 * ratio);
+      }
+
+      ctx.fillStyle = "rgba(180,210,255,0.45)";
+      ctx.font = `${10 * ratio}px monospace`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      for (let x = -n; x <= n; x++) {
+        const p = w2c(x, 0);
+        ctx.fillText(String(x), p.x, p.y + 4 * ratio);
+      }
+
+      ctx.strokeStyle = "#58c4dc";
+      ctx.lineWidth = 2.8;
+      ctx.beginPath();
+      for (let s = 0; s <= 450; s++) {
+        const x = bounds.xmin + (s / 450) * (bounds.xmax - bounds.xmin);
+        const y = evenOddEval(x);
+        const p = w2c(x, y);
+        if (s === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+      }
+      ctx.stroke();
+
+      for (let x = 1; x <= n; x++) {
+        const yp = evenOddEval(x);
+        const yn = evenOddEval(-x);
+        const pPos = w2c(x, yp);
+        const pNeg = w2c(-x, yn);
+
+        ctx.strokeStyle = "rgba(255,230,170,0.25)";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 3]);
+        ctx.beginPath();
+        ctx.moveTo(pNeg.x, pNeg.y);
+        ctx.lineTo(pPos.x, pPos.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.beginPath();
+        ctx.arc(pNeg.x, pNeg.y, 6 * ratio, 0, 2 * Math.PI);
+        ctx.fillStyle = "#fb923c";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,0.75)";
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(pPos.x, pPos.y, 6 * ratio, 0, 2 * Math.PI);
+        ctx.fillStyle = "#f0f560";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(255,255,255,0.75)";
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = "rgba(251,191,36,0.88)";
+      ctx.font = `bold ${12 * ratio}px monospace`;
+      ctx.textAlign = "right";
+      ctx.textBaseline = "top";
+      if (evenOddState.degree === 2) {
+        ctx.fillText("Για κάθε x: P(-x) = P(x)", plot.right - 4 * ratio, plot.top + 4 * ratio);
+      } else {
+        ctx.fillText("Για κάθε x: P(-x) = -P(x)", plot.right - 4 * ratio, plot.top + 4 * ratio);
+      }
+    }
+
+    evenOddModeSlider?.addEventListener("input", () => {
+      evenOddState.degree = Number(evenOddModeSlider.value || 2);
+      updateEvenOddText();
+    });
+
+    updateEvenOddText();
+    // ─────────────────────────────────────────────────────────────────────────
 
     function drawUnityRoots(canvas) {
       if (!canvas) return;
@@ -15600,6 +16516,15 @@
       }
       if (canDraw(pointsRepresentationCanvas)) {
         drawPointsRepresentation(pointsRepresentationCanvas);
+      }
+      if (canDraw(sampleAddMulCanvas)) {
+        drawSampleAddMul(sampleAddMulCanvas);
+      }
+      if (canDraw(evalComplexityCanvas)) {
+        drawEvalComplexity(evalComplexityCanvas);
+      }
+      if (canDraw(evenOddCanvas)) {
+        drawEvenOddSymmetry(evenOddCanvas);
       }
       if (canDraw(unityRootsCanvas)) {
         drawUnityRoots(unityRootsCanvas);
