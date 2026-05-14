@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Παρουσίαση: Ήχος, Συχνότητες και Ocean Waves</title>
-  <script src="assets/vendor/three.min.js"></script>
+  <script src="vendor/three.min.js"></script>
   <link rel="stylesheet" href="/apps/assets/css/presentation-shell.css" />
   <script src="/js/realtime-socket.js"></script>
   <script src="/apps/assets/js/presentation-config.js"></script>
@@ -161,6 +161,40 @@
     .slider-group input[type="range"] {
       width: 100%;
       accent-color: var(--accent);
+    }
+
+    .rot-mult-layout {
+      margin: 8px 0 10px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .rot-mult-sliders {
+      height: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .rot-mult-sliders .slider-group {
+      flex: 1;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .rot-mult-canvas-wrap {
+      display: flex;
+      align-items: stretch;
+    }
+
+    .rot-mult-canvas-wrap .euler-canvas {
+      width: 100%;
+      height: 320px;
+      margin: 0;
     }
 
     .wave-build-grid {
@@ -2026,6 +2060,18 @@
         gap: 8px;
       }
 
+      .rot-mult-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .rot-mult-sliders {
+        height: auto;
+      }
+
+      .rot-mult-sliders .slider-group {
+        min-height: 72px;
+      }
+
       .proof-layout {
         grid-template-columns: 1fr;
       }
@@ -2954,23 +3000,32 @@
               </div>
             </div>
 
-            <p style="margin:4px 0 6px;">
-              Κάνε κλικ <strong>πάνω στον κύκλο</strong> για να ορίσεις τη γωνία <strong>θ</strong>,
-              και κλικ <strong>αλλού</strong> για να ορίσεις σημείο <strong>z</strong>.
-              Ο πολλαπλασιασμός \(z \cdot e^{i\theta}\) περιστρέφει το z κατά θ.
+            <p style="margin:4px 0 8px;color:#9fd0ff;">
+              Στο σχήμα φαίνεται καθαρά ότι η γωνία του γινομένου είναι <strong>\(\theta_1+\theta_2\)</strong>.
             </p>
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0 10px;">
-              <span style="font-size:0.92rem;color:#9fd0ff;font-weight:600;">Γρήγορο τεστ:</span>
-              <button type="button" id="rotPreset1" class="fft-duel-submit" style="padding:6px 10px;min-width:54px;">× 1</button>
-              <button type="button" id="rotPresetI" class="fft-duel-submit" style="padding:6px 10px;min-width:54px;">× i</button>
-              <button type="button" id="rotPresetNeg1" class="fft-duel-submit" style="padding:6px 10px;min-width:54px;">× -1</button>
-              <button type="button" id="rotPresetNegI" class="fft-duel-submit" style="padding:6px 10px;min-width:54px;">× -i</button>
-              <button type="button" id="rotPresetFree" class="fft-duel-submit" style="padding:6px 10px;min-width:84px;">ελεύθερο \(e^{i\theta}\)</button>
+            <div class="rot-mult-layout">
+              <div class="rot-mult-sliders">
+                <div class="slider-group">
+                  <div class="slider-label"><span>r1</span><span id="rotR1Value">1.00</span></div>
+                  <input id="rotR1Slider" type="range" min="0" max="2" step="0.01" value="1" />
+                </div>
+                <div class="slider-group">
+                  <div class="slider-label"><span>θ1</span><span id="rotTheta1Value">0.00 rad (0°)</span></div>
+                  <input id="rotTheta1Slider" type="range" min="-3.1416" max="3.1416" step="0.01" value="0" />
+                </div>
+                <div class="slider-group">
+                  <div class="slider-label"><span>r2</span><span id="rotR2Value">1.00</span></div>
+                  <input id="rotR2Slider" type="range" min="0" max="2" step="0.01" value="1" />
+                </div>
+                <div class="slider-group">
+                  <div class="slider-label"><span>θ2</span><span id="rotTheta2Value">1.57 rad (90°)</span></div>
+                  <input id="rotTheta2Slider" type="range" min="-3.1416" max="3.1416" step="0.01" value="1.5708" />
+                </div>
+              </div>
+              <div class="rot-mult-canvas-wrap">
+                <canvas id="rotMultCanvas" class="euler-canvas" style="cursor:crosshair;"></canvas>
+              </div>
             </div>
-            <p style="margin:0 0 8px;font-size:0.9rem;color:#8fb0c8;">
-              Πολλαπλασιασμός με <strong>\(i\)</strong> = στροφή κατά <strong>90°</strong>, ενώ πολλαπλασιασμός με <strong>\(e^{i\theta}\)</strong> = αυθαίρετη στροφή.
-            </p>
-            <canvas id="rotMultCanvas" class="euler-canvas" style="cursor:crosshair;height:320px;width:100%;"></canvas>
             <div id="rotMultFormula" class="mathjax-box" style="margin-top:8px;min-height:36px;text-align:center;font-size:1.05em;"></div>
           </div>
         </div>
@@ -8572,384 +8627,273 @@
     eulerPlaneCanvas?.addEventListener("pointerup", stopEulerPointDrag);
     eulerPlaneCanvas?.addEventListener("pointercancel", stopEulerPointDrag);
 
-    // @slide 5.2 — Περιστροφή με πολλαπλασιασμό μιγαδικού (single canvas)
-    const rotMultCanvas  = document.getElementById("rotMultCanvas");
+    // @slide 5.2 — Περιστροφή με πολλαπλασιασμό μιγαδικού (sliders με snap)
+    const rotMultCanvas = document.getElementById("rotMultCanvas");
     const rotMultFormula = document.getElementById("rotMultFormula");
-    const rotPreset1 = document.getElementById("rotPreset1");
-    const rotPresetI = document.getElementById("rotPresetI");
-    const rotPresetNeg1 = document.getElementById("rotPresetNeg1");
-    const rotPresetNegI = document.getElementById("rotPresetNegI");
-    const rotPresetFree = document.getElementById("rotPresetFree");
+    const rotR1Slider = document.getElementById("rotR1Slider");
+    const rotR2Slider = document.getElementById("rotR2Slider");
+    const rotTheta1Slider = document.getElementById("rotTheta1Slider");
+    const rotTheta2Slider = document.getElementById("rotTheta2Slider");
+    const rotR1Value = document.getElementById("rotR1Value");
+    const rotR2Value = document.getElementById("rotR2Value");
+    const rotTheta1Value = document.getElementById("rotTheta1Value");
+    const rotTheta2Value = document.getElementById("rotTheta2Value");
 
-    let rotMult_z        = null;   // {a, b} or null
-    let rotMult_theta    = null;   // number (radians) or null
-    let rotMult_dragging = null;   // "z" | "theta" | null
-    let rotMult_thetaMode = "free"; // "free" | "1" | "i" | "-1" | "-i"
-
-    const ROT_PRESETS = [
-      { key: "1", label: "1", theta: 0 },
-      { key: "i", label: "i", theta: Math.PI / 2 },
-      { key: "-1", label: "-1", theta: Math.PI },
-      { key: "-i", label: "-i", theta: -Math.PI / 2 },
-    ];
-
-    function setRotMultTheta(theta, mode = "free") {
-      rotMult_theta = theta;
-      rotMult_thetaMode = mode;
+    function _rotMultR(w, h) {
+      return Math.min(w, h) * 0.34;
     }
 
-    function updateRotPresetButtons() {
-      const mapping = {
-        "1": rotPreset1,
-        "i": rotPresetI,
-        "-1": rotPresetNeg1,
-        "-i": rotPresetNegI,
-        "free": rotPresetFree,
-      };
-      Object.entries(mapping).forEach(([key, button]) => {
-        if (!button) return;
-        const active = rotMult_theta !== null && rotMult_thetaMode === key;
-        button.style.background = active ? "rgba(88,214,141,0.24)" : "";
-        button.style.borderColor = active ? "rgba(170,255,212,0.9)" : "";
-        button.style.color = active ? "#d9ffe8" : "";
+    function _rotNormalizeAngle(theta) {
+      const twoPi = 2 * Math.PI;
+      let out = theta;
+      while (out <= -Math.PI) out += twoPi;
+      while (out > Math.PI) out -= twoPi;
+      return out;
+    }
+
+    function _rotSnapRadius(radius) {
+      return Math.abs(radius - 1) <= 0.05 ? 1 : radius;
+    }
+
+    function _rotSnapAngle(angle) {
+      const targets = [0, Math.PI / 2, -Math.PI / 2, Math.PI, -Math.PI];
+      let best = angle;
+      let bestDist = Number.POSITIVE_INFINITY;
+      targets.forEach((target) => {
+        const dist = Math.abs(_rotNormalizeAngle(angle - target));
+        if (dist < bestDist) {
+          bestDist = dist;
+          best = target;
+        }
       });
+      return bestDist <= 0.10 ? best : angle;
     }
 
-    function canvasPointerXY(canvas, evt) {
-      const rect = canvas.getBoundingClientRect();
-      const ratio = window.devicePixelRatio || 1;
-      return { x: (evt.clientX - rect.left) * ratio, y: (evt.clientY - rect.top) * ratio };
+    function _rotGetState() {
+      const rawR1 = rotR1Slider ? Number(rotR1Slider.value) : 1;
+      const rawR2 = rotR2Slider ? Number(rotR2Slider.value) : 1;
+      const rawT1 = rotTheta1Slider ? Number(rotTheta1Slider.value) : 0;
+      const rawT2 = rotTheta2Slider ? Number(rotTheta2Slider.value) : Math.PI / 2;
+
+      const r1 = _rotSnapRadius(rawR1);
+      const r2 = _rotSnapRadius(rawR2);
+      const theta1 = _rotSnapAngle(_rotNormalizeAngle(rawT1));
+      const theta2 = _rotSnapAngle(_rotNormalizeAngle(rawT2));
+
+      return { r1, r2, theta1, theta2 };
     }
 
-    // R in pixel coords for the single unified canvas
-    function _rotMultR(w, h) { return Math.min(w, h) * 0.34; }
+    function _rotApplySnapToSliders() {
+      const { r1, r2, theta1, theta2 } = _rotGetState();
+      if (rotR1Slider) rotR1Slider.value = r1.toFixed(2);
+      if (rotR2Slider) rotR2Slider.value = r2.toFixed(2);
+      if (rotTheta1Slider) rotTheta1Slider.value = theta1.toFixed(4);
+      if (rotTheta2Slider) rotTheta2Slider.value = theta2.toFixed(4);
+      return { r1, r2, theta1, theta2 };
+    }
+
+    function _rotCardinalLabel(theta) {
+      const t = _rotNormalizeAngle(theta);
+      if (Math.abs(t) < 1e-4) return " (1)";
+      if (Math.abs(t - Math.PI / 2) < 1e-4) return " (i)";
+      if (Math.abs(t + Math.PI / 2) < 1e-4) return " (-i)";
+      if (Math.abs(Math.abs(t) - Math.PI) < 1e-4) return " (-1)";
+      return "";
+    }
+
+    function _rotUpdateSliderLabels(state) {
+      if (rotR1Value) rotR1Value.textContent = state.r1.toFixed(2) + (Math.abs(state.r1 - 1) < 1e-4 ? " (unit)" : "");
+      if (rotR2Value) rotR2Value.textContent = state.r2.toFixed(2) + (Math.abs(state.r2 - 1) < 1e-4 ? " (unit)" : "");
+      if (rotTheta1Value) {
+        const deg = (state.theta1 * 180 / Math.PI).toFixed(1);
+        rotTheta1Value.textContent = `${state.theta1.toFixed(2)} rad (${deg}°)` + _rotCardinalLabel(state.theta1);
+      }
+      if (rotTheta2Value) {
+        const deg = (state.theta2 * 180 / Math.PI).toFixed(1);
+        rotTheta2Value.textContent = `${state.theta2.toFixed(2)} rad (${deg}°)` + _rotCardinalLabel(state.theta2);
+      }
+    }
 
     function drawRotMult() {
       const canvas = rotMultCanvas;
       if (!canvas) return;
+
+      const state = _rotApplySnapToSliders();
+      _rotUpdateSliderLabels(state);
+
       fitCanvasToDisplaySize(canvas);
       const ratio = window.devicePixelRatio || 1;
-      const w = canvas.width, h = canvas.height;
+      const w = canvas.width;
+      const h = canvas.height;
       const ctx = canvas.getContext("2d");
       ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, w, h);
 
-      const cx = w * 0.5, cy = h * 0.5;
+      const cx = w * 0.5;
+      const cy = h * 0.5;
       const R = _rotMultR(w, h);
 
-      // --- Faint grid ---
-      ctx.strokeStyle = "rgba(50,80,130,0.28)"; ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgba(50,80,130,0.28)";
+      ctx.lineWidth = 1;
       for (let g = -3; g <= 3; g++) {
         if (g === 0) continue;
-        ctx.beginPath(); ctx.moveTo(cx + g*R, 0); ctx.lineTo(cx + g*R, h); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(0, cy + g*R); ctx.lineTo(w, cy + g*R); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(cx + g * R, 0);
+        ctx.lineTo(cx + g * R, h);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, cy + g * R);
+        ctx.lineTo(w, cy + g * R);
+        ctx.stroke();
       }
 
-      // --- Axes ---
-      ctx.strokeStyle = "#6a9de8"; ctx.lineWidth = 1.5 * ratio;
-      ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
-      ctx.font = `${11*ratio}px sans-serif`; ctx.fillStyle = "#6a9de8";
-      ctx.textAlign = "left";  ctx.textBaseline = "middle";
-      ctx.fillText("Re", w - 20*ratio, cy - 12*ratio);
-      ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
-      ctx.fillText("Im", cx + 14*ratio, 18*ratio);
+      ctx.strokeStyle = "#6a9de8";
+      ctx.lineWidth = 1.5 * ratio;
+      ctx.beginPath();
+      ctx.moveTo(0, cy);
+      ctx.lineTo(w, cy);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx, 0);
+      ctx.lineTo(cx, h);
+      ctx.stroke();
 
-      // Tick labels
-      ctx.fillStyle = "rgba(140,180,255,0.55)"; ctx.font = `${9*ratio}px sans-serif`;
-      for (const v of [-2,-1,1,2]) {
-        ctx.textAlign = "center"; ctx.textBaseline = "top";
-        ctx.fillText(v, cx + v*R, cy + 3*ratio);
-        ctx.textAlign = "right"; ctx.textBaseline = "middle";
-        ctx.fillText(v===1?"i":v===-1?"−i":v+"i", cx - 4*ratio, cy - v*R);
-      }
+      ctx.font = `${11 * ratio}px sans-serif`;
+      ctx.fillStyle = "#6a9de8";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText("Re", w - 20 * ratio, cy - 12 * ratio);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillText("Im", cx + 14 * ratio, 18 * ratio);
 
-      // --- Unit circle (prominent) ---
-      ctx.strokeStyle = "rgba(88,166,255,0.55)"; ctx.lineWidth = 2 * ratio;
-      ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI*2); ctx.stroke();
+      ctx.strokeStyle = "rgba(88,166,255,0.55)";
+      ctx.lineWidth = 2 * ratio;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R, 0, Math.PI * 2);
+      ctx.stroke();
 
-      // Cardinal dots + labels on unit circle
-      ctx.font = `bold ${11*ratio}px sans-serif`; ctx.fillStyle = "#8ab6ff";
-      const ucL = [{t:0,l:"1"},{t:Math.PI,l:"−1"},{t:Math.PI/2,l:"i"},{t:-Math.PI/2,l:"−i"}];
-      for (const {t, l} of ucL) {
-        const lx = cx + R*Math.cos(-t), ly = cy + R*Math.sin(-t);
-        const selectedPreset = rotMult_theta !== null && Math.abs(Math.atan2(Math.sin(rotMult_theta - t), Math.cos(rotMult_theta - t))) < 0.001;
-        const off = 16*ratio;
-        let ox=0, oy=0;
-        if (t===0){ox=off;} else if(t===Math.PI){ox=-off;} else if(t>0){oy=off;} else{oy=-off;}
-        ctx.textAlign="center"; ctx.textBaseline="middle";
-        ctx.fillText(l, lx+ox, ly+oy);
-        ctx.beginPath(); ctx.arc(lx, ly, 3*ratio, 0, Math.PI*2);
-        ctx.fillStyle = selectedPreset ? "#58d68d" : "rgba(90,150,255,0.6)";
+      const z1a = state.r1 * Math.cos(state.theta1);
+      const z1b = state.r1 * Math.sin(state.theta1);
+      const z2a = state.r2 * Math.cos(state.theta2);
+      const z2b = state.r2 * Math.sin(state.theta2);
+
+      const prodR = state.r1 * state.r2;
+      const prodTheta = _rotNormalizeAngle(state.theta1 + state.theta2);
+      const proda = prodR * Math.cos(prodTheta);
+      const prodb = prodR * Math.sin(prodTheta);
+
+      const z1x = cx + z1a * R;
+      const z1y = cy - z1b * R;
+      const z2x = cx + z2a * R;
+      const z2y = cy - z2b * R;
+      const px = cx + proda * R;
+      const py = cy - prodb * R;
+
+      ctx.strokeStyle = "rgba(88,166,255,0.8)";
+      ctx.lineWidth = 2 * ratio;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.20, 0, -state.theta1, state.theta1 < 0);
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(88,214,141,0.8)";
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.29, -state.theta1, -(state.theta1 + state.theta2), state.theta2 < 0);
+      ctx.stroke();
+
+      ctx.strokeStyle = "rgba(255,136,51,0.85)";
+      ctx.lineWidth = 2.2 * ratio;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.38, 0, -prodTheta, prodTheta < 0);
+      ctx.stroke();
+
+      ctx.font = `italic ${10 * ratio}px serif`;
+      ctx.fillStyle = "#8ac8ff";
+      ctx.fillText("θ1", cx + (R * 0.24) * Math.cos(-state.theta1 * 0.5), cy + (R * 0.24) * Math.sin(-state.theta1 * 0.5));
+      ctx.fillStyle = "#98f0bc";
+      ctx.fillText("θ2", cx + (R * 0.33) * Math.cos(-(state.theta1 + state.theta2 * 0.5)), cy + (R * 0.33) * Math.sin(-(state.theta1 + state.theta2 * 0.5)));
+      ctx.fillStyle = "#ffc58f";
+      ctx.fillText("θ1+θ2", cx + (R * 0.44) * Math.cos(-prodTheta * 0.5), cy + (R * 0.44) * Math.sin(-prodTheta * 0.5));
+
+      function drawArrow(x, y, color) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5 * ratio;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        const ang = Math.atan2(y - cy, x - cx);
+        const as = 9 * ratio;
+        const ps = 4 * ratio;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x - Math.cos(ang) * as + Math.sin(ang) * ps, y - Math.sin(ang) * as - Math.cos(ang) * ps);
+        ctx.lineTo(x - Math.cos(ang) * as - Math.sin(ang) * ps, y - Math.sin(ang) * as + Math.cos(ang) * ps);
+        ctx.closePath();
         ctx.fill();
-        if (selectedPreset) {
-          ctx.strokeStyle = "#d9ffe8";
-          ctx.lineWidth = 1.2 * ratio;
-          ctx.stroke();
-        }
-        ctx.fillStyle="#8ab6ff";
       }
 
-      // --- Hint if nothing set ---
-      if (!rotMult_z && rotMult_theta === null) {
-        ctx.fillStyle = "rgba(180,210,255,0.40)"; ctx.font = `${12*ratio}px sans-serif`;
-        ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        ctx.fillText("Κλικ κοντά στον κύκλο → γωνία θ  |  Κλικ αλλού → σημείο z  (drag για μετακίνηση)", cx, h - 18*ratio);
-        return;
-      }
+      drawArrow(z1x, z1y, "#58a6ff");
+      drawArrow(z2x, z2y, "#58d68d");
+      drawArrow(px, py, "#ff8833");
 
-      // --- e^{iθ}: green arrow + arc on unit circle ---
-      if (rotMult_theta !== null) {
-        const t = rotMult_theta;
-        const px = cx + R * Math.cos(-t), py = cy + R * Math.sin(-t);
+      ctx.fillStyle = "#80c8ff";
+      ctx.font = `bold ${10 * ratio}px sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = z1y < cy ? "bottom" : "top";
+      ctx.fillText("z1", z1x, z1y + (z1y < cy ? -8 : 8) * ratio);
 
-        // Arc from 0 to θ (at ~55% of R so it doesn't clash)
-        const arcR = R * 0.45;
-        ctx.strokeStyle = "rgba(255,200,60,0.70)"; ctx.lineWidth = 2 * ratio;
-        ctx.beginPath(); ctx.arc(cx, cy, arcR, 0, -t, t < 0); ctx.stroke();
-        const midT = -t * 0.5, tlR = arcR + 14*ratio;
-        ctx.fillStyle = "#ffcc44"; ctx.font = `italic bold ${13*ratio}px serif`;
-        ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        ctx.fillText("θ", cx + tlR*Math.cos(midT), cy + tlR*Math.sin(midT));
+      ctx.fillStyle = "#aaffd4";
+      ctx.textBaseline = z2y < cy ? "bottom" : "top";
+      ctx.fillText("z2", z2x, z2y + (z2y < cy ? -8 : 8) * ratio);
 
-        // Green arrow from origin to unit-circle point
-        ctx.strokeStyle = "#58d68d"; ctx.lineWidth = 2 * ratio;
-        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
-        const angG = Math.atan2(py-cy, px-cx), asG=8*ratio, psG=3.5*ratio;
-        ctx.fillStyle = "#58d68d"; ctx.beginPath();
-        ctx.moveTo(px, py);
-        ctx.lineTo(px-Math.cos(angG)*asG+Math.sin(angG)*psG, py-Math.sin(angG)*asG-Math.cos(angG)*psG);
-        ctx.lineTo(px-Math.cos(angG)*asG-Math.sin(angG)*psG, py-Math.sin(angG)*asG+Math.cos(angG)*psG);
-        ctx.closePath(); ctx.fill();
-        ctx.beginPath(); ctx.arc(px, py, 5.5*ratio, 0, Math.PI*2);
-        ctx.fillStyle = "#2ecc71"; ctx.fill();
-        ctx.strokeStyle = "#aaffd4"; ctx.lineWidth = 1.2*ratio; ctx.stroke();
-
-        // e^{iθ} label
-        const cosT = Math.cos(t), sinT = Math.sin(t);
-        const sSign = sinT >= 0 ? "+" : "−";
-        ctx.fillStyle = "#aaffd4"; ctx.font = `${10*ratio}px sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = py < cy ? "bottom" : "top";
-        ctx.fillText(`e^{iθ}=${cosT.toFixed(2)}${sSign}${Math.abs(sinT).toFixed(2)}i`,
-          px, py + (py < cy ? -7 : 7)*ratio);
-
-        // θ value bottom-right
-        ctx.fillStyle = "rgba(200,230,255,0.65)"; ctx.font = `${10*ratio}px sans-serif`;
-        ctx.textAlign = "right"; ctx.textBaseline = "bottom";
-        ctx.fillText(`θ = ${t.toFixed(2)} rad (${(t*180/Math.PI).toFixed(1)}°)`, w - 8*ratio, h - 5*ratio);
-      }
-
-      // --- z: blue arrow ---
-      if (rotMult_z) {
-        const {a, b} = rotMult_z;
-        const zx = cx + a*R, zy = cy - b*R;
-
-        // If θ set, also draw rotated result
-        if (rotMult_theta !== null) {
-          const cosT = Math.cos(rotMult_theta), sinT = Math.sin(rotMult_theta);
-          const ra = a*cosT - b*sinT, rb = a*sinT + b*cosT;
-          const rx = cx + ra*R, ry = cy - rb*R;
-          const modZ = Math.sqrt(a*a + b*b);
-
-          // Arc showing rotation of z
-          if (modZ > 0.05) {
-            const angZ = Math.atan2(b, a);
-            ctx.strokeStyle = "rgba(255,200,60,0.50)"; ctx.lineWidth = 1.5 * ratio;
-            ctx.setLineDash([4*ratio, 4*ratio]);
-            ctx.beginPath(); ctx.arc(cx, cy, modZ*R, -angZ, -(angZ + rotMult_theta), rotMult_theta < 0); ctx.stroke();
-            ctx.setLineDash([]);
-            const midAng = -(angZ + rotMult_theta * 0.5);
-            const labR = modZ * R * 0.55 + 12*ratio;
-            ctx.fillStyle = "#ffdd88"; ctx.font = `italic ${11*ratio}px serif`;
-            ctx.textAlign = "center"; ctx.textBaseline = "middle";
-            ctx.fillText("θ", cx + labR*Math.cos(midAng), cy + labR*Math.sin(midAng));
-          }
-
-          // Orange arrow: z·e^{iθ}
-          ctx.strokeStyle = "#ff8833"; ctx.lineWidth = 2.5 * ratio;
-          ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(rx, ry); ctx.stroke();
-          const ang2 = Math.atan2(ry-cy, rx-cx), as2=9*ratio, ps2=4*ratio;
-          ctx.fillStyle = "#ff8833"; ctx.beginPath();
-          ctx.moveTo(rx, ry);
-          ctx.lineTo(rx-Math.cos(ang2)*as2+Math.sin(ang2)*ps2, ry-Math.sin(ang2)*as2-Math.cos(ang2)*ps2);
-          ctx.lineTo(rx-Math.cos(ang2)*as2-Math.sin(ang2)*ps2, ry-Math.sin(ang2)*as2+Math.cos(ang2)*ps2);
-          ctx.closePath(); ctx.fill();
-          ctx.beginPath(); ctx.arc(rx, ry, 6*ratio, 0, Math.PI*2);
-          ctx.fillStyle = "#ff8833"; ctx.fill();
-          ctx.strokeStyle = "#ffcc88"; ctx.lineWidth = 1.5*ratio; ctx.stroke();
-          ctx.fillStyle = "#ffcc88"; ctx.font = `bold ${10*ratio}px sans-serif`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = ry < cy ? "bottom" : "top";
-          ctx.fillText(`z·e^{iθ}=(${ra.toFixed(2)},${rb.toFixed(2)})`, rx, ry+(ry<cy?-8:8)*ratio);
-        }
-
-        // Blue arrow: z
-        ctx.strokeStyle = "#58a6ff"; ctx.lineWidth = 2.5 * ratio;
-        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(zx, zy); ctx.stroke();
-        const ang1 = Math.atan2(zy-cy, zx-cx), as1=9*ratio, ps1=4*ratio;
-        ctx.fillStyle = "#58a6ff"; ctx.beginPath();
-        ctx.moveTo(zx, zy);
-        ctx.lineTo(zx-Math.cos(ang1)*as1+Math.sin(ang1)*ps1, zy-Math.sin(ang1)*as1-Math.cos(ang1)*ps1);
-        ctx.lineTo(zx-Math.cos(ang1)*as1-Math.sin(ang1)*ps1, zy-Math.sin(ang1)*as1+Math.cos(ang1)*ps1);
-        ctx.closePath(); ctx.fill();
-        ctx.beginPath(); ctx.arc(zx, zy, 6*ratio, 0, Math.PI*2);
-        ctx.fillStyle = "#3a80ee"; ctx.fill();
-        ctx.strokeStyle = "#80bfff"; ctx.lineWidth = 1.5*ratio; ctx.stroke();
-        const bSign = b >= 0 ? "+" : "−";
-        ctx.fillStyle = "#80c8ff"; ctx.font = `bold ${10*ratio}px sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = zy < cy ? "bottom" : "top";
-        ctx.fillText(`z=${a.toFixed(2)}${bSign}${Math.abs(b).toFixed(2)}i`, zx, zy+(zy<cy?-8:8)*ratio);
-      } else {
-        // Hint for z
-        ctx.fillStyle = "rgba(180,210,255,0.38)"; ctx.font = `${11*ratio}px sans-serif`;
-        ctx.textAlign = "left"; ctx.textBaseline = "top";
-        ctx.fillText("← κλικ εδώ για z", 8*ratio, 8*ratio);
-      }
-
-      // Hint for θ when no theta yet
-      if (rotMult_theta === null) {
-        ctx.fillStyle = "rgba(130,220,160,0.38)"; ctx.font = `${11*ratio}px sans-serif`;
-        ctx.textAlign = "center"; ctx.textBaseline = "bottom";
-        ctx.fillText("κλικ στον κύκλο για θ", cx, h - 8*ratio);
-      }
+      ctx.fillStyle = "#ffcc88";
+      ctx.textBaseline = py < cy ? "bottom" : "top";
+      ctx.fillText("z1·z2", px, py + (py < cy ? -8 : 8) * ratio);
     }
 
     function updateRotMultFormula() {
       if (!rotMultFormula) return;
-      if (!rotMult_z && rotMult_theta === null) { rotMultFormula.innerHTML = ""; return; }
-      if (!rotMult_z) {
-        rotMultFormula.innerHTML =
-          `Κάνε κλικ ή drag στο επίπεδο για να ορίσεις <strong style="color:#58a6ff;">z</strong>.`;
-        return;
-      }
-      if (rotMult_theta === null) {
-        rotMultFormula.innerHTML =
-          `Κάνε κλικ ή drag πάνω στον κύκλο για να ορίσεις γωνία <strong style="color:#ffcc44;">θ</strong>.`;
-        return;
-      }
-      const {a, b} = rotMult_z, t = rotMult_theta;
-      const cosT = Math.cos(t), sinT = Math.sin(t);
-      const ra = a*cosT - b*sinT, rb = a*sinT + b*cosT;
-      const bSign  = b   >= 0 ? "+" : "-";
-      const sSign  = sinT >= 0 ? "+" : "-";
-      const rbSign = rb  >= 0 ? "+" : "-";
-      const modeText = rotMult_thetaMode === "free"
-        ? `\(e^{i\\theta}\),\\; \\theta=${(t*180/Math.PI).toFixed(1)}^\\circ`
-        : `\(${rotMult_thetaMode}\)`;
-      // Coloured formula — use HTML spans + inline MathJax to avoid # in math mode
+      const state = _rotApplySnapToSliders();
+      _rotUpdateSliderLabels(state);
+
+      const r1 = state.r1;
+      const r2 = state.r2;
+      const theta1 = state.theta1;
+      const theta2 = state.theta2;
+      const r12 = r1 * r2;
+      const theta12 = _rotNormalizeAngle(theta1 + theta2);
+
       rotMultFormula.innerHTML =
-        `<div style="font-size:1.1em;text-align:center;margin:4px 0;">` +
-        `<span style="color:#ff8833;">\\(z \\cdot ${modeText}\\)</span>` +
-        ` &nbsp;=&nbsp; ` +
-        `<span style="color:#58a6ff;">\\(${a.toFixed(2)}${bSign}${Math.abs(b).toFixed(2)}i\\)</span>` +
+        `<div style="font-size:1.08em;text-align:center;margin:4px 0;">` +
+        `<span style="color:#8fc8ff;">\\(z_1=${r1.toFixed(2)}e^{i${theta1.toFixed(2)}}\\)</span>` +
         ` &nbsp;&middot;&nbsp; ` +
-        `<span style="color:#58d68d;">\\(${cosT.toFixed(2)}${sSign}${Math.abs(sinT).toFixed(2)}i\\)</span>` +
+        `<span style="color:#98f0bc;">\\(z_2=${r2.toFixed(2)}e^{i${theta2.toFixed(2)}}\\)</span>` +
         ` &nbsp;=&nbsp; ` +
-        `<span style="color:#ff8833;">\\(${ra.toFixed(2)}${rbSign}${Math.abs(rb).toFixed(2)}i\\)</span>` +
+        `<span style="color:#ffc58f;">\\(z_1z_2=${r12.toFixed(2)}e^{i${theta12.toFixed(2)}}\\)</span>` +
         `</div>` +
         `<div style="font-size:0.92em;color:#8fb0c8;margin-top:2px;">` +
-        (rotMult_thetaMode === "i"
-          ? `Εδώ ελέγχεις άμεσα ότι ο πολλαπλασιασμός με <strong>i</strong> κάνει στροφή <strong>90°</strong>.`
-          : `Πολλαπλασιασμός με <strong>i</strong> = στροφή 90°, ενώ με <strong>e^{i\theta}</strong> παίρνεις οποιαδήποτε γωνία.`) +
+        `\\(\\theta_1=${(theta1 * 180 / Math.PI).toFixed(1)}^\\circ,\\; \\theta_2=${(theta2 * 180 / Math.PI).toFixed(1)}^\\circ,\\; \\theta_1+\\theta_2=${((theta1 + theta2) * 180 / Math.PI).toFixed(1)}^\\circ\\)` +
         `</div>`;
-      if (window.MathJax && MathJax.typesetPromise) { MathJax.typesetPromise([rotMultFormula]).catch(()=>{}); }
-      updateRotPresetButtons();
+
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([rotMultFormula]).catch(() => {});
+      }
     }
 
-    // Hit-test: returns "theta", "z", "new_theta", or "new_z"
-    function _rotMultHitTest(x, y) {
-      fitCanvasToDisplaySize(rotMultCanvas);
-      const w = rotMultCanvas.width, h = rotMultCanvas.height;
-      const cx = w * 0.5, cy = h * 0.5;
-      const R = _rotMultR(w, h);
-      const ratio = window.devicePixelRatio || 1;
-      const HIT = 20 * ratio;
-      const dx = x - cx, dy = y - cy;
-      // Existing θ point?
-      if (rotMult_theta !== null) {
-        const px = cx + R * Math.cos(-rotMult_theta);
-        const py = cy + R * Math.sin(-rotMult_theta);
-        if (Math.hypot(x - px, y - py) < HIT) return "theta";
-      }
-      // Existing z point?
-      if (rotMult_z) {
-        const zx = cx + rotMult_z.a * R, zy = cy - rotMult_z.b * R;
-        if (Math.hypot(x - zx, y - zy) < HIT) return "z";
-      }
-      // New point — near circle → θ, elsewhere → z
-      const distFromCircle = Math.abs(Math.sqrt(dx*dx + dy*dy) - R);
-      return distFromCircle < 22 * ratio ? "new_theta" : "new_z";
+    function syncRotMultFromSliders() {
+      drawRotMult();
+      updateRotMultFormula();
     }
 
-    rotMultCanvas?.addEventListener("pointerdown", function(evt) {
-      evt.preventDefault();
-      fitCanvasToDisplaySize(rotMultCanvas);
-      const w = rotMultCanvas.width, h = rotMultCanvas.height;
-      const cx = w * 0.5, cy = h * 0.5;
-      const R = _rotMultR(w, h);
-      const {x, y} = canvasPointerXY(rotMultCanvas, evt);
-      const hit = _rotMultHitTest(x, y);
-      if (hit === "theta") {
-        rotMult_dragging = "theta";
-      } else if (hit === "z") {
-        rotMult_dragging = "z";
-      } else if (hit === "new_theta") {
-        setRotMultTheta(Math.atan2(cy - y, x - cx), "free");
-        rotMult_dragging = "theta";
-        drawRotMult(); updateRotMultFormula();
-      } else {
-        rotMult_z = { a: (x - cx) / R, b: (cy - y) / R };
-        rotMult_dragging = "z";
-        drawRotMult(); updateRotMultFormula();
-      }
-      rotMultCanvas.setPointerCapture(evt.pointerId);
-      rotMultCanvas.style.cursor = "grabbing";
+    [rotR1Slider, rotR2Slider, rotTheta1Slider, rotTheta2Slider].forEach((slider) => {
+      slider?.addEventListener("input", syncRotMultFromSliders);
+      slider?.addEventListener("change", syncRotMultFromSliders);
     });
 
-    rotMultCanvas?.addEventListener("pointermove", function(evt) {
-      const {x, y} = canvasPointerXY(rotMultCanvas, evt);
-      if (!rotMult_dragging) {
-        const hit = _rotMultHitTest(x, y);
-        rotMultCanvas.style.cursor = (hit === "z" || hit === "theta") ? "grab" : "crosshair";
-        return;
-      }
-      evt.preventDefault();
-      fitCanvasToDisplaySize(rotMultCanvas);
-      const w = rotMultCanvas.width, h = rotMultCanvas.height;
-      const cx = w * 0.5, cy = h * 0.5;
-      const R = _rotMultR(w, h);
-      if (rotMult_dragging === "theta") {
-        setRotMultTheta(Math.atan2(cy - y, x - cx), "free");
-      } else if (rotMult_dragging === "z") {
-        rotMult_z = { a: (x - cx) / R, b: (cy - y) / R };
-      }
-      drawRotMult(); updateRotMultFormula();
-    });
-
-    rotMultCanvas?.addEventListener("pointerup", function(evt) {
-      rotMult_dragging = null;
-      rotMultCanvas.style.cursor = "crosshair";
-    });
-
-    rotMultCanvas?.addEventListener("pointercancel", function(evt) {
-      rotMult_dragging = null;
-      rotMultCanvas.style.cursor = "crosshair";
-    });
-
-    rotPreset1?.addEventListener("click", function() { setRotMultTheta(0, "1"); drawRotMult(); updateRotMultFormula(); });
-    rotPresetI?.addEventListener("click", function() { setRotMultTheta(Math.PI / 2, "i"); drawRotMult(); updateRotMultFormula(); });
-    rotPresetNeg1?.addEventListener("click", function() { setRotMultTheta(Math.PI, "-1"); drawRotMult(); updateRotMultFormula(); });
-    rotPresetNegI?.addEventListener("click", function() { setRotMultTheta(-Math.PI / 2, "-i"); drawRotMult(); updateRotMultFormula(); });
-    rotPresetFree?.addEventListener("click", function() {
-      if (rotMult_theta === null) setRotMultTheta(Math.PI / 6, "free");
-      else rotMult_thetaMode = "free";
-      drawRotMult(); updateRotMultFormula();
-    });
-
-    drawRotMult();
-    updateRotPresetButtons();
+    syncRotMultFromSliders();
 
     const proofStepsTaylor = [
       {

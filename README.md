@@ -2,34 +2,25 @@ SmarT classROoms for emBodied participatory lEarning
 Strobe Multi-App Classroom
 Ενοποιημένο no-login περιβάλλον για classroom activities με real-time συνεργασία.
 
-# Εφαρμογές
-  - Geometry Live
-  - Buffon Needle
-  - Fourier Lab
-  - neural lab
-  
-- Teacher dashboard και Student launcher χωρίς login flow.
-- Legacy geometry canvas με real-time sync teacher-student.
-- Admin dashboard με live εικόνα χρηστών.
 # Τεχνολογίες Επικοινωνίας
 SmarT classROoms for emBodied participatory lEarning
 Strobe Multi-App Classroom
 
 Ενοποιημένο no-login περιβάλλον για classroom activities με real-time συνεργασία.
 
-## Εφαρμογές
+# Εφαρμογές
 - Geometry Live
 - Buffon Needle
 - Fourier Lab
 - Neural Lab
 
-## Αρχιτεκτονική (τρέχουσα)
+# Αρχιτεκτονική
 - Ένα κεντρικό Node server στο project root.
 - Όλες οι εφαρμογές μέσα στο apps (ξεχωριστός φάκελος ανά app).
 - Shared assets στο assets.
 - Session/data storage στο server με in-memory + file persistence (data/users.json).
 
-## Βασική δομή
+# Δομή φακέλων
 
 ```text
 strobe-private/
@@ -59,12 +50,12 @@ strobe-private/
     camera_tracking.py
 ```
 
-## Απαιτήσεις
+# Απαιτήσεις
 - Node.js 18+
 - npm
 - Python 3.11+ (προτείνεται 3.13)
 
-## Εγκατάσταση
+# Εγκατάσταση
 
 ```powershell
 cd "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private"
@@ -87,8 +78,9 @@ pip install opencv-python numpy ultralytics deep-sort-realtime setuptools==80.9.
 & ".\.venv\Scripts\python.exe" -m pip install torch torchvision
 ```
 
-## Εκκίνηση
+# Εκκίνηση
 
+## Τοπικά
 ```powershell
 cd "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private"
 npm start
@@ -96,7 +88,7 @@ npm start
 
 Σημείωση: ο Node server κάνει auto-spawn τον Python camera worker.
 
-## Βασικά URLs
+### Βασικά URLs
 - Entry: http://localhost:3000/
 - Teacher dashboard: http://localhost:3000/teacher
 - Student launcher: http://localhost:3000/student
@@ -107,6 +99,86 @@ npm start
 - Geometry student direct (legacy): http://localhost:3000/user.html
 - Camera speed test: http://localhost:3000/camera-speed-test
 - Health: http://localhost:3000/health
+
+## Myria server
+
+### Αρχεία/Φακέλοι που πρέπει να μεταφερθούν
+
+Μεταφορά των ακόλουθων αρχείων και φακέλων στον `/var/www/html/dmlt/buffon`:
+
+**Απαραίτητα αρχεία:**
+- `server.js` - κύριο αρχείο εκκίνησης
+- `package.json` - npm dependencies
+- `package-lock.json` - npm lock file
+
+**Φακέλοι:**
+- `apps/` - όλες οι εφαρμογές (geometry-live, buffon-needle, fourier-lab, neural-lab)
+- `assets/` - κοινά assets (CSS, JS)
+- `public/` - static files (index.html, launcher.html, κλπ)
+- `routes/` - API routes
+- `services/` - business logic (UserManager, etc)
+- `middleware/` - Express middleware
+- `views/` - templates (αν υπάρχουν)
+- `activities/` - activity configurations
+
+**Python scripts (για camera tracking):**
+- `camera_server.py`
+- `camera_tracking.py`
+
+**Προαιρετικά (αν χρησιμοποιείται):**
+- `data/users.json` - αν έχει προϋπάρχοντα δεδομένα
+- `.env` - environment variables (δημιουργείται ή ενημερώνεται στον server)
+
+**ΔΕΝ απαιτείται μεταφορά:**
+- `node_modules/` - θα δημιουργηθεί με `npm install`
+- `.venv/` - Python virtual environment θα δημιουργηθεί στον server
+- `.git/` - version control δεν είναι απαραίτητο
+- `node_modules/`, `.venv/`, `.git/` να αγνοηθούν
+
+### Setup στον Myria server
+
+Σωστός φάκελος:
+```bash
+cd /var/www/html/dmlt/node
+```
+
+Εγκατάσταση dependencies:
+```bash
+npm install
+# Και setup Python:
+python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install opencv-python numpy ultralytics deep-sort-realtime setuptools==80.9.0
+```
+
+### Εκκίνηση με screen
+
+Για να λειτουργεί ακόμα κι αν κλείσει η σύνδεση:
+```bash
+screen
+npm start
+# Ctrl+A και μετά D για να βγεις από το screen
+```
+
+Για να επανασυνδεθείς στο screen:
+```bash
+screen -r
+```
+detach συνεδρίας (μετά μπορώ να την πάρω με screen -r <id>)
+screen -d 2061641
+
+### Troubleshooting
+
+Θύρα 3000 πιασμένη;
+```bash
+ss -tulpn | grep 3000
+```
+
+Τερματισμός διεργασίας με PID:
+```bash
+kill -9 <PID>
+```
 
 ## App routes
 - Geometry Live:
@@ -233,3 +305,4 @@ netstat -ano | findstr :3000
 taskkill /PID <PID> /F
 ```
 2. Άνοιξε teacher και student pages:
+
