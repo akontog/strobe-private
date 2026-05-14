@@ -5,538 +5,231 @@ Strobe Multi-App Classroom
 # Εφαρμογές
   - Geometry Live
   - Buffon Needle
-  - Fourier Lab.
+  - Fourier Lab
   - neural lab
+  
 - Teacher dashboard και Student launcher χωρίς login flow.
 - Legacy geometry canvas με real-time sync teacher-student.
 - Admin dashboard με live εικόνα χρηστών.
 # Τεχνολογίες Επικοινωνίας
-- Video: WebRTC (UDP)
-- coordinates / events: WebSockets (TCP)
+SmarT classROoms for emBodied participatory lEarning
+Strobe Multi-App Classroom
 
-### Χρήστες
-#### server
-Ερώτημα: 1 ή 2 server
-##### Deep Sort
-Δέχεται: video feed
-Επιστρέφει: json με θέσεις.
-= Τεχνολογίες: Yolo, DeepSort, OpenCV (GPU;;;)
-##### broadcasting
-#### teacher, που μπορεί να σχεδιάσει και μαθήματα
-Πώς θα αυτοματοποιεί το αν οι clients έχουν ολοκληρώσει την διαδικασία
-#### mouse client
-Αριθμός: πολλοί
-#### camera client
-Αριθμός: 1 primary camera client ανά session (αλλά architecture να υποστηρίζει πολλούς)
-Στέλνει: video (WebRTC)
+Ενοποιημένο no-login περιβάλλον για classroom activities με real-time συνεργασία.
 
-- Και οι mouse clients και ο camera client αλλά και ο teacher client, βλέπουν τον κοινό καμβά με τον χρήστη με κάμερα και τους χρήστες ως σημεία
+## Εφαρμογές
+- Geometry Live
+- Buffon Needle
+- Fourier Lab
+- Neural Lab
 
+## Αρχιτεκτονική (τρέχουσα)
+- Ένα κεντρικό Node server στο project root.
+- Όλες οι εφαρμογές μέσα στο apps (ξεχωριστός φάκελος ανά app).
+- Shared assets στο assets.
+- Session/data storage στο server με in-memory + file persistence (data/users.json).
+
+## Βασική δομή
+
+```text
+strobe-private/
+    server.js
+    package.json
+    apps/
+        geometry-live/
+        buffon-needle/
+        fourier-lab/
+        neural-lab/
+        registry.js
+    assets/
+        css/
+        js/
+    public/
+        index.html
+        launcher.html
+        client.html
+        user.html
+    routes/
+    services/
+    middleware/
+    activities/
+    data/
+        users.json
+    camera_server.py
+    camera_tracking.py
+```
 
 ## Απαιτήσεις
-
 - Node.js 18+
 - npm
+- Python 3.11+ (προτείνεται 3.13)
 
 ## Εγκατάσταση
 
-```bash
+```powershell
+cd "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private"
 npm install
 ```
 
-## Εγκατάσταση σε νέο μηχάνημα (copy/paste)
-
-### 1) Προαπαιτούμενα
-
-- Node.js 18+
-- Python 3.11+ (προτείνεται 3.13 όπως στο project)
-
-### 2) Clone + Node install
+## Python worker setup (μία φορά)
 
 ```powershell
-git clone https://github.com/akontog/strobe-private.git
-cd "strobe-private\\server"
-npm install
-```
-
-### 3) Python worker environment
-
-```powershell
-cd ".."
+cd "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private"
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 pip install opencv-python numpy ultralytics deep-sort-realtime setuptools==80.9.0
 ```
 
-### 4) Προαιρετικά DeepSORT με torch
-
-#### CPU-only:
+Προαιρετικά για appearance embedder DeepSORT:
 
 ```powershell
 & ".\.venv\Scripts\python.exe" -m pip install torch torchvision
 ```
 
-#### GPU (CUDA build):
-
-1. Επίλεξε το σωστό command από τον PyTorch selector: https://pytorch.org/get-started/locally/
-2. Παράδειγμα για CUDA 12.8:
-
-```powershell
-& ".\.venv\Scripts\python.exe" -m pip install --index-url https://download.pytorch.org/whl/cu128 torch torchvision
-```
-
-Σημαντικό: αν το `torch.__version__` γράφει `+cpu` (π.χ. `2.10.0+cpu`), τότε δεν μπορεί να χρησιμοποιήσει GPU.
-Σε αυτή την περίπτωση κάνε reinstall με CUDA wheel από τον selector.
-
-## 
-
-```powershell
-cd "server"
-npm start
-```
-
 ## Εκκίνηση
-
-```bash
-cd "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private\server"
-npm start
-```
-
-## Έλεγχος περιβάλλοντος
-
-```bash
-node -v
-npm -v
-```
-
-Σε production hosting συνήθως δεν χρειάζεται `.env` αρχείο, αρκεί το platform να δίνει `PORT`.
-
-## 1) Τοπική εκκίνηση (ίδιο WiFi)
-
-## Εγκατάσταση
-### μεταφορά αρχείων:
-- html
-- server.js
-- package.json
--
-```bash
-npm install
-
-
-### Δεν δούλεψαν:
-npm install -g pm2 (δεν έχω δικαιώματα)
-nohup npm start & <- δεν δούλεψε
-
-
-### Δούλεψε
-#### Εκκίνηση 
-Σωστός φάκελος:
-cd /var/www/html/dmlt/buffon
-screen
-npm start
-control a
-
-921017
-```
-#### να δω τι τρέχει στο Port
-ss -tulpn | grep 3000
-#### Τερματισμός
-screen -r
-### Εκκίνηση server
-
-```bash
-npm install
-```
-
-npm start
-### URLs
-
-| Ρόλος       | URL (ίδιο PC)                        | URL (άλλες συσκευές στο ίδιο WiFi)          |
-|-------------|---------------------------------------|-----------------------------------------------|
-| Μαθητές     | `http://localhost:3000/student.html` | `http://<IP_ΥΠΟΛΟΓΙΣΤΗ>:3000/student.html`   |
-| Καθηγητής   | `http://localhost:3000/teacher.html` | `http://<IP_ΥΠΟΛΟΓΙΣΤΗ>:3000/teacher.html`   |
-
-Για να βρεις το `IP_ΥΠΟΛΟΓΙΣΤΗ`:
-- **Windows**: `ipconfig` → IPv4 Address
-- **Mac/Linux**: `ifconfig` ή `ip addr`
-
-```
-
-Χρησιμοποίησε:
-- [Μαθητές](http://myria.math.aegean.gr:3000/student.html)
-- [Καθηγητής](https://xxxx-xxxx-xxxx.trycloudflare.com/teacher.html)
-
-
-## 5) Troubleshooting
-
-### Η θύρα 3000 είναι πιασμένη
-
-Έλεγχος:
-
-```powershell
-ss -tulpn | grep 3000
-```
-
-Αν χρειαστεί, σταμάτα τη διεργασία με το PID:
-
-```powershell
-kill -9 <PID>
-```
-
-
-
-
-
-## Πώς τρέχω όλο το Geometry (ξεκάθαρα)
-
-### TL;DR
-
-- Δεν χρειάζεται να τρέχεις πρώτα Python χειροκίνητα.
-- Τρέχεις τον Node server και αυτός σηκώνει μόνος του τον Python DeepSORT worker.
-- Η Python δεν ανοίγει browser.
-- Browser ανοίγεις εσύ, χειροκίνητα.
-
-### Προετοιμασία (μία φορά)
-
-1. Node dependencies:
-
-```powershell
-cd "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private\server"
-npm install
-```
-
-2. Python environment + worker dependencies:
 
 ```powershell
 cd "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private"
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-pip install opencv-python numpy ultralytics deep-sort-realtime setuptools==80.9.0
-```
-
-Προαιρετικά (για appearance embedder DeepSORT):
-
-```powershell
-pip install torch torchvision
-```
-
-### Κάθε φορά που θες να δουλέψεις
-
-1. Ξεκίνα τον server:
-
-```powershell
-cd "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private\server"
 npm start
 ```
 
-2. Άνοιξε teacher και student pages:
-
-```powershell
-start http://localhost:3000/client.html
-start http://localhost:3000/user.html
-```
-
-### Σημειώσεις
-
-- Ο server τρέχει στο port `3000` ή στο `PORT` του περιβάλλοντος.
-- Τα πλήκτρα `←` και `→` αλλάζουν διαφάνεια.
-- Αν δεις πρόβλημα με `file:///js/realtime-socket.js`, άνοιξε τη σελίδα από `http://localhost:3000/...` και όχι ως τοπικό αρχείο.
-
-### Τερματισμός διεργασίας
-netstat -ano | findstr :3000
-taskkill /PID 12345 /F
-
-
-3. Στο student page επίλεξε Camera mode αν θες DeepSORT tracking.
-
-### Τι μένει ενεργό
-
-- Ο Node server μένει ενεργός μέχρι να τον σταματήσεις.
-- Ο Python worker μένει ενεργός όσο τρέχει ο Node server.
-- Με Ctrl+C στον Node server κλείνει και ο Python worker.
-
-### Αν τρέξεις χειροκίνητα python camera_server.py
-
-- Στη νέα αρχιτεκτονική αυτό είναι stdio worker (όχι Flask web server).
-- Θα περιμένει JSON requests από stdin και δεν θα ανοίξει browser.
-- Για κανονική χρήση Geometry, τρέχεις μόνο `npm start`.
+Σημείωση: ο Node server κάνει auto-spawn τον Python camera worker.
 
 ## Βασικά URLs
-
-- Entry page: http://localhost:3000/
+- Entry: http://localhost:3000/
 - Teacher dashboard: http://localhost:3000/teacher
 - Student launcher: http://localhost:3000/student
 - Student launcher alias: http://localhost:3000/client
 - Admin dashboard: http://localhost:3000/admin
-- Legacy Geometry teacher direct: http://localhost:3000/client.html
-- Legacy Geometry student direct: http://localhost:3000/user.html
+- Apps launcher: http://localhost:3000/apps-launcher
+- Geometry teacher direct (legacy): http://localhost:3000/client.html
+- Geometry student direct (legacy): http://localhost:3000/user.html
 - Camera speed test: http://localhost:3000/camera-speed-test
-- Health check: http://localhost:3000/health
+- Health: http://localhost:3000/health
 
-## Εφαρμογές
+## App routes
+- Geometry Live:
+    - /apps/geometry-live/teacher.html
+    - /apps/geometry-live/student.html
+- Buffon Needle:
+    - /apps/buffon-needle/teacher.html
+    - /apps/buffon-needle/student.html
+- Fourier Lab:
+    - /apps/fourier-lab/index.html?mode=teacher
+    - /apps/fourier-lab/index.html?mode=student
+- Neural Lab:
+    - /apps/neural-lab/teacher.html
+    - /apps/neural-lab/student.html
 
-### 1) Geometry Live (legacy)
+## Session/Data αποθήκευση (Επιλογή 1)
+- Υλοποίηση: services/UserManager.js
+- Middleware: middleware/sessionMiddleware.js
+- Endpoints: routes/appData.js
+- Storage file: data/users.json
 
-Teacher: `client.html`  
-Student: `user.html`
-
-Κύριες δυνατότητες:
-
-- Σχεδίαση σχημάτων (point, line, ray, circle, triangle, rectangle, polygon)
-- Grid / snap / line width / χρώματα
-- Real-time markers μαθητών (mouse ή camera)
-
-
-
-### 2) Buffon Needle
-
-Teacher: `/apps/buffon-needle/teacher.html`  
-Student: `/apps/buffon-needle/student.html`
-
-- Multiplayer γύροι μέσω WebSocket
-- Roster και scoring flow teacher-student
-- WS endpoint: `/ws/buffon`
-
-### 3) Fourier Lab
-
-Teacher/Student entry: `/apps/fourier-lab/index.html?mode=teacher|client`
-
-- Slide sync teacher-client
-- Activity telemetry μέσω WebSocket (`fourier:*` events)
-- Classroom summary και participant feed
-- Νέα ενότητα "Polynomial Bridge" ανάμεσα σε Fourier Transform και Cooley-Tukey:
-    coeff -> value, value -> coeff (μέσω σημείων), και interactive multiplication με συνέλιξη συντελεστών
+Ο server αποθηκεύει:
+- sessionId/userId
+- metadata χρήστη
+- app-specific state (geometry-live, fourier-lab, buffon-needle, neural-lab)
+- timestamps activity
 
 ## REST Endpoints
 
-### Legacy Geometry activity API
+### Legacy Geometry Activity
+- POST /api/activity/save
+- GET /api/activity/list
+- GET /api/activity/load/:filename
+- GET /api/activity/current
 
-- `POST /api/activity/save`
-- `GET /api/activity/list`
-- `GET /api/activity/load/:filename`
-- `GET /api/activity/current`
+### Teacher
+- GET /teacher/apps
+- GET /teacher/activities/:slug
+- POST /teacher/activities/:slug
+- GET /teacher/activities/:slug/:filename
 
-Example payload for save:
+### Student
+- GET /client/apps
+- GET /student/apps
 
-```json
-{
-    "name": "Activity 1",
-    "geometry": []
-}
-```
+### Admin
+- GET /admin/sessions
+- GET /admin/messages
+- POST /admin/messages/clear
+- GET /admin/messages/catalog
 
-### Teacher app activities API
+### Session/App Data
+- GET /api/session
+- POST /api/logout
+- GET /api/app-data?app=<slug>
+- POST /api/app-data
+- DELETE /api/session/:sessionId
+- GET /api/admin/stats
 
-- `GET /teacher/apps`
-- `GET /teacher/activities/:slug`
-- `POST /teacher/activities/:slug`
-- `GET /teacher/activities/:slug/:filename`
+## Real-time (WebSockets)
 
-### Student API
+### /ws/realtime
+Client -> Server (ενδεικτικά):
+- user-position
+- camera-frame
+- activity-update
+- fourier:join
+- fourier:set-slide
+- fourier:interaction
+- fourier:sound-control
+- fourier:heat-control
+- fourier:heat-time-control
 
-- `GET /client/apps`
-- `GET /student/apps`
+Server -> Client (ενδεικτικά):
+- users-update
+- activity-loaded
+- camera-points
+- fourier:state
+- fourier:slide
+- fourier:summary
+- fourier:participants
+- fourier:sound-state
+- fourier:heat-state
+- fourier:heat-time-state
 
-### Admin API
+### /ws/buffon
+- register_teacher
+- register_student
+- update
+- start_round
+- end_round
+- reset_tournament
 
-- `GET /admin/sessions`
+### /ws/neural-lab
+- register_teacher
+- register_student
+- student_weight
+- teacher_config
 
-Επιστρέφει merged εικόνα από auth sessions και realtime participants, μαζί με stats ανά role/source.
+## Camera worker
+- Script: camera_server.py
+- Model: yolov8n.pt
+- Transport: stdio JSON (όχι Flask HTTP)
 
-## Real-time γεγονότα
-
-### WebSocket (geometry + fourier)
-
-- Path: `/ws/realtime`
-- Message envelope: `{ "event": "<name>", "data": <payload> }`
-
-Client -> Server
-
-- `user-position`
-- `camera-frame`
-- `activity-update`
-- `fourier:join`
-- `fourier:set-slide`
-- `fourier:interaction`
-- `fourier:sound-control`
-
-Server -> Client
-
-- `users-update`
-- `activity-loaded`
-- `camera-points`
-- `fourier:state`
-- `fourier:slide`
-- `fourier:summary`
-- `fourier:participants`
-- `fourier:activity-event`
-- `fourier:sound-state`
-
-### WebSocket (buffon)
-
-- Path: `/ws/buffon`
-- Messages όπως `register_teacher`, `register_student`, `update`, `start_round`, `end_round`, `reset_tournament`
-
-## Camera worker (προαιρετικό)
-
-Για camera mode στο Geometry, ο Node server μιλάει απευθείας με Python DeepSORT worker (`camera_server.py`) μέσω stdio JSON (χωρίς Flask/HTTP ενδιάμεσα).
-
-Σημαντικό: ο worker σηκώνεται αυτόματα από τον Node server. Δεν χρειάζεται δεύτερο βήμα εκκίνησης για Python.
-
-### Γιατί αυτό είναι πιο performant
-
-- Δεν υπάρχει HTTP serialization ανά frame μεταξύ Node και Python.
-- Ο Python worker είναι persistent process (χωρίς cold start ανά request).
-- Το realtime παραμένει στο ίδιο WebSocket transport του Node (`/ws/realtime`).
-
-### Γρήγορη εκκίνηση (Windows PowerShell)
-
-1. Άνοιξε terminal στο project root:
-
-```powershell
-cd "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private"
-```
-
-2. Δημιούργησε και ενεργοποίησε virtual environment (μία φορά):
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-```
-
-3. Εγκατέστησε dependencies του worker:
-
-```powershell
-python -m pip install --upgrade pip
-pip install opencv-python numpy ultralytics deep-sort-realtime setuptools==80.9.0
-```
-
-Προαιρετικά, για appearance embedder mode του Deep SORT (`deepsort-cpu`/`deepsort-gpu`), εγκατάστησε και:
-
-```powershell
-pip install torch torchvision
-```
-
-4. Ξεκίνα μόνο τον Node server:
-
-```powershell
-cd "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private\server"
-npm start
-```
-
-Ο Node θα κάνει auto-spawn τον Python worker.
-
-### Τι πρέπει να δεις όταν ξεκινάει σωστά
-
-- Log γραμμή όπως: `[camera-worker] enabled: ...\\camera_server.py`.
-- Log γραμμή όπως: `[camera-worker] python: ...\\.venv\\Scripts\\python.exe`.
-- Log γραμμή όπως: `[camera-worker] [camera] tracking backend: deepsort-cpu`, `deepsort-gpu` ή `deepsort-iou`.
-- Αν δεις: `[camera] torch/torchvision not found; using IoU-only Deep SORT profile`, είναι normal και το σύστημα δουλεύει με `deepsort-iou`.
-- Αν έχεις CUDA-capable GPU και σωστό torch build, θα δεις log τύπου: `[camera] CUDA is available; trying GPU embedder first` και backend `deepsort-gpu`.
-- Αν λείπει το `torch`, ο worker συνεχίζει κανονικά με `deepsort-iou`.
-- Αν εμφανιστεί `centroid-fallback`, το app δουλεύει, αλλά χωρίς Deep SORT.
-
-### Ερμηνεία logs που βλέπεις
-
-- `torch/torchvision not found; using IoU-only Deep SORT profile`: σημαίνει ότι δεν υπάρχουν `torch/torchvision`, άρα ο worker πάει απευθείας σε `deepsort-iou`.
-- `tracking backend: deepsort-iou`: ο worker είναι έτοιμος και λειτουργικός.
-- `stdio worker ready`: ο worker περιμένει frames από τον Node server (σωστή κατάσταση).
-
-Αν δεις το παλιότερο log `Deep SORT init failed ... No module named 'torch'`, σημαίνει ότι τρέχεις παλιότερο build πριν το IoU-only startup fix.
-
-Αν θες full appearance DeepSORT (και όχι IoU-only), εγκατέστησε:
-
-```powershell
-pip install torch torchvision
-```
-
-### Αν το pip λέει "Requirement already satisfied" αλλά ο worker λέει ότι λείπει το torch
-
-Αυτό σημαίνει σχεδόν πάντα ότι το `pip` έκανε install σε άλλο interpreter (π.χ. system Python), όχι στο `.venv` που χρησιμοποιεί ο Node worker.
-
-1. Δες ποιο python χρησιμοποιεί ο worker από τα logs:
-
-- `[camera-worker] python: ...\\.venv\\Scripts\\python.exe`
-
-2. Κάνε install με αυτό το ακριβές executable:
-
-```powershell
-& "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private\.venv\Scripts\python.exe" -m pip install torch torchvision
-```
-
-3. Επιβεβαίωση στο ίδιο executable:
-
-```powershell
-& "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private\.venv\Scripts\python.exe" -c "import torch, torchvision; print(torch.__version__); print(torchvision.__version__)"
-```
-
-### Env vars για camera worker
-
-- `CAMERA_WORKER_ENABLED` (default: `1`)
-- `CAMERA_WORKER_PYTHON` (default: auto-detect `.venv`, fallback `python`)
-- `CAMERA_WORKER_SCRIPT` (default: `server/camera_server.py`)
-- `CAMERA_WORKER_TIMEOUT_MS` (default: `1200`)
-- `CAMERA_WORKER_MAX_PENDING` (default: `24`)
-- `DEEPSORT_USE_GPU` (default: `auto`, options: `auto`, `gpu`, `cpu`)
-- `CAMERA_YOLO_MODEL` (default: `yolov8n.pt`)
-- `CAMERA_YOLO_CLASSES` (default: `person,sports ball,book`)
-- `CAMERA_YOLO_CONF` (default: `0.35`)
-- `CAMERA_YOLO_MIN_AREA` (default: `320` px²)
-
-Συμπεριφορά `DEEPSORT_USE_GPU`:
-
-- `auto`: αν βρεθεί CUDA, δοκιμάζει πρώτα GPU και fallback σε CPU.
-- `gpu`: προσπαθεί GPU first, αλλά αν δεν υπάρχει CUDA κάνει fallback σε CPU.
-- `cpu`: κρατάει μόνο CPU embedder mode.
-
-Παράδειγμα (PowerShell):
-
-```powershell
-$env:CAMERA_WORKER_PYTHON = "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private\.venv\Scripts\python.exe"
-$env:CAMERA_WORKER_TIMEOUT_MS = "1500"
-$env:DEEPSORT_USE_GPU = "auto"
-npm start
-```
-
-Γρήγορος έλεγχος CUDA στο worker environment:
-
-```powershell
-& "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private\.venv\Scripts\python.exe" -c "import torch; print('torch=', torch.__version__); print('cuda_available=', torch.cuda.is_available()); print('cuda_runtime=', torch.version.cuda)"
-```
-
-## Δομή (συνοπτικά)
-
-```text
-server/
-    server.js
-    apps/
-        registry.js
-        buffon-needle/
-        fourier-lab/
-    public/
-        index.html
-        client.html
-        user.html
-    routes/
-        admin.js
-        apps.js
-        teacher.js
-        client.js
-    activities/
-```
+Χρήσιμα env vars:
+- CAMERA_WORKER_ENABLED
+- CAMERA_WORKER_PYTHON
+- CAMERA_WORKER_SCRIPT
+- CAMERA_WORKER_TIMEOUT_MS
+- CAMERA_WORKER_MAX_PENDING
+- DEEPSORT_USE_GPU
 
 ## Troubleshooting
 
-Έλεγχος αν ακούει κάτι στο 3000:
+Έλεγχος θύρας 3000:
 
 ```powershell
 netstat -ano | findstr :3000
 ```
 
-Τερματισμός διεργασίας:
+Τερματισμός process:
 
 ```powershell
-taskkill /PID 12345 /F
+taskkill /PID <PID> /F
 ```
+2. Άνοιξε teacher και student pages:

@@ -10,6 +10,7 @@ const teacherRouter = require('./routes/teacher');
 const clientRouter = require('./routes/client');
 const createAdminRouter = require('./routes/admin');
 const createAppsRouter = require('./routes/apps');
+const appDataRouter = require('./routes/appData');
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -39,8 +40,8 @@ function resolveCameraWorkerPython() {
   }
 
   const workspaceVenv = process.platform === 'win32'
-    ? path.join(__dirname, '..', '.venv', 'Scripts', 'python.exe')
-    : path.join(__dirname, '..', '.venv', 'bin', 'python');
+    ? path.join(__dirname, '.venv', 'Scripts', 'python.exe')
+    : path.join(__dirname, '.venv', 'bin', 'python');
 
   if (fs.existsSync(workspaceVenv)) {
     return workspaceVenv;
@@ -560,6 +561,10 @@ if (!fs.existsSync(legacyActivitiesDir)) {
 app.use(express.json({ limit: '8mb' }));
 app.use(express.urlencoded({ extended: true }));
 
+const { sessionMiddleware } = require('./middleware/sessionMiddleware');
+app.use(sessionMiddleware());
+
+// Session management middleware
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
@@ -596,13 +601,26 @@ app.get('/launcher.html', (req, res) => {
   res.sendFile(path.join(publicDir, 'launcher.html'));
 });
 
+app.get('/apps-launcher', (req, res) => {
+  res.sendFile(path.join(publicDir, 'apps-launcher.html'));
+});
+
 app.use('/css', express.static(path.join(publicDir, 'css')));
 app.use('/icons', express.static(path.join(publicDir, 'icons')));
 app.use('/js', express.static(path.join(publicDir, 'js')));
 app.use('/public', express.static(publicDir));
+
+// Unified assets (new structure)
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
+
+// Apps folders
+app.use('/apps', express.static(path.join(__dirname, 'apps')));
+
+// Legacy apps/assets path (keep for backward compatibility)
 app.use('/apps/assets', express.static(path.join(__dirname, 'apps', 'assets')));
 
 app.use('/teacher', teacherRouter);
+app.use(appDataRouter);
 app.use('/student', clientRouter);
 app.use('/client', clientRouter);
 
