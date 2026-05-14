@@ -2221,10 +2221,12 @@
       <a href="#sec-poly-mult-strategy" data-accordion-group="fft">9.6 Στρατηγική πολλαπλασιασμού</a>
       <a href="#sec-eval-complexity" data-accordion-group="fft">9.7 Αποτίμηση σε n σημεία: O(n²)</a>
       <a href="#sec-even-odd-eval" data-accordion-group="fft">9.8 Συμμετρία στην αποτίμηση: x² vs x³</a>
-      <a href="#sec-unity-roots" data-accordion-group="fft">9.9 N-ες ρίζες του 1</a>
-      <a href="#sec-cooley-interactive" data-accordion-group="fft">9.10 Cooley-Tukey για n σημεία (διαδραστικό)</a>
-      <a href="#sec-fft-complexity" data-accordion-group="fft">9.11 Από τον απλό DFT στον FFT (Cooley-Tukey)</a>
-      <a href="#sec-cooley-tukey" data-accordion-group="fft">9.12 Cooley-Tukey FFT βήμα-βήμα</a>
+      <a href="#sec-even-odd-split" data-accordion-group="fft">9.9 Διάσπαση σε άρτιο/περιττό μέρος</a>
+      <a href="#sec-recursion-symmetry" data-accordion-group="fft">9.10 Αναδρομή και συμμετρικά σημεία</a>
+      <a href="#sec-unity-roots" data-accordion-group="fft">9.11 N-ες ρίζες του 1</a>
+      <a href="#sec-cooley-interactive" data-accordion-group="fft">9.12 Cooley-Tukey για n σημεία (διαδραστικό)</a>
+      <a href="#sec-fft-complexity" data-accordion-group="fft">9.13 Από τον απλό DFT στον FFT (Cooley-Tukey)</a>
+      <a href="#sec-cooley-tukey" data-accordion-group="fft">9.14 Cooley-Tukey FFT βήμα-βήμα</a>
 
       <div class="toc-group-title" data-accordion-group="pipeline">10. Θάλασσα</div>
       <a href="#sec-bridge-1d2d" data-accordion-group="pipeline">10.1 Από 1D ήχο σε 2D θάλασσα</a>
@@ -2957,6 +2959,17 @@
               και κλικ <strong>αλλού</strong> για να ορίσεις σημείο <strong>z</strong>.
               Ο πολλαπλασιασμός \(z \cdot e^{i\theta}\) περιστρέφει το z κατά θ.
             </p>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0 10px;">
+              <span style="font-size:0.92rem;color:#9fd0ff;font-weight:600;">Γρήγορο τεστ:</span>
+              <button type="button" id="rotPreset1" class="fft-duel-submit" style="padding:6px 10px;min-width:54px;">× 1</button>
+              <button type="button" id="rotPresetI" class="fft-duel-submit" style="padding:6px 10px;min-width:54px;">× i</button>
+              <button type="button" id="rotPresetNeg1" class="fft-duel-submit" style="padding:6px 10px;min-width:54px;">× -1</button>
+              <button type="button" id="rotPresetNegI" class="fft-duel-submit" style="padding:6px 10px;min-width:54px;">× -i</button>
+              <button type="button" id="rotPresetFree" class="fft-duel-submit" style="padding:6px 10px;min-width:84px;">ελεύθερο \(e^{i\theta}\)</button>
+            </div>
+            <p style="margin:0 0 8px;font-size:0.9rem;color:#8fb0c8;">
+              Πολλαπλασιασμός με <strong>\(i\)</strong> = στροφή κατά <strong>90°</strong>, ενώ πολλαπλασιασμός με <strong>\(e^{i\theta}\)</strong> = αυθαίρετη στροφή.
+            </p>
             <canvas id="rotMultCanvas" class="euler-canvas" style="cursor:crosshair;height:320px;width:100%;"></canvas>
             <div id="rotMultFormula" class="mathjax-box" style="margin-top:8px;min-height:36px;text-align:center;font-size:1.05em;"></div>
           </div>
@@ -3584,10 +3597,127 @@
         </div>
       </section>
 
+      <section class="section" id="sec-even-odd-split">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>9.9) Διάσπαση πολυωνύμου σε άρτιο και περιττό μέρος</h2>
+            <div style="max-width:980px; margin:0 auto; display:flex; flex-direction:column; gap:10px;">
+              <div style="text-align:center; font-size:1.2em;">
+                \[
+                P(x)=3x^5+2x^4+x^3+7x^2+5x+1
+                \]
+              </div>
+              <div style="text-align:center; font-size:1.1em;">
+                \[
+                P(x)=\underbrace{(2x^4+7x^2+1)}_{P_e(x^2)}+x\underbrace{(3x^4+x^2+5)}_{P_o(x^2)}
+                \]
+              </div>
+              <div style="text-align:center; font-size:1.22em; margin-top:2px;">
+                \[
+                P(x)=P_e(x^2)+xP_o(x^2)
+                \]
+              </div>
+
+              <div
+                style="
+                  margin: 6px auto 0;
+                  border:2px solid #39ff14;
+                  border-radius:8px;
+                  padding:10px 18px;
+                  background:rgba(40,90,30,0.12);
+                  text-align:center;
+                  max-width:780px;
+                "
+              >
+                <div style="font-size:1.12em;">
+                  \[
+                  P(x_i)=P_e(x_i^2)+x_iP_o(x_i^2)
+                  \]
+                </div>
+                <div style="font-size:1.12em; margin-top:-8px;">
+                  \[
+                  P(-x_i)=P_e(x_i^2)-x_iP_o(x_i^2)
+                  \]
+                </div>
+              </div>
+
+              <div style="text-align:center; font-size:0.95em; color:#f0f560; font-weight:600; margin-top:4px;">
+                Ίδιος υπολογισμός για \(x_i^2\) και στα δύο: μεγάλη επικάλυψη υπολογισμών.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-recursion-symmetry">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>9.10) Αναδρομή και συμμετρικά σημεία</h2>
+            <div style="max-width:980px; margin:0 auto;">
+              <div style="text-align:center; font-size:1.18em; margin-bottom:14px;">
+                <div style="margin-bottom:10px;">
+                  <strong>Αναδρομική σχέση</strong>
+                </div>
+                <div>
+                  \[
+                  T(N) = 2T(N/2) + N
+                  \]
+                </div>
+                <div style="font-size:0.92em; color:var(--muted); margin-top:3px;">
+                  Λύνουμε δύο προβλήματα μεγέθους N/2, συν N πράξεις για σύνδεση → \(T(N) = N\log_2 N\)
+                </div>
+              </div>
+
+              <div style="background:rgba(100,150,210,0.1); border-radius:8px; padding:16px; margin:12px 0;">
+                <div style="text-align:center; font-size:1.08em; font-weight:600; margin-bottom:10px;">
+                  Το κρίσιμο ερώτημα: Ποια σημεία \(x_1, x_2, \ldots, x_n\) θα χρησιμοποιήσουμε;
+                </div>
+                <div style="text-align:center; font-size:1em; margin-bottom:8px;">
+                  Αν διαλέξουμε <strong>συμμετρικά</strong> σημεία, τότε:
+                </div>
+                <div style="text-align:center; font-size:1.1em; margin:8px 0;">
+                  \[
+                  P(x_i) = P_e(x_i^2) + x_i P_o(x_i^2)
+                  \]
+                </div>
+                <div style="text-align:center; font-size:1.1em; margin-bottom:8px;">
+                  \[
+                  P(-x_i) = P_e(x_i^2) - x_i P_o(x_i^2)
+                  \]
+                </div>
+                <div style="text-align:center; font-size:0.96em; color:var(--muted);">
+                  Ίδιος υπολογισμός \(P_e(x_i^2)\) και \(P_o(x_i^2)\) και για τα δύο!
+                </div>
+              </div>
+
+              <div style="text-align:center; font-size:0.98em; margin-top:12px; line-height:1.6;">
+                <div style="margin-bottom:6px;">
+                  <strong>Παράδειγμα:</strong> αν \(n = 8\) σημεία, διαλέγουμε
+                </div>
+                <div style="font-family:monospace; color:#f0f560;">
+                  \(x_1=1, x_2=2, x_3=4, x_4=8\) και \(-x_1=-1, -x_2=-2, -x_3=-4, -x_4=-8\)
+                </div>
+                <div style="margin-top:8px; color:var(--muted);">
+                  Τότε για κάθε \(i\), τα \(P_e(x_i^2), P_o(x_i^2)\) υπολογίζονται μια φορά
+                  <br />
+                  και χρησιμοποιούνται για την εύρεση και του \(P(x_i)\) και του \(P(-x_i)\).
+                </div>
+              </div>
+
+              <div style="text-align:center; font-size:0.98em; margin-top:14px; color:#86efac; font-weight:600;">
+                Λύση: Επιλέγουμε τις <strong>N-ες ρίζες της μονάδας</strong>,
+                <br />
+                που έχουν ακριβώς τη δομή συμμετρίας που χρειαζόμαστε!
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="section" id="sec-unity-roots">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.9) N-ες ρίζες του 1</h2>
+            <h2>9.11) N-ες ρίζες του 1</h2>
             <p>
               Οι <strong>N-ες ρίζες της μονάδας</strong> είναι οι λύσεις της εξίσωσης $z^N = 1$.
               Στο μιγαδικό επίπεδο είναι <strong>N ισαπέχοντα σημεία στον μοναδιαίο κύκλο</strong>.
@@ -3624,7 +3754,7 @@
       <section class="section" id="sec-cooley-interactive">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.10) Cooley-Tukey για n σημεία (διαδραστικό)</h2>
+            <h2>9.12) Cooley-Tukey για n σημεία (διαδραστικό)</h2>
             <p>
               Κάνε click στο γράφημα για να προχωρήσει ένα στάδιο: πρώτα divide (διάσπαση σε άρτια/περιττά),
               μετά conquer (συνδυασμός butterfly). Το n δίνεται ως δύναμη του 2.
@@ -3675,7 +3805,7 @@
       <section class="section" id="sec-fft-complexity">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.11) Από τον απλό DFT στον FFT (Cooley-Tukey)</h2>
+            <h2>9.13) Από τον απλό DFT στον FFT (Cooley-Tukey)</h2>
             <p>
               Στον απλό DFT, για κάθε συχνότητα κάνουμε άθροισμα σε όλα τα \(N\) δείγματα,
               άρα ο συνολικός κόπος μεγαλώνει σαν \(N^2\). Η ιδέα Cooley-Tukey είναι να
@@ -3717,7 +3847,7 @@
       <section class="section" id="sec-cooley-tukey">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.12) Cooley-Tukey FFT: αναδρομή και επίπεδα</h2>
+            <h2>9.14) Cooley-Tukey FFT: αναδρομή και επίπεδα</h2>
             <p>
               Ιδέα Cooley-Tukey: χωρίζουμε το σήμα σε άρτιες/περιττές θέσεις και λύνουμε δύο
               μικρότερα προβλήματα, ξανά και ξανά. Η σχέση είναι
@@ -8445,10 +8575,45 @@
     // @slide 5.2 — Περιστροφή με πολλαπλασιασμό μιγαδικού (single canvas)
     const rotMultCanvas  = document.getElementById("rotMultCanvas");
     const rotMultFormula = document.getElementById("rotMultFormula");
+    const rotPreset1 = document.getElementById("rotPreset1");
+    const rotPresetI = document.getElementById("rotPresetI");
+    const rotPresetNeg1 = document.getElementById("rotPresetNeg1");
+    const rotPresetNegI = document.getElementById("rotPresetNegI");
+    const rotPresetFree = document.getElementById("rotPresetFree");
 
     let rotMult_z        = null;   // {a, b} or null
     let rotMult_theta    = null;   // number (radians) or null
     let rotMult_dragging = null;   // "z" | "theta" | null
+    let rotMult_thetaMode = "free"; // "free" | "1" | "i" | "-1" | "-i"
+
+    const ROT_PRESETS = [
+      { key: "1", label: "1", theta: 0 },
+      { key: "i", label: "i", theta: Math.PI / 2 },
+      { key: "-1", label: "-1", theta: Math.PI },
+      { key: "-i", label: "-i", theta: -Math.PI / 2 },
+    ];
+
+    function setRotMultTheta(theta, mode = "free") {
+      rotMult_theta = theta;
+      rotMult_thetaMode = mode;
+    }
+
+    function updateRotPresetButtons() {
+      const mapping = {
+        "1": rotPreset1,
+        "i": rotPresetI,
+        "-1": rotPresetNeg1,
+        "-i": rotPresetNegI,
+        "free": rotPresetFree,
+      };
+      Object.entries(mapping).forEach(([key, button]) => {
+        if (!button) return;
+        const active = rotMult_theta !== null && rotMult_thetaMode === key;
+        button.style.background = active ? "rgba(88,214,141,0.24)" : "";
+        button.style.borderColor = active ? "rgba(170,255,212,0.9)" : "";
+        button.style.color = active ? "#d9ffe8" : "";
+      });
+    }
 
     function canvasPointerXY(canvas, evt) {
       const rect = canvas.getBoundingClientRect();
@@ -8508,13 +8673,21 @@
       const ucL = [{t:0,l:"1"},{t:Math.PI,l:"−1"},{t:Math.PI/2,l:"i"},{t:-Math.PI/2,l:"−i"}];
       for (const {t, l} of ucL) {
         const lx = cx + R*Math.cos(-t), ly = cy + R*Math.sin(-t);
+        const selectedPreset = rotMult_theta !== null && Math.abs(Math.atan2(Math.sin(rotMult_theta - t), Math.cos(rotMult_theta - t))) < 0.001;
         const off = 16*ratio;
         let ox=0, oy=0;
         if (t===0){ox=off;} else if(t===Math.PI){ox=-off;} else if(t>0){oy=off;} else{oy=-off;}
         ctx.textAlign="center"; ctx.textBaseline="middle";
         ctx.fillText(l, lx+ox, ly+oy);
         ctx.beginPath(); ctx.arc(lx, ly, 3*ratio, 0, Math.PI*2);
-        ctx.fillStyle="rgba(90,150,255,0.6)"; ctx.fill(); ctx.fillStyle="#8ab6ff";
+        ctx.fillStyle = selectedPreset ? "#58d68d" : "rgba(90,150,255,0.6)";
+        ctx.fill();
+        if (selectedPreset) {
+          ctx.strokeStyle = "#d9ffe8";
+          ctx.lineWidth = 1.2 * ratio;
+          ctx.stroke();
+        }
+        ctx.fillStyle="#8ab6ff";
       }
 
       // --- Hint if nothing set ---
@@ -8662,18 +8835,27 @@
       const bSign  = b   >= 0 ? "+" : "-";
       const sSign  = sinT >= 0 ? "+" : "-";
       const rbSign = rb  >= 0 ? "+" : "-";
+      const modeText = rotMult_thetaMode === "free"
+        ? `\(e^{i\\theta}\),\\; \\theta=${(t*180/Math.PI).toFixed(1)}^\\circ`
+        : `\(${rotMult_thetaMode}\)`;
       // Coloured formula — use HTML spans + inline MathJax to avoid # in math mode
       rotMultFormula.innerHTML =
         `<div style="font-size:1.1em;text-align:center;margin:4px 0;">` +
-        `<span style="color:#ff8833;">\\(z \\cdot e^{i\\theta}\\)</span>` +
+        `<span style="color:#ff8833;">\\(z \\cdot ${modeText}\\)</span>` +
         ` &nbsp;=&nbsp; ` +
         `<span style="color:#58a6ff;">\\(${a.toFixed(2)}${bSign}${Math.abs(b).toFixed(2)}i\\)</span>` +
         ` &nbsp;&middot;&nbsp; ` +
         `<span style="color:#58d68d;">\\(${cosT.toFixed(2)}${sSign}${Math.abs(sinT).toFixed(2)}i\\)</span>` +
         ` &nbsp;=&nbsp; ` +
         `<span style="color:#ff8833;">\\(${ra.toFixed(2)}${rbSign}${Math.abs(rb).toFixed(2)}i\\)</span>` +
+        `</div>` +
+        `<div style="font-size:0.92em;color:#8fb0c8;margin-top:2px;">` +
+        (rotMult_thetaMode === "i"
+          ? `Εδώ ελέγχεις άμεσα ότι ο πολλαπλασιασμός με <strong>i</strong> κάνει στροφή <strong>90°</strong>.`
+          : `Πολλαπλασιασμός με <strong>i</strong> = στροφή 90°, ενώ με <strong>e^{i\theta}</strong> παίρνεις οποιαδήποτε γωνία.`) +
         `</div>`;
       if (window.MathJax && MathJax.typesetPromise) { MathJax.typesetPromise([rotMultFormula]).catch(()=>{}); }
+      updateRotPresetButtons();
     }
 
     // Hit-test: returns "theta", "z", "new_theta", or "new_z"
@@ -8714,7 +8896,7 @@
       } else if (hit === "z") {
         rotMult_dragging = "z";
       } else if (hit === "new_theta") {
-        rotMult_theta = Math.atan2(cy - y, x - cx);
+        setRotMultTheta(Math.atan2(cy - y, x - cx), "free");
         rotMult_dragging = "theta";
         drawRotMult(); updateRotMultFormula();
       } else {
@@ -8739,7 +8921,7 @@
       const cx = w * 0.5, cy = h * 0.5;
       const R = _rotMultR(w, h);
       if (rotMult_dragging === "theta") {
-        rotMult_theta = Math.atan2(cy - y, x - cx);
+        setRotMultTheta(Math.atan2(cy - y, x - cx), "free");
       } else if (rotMult_dragging === "z") {
         rotMult_z = { a: (x - cx) / R, b: (cy - y) / R };
       }
@@ -8756,7 +8938,18 @@
       rotMultCanvas.style.cursor = "crosshair";
     });
 
+    rotPreset1?.addEventListener("click", function() { setRotMultTheta(0, "1"); drawRotMult(); updateRotMultFormula(); });
+    rotPresetI?.addEventListener("click", function() { setRotMultTheta(Math.PI / 2, "i"); drawRotMult(); updateRotMultFormula(); });
+    rotPresetNeg1?.addEventListener("click", function() { setRotMultTheta(Math.PI, "-1"); drawRotMult(); updateRotMultFormula(); });
+    rotPresetNegI?.addEventListener("click", function() { setRotMultTheta(-Math.PI / 2, "-i"); drawRotMult(); updateRotMultFormula(); });
+    rotPresetFree?.addEventListener("click", function() {
+      if (rotMult_theta === null) setRotMultTheta(Math.PI / 6, "free");
+      else rotMult_thetaMode = "free";
+      drawRotMult(); updateRotMultFormula();
+    });
+
     drawRotMult();
+    updateRotPresetButtons();
 
     const proofStepsTaylor = [
       {
