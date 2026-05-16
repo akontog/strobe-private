@@ -2240,7 +2240,7 @@
       <a href="#sec-euler-plane" data-accordion-group="euler">5.1 Τύπος του Euler</a>
       <a href="#sec-euler-i-rotation" data-accordion-group="euler">5.2 Περιστροφή με πολλαπλασιασμό μιγαδικού</a>
 
-      <div class="toc-group-title" data-accordion-group="rod">6. Fourier ράβδος</div>
+      <div class="toc-group-title" data-accordion-group="rod">6. Σειρές Fourier</div>
       <a href="#sec-heat-sine-intro" data-accordion-group="rod">6.1 Θερμοκρασία ράβδου</a>
       <a href="#sec-heat-rod" data-accordion-group="rod">6.2 Δραστηριότητα: Fourier και θερμοκρασία ράβδου</a>
       <a href="#sec-step-function" data-accordion-group="rod">6.3 Step function σε ράβδο 1 m</a>
@@ -2261,7 +2261,7 @@
       <div class="toc-group-title" data-accordion-group="fft">9. FFT</div>
       <a href="#sec-polynomial-mult" data-accordion-group="fft">9.1 Πράξεις πολυωνύμων O(n²)</a>
       <a href="#sec-line-representation" data-accordion-group="fft">9.2 Αναπαράσταση</a>
-      <a href="#sec-points-representation" data-accordion-group="fft">9.3 Αναπαράσταση με σημεία</a>
+      <a href="#sec-points-representation" data-accordion-group="fft">9.3 Αναπαράσταση με σημεία (Lagrange)</a>
       <a href="#sec-sample-add-mul" data-accordion-group="fft">9.4 Πράξεις στα samples</a>
       <a href="#sec-points-operations" data-accordion-group="fft">9.5 Πράξεις σε αναπαράσταση σημείων</a>
       <a href="#sec-poly-mult-strategy" data-accordion-group="fft">9.6 Στρατηγική πολλαπλασιασμού</a>
@@ -2269,7 +2269,7 @@
       <a href="#sec-even-odd-eval" data-accordion-group="fft">9.8 Συμμετρία στην αποτίμηση: x² vs x³</a>
       <a href="#sec-even-odd-split" data-accordion-group="fft">9.9 Διάσπαση σε άρτιο/περιττό μέρος</a>
       <a href="#sec-recursion-symmetry" data-accordion-group="fft">9.10 Αναδρομή και συμμετρικά σημεία</a>
-      <a href="#sec-unity-roots" data-accordion-group="fft">9.11 N-ες ρίζες του 1</a>
+      <a href="#sec-unity-roots" data-accordion-group="fft">9.11 N-ες ρίζες της μονάδας</a>
       <a href="#sec-cooley-interactive" data-accordion-group="fft">9.12 Cooley-Tukey για n σημεία (διαδραστικό)</a>
       <a href="#sec-fft-complexity" data-accordion-group="fft">9.13 Από τον απλό DFT στον FFT (Cooley-Tukey)</a>
       <a href="#sec-cooley-tukey" data-accordion-group="fft">9.14 Cooley-Tukey FFT βήμα-βήμα</a>
@@ -3343,6 +3343,55 @@
         </div>
       </section>
 
+      <section class="section activity-slide" id="sec-activity-complexity-check" data-activity-id="complexity-check">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>8.2) Δραστηριότητα: Αγώνες πολυπλοκότητας</h2>
+            <p class="student-only">
+              Επίλεξε μία πολυπλοκότητα και πάτα «Υποβολή επιλογής». Ο teacher θα κάνει reveal όταν
+              μαζευτούν αρκετές υποβολές.
+            </p>
+            <p class="teacher-only">
+              Με reveal εμφανίζονται οι επιλογές όλων. Με «Επόμενο N ×10» αυξάνεται το N επί 10
+              και υπολογίζεται η απόδοση κάθε μαθητή.
+            </p>
+            <div class="activity-grid">
+              <div class="activity-card student-only">
+                <h3>Επιλογή πολυπλοκότητας</h3>
+                <div class="complexity-choice-grid">
+                  <button type="button" class="complexity-choice-button" data-choice-key="half-n2">0.5 · N²</button>
+                  <button type="button" class="complexity-choice-button" data-choice-key="thousand-n">1000 · N</button>
+                  <button type="button" class="complexity-choice-button" data-choice-key="factorial">N!</button>
+                  <button type="button" class="complexity-choice-button" data-choice-key="half-2n">0.5 · 2^N</button>
+                  <button type="button" class="complexity-choice-button" data-choice-key="n-log-n">N log N</button>
+                </div>
+                <input id="complexityRaceChoiceControl" type="hidden" value="" data-activity-control="complexity-check" data-control-key="complexityChoice" />
+                <button id="complexityRaceSubmitBtn" class="fft-duel-submit" type="button">Υποβολή επιλογής</button>
+                <div class="hint" id="complexityRaceStudentStatus">Διάλεξε επιλογή και κάνε submit.</div>
+              </div>
+              <div class="activity-live teacher-only complexity-race-teacher">
+                <h3>Πίνακας teacher</h3>
+                <div class="complexity-race-toolbar">
+                  <span class="fft-duel-pill">N: <strong id="complexityRaceNValue">10</strong></span>
+                  <button id="complexityRaceRevealBtn" class="fft-duel-submit" type="button">Reveal επιλογών</button>
+                  <button id="complexityRaceNextBtn" class="fft-duel-submit" type="button">Επόμενο N ×10</button>
+                  <button id="complexityRaceResetBtn" class="fft-duel-submit" type="button">Reset</button>
+                </div>
+                <div id="complexityRaceTeacherStatus" class="complexity-race-status">Περιμένω υποβολές.</div>
+                <canvas id="complexityRaceCanvas" class="demo-canvas" width="940" height="320"></canvas>
+                <div class="activity-note">
+                  Άξονας X: από 0 έως επιλεγμένο N (μέχρι 1.000.000). Άξονας Y: όριο 1.000.000.
+                  Ό,τι το ξεπερνά βγαίνει πάνω από το γράφημα.
+                </div>
+                <div id="complexityRaceScoreboard" class="complexity-race-scoreboard">
+                  <div class="fft-duel-empty">Περιμένω reveal για να εμφανιστεί κατάταξη.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="section" id="sec-polynomial-mult">
         <div class="slide-card">
           <div class="slide-content">
@@ -3415,7 +3464,7 @@
       <section class="section" id="sec-points-representation">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.3) Αναπαράσταση με σημεία</h2>
+            <h2>9.3) Αναπαράσταση με σημεία (Lagrange)</h2>
             <p>
               Διάλεξε πλήθος σημείων (2 έως 6) και σύρε τα σημεία πάνω στο διάγραμμα.
               Σχεδιάζεται αυτόματα το μοναδικό παρεμβολικό πολυώνυμο βαθμού <strong>n-1</strong> (κόκκινη καμπύλη).
@@ -3597,7 +3646,7 @@
                 </tr>
               </tbody>
             </table>
-            <p style="margin-top:12px; font-size:0.88em; color:var(--muted);">Το κλειδί: η αποτίμηση και η παρεμβολή γίνονται γρήγορα αν διαλέξουμε σωστά τα σημεία — τις N-ες ρίζες του 1.</p>
+            <p style="margin-top:12px; font-size:0.88em; color:var(--muted);">Το κλειδί: η αποτίμηση και η παρεμβολή γίνονται γρήγορα αν διαλέξουμε σωστά τα σημεία — τις N-ες ρίζες της μονάδας.</p>
           </div>
         </div>
       </section>
@@ -3772,7 +3821,7 @@
       <section class="section" id="sec-unity-roots">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.11) N-ες ρίζες του 1</h2>
+            <h2>9.11) N-ες ρίζες της μονάδας</h2>
             <p>
               Οι <strong>N-ες ρίζες της μονάδας</strong> είναι οι λύσεις της εξίσωσης $z^N = 1$.
               Στο μιγαδικό επίπεδο είναι <strong>N ισαπέχοντα σημεία στον μοναδιαίο κύκλο</strong>.
@@ -3922,55 +3971,6 @@
               • FFT (Cooley-Tukey): <strong id="cooleyTreeFftValue">10.24K</strong>
               • Κέρδος: <strong id="cooleyTreeGainValue">102.40×</strong>
             </p>
-          </div>
-        </div>
-      </section>
-
-      <section class="section activity-slide" id="sec-activity-complexity-check" data-activity-id="complexity-check">
-        <div class="slide-card">
-          <div class="slide-content">
-            <h2>8.2) Δραστηριότητα: Αγώνες πολυπλοκότητας</h2>
-            <p class="student-only">
-              Επίλεξε μία πολυπλοκότητα και πάτα «Υποβολή επιλογής». Ο teacher θα κάνει reveal όταν
-              μαζευτούν αρκετές υποβολές.
-            </p>
-            <p class="teacher-only">
-              Με reveal εμφανίζονται οι επιλογές όλων. Με «Επόμενο N ×10» αυξάνεται το N επί 10
-              και υπολογίζεται η απόδοση κάθε μαθητή.
-            </p>
-            <div class="activity-grid">
-              <div class="activity-card student-only">
-                <h3>Επιλογή πολυπλοκότητας</h3>
-                <div class="complexity-choice-grid">
-                  <button type="button" class="complexity-choice-button" data-choice-key="half-n2">0.5 · N²</button>
-                  <button type="button" class="complexity-choice-button" data-choice-key="thousand-n">1000 · N</button>
-                  <button type="button" class="complexity-choice-button" data-choice-key="factorial">N!</button>
-                  <button type="button" class="complexity-choice-button" data-choice-key="half-2n">0.5 · 2^N</button>
-                  <button type="button" class="complexity-choice-button" data-choice-key="n-log-n">N log N</button>
-                </div>
-                <input id="complexityRaceChoiceControl" type="hidden" value="" data-activity-control="complexity-check" data-control-key="complexityChoice" />
-                <button id="complexityRaceSubmitBtn" class="fft-duel-submit" type="button">Υποβολή επιλογής</button>
-                <div class="hint" id="complexityRaceStudentStatus">Διάλεξε επιλογή και κάνε submit.</div>
-              </div>
-              <div class="activity-live teacher-only complexity-race-teacher">
-                <h3>Πίνακας teacher</h3>
-                <div class="complexity-race-toolbar">
-                  <span class="fft-duel-pill">N: <strong id="complexityRaceNValue">10</strong></span>
-                  <button id="complexityRaceRevealBtn" class="fft-duel-submit" type="button">Reveal επιλογών</button>
-                  <button id="complexityRaceNextBtn" class="fft-duel-submit" type="button">Επόμενο N ×10</button>
-                  <button id="complexityRaceResetBtn" class="fft-duel-submit" type="button">Reset</button>
-                </div>
-                <div id="complexityRaceTeacherStatus" class="complexity-race-status">Περιμένω υποβολές.</div>
-                <canvas id="complexityRaceCanvas" class="demo-canvas" width="940" height="320"></canvas>
-                <div class="activity-note">
-                  Άξονας X: από 0 έως επιλεγμένο N (μέχρι 1.000.000). Άξονας Y: όριο 1.000.000.
-                  Ό,τι το ξεπερνά βγαίνει πάνω από το γράφημα.
-                </div>
-                <div id="complexityRaceScoreboard" class="complexity-race-scoreboard">
-                  <div class="fft-duel-empty">Περιμένω reveal για να εμφανιστεί κατάταξη.</div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
