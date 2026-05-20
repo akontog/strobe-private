@@ -2277,13 +2277,11 @@
       <div class="toc-group-title" data-accordion-group="pipeline">10. Θάλασσα</div>
       <a href="#sec-bridge-1d2d" data-accordion-group="pipeline">10.1 Από 1D ήχο σε 2D θάλασσα</a>
       <a href="#sec-wave" data-accordion-group="pipeline">10.2 Τι είναι ο κυματισμός</a>
-      <a href="#sec-spectrum" data-accordion-group="pipeline">10.3 Ενεργειακό φάσμα</a>
-      <a href="#sec-phillips" data-accordion-group="pipeline">10.4 Φάσμα Phillips</a>
-      <a href="#sec-random" data-accordion-group="pipeline">10.5 Τυχαίες φάσεις</a>
-      <a href="#sec-time" data-accordion-group="pipeline">10.6 Εξέλιξη στον χρόνο</a>
-      <a href="#sec-ifft" data-accordion-group="pipeline">10.7 IFFT ανακατασκευή</a>
-      <a href="#sec-final" data-accordion-group="pipeline">10.8 Τελικό rendering</a>
-      <a href="#sec-activity-ocean-config" data-accordion-group="pipeline">10.9 Θάλασσα κυμάτων (τελική εικόνα)</a>
+      <a href="#sec-spectrum" data-accordion-group="pipeline">10.3 Ενεργειακό φάσμα + Phillips</a>
+      <a href="#sec-random" data-accordion-group="pipeline">10.4 Τυχαίες φάσεις</a>
+      <a href="#sec-time" data-accordion-group="pipeline">10.5 Εξέλιξη στον χρόνο</a>
+      <a href="#sec-ifft" data-accordion-group="pipeline">10.6 IFFT ανακατασκευή</a>
+      <a href="#sec-activity-ocean-config" data-accordion-group="pipeline">10.7 Θάλασσα κυμάτων (τελική εικόνα)</a>
     </aside>
 
     <main class="content" id="content">
@@ -3993,6 +3991,9 @@
               Στον ωκεανό, το ύψος της επιφάνειας είναι ένα πεδίο τιμών που μπορεί επίσης να αναλυθεί
               φασματικά, όπως και ένα ηχητικό σήμα.
             </p>
+            <div class="mathjax-box">
+              $$h(x,z)=\sum_{\vec{k}} H(\vec{k})\,e^{i(k_xx+k_zz)}$$
+            </div>
             <canvas id="wavinessCanvas" class="demo-canvas" width="940" height="250"></canvas>
           </div>
         </div>
@@ -4001,37 +4002,23 @@
       <section class="section" id="sec-spectrum">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>10.3) Ενεργειακό φάσμα</h2>
+            <h2>10.3) Ενεργειακό φάσμα + Phillips</h2>
             <p>
-              Classroom έκδοση: κάθε student στέλνει 3 ή 4 τυχαίες συχνότητες.
-              Ο server φτιάχνει ένα κοινό set ~40 όρων (όχι απαραίτητα Gaussian) και από αυτό
-              προκύπτει ένα συνολικό «raw» κύμα πριν το φυσικό weighting.
+              Παράγουμε Gaussian δείγματα στο φάσμα και στη συνέχεια εφαρμόζουμε το βάρος του Phillips
+              ώστε να τονιστούν/κατασταλούν συγκεκριμένα μήκη κύματος.
             </p>
             <div class="random-freq-toolbar">
-              <button id="randomFreqGenerateBtn" class="random-freq-btn student-only" type="button">Νέο random pack</button>
-              <button id="randomFreqClearBtn" class="random-freq-btn teacher-only" type="button">Καθαρισμός classroom set</button>
-              <span class="random-freq-chip">Στόχος όρων: <strong id="randomFreqTargetLabel">40</strong></span>
-              <span class="random-freq-chip">Συνολικοί όροι: <strong id="randomFreqTotalLabel">0</strong></span>
-              <span class="random-freq-chip">Used στο κύμα: <strong id="randomFreqUsedLabel">0</strong></span>
+              <button id="gaussianRefreshBtn" class="random-freq-btn" type="button">Νέο Gaussian</button>
+              <span class="random-freq-chip"><strong id="gaussianRefreshLabel">Gaussian #0</strong></span>
             </div>
-            <div class="random-freq-preview" id="randomFreqPackPreview">Πάτησε «Νέο random pack» για αποστολή συχνοτήτων.</div>
-            <div class="random-freq-table teacher-only" id="randomFreqTeacherTable">
-              <div class="fft-duel-empty">Δεν υπάρχουν ακόμα συχνότητες από students.</div>
-            </div>
-            <canvas id="energySpectrumCanvas" class="demo-canvas" width="940" height="250"></canvas>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="sec-phillips">
-        <div class="slide-card">
-          <div class="slide-content">
-            <h2>10.4) Φάσμα Phillips</h2>
+            <div class="random-freq-preview" id="gaussianPreview">Πάτησε «Νέο Gaussian» για να ανανεώσεις το φασματικό δείγμα.</div>
+            <canvas id="energySpectrumCanvas" class="demo-canvas" width="940" height="220"></canvas>
             <p>
-              Τώρα βάζουμε φυσική: πολλαπλασιάζουμε τις Gaussian τιμές με \(\sqrt{P(k)}\), όπου \(P(k)\)
-              είναι το Phillips spectrum. Έτσι ενισχύονται/καταστέλλονται συγκεκριμένα μήκη κύματος.
+              Εφαρμογή Phillips weighting στο ίδιο Gaussian δείγμα:
             </p>
-            <canvas id="phillipsCanvas" class="demo-canvas" width="940" height="250"></canvas>
+            <div>
+              <canvas id="phillipsCanvas" class="demo-canvas" width="940" height="220"></canvas>
+            </div>
           </div>
         </div>
       </section>
@@ -4039,7 +4026,7 @@
       <section class="section" id="sec-random">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>10.5) Τυχαίες φάσεις</h2>
+            <h2>10.4) Τυχαίες φάσεις</h2>
             <p>
               Από το μέτρο και την τυχαία φάση φτιάχνουμε τους μιγαδικούς συντελεστές \(H_0(k)\).
               Αυτό δίνει ρεαλισμό: η επιφάνεια δεν επαναλαμβάνεται μηχανικά, αλλά παραμένει στατιστικά σωστή.
@@ -4052,7 +4039,7 @@
       <section class="section" id="sec-time">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>10.6) Εξέλιξη στον χρόνο</h2>
+            <h2>10.5) Εξέλιξη στον χρόνο</h2>
             <p>
               Κάθε mode ταλαντώνεται με δική του γωνιακή συχνότητα. Το άθροισμα όλων των modes είναι η
               τελική δυναμική κίνηση του νερού.
@@ -4065,7 +4052,7 @@
       <section class="section" id="sec-ifft">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>10.7) IFFT: από \(H(k_x,k_z)\) σε \(h(x,z,t)\)</h2>
+            <h2>10.6) IFFT: από \(H(k_x,k_z)\) σε \(h(x,z,t)\)</h2>
             <p>
               Με IFFT γυρίζουμε από το spectral domain στο spatial domain και παίρνουμε ξανά ύψος επιφάνειας
               ανά σημείο πλέγματος.
@@ -4076,23 +4063,10 @@
         </div>
       </section>
 
-      <section class="section" id="sec-final">
-        <div class="slide-card">
-          <div class="slide-content">
-            <h2>10.8) Τελικό rendering</h2>
-            <p>
-              Το τελικό αποτέλεσμα προκύπτει από displacement + normals + shading και μπορεί να χρησιμοποιηθεί
-              για πλάνα μεγάλης κλίμακας.
-            </p>
-            <canvas id="finalRenderCanvas" class="demo-canvas" width="940" height="250"></canvas>
-          </div>
-        </div>
-      </section>
-
       <section class="section" id="sec-activity-ocean-config">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>10.9) Θάλασσα κυμάτων (τελική εικόνα)</h2>
+            <h2>10.7) Θάλασσα κυμάτων (τελική εικόνα)</h2>
             <p>
               Η ίδια ιδέα του στόχου κλείνει την παρουσίαση: από θεμελιώδη κύματα και ήχο,
               σε μια δυναμική επιφάνεια θάλασσας με επάλληλους κυματισμούς.
@@ -4546,13 +4520,9 @@
     const ifftOceanMath = document.getElementById("ifftOceanMath");
     const wavinessCanvas = document.getElementById("wavinessCanvas");
     const energySpectrumCanvas = document.getElementById("energySpectrumCanvas");
-    const randomFreqGenerateBtn = document.getElementById("randomFreqGenerateBtn");
-    const randomFreqClearBtn = document.getElementById("randomFreqClearBtn");
-    const randomFreqPackPreview = document.getElementById("randomFreqPackPreview");
-    const randomFreqTeacherTable = document.getElementById("randomFreqTeacherTable");
-    const randomFreqTargetLabel = document.getElementById("randomFreqTargetLabel");
-    const randomFreqTotalLabel = document.getElementById("randomFreqTotalLabel");
-    const randomFreqUsedLabel = document.getElementById("randomFreqUsedLabel");
+    const gaussianRefreshBtn = document.getElementById("gaussianRefreshBtn");
+    const gaussianRefreshLabel = document.getElementById("gaussianRefreshLabel");
+    const gaussianPreview = document.getElementById("gaussianPreview");
     const phillipsCanvas = document.getElementById("phillipsCanvas");
     const randomPhaseCanvas = document.getElementById("randomPhaseCanvas");
     const timeEvolutionCanvas = document.getElementById("timeEvolutionCanvas");
@@ -4706,9 +4676,8 @@
       own: null,
       players: [],
     };
-    const RANDOM_FREQ_MAX_TERMS = 40;
-    let classroomRandomFreqPacks = [];
-    let classroomRandomFreqUsedTerms = [];
+    let oceanGaussianSeedOffset = 0;
+    let oceanGaussianGeneration = 0;
 
     let audioContext = null;
     let activeOscillators = [];
@@ -5612,111 +5581,22 @@
 
     renderFftDuelUi();
 
-    // @slide 10.5 | @util — μορφοποιεί preview τυχαίων συχνοτήτων σε HTML string.
-    function formatRandomFreqPreviewItems(items) {
-      if (!Array.isArray(items) || !items.length) {
-        return "-";
+    function generateOceanGaussianSet() {
+      oceanGaussianGeneration += 1;
+      oceanGaussianSeedOffset = 1000 + Math.floor(Math.random() * 1000000);
+      if (gaussianRefreshLabel) {
+        gaussianRefreshLabel.textContent = `Gaussian #${oceanGaussianGeneration}`;
       }
-      return items
-        .map((item) => `${Number(item.freq).toFixed(2)}Hz`)
-        .join(", ");
+      if (gaussianPreview) {
+        gaussianPreview.textContent = "Νέο Gaussian δείγμα ενεργό: ενημερώθηκαν φάσμα, φάσεις, εξέλιξη και IFFT.";
+      }
     }
 
-    // @slide 10.5 — επιλέγει μέγεθος pack (3 ή 4 συχνότητες) βάσει τους συμμετέχοντες.
-    function chooseRandomPackSize() {
-      const participantEstimate = Math.max(1, classroomRandomFreqPacks.length);
-      return participantEstimate <= 10 ? 4 : 3;
-    }
-
-    // @slide 10.5 — κατασκευάζει τυχαίας συχνότητες pack για ένα student.
-    function buildRandomFreqPackItems(packSize) {
-      const items = [];
-      for (let i = 0; i < packSize; i += 1) {
-        const freq = Number((0.4 + Math.random() * 5.8).toFixed(2));
-        const amp = Number((0.05 + Math.random() * 0.16).toFixed(3));
-        const phase = Number((Math.random() * Math.PI * 2).toFixed(3));
-        const angle = Number((Math.random() * Math.PI * 2).toFixed(3));
-        items.push({ freq, amp, phase, angle });
-      }
-      return items;
-    }
-
-    // @slide 10.5 — εμφανίζει teacher πίνακα random pack συχνοτήτων ανά μαθητή.
-    function renderRandomFreqTeacherTable() {
-      if (!randomFreqTeacherTable) {
-        return;
-      }
-
-      if (!classroomRandomFreqPacks.length) {
-        randomFreqTeacherTable.innerHTML = '<div class="fft-duel-empty">Δεν υπάρχουν ακόμα συχνότητες από students.</div>';
-        return;
-      }
-
-      const rows = [];
-      let rowIndex = 1;
-      classroomRandomFreqPacks.slice(0, 80).forEach((pack) => {
-        const owner = String(pack && pack.name ? pack.name : "Student");
-        const terms = Array.isArray(pack && pack.items) ? pack.items : [];
-        terms.forEach((term) => {
-          rows.push(`
-            <div class="random-freq-row">
-              <span>${rowIndex}</span>
-              <span>${owner}</span>
-              <span>${Number(term.freq).toFixed(2)} Hz</span>
-              <span>${Number(term.amp).toFixed(3)}</span>
-              <span>${Number(term.phase).toFixed(2)}</span>
-            </div>
-          `);
-          rowIndex += 1;
-        });
-      });
-
-      randomFreqTeacherTable.innerHTML = rows.join("");
-    }
-
-    // @slide 10.5 — εφαρμόζει server payload τυχαίων πακέτων συχνοτήτων classroom.
-    function applyClassroomRandomFreqState(detail) {
-      const payload = detail && typeof detail === "object" ? detail : {};
-      classroomRandomFreqPacks = Array.isArray(payload.packs) ? payload.packs.slice(0, 140) : [];
-      classroomRandomFreqUsedTerms = Array.isArray(payload.usedTerms) ? payload.usedTerms.slice(0, RANDOM_FREQ_MAX_TERMS) : [];
-
-      if (randomFreqTargetLabel) {
-        randomFreqTargetLabel.textContent = String(RANDOM_FREQ_MAX_TERMS);
-      }
-      if (randomFreqTotalLabel) {
-        randomFreqTotalLabel.textContent = String(Number(payload.totalTerms) || 0);
-      }
-      if (randomFreqUsedLabel) {
-        randomFreqUsedLabel.textContent = String(classroomRandomFreqUsedTerms.length);
-      }
-
-      renderRandomFreqTeacherTable();
-    }
-
-    randomFreqGenerateBtn?.addEventListener("click", () => {
-      const packSize = chooseRandomPackSize();
-      const items = buildRandomFreqPackItems(packSize);
-
-      if (randomFreqPackPreview) {
-        randomFreqPackPreview.textContent = `Αποστολή ${packSize} συχνοτήτων: ${formatRandomFreqPreviewItems(items)}`;
-      }
-
-      document.dispatchEvent(
-        new CustomEvent("fourier:ocean-random-pack-local", {
-          detail: {
-            items,
-          },
-        })
-      );
+    gaussianRefreshBtn?.addEventListener("click", () => {
+      generateOceanGaussianSet();
     });
 
-    randomFreqClearBtn?.addEventListener("click", () => {
-      document.dispatchEvent(new CustomEvent("fourier:ocean-random-pack-clear-local"));
-    });
-
-    document.addEventListener("fourier:classroom-ocean-random-state", (event) => {
-      applyClassroomRandomFreqState(event && event.detail ? event.detail : null);
-    });
+    generateOceanGaussianSet();
 
     // @slide 7.1 — επιστρέφει scale X/Y για άξονες καμπύλοτητας.
     function getComplexityAxisRatios() {
@@ -15323,7 +15203,8 @@
 
     // @util ocean — pseudo-random uniform [0,1] από αριθμητικό seed (αναπαραγώγιμο).
     function seededUniform(seed) {
-      const value = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
+      const shiftedSeed = seed + oceanGaussianSeedOffset;
+      const value = Math.sin(shiftedSeed * 12.9898 + 78.233) * 43758.5453;
       return value - Math.floor(value);
     }
 
@@ -15346,7 +15227,7 @@
       return base * smallWaveSuppress;
     }
 
-    // @slide 10.3, 10.4 — σχεδιάζει ενεργειακό φάσμα θαλάσσιας (shallow/deep/Phillips).
+    // @slide 10.3 — σχεδιάζει Gaussian ενεργειακό φάσμα πριν από weighting.
     function drawEnergyCurve(canvas, t, color = "#ffb35c") {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const pad = 14;
@@ -15374,51 +15255,20 @@
         ctx.lineTo(cx, top + boxH - 10);
         ctx.stroke();
 
-        const usedTerms = Array.isArray(classroomRandomFreqUsedTerms) ? classroomRandomFreqUsedTerms : [];
-
-        if (usedTerms.length) {
-          usedTerms.forEach((term, index) => {
-            const freq = Number(term && term.freq);
-            const phase = Number(term && term.phase);
-            const angle = Number(term && term.angle);
-            const amp = Number(term && term.amp);
-            if (!Number.isFinite(freq) || !Number.isFinite(phase) || !Number.isFinite(angle) || !Number.isFinite(amp)) {
-              return;
-            }
-
-            const nx = Math.cos(angle) * Math.min(1.6, freq / 3.2);
-            const ny = Math.sin(angle) * Math.min(1.6, freq / 3.2);
-            const x = cx + scale * nx;
-            const y = cy - scale * ny;
-            const radius = 1.4 + Math.min(3.1, amp * 16);
-            const alpha = 0.42 + Math.min(0.48, amp * 2.4);
-            ctx.fillStyle = `rgba(159, 208, 255, ${alpha.toFixed(3)})`;
-            ctx.beginPath();
-            ctx.arc(x, y, radius, 0, 2 * Math.PI);
-            ctx.fill();
-          });
-        } else {
-          for (let i = 0; i < 140; i += 1) {
-            const g1 = seededGaussian(i + 1, i + 91);
-            const g2 = seededGaussian(i + 211, i + 389);
-            const x = cx + scale * g1;
-            const y = cy - scale * g2;
-            ctx.fillStyle = "rgba(159, 208, 255, 0.55)";
-            ctx.beginPath();
-            ctx.arc(x, y, 2, 0, 2 * Math.PI);
-            ctx.fill();
-          }
+        for (let i = 0; i < 140; i += 1) {
+          const g1 = seededGaussian(i + 1, i + 91);
+          const g2 = seededGaussian(i + 211, i + 389);
+          const x = cx + scale * g1;
+          const y = cy - scale * g2;
+          ctx.fillStyle = "rgba(159, 208, 255, 0.55)";
+          ctx.beginPath();
+          ctx.arc(x, y, 2, 0, 2 * Math.PI);
+          ctx.fill();
         }
 
         ctx.fillStyle = "#c7dcff";
         ctx.font = "12px Segoe UI, sans-serif";
-        ctx.fillText(
-          usedTerms.length
-            ? "Classroom random συχνότητες στο μιγαδικό επίπεδο"
-            : "Gaussian samples στο μιγαδικό επίπεδο (ξr, ξi)",
-          leftX + 10,
-          top + 16
-        );
+        ctx.fillText("Gaussian samples στο μιγαδικό επίπεδο (ξr, ξi)", leftX + 10, top + 16);
 
         const x1 = rightX + 10;
         const x2 = rightX + rightW - 10;
@@ -15433,32 +15283,9 @@
         ctx.lineTo(x2, y2);
         ctx.stroke();
 
-        const spectrumByBin = new Array(bins).fill(0);
-        if (usedTerms.length) {
-          usedTerms.forEach((term) => {
-            const freq = Number(term && term.freq);
-            const amp = Number(term && term.amp);
-            if (!Number.isFinite(freq) || !Number.isFinite(amp)) {
-              return;
-            }
-            const clampedFreq = Math.max(0, Math.min(maxK, freq));
-            const idx = Math.max(0, Math.min(bins - 1, Math.round((clampedFreq / maxK) * (bins - 1))));
-            spectrumByBin[idx] += Math.max(0, amp);
-          });
-        }
-
-        let maxAmp = 1e-6;
-        if (usedTerms.length) {
-          spectrumByBin.forEach((v) => {
-            maxAmp = Math.max(maxAmp, v);
-          });
-        }
-
         for (let b = 0; b < bins; b += 1) {
           const k = (b / (bins - 1)) * maxK;
-          const amp = usedTerms.length
-            ? Math.min(1, spectrumByBin[b] / maxAmp)
-            : Math.min(1, Math.abs(seededGaussian(b + 17, b + 501)) / 2.2);
+          const amp = Math.min(1, Math.abs(seededGaussian(b + 17, b + 501)) / 2.2);
           const x = x1 + (k / maxK) * (x2 - x1);
           const y = y2 - amp * (y2 - y1 - 8);
           ctx.strokeStyle = color;
@@ -15469,41 +15296,30 @@
           ctx.stroke();
         }
 
-        if (usedTerms.length) {
-          ctx.strokeStyle = "#6ee7b7";
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          for (let i = 0; i <= 220; i += 1) {
-            const nx = i / 220;
-            const x = x1 + nx * (x2 - x1);
-            let waveValue = 0;
-            usedTerms.forEach((term) => {
-              const freq = Number(term && term.freq);
-              const amp = Number(term && term.amp);
-              const phase = Number(term && term.phase);
-              if (!Number.isFinite(freq) || !Number.isFinite(amp) || !Number.isFinite(phase)) {
-                return;
-              }
-              waveValue += amp * Math.sin(2 * Math.PI * freq * nx - 0.75 * t + phase);
-            });
-            const y = y2 - 0.5 * (y2 - y1 - 8) - waveValue * 26;
-            if (i === 0) {
-              ctx.moveTo(x, y);
-            } else {
-              ctx.lineTo(x, y);
-            }
+        ctx.strokeStyle = "#6ee7b7";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        for (let i = 0; i <= 220; i += 1) {
+          const nx = i / 220;
+          const x = x1 + nx * (x2 - x1);
+          let waveValue = 0;
+          for (let m = 0; m < 18; m += 1) {
+            const freq = 0.35 + (m / 17) * maxK;
+            const amp = 0.08 + 0.12 * Math.min(1, Math.abs(seededGaussian(m + 311, m + 641)) / 2);
+            const phase = 2 * Math.PI * seededUniform(m + 877);
+            waveValue += amp * Math.sin(2 * Math.PI * freq * nx - 0.75 * t + phase);
           }
-          ctx.stroke();
+          const y = y2 - 0.5 * (y2 - y1 - 8) - waveValue * 26;
+          if (i === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
         }
+        ctx.stroke();
 
         ctx.fillStyle = "#c7dcff";
-        ctx.fillText(
-          usedTerms.length
-            ? "Classroom |A(k)| και κύμα από έως 40 τυχαίους όρους"
-            : "|ξ(k)| πριν από το spectrum weighting",
-          x1 + 4,
-          y1 + 12
-        );
+        ctx.fillText("|ξ(k)| πριν από το spectrum weighting", x1 + 4, y1 + 12);
         ctx.fillText("k", x2 - 8, y2 + 12);
       });
     }
