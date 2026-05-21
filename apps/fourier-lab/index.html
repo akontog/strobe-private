@@ -2279,9 +2279,8 @@
       <a href="#sec-wave" data-accordion-group="pipeline">10.2 Τι είναι ο κυματισμός</a>
       <a href="#sec-spectrum" data-accordion-group="pipeline">10.3 Ενεργειακό φάσμα + Phillips</a>
       <a href="#sec-random" data-accordion-group="pipeline">10.4 Τυχαίες φάσεις</a>
-      <a href="#sec-time" data-accordion-group="pipeline">10.5 Εξέλιξη στον χρόνο</a>
-      <a href="#sec-ifft" data-accordion-group="pipeline">10.6 IFFT ανακατασκευή</a>
-      <a href="#sec-activity-ocean-config" data-accordion-group="pipeline">10.7 Θάλασσα κυμάτων (τελική εικόνα)</a>
+        <a href="#sec-ifft" data-accordion-group="pipeline">10.5 IFFT ανακατασκευή</a>
+        <a href="#sec-activity-ocean-config" data-accordion-group="pipeline">10.6 Θάλασσα κυμάτων (τελική εικόνα)</a>
     </aside>
 
     <main class="content" id="content">
@@ -4036,18 +4035,6 @@
         </div>
       </section>
 
-      <section class="section" id="sec-time">
-        <div class="slide-card">
-          <div class="slide-content">
-            <h2>10.5) Εξέλιξη στον χρόνο</h2>
-            <p>
-              Κάθε mode ταλαντώνεται με δική του γωνιακή συχνότητα. Το άθροισμα όλων των modes είναι η
-              τελική δυναμική κίνηση του νερού.
-            </p>
-            <canvas id="timeEvolutionCanvas" class="demo-canvas" width="940" height="250"></canvas>
-          </div>
-        </div>
-      </section>
 
       <section class="section" id="sec-ifft">
         <div class="slide-card">
@@ -4822,6 +4809,14 @@
         canvas.width = displayWidth;
         canvas.height = displayHeight;
       }
+    }
+
+    // @util Canvas — μετατρέπει pointer event σε canvas pixels (λαμβάνει υπόψη devicePixelRatio).
+    function canvasPointerXY(canvas, event) {
+      const rect = canvas.getBoundingClientRect();
+      const sx = canvas.width / Math.max(1, rect.width);
+      const sy = canvas.height / Math.max(1, rect.height);
+      return { x: (event.clientX - rect.left) * sx, y: (event.clientY - rect.top) * sy };
     }
 
     function drawWaveGridAndAxes(ctx, width, height, midY, ratio) {
