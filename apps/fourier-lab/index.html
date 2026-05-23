@@ -2243,8 +2243,8 @@
       <div class="toc-group-title" data-accordion-group="rod">6. Σειρές Fourier</div>
       <a href="#sec-heat-sine-intro" data-accordion-group="rod">6.1 Θερμοκρασία ράβδου</a>
       <a href="#sec-heat-rod" data-accordion-group="rod">6.2 Δραστηριότητα: Fourier και θερμοκρασία ράβδου</a>
-      <a href="#sec-step-function" data-accordion-group="rod">6.3 Step function σε ράβδο 1 m</a>
-      <a href="#sec-fourier-line-synthesis" data-accordion-group="rod">6.4 Σύνθεση Fourier σε ευθεία</a>
+      <a href="#sec-fourier-line-synthesis" data-accordion-group="rod">6.3 Σύνθεση Fourier σε ευθεία</a>
+      <a href="#sec-step-function" data-accordion-group="rod">6.4 Βηματική συνάρτηση και φαινόμενο Gibbs</a>
 
       <div class="toc-group-title" data-accordion-group="transform">7. Μετασχηματισμός Fourier</div>
       <a href="#sec-fft" data-accordion-group="transform">7.1 Από το σήμα στο φάσμα (Fourier Transform)</a>
@@ -3098,30 +3098,10 @@
         </div>
       </section>
 
-      <section class="section" id="sec-step-function">
-        <div class="slide-card">
-          <div class="slide-content">
-            <h2>6.3) Ράβδος 1 m και step function</h2>
-            <p>
-              Η ράβδος έχει μήκος 1 m: στο αριστερό μισό η θερμοκρασία είναι χαμηλή και στο δεξί υψηλή.
-              Η απότομη αλλαγή (step) προσεγγίζεται από άθροισμα Fourier με όλο και περισσότερους όρους.
-            </p>
-            <canvas id="stepFourierCanvas" class="demo-canvas" width="940" height="320"></canvas>
-            <div class="slider-grid">
-              <div class="slider-group">
-                <div class="slider-label"><span>Όροι Fourier (περιττές αρμονικές)</span><span id="stepTermsValue">5</span></div>
-                <input id="stepTermsSlider" type="range" min="1" max="30" step="1" value="5" />
-              </div>
-            </div>
-            <div id="stepSeriesMath" class="mathjax-box"></div>
-          </div>
-        </div>
-      </section>
-
       <section class="section" id="sec-fourier-line-synthesis">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>6.4) Σύνθεση Fourier</h2>
+            <h2>6.3) Σύνθεση Fourier</h2>
             <p>
               Αριστερά κάνε κλικ ή σύρε για να ορίσεις τιμές y σε διάφορα x (αρχικά είναι ο άξονας xx').
               Δεξιά βλέπεις πόσο καλά το άθροισμα ημιτόνων Fourier προσεγγίζει τη συνάρτησή σου.
@@ -3137,6 +3117,27 @@
               </div>
             </div>
             <div id="fourierLineMath" class="mathjax-box"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-step-function">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>6.4) Βηματική συνάρτηση και φαινόμενο Gibbs</h2>
+            <p>
+              Η ράβδος έχει μήκος 1 m: στο αριστερό μισό η θερμοκρασία είναι χαμηλή και στο δεξί υψηλή.
+              Η βηματική αλλαγή προσεγγίζεται από άθροισμα Fourier και κοντά στην ασυνέχεια εμφανίζεται
+              το φαινόμενο Gibbs όσο αυξάνουμε τους όρους.
+            </p>
+            <canvas id="stepFourierCanvas" class="demo-canvas" width="940" height="320"></canvas>
+            <div class="slider-grid">
+              <div class="slider-group">
+                <div class="slider-label"><span>Όροι Fourier (περιττές αρμονικές)</span><span id="stepTermsValue">5</span></div>
+                <input id="stepTermsSlider" type="range" min="1" max="30" step="1" value="5" />
+              </div>
+            </div>
+            <div id="stepSeriesMath" class="mathjax-box"></div>
           </div>
         </div>
       </section>
@@ -10117,19 +10118,47 @@
       }
       const dt = Math.min(0.04, Math.max(1e-3, time - soundSimpleStringState.lastTime));
       soundSimpleStringState.lastTime = time;
+      const sustain = Boolean(soundSimpleSustain?.checked);
       if (soundSimpleStringState.dragging) {
+        if (sustain) {
+          soundSimpleStringState.sustainedAmplitude = Math.abs(Number(soundSimpleStringState.displacement) || 0);
+        }
         return;
       }
       const x = soundSimpleStringState.displacement;
       const v = soundSimpleStringState.velocity;
       const omega = Math.max(2, soundSimpleStringState.omega);
-      const zeta = Math.max(0.01, soundSimpleStringState.dampingRatio);
-      const a = -(omega * omega) * x - (2 * zeta * omega) * v;
-      soundSimpleStringState.velocity = v + a * dt;
-      soundSimpleStringState.displacement = x + soundSimpleStringState.velocity * dt;
-      if (Math.abs(soundSimpleStringState.displacement) < 0.0008 && Math.abs(soundSimpleStringState.velocity) < 0.0015) {
-        soundSimpleStringState.displacement = 0;
-        soundSimpleStringState.velocity = 0;
+      if (sustain) {
+        if (!soundSimpleStringState.sustainedAmplitude) {
+          const A = Math.sqrt(x * x + (v / omega) * (v / omega));
+          soundSimpleStringState.sustainedAmplitude = A > 0.001 ? A : 0;
+        }
+
+        if (soundSimpleStringState.sustainedAmplitude > 0.001) {
+          const a = -(omega * omega) * x;
+          soundSimpleStringState.velocity = v + a * dt;
+          soundSimpleStringState.displacement = x + soundSimpleStringState.velocity * dt;
+
+          const A = Math.sqrt(
+            soundSimpleStringState.displacement * soundSimpleStringState.displacement
+            + (soundSimpleStringState.velocity / omega) * (soundSimpleStringState.velocity / omega)
+          );
+          if (A > 0.0005) {
+            const scale = soundSimpleStringState.sustainedAmplitude / A;
+            soundSimpleStringState.displacement *= scale;
+            soundSimpleStringState.velocity *= scale;
+          }
+        }
+      } else {
+        soundSimpleStringState.sustainedAmplitude = null;
+        const zeta = Math.max(0.01, soundSimpleStringState.dampingRatio);
+        const a = -(omega * omega) * x - (2 * zeta * omega) * v;
+        soundSimpleStringState.velocity = v + a * dt;
+        soundSimpleStringState.displacement = x + soundSimpleStringState.velocity * dt;
+        if (Math.abs(soundSimpleStringState.displacement) < 0.0008 && Math.abs(soundSimpleStringState.velocity) < 0.0015) {
+          soundSimpleStringState.displacement = 0;
+          soundSimpleStringState.velocity = 0;
+        }
       }
     }
 
