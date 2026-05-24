@@ -25,6 +25,7 @@
 - [Solving the heat equation | DE3](https://www.youtube.com/watch?v=ToIXSwZ1pJU)
 - [Heat Diffusion in a Thin Metal Rod](https://medium.com/data-science/heat-diffusion-in-a-thin-metal-rod-faab655cb02c)
 - [But what is a partial differential equation?](https://www.3blue1brown.com/lessons/pdes/)
+- [σειρά video-μαθημάτων](https://www.classcentral.com/classroom/youtube-fourier-analysis-80314)
 # Fourier Series
 - [Ανάλυση Φουριέ](https://el.wikipedia.org/wiki/%CE%91%CE%BD%CE%AC%CE%BB%CF%85%CF%83%CE%B7_%CE%A6%CE%BF%CF%85%CF%81%CE%B9%CE%AD)
 - [But what is a Fourier series? From heat flow to drawing with circles | DE4 - 3Blue1Brown](https://www.youtube.com/watch?v=r6sGWTCMz2k)

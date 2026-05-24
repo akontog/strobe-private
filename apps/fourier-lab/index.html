@@ -2660,20 +2660,23 @@
                 <canvas id="soundSpectrumCanvas" class="sound-wave-canvas" style="width:100%; display:block;" width="940" height="110"></canvas>
               </div>
             </div>
-            <!-- hidden teacher tone inputs kept for JS compatibility -->
-            <div style="display:none;">
-              <input id="teacherSoundFreqOne" type="range" min="120" max="1200" step="1" value="330" />
-              <input id="teacherSoundAmpOne" type="range" min="0" max="100" step="1" value="70" />
-              <input id="teacherSoundFreqOneOn" type="checkbox" />
-              <input id="teacherSoundFreqTwo" type="range" min="120" max="1200" step="1" value="550" />
-              <input id="teacherSoundAmpTwo" type="range" min="0" max="100" step="1" value="70" />
-              <input id="teacherSoundFreqTwoOn" type="checkbox" />
-              <span id="teacherSoundFreqOneValue"></span>
-              <span id="teacherSoundAmpOneValue"></span>
-              <span id="teacherSoundFreqTwoValue"></span>
-              <span id="teacherSoundAmpTwoValue"></span>
+            <div class="teacher-only sound-teacher-frequency-grid" style="margin-top:10px;">
+              <div class="sound-slider teacher-tone-card">
+                <label class="sum-toggle"><input id="teacherSoundFreqOneOn" type="checkbox" checked /> ενεργή f1</label>
+                <div class="slider-label"><span>f1 συχνότητα</span><span id="teacherSoundFreqOneValue">330 Hz</span></div>
+                <input id="teacherSoundFreqOne" type="range" min="120" max="1200" step="1" value="330" />
+                <div class="slider-label"><span>f1 ένταση</span><span id="teacherSoundAmpOneValue">70%</span></div>
+                <input id="teacherSoundAmpOne" type="range" min="0" max="100" step="1" value="70" />
+              </div>
+              <div class="sound-slider teacher-tone-card">
+                <label class="sum-toggle"><input id="teacherSoundFreqTwoOn" type="checkbox" checked /> ενεργή f2</label>
+                <div class="slider-label"><span>f2 συχνότητα</span><span id="teacherSoundFreqTwoValue">550 Hz</span></div>
+                <input id="teacherSoundFreqTwo" type="range" min="120" max="1200" step="1" value="550" />
+                <div class="slider-label"><span>f2 ένταση</span><span id="teacherSoundAmpTwoValue">70%</span></div>
+                <input id="teacherSoundAmpTwo" type="range" min="0" max="100" step="1" value="70" />
+              </div>
             </div>
-            <div style="display:none;" id="soundFreqLegend"></div>
+            <div class="sum-legend" id="soundFreqLegend"></div>
             <div class="sound-air-strings-row">
               <div class="sound-air-stage">
                 <canvas id="airMoleculesCanvas" class="air-canvas air-canvas-compact" width="940" height="170"></canvas>
@@ -8905,7 +8908,7 @@
     function normalizeClassroomSoundSource(source, index = 0) {
       const frequency = Number(clampSoundNumber(source && source.frequency, 80, 1400, 440).toFixed(2));
       const amplitude = Number(clampSoundNumber(source && source.amplitude, 0, 1, 0).toFixed(3));
-      const rawKey = source && (source.socketId || source.key || source.name);
+      const rawKey = source && (source.key || source.socketId || source.name);
       const key = String(rawKey || `source-${index}`).slice(0, 80);
       const role = source && source.role === "teacher" ? "teacher" : "client";
       const origin = source && source.origin === "teacher"
@@ -8914,7 +8917,7 @@
           ? "teacher"
           : "student";
       const name = String((source && source.name) || (origin === "teacher" ? "Teacher" : "Student")).trim() || "Student";
-      const label = String((source && source.label) || name).trim() || name;
+      const label = String((source && (source.label || source.sourceLabel)) || name).trim() || name;
 
       return {
         key,
@@ -9274,6 +9277,40 @@
       }
     }
 
+    function emitTeacherToneControls(force = false) {
+      if (!isTeacherMode) {
+        return;
+      }
+
+      const f1Frequency = Number(teacherSoundFreqOne?.value ?? 220);
+      const f1Amplitude = teacherSoundFreqOneOn?.checked ? Number(teacherSoundAmpOne?.value ?? 70) / 100 : 0;
+      document.dispatchEvent(
+        new CustomEvent("fourier:sound-control-local-change", {
+          detail: {
+            sourceKey: "teacher-f1",
+            sourceLabel: "f1",
+            frequency: f1Frequency,
+            amplitude: f1Amplitude,
+            force,
+          },
+        })
+      );
+
+      const f2Frequency = Number(teacherSoundFreqTwo?.value ?? 440);
+      const f2Amplitude = teacherSoundFreqTwoOn?.checked ? Number(teacherSoundAmpTwo?.value ?? 70) / 100 : 0;
+      document.dispatchEvent(
+        new CustomEvent("fourier:sound-control-local-change", {
+          detail: {
+            sourceKey: "teacher-f2",
+            sourceLabel: "f2",
+            frequency: f2Frequency,
+            amplitude: f2Amplitude,
+            force,
+          },
+        })
+      );
+    }
+
     studentSoundFrequency?.addEventListener("input", () => {
       updateStudentSoundLabels(true);
     });
@@ -9309,6 +9346,8 @@
       if (syncAudio && isTeacherMode && classroomSoundEnabled) {
         syncClassroomSoundEngine();
       }
+
+      emitTeacherToneControls(syncAudio);
 
       updateTeacherStringLabels();
       updateTeacherSoundStatus();
@@ -10029,7 +10068,7 @@
     }
 
     // @slide 3.2 — σχεδιάζει φάσμα συχνοτήτων: θέση=f, ύψος bar=A.
-    function drawSoundSpectrum(canvas, sourcesOrLegacy) {
+    function drawSoundSpectrum(canvas, sourcesOrLegacy, options = {}) {
       if (!canvas) return;
       fitCanvasToDisplaySize(canvas);
       const ctx = canvas.getContext("2d");
@@ -10048,6 +10087,7 @@
       ctx.fillRect(0, 0, W, H);
 
       const sources = normalizeCompositeSourcesInput(sourcesOrLegacy).filter((source) => source.amplitude > 0.001);
+      const showHzAxisNumbers = options.showHzAxisNumbers !== false;
       const maxFreq = 1400;
       const maxAmp = Math.max(0.25, ...sources.map((s) => s.amplitude));
 
@@ -10060,9 +10100,11 @@
         ctx.moveTo(x, padT);
         ctx.lineTo(x, H - padB);
         ctx.stroke();
-        ctx.fillStyle = "rgba(165,189,224,0.72)";
-        ctx.font = `${Math.max(9, 9 * ratio)}px Segoe UI`;
-        ctx.fillText(String(f), x - 8 * ratio, H - 7 * ratio);
+        if (showHzAxisNumbers) {
+          ctx.fillStyle = "rgba(165,189,224,0.72)";
+          ctx.font = `${Math.max(9, 9 * ratio)}px Segoe UI`;
+          ctx.fillText(String(f), x - 8 * ratio, H - 7 * ratio);
+        }
       }
       ctx.strokeStyle = "#31517f";
       ctx.beginPath();
@@ -10408,11 +10450,11 @@
       drawCompositeWave(soundDecomposeMixCanvas, time, sources);
       drawSoundSpectrum(soundDecomposeMixSpectrumCanvas, sources);
       drawCompositeWave(soundDecomposePartOneCanvas, time, [sources[0]]);
-      drawSoundSpectrum(soundDecomposePartOneSpectrumCanvas, [sources[0]]);
+      drawSoundSpectrum(soundDecomposePartOneSpectrumCanvas, [sources[0]], { showHzAxisNumbers: false });
       drawCompositeWave(soundDecomposePartTwoCanvas, time, [sources[1]]);
-      drawSoundSpectrum(soundDecomposePartTwoSpectrumCanvas, [sources[1]]);
+      drawSoundSpectrum(soundDecomposePartTwoSpectrumCanvas, [sources[1]], { showHzAxisNumbers: false });
       drawCompositeWave(soundDecomposePartThreeCanvas, time, [sources[2]]);
-      drawSoundSpectrum(soundDecomposePartThreeSpectrumCanvas, [sources[2]]);
+      drawSoundSpectrum(soundDecomposePartThreeSpectrumCanvas, [sources[2]], { showHzAxisNumbers: false });
     }
 
     // @slide 3.1, 3.2 — ανιμάρει μόρια αέρα ανάλογα με τη συνολική πίεση του κύματος.

@@ -1137,6 +1137,43 @@ const fourierTaylorGuessState = {
 const fourierTaylorGuessLiveCoeffs = new Map(); // socketId -> {c0,c1,c2,c3}
 const FOURIER_DEBUG = process.env.FOURIER_DEBUG === '1';
 
+function buildFourierSoundStateKey(socketId, sourceKey = 'main') {
+  return `${String(socketId || '').trim()}::${String(sourceKey || 'main').trim() || 'main'}`;
+}
+
+function parseFourierSoundStateKey(stateKey) {
+  const raw = String(stateKey || '');
+  const separatorIndex = raw.indexOf('::');
+  if (separatorIndex < 0) {
+    return {
+      socketId: raw,
+      sourceKey: 'main'
+    };
+  }
+
+  return {
+    socketId: raw.slice(0, separatorIndex),
+    sourceKey: raw.slice(separatorIndex + 2) || 'main'
+  };
+}
+
+function removeFourierSoundStatesForSocket(socketId) {
+  const targetSocketId = String(socketId || '').trim();
+  if (!targetSocketId) {
+    return false;
+  }
+
+  let removed = false;
+  [...fourierSoundState.keys()].forEach((stateKey) => {
+    const parsed = parseFourierSoundStateKey(stateKey);
+    if (parsed.socketId === targetSocketId) {
+      removed = fourierSoundState.delete(stateKey) || removed;
+    }
+  });
+
+  return removed;
+}
+
 function logFourier(eventName, payload) {
   if (!FOURIER_DEBUG) {
     return;
@@ -1241,6 +1278,11 @@ function clampFourierNumber(value, min, max, fallback) {
 }
 
 function normalizeFourierSoundPayload(payload) {
+  const rawSourceKey = String(payload && payload.sourceKey || '').trim().toLowerCase();
+  const sourceKey = /^[a-z0-9_-]{1,32}$/.test(rawSourceKey)
+    ? rawSourceKey
+    : 'main';
+  const sourceLabel = coerceFourierString(payload && payload.sourceLabel, 24) || sourceKey;
   const frequency = Number(
     clampFourierNumber(payload && payload.frequency, 80, 1400, 440).toFixed(2)
   );
@@ -1249,6 +1291,8 @@ function normalizeFourierSoundPayload(payload) {
   );
 
   return {
+    sourceKey,
+    sourceLabel,
     frequency,
     amplitude
   };
@@ -1533,19 +1577,22 @@ function registerFourierParticipant(socket, role, rawName, rawTeam) {
   fourierParticipants.set(socket.id, participant);
 
   if (safeRole === 'client') {
-    const currentSound = fourierSoundState.get(socket.id) || {
+    const stateKey = buildFourierSoundStateKey(socket.id, 'main');
+    const currentSound = fourierSoundState.get(stateKey) || {
       frequency: 440,
       amplitude: 0,
       updatedAt: Date.now()
     };
 
-    fourierSoundState.set(socket.id, {
+    fourierSoundState.set(stateKey, {
+      sourceKey: 'main',
+      sourceLabel: 'main',
       frequency: Number(clampFourierNumber(currentSound.frequency, 80, 1400, 440).toFixed(2)),
       amplitude: Number(clampFourierNumber(currentSound.amplitude, 0, 1, 0).toFixed(3)),
       updatedAt: currentSound.updatedAt || Date.now()
     });
   } else {
-    fourierSoundState.delete(socket.id);
+    removeFourierSoundStatesForSocket(socket.id);
     fourierHeatState.delete(socket.id);
   }
 
@@ -1555,31 +1602,43 @@ function registerFourierParticipant(socket, role, rawName, rawTeam) {
 function buildFourierSoundPayload() {
   const states = [];
 
-  fourierParticipants.forEach((participant, socketId) => {
-    if (!participant || participant.role !== 'client') {
+  fourierSoundState.forEach((current, stateKey) => {
+    const parsedKey = parseFourierSoundStateKey(stateKey);
+    const socketId = parsedKey.socketId;
+    const sourceKey = parsedKey.sourceKey || 'main';
+    const participant = fourierParticipants.get(socketId);
+    if (!participant || (participant.role !== 'client' && participant.role !== 'teacher')) {
       return;
     }
 
-    const current = fourierSoundState.get(socketId) || {
-      frequency: 440,
-      amplitude: 0,
-      updatedAt: 0
-    };
-
     states.push({
+      key: stateKey,
       socketId,
+      sourceKey,
+      sourceLabel: coerceFourierString(current && current.sourceLabel, 24) || sourceKey,
       name: participant.name,
       team: participant.team,
       role: participant.role,
-      frequency: current.frequency,
-      amplitude: current.amplitude,
+      frequency: Number(clampFourierNumber(current && current.frequency, 80, 1400, 440).toFixed(2)),
+      amplitude: Number(clampFourierNumber(current && current.amplitude, 0, 1, 0).toFixed(3)),
       updatedAt: current.updatedAt || 0
     });
   });
 
   return states
-    .sort((a, b) => String(a.name).localeCompare(String(b.name)))
-    .slice(0, 120);
+    .sort((a, b) => {
+      const roleA = a.role === 'teacher' ? 0 : 1;
+      const roleB = b.role === 'teacher' ? 0 : 1;
+      if (roleA !== roleB) {
+        return roleA - roleB;
+      }
+      const nameCompare = String(a.name).localeCompare(String(b.name));
+      if (nameCompare !== 0) {
+        return nameCompare;
+      }
+      return String(a.sourceKey).localeCompare(String(b.sourceKey));
+    })
+    .slice(0, 240);
 }
 
 function buildFourierHeatPayload() {
@@ -1653,7 +1712,7 @@ function buildFourierParticipantPayload() {
     }
 
     const soundSnapshot = participant.role === 'client'
-      ? (fourierSoundState.get(participant.socketId) || {
+      ? (fourierSoundState.get(buildFourierSoundStateKey(participant.socketId, 'main')) || {
         frequency: 440,
         amplitude: 0,
         updatedAt: 0
@@ -2613,7 +2672,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('fourier:sound-control', (payload) => {
-    // Live slider updates from students.
+    // Live slider updates from students/teacher.
     // Robustness: if explicit join has not completed, we recover by creating
     // a client participant from this payload (implicit join fallback).
     touchGeometryConnection(socket.id);
@@ -2632,7 +2691,7 @@ io.on('connection', (socket) => {
     if (!participant) {
       participant = registerFourierParticipant(
         socket,
-        'client',
+        payload && payload.role === 'teacher' ? 'teacher' : 'client',
         payload && payload.name,
         payload && payload.team
       );
@@ -2646,13 +2705,19 @@ io.on('connection', (socket) => {
       });
     }
 
-    if (!participant || participant.role !== 'client') {
+    if (!participant || (participant.role !== 'client' && participant.role !== 'teacher')) {
       return;
     }
 
     const sound = normalizeFourierSoundPayload(payload);
+    const sourceKey = participant.role === 'teacher'
+      ? (sound.sourceKey || 'teacher-main')
+      : (sound.sourceKey || 'main');
+    const stateKey = buildFourierSoundStateKey(socket.id, sourceKey);
 
-    fourierSoundState.set(socket.id, {
+    fourierSoundState.set(stateKey, {
+      sourceKey,
+      sourceLabel: sound.sourceLabel || sourceKey,
       frequency: sound.frequency,
       amplitude: sound.amplitude,
       updatedAt: Date.now()
@@ -2698,6 +2763,8 @@ io.on('connection', (socket) => {
 
     logFourier('recv fourier:sound-control', {
       socketId: socket.id,
+      role: participant.role,
+      sourceKey,
       frequency: sound.frequency,
       amplitude: sound.amplitude
     });
@@ -3127,7 +3194,7 @@ io.on('connection', (socket) => {
     geometryConnectionMeta.delete(socket.id);
 
     const removedParticipant = fourierParticipants.delete(socket.id);
-    const removedSoundState = fourierSoundState.delete(socket.id);
+    const removedSoundState = removeFourierSoundStatesForSocket(socket.id);
     const removedHeatState = fourierHeatState.delete(socket.id);
     const removedOceanRandomPack = fourierOceanRandomState.packs.delete(socket.id);
     const removedFftDuelState = fourierFftDuelState.assignments.delete(socket.id);

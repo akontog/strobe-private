@@ -489,6 +489,9 @@
     return rawStates
       .map((item, index) => {
         const socketId = String((item && item.socketId) || `source-${index}`).trim();
+        const rawSourceKey = String((item && item.sourceKey) || 'main').trim().toLowerCase();
+        const sourceKey = /^[a-z0-9_-]{1,32}$/.test(rawSourceKey) ? rawSourceKey : 'main';
+        const sourceLabel = String((item && item.sourceLabel) || sourceKey).trim().slice(0, 24) || sourceKey;
         if (!socketId) {
           return null;
         }
@@ -497,9 +500,13 @@
         const role = item && item.role === "teacher" ? "teacher" : "client";
         const frequency = Number(clampValue(item && item.frequency, 80, 1400, 440).toFixed(2));
         const amplitude = Number(clampValue(item && item.amplitude, 0, 1, 0).toFixed(3));
+        const key = String((item && item.key) || `${socketId}::${sourceKey}`).trim() || `${socketId}::${sourceKey}`;
 
         return {
+          key,
           socketId,
+          sourceKey,
+          sourceLabel,
           name,
           role,
           frequency,
@@ -508,7 +515,18 @@
         };
       })
       .filter(Boolean)
-      .sort((a, b) => String(a.name).localeCompare(String(b.name)));
+      .sort((a, b) => {
+        const roleA = a && a.role === "teacher" ? 0 : 1;
+        const roleB = b && b.role === "teacher" ? 0 : 1;
+        if (roleA !== roleB) {
+          return roleA - roleB;
+        }
+        const nameCompare = String(a.name).localeCompare(String(b.name));
+        if (nameCompare !== 0) {
+          return nameCompare;
+        }
+        return String(a.sourceKey).localeCompare(String(b.sourceKey));
+      });
   }
 
   function applySoundStates(rawStates) {
@@ -1299,29 +1317,42 @@
 
   function emitSoundControl(detail, force = false) {
     // Live sound-control path:
-    // student slider -> fourier:sound-control -> server updates per-student sound state
-    // -> server broadcasts fourier:sound-state -> teacher sums all sources.
-    if (state.mode !== "client") {
+    // student/teacher source -> fourier:sound-control -> server updates sound state
+    // -> server broadcasts fourier:sound-state -> all clients render combined sources.
+    if (state.mode !== "client" && state.mode !== "teacher") {
       return;
     }
 
+    const senderRole = state.mode === "teacher" ? "teacher" : "client";
+
     const frequency = Number(clampValue(detail && detail.frequency, 80, 1400, 440).toFixed(2));
     const amplitude = Number(clampValue(detail && detail.amplitude, 0, 1, 0).toFixed(3));
-    const currentName = resolveClientName(studentNameInput ? studentNameInput.value : state.userName);
-    const currentTeam = resolveClientTeam(studentTeamInput ? studentTeamInput.value : state.userTeam, currentName);
+    const rawSourceKey = String((detail && detail.sourceKey) || "").trim().toLowerCase();
+    const sourceKey = /^[a-z0-9_-]{1,32}$/.test(rawSourceKey)
+      ? rawSourceKey
+      : senderRole === "teacher"
+        ? "teacher-main"
+        : "main";
+    const sourceLabel = String((detail && detail.sourceLabel) || "").trim().slice(0, 24);
+    const currentName = senderRole === "teacher"
+      ? normalizeName(state.userName, "Teacher")
+      : resolveClientName(studentNameInput ? studentNameInput.value : state.userName);
+    const currentTeam = senderRole === "teacher"
+      ? "Teacher"
+      : resolveClientTeam(studentTeamInput ? studentTeamInput.value : state.userTeam, currentName);
 
     if (!socket.connected) {
-      pendingSoundControl = { frequency, amplitude };
+      pendingSoundControl = { frequency, amplitude, sourceKey, sourceLabel };
       logComm("queue sound-control (socket disconnected)", pendingSoundControl);
       return;
     }
 
     if (!state.joined) {
-      pendingSoundControl = { frequency, amplitude };
+      pendingSoundControl = { frequency, amplitude, sourceKey, sourceLabel };
       logComm("queue sound-control (not joined yet)", pendingSoundControl);
 
-      if (!state.joinPayload || state.joinPayload.role !== "client") {
-        requestJoin("client", currentName, currentTeam);
+      if (!state.joinPayload || state.joinPayload.role !== senderRole) {
+        requestJoin(senderRole, currentName, currentTeam);
       } else {
         logComm("re-emit fourier:join before sound-control", state.joinPayload);
         socket.emit("fourier:join", state.joinPayload);
@@ -1332,7 +1363,7 @@
     }
 
     const now = Date.now();
-    const controlKey = `${frequency}:${amplitude}`;
+    const controlKey = `${senderRole}:${sourceKey}:${frequency}:${amplitude}`;
 
     if (!force && controlKey === lastSoundControlKey && now - lastSoundControlSentAt < 120) {
       return;
@@ -1343,9 +1374,11 @@
     const payload = {
       // Name/team are included so the server can recover with an implicit join
       // if a sound-control arrives before/without a successful explicit join.
-      role: "client",
+      role: senderRole,
       name: currentName,
       team: currentTeam,
+      sourceKey,
+      sourceLabel,
       frequency,
       amplitude,
     };
@@ -1632,7 +1665,8 @@
   // Primary bridge from the presentation script (index.html):
   // index dispatches `fourier:sound-control-local-change` whenever sliders move.
   document.addEventListener("fourier:sound-control-local-change", (event) => {
-    emitSoundControl((event && event.detail) || {}, false);
+    const detail = (event && event.detail) || {};
+    emitSoundControl(detail, Boolean(detail.force));
   });
 
   // Primary bridge from the presentation script (index.html):
