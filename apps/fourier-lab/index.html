@@ -2219,7 +2219,7 @@
       <div class="toc-group-title" data-accordion-group="waves">2. Θεμέλια κυμάτων</div>
       <a href="#sec-intro" data-accordion-group="waves">2.1 Κύμα f(x)=sin(x)</a>
       <a href="#sec-wave2d" data-accordion-group="waves">2.2 2D κύμα: A·sin(kx·x+kz·z+ωt+φ)</a>
-      <a href="#sec-why-gerstner" data-accordion-group="waves">2.3 Κυκλική τροχιά σωματιδίων</a>
+      <a href="#sec-why-gerstner" data-accordion-group="waves">2.3 Κυκλική τροχιά σωματιδίων (Gerstner)</a>
       <a href="#sec-wave1d-arrows" data-accordion-group="waves">2.4 Κίνηση σωματιδίων (1D, x μόνο)</a>
       <a href="#sec-compare-sine-gerstner" data-accordion-group="waves">2.5 Σύγκριση: Ημιτονοειδές vs Gerstner</a>
       <a href="#sec-sum" data-accordion-group="waves">2.6 Δραστηριότητα: Άθροισμα κυμάτων</a>
@@ -2403,7 +2403,7 @@
       <section class="section" id="sec-why-gerstner">
         <div class="slide-card">
           <div class="slide-content" style="display:flex;flex-direction:column;gap:8px;">
-            <h2 style="margin:0;">2.3) Κυκλική τροχιά σωματιδίων</h2>
+            <h2 style="margin:0;">2.3) Κυκλική τροχιά σωματιδίων (Gerstner)</h2>
             <canvas id="whyGerstnerCanvas" class="demo-canvas" style="flex:1;width:100%;min-height:0;"></canvas>
             <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;align-items:center;padding:2px 0;">
               <label class="ocean-control" style="min-width:280px;max-width:400px;" data-tip="Αλλάζει το πλάτος A της κυκλικής τροχιάς.">
@@ -3079,9 +3079,7 @@
                   <input id="heatStudentTemperature" type="range" min="0" max="100" step="1" value="53"
                     data-activity-control="heat-rod-control" data-control-key="temperatureC" />
                 </div>
-                <div class="heat-student-note teacher-only">
-                  Αν δεν υπάρχουν μαθητές, όρισε εσύ Σημείο και Θερμοκρασία από τους παραπάνω sliders.
-                </div>
+                
               </div>
               <div class="activity-live teacher-only">
                 <h3>Classroom επιλογές θερμότητας</h3>
@@ -11382,7 +11380,7 @@
         ctx.strokeRect(left, top, rodW, rodH);
         ctx.fillStyle = "#c7dcff";
         ctx.font = "12px Segoe UI, sans-serif";
-        ctx.fillText("Ράβδος (χρωματική θερμοκρασία)", left + 8, 16);
+        ctx.fillText("Ράβδος", left + 8, 16);
         ctx.fillText("x=0", left - 2, bottom + 14);
         ctx.fillText("x=1", right - 22, bottom + 14);
         ctx.fillText(`t=${timeValue.toFixed(1)}`, right - 52, 16);
