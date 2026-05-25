@@ -21,6 +21,8 @@ const PORT = Number.isInteger(parsedPort) && parsedPort > 0 && parsedPort < 6553
   ? parsedPort
   : 3000;
 const REALTIME_WS_PATH = '/ws/realtime';
+// Global camera toggle: set false to run the server with camera features fully disabled.
+const CAMERA_FEATURES_ENABLED = false;
 const parsedCameraWorkerTimeoutMs = Number.parseInt(process.env.CAMERA_WORKER_TIMEOUT_MS || '1200', 10);
 const CAMERA_WORKER_TIMEOUT_MS = Number.isInteger(parsedCameraWorkerTimeoutMs)
   ? Math.max(150, Math.min(parsedCameraWorkerTimeoutMs, 10000))
@@ -30,7 +32,8 @@ const CAMERA_WORKER_MAX_PENDING = Number.isInteger(parsedCameraWorkerMaxPending)
   ? Math.max(1, Math.min(parsedCameraWorkerMaxPending, 120))
   : 24;
 const CAMERA_WORKER_RESTART_DELAY_MS = 1200;
-const CAMERA_WORKER_ENABLED = String(process.env.CAMERA_WORKER_ENABLED || '1').trim() !== '0';
+const CAMERA_WORKER_ENABLED = CAMERA_FEATURES_ENABLED
+  && String(process.env.CAMERA_WORKER_ENABLED || '1').trim() !== '0';
 const CAMERA_WORKER_SCRIPT = process.env.CAMERA_WORKER_SCRIPT || path.join(__dirname, 'camera_server.py');
 
 function resolveCameraWorkerPython() {
@@ -594,6 +597,10 @@ app.get('/user.html', (req, res) => {
 });
 
 app.get('/camera-speed-test', (req, res) => {
+  if (!CAMERA_FEATURES_ENABLED) {
+    return res.status(404).json({ error: 'Camera features are disabled on this server.' });
+  }
+
   res.sendFile(path.join(publicDir, 'camera-speed-test.html'));
 });
 
@@ -2276,123 +2283,125 @@ io.on('connection', (socket) => {
     emitUsersUpdate();
   });
 
-  socket.on('camera-frame', async (data) => {
-    if (!data || !data.image) {
-      return;
-    }
-
-    touchGeometryConnection(socket.id);
-    recordCommunication({
-      app: 'geometry',
-      direction: 'in',
-      event: 'camera-frame',
-      from: socket.id,
-      to: 'server',
-      payload: {
-        name: data && data.name,
-        hasImage: Boolean(data && data.image),
-        imageLength: data && data.image ? String(data.image).length : 0
+  if (CAMERA_FEATURES_ENABLED) {
+    socket.on('camera-frame', async (data) => {
+      if (!data || !data.image) {
+        return;
       }
-    });
 
-    const detection = await detectPointsFromPython(data.image);
-    const points = Array.isArray(detection.points) ? detection.points : [];
-    const boxes = Array.isArray(detection.boxes) ? detection.boxes : [];
-    const tracking = typeof detection.tracking === 'string' ? detection.tracking : 'unknown';
-    const existing = activeUsers.get(socket.id) || {};
+      touchGeometryConnection(socket.id);
+      recordCommunication({
+        app: 'geometry',
+        direction: 'in',
+        event: 'camera-frame',
+        from: socket.id,
+        to: 'server',
+        payload: {
+          name: data && data.name,
+          hasImage: Boolean(data && data.image),
+          imageLength: data && data.image ? String(data.image).length : 0
+        }
+      });
 
-    activeUsers.set(socket.id, {
-      ...existing,
-      id: socket.id,
-      role: 'camera',
-      name: data.name || existing.name,
-      color: data.color || existing.color,
-      shape: data.shape || existing.shape,
-      points,
-      boxes,
-      cameraTracking: tracking
-    });
+      const detection = await detectPointsFromPython(data.image);
+      const points = Array.isArray(detection.points) ? detection.points : [];
+      const boxes = Array.isArray(detection.boxes) ? detection.boxes : [];
+      const tracking = typeof detection.tracking === 'string' ? detection.tracking : 'unknown';
+      const existing = activeUsers.get(socket.id) || {};
 
-    recordCommunication({
-      app: 'geometry',
-      direction: 'out',
-      event: 'camera-points',
-      from: 'server',
-      to: socket.id,
-      payload: {
-        count: Array.isArray(points) ? points.length : 0,
-        boxes: Array.isArray(boxes) ? boxes.length : 0,
+      activeUsers.set(socket.id, {
+        ...existing,
+        id: socket.id,
+        role: 'camera',
+        name: data.name || existing.name,
+        color: data.color || existing.color,
+        shape: data.shape || existing.shape,
+        points,
+        boxes,
+        cameraTracking: tracking
+      });
+
+      recordCommunication({
+        app: 'geometry',
+        direction: 'out',
+        event: 'camera-points',
+        from: 'server',
+        to: socket.id,
+        payload: {
+          count: Array.isArray(points) ? points.length : 0,
+          boxes: Array.isArray(boxes) ? boxes.length : 0,
+          tracking
+        }
+      });
+      socket.emit('camera-points', {
+        points,
+        boxes,
         tracking
+      });
+      emitUsersUpdate();
+    });
+
+    socket.on('camera-speed-frame', async (data) => {
+      if (!data || !data.image) {
+        return;
       }
-    });
-    socket.emit('camera-points', {
-      points,
-      boxes,
-      tracking
-    });
-    emitUsersUpdate();
-  });
 
-  socket.on('camera-speed-frame', async (data) => {
-    if (!data || !data.image) {
-      return;
-    }
+      touchGeometryConnection(socket.id);
+      const requestId = typeof data.requestId === 'number' || typeof data.requestId === 'string'
+        ? data.requestId
+        : null;
+      const serverReceivedAt = Date.now();
 
-    touchGeometryConnection(socket.id);
-    const requestId = typeof data.requestId === 'number' || typeof data.requestId === 'string'
-      ? data.requestId
-      : null;
-    const serverReceivedAt = Date.now();
+      recordCommunication({
+        app: 'geometry',
+        direction: 'in',
+        event: 'camera-speed-frame',
+        from: socket.id,
+        to: 'server',
+        payload: {
+          requestId,
+          hasImage: Boolean(data && data.image),
+          imageLength: data && data.image ? String(data.image).length : 0
+        }
+      });
 
-    recordCommunication({
-      app: 'geometry',
-      direction: 'in',
-      event: 'camera-speed-frame',
-      from: socket.id,
-      to: 'server',
-      payload: {
+      const detection = await detectCameraFrameFromPython(data.image, {
+        includeAnnotatedImage: true
+      });
+      const points = Array.isArray(detection.points) ? detection.points : [];
+      const boxes = Array.isArray(detection.boxes) ? detection.boxes : [];
+      const tracking = typeof detection.tracking === 'string' ? detection.tracking : 'unknown';
+      const annotatedImage = typeof detection.annotatedImage === 'string' ? detection.annotatedImage : null;
+      const serverSentAt = Date.now();
+
+      recordCommunication({
+        app: 'geometry',
+        direction: 'out',
+        event: 'camera-speed-result',
+        from: 'server',
+        to: socket.id,
+        payload: {
+          requestId,
+          boxes: boxes.length,
+          points: points.length,
+          tracking,
+          serverElapsedMs: serverSentAt - serverReceivedAt
+        }
+      });
+
+      socket.emit('camera-speed-result', {
         requestId,
-        hasImage: Boolean(data && data.image),
-        imageLength: data && data.image ? String(data.image).length : 0
-      }
-    });
-
-    const detection = await detectCameraFrameFromPython(data.image, {
-      includeAnnotatedImage: true
-    });
-    const points = Array.isArray(detection.points) ? detection.points : [];
-    const boxes = Array.isArray(detection.boxes) ? detection.boxes : [];
-    const tracking = typeof detection.tracking === 'string' ? detection.tracking : 'unknown';
-    const annotatedImage = typeof detection.annotatedImage === 'string' ? detection.annotatedImage : null;
-    const serverSentAt = Date.now();
-
-    recordCommunication({
-      app: 'geometry',
-      direction: 'out',
-      event: 'camera-speed-result',
-      from: 'server',
-      to: socket.id,
-      payload: {
-        requestId,
-        boxes: boxes.length,
-        points: points.length,
+        points,
+        boxes,
         tracking,
-        serverElapsedMs: serverSentAt - serverReceivedAt
-      }
+        annotatedImage,
+        serverReceivedAt,
+        serverSentAt,
+        serverElapsedMs: serverSentAt - serverReceivedAt,
+        clientSentAt: typeof data.clientSentAt === 'number' ? data.clientSentAt : null
+      });
     });
-
-    socket.emit('camera-speed-result', {
-      requestId,
-      points,
-      boxes,
-      tracking,
-      annotatedImage,
-      serverReceivedAt,
-      serverSentAt,
-      serverElapsedMs: serverSentAt - serverReceivedAt,
-      clientSentAt: typeof data.clientSentAt === 'number' ? data.clientSentAt : null
-    });
-  });
+  }
 
   socket.on('activity-update', (geometry) => {
     touchGeometryConnection(socket.id);
@@ -3894,7 +3903,10 @@ httpServer.listen(PORT, HOST, () => {
     console.log(`[camera-worker] python: ${CAMERA_WORKER_PYTHON}`);
     startCameraWorker();
   } else {
-    console.log('[camera-worker] disabled by CAMERA_WORKER_ENABLED=0');
+    const reason = CAMERA_FEATURES_ENABLED
+      ? 'CAMERA_WORKER_ENABLED=0'
+      : 'CAMERA_FEATURES_ENABLED=false';
+    console.log(`[camera-worker] disabled (${reason})`);
   }
 });
 

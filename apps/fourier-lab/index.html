@@ -915,6 +915,103 @@
       line-height: 1.7;
     }
 
+    .bridge-dim-layout {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(260px, 0.8fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .bridge-dim-canvas {
+      margin-top: 0;
+      height: 360px;
+    }
+
+    .bridge-dim-formulas {
+      margin-top: 0;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-size: 1.02rem;
+      line-height: 1.5;
+    }
+
+    .wave-vector-layout {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.85fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .wave-vector-canvas {
+      margin-top: 0;
+      height: 360px;
+    }
+
+    .wave-vector-side {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .wave-vector-controls {
+      display: grid;
+      gap: 10px;
+    }
+
+    .wave-vector-slider {
+      margin: 0;
+    }
+
+    .wave-vector-note {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #050b16;
+      color: #d7eaff;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .wave-vector-math {
+      margin-top: 0;
+      min-height: 188px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.45;
+      font-size: 0.96rem;
+    }
+
+    @media (max-width: 900px) {
+      .bridge-dim-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .bridge-dim-canvas {
+        height: 300px;
+      }
+
+      .bridge-dim-formulas {
+        min-height: 0;
+      }
+
+      .wave-vector-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .wave-vector-canvas {
+        height: 320px;
+      }
+
+      .wave-vector-math {
+        min-height: 0;
+      }
+    }
+
     .deriv-list {
       margin-top: 10px;
       border: 1px solid var(--line);
@@ -1542,6 +1639,39 @@
       color: #a7f3d0;
       line-height: 1.35;
       min-height: 1.2em;
+    }
+
+    .spectrum-bottom-row {
+      margin-top: 6px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.9fr);
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .spectrum-bottom-canvas {
+      margin-top: 0;
+      height: 220px;
+    }
+
+    .spectrum-formula-box {
+      margin-top: 0;
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.45;
+      font-size: 0.96rem;
+    }
+
+    @media (max-width: 900px) {
+      .spectrum-bottom-row {
+        grid-template-columns: 1fr;
+      }
+
+      .spectrum-formula-box {
+        min-height: 0;
+      }
     }
 
     .random-freq-table {
@@ -2275,10 +2405,10 @@
       <a href="#sec-cooley-tukey" data-accordion-group="fft">9.14 Cooley-Tukey FFT βήμα-βήμα</a>
 
       <div class="toc-group-title" data-accordion-group="pipeline">10. Θάλασσα</div>
-      <a href="#sec-bridge-1d2d" data-accordion-group="pipeline">10.1 Από 1D ήχο σε 2D θάλασσα</a>
-      <a href="#sec-wave" data-accordion-group="pipeline">10.2 Τι είναι ο κυματισμός</a>
-      <a href="#sec-spectrum" data-accordion-group="pipeline">10.3 Ενεργειακό φάσμα + Phillips</a>
-      <a href="#sec-random" data-accordion-group="pipeline">10.4 Τυχαίες φάσεις</a>
+      <a href="#sec-ocean-waves-intro" data-accordion-group="pipeline">10.1 Θάλλασα -> Άθροισμα πολλών ημιτονοειδών κυμμάτων</a>
+      <a href="#sec-bridge-1d2d" data-accordion-group="pipeline">10.2 Κυματαριθμοι (wave vectors)</a>
+      <a href="#sec-wavevector-explorer" data-accordion-group="pipeline">10.3 Κατεύθυνση κύματος από kx, kz και λ</a>
+      <a href="#sec-spectrum" data-accordion-group="pipeline">10.4 Ενεργειακό φάσμα + Phillips</a>
         <a href="#sec-ifft" data-accordion-group="pipeline">10.5 IFFT ανακατασκευή</a>
         <a href="#sec-activity-ocean-config" data-accordion-group="pipeline">10.6 Θάλασσα κυμάτων (τελική εικόνα)</a>
     </aside>
@@ -3978,28 +4108,54 @@
         </div>
       </section>
 
-      <section class="section" id="sec-bridge-1d2d">
+      <section class="section" id="sec-ocean-waves-intro">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>10.1) Από 1D ήχο σε 2D θάλασσα</h2>
-            <canvas id="bridgeDimCanvas" class="demo-canvas" width="940" height="300"></canvas>
-            <div id="bridgeDimMath" class="mathjax-box"></div>
+            <h2>10.1) Θάλλασα -> Άθροισμα πολλών ημιτονοειδών κυμμάτων</h2>
+            <canvas id="oceanWavesIntroCanvas" class="demo-canvas" width="940" height="360"></canvas>
           </div>
         </div>
       </section>
 
-      <section class="section" id="sec-wave">
+      <section class="section" id="sec-bridge-1d2d">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>10.2) Τι είναι ο κυματισμός</h2>
-            <p>
-              Στον ωκεανό, το ύψος της επιφάνειας είναι ένα πεδίο τιμών που μπορεί επίσης να αναλυθεί
-              φασματικά, όπως και ένα ηχητικό σήμα.
-            </p>
-            <div class="mathjax-box">
-              $$h(x,z)=\sum_{\vec{k}} H(\vec{k})\,e^{i(k_xx+k_zz)}$$
+            <h2>10.2) Κυματαριθμοι (wave vectors)</h2>
+            <div class="bridge-dim-layout">
+              <canvas id="bridgeDimCanvas" class="demo-canvas bridge-dim-canvas" width="760" height="360"></canvas>
+              <div id="bridgeDimMath" class="mathjax-box bridge-dim-formulas"></div>
             </div>
-            <canvas id="wavinessCanvas" class="demo-canvas" width="940" height="250"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sec-wavevector-explorer">
+        <div class="slide-card">
+          <div class="slide-content">
+            <h2>10.3) Κατεύθυνση κύματος από kx, kz και λ</h2>
+            <div class="wave-vector-layout">
+              <canvas id="waveVectorExplorerCanvas" class="demo-canvas wave-vector-canvas" width="760" height="360"></canvas>
+              <div class="wave-vector-side">
+                <div class="wave-vector-controls">
+                  <div class="slider-group wave-vector-slider wave-tip" data-tip="k_x: ελέγχει το οριζόντιο μέρος του wave vector και συνεπώς την κατεύθυνση διάδοσης." title="k_x: ελέγχει το οριζόντιο μέρος του wave vector και συνεπώς την κατεύθυνση διάδοσης.">
+                    <div class="slider-label"><span>k_x</span><span id="waveVectorKxValue">2.00</span></div>
+                    <input id="waveVectorKx" type="range" min="-5" max="5" step="0.01" value="2" title="k_x: ελέγχει το οριζόντιο μέρος του wave vector." />
+                  </div>
+                  <div class="slider-group wave-vector-slider wave-tip" data-tip="k_z: ελέγχει το κατακόρυφο μέρος του wave vector και στρίβει το κύμα στο επίπεδο x-z." title="k_z: ελέγχει το κατακόρυφο μέρος του wave vector και στρίβει το κύμα στο επίπεδο x-z.">
+                    <div class="slider-label"><span>k_z</span><span id="waveVectorKzValue">1.20</span></div>
+                    <input id="waveVectorKz" type="range" min="-5" max="5" step="0.01" value="1.2" title="k_z: ελέγχει το κατακόρυφο μέρος του wave vector." />
+                  </div>
+                  <div class="slider-group wave-vector-slider wave-tip" data-tip="λ: καθορίζει το μήκος κύματος. Όσο μικρότερο το λ, τόσο μεγαλύτερο το |k| και τόσο πιο πυκνά τα κύματα." title="λ: καθορίζει το μήκος κύματος. Όσο μικρότερο το λ, τόσο μεγαλύτερο το |k| και τόσο πιο πυκνά τα κύματα.">
+                    <div class="slider-label"><span>λ</span><span id="waveVectorLambdaValue">4.80</span></div>
+                    <input id="waveVectorLambda" type="range" min="1.5" max="14" step="0.01" value="4.8" title="λ: καθορίζει το μήκος κύματος." />
+                  </div>
+                </div>
+                <div class="wave-vector-note">
+                  Πειράζεις τη διεύθυνση με <strong>k_x</strong> και <strong>k_z</strong>, και το <strong>λ</strong> αλλάζει το μέτρο <strong>|k|</strong> και την απόσταση μεταξύ των κυματικών μετώπων.
+                </div>
+                <div id="waveVectorMath" class="mathjax-box wave-vector-math"></div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -4007,36 +4163,32 @@
       <section class="section" id="sec-spectrum">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>10.3) Ενεργειακό φάσμα + Phillips</h2>
+            <h2>10.4) Ενεργειακό φάσμα + Phillips</h2>
             <p>
               Παράγουμε Gaussian δείγματα στο φάσμα και στη συνέχεια εφαρμόζουμε το βάρος του Phillips
               ώστε να τονιστούν/κατασταλούν συγκεκριμένα μήκη κύματος.
             </p>
             <div class="random-freq-toolbar">
               <button id="gaussianRefreshBtn" class="random-freq-btn" type="button">Νέο Gaussian</button>
-              <span class="random-freq-chip"><strong id="gaussianRefreshLabel">Gaussian #0</strong></span>
             </div>
-            <div class="random-freq-preview" id="gaussianPreview">Πάτησε «Νέο Gaussian» για να ανανεώσεις το φασματικό δείγμα.</div>
             <canvas id="energySpectrumCanvas" class="demo-canvas" width="940" height="220"></canvas>
             <p>
               Εφαρμογή Phillips weighting στο ίδιο Gaussian δείγμα:
             </p>
-            <div>
-              <canvas id="phillipsCanvas" class="demo-canvas" width="940" height="220"></canvas>
+            <div class="spectrum-bottom-row">
+              <canvas id="phillipsCanvas" class="demo-canvas spectrum-bottom-canvas" width="640" height="220"></canvas>
+              <div class="mathjax-box spectrum-formula-box">
+                \[
+                  H_0(\vec{k})=\frac{1}{\sqrt{2}}\left(\xi_r+i\xi_i\right)\sqrt{P(\vec{k})}
+                \]
+                \[
+                  P(\vec{k})=\frac{e^{-1/(k^2L^2)}}{k^4}\,e^{-k^2d^2},\qquad k=\|\vec{k}\|
+                \]
+                \[
+                  |H_0(\vec{k})|\propto |\xi(\vec{k})|\sqrt{P(\vec{k})}
+                \]
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="section" id="sec-random">
-        <div class="slide-card">
-          <div class="slide-content">
-            <h2>10.4) Τυχαίες φάσεις</h2>
-            <p>
-              Από το μέτρο και την τυχαία φάση φτιάχνουμε τους μιγαδικούς συντελεστές \(H_0(k)\).
-              Αυτό δίνει ρεαλισμό: η επιφάνεια δεν επαναλαμβάνεται μηχανικά, αλλά παραμένει στατιστικά σωστή.
-            </p>
-            <canvas id="randomPhaseCanvas" class="demo-canvas" width="940" height="250"></canvas>
           </div>
         </div>
       </section>
@@ -4045,7 +4197,7 @@
       <section class="section" id="sec-ifft">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>10.6) IFFT: από \(H(k_x,k_z)\) σε \(h(x,z,t)\)</h2>
+            <h2>10.5) IFFT: από \(H(k_x,k_z)\) σε \(h(x,z,t)\)</h2>
             <p>
               Με IFFT γυρίζουμε από το spectral domain στο spatial domain και παίρνουμε ξανά ύψος επιφάνειας
               ανά σημείο πλέγματος.
@@ -4059,7 +4211,7 @@
       <section class="section" id="sec-activity-ocean-config">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>10.7) Θάλασσα κυμάτων (τελική εικόνα)</h2>
+            <h2>10.6) Θάλασσα κυμάτων (τελική εικόνα)</h2>
             <p>
               Η ίδια ιδέα του στόχου κλείνει την παρουσίαση: από θεμελιώδη κύματα και ήχο,
               σε μια δυναμική επιφάνεια θάλασσας με επάλληλους κυματισμούς.
@@ -4508,8 +4660,17 @@
     const sortStatsMergeWrites = document.getElementById("sortStatsMergeWrites");
     const sortStatsBubbleSteps = document.getElementById("sortStatsBubbleSteps");
     const sortStatsMergeSteps = document.getElementById("sortStatsMergeSteps");
+    const oceanWavesIntroCanvas = document.getElementById("oceanWavesIntroCanvas");
     const bridgeDimCanvas = document.getElementById("bridgeDimCanvas");
     const bridgeDimMath = document.getElementById("bridgeDimMath");
+    const waveVectorExplorerCanvas = document.getElementById("waveVectorExplorerCanvas");
+    const waveVectorKx = document.getElementById("waveVectorKx");
+    const waveVectorKz = document.getElementById("waveVectorKz");
+    const waveVectorLambda = document.getElementById("waveVectorLambda");
+    const waveVectorKxValue = document.getElementById("waveVectorKxValue");
+    const waveVectorKzValue = document.getElementById("waveVectorKzValue");
+    const waveVectorLambdaValue = document.getElementById("waveVectorLambdaValue");
+    const waveVectorMath = document.getElementById("waveVectorMath");
     const ifftExplainCanvas = document.getElementById("ifftExplainCanvas");
     const ifftExplainMath = document.getElementById("ifftExplainMath");
     const ifftOceanMath = document.getElementById("ifftOceanMath");
@@ -5141,6 +5302,12 @@
       slider?.addEventListener("input", updateWave2DLabels);
     });
     updateWave2DLabels();
+
+    [waveVectorKx, waveVectorKz, waveVectorLambda].forEach((slider) => {
+      slider?.addEventListener("input", renderWaveVectorMath);
+      slider?.addEventListener("change", renderWaveVectorMath);
+    });
+    renderWaveVectorMath();
 
     // @ui — τοποθετεί τα tooltips αριστερά/δεξιά όταν ο slider είναι στα άκρα του viewport.
     function updateAdaptiveTooltipPlacement() {
@@ -7113,13 +7280,17 @@
 
     renderFFTExplainMath();
 
-    // @slide 10.1 — γράφει MathJax τύπους bridge 1D→2D.
+    // @slide 10.1 — γράφει MathJax τύπους για κυματαριθμούς (wave vectors).
     function renderBridgeDimMath() {
       if (!bridgeDimMath) {
         return;
       }
 
-      bridgeDimMath.innerHTML = `\\[s(x,t)=\\sum_k A_k\\sin(kx-\\omega_k t+\\phi_k)\\qquad\\Longrightarrow\\qquad h(x,z,t)=\\sum_{\\mathbf{k}}A_{\\mathbf{k}}\\sin(\\mathbf{k}\\cdot\\mathbf{x}-\\omega_{\\mathbf{k}}t+\\phi_{\\mathbf{k}}),\\;\\mathbf{k}=(k_x,k_z)\\]`;
+      bridgeDimMath.innerHTML = `
+        \\[\\vec{k}=(k_x,k_z)\\]
+        \\[k_x=\\frac{2\\pi}{L}i,\\qquad k_z=\\frac{2\\pi}{L}j\\]
+        \\[i,j\\in\\{-N/2,\\dots,N/2-1\\}\\]
+      `;
 
       if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
         window.MathJax.typesetPromise([bridgeDimMath]).catch(() => {});
@@ -12266,113 +12437,468 @@
       });
     }
 
-    // @slide 10.1 — σχεδιάζει bridge 1D→2D: συχνότητες και 2D wavevectors.
-    function drawDimensionalBridge(canvas, t) {
+    // @slide 10.1 — εισαγωγική εικόνα: πολλά κύματα αριστερά -> θάλασσα δεξιά.
+    function drawOceanWavesIntro(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const pad = 14;
-        const gap = 14;
-        const leftW = Math.floor((width - pad * 2 - gap) * 0.47);
-        const rightW = width - pad * 2 - gap - leftW;
+        const leftW = Math.floor((width - pad * 2) * 0.47);
+        const rightW = width - pad * 2 - leftW;
         const leftX = pad;
-        const rightX = leftX + leftW + gap;
+        const rightX = leftX + leftW;
         const top = pad;
         const boxH = height - pad * 2;
 
-        ctx.strokeStyle = "#345886";
-        ctx.strokeRect(leftX, top, leftW, boxH);
-        ctx.strokeRect(rightX, top, rightW, boxH);
+        const bgGrad = ctx.createLinearGradient(0, top, 0, top + boxH);
+        bgGrad.addColorStop(0, "#04162f");
+        bgGrad.addColorStop(1, "#020a17");
+        ctx.fillStyle = bgGrad;
+        ctx.fillRect(leftX, top, leftW, boxH);
+        ctx.fillRect(rightX, top, rightW, boxH);
 
-        const x1 = leftX + 10;
-        const x2 = leftX + leftW - 10;
-        const midY = top + boxH * 0.60;
-        const amp = boxH * 0.24;
+        const waveColors = ["#26d8ff", "#ffd84d", "#ff5ad7", "#7dff5b", "#ff8c2e", "#cfd8e6"];
+        const waveLabels = ["Wave 1", "Wave 2", "Wave 3", "Wave 4", "Wave 5", "Wave N"];
+        const rows = 6;
+        const yStart = top + 36;
+        const yGap = (boxH - 72) / (rows - 1);
+        const x1 = leftX + 104;
+        const x2 = leftX + leftW - 22;
 
-        ctx.strokeStyle = "#2f4f85";
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(x1, midY);
-        ctx.lineTo(x2, midY);
-        ctx.stroke();
+        for (let r = 0; r < rows; r += 1) {
+          const y = yStart + r * yGap;
+          ctx.fillStyle = waveColors[r];
+          ctx.font = "700 22px Segoe UI, sans-serif";
+          ctx.fillText(waveLabels[r], leftX + 14, y + 7);
 
-        const signal = (nx) =>
-          0.85 * Math.sin(2 * Math.PI * (1.2 * nx - 0.25 * t)) +
-          0.45 * Math.sin(2 * Math.PI * (2.4 * nx - 0.41 * t + 0.3));
-
-        ctx.strokeStyle = "#9cffb4";
-        ctx.lineWidth = 2.8;
-        ctx.beginPath();
-        for (let x = x1; x <= x2; x += 2) {
-          const nx = (x - x1) / Math.max(1, x2 - x1);
-          const y = midY - amp * signal(nx);
-          if (x === x1) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          ctx.strokeStyle = waveColors[r];
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          for (let x = x1; x <= x2; x += 2) {
+            const nx = (x - x1) / Math.max(1, x2 - x1);
+            const freq = 3.8 + (r % 5) * 0.45;
+            const amp = 11 + (rows - r) * 0.8;
+            const phase = 0.7 * r - t * (0.8 + 0.08 * r);
+            const yy = y + amp * Math.sin(2 * Math.PI * freq * nx + phase);
+            if (x === x1) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
+          }
+          ctx.stroke();
         }
+
+        ctx.fillStyle = "#a7bdd6";
+        ctx.font = "700 30px Segoe UI, sans-serif";
+        ctx.fillText("...", leftX + 88, yStart + yGap * 4.6);
+
+        const braceX = rightX - 18;
+        const braceTop = top + 8;
+        const braceBottom = top + boxH - 8;
+        ctx.strokeStyle = "rgba(238,246,255,0.9)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(braceX, braceTop);
+        ctx.quadraticCurveTo(braceX + 16, braceTop, braceX + 16, braceTop + 18);
+        ctx.lineTo(braceX + 16, (braceTop + braceBottom) * 0.5 - 14);
+        ctx.quadraticCurveTo(braceX + 16, (braceTop + braceBottom) * 0.5, braceX + 30, (braceTop + braceBottom) * 0.5);
+        ctx.quadraticCurveTo(braceX + 16, (braceTop + braceBottom) * 0.5, braceX + 16, (braceTop + braceBottom) * 0.5 + 14);
+        ctx.lineTo(braceX + 16, braceBottom - 18);
+        ctx.quadraticCurveTo(braceX + 16, braceBottom, braceX, braceBottom);
         ctx.stroke();
 
-        const cols = 24;
-        const rows = 14;
-        const gx1 = rightX + 12;
-        const gy1 = top + 12;
-        const gx2 = rightX + rightW - 12;
-        const gy2 = top + boxH - 12;
-        const cellW = (gx2 - gx1) / cols;
-        const cellH = (gy2 - gy1) / rows;
+        const arrowY = top + boxH * 0.50;
+        const arrowStart = braceX + 28;
+        const arrowEnd = rightX + 76;
+        ctx.strokeStyle = "#e3f0ff";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(arrowStart, arrowY);
+        ctx.lineTo(arrowEnd, arrowY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(arrowEnd, arrowY);
+        ctx.lineTo(arrowEnd - 11, arrowY - 8);
+        ctx.moveTo(arrowEnd, arrowY);
+        ctx.lineTo(arrowEnd - 11, arrowY + 8);
+        ctx.stroke();
 
-        for (let row = 0; row < rows; row += 1) {
-          for (let col = 0; col < cols; col += 1) {
-            const nx = col / Math.max(1, cols - 1);
-            const nz = row / Math.max(1, rows - 1);
-            const value =
-              Math.sin(2 * Math.PI * (1.15 * nx - 0.23 * t)) +
-              0.8 * Math.sin(2 * Math.PI * (1.30 * nz - 0.31 * t + 0.35)) +
-              0.6 * Math.sin(2 * Math.PI * (0.75 * nx + 1.05 * nz - 0.27 * t));
-            const alpha = 0.18 + ((value + 2.4) / 4.8) * 0.72;
-            ctx.fillStyle = `rgba(92,166,255,${Math.max(0.08, Math.min(0.96, alpha)).toFixed(3)})`;
-            ctx.fillRect(gx1 + col * cellW, gy1 + row * cellH, cellW - 1.2, cellH - 1.2);
+        const seaX = rightX + 240;
+        const seaY = top + boxH * 0.58;
+        const cols = 22;
+        const rowsSea = 14;
+        const step = 12;
+        const heights = Array.from({ length: rowsSea }, () => Array(cols).fill(0));
+
+        for (let rz = 0; rz < rowsSea; rz += 1) {
+          for (let cx = 0; cx < cols; cx += 1) {
+            const nx = cx / Math.max(1, cols - 1);
+            const nz = rz / Math.max(1, rowsSea - 1);
+            heights[rz][cx] =
+              14 * Math.sin(2 * Math.PI * (nx * 1.3 - t * 0.22)) +
+              10 * Math.sin(2 * Math.PI * (nz * 1.05 - t * 0.18 + 0.4)) +
+              7 * Math.sin(2 * Math.PI * (nx * 0.65 + nz * 0.9 - t * 0.26));
           }
         }
 
-        const cx = gx1 + (gx2 - gx1) * 0.52;
-        const cy = gy1 + (gy2 - gy1) * 0.50;
-        const vec1 = { x: 60, y: -22, color: "#ffbe76" };
-        const vec2 = { x: 28, y: -56, color: "#c6a8ff" };
-        [vec1, vec2].forEach((vector, idx) => {
-          ctx.strokeStyle = vector.color;
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(cx, cy);
-          ctx.lineTo(cx + vector.x, cy + vector.y);
-          ctx.stroke();
-          ctx.beginPath();
-          ctx.moveTo(cx + vector.x, cy + vector.y);
-          ctx.lineTo(cx + vector.x - 8, cy + vector.y + 4);
-          ctx.moveTo(cx + vector.x, cy + vector.y);
-          ctx.lineTo(cx + vector.x - 2, cy + vector.y + 9);
-          ctx.stroke();
-          ctx.fillStyle = vector.color;
-          ctx.font = "12px Segoe UI, sans-serif";
-          ctx.fillText(`k${idx + 1}`, cx + vector.x + 4, cy + vector.y - 4);
-        });
+        const project = (cx, rz, h) => {
+          const xx = (cx - cols * 0.5) * step;
+          const zz = (rz - rowsSea * 0.5) * step;
+          return {
+            x: seaX + xx - zz * 1.25,
+            y: seaY + (xx + zz) * 0.26 - h,
+          };
+        };
 
-        const bridgeY = top + boxH * 0.12;
-        ctx.strokeStyle = "#7fc4ff";
+        for (let rz = 0; rz < rowsSea - 1; rz += 1) {
+          for (let cx = 0; cx < cols - 1; cx += 1) {
+            const p1 = project(cx, rz, heights[rz][cx]);
+            const p2 = project(cx + 1, rz, heights[rz][cx + 1]);
+            const p3 = project(cx + 1, rz + 1, heights[rz + 1][cx + 1]);
+            const p4 = project(cx, rz + 1, heights[rz + 1][cx]);
+            const avg = (heights[rz][cx] + heights[rz][cx + 1] + heights[rz + 1][cx + 1] + heights[rz + 1][cx]) * 0.25;
+            const light = Math.max(26, Math.min(72, 43 + avg * 0.7));
+            ctx.fillStyle = `hsl(210, 64%, ${light.toFixed(1)}%)`;
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.lineTo(p3.x, p3.y);
+            ctx.lineTo(p4.x, p4.y);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = "rgba(216,234,255,0.16)";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+
+        ctx.fillStyle = "#eef6ff";
+      });
+    }
+
+    // @slide 10.2 — σχεδιάζει πλέγμα 16x16 κυματαριθμών με άξονες -L/2..L/2.
+    function drawDimensionalBridge(canvas, t) {
+      drawAxesCanvas(canvas, (ctx, width, height) => {
+        const pad = 14;
+        const gridN = 16;
+        const boxX = pad;
+        const boxY = pad;
+        const boxW = width - pad * 2;
+        const boxH = height - pad * 2;
+        const gridSize = Math.min(boxH - 54, boxW - 130);
+        const gx = boxX + 60;
+        const gy = boxY + 18;
+        const cell = gridSize / gridN;
+        const half = gridN / 2;
+        const maxR = Math.sqrt(2) * half;
+        const axisBottomY = gy + gridSize + 24;
+        const axisLeftX = gx - 24;
+
+        ctx.strokeStyle = "#345886";
+        ctx.strokeRect(boxX, boxY, boxW, boxH);
+
+        for (let j = 0; j < gridN; j += 1) {
+          for (let i = 0; i < gridN; i += 1) {
+            const ix = i - half;
+            const jx = j - half;
+            const r = Math.sqrt(ix * ix + jx * jx);
+            const u = Math.max(0, Math.min(1, r / maxR));
+            const alpha = 0.18 + u * 0.78;
+            const hue = 205 - u * 28;
+            ctx.fillStyle = `hsla(${hue.toFixed(1)}, 88%, ${(38 + u * 24).toFixed(1)}%, ${alpha.toFixed(3)})`;
+            ctx.fillRect(gx + i * cell + 0.8, gy + j * cell + 0.8, cell - 1.6, cell - 1.6);
+          }
+        }
+
+        ctx.strokeStyle = "rgba(174,208,246,0.35)";
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= gridN; i += 1) {
+          const x = gx + i * cell;
+          ctx.beginPath();
+          ctx.moveTo(x, gy);
+          ctx.lineTo(x, gy + gridSize);
+          ctx.stroke();
+        }
+        for (let j = 0; j <= gridN; j += 1) {
+          const y = gy + j * cell;
+          ctx.beginPath();
+          ctx.moveTo(gx, y);
+          ctx.lineTo(gx + gridSize, y);
+          ctx.stroke();
+        }
+
+        const cX = gx + half * cell;
+        const cY = gy + half * cell;
+        ctx.strokeStyle = "#ffce8a";
+        ctx.lineWidth = 1.7;
+        ctx.beginPath();
+        ctx.moveTo(cX, gy - 6);
+        ctx.lineTo(cX, gy + gridSize + 6);
+
+
+        const ticks = 8;
+        ctx.strokeStyle = "#c8dfff";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(gx, axisBottomY);
+        ctx.lineTo(gx + gridSize, axisBottomY);
+        ctx.stroke();
+        for (let i = 0; i <= ticks; i += 1) {
+          const x = gx + (i / ticks) * gridSize;
+          ctx.beginPath();
+          ctx.moveTo(x, axisBottomY - 7);
+          ctx.lineTo(x, axisBottomY + 7);
+          ctx.stroke();
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(axisLeftX, gy + gridSize);
+        ctx.lineTo(axisLeftX, gy);
+        ctx.stroke();
+        for (let j = 0; j <= ticks; j += 1) {
+          const y = gy + gridSize - (j / ticks) * gridSize;
+          ctx.beginPath();
+          ctx.moveTo(axisLeftX - 7, y);
+          ctx.lineTo(axisLeftX + 7, y);
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = "#e4efff";
+        ctx.font = "italic 20px Cambria, Georgia, serif";
+        ctx.fillText("x", gx + gridSize * 0.49, axisBottomY + 28);
+        ctx.save();
+        ctx.translate(axisLeftX - 28, gy + gridSize * 0.52);
+        ctx.rotate(-Math.PI / 2);
+        ctx.fillText("z", 0, 0);
+        ctx.restore();
+
+        ctx.font = "italic 18px Cambria, Georgia, serif";
+        ctx.fillText("- L/2", gx - 16, axisBottomY - 12);
+        ctx.fillText("L/2", gx + gridSize - 16, axisBottomY - 12);
+        ctx.fillText("L/2", axisLeftX - 16, gy - 12);
+        ctx.fillText("- L/2", axisLeftX - 26, gy + gridSize + 20);
+
+        
+        ctx.fillStyle = "#8fb5d7";
+        ctx.font = "11px Segoe UI, sans-serif";
+        ctx.fillText("i", gx + gridSize + 12, cY + 4);
+        ctx.fillText("j", cX - 4, gy - 10);
+      });
+    }
+
+    // @slide 10.3 — επιστρέφει τα sliders και τα παράγωγα μεγέθη του wave vector.
+    function getWaveVectorSettings() {
+      const rawKx = waveVectorKx ? Number(waveVectorKx.value) : 2;
+      const rawKz = waveVectorKz ? Number(waveVectorKz.value) : 1.2;
+      const lambda = Math.max(0.2, waveVectorLambda ? Number(waveVectorLambda.value) : 4.8);
+      const rawNorm = Math.hypot(rawKx, rawKz) || 1;
+      const magnitude = (2 * Math.PI) / lambda;
+      const kx = magnitude * rawKx / rawNorm;
+      const kz = magnitude * rawKz / rawNorm;
+      const angle = Math.atan2(kz, kx);
+      const omega = 0.85 + magnitude * 0.35;
+
+      return {
+        rawKx,
+        rawKz,
+        lambda,
+        magnitude,
+        kx,
+        kz,
+        angle,
+        omega,
+      };
+    }
+
+    // @slide 10.3 — ενημερώνει MathJax και labels με τις τρέχουσες τιμές του wave vector.
+    function renderWaveVectorMath() {
+      if (!waveVectorMath) {
+        return;
+      }
+
+      const settings = getWaveVectorSettings();
+      const directionDegrees = ((settings.angle * 180) / Math.PI + 360) % 360;
+
+      if (waveVectorKxValue) waveVectorKxValue.textContent = settings.kx.toFixed(2);
+      if (waveVectorKzValue) waveVectorKzValue.textContent = settings.kz.toFixed(2);
+      if (waveVectorLambdaValue) waveVectorLambdaValue.textContent = settings.lambda.toFixed(2);
+
+      waveVectorMath.innerHTML = `
+        \\[\\vec{k}=(k_x,k_z)=(${settings.kx.toFixed(2)},${settings.kz.toFixed(2)})\\]
+        \\[|\\vec{k}|=\\sqrt{k_x^2+k_z^2}=${settings.magnitude.toFixed(2)}=\\frac{2\\pi}{\\lambda}\\]
+        \\[\\lambda=\\frac{2\\pi}{|\\vec{k}|}=${settings.lambda.toFixed(2)}\\]
+        \\[h(x,z,t)=\\cos\\big(k_xx+k_zz-\\omega t\\big),\\quad \\theta=${directionDegrees.toFixed(1)}^\\circ\\]
+      `;
+
+      if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
+        window.MathJax.typesetPromise([waveVectorMath]).catch(() => {});
+      }
+    }
+
+    // @slide 10.3 — σχεδιάζει κατεύθυνση του κύματος και wave fronts για το τρέχον \,k.
+    function drawWaveVectorExplorer(canvas, t) {
+      drawAxesCanvas(canvas, (ctx, width, height) => {
+        const settings = getWaveVectorSettings();
+        const pad = 14;
+        const leftW = 240;
+        const leftX = pad;
+        const top = pad;
+        const boxH = height - pad * 2;
+        const rightX = leftX + leftW + 12;
+        const rightW = width - rightX - pad;
+
+        const leftBox = { x: leftX, y: top, w: leftW, h: boxH };
+        const rightBox = { x: rightX, y: top, w: rightW, h: boxH };
+
+        const leftGrad = ctx.createLinearGradient(leftBox.x, leftBox.y, leftBox.x, leftBox.y + leftBox.h);
+        leftGrad.addColorStop(0, "#061a33");
+        leftGrad.addColorStop(1, "#040d1c");
+        ctx.fillStyle = leftGrad;
+        ctx.fillRect(leftBox.x, leftBox.y, leftBox.w, leftBox.h);
+        ctx.fillStyle = "#03101f";
+        ctx.fillRect(rightBox.x, rightBox.y, rightBox.w, rightBox.h);
+
+        ctx.strokeStyle = "#345886";
+        ctx.strokeRect(leftBox.x, leftBox.y, leftBox.w, leftBox.h);
+        ctx.strokeRect(rightBox.x, rightBox.y, rightBox.w, rightBox.h);
+
+        const origin = { x: leftBox.x + 70, y: leftBox.y + leftBox.h - 78 };
+        const axisLen = 88;
+        ctx.strokeStyle = "#d8e9ff";
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.moveTo(leftX + leftW - 8, bridgeY);
-        ctx.lineTo(rightX + 8, bridgeY);
+        ctx.moveTo(origin.x, origin.y);
+        ctx.lineTo(origin.x + axisLen, origin.y);
+        ctx.moveTo(origin.x, origin.y);
+        ctx.lineTo(origin.x, origin.y - axisLen);
         ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(rightX + 8, bridgeY);
-        ctx.lineTo(rightX + 1, bridgeY - 5);
-        ctx.moveTo(rightX + 8, bridgeY);
-        ctx.lineTo(rightX + 1, bridgeY + 5);
-        ctx.stroke();
+        ctx.fillStyle = "#d8e9ff";
+        ctx.font = "italic 18px Cambria, Georgia, serif";
+        ctx.fillText("x", origin.x + axisLen + 4, origin.y + 6);
+        ctx.fillText("z", origin.x - 6, origin.y - axisLen - 8);
 
-        ctx.fillStyle = "#c7dcff";
-        ctx.font = "12px Segoe UI, sans-serif";
-        ctx.fillText("1D: συχνότητες στον x", leftX + 12, top + 18);
-        ctx.fillText("2D: συχνότητες + κατευθύνσεις (kx, kz)", rightX + 12, top + 18);
-        ctx.fillStyle = "#9ed1ff";
-        ctx.fillText("ίδια ιδέα Fourier, μία διάσταση παραπάνω", leftX + leftW - 168, bridgeY - 8);
+        const dirMag = Math.hypot(settings.kx, settings.kz) || 1;
+        const arrowScale = 84 / dirMag;
+        const tip = {
+          x: origin.x + settings.kx * arrowScale,
+          y: origin.y - settings.kz * arrowScale,
+        };
+        const arrowAngle = Math.atan2(origin.y - tip.y, tip.x - origin.x);
+        const headSize = 10;
+        ctx.strokeStyle = "#5bc0ff";
+        ctx.lineWidth = 4;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(origin.x, origin.y);
+        ctx.lineTo(tip.x, tip.y);
+        ctx.stroke();
+        ctx.fillStyle = "#5bc0ff";
+        ctx.beginPath();
+        ctx.moveTo(tip.x, tip.y);
+        ctx.lineTo(tip.x - headSize * Math.cos(arrowAngle - 0.42), tip.y + headSize * Math.sin(arrowAngle - 0.42));
+        ctx.lineTo(tip.x - headSize * Math.cos(arrowAngle + 0.42), tip.y + headSize * Math.sin(arrowAngle + 0.42));
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "#d9efff";
+        ctx.font = "700 18px Segoe UI, sans-serif";
+        ctx.fillText("k", tip.x + 6, tip.y - 8);
+        ctx.font = "14px Segoe UI, sans-serif";
+        ctx.fillText(`|k| = ${settings.magnitude.toFixed(2)}`, leftBox.x + 16, leftBox.y + 24);
+        ctx.fillText(`\u03bb = ${settings.lambda.toFixed(2)}`, leftBox.x + 16, leftBox.y + 44);
+        ctx.fillText(`\u03b8 = ${(((settings.angle * 180) / Math.PI + 360) % 360).toFixed(1)}°`, leftBox.x + 16, leftBox.y + 64);
+
+        const field = {
+          x: rightBox.x + 16,
+          y: rightBox.y + 16,
+          w: rightBox.w - 32,
+          h: rightBox.h - 32,
+        };
+        const fieldGrad = ctx.createLinearGradient(field.x, field.y, field.x, field.y + field.h);
+        fieldGrad.addColorStop(0, "#07192e");
+        fieldGrad.addColorStop(1, "#020812");
+        ctx.fillStyle = fieldGrad;
+        ctx.fillRect(field.x, field.y, field.w, field.h);
+
+        const rows = 14;
+        const cols = 20;
+        const mesh = [];
+        const phaseScale = 2.8;
+        const projected = (gx, gz, heightValue) => {
+          const px = field.x + field.w * 0.5 + (gx - gz) * 9.5;
+          const py = field.y + 38 + (gx + gz) * 4.2 - heightValue * 20;
+          return { x: px, y: py };
+        };
+
+        for (let row = 0; row < rows; row += 1) {
+          mesh[row] = [];
+          for (let col = 0; col < cols; col += 1) {
+            const nx = col / Math.max(1, cols - 1) - 0.5;
+            const nz = row / Math.max(1, rows - 1) - 0.5;
+            const phase = settings.kx * nx * phaseScale + settings.kz * nz * phaseScale - settings.omega * t;
+            const heightValue = 0.55 * Math.cos(phase);
+            mesh[row][col] = { nx, nz, heightValue };
+          }
+        }
+
+        for (let row = rows - 2; row >= 0; row -= 1) {
+          for (let col = 0; col < cols - 1; col += 1) {
+            const p1 = projected(mesh[row][col].nx, mesh[row][col].nz, mesh[row][col].heightValue);
+            const p2 = projected(mesh[row][col + 1].nx, mesh[row][col + 1].nz, mesh[row][col + 1].heightValue);
+            const p3 = projected(mesh[row + 1][col + 1].nx, mesh[row + 1][col + 1].nz, mesh[row + 1][col + 1].heightValue);
+            const p4 = projected(mesh[row + 1][col].nx, mesh[row + 1][col].nz, mesh[row + 1][col].heightValue);
+            const avgHeight = (mesh[row][col].heightValue + mesh[row][col + 1].heightValue + mesh[row + 1][col + 1].heightValue + mesh[row + 1][col].heightValue) * 0.25;
+            const shade = 34 + (avgHeight + 0.55) * 42;
+            const fill = Math.max(14, Math.min(78, shade));
+            ctx.fillStyle = `hsl(210, 76%, ${fill.toFixed(1)}%)`;
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.lineTo(p3.x, p3.y);
+            ctx.lineTo(p4.x, p4.y);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = "rgba(255,255,255,0.08)";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+
+        const waveDir = { x: settings.kx / dirMag, y: -settings.kz / dirMag };
+        const crestStart = projected(-0.48, -0.10, 0.08);
+        const crestEnd = projected(0.48, 0.10, 0.08);
+        ctx.strokeStyle = "rgba(255,219,159,0.95)";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(crestStart.x, crestStart.y);
+        ctx.lineTo(crestEnd.x, crestEnd.y);
+        ctx.stroke();
+        ctx.fillStyle = "#ffdb9f";
+        ctx.beginPath();
+        ctx.arc(crestEnd.x, crestEnd.y, 4, 0, 2 * Math.PI);
+        ctx.fill();
+
+        const center = projected(0, 0, 0.08);
+        const arrowLen = 110;
+        const arrowEnd = {
+          x: center.x + waveDir.x * arrowLen,
+          y: center.y + waveDir.y * arrowLen,
+        };
+        ctx.strokeStyle = "#ffbf5a";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(center.x, center.y);
+        ctx.lineTo(arrowEnd.x, arrowEnd.y);
+        ctx.stroke();
+        const headAngle = Math.atan2(center.y - arrowEnd.y, arrowEnd.x - center.x);
+        ctx.fillStyle = "#ffbf5a";
+        ctx.beginPath();
+        ctx.moveTo(arrowEnd.x, arrowEnd.y);
+        ctx.lineTo(arrowEnd.x - 12 * Math.cos(headAngle - 0.42), arrowEnd.y + 12 * Math.sin(headAngle - 0.42));
+        ctx.lineTo(arrowEnd.x - 12 * Math.cos(headAngle + 0.42), arrowEnd.y + 12 * Math.sin(headAngle + 0.42));
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "#e8f4ff";
+        ctx.font = "700 15px Segoe UI, sans-serif";
+        ctx.fillText("3D wave surface", field.x + 12, field.y + 20);
+        ctx.fillStyle = "#ffdb9f";
+        ctx.fillText("\u2192 propagation", field.x + field.w - 112, field.y + 20);
       });
     }
 
@@ -15511,17 +16037,62 @@
         const grad = ctx.createLinearGradient(0, 0, 0, height);
         grad.addColorStop(0, "#0a1f3f"); grad.addColorStop(1, "#041024");
         ctx.fillStyle = grad; ctx.fillRect(0, 0, width, height);
-        for (let i = 0; i < 4; i += 1) {
-          ctx.strokeStyle = `rgba(143, 205, 255, ${0.25 + i * 0.15})`;
-          ctx.lineWidth = 1.5 + i * 0.6;
-          ctx.beginPath();
-          for (let x = 0; x <= width; x += 2) {
-            const nx = x / width;
-            const y = height * (0.35 + i * 0.14) + (18 + i * 8) * Math.sin(2 * Math.PI * ((1.2 + i * 0.5) * nx - t * (0.3 + i * 0.15)));
-            if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        const horizonY = height * 0.24;
+        const baseY = height * 0.92;
+        const rows = 11;
+        const cols = 60;
+        const centerX = width * 0.50;
+
+        const project = (nx, nz, h) => ({
+          x: centerX + (nx - 0.5) * width * (0.94 - nz * 0.22) + (nz - 0.5) * width * 0.12,
+          y: horizonY + Math.pow(nz, 1.28) * (baseY - horizonY) - h,
+        });
+
+        ctx.strokeStyle = "rgba(216, 234, 255, 0.18)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, horizonY);
+        ctx.lineTo(width, horizonY);
+        ctx.stroke();
+
+        for (let row = 0; row < rows - 1; row += 1) {
+          const nz0 = row / (rows - 1);
+          const nz1 = (row + 1) / (rows - 1);
+          for (let col = 0; col < cols - 1; col += 1) {
+            const nx0 = col / (cols - 1);
+            const nx1 = (col + 1) / (cols - 1);
+            const h0 = 16 * Math.sin(2 * Math.PI * (1.9 * nx0 - 0.28 * t + nz0 * 0.85));
+            const h1 = 16 * Math.sin(2 * Math.PI * (1.9 * nx1 - 0.28 * t + nz0 * 0.85));
+            const h2 = 16 * Math.sin(2 * Math.PI * (1.9 * nx1 - 0.28 * t + nz1 * 0.85));
+            const h3 = 16 * Math.sin(2 * Math.PI * (1.9 * nx0 - 0.28 * t + nz1 * 0.85));
+            const p1 = project(nx0, nz0, h0 * (0.44 + nz0 * 0.64));
+            const p2 = project(nx1, nz0, h1 * (0.44 + nz0 * 0.64));
+            const p3 = project(nx1, nz1, h2 * (0.44 + nz1 * 0.64));
+            const p4 = project(nx0, nz1, h3 * (0.44 + nz1 * 0.64));
+            const shade = Math.max(26, Math.min(78, 42 + ((h0 + h1 + h2 + h3) * 0.16) + nz1 * 12));
+            ctx.fillStyle = `hsl(206, 66%, ${shade.toFixed(1)}%)`;
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.lineTo(p3.x, p3.y);
+            ctx.lineTo(p4.x, p4.y);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = "rgba(228, 244, 255, 0.10)";
+            ctx.lineWidth = 1;
+            ctx.stroke();
           }
-          ctx.stroke();
         }
+
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.32)";
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        for (let x = 0; x <= width; x += 2) {
+          const nx = x / width;
+          const y = baseY - 16 * Math.sin(2 * Math.PI * (1.7 * nx - t * 0.22));
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
       });
     }
 
@@ -16169,15 +16740,22 @@
       const A = Number(settings?.amp || 0.4);
       const maxH = H * 0.18 * Math.min(A / 0.4 + 0.2, 2.4);
 
+      ctx.strokeStyle = "rgba(205, 226, 255, 0.22)";
+      ctx.lineWidth = Math.max(1, dpr * 1.1);
+      ctx.beginPath();
+      ctx.moveTo(0, horizonY);
+      ctx.lineTo(W, horizonY);
+      ctx.stroke();
+
       for (let zi = 0; zi < numZ; zi += 1) {
         const z0 = (zi / (numZ - 1)) * zRange;
         const perspT = zi / (numZ - 1);
-        const rowBaseY = horizonY + perspT * (baseY - horizonY);
+        const rowBaseY = horizonY + Math.pow(perspT, 1.35) * (baseY - horizonY);
         const pts = [];
 
         for (let xi = 0; xi <= numX; xi += 1) {
           const x0 = (xi / numX) * xRange;
-          let sx = padL + (xi / numX) * plotW;
+          let projectedX = (xi / numX) - 0.5;
           let yDisp = 0;
 
           if (isGerstner) {
@@ -16190,7 +16768,7 @@
             const omega = Number(settings?.omega || 1.1);
             const theta = k * (dirX * x0 + dirZ * z0) + omega * t;
             const xDisp = q * A * dirX * Math.cos(theta) * 0.55;
-            sx = padL + ((x0 + xDisp) / xRange) * plotW;
+            projectedX = ((x0 + xDisp) / xRange) - 0.5;
             yDisp = A * Math.sin(theta);
           } else {
             const kx = Number(settings?.kx || 1.4);
@@ -16200,8 +16778,19 @@
             yDisp = A * Math.sin(kx * x0 + kz * z0 + omega * t + phi);
           }
 
+          const sx = padL + projectedX * plotW * (0.95 - perspT * 0.18) + plotW * 0.5;
           const sy = rowBaseY - yDisp * maxH * (0.25 + 0.75 * perspT);
           pts.push([sx, sy]);
+        }
+
+        if (zi < numZ - 1) {
+          const nextDepth = (zi + 1) / (numZ - 1);
+          const nextRowY = horizonY + Math.pow(nextDepth, 1.35) * (baseY - horizonY);
+          const strip = ctx.createLinearGradient(0, rowBaseY, 0, nextRowY);
+          strip.addColorStop(0, `rgba(22, 76, 145, ${(0.10 + perspT * 0.16).toFixed(3)})`);
+          strip.addColorStop(1, `rgba(4, 16, 42, ${(0.06 + perspT * 0.10).toFixed(3)})`);
+          ctx.fillStyle = strip;
+          ctx.fillRect(0, Math.min(rowBaseY, nextRowY) - 1, W, Math.abs(nextRowY - rowBaseY) + 2);
         }
 
         ctx.save();
@@ -16227,6 +16816,15 @@
         ctx.moveTo(pts[0][0], pts[0][1]);
         for (let i = 1; i < pts.length; i += 1) ctx.lineTo(pts[i][0], pts[i][1]);
         ctx.stroke();
+
+        if (zi === numZ - 1) {
+          ctx.strokeStyle = "rgba(234, 248, 255, 0.30)";
+          ctx.lineWidth = Math.max(1.2, dpr * 1.5);
+          ctx.beginPath();
+          ctx.moveTo(pts[0][0], pts[0][1]);
+          for (let i = 1; i < pts.length; i += 1) ctx.lineTo(pts[i][0], pts[i][1]);
+          ctx.stroke();
+        }
       }
     }
 
@@ -16406,8 +17004,14 @@
       if (canDraw(ifftExplainCanvas)) {
         drawIFFTExplain(ifftExplainCanvas, elapsedSeconds);
       }
+      if (canDraw(oceanWavesIntroCanvas)) {
+        drawOceanWavesIntro(oceanWavesIntroCanvas, elapsedSeconds);
+      }
       if (canDraw(bridgeDimCanvas)) {
         drawDimensionalBridge(bridgeDimCanvas, elapsedSeconds);
+      }
+      if (canDraw(waveVectorExplorerCanvas)) {
+        drawWaveVectorExplorer(waveVectorExplorerCanvas, elapsedSeconds);
       }
       if (canDraw(wavinessCanvas)) {
         drawWaviness(wavinessCanvas, elapsedSeconds);
