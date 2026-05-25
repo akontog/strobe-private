@@ -104,22 +104,22 @@ npm start
 
 ### Αρχεία/Φακέλοι που πρέπει να μεταφερθούν
 
-Μεταφορά των ακόλουθων αρχείων και φακέλων στον `/var/www/html/dmlt/buffon`:
+Μεταφορά των ακόλουθων αρχείων και φακέλων στον `/var/www/html/dmlt/node`:
 
 **Απαραίτητα αρχεία:**
 - `server.js` - κύριο αρχείο εκκίνησης
 - `package.json` - npm dependencies
 - `package-lock.json` - npm lock file
 
-**Φακέλοι:**
+**Φάκελοι:**
+- `activities/` - activity configurations
 - `apps/` - όλες οι εφαρμογές (geometry-live, buffon-needle, fourier-lab, neural-lab)
 - `assets/` - κοινά assets (CSS, JS)
+- `middleware/` - Express middleware
 - `public/` - static files (index.html, launcher.html, κλπ)
 - `routes/` - API routes
 - `services/` - business logic (UserManager, etc)
-- `middleware/` - Express middleware
 - `views/` - templates (αν υπάρχουν)
-- `activities/` - activity configurations
 
 **Python scripts (για camera tracking):**
 - `camera_server.py`

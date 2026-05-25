@@ -2971,6 +2971,9 @@
                 <div class="euler-proof-step" style="text-align:center;">
                   \[\boxed{e^{ix}=\cos x+i\sin x}\]
                 </div>
+                <div class="euler-proof-step" style="text-align:center;">
+                  \[A\sin(\mathbf{k}\cdot\mathbf{x}+\omega t+\varphi) \;\longrightarrow\; \operatorname{Im}\!\left(A\,e^{\,i(\mathbf{k}\cdot\mathbf{x}+\omega t+\varphi)}\right)\]
+                </div>
               </div>
             </div>
           </div>
@@ -3291,18 +3294,19 @@
           <div class="slide-content">
             <h2>8.1) Divide &amp; Conquer</h2>
             <p>
-              Αριστερά: κάνεις click στο ενεργό ζευγάρι του Bubble Sort και γίνεται αντιμετάθεση μόνο όταν χρειάζεται.
-              Δεξιά: με click προχωρά το Merge Sort: divide (σπάσιμο προς τα κάτω) και conquer (σύνθεση προς τα πάνω).
+              Με τα κοινά κουμπιά ελέγχεις ταυτόχρονα και τα δύο animations.
+              Αριστερά προχωρούν τα βήματα του Bubble Sort και δεξιά ανοίγει σταδιακά το δέντρο του Merge Sort.
             </p>
-            <canvas id="sortCompareCanvas" class="demo-canvas" width="940" height="320"></canvas>
+            <div style="margin-top:8px; overflow:auto; max-height:min(52vh, 310px); border:1px solid rgba(190,220,255,0.18); border-radius:10px; background:rgba(6,18,32,0.55);">
+              <canvas id="sortCompareCanvas" class="demo-canvas" style="display:block; width:900px; height:560px; max-width:none;" width="940" height="640"></canvas>
+            </div>
             <div class="slider-grid" style="margin-top:10px;">
               <div class="slider-group">
-                <div class="slider-label"><span>Bubble status</span><span id="sortCompareBubbleStatus">-</span></div>
-                <button id="sortCompareRefreshBtn" class="fft-duel-submit" type="button">Refresh</button>
-              </div>
-              <div class="slider-group">
-                <div class="slider-label"><span>Merge status</span><span id="sortCompareMergeStatus">-</span></div>
-                <div class="fft-duel-note" style="margin-top:8px;">Click σε ενεργό στοιχείο δεξιά για επόμενο βήμα merge.</div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
+                  <button id="sortComparePrevBtn" class="fft-duel-submit" type="button">Προηγούμενο</button>
+                  <button id="sortCompareNextBtn" class="fft-duel-submit" type="button">Επόμενο</button>
+                  <button id="sortCompareRefreshBtn" class="fft-duel-submit" type="button">Reset</button>
+                </div>
               </div>
             </div>
             <div style="margin-top:10px; overflow:auto;">
@@ -3316,17 +3320,17 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">Συγκρίσεις</td>
+                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">Ορατές συγκρίσεις</td>
                     <td id="sortStatsBubbleComparisons" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">0</td>
                     <td id="sortStatsMergeComparisons" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">0</td>
                   </tr>
                   <tr>
-                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">Αντιμεταθέσεις</td>
+                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">Ορατές αλλαγές</td>
                     <td id="sortStatsBubbleSwaps" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">0</td>
                     <td style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">-</td>
                   </tr>
                   <tr>
-                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">Writes/Τοποθετήσεις</td>
+                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">Τοποθετήσεις merge</td>
                     <td style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">-</td>
                     <td id="sortStatsMergeWrites" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">0</td>
                   </tr>
@@ -4495,6 +4499,8 @@
     const sortCompareCanvas = document.getElementById("sortCompareCanvas");
     const sortCompareBubbleStatus = document.getElementById("sortCompareBubbleStatus");
     const sortCompareMergeStatus = document.getElementById("sortCompareMergeStatus");
+    const sortComparePrevBtn = document.getElementById("sortComparePrevBtn");
+    const sortCompareNextBtn = document.getElementById("sortCompareNextBtn");
     const sortCompareRefreshBtn = document.getElementById("sortCompareRefreshBtn");
     const sortStatsBubbleComparisons = document.getElementById("sortStatsBubbleComparisons");
     const sortStatsMergeComparisons = document.getElementById("sortStatsMergeComparisons");
@@ -4592,25 +4598,106 @@
       totalStudents: 0,
     };
     const SORT_COMPARE_SIZE = 8;
-    const SORT_COMPARE_BASE_ARRAY = [41, 12, 68, 27, 33, 19, 85, 56];
+    const SORT_COMPARE_BASE_ARRAY = [5, 3, 1, 8, 7, 2, 6, 4];
+    const SORT_COMPARE_BUBBLE_SNAPSHOTS = [
+      { reveal: 0, column: 0, y: 86, title: "1η διάβαση", values: [5, 3, 1, 8, 7, 2, 6, 4], highlight: [6, 7], note: "Σύγκριση (6,4)" },
+      { reveal: 1, column: 0, y: 154, values: [5, 3, 1, 8, 7, 2, 4, 6], highlight: [6, 7], note: "Swap (6,4)" },
+      { reveal: 2, column: 0, y: 222, values: [5, 3, 1, 8, 2, 7, 4, 6], highlight: [4, 5], note: "Swap (7,2)" },
+      { reveal: 3, column: 0, y: 290, values: [5, 3, 1, 2, 8, 7, 4, 6], highlight: [3, 4], note: "Swap (8,2)" },
+      { reveal: 4, column: 0, y: 348, ellipsis: true, note: "Συνεχίζονται οι συγκρίσεις της 1ης διάβασης" },
+      { reveal: 4, column: 0, y: 414, values: [1, 5, 3, 2, 8, 7, 4, 6], final: true, caption: "μετά από όλες τις συγκρίσεις", note: "Τέλος 1ης διάβασης" },
+      { reveal: 5, column: 1, y: 86, title: "2η διάβαση", values: [1, 5, 3, 2, 8, 7, 4, 6], highlight: [5, 6], note: "Σύγκριση (7,4)" },
+      { reveal: 6, column: 1, y: 154, values: [1, 5, 3, 2, 8, 4, 7, 6], highlight: [5, 6], note: "Swap (7,4)" },
+      { reveal: 7, column: 1, y: 222, values: [1, 5, 3, 2, 4, 8, 7, 6], highlight: [4, 5], note: "Swap (8,4)" },
+      { reveal: 8, column: 1, y: 290, values: [1, 5, 2, 3, 4, 8, 7, 6], highlight: [2, 3], note: "Swap (3,2)" },
+      { reveal: 9, column: 1, y: 358, values: [1, 2, 5, 3, 4, 8, 7, 6], highlight: [1, 2], note: "Swap (5,2)" },
+      { reveal: 10, column: 1, y: 416, ellipsis: true, note: "Συνεχίζονται οι συγκρίσεις της 2ης διάβασης" },
+      { reveal: 10, column: 1, y: 482, values: [1, 2, 3, 4, 5, 8, 7, 6], final: true, caption: "μετά από όλες τις συγκρίσεις", note: "Τέλος 2ης διάβασης" },
+      { reveal: 11, column: 2, y: 86, title: "3η διάβαση", values: [1, 2, 3, 4, 5, 8, 7, 6], highlight: [5, 6], note: "Σύγκριση (8,7)" },
+      { reveal: 12, column: 2, y: 154, values: [1, 2, 3, 4, 5, 7, 8, 6], highlight: [5, 6], note: "Swap (8,7)" },
+      { reveal: 13, column: 2, y: 222, values: [1, 2, 3, 4, 5, 6, 7, 8], highlight: [6, 7], note: "Swap (7,6)" },
+      { reveal: 14, column: 2, y: 280, ellipsis: true, note: "Ο πίνακας έχει πλέον ταξινομηθεί" },
+      { reveal: 14, column: 2, y: 346, values: [1, 2, 3, 4, 5, 6, 7, 8], final: true, emphasis: true, caption: "Ταξινομημένος", note: "Ο Bubble Sort ολοκληρώθηκε" },
+    ];
+    const SORT_COMPARE_MERGE_COMPARISONS = [0, 0, 0, 0, 4, 10, 17];
+    const SORT_COMPARE_MERGE_WRITES = [0, 0, 0, 0, 8, 16, 24];
+    const SORT_COMPARE_MERGE_STATUS = [
+      "Αρχικός πίνακας",
+      "Divide: σπάσιμο σε 2 υποπίνακες",
+      "Divide: σπάσιμο σε 4 υποπίνακες",
+      "Divide: φτάνουμε σε φύλλα μήκους 1",
+      "Conquer: πρώτες συγχωνεύσεις των ζευγών",
+      "Conquer: δεύτερες συγχωνεύσεις σε πίνακες μήκους 4",
+      "Τελική συγχώνευση και ταξινόμηση",
+    ];
+    const SORT_COMPARE_MERGE_NODES = [
+      { id: "root", x: 0, y: 0.0, text: "5 · 3 · 1 · 8 · 7 · 2 · 6 · 4", kind: "split", reveal: 0 },
+      { id: "L1", x: -4, y: -1.6, text: "5 · 3 · 1 · 8", kind: "split", reveal: 1 },
+      { id: "R1", x: 4, y: -1.6, text: "7 · 2 · 6 · 4", kind: "split", reveal: 1 },
+      { id: "LL2", x: -6, y: -3.2, text: "5 · 3", kind: "split", reveal: 2 },
+      { id: "LR2", x: -2, y: -3.2, text: "1 · 8", kind: "split", reveal: 2 },
+      { id: "RL2", x: 2, y: -3.2, text: "7 · 2", kind: "split", reveal: 2 },
+      { id: "RR2", x: 6, y: -3.2, text: "6 · 4", kind: "split", reveal: 2 },
+      { id: "a", x: -7, y: -4.8, text: "5", kind: "leaf", reveal: 3 },
+      { id: "b", x: -5, y: -4.8, text: "3", kind: "leaf", reveal: 3 },
+      { id: "c", x: -3, y: -4.8, text: "1", kind: "leaf", reveal: 3 },
+      { id: "d", x: -1, y: -4.8, text: "8", kind: "leaf", reveal: 3 },
+      { id: "e", x: 1, y: -4.8, text: "7", kind: "leaf", reveal: 3 },
+      { id: "f", x: 3, y: -4.8, text: "2", kind: "leaf", reveal: 3 },
+      { id: "g", x: 5, y: -4.8, text: "6", kind: "leaf", reveal: 3 },
+      { id: "h", x: 7, y: -4.8, text: "4", kind: "leaf", reveal: 3 },
+      { id: "mLL", x: -6, y: -6.4, text: "3 · 5", kind: "merge", reveal: 4 },
+      { id: "mLR", x: -2, y: -6.4, text: "1 · 8", kind: "merge", reveal: 4 },
+      { id: "mRL", x: 2, y: -6.4, text: "2 · 7", kind: "merge", reveal: 4 },
+      { id: "mRR", x: 6, y: -6.4, text: "4 · 6", kind: "merge", reveal: 4 },
+      { id: "mL", x: -4, y: -8.0, text: "1 · 3 · 5 · 8", kind: "merge", reveal: 5 },
+      { id: "mR", x: 4, y: -8.0, text: "2 · 4 · 6 · 7", kind: "merge", reveal: 5 },
+      { id: "final", x: 0, y: -9.6, text: "1 · 2 · 3 · 4 · 5 · 6 · 7 · 8", kind: "final", reveal: 6 },
+    ];
+    const SORT_COMPARE_MERGE_EDGES = [
+      { from: "root", to: "L1", kind: "split", reveal: 1 },
+      { from: "root", to: "R1", kind: "split", reveal: 1 },
+      { from: "L1", to: "LL2", kind: "split", reveal: 2 },
+      { from: "L1", to: "LR2", kind: "split", reveal: 2 },
+      { from: "R1", to: "RL2", kind: "split", reveal: 2 },
+      { from: "R1", to: "RR2", kind: "split", reveal: 2 },
+      { from: "LL2", to: "a", kind: "split", reveal: 3 },
+      { from: "LL2", to: "b", kind: "split", reveal: 3 },
+      { from: "LR2", to: "c", kind: "split", reveal: 3 },
+      { from: "LR2", to: "d", kind: "split", reveal: 3 },
+      { from: "RL2", to: "e", kind: "split", reveal: 3 },
+      { from: "RL2", to: "f", kind: "split", reveal: 3 },
+      { from: "RR2", to: "g", kind: "split", reveal: 3 },
+      { from: "RR2", to: "h", kind: "split", reveal: 3 },
+      { from: "a", to: "mLL", kind: "merge", reveal: 4 },
+      { from: "b", to: "mLL", kind: "merge", reveal: 4 },
+      { from: "c", to: "mLR", kind: "merge", reveal: 4 },
+      { from: "d", to: "mLR", kind: "merge", reveal: 4 },
+      { from: "e", to: "mRL", kind: "merge", reveal: 4 },
+      { from: "f", to: "mRL", kind: "merge", reveal: 4 },
+      { from: "g", to: "mRR", kind: "merge", reveal: 4 },
+      { from: "h", to: "mRR", kind: "merge", reveal: 4 },
+      { from: "mLL", to: "mL", kind: "merge", reveal: 5 },
+      { from: "mLR", to: "mL", kind: "merge", reveal: 5 },
+      { from: "mRL", to: "mR", kind: "merge", reveal: 5 },
+      { from: "mRR", to: "mR", kind: "merge", reveal: 5 },
+      { from: "mL", to: "final", kind: "merge", reveal: 6 },
+      { from: "mR", to: "final", kind: "merge", reveal: 6 },
+    ];
+    const SORT_COMPARE_MERGE_LABELS = [
+      { x: -9.2, y: 0.0, text: "Αρχικός", kind: "split", reveal: 0 },
+      { x: -9.2, y: -1.6, text: "Διαχωρισμός n/2", kind: "split", reveal: 1 },
+      { x: -9.2, y: -3.2, text: "Διαχωρισμός n/4", kind: "split", reveal: 2 },
+      { x: -9.2, y: -4.8, text: "1", kind: "leaf", reveal: 3 },
+      { x: -9.2, y: -6.4, text: "Συγχώνευση", kind: "merge", reveal: 4 },
+      { x: -9.2, y: -8.0, text: "Συγχώνευση", kind: "merge", reveal: 5 },
+      { x: -9.2, y: -9.6, text: "Ταξινομημένος", kind: "merge", reveal: 6 },
+    ];
     const sortCompareState = {
-      baseArray: SORT_COMPARE_BASE_ARRAY.slice(),
-      bubbleArray: SORT_COMPARE_BASE_ARRAY.slice(),
-      bubblePass: 0,
-      bubbleIndex: 0,
-      bubbleDone: false,
-      mergeStages: [],
-      mergeStageIndex: 0,
-      mergeStageReveal: 0,
-      mergeCountedStages: new Set(),
-      mergeAnimStartAt: 0,
-      mergeAnimDuration: 0.32,
-      mergeAnimValue: null,
-      mergeAnimTargetIndex: -1,
+      bubbleStepIndex: 0,
+      mergeStepIndex: 0,
       bubbleHint: "",
       mergeHint: "",
-      bubbleHitRects: [],
-      mergeHitRects: [],
       bubbleComparisons: 0,
       bubbleSwaps: 0,
       mergeComparisons: 0,
@@ -5696,264 +5783,90 @@
       return { merged, comparisons, writes };
     }
 
-    function getSortCompareMaxDepth() {
-      return Math.round(Math.log2(SORT_COMPARE_SIZE));
+    function getVisibleBubbleSnapshots() {
+      return SORT_COMPARE_BUBBLE_SNAPSHOTS.filter((snapshot) => snapshot.reveal <= sortCompareState.bubbleStepIndex);
     }
 
-    function buildMergeSortStages(baseArray) {
-      const stages = [];
-      let groups = [baseArray.slice()];
-      let depth = 0;
-      const maxDepth = getSortCompareMaxDepth();
-
-      stages.push({
-        type: "start",
-        depth,
-        groups: groups.map((group) => group.slice()),
-        comparisons: 0,
-        writes: 0,
-      });
-
-      while (groups.some((group) => group.length > 1)) {
-        const next = [];
-        groups.forEach((group) => {
-          if (group.length <= 1) {
-            next.push(group.slice());
-            return;
-          }
-          const mid = Math.floor(group.length / 2);
-          next.push(group.slice(0, mid));
-          next.push(group.slice(mid));
-        });
-        groups = next;
-        depth += 1;
-        stages.push({
-          type: "split",
-          depth: Math.min(maxDepth, depth),
-          groups: groups.map((group) => group.slice()),
-          comparisons: 0,
-          writes: 0,
-        });
-      }
-
-      while (groups.length > 1) {
-        const next = [];
-        let stageComparisons = 0;
-        let stageWrites = 0;
-        for (let i = 0; i < groups.length; i += 2) {
-          const left = groups[i];
-          const right = groups[i + 1];
-          if (!right) {
-            next.push(left.slice());
-            continue;
-          }
-          const merged = mergeSortedArraysWithMetrics(left, right);
-          next.push(merged.merged);
-          stageComparisons += merged.comparisons;
-          stageWrites += merged.writes;
-        }
-        groups = next;
-        depth = Math.max(0, depth - 1);
-        stages.push({
-          type: "merge",
-          depth,
-          groups: groups.map((group) => group.slice()),
-          comparisons: stageComparisons,
-          writes: stageWrites,
-        });
-      }
-
-      stages.push({
-        type: "done",
-        depth: 0,
-        groups: groups.map((group) => group.slice()),
-        comparisons: 0,
-        writes: 0,
-      });
-
-      return stages;
-    }
-
-    function getSortCompareBubblePair() {
-      const n = sortCompareState.bubbleArray.length;
-      if (sortCompareState.bubbleDone || n < 2) {
-        return null;
-      }
-      const safePass = Math.max(0, sortCompareState.bubblePass);
-      const safeIndex = Math.max(0, sortCompareState.bubbleIndex);
-      const rightBound = n - 1 - safePass;
-      if (safeIndex >= rightBound) {
-        return null;
-      }
-      return { i: safeIndex, j: safeIndex + 1 };
+    function getCurrentBubbleSnapshot() {
+      return SORT_COMPARE_BUBBLE_SNAPSHOTS.find((snapshot) => snapshot.reveal === sortCompareState.bubbleStepIndex)
+        || SORT_COMPARE_BUBBLE_SNAPSHOTS[SORT_COMPARE_BUBBLE_SNAPSHOTS.length - 1];
     }
 
     function advanceBubbleSortPointer() {
-      const n = sortCompareState.bubbleArray.length;
-      sortCompareState.bubbleIndex += 1;
-      if (sortCompareState.bubbleIndex >= n - 1 - sortCompareState.bubblePass) {
-        sortCompareState.bubblePass += 1;
-        sortCompareState.bubbleIndex = 0;
-      }
-      if (sortCompareState.bubblePass >= n - 1) {
-        sortCompareState.bubbleDone = true;
+      if (sortCompareState.bubbleStepIndex < 14) {
+        sortCompareState.bubbleStepIndex += 1;
       }
     }
 
     function advanceMergeSortPointer() {
-      const getFlatValueAt = (groups, flatIndex) => {
-        let idx = 0;
-        for (let g = 0; g < groups.length; g += 1) {
-          const group = groups[g];
-          for (let i = 0; i < group.length; i += 1) {
-            if (idx === flatIndex) {
-              return group[i];
-            }
-            idx += 1;
-          }
-        }
-        return null;
-      };
-      const triggerMergeAnimation = (stage, targetIndex) => {
-        if (!stage || stage.type !== "merge") {
-          return;
-        }
-        sortCompareState.mergeAnimStartAt = performance.now() / 1000;
-        sortCompareState.mergeAnimTargetIndex = targetIndex;
-        sortCompareState.mergeAnimValue = getFlatValueAt(stage.groups, targetIndex);
-      };
-
-      const getStageTarget = (stage) => (
-        stage && Array.isArray(stage.groups)
-          ? stage.groups.reduce((sum, group) => sum + group.length, 0)
-          : 0
-      );
-      const countStageIfNeeded = (stageIndex) => {
-        const stage = sortCompareState.mergeStages[stageIndex];
-        if (!stage || stage.type !== "merge" || sortCompareState.mergeCountedStages.has(stageIndex)) {
-          return;
-        }
-        sortCompareState.mergeComparisons += Number(stage.comparisons) || 0;
-        sortCompareState.mergeWrites += Number(stage.writes) || 0;
-        sortCompareState.mergeCountedStages.add(stageIndex);
-      };
-
-      if (sortCompareState.mergeStageIndex >= sortCompareState.mergeStages.length - 1) {
-        sortCompareState.mergeHint = "Το Merge Sort ολοκληρώθηκε.";
-        return;
+      if (sortCompareState.mergeStepIndex < 6) {
+        sortCompareState.mergeStepIndex += 1;
       }
+    }
 
-      const currentStage = sortCompareState.mergeStages[sortCompareState.mergeStageIndex];
-      if (currentStage && currentStage.type === "merge") {
-        const target = getStageTarget(currentStage);
-        if (sortCompareState.mergeStageReveal < target) {
-          const nextTargetIndex = sortCompareState.mergeStageReveal;
-          sortCompareState.mergeStageReveal += 1;
-          triggerMergeAnimation(currentStage, nextTargetIndex);
-          sortCompareState.mergeSteps += 1;
-          sortCompareState.mergeHint = "Conquer: μπαίνει ένα-ένα στοιχείο στον ταξινομημένο πίνακα.";
-          if (sortCompareState.mergeStageReveal >= target) {
-            countStageIfNeeded(sortCompareState.mergeStageIndex);
-          }
-          return;
-        }
+    function retreatBubbleSortPointer() {
+      if (sortCompareState.bubbleStepIndex > 0) {
+        sortCompareState.bubbleStepIndex -= 1;
       }
+    }
 
-      const nextStage = sortCompareState.mergeStages[sortCompareState.mergeStageIndex + 1];
-      sortCompareState.mergeStageIndex += 1;
-      sortCompareState.mergeStageReveal = 0;
-
-      if (nextStage && nextStage.type === "merge") {
-        const target = getStageTarget(nextStage);
-        if (target > 0) {
-          sortCompareState.mergeStageReveal = 1;
-          triggerMergeAnimation(nextStage, 0);
-          sortCompareState.mergeSteps += 1;
-          sortCompareState.mergeHint = "Conquer: μπαίνει ένα-ένα στοιχείο στον ταξινομημένο πίνακα.";
-          if (sortCompareState.mergeStageReveal >= target) {
-            countStageIfNeeded(sortCompareState.mergeStageIndex);
-          }
-          return;
-        }
+    function retreatMergeSortPointer() {
+      if (sortCompareState.mergeStepIndex > 0) {
+        sortCompareState.mergeStepIndex -= 1;
       }
+    }
 
-      sortCompareState.mergeSteps += 1;
-      sortCompareState.mergeHint = nextStage && nextStage.type === "split"
-        ? "Divide: τα τμήματα άνοιξαν προς τα κάτω."
-        : "Merge Sort ολοκληρώθηκε.";
+    function stepSortCompareForward() {
+      advanceBubbleSortPointer();
+      advanceMergeSortPointer();
+      updateSortCompareStatusTexts();
+    }
+
+    function stepSortCompareBackward() {
+      retreatBubbleSortPointer();
+      retreatMergeSortPointer();
+      updateSortCompareStatusTexts();
     }
 
     function updateSortStatsTable() {
+      const visibleBubble = getVisibleBubbleSnapshots();
+      const bubbleChanges = visibleBubble.filter((snapshot) => snapshot.note && /swap/i.test(snapshot.note)).length;
       if (sortStatsBubbleComparisons) {
-        sortStatsBubbleComparisons.textContent = String(sortCompareState.bubbleComparisons);
+        sortStatsBubbleComparisons.textContent = String(bubbleChanges);
       }
       if (sortStatsMergeComparisons) {
-        sortStatsMergeComparisons.textContent = String(sortCompareState.mergeComparisons);
+        sortStatsMergeComparisons.textContent = String(SORT_COMPARE_MERGE_COMPARISONS[sortCompareState.mergeStepIndex] || 0);
       }
       if (sortStatsBubbleSwaps) {
-        sortStatsBubbleSwaps.textContent = String(sortCompareState.bubbleSwaps);
+        sortStatsBubbleSwaps.textContent = String(bubbleChanges);
       }
       if (sortStatsMergeWrites) {
-        sortStatsMergeWrites.textContent = String(sortCompareState.mergeWrites);
+        sortStatsMergeWrites.textContent = String(SORT_COMPARE_MERGE_WRITES[sortCompareState.mergeStepIndex] || 0);
       }
       if (sortStatsBubbleSteps) {
-        sortStatsBubbleSteps.textContent = String(sortCompareState.bubbleSteps);
+        sortStatsBubbleSteps.textContent = `${sortCompareState.bubbleStepIndex + 1}/15`;
       }
       if (sortStatsMergeSteps) {
-        sortStatsMergeSteps.textContent = String(sortCompareState.mergeSteps);
+        sortStatsMergeSteps.textContent = `${sortCompareState.mergeStepIndex + 1}/7`;
       }
     }
 
     function updateSortCompareStatusTexts() {
-      const pair = getSortCompareBubblePair();
+      const currentBubble = getCurrentBubbleSnapshot();
       if (sortCompareBubbleStatus) {
-        if (sortCompareState.bubbleDone) {
-          sortCompareBubbleStatus.textContent = "Ολοκληρώθηκε ✓";
-        } else if (pair) {
-          const leftValue = sortCompareState.bubbleArray[pair.i];
-          const rightValue = sortCompareState.bubbleArray[pair.j];
-          sortCompareBubbleStatus.textContent = `Σύγκριση ${leftValue} και ${rightValue} (pass ${sortCompareState.bubblePass + 1})`;
-        } else {
-          sortCompareBubbleStatus.textContent = "Περίμενε επόμενο βήμα";
-        }
+        sortCompareBubbleStatus.textContent = `${sortCompareState.bubbleStepIndex + 1}/15 • ${currentBubble.note || "Bubble Sort"}`;
       }
 
       if (sortCompareMergeStatus) {
-        const stage = sortCompareState.mergeStages[sortCompareState.mergeStageIndex];
-        const idx = sortCompareState.mergeStageIndex + 1;
-        const total = sortCompareState.mergeStages.length;
-        const stageName = stage ? stage.type : "-";
-        const hint = sortCompareState.mergeHint ? ` • ${sortCompareState.mergeHint}` : "";
-        sortCompareMergeStatus.textContent = `${idx}/${total} • ${stageName}${hint}`;
+        sortCompareMergeStatus.textContent = `${sortCompareState.mergeStepIndex + 1}/7 • ${SORT_COMPARE_MERGE_STATUS[sortCompareState.mergeStepIndex]}`;
       }
 
       updateSortStatsTable();
     }
 
     function resetSortCompareState() {
-      const base = SORT_COMPARE_BASE_ARRAY.slice();
-      sortCompareState.baseArray = base.slice();
-      sortCompareState.bubbleArray = base.slice();
-      sortCompareState.bubblePass = 0;
-      sortCompareState.bubbleIndex = 0;
-      sortCompareState.bubbleDone = false;
-      sortCompareState.mergeStages = buildMergeSortStages(base);
-      sortCompareState.mergeStageIndex = 0;
-      sortCompareState.mergeStageReveal = 0;
-      sortCompareState.mergeCountedStages = new Set();
-      sortCompareState.mergeAnimStartAt = 0;
-      sortCompareState.mergeAnimValue = null;
-      sortCompareState.mergeAnimTargetIndex = -1;
-      sortCompareState.bubbleHint = "Click στο φωτισμένο ζευγάρι για το επόμενο βήμα.";
-      sortCompareState.mergeHint = "Click στα δεξιά στοιχεία για το επόμενο στάδιο.";
-      sortCompareState.bubbleHitRects = [];
-      sortCompareState.mergeHitRects = [];
-      sortCompareState.bubbleComparisons = 0;
-      sortCompareState.bubbleSwaps = 0;
-      sortCompareState.mergeComparisons = 0;
-      sortCompareState.mergeWrites = 0;
-      sortCompareState.bubbleSteps = 0;
-      sortCompareState.mergeSteps = 0;
+      sortCompareState.bubbleStepIndex = 0;
+      sortCompareState.mergeStepIndex = 0;
       updateSortCompareStatusTexts();
     }
 
@@ -5961,57 +5874,12 @@
       if (!sortCompareCanvas) {
         return;
       }
-      const rect = sortCompareCanvas.getBoundingClientRect();
-      const scaleX = sortCompareCanvas.width / Math.max(1, rect.width);
-      const scaleY = sortCompareCanvas.height / Math.max(1, rect.height);
-      const px = (event.clientX - rect.left) * scaleX;
-      const py = (event.clientY - rect.top) * scaleY;
-
-      const bubbleHit = sortCompareState.bubbleHitRects.find((box) => (
-        px >= box.x && px <= box.x + box.w && py >= box.y && py <= box.y + box.h
-      ));
-      if (bubbleHit) {
-        const pair = getSortCompareBubblePair();
-        if (!pair) {
-          sortCompareState.bubbleHint = "Το Bubble Sort ολοκληρώθηκε.";
-          updateSortCompareStatusTexts();
-          return;
-        }
-
-        if (bubbleHit.index !== pair.i && bubbleHit.index !== pair.j) {
-          sortCompareState.bubbleHint = `Διάλεξε ένα από τα τονισμένα στοιχεία (${pair.i + 1}, ${pair.j + 1}).`;
-          updateSortCompareStatusTexts();
-          return;
-        }
-
-        const leftValue = sortCompareState.bubbleArray[pair.i];
-        const rightValue = sortCompareState.bubbleArray[pair.j];
-        sortCompareState.bubbleComparisons += 1;
-        sortCompareState.bubbleSteps += 1;
-        if (leftValue > rightValue) {
-          sortCompareState.bubbleArray[pair.i] = rightValue;
-          sortCompareState.bubbleArray[pair.j] = leftValue;
-          sortCompareState.bubbleSwaps += 1;
-          sortCompareState.bubbleHint = `Swap: ${leftValue} ↔ ${rightValue}`;
-        } else {
-          sortCompareState.bubbleHint = `Χωρίς swap: ${leftValue} ≤ ${rightValue}`;
-        }
-
-        advanceBubbleSortPointer();
-        updateSortCompareStatusTexts();
-        return;
-      }
-
-      const mergeHit = sortCompareState.mergeHitRects.find((box) => (
-        px >= box.x && px <= box.x + box.w && py >= box.y && py <= box.y + box.h
-      ));
-      if (mergeHit) {
-        advanceMergeSortPointer();
-        updateSortCompareStatusTexts();
-      }
+      stepSortCompareForward();
     }
 
     sortCompareCanvas?.addEventListener("click", onSortCompareCanvasClick);
+    sortComparePrevBtn?.addEventListener("click", stepSortCompareBackward);
+    sortCompareNextBtn?.addEventListener("click", stepSortCompareForward);
     sortCompareRefreshBtn?.addEventListener("click", () => {
       resetSortCompareState();
     });
@@ -14431,11 +14299,12 @@
         const top = 12;
         const bottom = height - 12;
         const split = Math.floor(width * 0.50);
-        const gap = 8;
+        const gap = 10;
         const lx = left;
         const lw = split - left - gap;
         const rx = split + gap;
         const rw = right - rx;
+        const pulse = 0.55 + 0.45 * Math.sin(t * 3.4);
 
         ctx.strokeStyle = "#345886";
         ctx.strokeRect(lx, top, lw, bottom - top);
@@ -14443,222 +14312,201 @@
 
         ctx.fillStyle = "#d8eeff";
         ctx.font = "12px Segoe UI, sans-serif";
-        ctx.fillText("Bubble Sort (click στο ενεργό ζευγάρι)", lx + 10, top + 16);
-        ctx.fillText("Merge Sort (click δεξιά για βήμα)", rx + 10, top + 16);
+        ctx.fillText("Bubble Sort", lx + 10, top + 16);
+        ctx.fillText("Merge Sort", rx + 10, top + 16);
 
-        const drawGroups = (x, y, w, groups, options = {}) => {
-          const totalItems = SORT_COMPARE_SIZE;
-          const groupGap = 10;
-          const innerPad = 10;
-          const boxH = 38;
-          const widthForCells = w - innerPad * 2 - groupGap * Math.max(0, groups.length - 1);
-          const boxW = Math.max(16, Math.min(42, widthForCells / Math.max(1, totalItems)));
-          const totalW = totalItems * boxW + groupGap * Math.max(0, groups.length - 1);
-          let cx = x + Math.max(innerPad, (w - totalW) * 0.5);
-          let globalIndex = 0;
+        const drawSequence = (centerX, y, values, options = {}) => {
+          const tokenFont = options.emphasis ? "bold 16px Cambria Math, Georgia, serif" : "15px Cambria Math, Georgia, serif";
+          const captionFont = "11px Segoe UI, sans-serif";
+          const separator = "·";
+          ctx.font = tokenFont;
+          const tokenWidths = values.map((value) => ctx.measureText(String(value)).width);
+          const sepWidth = ctx.measureText(` ${separator} `).width;
+          const contentWidth = tokenWidths.reduce((sum, w) => sum + w, 0) + sepWidth * Math.max(0, values.length - 1);
+          const boxPadX = 14;
+          const boxW = contentWidth + boxPadX * 2;
+          const boxH = options.final ? 34 : 30;
+          const boxX = centerX - boxW * 0.5;
+          const boxY = y - boxH * 0.5;
+          const baseFill = options.final ? "rgba(34,150,100,0.22)" : "rgba(52,120,190,0.12)";
+          const baseStroke = options.final ? "rgba(34,150,100,0.92)" : "rgba(52,120,190,0.86)";
 
-          const localHitRects = [];
-          const cellCenters = [];
-          const valueCenterMap = new Map();
-          groups.forEach((group, groupIndex) => {
-            const visibleLimit = Array.isArray(options.visibleCounts)
-              ? Math.max(0, Math.min(group.length, Number(options.visibleCounts[groupIndex]) || 0))
-              : group.length;
+          ctx.fillStyle = baseFill;
+          ctx.strokeStyle = baseStroke;
+          ctx.lineWidth = options.emphasis ? 2.6 : 1.5;
+          ctx.beginPath();
+          ctx.roundRect(boxX, boxY, boxW, boxH, 8);
+          ctx.fill();
+          ctx.stroke();
 
-            group.forEach((value, valueIndex) => {
-              const isPair = options.pair && (globalIndex === options.pair.i || globalIndex === options.pair.j);
-              const isVisible = valueIndex < visibleLimit;
-              ctx.fillStyle = isVisible
-                ? (isPair ? "rgba(255, 192, 100, 0.92)" : (options.boxColor || "rgba(112, 169, 255, 0.86)"))
-                : "rgba(92, 124, 170, 0.24)";
-              ctx.strokeStyle = isPair ? "rgba(255, 235, 168, 0.95)" : "rgba(194, 222, 255, 0.72)";
-              ctx.lineWidth = isPair ? 2.2 : 1.2;
-              ctx.fillRect(cx, y, boxW - 2, boxH);
-              ctx.strokeRect(cx, y, boxW - 2, boxH);
-
-              if (isVisible) {
-                ctx.fillStyle = "#081425";
-                ctx.font = "bold 13px Segoe UI, sans-serif";
-                ctx.fillText(String(value), cx + 8, y + 23);
-              }
-
-              localHitRects.push({ x: cx, y, w: boxW - 2, h: boxH, index: globalIndex });
-              const center = { x: cx + (boxW - 2) * 0.5, y: y + boxH * 0.5, value, index: globalIndex };
-              cellCenters.push(center);
-              if (!valueCenterMap.has(String(value))) {
-                valueCenterMap.set(String(value), center);
-              }
-              cx += boxW;
-              globalIndex += 1;
-            });
-            cx += groupGap;
+          let cursorX = boxX + boxPadX;
+          const textY = y + 5;
+          values.forEach((value, index) => {
+            const active = Array.isArray(options.highlight) && options.highlight.includes(index);
+            if (active) {
+              const glowAlpha = options.current ? 0.36 + 0.18 * pulse : 0.26;
+              ctx.fillStyle = `rgba(230,100,60,${glowAlpha.toFixed(3)})`;
+              ctx.beginPath();
+              ctx.roundRect(cursorX - 5, boxY + 4, tokenWidths[index] + 10, boxH - 8, 6);
+              ctx.fill();
+            }
+            ctx.fillStyle = options.final ? "#e8fff2" : "#f7fbff";
+            ctx.font = tokenFont;
+            ctx.fillText(String(value), cursorX, textY);
+            cursorX += tokenWidths[index];
+            if (index < values.length - 1) {
+              ctx.fillStyle = "#f5d79d";
+              ctx.fillText(` ${separator} `, cursorX, textY);
+              cursorX += sepWidth;
+            }
           });
 
-          const centers = [];
-          let walkX = x + Math.max(innerPad, (w - totalW) * 0.5);
-          groups.forEach((group) => {
-            const gStart = walkX;
-            const gWidth = group.length * boxW;
-            centers.push(gStart + gWidth * 0.5);
-            walkX += gWidth + groupGap;
-          });
+          if (options.caption) {
+            ctx.fillStyle = options.final ? "#9de0b9" : "#8fb0c8";
+            ctx.font = captionFont;
+            ctx.textAlign = "center";
+            ctx.fillText(options.caption, centerX, boxY + boxH + 16);
+            ctx.textAlign = "start";
+          }
 
-          return { hitRects: localHitRects, centers, cellCenters, valueCenterMap };
+          return { x: boxX, y: boxY, w: boxW, h: boxH };
         };
 
-        const pair = getSortCompareBubblePair();
-        const bubbleDraw = drawGroups(lx, top + 50, lw, [sortCompareState.bubbleArray], {
-          pair,
-          boxColor: "rgba(124, 183, 255, 0.86)",
-        });
-        sortCompareState.bubbleHitRects = bubbleDraw.hitRects;
+        const columnCenters = [lx + lw * 0.17, lx + lw * 0.50, lx + lw * 0.83];
+        const visibleBubble = getVisibleBubbleSnapshots();
+        const currentBubbleReveal = sortCompareState.bubbleStepIndex;
 
-        const bubbleInfoY = top + 110;
-        ctx.fillStyle = "#9fc9f5";
-        ctx.font = "11px Segoe UI, sans-serif";
-        ctx.fillText(`pass: ${sortCompareState.bubblePass + 1}/${SORT_COMPARE_SIZE - 1}`, lx + 10, bubbleInfoY);
-        if (sortCompareState.bubbleHint) {
-          ctx.fillStyle = "#c7dcff";
-          ctx.fillText(sortCompareState.bubbleHint, lx + 10, bubbleInfoY + 18);
-        }
+        [0, 1, 2].forEach((column) => {
+          const columnItems = visibleBubble.filter((item) => item.column === column);
+          if (!columnItems.length) {
+            return;
+          }
+          const title = columnItems.find((item) => item.title)?.title;
+          if (title) {
+            ctx.fillStyle = "#ffcc8c";
+            ctx.font = "bold 14px Segoe UI, sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(title, columnCenters[column], top + 36);
+            ctx.textAlign = "start";
+          }
 
-        const stage = sortCompareState.mergeStages[sortCompareState.mergeStageIndex] || { type: "-", groups: [], depth: 0 };
-        const prevStage = sortCompareState.mergeStageIndex > 0
-          ? sortCompareState.mergeStages[sortCompareState.mergeStageIndex - 1]
-          : null;
-        const maxDepth = getSortCompareMaxDepth();
-        const levelY = (depth) => top + 52 + depth * 52;
+          let previousBox = null;
+          columnItems.forEach((item) => {
+            if (item.ellipsis) {
+              ctx.fillStyle = "#d8eeff";
+              ctx.font = "20px Cambria Math, Georgia, serif";
+              ctx.textAlign = "center";
+              ctx.fillText("⋮", columnCenters[column], top + item.y);
+              ctx.textAlign = "start";
+              return;
+            }
 
-        const stageLabel = {
-          start: "εκκίνηση",
-          split: "διάσπαση",
-          merge: "σύνθεση",
-          done: "ταξινομημένο",
-        }[stage.type] || stage.type;
-        ctx.fillStyle = "#9fc9f5";
-        ctx.font = "11px Segoe UI, sans-serif";
-        ctx.fillText(
-          `στάδιο ${sortCompareState.mergeStageIndex + 1}/${Math.max(1, sortCompareState.mergeStages.length)}: ${stageLabel}`,
-          rx + 10,
-          top + 36,
-        );
+            const box = drawSequence(columnCenters[column], top + item.y, item.values, {
+              highlight: item.highlight,
+              final: item.final,
+              emphasis: item.emphasis,
+              caption: item.caption,
+              current: item.reveal === currentBubbleReveal,
+            });
 
-        for (let depth = 0; depth <= maxDepth; depth += 1) {
-          const y = levelY(depth);
-          ctx.strokeStyle = "rgba(132, 169, 219, 0.18)";
-          ctx.beginPath();
-          ctx.moveTo(rx + 8, y + 19);
-          ctx.lineTo(rx + rw - 8, y + 19);
-          ctx.stroke();
-        }
-
-        const prevDraw = prevStage
-          ? drawGroups(
-              rx,
-              levelY(prevStage.depth),
-              rw,
-              prevStage.groups,
-              {
-                boxColor: stage.type === "merge"
-                  ? "rgba(255, 191, 113, 0.90)"
-                  : "rgba(119, 149, 194, 0.58)",
-              },
-            )
-          : null;
-
-        const mergeColor = stage.type === "merge" || stage.type === "done"
-          ? "rgba(126, 228, 170, 0.90)"
-          : "rgba(129, 195, 255, 0.88)";
-        let visibleCounts = null;
-        if (stage.type === "merge") {
-          let revealLeft = sortCompareState.mergeStageReveal;
-          visibleCounts = stage.groups.map((group) => {
-            const shown = Math.max(0, Math.min(group.length, revealLeft));
-            revealLeft -= shown;
-            return shown;
+            if (previousBox) {
+              ctx.strokeStyle = "rgba(34,150,100,0.62)";
+              ctx.lineWidth = 1.5;
+              ctx.beginPath();
+              ctx.moveTo(previousBox.x + previousBox.w * 0.5, previousBox.y + previousBox.h + 6);
+              ctx.lineTo(box.x + box.w * 0.5, box.y - 8);
+              ctx.stroke();
+            }
+            previousBox = box;
           });
-        }
-        const mergeDraw = drawGroups(rx, levelY(stage.depth), rw, stage.groups, {
-          boxColor: mergeColor,
-          visibleCounts,
         });
-        sortCompareState.mergeHitRects = mergeDraw.hitRects;
-
-        if (stage.type === "merge" && prevDraw && sortCompareState.mergeAnimValue !== null) {
-          const elapsed = t - sortCompareState.mergeAnimStartAt;
-          const progress = Math.max(0, Math.min(1, elapsed / Math.max(0.05, sortCompareState.mergeAnimDuration)));
-          const valueKey = String(sortCompareState.mergeAnimValue);
-          const from = prevDraw.valueCenterMap.get(valueKey);
-          const to = mergeDraw.cellCenters[sortCompareState.mergeAnimTargetIndex];
-          if (from && to && progress < 1) {
-            // Keep source clearly visible while value is moving upward.
-            ctx.strokeStyle = "rgba(255, 244, 193, 0.98)";
-            ctx.lineWidth = 2.4;
-            ctx.beginPath();
-            ctx.arc(from.x, from.y, 17, 0, 2 * Math.PI);
-            ctx.stroke();
-
-            const x = from.x + (to.x - from.x) * progress;
-            const y = from.y + (to.y - from.y) * progress;
-            const wBox = 24;
-            const hBox = 24;
-            ctx.fillStyle = "rgba(255, 231, 141, 0.95)";
-            ctx.strokeStyle = "rgba(255, 246, 198, 0.98)";
-            ctx.lineWidth = 1.6;
-            ctx.fillRect(x - wBox * 0.5, y - hBox * 0.5, wBox, hBox);
-            ctx.strokeRect(x - wBox * 0.5, y - hBox * 0.5, wBox, hBox);
-            ctx.fillStyle = "#15243b";
-            ctx.font = "bold 12px Segoe UI, sans-serif";
-            ctx.fillText(String(sortCompareState.mergeAnimValue), x - 8, y + 4);
-          }
-          if (progress >= 1) {
-            sortCompareState.mergeAnimValue = null;
-            sortCompareState.mergeAnimTargetIndex = -1;
-          }
-        }
-
-        if (prevStage && prevDraw) {
-          ctx.strokeStyle = "rgba(200, 226, 255, 0.45)";
-          ctx.lineWidth = 1.3;
-          ctx.beginPath();
-          if (stage.type === "split") {
-            let childIdx = 0;
-            for (let p = 0; p < prevStage.groups.length; p += 1) {
-              const childCount = prevStage.groups[p].length > 1 ? 2 : 1;
-              for (let c = 0; c < childCount; c += 1) {
-                const toIdx = childIdx + c;
-                if (toIdx < mergeDraw.centers.length) {
-                  ctx.moveTo(prevDraw.centers[p], levelY(prevStage.depth) + 38);
-                  ctx.lineTo(mergeDraw.centers[toIdx], levelY(stage.depth) - 2);
-                }
-              }
-              childIdx += childCount;
-            }
-          } else if (stage.type === "merge") {
-            let parentIdx = 0;
-            for (let g = 0; g < stage.groups.length; g += 1) {
-              const toX = mergeDraw.centers[g];
-              const fromA = prevDraw.centers[parentIdx];
-              const fromB = prevDraw.centers[parentIdx + 1];
-              if (Number.isFinite(fromA)) {
-                ctx.moveTo(fromA, levelY(prevStage.depth) + 38);
-                ctx.lineTo(toX, levelY(stage.depth) - 2);
-              }
-              if (Number.isFinite(fromB)) {
-                ctx.moveTo(fromB, levelY(prevStage.depth) + 38);
-                ctx.lineTo(toX, levelY(stage.depth) - 2);
-                parentIdx += 2;
-              } else {
-                parentIdx += 1;
-              }
-            }
-          }
-          ctx.stroke();
-        }
 
         ctx.fillStyle = "#7fadcc";
-        ctx.font = "10px Segoe UI, sans-serif";
-        ctx.fillText("Divide: κατεβαίνει επίπεδα • Conquer: ανεβαίνει και κλείνει.", rx + 10, top + 260);
+        ctx.font = "11px Segoe UI, sans-serif";
+        ctx.fillText("Πορτοκαλί = ζευγάρι που ελέγχεται και, αν χρειάζεται, αντιμετατίθεται.", lx + 10, bottom - 12);
+
+        const nodeMap = new Map();
+        const treeLeft = rx + 28;
+        const treeRight = rx + rw - 18;
+        const treeTop = top + 44;
+        const treeBottom = bottom - 20;
+        const logicalXMin = -10.0;
+        const logicalXMax = 8.0;
+        const logicalYMin = -10.2;
+        const logicalYMax = 0.8;
+        const mapTreeX = (value) => treeLeft + ((value - logicalXMin) / (logicalXMax - logicalXMin)) * (treeRight - treeLeft);
+        const mapTreeY = (value) => treeTop + ((logicalYMax - value) / (logicalYMax - logicalYMin)) * (treeBottom - treeTop);
+        const drawTreeNode = (node) => {
+          const centerX = mapTreeX(node.x);
+          const centerY = mapTreeY(node.y);
+          const isCurrent = node.reveal === sortCompareState.mergeStepIndex;
+          const font = node.kind === "final" ? "bold 14px Cambria Math, Georgia, serif" : "13px Cambria Math, Georgia, serif";
+          ctx.font = font;
+          const textWidth = ctx.measureText(node.text).width;
+          const boxW = Math.max(30, textWidth + 16);
+          const boxH = node.kind === "leaf" ? 28 : 30;
+          const boxX = centerX - boxW * 0.5;
+          const boxY = centerY - boxH * 0.5;
+          const palette = node.kind === "merge" || node.kind === "final"
+            ? { fill: node.kind === "final" ? "rgba(34,150,100,0.25)" : "rgba(34,150,100,0.14)", stroke: "rgba(34,150,100,0.88)", text: "#eafff2" }
+            : node.kind === "leaf"
+              ? { fill: "rgba(230,100,60,0.16)", stroke: "rgba(230,100,60,0.88)", text: "#fff0ea" }
+              : { fill: "rgba(52,120,190,0.14)", stroke: "rgba(52,120,190,0.9)", text: "#f4f9ff" };
+          ctx.fillStyle = isCurrent ? palette.stroke.replace("0.88", (0.42 + 0.18 * pulse).toFixed(2)).replace("0.9", (0.42 + 0.18 * pulse).toFixed(2)) : palette.fill;
+          ctx.strokeStyle = palette.stroke;
+          ctx.lineWidth = isCurrent ? 2.6 : 1.5;
+          ctx.beginPath();
+          ctx.roundRect(boxX, boxY, boxW, boxH, 7);
+          ctx.fill();
+          ctx.stroke();
+          ctx.fillStyle = palette.text;
+          ctx.fillText(node.text, boxX + 8, centerY + 5);
+          nodeMap.set(node.id, { x: centerX, y: centerY, boxX, boxY, boxW, boxH });
+        };
+
+        SORT_COMPARE_MERGE_EDGES.forEach((edge) => {
+          if (edge.reveal > sortCompareState.mergeStepIndex) {
+            return;
+          }
+          const fromNode = SORT_COMPARE_MERGE_NODES.find((node) => node.id === edge.from);
+          const toNode = SORT_COMPARE_MERGE_NODES.find((node) => node.id === edge.to);
+          if (!fromNode || !toNode) {
+            return;
+          }
+          const from = { x: mapTreeX(fromNode.x), y: mapTreeY(fromNode.y) + 16 };
+          const to = { x: mapTreeX(toNode.x), y: mapTreeY(toNode.y) - 16 };
+          ctx.strokeStyle = edge.kind === "merge" ? "rgba(34,150,100,0.74)" : "rgba(170,190,215,0.68)";
+          ctx.lineWidth = edge.kind === "merge" ? 1.8 : 1.3;
+          if (edge.kind === "merge") {
+            ctx.setLineDash([6, 5]);
+          } else {
+            ctx.setLineDash([]);
+          }
+          ctx.beginPath();
+          ctx.moveTo(from.x, from.y);
+          ctx.lineTo(to.x, to.y);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        });
+
+        SORT_COMPARE_MERGE_NODES.forEach((node) => {
+          if (node.reveal <= sortCompareState.mergeStepIndex) {
+            drawTreeNode(node);
+          }
+        });
+
+        SORT_COMPARE_MERGE_LABELS.forEach((label) => {
+          if (label.reveal > sortCompareState.mergeStepIndex) {
+            return;
+          }
+          ctx.fillStyle = label.kind === "merge" ? "#9de0b9" : label.kind === "leaf" ? "#ffb499" : "#9fc9f5";
+          ctx.font = "bold 11px Segoe UI, sans-serif";
+          ctx.fillText(label.text, mapTreeX(label.x), mapTreeY(label.y) + 4);
+        });
+
+        ctx.fillStyle = "#7fadcc";
+        ctx.font = "11px Segoe UI, sans-serif";
+        ctx.fillText("Γαλάζιο = split • πορτοκαλί = φύλλο • πράσινο = merge/conquer", rx + 10, bottom - 12);
       });
     }
 
