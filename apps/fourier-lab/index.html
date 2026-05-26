@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Παρουσίαση: Ήχος, Συχνότητες και Ocean Waves</title>
   <script src="vendor/three.min.js"></script>
-  <link rel="stylesheet" href="/apps/assets/css/presentation-shell.css" />
-  <script src="/js/realtime-socket.js"></script>
-  <script src="/apps/assets/js/presentation-config.js"></script>
-  <script src="/apps/assets/js/presentation-shell.js"></script>
-  <script src="/apps/assets/js/presentation-toc.js"></script>
+  <link rel="stylesheet" href="../assets/css/presentation-shell.css" />
+  <script src="../../public/js/realtime-socket.js"></script>
+  <script src="../assets/js/presentation-config.js"></script>
+  <script src="../assets/js/presentation-shell.js"></script>
+  <script src="../assets/js/presentation-toc.js"></script>
   <script>
     window.MathJax = {
       tex: {
@@ -166,16 +166,16 @@
     .rot-mult-layout {
       margin: 8px 0 10px;
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
+      grid-template-columns: minmax(220px, 0.88fr) minmax(0, 1.12fr);
+      gap: 10px;
       align-items: stretch;
     }
 
     .rot-mult-sliders {
-      height: 320px;
+      height: 280px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
     .rot-mult-sliders .slider-group {
@@ -184,6 +184,7 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
+      min-height: 60px;
     }
 
     .rot-mult-canvas-wrap {
@@ -193,7 +194,7 @@
 
     .rot-mult-canvas-wrap .euler-canvas {
       width: 100%;
-      height: 320px;
+      height: 280px;
       margin: 0;
     }
 
@@ -17015,7 +17016,9 @@
 
     }
 
-    window.requestAnimationFrame(animatePresentation);
+    window.addEventListener('DOMContentLoaded', () => {
+      window.requestAnimationFrame(animatePresentation);
+    });
 
     document.addEventListener("visibilitychange", () => {
       if (document.hidden) {
