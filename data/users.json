@@ -48963,5 +48963,75 @@
         "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
       }
     }
+  ],
+  [
+    "d987a058-ddb9-4c0f-b28e-f13e11f09905",
+    {
+      "sessionId": "d987a058-ddb9-4c0f-b28e-f13e11f09905",
+      "userId": "user_1779791047009_0a5gwt4m4",
+      "createdAt": "2026-05-26T10:24:07.009Z",
+      "lastActivity": "2026-05-26T10:24:07.743Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "124.198.131.22",
+        "userAgent": "Mozilla/5.0 (rondo2012@atomicmail.io)"
+      }
+    }
+  ],
+  [
+    "7733edaa-234d-497f-b39c-7d6499373b4d",
+    {
+      "sessionId": "7733edaa-234d-497f-b39c-7d6499373b4d",
+      "userId": "user_1779791048631_fjyes1955",
+      "createdAt": "2026-05-26T10:24:08.631Z",
+      "lastActivity": "2026-05-26T10:24:08.824Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "45.198.224.85",
+        "userAgent": "Shodan-Pull/1.0"
+      }
+    }
   ]
 ]
