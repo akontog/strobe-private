@@ -1021,7 +1021,7 @@
   }
 
   function buildStudentLink() {
-    return "http://dmlt.math.aegean.gr:3000/client";
+    return "http://dmlt.math.aegean.gr:3000/apps/fourier-lab/index.html?mode=client";
   }
 
   function updateJoinQrAssets() {
@@ -1131,6 +1131,9 @@
   let lastHeatTimeControlSentAt = 0;
   let lastHeatTimeControlValue = null;
   let pendingHeatTimeControl = null;
+  let lastTaylorGuessLiveSentAt = 0;
+  let lastTaylorGuessLiveKey = "";
+  let pendingTaylorGuessLive = null;
   let pendingChatMessage = "";
 
   function resolveClientName(name) {
@@ -1608,13 +1611,46 @@
       socket.emit('fourier:taylor-guess-reveal', payload);
     }
 
-    function emitTaylorGuessLive(detail) {
-      if (state.mode !== 'client' || !socket.connected || !state.joined) return;
+    function emitTaylorGuessLive(detail, force = false) {
+      if (state.mode !== 'client') return;
       const c0 = Number(clampValue(detail && detail.c0, -4, 4, 0).toFixed(2));
       const c1 = Number(clampValue(detail && detail.c1, -4, 4, 0).toFixed(2));
       const c2 = Number(clampValue(detail && detail.c2, -4, 4, 0).toFixed(2));
       const c3 = Number(clampValue(detail && detail.c3, -4, 4, 0).toFixed(2));
-      socket.emit('fourier:taylor-guess-live', { c0, c1, c2, c3 });
+
+      const currentName = resolveClientName(studentNameInput ? studentNameInput.value : state.userName);
+      const currentTeam = resolveClientTeam(studentTeamInput ? studentTeamInput.value : state.userTeam, currentName);
+
+      if (!socket.connected) {
+        pendingTaylorGuessLive = { c0, c1, c2, c3 };
+        logComm('queue fourier:taylor-guess-live (socket disconnected)', pendingTaylorGuessLive);
+        return;
+      }
+
+      if (!state.joined) {
+        pendingTaylorGuessLive = { c0, c1, c2, c3 };
+        logComm('queue fourier:taylor-guess-live (not joined yet)', pendingTaylorGuessLive);
+
+        if (!state.joinPayload || state.joinPayload.role !== 'client') {
+          requestJoin('client', currentName, currentTeam);
+        } else {
+          logComm('re-emit fourier:join before taylor-guess-live', state.joinPayload);
+          socket.emit('fourier:join', state.joinPayload);
+        }
+      }
+
+      const now = Date.now();
+      const liveKey = `${c0}:${c1}:${c2}:${c3}`;
+      if (!force && liveKey === lastTaylorGuessLiveKey && now - lastTaylorGuessLiveSentAt < 70) {
+        return;
+      }
+
+      lastTaylorGuessLiveKey = liveKey;
+      lastTaylorGuessLiveSentAt = now;
+
+      const payload = { role: 'client', name: currentName, team: currentTeam, c0, c1, c2, c3 };
+      logComm('emit fourier:taylor-guess-live', payload);
+      socket.emit('fourier:taylor-guess-live', payload);
     }
 
     function emitTaylorGuessSubmit(detail) {
@@ -1928,7 +1964,7 @@
     if (state.joinPayload) {
       logComm("emit fourier:join on connect", state.joinPayload);
       socket.emit("fourier:join", state.joinPayload);
-    } else if (state.mode === "client" && (pendingSoundControl || pendingHeatControl)) {
+    } else if (state.mode === "client" && (pendingSoundControl || pendingHeatControl || pendingTaylorGuessLive)) {
       const currentName = resolveClientName(studentNameInput ? studentNameInput.value : state.userName);
       const currentTeam = resolveClientTeam(studentTeamInput ? studentTeamInput.value : state.userTeam, currentName);
       requestJoin("client", currentName, currentTeam);
@@ -2009,10 +2045,10 @@
 
     if (payload && Object.prototype.hasOwnProperty.call(payload, "waveSum")) {
       applyWaveSumState(payload.waveSum);
+    }
 
-        if (payload && Object.prototype.hasOwnProperty.call(payload, "taylorGuess")) {
-          applyTaylorGuessState(payload.taylorGuess);
-        }
+    if (payload && Object.prototype.hasOwnProperty.call(payload, "taylorGuess")) {
+      applyTaylorGuessState(payload.taylorGuess);
     }
 
     if (payload && (payload.activeSlideId || Number.isInteger(payload.activeSlideIndex))) {
@@ -2031,6 +2067,11 @@
       if (pendingHeatControl) {
         emitHeatControl(pendingHeatControl, true);
         pendingHeatControl = null;
+      }
+
+      if (pendingTaylorGuessLive) {
+        emitTaylorGuessLive(pendingTaylorGuessLive, true);
+        pendingTaylorGuessLive = null;
       }
     } else if (state.mode === "teacher") {
       emitHeatControl(pendingHeatControl || getLocalHeatControlFromDom(), true);
@@ -2086,12 +2127,12 @@
       applyOceanRandomState(payload.oceanRandom);
     }
 
+    if (payload && Object.prototype.hasOwnProperty.call(payload, "taylorGuess")) {
+      applyTaylorGuessState(payload.taylorGuess);
+    }
+
     if (payload && (payload.activeSlideId || Number.isInteger(payload.activeSlideIndex))) {
       state.activeSlideId = payload.activeSlideId || state.activeSlideId;
-
-          if (payload && Object.prototype.hasOwnProperty.call(payload, "taylorGuess")) {
-            applyTaylorGuessState(payload.taylorGuess);
-          }
       state.activeSlideIndex = Number.isInteger(payload.activeSlideIndex) ? payload.activeSlideIndex : state.activeSlideIndex;
     }
 

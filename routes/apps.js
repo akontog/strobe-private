@@ -41,7 +41,7 @@ function createAppsRouter() {
 
     const staticMiddleware = express.static(app.staticDir, {
       index: false,
-      fallthrough: false
+      fallthrough: true
     });
 
     return staticMiddleware(req, res, next);

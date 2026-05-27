@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="el">
 <head>
   <meta charset="UTF-8" />
@@ -898,6 +898,32 @@
     .taylor-guess-slider .slider-label {
       font-size: 0.83rem;
       margin-bottom: 4px;
+    }
+
+    .taylor-guess-math {
+      display: grid;
+      gap: 6px;
+      align-items: center;
+      justify-items: stretch;
+      text-align: left;
+    }
+
+    .taylor-guess-math-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .taylor-guess-math-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .taylor-guess-math-formula {
+      min-width: 0;
+      text-align: center;
     }
 
     .unity-roots-layout {
@@ -2411,7 +2437,7 @@
       <a href="#sec-intro" data-accordion-group="waves">2.1 Κύμα f(x)=sin(x)</a>
       <a href="#sec-wave2d" data-accordion-group="waves">2.2 2D κύμα: A·sin(kx·x+kz·z+ωt+φ)</a>
       <a href="#sec-why-gerstner" data-accordion-group="waves">2.3 Κυκλική τροχιά σωματιδίων (Gerstner)</a>
-      <a href="#sec-wave1d-arrows" data-accordion-group="waves">2.4 Κίνηση σωματιδίων (1D, x μόνο)</a>
+      <a href="#sec-wave1d-arrows" data-accordion-group="waves">2.4 Ημιτονοειδές vs Gerstner</a>
       <a href="#sec-compare-sine-gerstner" data-accordion-group="waves">2.5 Σύγκριση: Ημιτονοειδές vs Gerstner</a>
       <a href="#sec-sum" data-accordion-group="waves">2.6 Δραστηριότητα: Άθροισμα κυμάτων</a>
 
@@ -3079,8 +3105,8 @@
                 Ρύθμισε τους συντελεστές \(c_0,\,c_1,\,c_2,\,c_3\) ώστε το πολυώνυμο
                 \(P(x)=c_0+c_1 x+c_2 x^2+c_3 x^3\) να προσεγγίζει τη συνάρτηση \(e^{2x}\).
               </p>
-              <canvas id="taylorGuessCanvas" class="euler-canvas" style="width:100%;height:270px;" width="940" height="270"></canvas>
-              <div id="taylorGuessMath" class="mathjax-box" style="margin-top:5px;padding:4px 12px;min-height:auto;font-size:0.93em;text-align:center;"></div>
+              <canvas id="taylorGuessCanvas" class="euler-canvas" style="width:100%;height:220px;" width="940" height="220"></canvas>
+              <div id="taylorGuessMath" class="mathjax-box taylor-guess-math" style="margin-top:5px;padding:4px 12px;min-height:auto;font-size:0.93em;"></div>
               <div id="taylorGuessLegend" class="sum-legend" style="margin-top:8px;"></div>
               <div class="taylor-guess-controls">
                 <div class="slider-group taylor-guess-slider">
@@ -5383,13 +5409,17 @@
 
     // @slide 2.3 — teacher: σχεδιάζει sum-legend-items για κάθε student στο waveSumLegend.
     const WAVE_SUM_STUDENT_PALETTE = ['#f472b6', '#fb923c', '#facc15', '#a3e635', '#34d399', '#22d3ee', '#818cf8', '#e879f9'];
+    let waveSumClassroomEntries = [];
     function escapeWaveSumHtml(str) {
       return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
     }
     document.addEventListener("fourier:wave-sum-state", (event) => {
+      const incomingEntries = (event && event.detail && Array.isArray(event.detail.entries)) ? event.detail.entries : [];
+      waveSumClassroomEntries = isTeacherMode ? incomingEntries : [];
       if (!waveSumLegend) return;
       waveSumLegend.querySelectorAll(".wave-sum-entry").forEach((el) => el.remove());
-      const entries = (event && event.detail && Array.isArray(event.detail.entries)) ? event.detail.entries : [];
+      if (!isTeacherMode) return;
+      const entries = waveSumClassroomEntries;
       entries.forEach((entry, index) => {
         const color = WAVE_SUM_STUDENT_PALETTE[index % WAVE_SUM_STUDENT_PALETTE.length];
         const span = document.createElement("span");
@@ -8576,13 +8606,56 @@
       if (taylorGuessC3Value) taylorGuessC3Value.textContent = Number(taylorGuessC3?.value || 0).toFixed(2);
     }
 
+    function escapeTaylorGuessLabel(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatTaylorGuessFormula(coeffs, symbol = 'P') {
+      const safeCoeffs = Array.isArray(coeffs) ? coeffs : [0, 0, 0, 0];
+      const [c0, c1, c2, c3] = safeCoeffs.map(value => Number(value || 0).toFixed(2));
+      return `\\(${symbol}(x)=${c0}+${c1}x+${c2}x^2+${c3}x^3\\)`;
+    }
+
     function updateTaylorGuessMath() {
       if (!taylorGuessMath) return;
-      const c0 = Number(taylorGuessC0?.value || 0).toFixed(2);
-      const c1 = Number(taylorGuessC1?.value || 0).toFixed(2);
-      const c2 = Number(taylorGuessC2?.value || 0).toFixed(2);
-      const c3 = Number(taylorGuessC3?.value || 0).toFixed(2);
-      taylorGuessMath.innerHTML = `\\[P(x)=${c0}+${c1}x+${c2}x^2+${c3}x^3\\]`;
+      const teacherCoeffs = [
+        Number(taylorGuessC0?.value || 0),
+        Number(taylorGuessC1?.value || 0),
+        Number(taylorGuessC2?.value || 0),
+        Number(taylorGuessC3?.value || 0),
+      ];
+
+      const rows = [
+        `<div class="taylor-guess-math-row">` +
+          `<div class="taylor-guess-math-label" style="color:#ffe040;">${isTeacherMode ? 'Teacher' : 'Εσύ'}</div>` +
+          `<div class="taylor-guess-math-formula">${formatTaylorGuessFormula(teacherCoeffs, 'P')}</div>` +
+        `</div>`
+      ];
+
+      if (isTeacherMode) {
+        taylorGuessLocalState.players.forEach((player, index) => {
+          const color = TAYLOR_GUESS_PALETTE[index % TAYLOR_GUESS_PALETTE.length];
+          const statusLabel = Array.isArray(player?.coeffs)
+            ? (player.submitted ? 'submitted' : 'live')
+            : 'awaiting';
+          const formulaHtml = Array.isArray(player?.coeffs)
+            ? formatTaylorGuessFormula(player.coeffs, 'S')
+            : '<span style="opacity:.7;">αναμονή για coefficients</span>';
+          rows.push(
+            `<div class="taylor-guess-math-row">` +
+              `<div class="taylor-guess-math-label" style="color:${color};">${escapeTaylorGuessLabel(player.name || `Student ${index + 1}`)} (${statusLabel})</div>` +
+              `<div class="taylor-guess-math-formula">${formulaHtml}</div>` +
+            `</div>`
+          );
+        });
+      }
+
+      taylorGuessMath.innerHTML = rows.join('');
       if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
         window.MathJax.typesetPromise([taylorGuessMath]).catch(() => {});
       }
@@ -8623,9 +8696,11 @@
       if (isTeacherMode) {
         appendLegendItem('P(x)', '#ffe040', '(δικό σου)');
         taylorGuessLocalState.players.forEach((player, index) => {
-          if (!Array.isArray(player.coeffs)) return;
           const color = TAYLOR_GUESS_PALETTE[index % TAYLOR_GUESS_PALETTE.length];
-          appendLegendItem(player.name || `#${index + 1}`, color, '(student)');
+          const extra = Array.isArray(player.coeffs)
+            ? (player.submitted ? '(submitted)' : '(live)')
+            : '(awaiting)';
+          appendLegendItem(player.name || `#${index + 1}`, color, extra);
         });
       } else {
         appendLegendItem('P(x)', '#ffe040', '(δικό σου)');
@@ -8650,7 +8725,7 @@
     }
 
     [taylorGuessC0, taylorGuessC1, taylorGuessC2, taylorGuessC3].forEach(el => {
-      el?.addEventListener('input', () => {
+      const emitTaylorGuessLive = () => {
         updateTaylorGuessSliderLabels();
         updateTaylorGuessMath();
         document.dispatchEvent(new CustomEvent('fourier:taylor-guess-live-local', {
@@ -8661,7 +8736,10 @@
             c3: Number(taylorGuessC3?.value || 0)
           }
         }));
-      });
+      };
+
+      el?.addEventListener('input', emitTaylorGuessLive);
+      el?.addEventListener('change', emitTaylorGuessLive);
     });
 
     taylorGuessStartBtn?.addEventListener('click', () => {
@@ -8724,6 +8802,8 @@
         ownCoeffs: Array.isArray(p.ownCoeffs) ? p.ownCoeffs : null,
       };
       updateTaylorGuessUI();
+      updateTaylorGuessMath();
+      drawTaylorGuessCanvas(taylorGuessCanvas);
       if (!isTeacherMode) {
         document.dispatchEvent(new CustomEvent('fourier:taylor-guess-live-local', {
           detail: {
@@ -9296,7 +9376,9 @@
           ? "teacher"
           : "student";
       const name = String((source && source.name) || (origin === "teacher" ? "Teacher" : "Student")).trim() || "Student";
-      const label = String((source && (source.label || source.sourceLabel)) || name).trim() || name;
+      const rawLabel = String((source && (source.label || source.sourceLabel)) || "").trim();
+      const isGenericLabel = /^(main|teacher-main|local-student|source-\d+|legacy-\d+)$/i.test(rawLabel);
+      const label = !rawLabel || isGenericLabel ? name : rawLabel;
 
       return {
         key,
@@ -9370,10 +9452,6 @@
 
       if (isTeacherMode) {
         return [...classroomSources, ...getTeacherToneSources()];
-      }
-
-      if (classroomSources.length > 0) {
-        return classroomSources;
       }
 
       return getStudentPreviewSoundSources();
@@ -11402,12 +11480,14 @@
         const mid = height * 0.55;
         const plot = drawWaveGridAndAxes(ctx, width, height, mid, ratio);
 
-        const components = [
-          { on: sumOn1 ? sumOn1.checked : true, amp: sumAmp1 ? Number(sumAmp1.value) : 1, freq: sumFreq1 ? Number(sumFreq1.value) : 1.2, phase: sumPhi1 ? Number(sumPhi1.value) : 0.00, color: "rgba(129, 184, 255, 0.72)" },
-          { on: sumOn2 ? sumOn2.checked : true, amp: sumAmp2 ? Number(sumAmp2.value) : 0.7, freq: sumFreq2 ? Number(sumFreq2.value) : 2.0, phase: sumPhi2 ? Number(sumPhi2.value) : 0.35, color: "rgba(255, 182, 92, 0.72)" },
-          { on: sumOn3 ? sumOn3.checked : true, amp: sumAmp3 ? Number(sumAmp3.value) : 0.5, freq: sumFreq3 ? Number(sumFreq3.value) : 3.2, phase: sumPhi3 ? Number(sumPhi3.value) : 0.70, color: "rgba(199, 150, 255, 0.72)" },
-          { on: sumOn4 ? sumOn4.checked : true, amp: sumAmp4 ? Number(sumAmp4.value) : 0.35, freq: sumFreq4 ? Number(sumFreq4.value) : 4.4, phase: sumPhi4 ? Number(sumPhi4.value) : 1.10, color: "rgba(106, 236, 176, 0.72)" },
-        ];
+        const components = isTeacherMode
+          ? [
+              { on: sumOn1 ? sumOn1.checked : true, amp: sumAmp1 ? Number(sumAmp1.value) : 1, freq: sumFreq1 ? Number(sumFreq1.value) : 1.2, phase: sumPhi1 ? Number(sumPhi1.value) : 0.00, color: "rgba(129, 184, 255, 0.72)" },
+              { on: sumOn2 ? sumOn2.checked : true, amp: sumAmp2 ? Number(sumAmp2.value) : 0.7, freq: sumFreq2 ? Number(sumFreq2.value) : 2.0, phase: sumPhi2 ? Number(sumPhi2.value) : 0.35, color: "rgba(255, 182, 92, 0.72)" },
+              { on: sumOn3 ? sumOn3.checked : true, amp: sumAmp3 ? Number(sumAmp3.value) : 0.5, freq: sumFreq3 ? Number(sumFreq3.value) : 3.2, phase: sumPhi3 ? Number(sumPhi3.value) : 0.70, color: "rgba(199, 150, 255, 0.72)" },
+              { on: sumOn4 ? sumOn4.checked : true, amp: sumAmp4 ? Number(sumAmp4.value) : 0.35, freq: sumFreq4 ? Number(sumFreq4.value) : 4.4, phase: sumPhi4 ? Number(sumPhi4.value) : 1.10, color: "rgba(106, 236, 176, 0.72)" },
+            ]
+          : [];
 
         if (!isTeacherMode && waveSumStudentFreq) {
           components.push({
@@ -11418,6 +11498,18 @@
             color: "rgba(108, 208, 255, 0.82)",
           });
         }
+
+        const classroomComponents = isTeacherMode
+          ? waveSumClassroomEntries.map((entry, index) => ({
+              on: true,
+              amp: 0.9,
+              freq: Number(entry.freq),
+              phase: Number(entry.phi || 0),
+              color: WAVE_SUM_STUDENT_PALETTE[index % WAVE_SUM_STUDENT_PALETTE.length],
+              name: entry.name,
+            }))
+          : [];
+        const sumComponents = isTeacherMode ? [...components, ...classroomComponents] : components;
 
         const componentScale = 48;
         components.forEach((component) => {
@@ -11435,6 +11527,36 @@
           ctx.stroke();
         });
 
+        classroomComponents.forEach((component, index) => {
+          const strokeColor = component.color;
+          ctx.strokeStyle = strokeColor;
+          ctx.lineWidth = 1.8;
+          ctx.globalAlpha = 0.95;
+          ctx.beginPath();
+          let labelY = mid;
+          const labelNx = 0.86;
+          for (let x = plot.plotLeft; x <= plot.plotRight; x += 2) {
+            const nx = (x - plot.plotLeft) / plot.plotWidth;
+            const y = mid - componentScale * component.amp * Math.sin(2 * Math.PI * component.freq * nx + component.phase - t * component.freq);
+            if (x === plot.plotLeft) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            if (Math.abs(nx - labelNx) < 0.004) {
+              labelY = y;
+            }
+          }
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = strokeColor;
+          ctx.font = `bold ${Math.max(10, 10 * ratio)}px Segoe UI`;
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          const labelOffset = ((index % 2 === 0 ? -1 : 1) * (8 + (index % 3) * 6)) * ratio;
+          ctx.fillText(
+            String(component.name || `Student ${index + 1}`),
+            plot.plotLeft + plot.plotWidth * labelNx + 6 * ratio,
+            Math.max(12 * ratio, Math.min(height - 10 * ratio, labelY + labelOffset))
+          );
+        });
+
         const sumGain = 1.18;
         ctx.strokeStyle = "#1e90ff";
         ctx.lineWidth = 4.2;
@@ -11442,7 +11564,7 @@
         for (let x = plot.plotLeft; x <= plot.plotRight; x += 2) {
           const nx = (x - plot.plotLeft) / plot.plotWidth;
           let sum = 0;
-          components.forEach((component) => {
+          sumComponents.forEach((component) => {
             if (!component.on) {
               return;
             }
@@ -11464,15 +11586,28 @@
         const Q = 0.55;
         const xRange = 2 * Math.PI;
         const componentScale = 48;
-        const components = [
-          { on: sumOn1 ? sumOn1.checked : true, amp: sumAmp1 ? Number(sumAmp1.value) : 1, freq: sumFreq1 ? Number(sumFreq1.value) : 1.2, phase: sumPhi1 ? Number(sumPhi1.value) : 0.00, color: "rgba(129, 184, 255, 0.72)" },
-          { on: sumOn2 ? sumOn2.checked : true, amp: sumAmp2 ? Number(sumAmp2.value) : 0.7, freq: sumFreq2 ? Number(sumFreq2.value) : 2.0, phase: sumPhi2 ? Number(sumPhi2.value) : 0.35, color: "rgba(255, 182, 92, 0.72)" },
-          { on: sumOn3 ? sumOn3.checked : true, amp: sumAmp3 ? Number(sumAmp3.value) : 0.5, freq: sumFreq3 ? Number(sumFreq3.value) : 3.2, phase: sumPhi3 ? Number(sumPhi3.value) : 0.70, color: "rgba(199, 150, 255, 0.72)" },
-          { on: sumOn4 ? sumOn4.checked : true, amp: sumAmp4 ? Number(sumAmp4.value) : 0.35, freq: sumFreq4 ? Number(sumFreq4.value) : 4.4, phase: sumPhi4 ? Number(sumPhi4.value) : 1.10, color: "rgba(106, 236, 176, 0.72)" },
-        ];
+        const components = isTeacherMode
+          ? [
+              { on: sumOn1 ? sumOn1.checked : true, amp: sumAmp1 ? Number(sumAmp1.value) : 1, freq: sumFreq1 ? Number(sumFreq1.value) : 1.2, phase: sumPhi1 ? Number(sumPhi1.value) : 0.00, color: "rgba(129, 184, 255, 0.72)" },
+              { on: sumOn2 ? sumOn2.checked : true, amp: sumAmp2 ? Number(sumAmp2.value) : 0.7, freq: sumFreq2 ? Number(sumFreq2.value) : 2.0, phase: sumPhi2 ? Number(sumPhi2.value) : 0.35, color: "rgba(255, 182, 92, 0.72)" },
+              { on: sumOn3 ? sumOn3.checked : true, amp: sumAmp3 ? Number(sumAmp3.value) : 0.5, freq: sumFreq3 ? Number(sumFreq3.value) : 3.2, phase: sumPhi3 ? Number(sumPhi3.value) : 0.70, color: "rgba(199, 150, 255, 0.72)" },
+              { on: sumOn4 ? sumOn4.checked : true, amp: sumAmp4 ? Number(sumAmp4.value) : 0.35, freq: sumFreq4 ? Number(sumFreq4.value) : 4.4, phase: sumPhi4 ? Number(sumPhi4.value) : 1.10, color: "rgba(106, 236, 176, 0.72)" },
+            ]
+          : [];
         if (!isTeacherMode && waveSumStudentFreq) {
           components.push({ on: true, amp: 0.9, freq: Number(waveSumStudentFreq.value), phase: waveSumStudentPhi ? Number(waveSumStudentPhi.value) : 0, color: "rgba(108, 208, 255, 0.82)" });
         }
+        const classroomComponents = isTeacherMode
+          ? waveSumClassroomEntries.map((entry, index) => ({
+              on: true,
+              amp: 0.9,
+              freq: Number(entry.freq),
+              phase: Number(entry.phi || 0),
+              color: WAVE_SUM_STUDENT_PALETTE[index % WAVE_SUM_STUDENT_PALETTE.length],
+              name: entry.name,
+            }))
+          : [];
+        const sumComponents = isTeacherMode ? [...components, ...classroomComponents] : components;
         components.forEach((comp) => {
           if (!comp.on) return;
           const k = comp.freq;
@@ -11488,6 +11623,38 @@
           }
           ctx.stroke();
         });
+        classroomComponents.forEach((comp, index) => {
+          const k = comp.freq;
+          ctx.strokeStyle = comp.color;
+          ctx.lineWidth = 1.8;
+          ctx.globalAlpha = 0.95;
+          ctx.beginPath();
+          let labelX = plot.plotLeft + plot.plotWidth * 0.86;
+          let labelY = mid;
+          for (let xi = 0; xi <= 300; xi++) {
+            const x0 = (xi / 300) * xRange;
+            const theta = k * x0 + comp.phase - t * k;
+            const sx = plot.plotLeft + (x0 / xRange) * plot.plotWidth + Q * comp.amp * Math.cos(theta) * componentScale * 0.35;
+            const sy = mid - comp.amp * Math.sin(theta) * componentScale;
+            xi === 0 ? ctx.moveTo(sx, sy) : ctx.lineTo(sx, sy);
+            if (Math.abs(xi - 258) <= 1) {
+              labelX = sx;
+              labelY = sy;
+            }
+          }
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = comp.color;
+          ctx.font = `bold ${Math.max(10, 10 * ratio)}px Segoe UI`;
+          ctx.textAlign = "left";
+          ctx.textBaseline = "middle";
+          const labelOffset = ((index % 2 === 0 ? -1 : 1) * (8 + (index % 3) * 6)) * ratio;
+          ctx.fillText(
+            String(comp.name || `Student ${index + 1}`),
+            labelX + 6 * ratio,
+            Math.max(12 * ratio, Math.min(height - 10 * ratio, labelY + labelOffset))
+          );
+        });
         const sumGain = 1.18;
         ctx.strokeStyle = "#ff8c30";
         ctx.lineWidth = 4.2;
@@ -11495,7 +11662,7 @@
         for (let xi = 0; xi <= 300; xi++) {
           const x0 = (xi / 300) * xRange;
           let sumXDisp = 0, sumYDisp = 0;
-          components.forEach((comp) => {
+          sumComponents.forEach((comp) => {
             if (!comp.on) return;
             const k = comp.freq;
             const theta = k * x0 + comp.phase - t * k;
@@ -17319,3 +17486,5 @@
   <script src="classroom-sync.js"></script>
 </body>
 </html>
+
+

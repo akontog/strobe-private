@@ -1101,6 +1101,20 @@ app.use('/admin', createAdminRouter({
 }));
 app.use('/apps', createAppsRouter());
 
+app.use((err, req, res, next) => {
+  if (!err) {
+    return next();
+  }
+
+  if (err.code === 'ENOENT') {
+    return res.status(404).json({ error: 'Resource not found' });
+  }
+
+  const status = Number.isInteger(err.status) ? err.status : 500;
+  console.error('[http] request error:', err && err.message ? err.message : err);
+  return res.status(status).json({ error: status === 500 ? 'Internal server error' : 'Request failed' });
+});
+
 const FOURIER_ROOM = 'fourier:classroom';
 const fourierParticipants = new Map();
 const fourierState = {
@@ -1992,9 +2006,9 @@ function buildFourierTaylorGuessPayload(viewerSocketId = '', viewerRole = 'clien
     const isOwn = socketId === viewerSocketId;
     const showCoeffs = revealForTeacher || (isOwn && Boolean(sub));
     const live = fourierTaylorGuessLiveCoeffs.get(socketId);
-    const teacherCoeffs = sub
-      ? [sub.c0, sub.c1, sub.c2, sub.c3]
-      : (live ? [live.c0, live.c1, live.c2, live.c3] : null);
+    const teacherCoeffs = live
+      ? [live.c0, live.c1, live.c2, live.c3]
+      : (sub ? [sub.c0, sub.c1, sub.c2, sub.c3] : null);
     players.push({
       socketId,
       name: participant.name,
@@ -2525,6 +2539,7 @@ io.on('connection', (socket) => {
     emitFourierFftDuelState();
     emitFourierOceanRandomState();
     emitFourierWaveSumState();
+    emitFourierTaylorGuessState();
   });
 
   socket.on('fourier:request-state', () => {
@@ -3115,79 +3130,110 @@ io.on('connection', (socket) => {
 
     fourierWaveSumState.set(socket.id, { freq, phi, updatedAt: now });
 
-      socket.on('fourier:taylor-guess-start', (payload) => {
-        touchGeometryConnection(socket.id);
-        const participant = fourierParticipants.get(socket.id);
-        if (!participant || participant.role !== 'teacher') return;
-        startFourierTaylorGuessRound();
-        emitFourierTaylorGuessState();
-        emitFourierSummary();
-      });
-
-      socket.on('fourier:taylor-guess-live', (payload) => {
-        touchGeometryConnection(socket.id);
-        const participant = fourierParticipants.get(socket.id);
-        if (!participant || participant.role !== 'client') return;
-        const c0 = Number(clampFourierNumber(payload && payload.c0, -4, 4, 0).toFixed(2));
-        const c1 = Number(clampFourierNumber(payload && payload.c1, -4, 4, 0).toFixed(2));
-        const c2 = Number(clampFourierNumber(payload && payload.c2, -4, 4, 0).toFixed(2));
-        const c3 = Number(clampFourierNumber(payload && payload.c3, -4, 4, 0).toFixed(2));
-        fourierTaylorGuessLiveCoeffs.set(socket.id, { c0, c1, c2, c3 });
-        // Emit state update only to teacher sockets
-        fourierParticipants.forEach((p, sid) => {
-          if (p && p.role === 'teacher') {
-            const pl = buildFourierTaylorGuessPayload(sid, 'teacher');
-            io.to(sid).emit('fourier:taylor-guess-state', pl);
-          }
-        });
-      });
-
-      socket.on('fourier:taylor-guess-submit', (payload) => {
-        touchGeometryConnection(socket.id);
-        const participant = fourierParticipants.get(socket.id);
-        if (!participant || participant.role !== 'client') return;
-        if (fourierTaylorGuessState.status !== 'running') return;
-        if (fourierTaylorGuessState.submissions.has(socket.id)) return;
-
-        const c0 = Number(clampFourierNumber(payload && payload.c0, -4, 4, 0).toFixed(2));
-        const c1 = Number(clampFourierNumber(payload && payload.c1, -4, 4, 0).toFixed(2));
-        const c2 = Number(clampFourierNumber(payload && payload.c2, -4, 4, 0).toFixed(2));
-        const c3 = Number(clampFourierNumber(payload && payload.c3, -4, 4, 0).toFixed(2));
-
-        // RMSE against e^(2x) at 21 sample points on [-1.5, 1.5]
-        let mse = 0;
-        for (let i = 0; i <= 20; i++) {
-          const x = -1.5 + (i / 20) * 3.0;
-          const diff = Math.exp(2 * x) - (c0 + c1 * x + c2 * x * x + c3 * x * x * x);
-          mse += diff * diff;
-        }
-        const error = Number(Math.sqrt(mse / 21).toFixed(3));
-        const now = Date.now();
-
-        fourierTaylorGuessState.submissions.set(socket.id, { c0, c1, c2, c3, error, submittedAt: now });
-        fourierTaylorGuessState.updatedAt = now;
-        participant.interactions += 1;
-        participant.lastActionAt = now;
-        fourierParticipants.set(socket.id, participant);
-
-        emitFourierParticipants();
-        emitFourierTaylorGuessState();
-        emitFourierSummary();
-      });
-
-      socket.on('fourier:taylor-guess-reveal', (payload) => {
-        touchGeometryConnection(socket.id);
-        const participant = fourierParticipants.get(socket.id);
-        if (!participant || participant.role !== 'teacher') return;
-        if (fourierTaylorGuessState.status !== 'running') return;
-        fourierTaylorGuessState.revealResults = true;
-        fourierTaylorGuessState.updatedAt = Date.now();
-        emitFourierTaylorGuessState();
-      });
     participant.lastActionAt = now;
     fourierParticipants.set(socket.id, participant);
 
     emitFourierWaveSumState();
+  });
+
+  socket.on('fourier:taylor-guess-start', () => {
+    touchGeometryConnection(socket.id);
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'teacher') return;
+    startFourierTaylorGuessRound();
+    emitFourierTaylorGuessState();
+    emitFourierSummary();
+  });
+
+  socket.on('fourier:taylor-guess-live', (payload) => {
+    touchGeometryConnection(socket.id);
+    let participant = fourierParticipants.get(socket.id);
+    let createdFromTaylorLive = false;
+
+    if (!participant) {
+      participant = registerFourierParticipant(
+        socket,
+        'client',
+        payload && payload.name,
+        payload && payload.team
+      );
+      createdFromTaylorLive = true;
+    }
+
+    if (!participant || participant.role !== 'client') return;
+    const c0 = Number(clampFourierNumber(payload && payload.c0, -4, 4, 0).toFixed(2));
+    const c1 = Number(clampFourierNumber(payload && payload.c1, -4, 4, 0).toFixed(2));
+    const c2 = Number(clampFourierNumber(payload && payload.c2, -4, 4, 0).toFixed(2));
+    const c3 = Number(clampFourierNumber(payload && payload.c3, -4, 4, 0).toFixed(2));
+    fourierTaylorGuessLiveCoeffs.set(socket.id, { c0, c1, c2, c3 });
+
+    participant.lastActionAt = Date.now();
+    fourierParticipants.set(socket.id, participant);
+
+    if (createdFromTaylorLive) {
+      emitFourierParticipants();
+      emitFourierSoundState();
+      emitFourierSummary();
+    }
+
+    fourierParticipants.forEach((currentParticipant, sid) => {
+      if (currentParticipant && currentParticipant.role === 'teacher') {
+        const teacherPayload = buildFourierTaylorGuessPayload(sid, 'teacher');
+        io.to(sid).emit('fourier:taylor-guess-state', teacherPayload);
+      }
+    });
+  });
+
+  socket.on('fourier:taylor-guess-submit', (payload) => {
+    touchGeometryConnection(socket.id);
+    let participant = fourierParticipants.get(socket.id);
+
+    if (!participant) {
+      participant = registerFourierParticipant(
+        socket,
+        'client',
+        payload && payload.name,
+        payload && payload.team
+      );
+    }
+
+    if (!participant || participant.role !== 'client') return;
+    if (fourierTaylorGuessState.status !== 'running') return;
+    if (fourierTaylorGuessState.submissions.has(socket.id)) return;
+
+    const c0 = Number(clampFourierNumber(payload && payload.c0, -4, 4, 0).toFixed(2));
+    const c1 = Number(clampFourierNumber(payload && payload.c1, -4, 4, 0).toFixed(2));
+    const c2 = Number(clampFourierNumber(payload && payload.c2, -4, 4, 0).toFixed(2));
+    const c3 = Number(clampFourierNumber(payload && payload.c3, -4, 4, 0).toFixed(2));
+
+    let mse = 0;
+    for (let i = 0; i <= 20; i++) {
+      const x = -1.5 + (i / 20) * 3.0;
+      const diff = Math.exp(2 * x) - (c0 + c1 * x + c2 * x * x + c3 * x * x * x);
+      mse += diff * diff;
+    }
+    const now = Date.now();
+    const error = Number(Math.sqrt(mse / 21).toFixed(3));
+
+    fourierTaylorGuessState.submissions.set(socket.id, { c0, c1, c2, c3, error, submittedAt: now });
+    fourierTaylorGuessState.updatedAt = now;
+    participant.interactions += 1;
+    participant.lastActionAt = now;
+    fourierParticipants.set(socket.id, participant);
+
+    emitFourierParticipants();
+    emitFourierTaylorGuessState();
+    emitFourierSummary();
+  });
+
+  socket.on('fourier:taylor-guess-reveal', () => {
+    touchGeometryConnection(socket.id);
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'teacher') return;
+    if (fourierTaylorGuessState.status !== 'running') return;
+    fourierTaylorGuessState.revealResults = true;
+    fourierTaylorGuessState.updatedAt = Date.now();
+    emitFourierTaylorGuessState();
   });
 
   socket.on('disconnect', () => {
@@ -3242,6 +3288,10 @@ io.on('connection', (socket) => {
 
     if (removedWaveSumEntry || removedParticipant) {
       emitFourierWaveSumState();
+    }
+
+    if (removedParticipant) {
+      emitFourierTaylorGuessState();
     }
 
     emitUsersUpdate();
