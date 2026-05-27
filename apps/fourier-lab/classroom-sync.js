@@ -1021,13 +1021,7 @@
   }
 
   function buildStudentLink() {
-    const url = new URL(window.location.href);
-    url.searchParams.set("mode", "client");
-    url.searchParams.delete("name");
-    url.searchParams.delete("team");
-    url.searchParams.delete("autoconnect");
-    url.hash = "";
-    return `${url.origin}${url.pathname}${url.search}`;
+    return "http://dmlt.math.aegean.gr:3000/client";
   }
 
   function updateJoinQrAssets() {
@@ -1038,8 +1032,7 @@
     }
 
     if (classJoinQrImageNode) {
-      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(link)}`;
-      classJoinQrImageNode.src = qrUrl;
+      classJoinQrImageNode.src = "media/QRCode.png";
       classJoinQrImageNode.alt = "QR code για σύνδεση μαθητών";
     }
   }
@@ -1089,6 +1082,16 @@
   }
 
   updateJoinQrAssets();
+
+  if (classJoinQrImageNode) {
+    classJoinQrImageNode.title = "Click για μεγέθυνση QR";
+    classJoinQrImageNode.addEventListener("click", () => {
+      const isExpanded = classJoinQrImageNode.classList.toggle("is-expanded");
+      classJoinQrImageNode.title = isExpanded
+        ? "Click για επαναφορά"
+        : "Click για μεγέθυνση QR";
+    });
+  }
 
   updateRoleLabel();
   setConnectionState(false);

@@ -34,6 +34,22 @@
 \pgfplotsset{compat=1.18}
 \usepackage{xcolor}
 
+\tikzset{
+    basearr/.style={rectangle, rounded corners=2pt,
+        thick,
+        font=\small\ttfamily,
+        inner sep=4pt,
+        minimum height=18pt},
+    splitarr/.style={basearr, draw=splitcolor, fill=splitcolor!12},
+    mergearr/.style={basearr, draw=mergecolor, fill=mergecolor!12},
+    leafarr/.style={basearr, draw=leafcolor, fill=leafcolor!12},
+    edge/.style={->, thick, gray!60},
+    mergedge/.style={->, thick, mergecolor!70, dashed},
+    bubblearr/.style={basearr, draw=splitcolor, fill=splitcolor!8},
+    bubblefinal/.style={basearr, draw=mergecolor, fill=mergecolor!25},
+    compare/.style={<->, thick, swapcolor, shorten <=2pt, shorten >=2pt}
+}
+
 % Workaround για Pandoc table widths
 \providecommand{\real}[1]{#1}
 

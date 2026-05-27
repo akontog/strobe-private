@@ -512,34 +512,64 @@
     }
 
     .ocean-canvas {
-      width: 100%;
-      height: 430px;
+      width: min(860px, 96%);
+      height: 390px;
       border: 1px solid var(--line);
       border-radius: 12px;
       background: #000;
       display: block;
-      margin-top: 0;
+      margin: 0 auto;
     }
 
     .ocean-controls {
-      margin-top: 10px;
+      margin-top: 8px;
       border: 1px solid var(--line);
       border-radius: 10px;
       background: #050b16;
       padding: 8px;
       display: grid;
-      grid-template-columns: repeat(4, minmax(130px, 1fr)) auto;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
-      align-items: center;
+      align-items: stretch;
+    }
+
+    .ocean-control-panel {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #07101d;
+      padding: 7px;
+      display: grid;
+      gap: 6px;
+      align-content: start;
+      min-height: 138px;
+    }
+
+    .ocean-control-panel h3 {
+      margin: 0;
+      font-size: 0.88rem;
+      color: #c9e4ff;
+    }
+
+    .ocean-control-panel p {
+      margin: 0;
+      font-size: 0.74rem;
+      color: #97b6de;
+      line-height: 1.35;
+    }
+
+    .ocean-control-panel .ocean-math-inline {
+      color: #7fc2ff;
+      font-weight: 600;
+      letter-spacing: 0.2px;
     }
 
     .ocean-control-checkbox {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 4px 10px;
+      justify-content: flex-start;
+      gap: 8px;
+      padding: 2px 0;
     }
 
     .ocean-control-checkbox span {
@@ -1296,6 +1326,22 @@
       background: #ffffff;
       padding: 5px;
       flex-shrink: 0;
+      cursor: zoom-in;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, width 0.22s ease, height 0.22s ease;
+      user-select: none;
+    }
+
+    .class-qr-image.is-expanded {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(78vw, 420px);
+      height: min(78vw, 420px);
+      z-index: 2500;
+      border-color: #0f172a;
+      box-shadow: 0 22px 56px rgba(2, 6, 23, 0.7);
+      cursor: zoom-out;
     }
 
     .class-table {
@@ -1614,6 +1660,31 @@
       color: #ecfeff;
       cursor: pointer;
       white-space: nowrap;
+    }
+
+    .spectrum-slider-control {
+      min-width: 210px;
+      display: grid;
+      gap: 4px;
+      padding: 6px 8px;
+      border: 1px solid #2e4469;
+      border-radius: 8px;
+      background: #081325;
+    }
+
+    .spectrum-slider-control span {
+      font-size: 0.75rem;
+      color: #cde2ff;
+      letter-spacing: 0.2px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .spectrum-slider-control input[type="range"] {
+      width: 100%;
+      accent-color: #79c0ff;
     }
 
     .random-freq-preview {
@@ -2192,6 +2263,14 @@
         grid-template-columns: 1fr;
       }
 
+      .ocean-controls {
+        grid-template-columns: 1fr;
+      }
+
+      .ocean-control-panel {
+        min-height: auto;
+      }
+
       .edge-nav.left {
         left: 10px;
       }
@@ -2253,7 +2332,7 @@
             <button type="button" class="secondary" id="classCopyStudentLinkBtn">Αντιγραφή student link</button>
             <span id="classCopyHint"></span>
           </div>
-          <img class="class-qr-image" id="classJoinQrImage" alt="QR για σύνδεση μαθητών" />
+          <img class="class-qr-image" id="classJoinQrImage" src="media/QRCode.png" alt="QR για σύνδεση μαθητών" />
         </div>
       </div>
     </div>
@@ -2371,11 +2450,11 @@
       <a href="#sec-activity-complexity-check" data-accordion-group="complexity">8.2 Δραστηριότητα: Αγώνες πολυπλοκότητας</a>
 
       <div class="toc-group-title" data-accordion-group="fft">9. FFT</div>
-      <a href="#sec-polynomial-mult" data-accordion-group="fft">9.1 Πράξεις πολυωνύμων O(n²)</a>
+      <a href="#sec-polynomial-mult" data-accordion-group="fft">9.1 Πράξεις πολυωνύμων (Πολυπλοκότητα)</a>
       <a href="#sec-line-representation" data-accordion-group="fft">9.2 Αναπαράσταση</a>
       <a href="#sec-points-representation" data-accordion-group="fft">9.3 Αναπαράσταση με σημεία (Lagrange)</a>
-      <a href="#sec-sample-add-mul" data-accordion-group="fft">9.4 Πράξεις στα samples</a>
-      <a href="#sec-points-operations" data-accordion-group="fft">9.5 Πράξεις σε αναπαράσταση σημείων</a>
+      <a href="#sec-sample-add-mul" data-accordion-group="fft">9.4 Πράξεις σε αναπαράσταση σημείων</a>
+      <a href="#sec-points-operations" data-accordion-group="fft">9.5 Πράξεις σε αναπαράσταση σημείων (Πολυπλοκότητα)</a>
       <a href="#sec-poly-mult-strategy" data-accordion-group="fft">9.6 Στρατηγική πολλαπλασιασμού</a>
       <a href="#sec-eval-complexity" data-accordion-group="fft">9.7 Αποτίμηση σε n σημεία: O(n²)</a>
       <a href="#sec-even-odd-eval" data-accordion-group="fft">9.8 Συμμετρία στην αποτίμηση: x² vs x³</a>
@@ -3507,7 +3586,7 @@
       <section class="section" id="sec-polynomial-mult">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.1) Πράξεις πολυωνύμων</h2>
+            <h2>9.1) Πράξεις πολυωνύμων (Πολυπλοκότητα)</h2>
             <p>Σύγκριση τριών βασικών πράξεων με διαφορετική πολυπλοκότητα:</p>
             <table style="width:100%; margin-top:14px; border-collapse:collapse; font-size:0.9em; line-height:1.6;">
               <thead>
@@ -3598,7 +3677,7 @@
       <section class="section" id="sec-sample-add-mul">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.4) Πράξεις στα samples: πρόσθεση &amp; πολλαπλασιασμός</h2>
+            <h2>9.4) Πράξεις σε αναπαράσταση σημείων</h2>
             <p>
               Σύρε τα σημεία των δύο πολυωνύμων <strong style="color:#58a6ff;">A(x)</strong> (μπλε)
               και <strong style="color:#f472b6;">B(x)</strong> (ροζ).
@@ -3621,7 +3700,7 @@
       <section class="section" id="sec-points-operations">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.5) Πράξεις σε αναπαράσταση σημείων</h2>
+            <h2>9.5) Πράξεις σε αναπαράσταση σημείων (Πολυπλοκότητα)</h2>
             <p>Όπως στο 9.1, αλλά τώρα στο point-value μοντέλο (Lagrange):</p>
             <table style="width:100%; margin-top:14px; border-collapse:collapse; font-size:0.9em; line-height:1.6;">
               <thead>
@@ -4055,6 +4134,15 @@
             </p>
             <div class="random-freq-toolbar">
               <button id="gaussianRefreshBtn" class="random-freq-btn" type="button">Νέο Gaussian</button>
+              <label class="spectrum-slider-control" title="Wind speed που ορίζει το Lw=V^2/g στο Phillips.">
+                <span>Wind V (m/s) <strong id="phillipsWindValue">3.0</strong></span>
+                <input id="phillipsWindSlider" type="range" min="2" max="3.5" step="0.1" value="3.0" />
+              </label>
+              <label class="spectrum-slider-control" title="Small-wave suppression e^(-k^2 d^2). Μεγαλύτερο d κόβει τα high-k.">
+                <span>Damping d <strong id="phillipsDampingValue">0.180</strong></span>
+                <input id="phillipsDampingSlider" type="range" min="0.01" max="1.00" step="0.01" value="0.18" />
+              </label>
+              <span id="phillipsLwChip" class="random-freq-chip">Lw = 0.92 m</span>
             </div>
             <canvas id="energySpectrumCanvas" class="demo-canvas" width="940" height="220"></canvas>
             <p>
@@ -4103,26 +4191,41 @@
             </p>
             <canvas id="oceanWaveCanvas" class="ocean-canvas" width="940" height="430"></canvas>
             <div class="ocean-controls">
-              <label class="ocean-control" data-tip="N GRID: αυξάνει/μειώνει την ανάλυση του πλέγματος (λεπτομέρεια και κόστος)." title="N GRID: αυξάνει/μειώνει την ανάλυση του πλέγματος (λεπτομέρεια και κόστος).">
-                <span>N GRID <strong id="oceanNValueEnd">40</strong></span>
-                <input id="oceanNEnd" type="range" min="12" max="90" step="1" value="40" title="N GRID: αυξάνει/μειώνει την ανάλυση του πλέγματος (λεπτομέρεια και κόστος)." />
-              </label>
-              <label class="ocean-control" data-tip="AMP: ελέγχει το ύψος των κυμάτων." title="AMP: ελέγχει το ύψος των κυμάτων.">
-                <span>AMP <strong id="oceanAmpValueEnd">1.00</strong></span>
-                <input id="oceanAmpEnd" type="range" min="0.3" max="2.2" step="0.01" value="1" title="AMP: ελέγχει το ύψος των κυμάτων." />
-              </label>
-              <label class="ocean-control" data-tip="SPEED: αυξάνει ή μειώνει την ταχύτητα εξέλιξης του κυματισμού." title="SPEED: αυξάνει ή μειώνει την ταχύτητα εξέλιξης του κυματισμού.">
-                <span>SPEED <strong id="oceanSpeedValueEnd">1.00</strong></span>
-                <input id="oceanSpeedEnd" type="range" min="0.2" max="2.8" step="0.01" value="1" title="SPEED: αυξάνει ή μειώνει την ταχύτητα εξέλιξης του κυματισμού." />
-              </label>
-              <label class="ocean-control" data-tip="CHOPPY: κάνει τις κορυφές πιο αιχμηρές ή πιο ομαλές." title="CHOPPY: κάνει τις κορυφές πιο αιχμηρές ή πιο ομαλές.">
-                <span>CHOPPY <strong id="oceanChoppyValueEnd">1.00</strong></span>
-                <input id="oceanChoppyEnd" type="range" min="0.4" max="2.4" step="0.01" value="1" title="CHOPPY: κάνει τις κορυφές πιο αιχμηρές ή πιο ομαλές." />
-              </label>
-              <label class="ocean-control-checkbox" data-tip="GRID: εμφανίζει ή αποκρύπτει το πλέγμα (wireframe) της επιφάνειας." title="GRID: εμφανίζει ή αποκρύπτει το πλέγμα (wireframe) της επιφάνειας.">
-                <span>GRID</span>
-                <input id="oceanShowGridEnd" type="checkbox" autocomplete="off" title="GRID: εμφανίζει ή αποκρύπτει το πλέγμα της επιφάνειας." />
-              </label>
+              <div class="ocean-control-panel">
+                <h3>🌬️ Άνεμος (Phillips)</h3>
+                <p><span class="ocean-math-inline">\(L_w = V^2/g\)</span> και κατευθυντικότητα του φάσματος.</p>
+                <label class="ocean-control" data-tip="A: ενεργειακή κλίμακα του φάσματος Phillips. Μεγαλώνει/μικραίνει το συνολικό ύψος κυμάτων." title="A: ενεργειακή κλίμακα του φάσματος Phillips.">
+                  <span>Energy A <strong id="oceanAmpValueEnd">1.00</strong></span>
+                  <input id="oceanAmpEnd" type="range" min="0.3" max="2.2" step="0.01" value="1" title="A: ενεργειακή κλίμακα του φάσματος Phillips." />
+                </label>
+                <label class="ocean-control" data-tip="V: προσεγγιστικός έλεγχος έντασης/ταχύτητας ανέμου στη δυναμική εξέλιξη." title="V: προσεγγιστικός έλεγχος έντασης/ταχύτητας ανέμου.">
+                  <span>Wind V <strong id="oceanSpeedValueEnd">1.00</strong></span>
+                  <input id="oceanSpeedEnd" type="range" min="0.2" max="2.8" step="0.01" value="1" title="V: προσεγγιστικός έλεγχος έντασης/ταχύτητας ανέμου." />
+                </label>
+              </div>
+
+              <div class="ocean-control-panel">
+                <h3>🌊 Γεωμετρία (Gerstner)</h3>
+                <p><span class="ocean-math-inline">\(A\cdot k\)</span> για πιο αιχμηρές ή πιο ομαλές κορυφές.</p>
+                <label class="ocean-control" data-tip="CHOPPY: ελέγχει τη μη-ημιτονοειδή γεωμετρία της επιφάνειας (κοφτές κορυφές)." title="CHOPPY: ελέγχει τη γεωμετρία Gerstner.">
+                  <span>Choppiness <strong id="oceanChoppyValueEnd">1.00</strong></span>
+                  <input id="oceanChoppyEnd" type="range" min="0.4" max="2.4" step="0.01" value="1" title="CHOPPY: ελέγχει τη γεωμετρία Gerstner." />
+                </label>
+              </div>
+
+              <div class="ocean-control-panel">
+                <h3>⚡ Ανάλυση (FFT)</h3>
+                <p>Ανάλυση πλέγματος με κόστος <span class="ocean-math-inline">\(O(N\log N)\)</span>.</p>
+                <label class="ocean-control" data-tip="N: αυξάνει/μειώνει την ανάλυση FFT του πλέγματος και το υπολογιστικό κόστος." title="N: ανάλυση FFT πλέγματος.">
+                  <span>N Grid <strong id="oceanNValueEnd">32</strong></span>
+                  <input id="oceanNEnd" type="range" min="0" max="2" step="1" value="1" title="N: ανάλυση FFT πλέγματος (δυνάμεις του 2)." />
+                </label>
+                <label class="ocean-control-checkbox" data-tip="GRID: προβάλλει wireframe του πλέγματος για να βλέπεις καθαρά την ανάλυση FFT." title="GRID: προβολή wireframe πλέγματος.">
+                  <input id="oceanShowGridEnd" type="checkbox" autocomplete="off" title="GRID: προβολή wireframe πλέγματος." />
+                  <span>Wireframe GRID</span>
+                </label>
+                <p style="font-size:0.74rem;">Μεγαλύτερο N: καθαρότερο πεδίο συχνοτήτων, αλλά ακριβότερος υπολογισμός.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -4558,6 +4661,11 @@
     const gaussianRefreshBtn = document.getElementById("gaussianRefreshBtn");
     const gaussianRefreshLabel = document.getElementById("gaussianRefreshLabel");
     const gaussianPreview = document.getElementById("gaussianPreview");
+    const phillipsWindSlider = document.getElementById("phillipsWindSlider");
+    const phillipsDampingSlider = document.getElementById("phillipsDampingSlider");
+    const phillipsWindValue = document.getElementById("phillipsWindValue");
+    const phillipsDampingValue = document.getElementById("phillipsDampingValue");
+    const phillipsLwChip = document.getElementById("phillipsLwChip");
     const phillipsCanvas = document.getElementById("phillipsCanvas");
     const randomPhaseCanvas = document.getElementById("randomPhaseCanvas");
     const timeEvolutionCanvas = document.getElementById("timeEvolutionCanvas");
@@ -4794,6 +4902,11 @@
     };
     let oceanGaussianSeedOffset = 0;
     let oceanGaussianGeneration = 0;
+    const oceanSpectrumUiState = {
+      hoveredEnergyBin: -1,
+      pinnedEnergyBin: -1,
+      energyHitBins: [],
+    };
 
     let audioContext = null;
     let activeOscillators = [];
@@ -5718,6 +5831,97 @@
 
     gaussianRefreshBtn?.addEventListener("click", () => {
       generateOceanGaussianSet();
+    });
+
+    function getPhillipsControlValues() {
+      const windSpeed = phillipsWindSlider ? Number(phillipsWindSlider.value) : 10;
+      const damping = phillipsDampingSlider ? Number(phillipsDampingSlider.value) : 0.18;
+      return {
+        windSpeed: Number.isFinite(windSpeed) ? windSpeed : 10,
+        damping: Number.isFinite(damping) ? damping : 0.18,
+      };
+    }
+
+    function syncOceanSpeedFromPhillipsWind() {
+      const { windSpeed } = getPhillipsControlValues();
+      const minWind = phillipsWindSlider ? Number(phillipsWindSlider.min) : 2;
+      const maxWind = phillipsWindSlider ? Number(phillipsWindSlider.max) : 3.5;
+      const ratio = (windSpeed - minWind) / Math.max(1e-6, maxWind - minWind);
+      const mappedOceanSpeed = 0.2 + Math.max(0, Math.min(1, ratio)) * 2.6;
+      [oceanSpeed, oceanSpeedEnd].forEach((slider) => {
+        if (!slider) {
+          return;
+        }
+        const current = Number(slider.value);
+        if (Math.abs(current - mappedOceanSpeed) > 1e-6) {
+          slider.value = mappedOceanSpeed.toFixed(2);
+        }
+      });
+      updateOceanLabels();
+    }
+
+    function updatePhillipsControlLabels() {
+      const { windSpeed, damping } = getPhillipsControlValues();
+      if (phillipsWindValue) {
+        phillipsWindValue.textContent = windSpeed.toFixed(1);
+      }
+      if (phillipsDampingValue) {
+        phillipsDampingValue.textContent = damping.toFixed(3);
+      }
+      if (phillipsLwChip) {
+        const lw = (windSpeed * windSpeed) / 9.81;
+        phillipsLwChip.textContent = `Lw = ${lw.toFixed(2)} m`;
+      }
+    }
+
+    const onPhillipsControlInput = () => {
+      updatePhillipsControlLabels();
+      syncOceanSpeedFromPhillipsWind();
+    };
+
+    phillipsWindSlider?.addEventListener("input", onPhillipsControlInput);
+    phillipsDampingSlider?.addEventListener("input", onPhillipsControlInput);
+    onPhillipsControlInput();
+
+    function pickEnergySpectrumBarFromPointer(event, lockSelection) {
+      if (!energySpectrumCanvas) {
+        return;
+      }
+      const rect = energySpectrumCanvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) {
+        return;
+      }
+      const x = (event.clientX - rect.left) * (energySpectrumCanvas.width / rect.width);
+      const y = (event.clientY - rect.top) * (energySpectrumCanvas.height / rect.height);
+      const hit = oceanSpectrumUiState.energyHitBins.find((bar) => {
+        return x >= bar.x1 && x <= bar.x2 && y >= bar.y1 && y <= bar.y2;
+      });
+      const hitIndex = hit ? hit.index : -1;
+      if (lockSelection) {
+        oceanSpectrumUiState.pinnedEnergyBin = (oceanSpectrumUiState.pinnedEnergyBin === hitIndex) ? -1 : hitIndex;
+      } else {
+        oceanSpectrumUiState.hoveredEnergyBin = hitIndex;
+      }
+    }
+
+    energySpectrumCanvas?.addEventListener("pointermove", (event) => {
+      if (oceanSpectrumUiState.pinnedEnergyBin >= 0) {
+        return;
+      }
+      pickEnergySpectrumBarFromPointer(event, false);
+    });
+
+    energySpectrumCanvas?.addEventListener("pointerleave", () => {
+      if (oceanSpectrumUiState.pinnedEnergyBin < 0) {
+        oceanSpectrumUiState.hoveredEnergyBin = -1;
+      }
+    });
+
+    energySpectrumCanvas?.addEventListener("click", (event) => {
+      pickEnergySpectrumBarFromPointer(event, true);
+      if (oceanSpectrumUiState.pinnedEnergyBin < 0) {
+        oceanSpectrumUiState.hoveredEnergyBin = -1;
+      }
     });
 
     generateOceanGaussianSet();
@@ -7439,8 +7643,47 @@
 
     // @slide 1.3, 10.2 — επιστρέφει N, amp, speed, choppy από ocean sliders.
     function getOceanSettings() {
+      const oceanNPow2Values = [16, 32, 64];
+      const readOceanN = (slider) => {
+        if (!slider) {
+          return null;
+        }
+
+        const raw = Number(slider.value);
+        if (!Number.isFinite(raw)) {
+          return null;
+        }
+
+        // If slider is configured as index selector, map to powers of 2.
+        if (
+          Number(slider.min) === 0 &&
+          Number(slider.max) === oceanNPow2Values.length - 1 &&
+          Number(slider.step) === 1
+        ) {
+          const idx = Math.max(0, Math.min(oceanNPow2Values.length - 1, Math.round(raw)));
+          if (Number(slider.value) !== idx) {
+            slider.value = String(idx);
+          }
+          return oceanNPow2Values[idx];
+        }
+
+        // Backward compatibility: if we ever get a free numeric value, snap to nearest power of 2.
+        let closest = oceanNPow2Values[0];
+        let bestDist = Math.abs(raw - closest);
+        for (let i = 1; i < oceanNPow2Values.length; i += 1) {
+          const dist = Math.abs(raw - oceanNPow2Values[i]);
+          if (dist < bestDist) {
+            bestDist = dist;
+            closest = oceanNPow2Values[i];
+          }
+        }
+        return closest;
+      };
+
+      const nFromMain = readOceanN(oceanN);
+      const nFromEnd = readOceanN(oceanNEnd);
       return {
-        n: oceanN ? Number(oceanN.value) : (oceanNEnd ? Number(oceanNEnd.value) : 40),
+        n: nFromMain ?? nFromEnd ?? 32,
         amp: oceanAmp ? Number(oceanAmp.value) : (oceanAmpEnd ? Number(oceanAmpEnd.value) : 1),
         speed: oceanSpeed ? Number(oceanSpeed.value) : (oceanSpeedEnd ? Number(oceanSpeedEnd.value) : 1),
         choppy: oceanChoppy ? Number(oceanChoppy.value) : (oceanChoppyEnd ? Number(oceanChoppyEnd.value) : 1),
@@ -7845,41 +8088,41 @@
         renderer.toneMappingExposure = 0.95;
 
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x85b6de);
-        scene.fog = new THREE.Fog(0x6f9fc6, 10, 36);
+        scene.background = new THREE.Color(0x6e8ba4);
+        scene.fog = new THREE.Fog(0x567189, 10, 36);
 
         const camera = new THREE.PerspectiveCamera(52, 1, 0.1, 150);
         camera.position.set(0, 5.8, 11.5);
         camera.lookAt(0, 0, 0);
 
-        const hemisphere = new THREE.HemisphereLight(0xd8ecff, 0x23465f, 1.0);
+        const hemisphere = new THREE.HemisphereLight(0xd7e8f8, 0x143245, 0.98);
         scene.add(hemisphere);
 
-        const sun = new THREE.DirectionalLight(0xfff1d6, 1.05);
+        const sun = new THREE.DirectionalLight(0xfff2d4, 1.0);
         sun.position.set(7, 9, -4);
         scene.add(sun);
 
         const sunGlow = new THREE.Mesh(
           new THREE.SphereGeometry(0.45, 16, 16),
-          new THREE.MeshBasicMaterial({ color: 0xffdf9d, transparent: true, opacity: 0.42 })
+          new THREE.MeshBasicMaterial({ color: 0xffde98, transparent: true, opacity: 0.33 })
         );
         sunGlow.position.set(0, 5.6, -18);
         scene.add(sunGlow);
 
         const sky = new THREE.Mesh(
           new THREE.SphereGeometry(62, 24, 12),
-          new THREE.MeshBasicMaterial({ color: 0x7fb2de, side: THREE.BackSide })
+          new THREE.MeshBasicMaterial({ color: 0x6b8ba8, side: THREE.BackSide })
         );
         scene.add(sky);
 
         const waterMaterial = new THREE.MeshStandardMaterial({
-          color: 0x2e86c6,
-          roughness: 0.28,
-          metalness: 0.05,
+          color: 0x1f4f6e,
+          roughness: 0.26,
+          metalness: 0.06,
           transparent: true,
-          opacity: 0.96,
-          emissive: 0x0f3f63,
-          emissiveIntensity: 0.12,
+          opacity: 0.97,
+          emissive: 0x072238,
+          emissiveIntensity: 0.08,
         });
 
         const state = {
@@ -11690,7 +11933,7 @@
         }
 
         // LEFT panel — user-drawn function
-        const L = drawPanelBox(leftPanelLeft, "Συνάρτηση-στόχος (σύρε για να ζωγραφίσεις)");
+        const L = drawPanelBox(leftPanelLeft, "");
         ctx.strokeStyle = "#ffbe76";
         ctx.lineWidth = 2.4;
         ctx.beginPath();
@@ -15580,14 +15823,32 @@
       return r * Math.cos(theta);
     }
 
-    // @slide 10.4 | @util — υπολογίζει τιμή Phillips ocean spectrum για wavenumber k.
-    function phillipsValue(k) {
-      const clampedK = Math.max(0.12, k);
-      const L = 1.15;
-      const damping = 0.18;
+    // @slide 10.3 | @util — υπολογίζει τιμή Phillips ocean spectrum για wavenumber k.
+    function phillipsValue(k, windSpeedInput = null, dampingInput = null) {
+      const clampedK = Math.max(0.35, k);
+      const controls = getPhillipsControlValues();
+      const windSpeed = windSpeedInput ?? controls.windSpeed;
+      const damping = dampingInput ?? controls.damping;
+      const L = Math.max(0.04, (windSpeed * windSpeed) / 9.81);
       const base = Math.exp(-1 / (clampedK * clampedK * L * L)) / Math.pow(clampedK, 4);
       const smallWaveSuppress = Math.exp(-clampedK * clampedK * damping * damping);
       return base * smallWaveSuppress;
+    }
+
+    // @slide 10.3 | @util — παράγει κοινό σύνολο Gaussian+Phillips bins για 10.3/10.4.
+    function buildOceanSpectrumBins(binCount = 48, maxK = 6) {
+      const { windSpeed, damping } = getPhillipsControlValues();
+      const bins = [];
+      for (let b = 0; b < binCount; b += 1) {
+        const k = (b / Math.max(1, binCount - 1)) * maxK;
+        const real = seededGaussian(b + 41, b + 907);
+        const imag = seededGaussian(b + 401, b + 1289);
+        const gaussian = Math.hypot(real, imag);
+        const p = phillipsValue(k, windSpeed, damping);
+        const weighted = gaussian * Math.sqrt(p);
+        bins.push({ k, real, imag, gaussian, p, weighted, phase: Math.atan2(imag, real) });
+      }
+      return { bins, maxK, windSpeed, damping };
     }
 
     // @slide 10.3 — σχεδιάζει Gaussian ενεργειακό φάσμα πριν από weighting.
@@ -15618,16 +15879,27 @@
         ctx.lineTo(cx, top + boxH - 10);
         ctx.stroke();
 
-        for (let i = 0; i < 140; i += 1) {
-          const g1 = seededGaussian(i + 1, i + 91);
-          const g2 = seededGaussian(i + 211, i + 389);
-          const x = cx + scale * g1;
-          const y = cy - scale * g2;
-          ctx.fillStyle = "rgba(159, 208, 255, 0.55)";
+        const spectrum = buildOceanSpectrumBins(42, 6);
+        const activeIndex = oceanSpectrumUiState.pinnedEnergyBin >= 0
+          ? oceanSpectrumUiState.pinnedEnergyBin
+          : oceanSpectrumUiState.hoveredEnergyBin;
+
+        spectrum.bins.forEach((bin, index) => {
+          const x = cx + scale * (bin.real / 2.8);
+          const y = cy - scale * (bin.imag / 2.8);
+          const isActive = index === activeIndex;
+          ctx.fillStyle = isActive ? "rgba(255, 235, 132, 0.95)" : "rgba(159, 208, 255, 0.55)";
           ctx.beginPath();
-          ctx.arc(x, y, 2, 0, 2 * Math.PI);
+          ctx.arc(x, y, isActive ? 4.5 : 2.2, 0, 2 * Math.PI);
           ctx.fill();
-        }
+          if (isActive) {
+            ctx.strokeStyle = "rgba(255, 235, 132, 0.9)";
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(x, y, 8.5, 0, 2 * Math.PI);
+            ctx.stroke();
+          }
+        });
 
         ctx.fillStyle = "#c7dcff";
         ctx.font = "12px Segoe UI, sans-serif";
@@ -15637,8 +15909,8 @@
         const x2 = rightX + rightW - 10;
         const y1 = top + 16;
         const y2 = top + boxH - 14;
-        const bins = 42;
-        const maxK = 6;
+        const bins = spectrum.bins.length;
+        const maxK = spectrum.maxK;
 
         ctx.strokeStyle = "#2f4f85";
         ctx.beginPath();
@@ -15646,43 +15918,38 @@
         ctx.lineTo(x2, y2);
         ctx.stroke();
 
-        for (let b = 0; b < bins; b += 1) {
-          const k = (b / (bins - 1)) * maxK;
-          const amp = Math.min(1, Math.abs(seededGaussian(b + 17, b + 501)) / 2.2);
-          const x = x1 + (k / maxK) * (x2 - x1);
-          const y = y2 - amp * (y2 - y1 - 8);
-          ctx.strokeStyle = color;
-          ctx.lineWidth = 2.2;
+        const maxAmp = Math.max(1e-6, ...spectrum.bins.map((bin) => bin.gaussian));
+        const barPixelW = Math.max(4, ((x2 - x1) / bins) * 0.64);
+        const hitBins = [];
+
+        spectrum.bins.forEach((bin, index) => {
+          const x = x1 + (bin.k / maxK) * (x2 - x1);
+          const y = y2 - (bin.gaussian / maxAmp) * (y2 - y1 - 8);
+          const isActive = index === activeIndex;
+          ctx.strokeStyle = isActive ? "#ffec99" : color;
+          ctx.lineWidth = isActive ? 3.4 : 2.2;
           ctx.beginPath();
           ctx.moveTo(x, y2);
           ctx.lineTo(x, y);
           ctx.stroke();
-        }
-
-        ctx.strokeStyle = "#6ee7b7";
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        for (let i = 0; i <= 220; i += 1) {
-          const nx = i / 220;
-          const x = x1 + nx * (x2 - x1);
-          let waveValue = 0;
-          for (let m = 0; m < 18; m += 1) {
-            const freq = 0.35 + (m / 17) * maxK;
-            const amp = 0.08 + 0.12 * Math.min(1, Math.abs(seededGaussian(m + 311, m + 641)) / 2);
-            const phase = 2 * Math.PI * seededUniform(m + 877);
-            waveValue += amp * Math.sin(2 * Math.PI * freq * nx - 0.75 * t + phase);
-          }
-          const y = y2 - 0.5 * (y2 - y1 - 8) - waveValue * 26;
-          if (i === 0) {
-            ctx.moveTo(x, y);
-          } else {
-            ctx.lineTo(x, y);
-          }
-        }
-        ctx.stroke();
+          hitBins.push({
+            index,
+            x1: x - barPixelW * 0.5,
+            x2: x + barPixelW * 0.5,
+            y1: y,
+            y2,
+          });
+        });
+        oceanSpectrumUiState.energyHitBins = hitBins;
 
         ctx.fillStyle = "#c7dcff";
         ctx.fillText("|ξ(k)| πριν από το spectrum weighting", x1 + 4, y1 + 12);
+        if (activeIndex >= 0 && spectrum.bins[activeIndex]) {
+          const activeK = spectrum.bins[activeIndex].k;
+          const activeAmp = spectrum.bins[activeIndex].gaussian;
+          ctx.fillStyle = "#ffe7a8";
+          ctx.fillText(`link: bar k=${activeK.toFixed(2)} ↔ σημείο ξ(k), |ξ|=${activeAmp.toFixed(2)}`, x1 + 4, y1 + 28);
+        }
         ctx.fillText("k", x2 - 8, y2 + 12);
       });
     }
@@ -15782,8 +16049,9 @@
         const x2 = right - 10;
         const y1 = top + 14;
         const y2 = bottom - 14;
-        const bins = 48;
-        const maxK = 6;
+        const spectrum = buildOceanSpectrumBins(48, 8);
+        const bins = spectrum.bins.length;
+        const maxK = spectrum.maxK;
 
         ctx.strokeStyle = "#345886";
         ctx.strokeRect(left, top, graphW, graphH);
@@ -15794,18 +16062,14 @@
         ctx.lineTo(x2, y2);
         ctx.stroke();
 
-        const raw = [];
-        const weighted = [];
-        let maxVal = 1e-6;
-        for (let b = 0; b < bins; b += 1) {
-          const k = (b / (bins - 1)) * maxK;
-          const gaussian = Math.abs(seededGaussian(b + 41, b + 907));
-          const p = phillipsValue(k);
-          const w = gaussian * Math.sqrt(p);
-          raw.push({ k, v: gaussian });
-          weighted.push({ k, v: w, p });
-          maxVal = Math.max(maxVal, gaussian, w, p * 1.8);
-        }
+        const raw = spectrum.bins.map((bin) => ({ k: bin.k, v: bin.gaussian }));
+        const weighted = spectrum.bins.map((bin) => ({ k: bin.k, v: bin.weighted, p: bin.p }));
+        const maxVal = Math.max(
+          1e-6,
+          ...raw.map((point) => point.v),
+          ...weighted.map((point) => point.v),
+          ...weighted.map((point) => point.p * 1.8)
+        );
 
         ctx.strokeStyle = "rgba(255, 195, 140, 0.55)";
         ctx.lineWidth = 1.6;
@@ -15844,6 +16108,8 @@
         ctx.fillText("πορτοκαλί: Gaussian |ξ(k)|", x1 + 4, y1 + 12);
         ctx.fillText("γαλάζιο bars: |ξ(k)|·√P(k)", x1 + 4, y1 + 28);
         ctx.fillText("κυανή καμπύλη: P(k) (Phillips envelope)", x1 + 4, y1 + 44);
+        ctx.fillStyle = "#9fd0ff";
+        ctx.fillText(`Wind V=${spectrum.windSpeed.toFixed(1)} m/s, damping d=${spectrum.damping.toFixed(3)}`, x1 + 4, y1 + 60);
         ctx.fillText("k", x2 - 6, y2 + 12);
       });
     }
@@ -15864,7 +16130,7 @@
       });
     }
 
-    // @slide 10.7 — σχεδιάζει ανακατασκευή ύψους θαλασσιού με IFFT.
+    // @slide 10.4 — σχεδιάζει χρονικά εξελισσόμενο H(k,t) και την αντίστοιχη ανακατασκευή.
     function drawIFFT(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const pad = 12;
@@ -15892,18 +16158,28 @@
         ctx.lineTo(lx2, ly2);
         ctx.stroke();
 
-        const bars = 12;
-        for (let i = 0; i < bars; i += 1) {
-          const u = i / Math.max(1, bars - 1);
-          const x = lx1 + u * (lx2 - lx1);
-          const value =
-            0.75 * Math.abs(Math.sin(2 * Math.PI * (u * 1.1 - 0.20 * t))) +
-            0.45 * Math.abs(Math.sin(2 * Math.PI * (u * 2.0 - 0.34 * t + 0.27)));
-          const y = ly2 - value * (ly2 - ly1);
-          ctx.strokeStyle = "#a98bff";
+        const spectrum = buildOceanSpectrumBins(48, 8);
+        const sampledBins = spectrum.bins;
+
+        const lyMid = (ly1 + ly2) * 0.5;
+        ctx.strokeStyle = "#2f4f85";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(lx1, lyMid);
+        ctx.lineTo(lx2, lyMid);
+        ctx.stroke();
+
+        const maxGaussian = Math.max(1e-6, ...sampledBins.map((bin) => bin.gaussian));
+        for (let i = 0; i < sampledBins.length; i += 1) {
+          const bin = sampledBins[i];
+          const x = lx1 + (bin.k / Math.max(1e-6, spectrum.maxK)) * (lx2 - lx1);
+          const omega = Math.sqrt(9.81 * Math.max(0.08, bin.k));
+          const signedValue = (bin.weighted / maxGaussian) * Math.cos(omega * t * 0.9 + bin.phase);
+          const y = lyMid - signedValue * (lyMid - ly1 - 2);
+          ctx.strokeStyle = signedValue >= 0 ? "#79c0ff" : "#ffb38a";
           ctx.lineWidth = 3;
           ctx.beginPath();
-          ctx.moveTo(x, ly2);
+          ctx.moveTo(x, lyMid);
           ctx.lineTo(x, y);
           ctx.stroke();
         }
@@ -15921,9 +16197,15 @@
           for (let c = 0; c < cols; c += 1) {
             const nx = c / Math.max(1, cols - 1);
             const nz = r / Math.max(1, rows - 1);
-            const h =
-              Math.sin(2 * Math.PI * (1.2 * nx - 0.26 * t)) +
-              0.8 * Math.sin(2 * Math.PI * (1.0 * nz - 0.31 * t + 0.4));
+            let h = 0;
+            sampledBins.forEach((bin, idx) => {
+              const amp = Math.min(1.25, bin.weighted / maxGaussian);
+              const omega = Math.sqrt(9.81 * Math.max(0.08, bin.k));
+              const dirX = Math.cos((idx / Math.max(1, sampledBins.length - 1)) * Math.PI * 1.4 + 0.2);
+              const dirZ = Math.sin((idx / Math.max(1, sampledBins.length - 1)) * Math.PI * 1.4 + 0.2);
+              const phase = 2 * Math.PI * bin.k * (dirX * nx + dirZ * nz) - omega * t * 1.05 + bin.phase;
+              h += amp * Math.cos(phase);
+            });
             const alpha = 0.15 + ((h + 1.8) / 3.6) * 0.75;
             ctx.fillStyle = `rgba(92,166,255,${Math.max(0.08, Math.min(0.95, alpha)).toFixed(3)})`;
             ctx.fillRect(rx1 + c * cellW, ry1 + r * cellH, cellW - 1, cellH - 1);
@@ -15949,8 +16231,10 @@
 
         ctx.fillStyle = "#c7dcff";
         ctx.font = "12px Segoe UI, sans-serif";
-        ctx.fillText("Φάσμα H(kx,kz)", lx1, top + 14);
-        ctx.fillText("Ύψος επιφάνειας h(x,z,t)", rx1, top + 14);
+        ctx.fillText("Re(H(kx,kz,t)) signed bins (ίδια λογική με 10.3)", lx1, top + 14);
+        ctx.fillStyle = "#9fd0ff";
+        ctx.fillText("μπλε: θετικό, πορτοκαλί: αρνητικό", lx1, top + 29);
+        ctx.fillText("Ύψος επιφάνειας h(x,z,t) από τα αριστερά bars", rx1, top + 14);
         ctx.fillStyle = "#ffe7a8";
         ctx.fillText("IFFT2", leftX + leftW + 14, midY - 8);
       });
@@ -15960,7 +16244,7 @@
     function drawFinalRender(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const grad = ctx.createLinearGradient(0, 0, 0, height);
-        grad.addColorStop(0, "#0a1f3f"); grad.addColorStop(1, "#041024");
+        grad.addColorStop(0, "#5f7f9a"); grad.addColorStop(1, "#07263f");
         ctx.fillStyle = grad; ctx.fillRect(0, 0, width, height);
         const horizonY = height * 0.24;
         const baseY = height * 0.92;
@@ -15995,7 +16279,7 @@
             const p3 = project(nx1, nz1, h2 * (0.44 + nz1 * 0.64));
             const p4 = project(nx0, nz1, h3 * (0.44 + nz1 * 0.64));
             const shade = Math.max(26, Math.min(78, 42 + ((h0 + h1 + h2 + h3) * 0.16) + nz1 * 12));
-            ctx.fillStyle = `hsl(206, 66%, ${shade.toFixed(1)}%)`;
+            ctx.fillStyle = `hsl(205, 58%, ${shade.toFixed(1)}%)`;
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
@@ -16009,7 +16293,7 @@
           }
         }
 
-        ctx.strokeStyle = "rgba(255, 255, 255, 0.32)";
+        ctx.strokeStyle = "rgba(239, 251, 255, 0.30)";
         ctx.lineWidth = 2.4;
         ctx.beginPath();
         for (let x = 0; x <= width; x += 2) {
