@@ -2405,24 +2405,6 @@
       </div>
     </div>
 
-    <div class="teacher-only class-accordion" id="classFftDuelAccordion">
-      <button type="button" class="class-accordion-header" data-class-accordion-toggle data-target="classFftDuelBody" aria-controls="classFftDuelBody" aria-expanded="false">
-        <span>FFT Duel (7.2) (<span id="classFftDuelSolved">0</span>/<span id="classFftDuelTotal">0</span>)</span>
-        <span class="class-accordion-arrow">▼</span>
-      </button>
-      <div class="class-accordion-body" id="classFftDuelBody">
-        <div class="fft-duel-toolbar">
-          <button type="button" class="fft-duel-submit" id="classFftDuelStartBtn">Νέος γύρος FFT Duel</button>
-          <button type="button" class="fft-duel-submit" id="classFftDuelRevealBtn">Αποκάλυψη απαντήσεων</button>
-          <span class="fft-duel-pill" id="classFftDuelRoundLabel">Γύρος: -</span>
-        </div>
-        <div class="class-chat-hint" id="classFftDuelStatus">Πάτησε «Νέος γύρος» για να σταλεί διαφορετικό σήμα σε κάθε student.</div>
-        <div class="fft-duel-board" id="classFftDuelBoard">
-          <div class="fft-duel-empty">Δεν υπάρχει ενεργός γύρος.</div>
-        </div>
-      </div>
-    </div>
-
     <div class="dock-mini" id="classSummaryMini">Φόρτωση classroom κατάστασης...</div>
   </div>
 
@@ -2465,11 +2447,10 @@
 
       <div class="toc-group-title" data-accordion-group="transform">7. Μετασχηματισμός Fourier</div>
       <a href="#sec-fft" data-accordion-group="transform">7.1 Από το σήμα στο φάσμα (Fourier Transform)</a>
-      <a href="#sec-fft-duel" data-accordion-group="transform">7.2 Δραστηριότητα: Βρες τη συχνότητα</a>
-      <a href="#sec-fft-spikes" data-accordion-group="transform">7.3 Σύνθετο σήμα</a>
-      <a href="#sec-fft-explain" data-accordion-group="transform">7.4 Απλός Fourier Transform (DFT)</a>
-      <a href="#sec-ifft-explain" data-accordion-group="transform">7.5 Αντίστροφος μετασχηματισμός (IDFT)</a>
-      <a href="#sec-audio-smooth" data-accordion-group="transform">7.6 DFT → IDFT</a>
+      <a href="#sec-fft-spikes" data-accordion-group="transform">7.2 Σύνθετο σήμα</a>
+      <a href="#sec-fft-explain" data-accordion-group="transform">7.3 Απλός Fourier Transform (DFT)</a>
+      <a href="#sec-ifft-explain" data-accordion-group="transform">7.4 Αντίστροφος μετασχηματισμός (IDFT)</a>
+      <a href="#sec-audio-smooth" data-accordion-group="transform">7.5 DFT → IDFT</a>
 
       <div class="toc-group-title" data-accordion-group="complexity">8. Πολυπλοκότητα</div>
       <a href="#sec-sort-compare" data-accordion-group="complexity">8.1 Divide &amp; Conquer</a>
@@ -3373,12 +3354,17 @@
               Η ημιτονοειδής καμπύλη «τυλίγεται» μέσω του <strong>e<sup>-i2πkn/N</sup></strong> και η
               μέση τιμή της (κέντρο μάζας) γίνεται μεγάλη ακριβώς όταν το <strong>k</strong> ταιριάζει,
               οπότε εμφανίζεται spike στο γράφημα.
+              Όσο μεγαλώνει το μήκος παρατήρησης, τόσο πιο καθαρό και ακριβές γίνεται το φάσμα.
             </p>
             <canvas id="fftEulerBridgeCanvas" class="demo-canvas" width="940" height="320"></canvas>
-            <div class="slider-grid">
+            <div class="slider-grid" style="grid-template-columns: repeat(4, minmax(150px, 1fr));">
               <div class="slider-group">
                 <div class="slider-label"><span>Δείκτης x (χρόνος)</span><span id="fftBridgeSampleXValue">0.00 s</span></div>
                 <input id="fftBridgeSampleX" type="range" min="0" max="2" step="0.01" value="0.5" />
+              </div>
+              <div class="slider-group">
+                <div class="slider-label"><span>Μήκος παραθύρου L</span><span id="fftBridgeLengthValue">2.0 s</span></div>
+                <input id="fftBridgeLength" type="range" min="0.5" max="10" step="0.1" value="2" />
               </div>
               <div class="slider-group">
                 <div class="slider-label"><span>Συχνότητα σήματος f<sub>signal</sub></span><span id="fftSignalFreqValue">2.00</span></div>
@@ -3400,51 +3386,15 @@
         </div>
       </section>
 
-      <section class="section" id="sec-fft-duel">
-        <div class="slide-card">
-          <div class="slide-content">
-            <h2>7.2) Δραστηριότητα: Βρες τη συχνότητα του σήματος</h2>
-            <p>
-              Κάθε γύρο ο teacher δημιουργεί κρυφή τυχαία συχνότητα (με ακρίβεια δεκαδικού) για κάθε student.
-              Με το slider αλλάζεις τη δοκιμαστική συχνότητα <strong>k</strong> και «τυλίγεις/ξετυλίγεις» το σήμα.
-              Όταν βρεις το καλύτερο ταίριασμα πατάς submit. Στον teacher φαίνεται αρχικά μόνο ποιοι υπέβαλαν,
-              και με κουμπί reveal εμφανίζονται οι τιμές και το σφάλμα.
-            </p>
-            <canvas id="fftDuelCanvas" class="demo-canvas" width="940" height="320"></canvas>
-            <div class="fft-duel-toolbar">
-              <span class="fft-duel-pill">Σήμα: <strong id="fftDuelSignalLabel">-</strong></span>
-              <span class="fft-duel-pill">Γύρος: <strong id="fftDuelRoundLabel">-</strong></span>
-              <span class="fft-duel-pill">Υποβολές: <strong id="fftDuelProgressLabel">0/0</strong></span>
-            </div>
-            <div class="slider-grid">
-              <div class="slider-group">
-                <div class="slider-label"><span>Δοκιμαστική συχνότητα k</span><span id="fftDuelProbeValue">2.0</span></div>
-                <input id="fftDuelProbeFreq" type="range" min="0" max="8" step="0.1" value="2" data-activity-control="fft-duel" data-control-key="probeFreq" />
-              </div>
-              <div class="slider-group student-only">
-                <div class="slider-label"><span>Τιμή που θα στείλω</span><span id="fftDuelGuessValue">2.0</span></div>
-                <button id="fftDuelSubmitBtn" class="fft-duel-submit" type="button">Submit συχνότητας</button>
-              </div>
-              <div class="slider-group teacher-only">
-                <div class="slider-label"><span>Έλεγχος γύρου</span><span id="fftDuelTeacherHint">Στείλε νέο γύρο στην τάξη</span></div>
-                <button id="fftDuelStartBtn" class="fft-duel-submit" type="button">Νέος γύρος για όλους</button>
-                <button id="fftDuelRevealBtn" class="fft-duel-submit" type="button">Reveal αποτελεσμάτων</button>
-              </div>
-            </div>
-            <div id="fftDuelLockLabel" class="fft-duel-lock">Περίμενε νέο γύρο από τον teacher.</div>
-            <p class="fft-duel-note">Στον teacher εμφανίζεται πρώτα μόνο ποιοι υπέβαλαν. Με reveal εμφανίζονται τιμή και σφάλμα ανά student.</p>
-          </div>
-        </div>
-      </section>
-
       <section class="section" id="sec-fft-spikes">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>7.3) Σύνθετο σήμα</h2>
+            <h2>7.2) Σύνθετο σήμα</h2>
             <p>
               Διαδραστική απεικόνιση μετάβασης από το πεδίο χρόνου στο πεδίο συχνοτήτων, όπου οι
               κορυφές δείχνουν ποιες συχνότητες υπάρχουν περισσότερο. Εδώ βλέπεις και το τύλιγμα
               του σύνθετου σήματος στο μιγαδικό επίπεδο για δοκιμαστική συχνότητα k.
+              Με μεγαλύτερο μήκος δείγματος το φάσμα γίνεται πιο σταθερό και οι κορυφές αποτυπώνονται ακριβέστερα.
             </p>
             <canvas id="fftDemoCanvas" class="demo-canvas" width="940" height="320"></canvas>
             <div class="slider-grid">
@@ -3464,6 +3414,10 @@
                 <div class="slider-label"><span>Δοκιμή k για τύλιγμα</span><span id="fftMixProbeFreqValue">2.00</span></div>
                 <input id="fftMixProbeFreq" type="range" min="0" max="8" step="0.01" value="2" />
               </div>
+              <div class="slider-group">
+                <div class="slider-label"><span>Μήκος δείγματος L</span><span id="fftMixLengthValue">2.0 s</span></div>
+                <input id="fftMixLength" type="range" min="0.5" max="10" step="0.1" value="2" />
+              </div>
             </div>
           </div>
         </div>
@@ -3472,7 +3426,7 @@
       <section class="section" id="sec-fft-explain">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>7.4) Απλός Fourier Transform (DFT)</h2>
+            <h2>7.3) Απλός Fourier Transform (DFT)</h2>
             
             <canvas id="fftExplainCanvas" class="demo-canvas" width="940" height="320"></canvas>
             <div id="fftExplainMath" class="mathjax-box"></div>
@@ -3483,7 +3437,7 @@
       <section class="section" id="sec-ifft-explain">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>7.5) Αντίστροφος μετασχηματισμός (IDFT)</h2>
+            <h2>7.4) Αντίστροφος μετασχηματισμός (IDFT)</h2>
             
             <canvas id="ifftExplainCanvas" class="demo-canvas" width="940" height="320"></canvas>
             <div id="ifftExplainMath" class="mathjax-box"></div>
@@ -3494,7 +3448,7 @@
       <section class="section" id="sec-audio-smooth">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>7.6) DFT → IDFT (ήχος)</h2>
+            <h2>7.5) DFT → IDFT (ήχος)</h2>
             <div style="display:flex; align-items:center; gap:14px;">
               <div style="display:flex; flex-direction:column; gap:10px; flex-shrink:0;">
                 <button id="filterPlayRaw" class="speaker-btn" type="button"><span class="icon">▶</span> Play αρχικό</button>
@@ -4515,6 +4469,8 @@
     const fftEulerBridgeCanvas = document.getElementById("fftEulerBridgeCanvas");
     const fftBridgeSampleX = document.getElementById("fftBridgeSampleX");
     const fftBridgeSampleXValue = document.getElementById("fftBridgeSampleXValue");
+    const fftBridgeLength = document.getElementById("fftBridgeLength");
+    const fftBridgeLengthValue = document.getElementById("fftBridgeLengthValue");
     const fftSignalFreq = document.getElementById("fftSignalFreq");
     const fftProbeFreq = document.getElementById("fftProbeFreq");
     const fftSignalFreqValue = document.getElementById("fftSignalFreqValue");
@@ -4575,6 +4531,8 @@
     const fftMixFreq3Value = document.getElementById("fftMixFreq3Value");
     const fftMixProbeFreq = document.getElementById("fftMixProbeFreq");
     const fftMixProbeFreqValue = document.getElementById("fftMixProbeFreqValue");
+    const fftMixLength = document.getElementById("fftMixLength");
+    const fftMixLengthValue = document.getElementById("fftMixLengthValue");
     const soundFilterCanvas = document.getElementById("soundFilterCanvas");
     const filterPlayRaw = document.getElementById("filterPlayRaw");
     const filterPlayClean = document.getElementById("filterPlayClean");
@@ -5580,7 +5538,19 @@
       if (!fftSignalFreq) {
         return;
       }
-      const sampleX = fftBridgeSampleX ? Number(fftBridgeSampleX.value) : 0;
+      const signalLength = fftBridgeLength ? Number(fftBridgeLength.value) : 2;
+      if (fftBridgeLengthValue) {
+        fftBridgeLengthValue.textContent = `${signalLength.toFixed(1)} s`;
+      }
+      if (fftBridgeSampleX) {
+        fftBridgeSampleX.max = signalLength.toFixed(1);
+      }
+      const sampleX = fftBridgeSampleX
+        ? Math.max(0, Math.min(signalLength, Number(fftBridgeSampleX.value)))
+        : 0;
+      if (fftBridgeSampleX) {
+        fftBridgeSampleX.value = sampleX.toFixed(2);
+      }
       if (fftBridgeSampleXValue) {
         fftBridgeSampleXValue.textContent = `${sampleX.toFixed(2)} s`;
       }
@@ -5588,7 +5558,7 @@
       fftProbeFreqValue.textContent = Number(fftProbeFreq.value).toFixed(2);
     }
 
-    [fftBridgeSampleX, fftSignalFreq, fftProbeFreq].forEach((slider) => {
+    [fftBridgeSampleX, fftBridgeLength, fftSignalFreq, fftProbeFreq].forEach((slider) => {
       slider?.addEventListener("input", updateFFTBridgeLabels);
     });
     updateFFTBridgeLabels();
@@ -7379,9 +7349,12 @@
       fftMixFreq2Value.textContent = Number(fftMixFreq2.value).toFixed(2);
       fftMixFreq3Value.textContent = Number(fftMixFreq3.value).toFixed(2);
       fftMixProbeFreqValue.textContent = Number(fftMixProbeFreq.value).toFixed(2);
+      if (fftMixLengthValue && fftMixLength) {
+        fftMixLengthValue.textContent = `${Number(fftMixLength.value).toFixed(1)} s`;
+      }
     }
 
-    [fftMixFreq1, fftMixFreq2, fftMixFreq3, fftMixProbeFreq].forEach((slider) => {
+    [fftMixFreq1, fftMixFreq2, fftMixFreq3, fftMixProbeFreq, fftMixLength].forEach((slider) => {
       slider?.addEventListener("input", updateFFTMixLabels);
     });
     updateFFTMixLabels();
@@ -12194,7 +12167,7 @@
     function drawFFTDemo(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const split = width * 0.56;
-        const durationSec = 2;
+        const durationSec = Math.max(0.5, Math.min(10, fftMixLength ? Number(fftMixLength.value) : 2));
 
         const f1 = fftMixFreq1 ? Number(fftMixFreq1.value) : 2;
         const f2 = fftMixFreq2 ? Number(fftMixFreq2.value) : 5;
@@ -12252,8 +12225,8 @@
         const graphW = rightW - 12;
         const graphH = height - 32;
         const maxK = 8;
-        const bins = 180;
-        const sampleCount = 300;
+        const bins = Math.round(90 + durationSec * 55);
+        const sampleCount = Math.round(120 + durationSec * 160);
 
         const signalSamples = [];
         for (let n = 0; n < sampleCount; n += 1) {
@@ -12398,6 +12371,7 @@
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const signalFreq = fftSignalFreq ? Number(fftSignalFreq.value) : 3;
         const probeFreq = fftProbeFreq ? Number(fftProbeFreq.value) : 3;
+        const durationSec = Math.max(0.5, Math.min(10, fftBridgeLength ? Number(fftBridgeLength.value) : 2));
 
         const topH = height * 0.33;
         const pad = 12;
@@ -12412,10 +12386,10 @@
         ctx.strokeRect(pad, bottomY + 2, leftW - 2 * pad, bottomH - 12);
         ctx.strokeRect(rightX + 2, bottomY + 2, rightW - pad - 4, bottomH - 12);
 
-        const N = 260;
+        const N = Math.round(120 + durationSec * 140);
         const samples = [];
         for (let n = 0; n < N; n += 1) {
-          const u = n / N;
+          const u = (n / N) * durationSec;
           const x = Math.sin(2 * Math.PI * signalFreq * u);
           samples.push({ u, x });
         }
@@ -12423,9 +12397,8 @@
         const topMidY = pad + (topH - pad - 2) * 0.58;
         const topX1 = pad + 8;
         const topX2 = width - pad - 8;
-        const durationSec = 2;
         const sampleTime = Math.max(0, Math.min(durationSec, fftBridgeSampleX ? Number(fftBridgeSampleX.value) : 0));
-        const sampleU = sampleTime / durationSec;
+        const sampleU = sampleTime;
         ctx.strokeStyle = "#3f5f90";
         ctx.beginPath();
         ctx.moveTo(topX1, topMidY);
@@ -12558,7 +12531,7 @@
         const gw = rightW - pad - 20;
         const gh = bottomH - 30;
         const maxK = 8;
-        const bins = 180;
+        const bins = Math.round(90 + durationSec * 55);
         const spectrum = [];
         let maxMu = 1e-6;
 
