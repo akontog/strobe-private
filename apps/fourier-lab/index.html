@@ -3490,7 +3490,7 @@
       <section class="section" id="sec-audio-smooth">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>7.6) DFT → IFFT σε ήχο</h2>
+            <h2>7.6) DFT → IDFT (ήχος)</h2>
             <div style="display:flex; align-items:center; gap:14px;">
               <div style="display:flex; flex-direction:column; gap:10px; flex-shrink:0;">
                 <button id="filterPlayRaw" class="speaker-btn" type="button"><span class="icon">▶</span> Play αρχικό</button>
@@ -16398,10 +16398,8 @@
 
         ctx.fillStyle = "#c7dcff";
         ctx.font = "12px Segoe UI, sans-serif";
-        ctx.fillText("Re(H(kx,kz,t)) signed bins (ίδια λογική με 10.3)", lx1, top + 14);
-        ctx.fillStyle = "#9fd0ff";
-        ctx.fillText("μπλε: θετικό, πορτοκαλί: αρνητικό", lx1, top + 29);
-        ctx.fillText("Ύψος επιφάνειας h(x,z,t) από τα αριστερά bars", rx1, top + 14);
+        ctx.fillText("H(kx,kz,t)", lx1, top + 14);
+        ctx.fillText("Ύψος επιφάνειας h(x,z,t)", rx1, top + 14);
         ctx.fillStyle = "#ffe7a8";
         ctx.fillText("IFFT2", leftX + leftW + 14, midY - 8);
       });
