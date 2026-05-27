@@ -2435,7 +2435,7 @@
       
       <div class="toc-group-title" data-accordion-group="waves">2. Θεμέλια κυμάτων</div>
       <a href="#sec-intro" data-accordion-group="waves">2.1 Κύμα f(x)=sin(x)</a>
-      <a href="#sec-wave2d" data-accordion-group="waves">2.2 2D κύμα: A·sin(kx·x+kz·z+ωt+φ)</a>
+      <a href="#sec-wave2d" data-accordion-group="waves">2.2 2D κύμα: A·sin(kx·x+kz·z-ωt+φ)</a>
       <a href="#sec-why-gerstner" data-accordion-group="waves">2.3 Κυκλική τροχιά σωματιδίων (Gerstner)</a>
       <a href="#sec-wave1d-arrows" data-accordion-group="waves">2.4 Ημιτονοειδές vs Gerstner</a>
       <a href="#sec-compare-sine-gerstner" data-accordion-group="waves">2.5 Σύγκριση: Ημιτονοειδές vs Gerstner</a>
@@ -2569,9 +2569,9 @@
                 <div class="wave-build-item">
                   <div class="wave-build-row">
                     <label class="sum-toggle wave-build-toggle wave-tip" data-tip="t: εισάγει χρονική εξέλιξη και κάνει το κύμα να διαδίδεται." title="t: εισάγει χρονική εξέλιξη και κάνει το κύμα να διαδίδεται."><input id="enableTime" type="checkbox" /> <span>t</span></label>
-                    <div class="slider-group wave-build-slider wave-tip" id="timeControlWrap" data-tip="ω: ελέγχει τη χρονική εξέλιξη του κύματος. Αρνητικό ω αντιστρέφει τη φορά κίνησης." title="ω: ελέγχει τη χρονική εξέλιξη του κύματος. Αρνητικό ω αντιστρέφει τη φορά κίνησης." hidden>
+                    <div class="slider-group wave-build-slider wave-tip" id="timeControlWrap" data-tip="ω: ελέγχει τη χρονική εξέλιξη του κύματος. Μεγαλύτερο ω σημαίνει ταχύτερη κίνηση." title="ω: ελέγχει τη χρονική εξέλιξη του κύματος. Μεγαλύτερο ω σημαίνει ταχύτερη κίνηση." hidden>
                       <div class="slider-label"><span>ω</span><span id="timeValue">1.00</span></div>
-                      <input id="timeSlider" type="range" min="-25" max="25" step="0.01" value="1" title="ω: ελέγχει τη χρονική εξέλιξη του κύματος. Αρνητικό ω αντιστρέφει τη φορά κίνησης." />
+                      <input id="timeSlider" type="range" min="0" max="10" step="0.01" value="1" title="ω: ελέγχει τη χρονική εξέλιξη του κύματος. Μεγαλύτερο ω σημαίνει ταχύτερη κίνηση." />
                     </div>
                   </div>
                 </div>
@@ -2585,7 +2585,7 @@
       <section class="section" id="sec-wave2d">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>2.2) 2D κύμα: \(A\sin(k_xx+k_zz+\omega t+\phi)\)</h2>
+            <h2>2.2) 2D κύμα: \(A\sin(k_xx+k_zz-\omega t+\phi)\)</h2>
             <canvas id="wave2DCanvas" class="demo-canvas" width="940" height="345"></canvas>
             <div class="wave2d-controls">
               <label class="sum-toggle" style="grid-column:1/-1;margin-bottom:4px;"><input id="wave2DAnimate" type="checkbox" /> <span>▶ κίνηση</span></label>
@@ -2711,7 +2711,7 @@
               εμφανίζονται στο legend παρακάτω.
             </p>
             <p class="student-only">
-              Επίλεξε τη συχνότητα του κύματός σου. Η επιλογή σου εμφανίζεται live στον δάσκαλο.
+              Επίλεξε συχνότητα και πλάτος για το κύμα σου. Η επιλογή σου εμφανίζεται live στον δάσκαλο.
             </p>
             <div style="display:flex;gap:8px;height:190px;margin-bottom:4px;">
               <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-height:0;">
@@ -2723,7 +2723,7 @@
                 <canvas id="sumGerstnerCanvas" class="demo-canvas" style="flex:1;width:100%;min-height:0;"></canvas>
               </div>
             </div>
-            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:4px 0 8px;">
+            <div class="teacher-only" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:4px 0 8px;">
               <label class="sum-toggle" style="display:block;margin:0;"><input id="sumAnimate" type="checkbox" /> <span>▶ κίνηση</span></label>
               <label class="sound-slider" style="margin:0;min-width:260px;max-width:360px;" title="ω (omega): αλλάζει την ταχύτητα χρονικής εξέλιξης όλων των ημιτονοειδών στο άθροισμα.">
                 <div class="slider-label"><span>Ταχύτητα ω</span><span id="sumMotionSpeedValue">1.00</span></div>
@@ -2741,6 +2741,10 @@
               <label class="sound-slider">
                 <div class="slider-label"><span id="waveSumStudentName">Συχνότητα κύματος</span><span id="waveSumStudentFreqValue">1.20</span></div>
                 <input id="waveSumStudentFreq" type="range" min="0.4" max="6" step="0.01" value="1.2" title="Συχνότητα: αλλάζει πόσο πυκνό είναι το κύμα σου." />
+              </label>
+              <label class="sound-slider">
+                <div class="slider-label"><span>Πλάτος A</span><span id="waveSumStudentAmpValue">0.90</span></div>
+                <input id="waveSumStudentAmp" type="range" min="0" max="1.8" step="0.01" value="0.9" title="Πλάτος A: αλλάζει το ύψος του προσωπικού σου κύματος." />
               </label>
               <label class="sound-slider">
                 <div class="slider-label"><span>Φάση φ</span><span id="waveSumStudentPhiValue">0.00</span></div>
@@ -4403,6 +4407,8 @@
     const sumPhi4Value = document.getElementById("sumPhi4Value");
     const waveSumStudentFreq = document.getElementById("waveSumStudentFreq");
     const waveSumStudentFreqValue = document.getElementById("waveSumStudentFreqValue");
+    const waveSumStudentAmp = document.getElementById("waveSumStudentAmp");
+    const waveSumStudentAmpValue = document.getElementById("waveSumStudentAmpValue");
     const waveSumStudentPhi = document.getElementById("waveSumStudentPhi");
     const waveSumStudentPhiValue = document.getElementById("waveSumStudentPhiValue");
     const waveSumStudentName = document.getElementById("waveSumStudentName");
@@ -4726,7 +4732,6 @@
     const taylorGuessCanvas = document.getElementById("taylorGuessCanvas");
     const taylorGuessLegend = document.getElementById("taylorGuessLegend");
     const taylorGuessProgressLabel = document.getElementById("taylorGuessProgressLabel");
-    const taylorGuessStartBtn = document.getElementById("taylorGuessStartBtn");
     const taylorGuessRevealBtn = document.getElementById("taylorGuessRevealBtn");
     const taylorGuessC0 = document.getElementById("taylorGuessC0");
     const taylorGuessC1 = document.getElementById("taylorGuessC1");
@@ -5384,6 +5389,16 @@
     function updateSumMotionControls() {
       const speed = Number(sumMotionSpeed?.value || 1);
       if (sumMotionSpeedValue) sumMotionSpeedValue.textContent = speed.toFixed(2);
+      if (!isTeacherMode) {
+        if (sumAnimate) {
+          sumAnimate.checked = false;
+          sumAnimate.disabled = true;
+        }
+        if (sumMotionSpeed) {
+          sumMotionSpeed.disabled = true;
+        }
+        return;
+      }
       if (sumMotionSpeed) sumMotionSpeed.disabled = !(sumAnimate && sumAnimate.checked);
     }
     sumAnimate?.addEventListener("change", updateSumMotionControls);
@@ -5394,13 +5409,15 @@
     function updateWaveSumStudentFreqLabel() {
       if (!waveSumStudentFreq) return;
       if (waveSumStudentFreqValue) waveSumStudentFreqValue.textContent = Number(waveSumStudentFreq.value).toFixed(2);
+      if (waveSumStudentAmpValue && waveSumStudentAmp) waveSumStudentAmpValue.textContent = Number(waveSumStudentAmp.value).toFixed(2);
       if (waveSumStudentPhiValue && waveSumStudentPhi) waveSumStudentPhiValue.textContent = Number(waveSumStudentPhi.value).toFixed(2);
     }
-    [waveSumStudentFreq, waveSumStudentPhi].forEach((control) => control?.addEventListener("input", () => {
+    [waveSumStudentFreq, waveSumStudentAmp, waveSumStudentPhi].forEach((control) => control?.addEventListener("input", () => {
       updateWaveSumStudentFreqLabel();
       document.dispatchEvent(new CustomEvent("fourier:wave-sum-freq-local-change", {
         detail: {
           freq: Number(waveSumStudentFreq ? waveSumStudentFreq.value : 1.2),
+          amp: Number(waveSumStudentAmp ? waveSumStudentAmp.value : 0.9),
           phi: Number(waveSumStudentPhi ? waveSumStudentPhi.value : 0),
         }
       }));
@@ -5424,16 +5441,15 @@
         const color = WAVE_SUM_STUDENT_PALETTE[index % WAVE_SUM_STUDENT_PALETTE.length];
         const span = document.createElement("span");
         span.className = "sum-legend-item wave-sum-entry";
-        span.innerHTML = `<span class="sum-chip" style="background:${color}"></span>${escapeWaveSumHtml(entry.name)} <span style="opacity:0.6">f=${Number(entry.freq).toFixed(2)}, φ=${Number(entry.phi || 0).toFixed(2)}</span>`;
+        span.innerHTML = `<span class="sum-chip" style="background:${color}"></span>${escapeWaveSumHtml(entry.name)} <span style="opacity:0.6">A=${Number(entry.amp || 0.9).toFixed(2)}, f=${Number(entry.freq).toFixed(2)}, φ=${Number(entry.phi || 0).toFixed(2)}</span>`;
         waveSumLegend.appendChild(span);
       });
     });
 
-    // @slide 2.3 — student: ενημερώνει label ονόματος στο student slider.
-    document.addEventListener("fourier:student-name-ready", (event) => {
-      const name = (event && event.detail && event.detail.name) ? String(event.detail.name) : "";
-      if (name && waveSumStudentName) {
-        waveSumStudentName.textContent = name;
+    // @slide 2.3 — κρατάει σταθερό το label του student slider ως συχνότητα.
+    document.addEventListener("fourier:student-name-ready", () => {
+      if (waveSumStudentName) {
+        waveSumStudentName.textContent = "Συχνότητα κύματος";
       }
     });
 
@@ -7449,7 +7465,7 @@
       }
 
       if (!bridgeDimSelectedCell) {
-        bridgeDimSelectionLabel.innerHTML = "Κλικ σε ένα κελί του πλέγματος για να δεις τη συγκεκριμένη κυματική συνιστώσα.";
+        bridgeDimSelectionLabel.innerHTML = "";
         return;
       }
 
@@ -8716,16 +8732,18 @@
       if (taylorGuessProgressLabel) taylorGuessProgressLabel.textContent = `${s.submittedCount}/${s.totalPlayers}`;
       if (taylorGuessLockLabel) taylorGuessLockLabel.style.display = s.ownSubmitted ? 'block' : 'none';
       if (taylorGuessSubmitBtn) {
-        taylorGuessSubmitBtn.disabled = s.ownSubmitted || s.status !== 'running';
+        taylorGuessSubmitBtn.disabled = s.ownSubmitted;
         taylorGuessSubmitBtn.textContent = s.ownSubmitted ? 'Υποβλήθηκε ✓' : 'Submit συντελεστών';
       }
-      if (taylorGuessRevealBtn) taylorGuessRevealBtn.disabled = s.status !== 'running' || s.revealResults;
-      if (taylorGuessStartBtn) taylorGuessStartBtn.disabled = false;
+      if (taylorGuessRevealBtn) taylorGuessRevealBtn.disabled = s.revealResults;
       updateTaylorGuessLegend();
     }
 
     [taylorGuessC0, taylorGuessC1, taylorGuessC2, taylorGuessC3].forEach(el => {
       const emitTaylorGuessLive = () => {
+        if (isTeacherMode) {
+          return;
+        }
         updateTaylorGuessSliderLabels();
         updateTaylorGuessMath();
         document.dispatchEvent(new CustomEvent('fourier:taylor-guess-live-local', {
@@ -8742,9 +8760,6 @@
       el?.addEventListener('change', emitTaylorGuessLive);
     });
 
-    taylorGuessStartBtn?.addEventListener('click', () => {
-      document.dispatchEvent(new CustomEvent('fourier:taylor-guess-start-local'));
-    });
     taylorGuessRevealBtn?.addEventListener('click', () => {
       document.dispatchEvent(new CustomEvent('fourier:taylor-guess-reveal-local'));
     });
@@ -11492,7 +11507,7 @@
         if (!isTeacherMode && waveSumStudentFreq) {
           components.push({
             on: true,
-            amp: 0.9,
+            amp: waveSumStudentAmp ? Number(waveSumStudentAmp.value) : 0.9,
             freq: Number(waveSumStudentFreq.value),
             phase: waveSumStudentPhi ? Number(waveSumStudentPhi.value) : 0,
             color: "rgba(108, 208, 255, 0.82)",
@@ -11502,7 +11517,7 @@
         const classroomComponents = isTeacherMode
           ? waveSumClassroomEntries.map((entry, index) => ({
               on: true,
-              amp: 0.9,
+              amp: Number(entry.amp || 0.9),
               freq: Number(entry.freq),
               phase: Number(entry.phi || 0),
               color: WAVE_SUM_STUDENT_PALETTE[index % WAVE_SUM_STUDENT_PALETTE.length],
@@ -11595,12 +11610,12 @@
             ]
           : [];
         if (!isTeacherMode && waveSumStudentFreq) {
-          components.push({ on: true, amp: 0.9, freq: Number(waveSumStudentFreq.value), phase: waveSumStudentPhi ? Number(waveSumStudentPhi.value) : 0, color: "rgba(108, 208, 255, 0.82)" });
+          components.push({ on: true, amp: waveSumStudentAmp ? Number(waveSumStudentAmp.value) : 0.9, freq: Number(waveSumStudentFreq.value), phase: waveSumStudentPhi ? Number(waveSumStudentPhi.value) : 0, color: "rgba(108, 208, 255, 0.82)" });
         }
         const classroomComponents = isTeacherMode
           ? waveSumClassroomEntries.map((entry, index) => ({
               on: true,
-              amp: 0.9,
+              amp: Number(entry.amp || 0.9),
               freq: Number(entry.freq),
               phase: Number(entry.phi || 0),
               color: WAVE_SUM_STUDENT_PALETTE[index % WAVE_SUM_STUDENT_PALETTE.length],
@@ -17316,7 +17331,7 @@
       }
 
       if (canDraw(sumWavesCanvas) || canDraw(sumGerstnerCanvas)) {
-        if (sumAnimate?.checked) sumTime += 0.06 * Number(sumMotionSpeed?.value || 1);
+        if (isTeacherMode && sumAnimate?.checked) sumTime += 0.06 * Number(sumMotionSpeed?.value || 1);
         if (canDraw(sumWavesCanvas)) drawSignalDemo(sumWavesCanvas, sumTime);
         if (canDraw(sumGerstnerCanvas)) drawGerstnerSumDemo(sumGerstnerCanvas, sumTime);
       }

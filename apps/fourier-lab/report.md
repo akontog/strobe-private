@@ -1322,7 +1322,7 @@ a_i
 \cos(\vec{k}_i\cdot\vec{r}+\phi_i)
 $$
 
-και σύμφωνα με το Κεντρικό Οριακό Θεώρημα, όταν $M \to \infty$, η διαδικασία τείνει σε Gaussian κατανομή. Για τον λόγο αυτό και οι Fourier coefficients θεωρούνται Gaussian. Για να προκύψει πραγματικό height field μετά τον inverse Fourier transform, απαιτείται Hermitian συμμετρία:
+και σύμφωνα με το Κεντρικό Οριακό Θεώρημα, όταν $M \to \infty$, η διαδικασία τείνει σε Gaussian κατανομή. Για τον λόγο αυτό και οι Fourier coefficients θεωρούνται Gaussian. Για να προκύψει πραγματικό height field μετά τον inverse Fourier transform, απαιτείται συζυγής (hermitian) συμμετρία:
 
 $$
 h_0^*(-\vec{k}) = h_0(\vec{k})

@@ -43,6 +43,7 @@
   const randomFreqGenerateBtn = document.getElementById("randomFreqGenerateBtn");
   const randomFreqClearBtn = document.getElementById("randomFreqClearBtn");
   const waveSumStudentFreqInput = document.getElementById("waveSumStudentFreq");
+  const waveSumStudentAmpInput = document.getElementById("waveSumStudentAmp");
   const waveSumStudentPhiInput = document.getElementById("waveSumStudentPhi");
   const COMM_DEBUG = searchParams.get("debugWs") === "1";
 
@@ -773,6 +774,7 @@
       .slice(0, 60)
       .map((entry) => ({
         name: normalizeName(entry && entry.name, "Student"),
+        amp: Number(clampValue(entry && entry.amp, 0, 1.8, 0.9).toFixed(2)),
         freq: Number(clampValue(entry && entry.freq, 0.4, 6, 1.2).toFixed(2)),
         phi: Number(clampValue(entry && entry.phi, -3.14, 3.14, 0).toFixed(2)),
         updatedAt: toFiniteNumber(entry && entry.updatedAt),
@@ -1134,6 +1136,7 @@
   let lastTaylorGuessLiveSentAt = 0;
   let lastTaylorGuessLiveKey = "";
   let pendingTaylorGuessLive = null;
+  let pendingTaylorGuessSubmit = null;
   let pendingChatMessage = "";
 
   function resolveClientName(name) {
@@ -1597,13 +1600,6 @@
       document.dispatchEvent(new CustomEvent('fourier:taylor-guess-state', { detail: state.taylorGuess }));
     }
 
-    function emitTaylorGuessStart() {
-      if (state.mode !== 'teacher' || !socket.connected || !state.joined) return;
-      const payload = { slideId: state.activeSlideId || '' };
-      logComm('emit fourier:taylor-guess-start', payload);
-      socket.emit('fourier:taylor-guess-start', payload);
-    }
-
     function emitTaylorGuessReveal() {
       if (state.mode !== 'teacher' || !socket.connected || !state.joined) return;
       const payload = { slideId: state.activeSlideId || '' };
@@ -1654,12 +1650,35 @@
     }
 
     function emitTaylorGuessSubmit(detail) {
-      if (state.mode !== 'client' || !socket.connected || !state.joined) return;
+      if (state.mode !== 'client') return;
       const c0 = Number(clampValue(detail && detail.c0, -4, 4, 0).toFixed(2));
       const c1 = Number(clampValue(detail && detail.c1, -4, 4, 0).toFixed(2));
       const c2 = Number(clampValue(detail && detail.c2, -4, 4, 0).toFixed(2));
       const c3 = Number(clampValue(detail && detail.c3, -4, 4, 0).toFixed(2));
-      const payload = { c0, c1, c2, c3 };
+
+      const currentName = resolveClientName(studentNameInput ? studentNameInput.value : state.userName);
+      const currentTeam = resolveClientTeam(studentTeamInput ? studentTeamInput.value : state.userTeam, currentName);
+
+      if (!socket.connected) {
+        pendingTaylorGuessSubmit = { c0, c1, c2, c3 };
+        logComm('queue fourier:taylor-guess-submit (socket disconnected)', pendingTaylorGuessSubmit);
+        return;
+      }
+
+      if (!state.joined) {
+        pendingTaylorGuessSubmit = { c0, c1, c2, c3 };
+        logComm('queue fourier:taylor-guess-submit (not joined yet)', pendingTaylorGuessSubmit);
+
+        if (!state.joinPayload || state.joinPayload.role !== 'client') {
+          requestJoin('client', currentName, currentTeam);
+        } else {
+          logComm('re-emit fourier:join before taylor-guess-submit', state.joinPayload);
+          socket.emit('fourier:join', state.joinPayload);
+        }
+        return;
+      }
+
+      const payload = { c0, c1, c2, c3, role: 'client', name: currentName, team: currentTeam };
       logComm('emit fourier:taylor-guess-submit', payload);
       socket.emit('fourier:taylor-guess-submit', payload);
     }
@@ -1670,8 +1689,9 @@
     }
 
     const freq = Number(clampValue(detail && detail.freq, 0.4, 6, 1.2).toFixed(2));
+    const amp = Number(clampValue(detail && detail.amp, 0, 1.8, 0.9).toFixed(2));
     const phi = Number(clampValue(detail && detail.phi, -3.14, 3.14, 0).toFixed(2));
-    const payload = { freq, phi };
+    const payload = { freq, amp, phi };
 
     logComm("emit fourier:wave-sum-update", payload);
     socket.emit("fourier:wave-sum-update", payload);
@@ -1809,10 +1829,11 @@
   });
 
   // Fallback bridge for wave-sum student slider.
-  [waveSumStudentFreqInput, waveSumStudentPhiInput].forEach((control) => {
+  [waveSumStudentFreqInput, waveSumStudentAmpInput, waveSumStudentPhiInput].forEach((control) => {
     control?.addEventListener("input", () => {
       emitWaveSumUpdate({
         freq: Number(waveSumStudentFreqInput ? waveSumStudentFreqInput.value : 1.2),
+        amp: Number(waveSumStudentAmpInput ? waveSumStudentAmpInput.value : 0.9),
         phi: Number(waveSumStudentPhiInput ? waveSumStudentPhiInput.value : 0),
       });
     });
@@ -1820,6 +1841,7 @@
     control?.addEventListener("change", () => {
       emitWaveSumUpdate({
         freq: Number(waveSumStudentFreqInput ? waveSumStudentFreqInput.value : 1.2),
+        amp: Number(waveSumStudentAmpInput ? waveSumStudentAmpInput.value : 0.9),
         phi: Number(waveSumStudentPhiInput ? waveSumStudentPhiInput.value : 0),
       });
     });
@@ -1964,7 +1986,7 @@
     if (state.joinPayload) {
       logComm("emit fourier:join on connect", state.joinPayload);
       socket.emit("fourier:join", state.joinPayload);
-    } else if (state.mode === "client" && (pendingSoundControl || pendingHeatControl || pendingTaylorGuessLive)) {
+    } else if (state.mode === "client" && (pendingSoundControl || pendingHeatControl || pendingTaylorGuessLive || pendingTaylorGuessSubmit)) {
       const currentName = resolveClientName(studentNameInput ? studentNameInput.value : state.userName);
       const currentTeam = resolveClientTeam(studentTeamInput ? studentTeamInput.value : state.userTeam, currentName);
       requestJoin("client", currentName, currentTeam);
@@ -2073,6 +2095,11 @@
         emitTaylorGuessLive(pendingTaylorGuessLive, true);
         pendingTaylorGuessLive = null;
       }
+
+      if (pendingTaylorGuessSubmit) {
+        emitTaylorGuessSubmit(pendingTaylorGuessSubmit);
+        pendingTaylorGuessSubmit = null;
+      }
     } else if (state.mode === "teacher") {
       emitHeatControl(pendingHeatControl || getLocalHeatControlFromDom(), true);
       pendingHeatControl = null;
@@ -2180,10 +2207,6 @@
     logComm("recv fourier:taylor-guess-state", payload);
     applyTaylorGuessState(payload);
     updateMiniSummary();
-  });
-
-  document.addEventListener("fourier:taylor-guess-start-local", () => {
-    emitTaylorGuessStart();
   });
 
   document.addEventListener("fourier:taylor-guess-reveal-local", () => {

@@ -1146,7 +1146,7 @@ const fourierFftDuelState = {
   revealResults: false,
   assignments: new Map()
 };
-const fourierWaveSumState = new Map(); // socketId -> { freq, updatedAt }
+const fourierWaveSumState = new Map(); // socketId -> { freq, amp, phi, updatedAt }
 const fourierTaylorGuessState = {
   roundId: '',
   status: 'idle',
@@ -1995,6 +1995,15 @@ function startFourierTaylorGuessRound() {
   fourierTaylorGuessState.submissions = new Map();
 }
 
+function ensureFourierTaylorGuessRoundRunning() {
+  if (fourierTaylorGuessState.status === 'running') {
+    return false;
+  }
+
+  startFourierTaylorGuessRound();
+  return true;
+}
+
 function buildFourierTaylorGuessPayload(viewerSocketId = '', viewerRole = 'client') {
   const revealForTeacher = viewerRole === 'teacher' && Boolean(fourierTaylorGuessState.revealResults);
   const submittedCount = fourierTaylorGuessState.submissions.size;
@@ -2089,6 +2098,7 @@ function buildFourierWaveSumPayload() {
     }
     entries.push({
       name: participant.name,
+      amp: Number(clampFourierNumber(data.amp, 0, 1.8, 0.9).toFixed(2)),
       freq: Number(clampFourierNumber(data.freq, 0.4, 6, 1.2).toFixed(2)),
       phi: Number(clampFourierNumber(data.phi, -3.14, 3.14, 0).toFixed(2)),
       updatedAt: data.updatedAt || 0
@@ -3125,10 +3135,11 @@ io.on('connection', (socket) => {
     }
 
     const freq = Number(clampFourierNumber((payload && payload.freq), 0.4, 6, 1.2).toFixed(2));
+    const amp = Number(clampFourierNumber((payload && payload.amp), 0, 1.8, 0.9).toFixed(2));
     const phi = Number(clampFourierNumber((payload && payload.phi), -3.14, 3.14, 0).toFixed(2));
     const now = Date.now();
 
-    fourierWaveSumState.set(socket.id, { freq, phi, updatedAt: now });
+    fourierWaveSumState.set(socket.id, { freq, amp, phi, updatedAt: now });
 
     participant.lastActionAt = now;
     fourierParticipants.set(socket.id, participant);
@@ -3136,19 +3147,11 @@ io.on('connection', (socket) => {
     emitFourierWaveSumState();
   });
 
-  socket.on('fourier:taylor-guess-start', () => {
-    touchGeometryConnection(socket.id);
-    const participant = fourierParticipants.get(socket.id);
-    if (!participant || participant.role !== 'teacher') return;
-    startFourierTaylorGuessRound();
-    emitFourierTaylorGuessState();
-    emitFourierSummary();
-  });
-
   socket.on('fourier:taylor-guess-live', (payload) => {
     touchGeometryConnection(socket.id);
     let participant = fourierParticipants.get(socket.id);
     let createdFromTaylorLive = false;
+    let startedByLive = false;
 
     if (!participant) {
       participant = registerFourierParticipant(
@@ -3161,6 +3164,7 @@ io.on('connection', (socket) => {
     }
 
     if (!participant || participant.role !== 'client') return;
+    startedByLive = ensureFourierTaylorGuessRoundRunning();
     const c0 = Number(clampFourierNumber(payload && payload.c0, -4, 4, 0).toFixed(2));
     const c1 = Number(clampFourierNumber(payload && payload.c1, -4, 4, 0).toFixed(2));
     const c2 = Number(clampFourierNumber(payload && payload.c2, -4, 4, 0).toFixed(2));
@@ -3173,6 +3177,8 @@ io.on('connection', (socket) => {
     if (createdFromTaylorLive) {
       emitFourierParticipants();
       emitFourierSoundState();
+      emitFourierSummary();
+    } else if (startedByLive) {
       emitFourierSummary();
     }
 
@@ -3198,7 +3204,7 @@ io.on('connection', (socket) => {
     }
 
     if (!participant || participant.role !== 'client') return;
-    if (fourierTaylorGuessState.status !== 'running') return;
+  ensureFourierTaylorGuessRoundRunning();
     if (fourierTaylorGuessState.submissions.has(socket.id)) return;
 
     const c0 = Number(clampFourierNumber(payload && payload.c0, -4, 4, 0).toFixed(2));
@@ -3230,7 +3236,7 @@ io.on('connection', (socket) => {
     touchGeometryConnection(socket.id);
     const participant = fourierParticipants.get(socket.id);
     if (!participant || participant.role !== 'teacher') return;
-    if (fourierTaylorGuessState.status !== 'running') return;
+    ensureFourierTaylorGuessRoundRunning();
     fourierTaylorGuessState.revealResults = true;
     fourierTaylorGuessState.updatedAt = Date.now();
     emitFourierTaylorGuessState();
