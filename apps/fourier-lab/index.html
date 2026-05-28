@@ -3503,9 +3503,7 @@
             <div id="complexityRaceTeacherStatus" class="complexity-race-status">Πάτησε N ×10 ή N /10 για να αλλάξεις το μέγεθος εισόδου.</div>
             <canvas id="complexityRaceCanvas" class="demo-canvas" width="940" height="380"></canvas>
             <div id="complexityRaceLegend" style="display:grid; grid-template-columns:repeat(2,minmax(220px,1fr)); gap:8px; margin-top:10px;"></div>
-            <div class="activity-note">
-              Πάνω στο γράφημα εμφανίζεται μόνο η σημειογραφία O(·), ενώ εδώ δίπλα φαίνονται τα ελληνικά ονόματα.
-            </div>
+            
           </div>
         </div>
       </section>
@@ -3526,15 +3524,15 @@
               </thead>
               <tbody>
                 <tr style="background: rgba(88, 166, 255, 0.05);">
-                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-weight:bold;">Πρόσθεση</td>
-                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-family:monospace; font-size:0.88em;">A(x) = x² + 2x + 1<br/>B(x) = 2x + 3<br/>A+B = x² + 4x + 4</td>
-                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-size:0.87em;">Πρόσθεση κάθε συντελεστή: $a_i + b_i$</td>
-                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); text-align:center; color: #90ee90; font-weight:bold;">O(n)</td>
-                </tr>
-                <tr style="background: rgba(58, 130, 200, 0.05);">
                   <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-weight:bold;">Αποτίμηση<br/>(Horner)</td>
                   <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-family:monospace; font-size:0.88em;">A(x) = x² + 2x + 1<br/>A(2) = ?<br/>Βήματα: ((1·2+2)·2+1) = 9</td>
                   <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-size:0.87em;">$r = a_n$<br/>For $i=n-1$ to 0:<br/>$r = r·x + a_i$</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); text-align:center; color: #90ee90; font-weight:bold;">O(n)</td>
+                </tr>
+                <tr style="background: rgba(58, 130, 200, 0.05);">
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-weight:bold;">Πρόσθεση</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-family:monospace; font-size:0.88em;">A(x) = x² + 2x + 1<br/>B(x) = 2x + 3<br/>A+B = x² + 4x + 4</td>
+                  <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); vertical-align:top; font-size:0.87em;">Πρόσθεση κάθε συντελεστή: $a_i + b_i$</td>
                   <td style="padding:10px; border: 1px solid rgba(88, 166, 255, 0.2); text-align:center; color: #90ee90; font-weight:bold;">O(n)</td>
                 </tr>
                 <tr style="background: rgba(200, 130, 100, 0.05);">
@@ -3555,7 +3553,7 @@
       <section class="section" id="sec-line-representation">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.2) Αναπαράσταση</h2>
+            <h2>9.2) Αναπαράσταση Συντελεστές - Σημεία </h2>
             <p>
               Δύο πολυώνυμα 1ου βαθμού (ευθείες) στο ίδιο διάγραμμα: η μπλε με sliders,
               η ροζ από δύο σημεία που μετακινούνται με drag and drop.
@@ -3563,11 +3561,11 @@
             <canvas id="lineRepresentationCanvas" class="demo-canvas" width="940" height="360" style="touch-action:none;"></canvas>
             <div class="slider-grid" style="margin-top:10px;">
               <div class="slider-group">
-                <div class="slider-label"><span>Κλίση m (μπλε)</span><span id="lineRepSlopeValue">1.00</span></div>
+                <div class="slider-label"><span>Κλίση λ </span><span id="lineRepSlopeValue">1.00</span></div>
                 <input id="lineRepSlope" type="range" min="-3" max="3" step="0.01" value="1" />
               </div>
               <div class="slider-group">
-                <div class="slider-label"><span>Τομή b (μπλε)</span><span id="lineRepInterceptValue">0.00</span></div>
+                <div class="slider-label"><span>Τομή b</span><span id="lineRepInterceptValue">0.00</span></div>
                 <input id="lineRepIntercept" type="range" min="-5" max="5" step="0.01" value="0" />
               </div>
             </div>
@@ -4669,7 +4667,7 @@
       { key: "quad", greek: "Τετραγωνική", oLabel: "O(n^2)", color: "#c71d1d" },
       { key: "cubic", greek: "Πολυωνυμική", oLabel: "O(n^3)", color: "#6d0f0f" },
       { key: "exp", greek: "Εκθετική", oLabel: "O(2^n)", color: "#c022d9" },
-      { key: "fact", greek: "Παραγοντική (χειρότερη)", oLabel: "O(n!)", color: "#7f16d2" },
+      { key: "fact", greek: "Παραγοντική", oLabel: "O(n!)", color: "#7f16d2" },
     ];
     const complexityRaceModelMap = new Map(complexityRaceModels.map((model) => [model.key, model]));
     const complexityRaceUiState = {
@@ -13768,12 +13766,7 @@
         ctx.fillText(`P${idx + 1}(${p.x.toFixed(2)}, ${p.y.toFixed(2)})`, pc.x + 8 * ratio, pc.y - 8 * ratio);
       });
 
-      ctx.fillStyle = "rgba(180,220,255,0.9)";
-      ctx.font = `${11 * ratio}px monospace`;
-      ctx.textAlign = "left";
-      ctx.textBaseline = "top";
-      ctx.fillText("L1: sliders (m, b)  |  L2: drag points P1, P2", plot.left + 2 * ratio, plot.top + 2 * ratio);
-    }
+      }
 
     function lineRepGetPointerPos(canvas, event) {
       const rect = canvas.getBoundingClientRect();
