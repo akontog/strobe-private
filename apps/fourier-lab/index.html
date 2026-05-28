@@ -2454,7 +2454,7 @@
 
       <div class="toc-group-title" data-accordion-group="complexity">8. Πολυπλοκότητα</div>
       <a href="#sec-sort-compare" data-accordion-group="complexity">8.1 Divide &amp; Conquer</a>
-      <a href="#sec-activity-complexity-check" data-accordion-group="complexity">8.2 Δραστηριότητα: Αγώνες πολυπλοκότητας</a>
+      <a href="#sec-activity-complexity-check" data-accordion-group="complexity">8.2 Καμπύλες πολυπλοκότητας</a>
 
       <div class="toc-group-title" data-accordion-group="fft">9. FFT</div>
       <a href="#sec-polynomial-mult" data-accordion-group="fft">9.1 Πράξεις πολυωνύμων (Πολυπλοκότητα)</a>
@@ -2500,7 +2500,7 @@
             <h2>1.2) Η τεχνική στον κινηματογράφο</h2>
             
             <video controls class="demo-canvas" id="moviesTechVideo">
-              <source src="assets/videos/movies-techniques.mp4" type="video/mp4" />
+              <source src="media/clips.mp4" type="video/mp4" />
             </video>
           </div>
         </div>
@@ -3306,8 +3306,9 @@
           <div class="slide-content">
             <h2>6.3) Σύνθεση Fourier</h2>
             <p>
-              Αριστερά κάνε κλικ ή σύρε για να ορίσεις τιμές y σε διάφορα x (αρχικά είναι ο άξονας xx').
-              Δεξιά βλέπεις πόσο καλά το άθροισμα ημιτόνων Fourier προσεγγίζει τη συνάρτησή σου.
+              Η συνάρτηση φαίνεται περιοδικά σε 3 συνεχόμενα τμήματα. Ο teacher επεμβαίνει μόνο στο
+              μεσαίο τμήμα και τα δύο πλαϊνά ενημερώνονται αυτόματα με ακριβώς τον ίδιο τρόπο.
+              Δεξιά βλέπεις πόσο καλά το άθροισμα ημιτόνων Fourier προσεγγίζει την περιοδική επέκταση.
             </p>
             <canvas id="fourierLineCanvas" class="demo-canvas" width="940" height="320"></canvas>
             <div class="slider-grid">
@@ -3465,103 +3466,45 @@
         <div class="slide-card">
           <div class="slide-content">
             <h2>8.1) Divide &amp; Conquer</h2>
-            <p>
-              Με τα κοινά κουμπιά ελέγχεις ταυτόχρονα και τα δύο animations.
-              Αριστερά προχωρούν τα βήματα του Bubble Sort και δεξιά ανοίγει σταδιακά το δέντρο του Merge Sort.
-            </p>
             <div style="margin-top:8px; overflow:auto; max-height:min(52vh, 310px); border:1px solid rgba(190,220,255,0.18); border-radius:10px; background:rgba(6,18,32,0.55);">
-              <canvas id="sortCompareCanvas" class="demo-canvas" style="display:block; width:900px; height:560px; max-width:none;" width="940" height="640"></canvas>
+              <canvas id="sortCompareCanvas" class="demo-canvas" style="display:block; width:900px; height:300px; max-width:none;" width="940" height="300"></canvas>
             </div>
-            <div class="slider-grid" style="margin-top:10px;">
+            <div class="slider-grid" style="margin:10px auto 0; width:900px; max-width:100%; grid-template-columns:repeat(2, minmax(0, 1fr));">
               <div class="slider-group">
-                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
-                  <button id="sortComparePrevBtn" class="fft-duel-submit" type="button">Προηγούμενο</button>
-                  <button id="sortCompareNextBtn" class="fft-duel-submit" type="button">Επόμενο</button>
-                  <button id="sortCompareRefreshBtn" class="fft-duel-submit" type="button">Reset</button>
+                <div class="slider-label"><span>Bubble Sort</span><span id="sortCompareBubbleStatus">Βήμα 1</span></div>
+                <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:8px;">
+                  <button id="sortCompareBubblePrevBtn" class="fft-duel-submit" type="button">Προηγούμενο</button>
+                  <button id="sortCompareBubbleNextBtn" class="fft-duel-submit" type="button">Επόμενο</button>
+                  <button id="sortCompareBubbleRefreshBtn" class="fft-duel-submit" type="button">Reset</button>
                 </div>
               </div>
-            </div>
-            <div style="margin-top:10px; overflow:auto;">
-              <table style="width:100%; border-collapse:collapse; font-size:0.92em;">
-                <thead>
-                  <tr>
-                    <th style="text-align:left; border-bottom:1px solid rgba(190,220,255,0.3); padding:6px;">Στατιστικό</th>
-                    <th style="text-align:center; border-bottom:1px solid rgba(190,220,255,0.3); padding:6px;">Bubble Sort</th>
-                    <th style="text-align:center; border-bottom:1px solid rgba(190,220,255,0.3); padding:6px;">Merge Sort</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">Ορατές συγκρίσεις</td>
-                    <td id="sortStatsBubbleComparisons" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">0</td>
-                    <td id="sortStatsMergeComparisons" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">0</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">Ορατές αλλαγές</td>
-                    <td id="sortStatsBubbleSwaps" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">0</td>
-                    <td style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">-</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">Τοποθετήσεις merge</td>
-                    <td style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">-</td>
-                    <td id="sortStatsMergeWrites" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">0</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:6px;">Βήματα αλγορίθμου</td>
-                    <td id="sortStatsBubbleSteps" style="text-align:center; padding:6px;">0</td>
-                    <td id="sortStatsMergeSteps" style="text-align:center; padding:6px;">0</td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="slider-group">
+                <div class="slider-label"><span>Merge Sort</span><span id="sortCompareMergeStatus">Βήμα 1</span></div>
+                <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin-top:8px;">
+                  <button id="sortCompareMergePrevBtn" class="fft-duel-submit" type="button">Προηγούμενο</button>
+                  <button id="sortCompareMergeNextBtn" class="fft-duel-submit" type="button">Επόμενο</button>
+                  <button id="sortCompareMergeRefreshBtn" class="fft-duel-submit" type="button">Reset</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="section activity-slide" id="sec-activity-complexity-check" data-activity-id="complexity-check">
+      <section class="section" id="sec-activity-complexity-check">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.2) Δραστηριότητα: Αγώνες πολυπλοκότητας</h2>
-            <p class="student-only">
-              Επίλεξε μία πολυπλοκότητα και πάτα «Υποβολή επιλογής». Ο teacher θα κάνει reveal όταν
-              μαζευτούν αρκετές υποβολές.
-            </p>
-            <p class="teacher-only">
-              Με reveal εμφανίζονται οι επιλογές όλων. Με «Επόμενο N ×10» αυξάνεται το N επί 10
-              και υπολογίζεται η απόδοση κάθε μαθητή.
-            </p>
-            <div class="activity-grid">
-              <div class="activity-card student-only">
-                <h3>Επιλογή πολυπλοκότητας</h3>
-                <div class="complexity-choice-grid">
-                  <button type="button" class="complexity-choice-button" data-choice-key="half-n2">0.5 · N²</button>
-                  <button type="button" class="complexity-choice-button" data-choice-key="thousand-n">1000 · N</button>
-                  <button type="button" class="complexity-choice-button" data-choice-key="factorial">N!</button>
-                  <button type="button" class="complexity-choice-button" data-choice-key="half-2n">0.5 · 2^N</button>
-                  <button type="button" class="complexity-choice-button" data-choice-key="n-log-n">N log N</button>
-                </div>
-                <input id="complexityRaceChoiceControl" type="hidden" value="" data-activity-control="complexity-check" data-control-key="complexityChoice" />
-                <button id="complexityRaceSubmitBtn" class="fft-duel-submit" type="button">Υποβολή επιλογής</button>
-                <div class="hint" id="complexityRaceStudentStatus">Διάλεξε επιλογή και κάνε submit.</div>
-              </div>
-              <div class="activity-live teacher-only complexity-race-teacher">
-                <h3>Πίνακας teacher</h3>
-                <div class="complexity-race-toolbar">
-                  <span class="fft-duel-pill">N: <strong id="complexityRaceNValue">10</strong></span>
-                  <button id="complexityRaceRevealBtn" class="fft-duel-submit" type="button">Reveal επιλογών</button>
-                  <button id="complexityRaceNextBtn" class="fft-duel-submit" type="button">Επόμενο N ×10</button>
-                  <button id="complexityRaceResetBtn" class="fft-duel-submit" type="button">Reset</button>
-                </div>
-                <div id="complexityRaceTeacherStatus" class="complexity-race-status">Περιμένω υποβολές.</div>
-                <canvas id="complexityRaceCanvas" class="demo-canvas" width="940" height="320"></canvas>
-                <div class="activity-note">
-                  Άξονας X: από 0 έως επιλεγμένο N (μέχρι 1.000.000). Άξονας Y: όριο 1.000.000.
-                  Ό,τι το ξεπερνά βγαίνει πάνω από το γράφημα.
-                </div>
-                <div id="complexityRaceScoreboard" class="complexity-race-scoreboard">
-                  <div class="fft-duel-empty">Περιμένω reveal για να εμφανιστεί κατάταξη.</div>
-                </div>
-              </div>
+            <h2>8.2) Καμπύλες πολυπλοκότητας</h2>
+            <div class="complexity-race-toolbar">
+              <span class="fft-duel-pill">N: <strong id="complexityRaceNValue">10</strong></span>
+              <button id="complexityRacePrevBtn" class="fft-duel-submit" type="button">N /10</button>
+              <button id="complexityRaceNextBtn" class="fft-duel-submit" type="button">N ×10</button>
+            </div>
+            <div id="complexityRaceTeacherStatus" class="complexity-race-status">Πάτησε N ×10 ή N /10 για να αλλάξεις το μέγεθος εισόδου.</div>
+            <canvas id="complexityRaceCanvas" class="demo-canvas" width="940" height="380"></canvas>
+            <div id="complexityRaceLegend" style="display:grid; grid-template-columns:repeat(2,minmax(220px,1fr)); gap:8px; margin-top:10px;"></div>
+            <div class="activity-note">
+              Πάνω στο γράφημα εμφανίζεται μόνο η σημειογραφία O(·), ενώ εδώ δίπλα φαίνονται τα ελληνικά ονόματα.
             </div>
           </div>
         </div>
@@ -4622,22 +4565,21 @@
     const complexityRaceSubmitBtn = document.getElementById("complexityRaceSubmitBtn");
     const complexityRaceStudentStatus = document.getElementById("complexityRaceStudentStatus");
     const complexityRaceRevealBtn = document.getElementById("complexityRaceRevealBtn");
+    const complexityRacePrevBtn = document.getElementById("complexityRacePrevBtn");
     const complexityRaceNextBtn = document.getElementById("complexityRaceNextBtn");
     const complexityRaceResetBtn = document.getElementById("complexityRaceResetBtn");
     const complexityRaceTeacherStatus = document.getElementById("complexityRaceTeacherStatus");
     const complexityRaceScoreboard = document.getElementById("complexityRaceScoreboard");
+    const complexityRaceLegend = document.getElementById("complexityRaceLegend");
     const sortCompareCanvas = document.getElementById("sortCompareCanvas");
     const sortCompareBubbleStatus = document.getElementById("sortCompareBubbleStatus");
     const sortCompareMergeStatus = document.getElementById("sortCompareMergeStatus");
-    const sortComparePrevBtn = document.getElementById("sortComparePrevBtn");
-    const sortCompareNextBtn = document.getElementById("sortCompareNextBtn");
-    const sortCompareRefreshBtn = document.getElementById("sortCompareRefreshBtn");
-    const sortStatsBubbleComparisons = document.getElementById("sortStatsBubbleComparisons");
-    const sortStatsMergeComparisons = document.getElementById("sortStatsMergeComparisons");
-    const sortStatsBubbleSwaps = document.getElementById("sortStatsBubbleSwaps");
-    const sortStatsMergeWrites = document.getElementById("sortStatsMergeWrites");
-    const sortStatsBubbleSteps = document.getElementById("sortStatsBubbleSteps");
-    const sortStatsMergeSteps = document.getElementById("sortStatsMergeSteps");
+    const sortCompareBubblePrevBtn = document.getElementById("sortCompareBubblePrevBtn");
+    const sortCompareBubbleNextBtn = document.getElementById("sortCompareBubbleNextBtn");
+    const sortCompareBubbleRefreshBtn = document.getElementById("sortCompareBubbleRefreshBtn");
+    const sortCompareMergePrevBtn = document.getElementById("sortCompareMergePrevBtn");
+    const sortCompareMergeNextBtn = document.getElementById("sortCompareMergeNextBtn");
+    const sortCompareMergeRefreshBtn = document.getElementById("sortCompareMergeRefreshBtn");
     const oceanWavesIntroCanvas = document.getElementById("oceanWavesIntroCanvas");
     const bridgeDimCanvas = document.getElementById("bridgeDimCanvas");
     const bridgeDimMath = document.getElementById("bridgeDimMath");
@@ -4718,44 +4660,53 @@
     const pageMode = new URLSearchParams(window.location.search).get("mode") === "teacher" ? "teacher" : "client";
     const isTeacherMode = pageMode === "teacher";
 
-    const COMPLEXITY_RACE_MAX_VALUE = 1000000;
+    const COMPLEXITY_CURVES_N_MAX = 1000000;
     const complexityRaceModels = [
-      { key: "half-n2", label: "0.5 · N²", color: "rgba(255, 191, 99, 0.72)" },
-      { key: "thousand-n", label: "1000 · N", color: "rgba(108, 226, 164, 0.72)" },
-      { key: "factorial", label: "N!", color: "rgba(255, 132, 132, 0.72)" },
-      { key: "half-2n", label: "0.5 · 2^N", color: "rgba(193, 163, 255, 0.72)" },
-      { key: "n-log-n", label: "N log N", color: "rgba(143, 229, 255, 0.72)" },
+      { key: "const", greek: "Σταθερή", oLabel: "O(1)", color: "#2f6fca" },
+      { key: "log", greek: "Λογαριθμική", oLabel: "O(log n)", color: "#2f6b26" },
+      { key: "linear", greek: "Γραμμική", oLabel: "O(n)", color: "#c7ac42" },
+      { key: "nlogn", greek: "Γραμμική-Λογαριθμική", oLabel: "O(n log n)", color: "#d89a12" },
+      { key: "quad", greek: "Τετραγωνική", oLabel: "O(n^2)", color: "#c71d1d" },
+      { key: "cubic", greek: "Πολυωνυμική", oLabel: "O(n^3)", color: "#6d0f0f" },
+      { key: "exp", greek: "Εκθετική", oLabel: "O(2^n)", color: "#c022d9" },
+      { key: "fact", greek: "Παραγοντική (χειρότερη)", oLabel: "O(n!)", color: "#7f16d2" },
     ];
     const complexityRaceModelMap = new Map(complexityRaceModels.map((model) => [model.key, model]));
-    const complexityRaceSelections = new Map();
     const complexityRaceUiState = {
-      selectedChoice: "",
       n: 10,
-      revealResults: false,
-      totalStudents: 0,
     };
     const SORT_COMPARE_SIZE = 8;
     const SORT_COMPARE_BASE_ARRAY = [5, 3, 1, 8, 7, 2, 6, 4];
-    const SORT_COMPARE_BUBBLE_SNAPSHOTS = [
-      { reveal: 0, column: 0, y: 86, title: "1η διάβαση", values: [5, 3, 1, 8, 7, 2, 6, 4], highlight: [6, 7], note: "Σύγκριση (6,4)" },
-      { reveal: 1, column: 0, y: 154, values: [5, 3, 1, 8, 7, 2, 4, 6], highlight: [6, 7], note: "Swap (6,4)" },
-      { reveal: 2, column: 0, y: 222, values: [5, 3, 1, 8, 2, 7, 4, 6], highlight: [4, 5], note: "Swap (7,2)" },
-      { reveal: 3, column: 0, y: 290, values: [5, 3, 1, 2, 8, 7, 4, 6], highlight: [3, 4], note: "Swap (8,2)" },
-      { reveal: 4, column: 0, y: 348, ellipsis: true, note: "Συνεχίζονται οι συγκρίσεις της 1ης διάβασης" },
-      { reveal: 4, column: 0, y: 414, values: [1, 5, 3, 2, 8, 7, 4, 6], final: true, caption: "μετά από όλες τις συγκρίσεις", note: "Τέλος 1ης διάβασης" },
-      { reveal: 5, column: 1, y: 86, title: "2η διάβαση", values: [1, 5, 3, 2, 8, 7, 4, 6], highlight: [5, 6], note: "Σύγκριση (7,4)" },
-      { reveal: 6, column: 1, y: 154, values: [1, 5, 3, 2, 8, 4, 7, 6], highlight: [5, 6], note: "Swap (7,4)" },
-      { reveal: 7, column: 1, y: 222, values: [1, 5, 3, 2, 4, 8, 7, 6], highlight: [4, 5], note: "Swap (8,4)" },
-      { reveal: 8, column: 1, y: 290, values: [1, 5, 2, 3, 4, 8, 7, 6], highlight: [2, 3], note: "Swap (3,2)" },
-      { reveal: 9, column: 1, y: 358, values: [1, 2, 5, 3, 4, 8, 7, 6], highlight: [1, 2], note: "Swap (5,2)" },
-      { reveal: 10, column: 1, y: 416, ellipsis: true, note: "Συνεχίζονται οι συγκρίσεις της 2ης διάβασης" },
-      { reveal: 10, column: 1, y: 482, values: [1, 2, 3, 4, 5, 8, 7, 6], final: true, caption: "μετά από όλες τις συγκρίσεις", note: "Τέλος 2ης διάβασης" },
-      { reveal: 11, column: 2, y: 86, title: "3η διάβαση", values: [1, 2, 3, 4, 5, 8, 7, 6], highlight: [5, 6], note: "Σύγκριση (8,7)" },
-      { reveal: 12, column: 2, y: 154, values: [1, 2, 3, 4, 5, 7, 8, 6], highlight: [5, 6], note: "Swap (8,7)" },
-      { reveal: 13, column: 2, y: 222, values: [1, 2, 3, 4, 5, 6, 7, 8], highlight: [6, 7], note: "Swap (7,6)" },
-      { reveal: 14, column: 2, y: 280, ellipsis: true, note: "Ο πίνακας έχει πλέον ταξινομηθεί" },
-      { reveal: 14, column: 2, y: 346, values: [1, 2, 3, 4, 5, 6, 7, 8], final: true, emphasis: true, caption: "Ταξινομημένος", note: "Ο Bubble Sort ολοκληρώθηκε" },
-    ];
+    const SORT_COMPARE_BUBBLE_SNAPSHOTS = (() => {
+      const working = SORT_COMPARE_BASE_ARRAY.slice();
+      const snapshots = [];
+      let reveal = 0;
+      const n = working.length;
+      const passRows = Array.from({ length: Math.max(0, n - 1) }, () => 0);
+      for (let pass = 0; pass < n - 1; pass += 1) {
+        for (let index = n - 1; index > pass; index -= 1) {
+          if (working[index - 1] > working[index]) {
+            const temp = working[index - 1];
+            working[index - 1] = working[index];
+            working[index] = temp;
+          }
+          snapshots.push({
+            reveal,
+            pass,
+            row: passRows[pass],
+            values: working.slice(),
+            highlight: [index - 1, index],
+            sortedCount: index - 1 === pass ? pass + 1 : pass,
+            final: pass === n - 2 && index - 1 === pass,
+            emphasis: pass === n - 2 && index - 1 === pass,
+          });
+          passRows[pass] += 1;
+          reveal += 1;
+        }
+      }
+      return snapshots;
+    })();
+    const SORT_COMPARE_BUBBLE_MAX_STEP = Math.max(0, ...SORT_COMPARE_BUBBLE_SNAPSHOTS.map((snapshot) => Number(snapshot.reveal) || 0));
     const SORT_COMPARE_MERGE_COMPARISONS = [0, 0, 0, 0, 4, 10, 17];
     const SORT_COMPARE_MERGE_WRITES = [0, 0, 0, 0, 8, 16, 24];
     const SORT_COMPARE_MERGE_STATUS = [
@@ -6053,7 +6004,7 @@
     }
 
     function advanceBubbleSortPointer() {
-      if (sortCompareState.bubbleStepIndex < 14) {
+      if (sortCompareState.bubbleStepIndex < SORT_COMPARE_BUBBLE_MAX_STEP) {
         sortCompareState.bubbleStepIndex += 1;
       }
     }
@@ -6088,40 +6039,14 @@
       updateSortCompareStatusTexts();
     }
 
-    function updateSortStatsTable() {
-      const visibleBubble = getVisibleBubbleSnapshots();
-      const bubbleChanges = visibleBubble.filter((snapshot) => snapshot.note && /swap/i.test(snapshot.note)).length;
-      if (sortStatsBubbleComparisons) {
-        sortStatsBubbleComparisons.textContent = String(bubbleChanges);
-      }
-      if (sortStatsMergeComparisons) {
-        sortStatsMergeComparisons.textContent = String(SORT_COMPARE_MERGE_COMPARISONS[sortCompareState.mergeStepIndex] || 0);
-      }
-      if (sortStatsBubbleSwaps) {
-        sortStatsBubbleSwaps.textContent = String(bubbleChanges);
-      }
-      if (sortStatsMergeWrites) {
-        sortStatsMergeWrites.textContent = String(SORT_COMPARE_MERGE_WRITES[sortCompareState.mergeStepIndex] || 0);
-      }
-      if (sortStatsBubbleSteps) {
-        sortStatsBubbleSteps.textContent = `${sortCompareState.bubbleStepIndex + 1}/15`;
-      }
-      if (sortStatsMergeSteps) {
-        sortStatsMergeSteps.textContent = `${sortCompareState.mergeStepIndex + 1}/7`;
-      }
-    }
-
     function updateSortCompareStatusTexts() {
-      const currentBubble = getCurrentBubbleSnapshot();
       if (sortCompareBubbleStatus) {
-        sortCompareBubbleStatus.textContent = `${sortCompareState.bubbleStepIndex + 1}/15 • ${currentBubble.note || "Bubble Sort"}`;
+        sortCompareBubbleStatus.textContent = `Βήμα ${sortCompareState.bubbleStepIndex + 1}/${SORT_COMPARE_BUBBLE_MAX_STEP + 1}`;
       }
 
       if (sortCompareMergeStatus) {
-        sortCompareMergeStatus.textContent = `${sortCompareState.mergeStepIndex + 1}/7 • ${SORT_COMPARE_MERGE_STATUS[sortCompareState.mergeStepIndex]}`;
+        sortCompareMergeStatus.textContent = `Βήμα ${sortCompareState.mergeStepIndex + 1}/7`;
       }
-
-      updateSortStatsTable();
     }
 
     function resetSortCompareState() {
@@ -6130,18 +6055,29 @@
       updateSortCompareStatusTexts();
     }
 
-    function onSortCompareCanvasClick(event) {
-      if (!sortCompareCanvas) {
-        return;
-      }
-      stepSortCompareForward();
-    }
-
-    sortCompareCanvas?.addEventListener("click", onSortCompareCanvasClick);
-    sortComparePrevBtn?.addEventListener("click", stepSortCompareBackward);
-    sortCompareNextBtn?.addEventListener("click", stepSortCompareForward);
-    sortCompareRefreshBtn?.addEventListener("click", () => {
-      resetSortCompareState();
+    sortCompareBubblePrevBtn?.addEventListener("click", () => {
+      retreatBubbleSortPointer();
+      updateSortCompareStatusTexts();
+    });
+    sortCompareBubbleNextBtn?.addEventListener("click", () => {
+      advanceBubbleSortPointer();
+      updateSortCompareStatusTexts();
+    });
+    sortCompareBubbleRefreshBtn?.addEventListener("click", () => {
+      sortCompareState.bubbleStepIndex = 0;
+      updateSortCompareStatusTexts();
+    });
+    sortCompareMergePrevBtn?.addEventListener("click", () => {
+      retreatMergeSortPointer();
+      updateSortCompareStatusTexts();
+    });
+    sortCompareMergeNextBtn?.addEventListener("click", () => {
+      advanceMergeSortPointer();
+      updateSortCompareStatusTexts();
+    });
+    sortCompareMergeRefreshBtn?.addEventListener("click", () => {
+      sortCompareState.mergeStepIndex = 0;
+      updateSortCompareStatusTexts();
     });
     resetSortCompareState();
 
@@ -6295,19 +6231,13 @@
     });
     resetCooleyInteractiveState();
 
-    // @slide 8.2 | @util — επικυρώνει κλειδί μοντέλου πολυπλοκότητας εντός επιτρεπτών επιλογών.
-    function normalizeComplexityRaceChoice(value) {
-      const safe = String(value || "").trim();
-      return complexityRaceModelMap.has(safe) ? safe : "";
-    }
-
-    // @slide 8.2 — επιστρέφει το τρέχον N για τον αγώνα πολυπλοκότητας.
+    // @slide 8.2 — επιστρέφει το τρέχον N του demo πολυπλοκότητας.
     function getComplexityRaceNCurrent() {
       const safeN = Number(complexityRaceUiState.n);
       if (!Number.isFinite(safeN) || safeN < 10) {
         return 10;
       }
-      return Math.min(1000000, Math.round(safeN));
+      return Math.min(COMPLEXITY_CURVES_N_MAX, Math.round(safeN));
     }
 
     // @slide 8.2 — ενημερώνει label N για complexity race.
@@ -6319,48 +6249,10 @@
       complexityRaceNValue.textContent = n.toLocaleString("el-GR");
     }
 
-    function getComplexityRaceSelectionCount(selectionKey) {
-      let count = 0;
-      complexityRaceSelections.forEach((value) => {
-        if (value === selectionKey) {
-          count += 1;
-        }
-      });
-      return count;
-    }
-
-    function getComplexityRaceSubmittedCount() {
-      return complexityRaceSelections.size;
-    }
-
-    function getComplexityRaceRevealThreshold() {
-      const total = Math.max(0, Number(complexityRaceUiState.totalStudents) || 0);
-      if (total <= 1) {
-        return total === 0 ? 1 : total;
-      }
-      return Math.max(2, Math.ceil(total * 0.5));
-    }
-
-    function setComplexityRaceStudentStatus(message) {
-      if (complexityRaceStudentStatus) {
-        complexityRaceStudentStatus.textContent = message;
-      }
-    }
-
     function setComplexityRaceTeacherStatus(message) {
       if (complexityRaceTeacherStatus) {
         complexityRaceTeacherStatus.textContent = message;
       }
-    }
-
-    function setComplexityRaceChoiceSelection(nextChoice) {
-      const safeChoice = normalizeComplexityRaceChoice(nextChoice);
-      complexityRaceUiState.selectedChoice = safeChoice;
-
-      complexityRaceChoiceButtons.forEach((button) => {
-        const buttonChoice = normalizeComplexityRaceChoice(button && button.dataset ? button.dataset.choiceKey : "");
-        button.classList.toggle("selected", Boolean(safeChoice) && buttonChoice === safeChoice);
-      });
     }
 
     // @slide 8.2 | @util — n! με cap στο Infinity για αποφυγή overflow.
@@ -6380,285 +6272,52 @@
       return value;
     }
 
-    // @slide 8.2 — υπολογίζει αριθμό operations μοντέλου για δοσμένο N.
+    // @slide 8.2 — υπολογίζει μοντέλο πολυπλοκότητας για δοσμένο n.
     function evaluateComplexityRace(modelKey, n) {
       const safeN = Math.max(0, Number(n) || 0);
-
-      if (modelKey === "half-n2") {
-        return 0.5 * safeN * safeN;
+      if (modelKey === "const") return 1;
+      if (modelKey === "log") return safeN <= 1 ? 0 : Math.log2(safeN);
+      if (modelKey === "linear") return safeN;
+      if (modelKey === "nlogn") return safeN <= 1 ? 0 : safeN * Math.log2(safeN);
+      if (modelKey === "quad") return safeN * safeN;
+      if (modelKey === "cubic") return safeN * safeN * safeN;
+      if (modelKey === "exp") {
+        if (safeN > 120) return Number.POSITIVE_INFINITY;
+        return Math.pow(2, safeN);
       }
-      if (modelKey === "thousand-n") {
-        return 1000 * safeN;
-      }
-      if (modelKey === "factorial") {
+      if (modelKey === "fact") {
         return factorialBounded(safeN);
       }
-      if (modelKey === "half-2n") {
-        if (safeN > 120) {
-          return Number.POSITIVE_INFINITY;
-        }
-        return 0.5 * Math.pow(2, safeN);
-      }
-      if (modelKey === "n-log-n") {
-        if (safeN <= 1) {
-          return 0;
-        }
-        return safeN * Math.log2(safeN);
-      }
-
       return 0;
     }
-
-    // @slide 8.2 — ελέγχει αν ένα event entry ανήκει στο complexity-race.
-    function isComplexityRaceEntry(entry) {
-      if (!entry || typeof entry !== "object") {
-        return false;
-      }
-
-      return String(entry.activityId || "") === "complexity-check"
-        && String(entry.controlId || "") === "complexityChoice";
-    }
-
-    // @slide 8.2 — καταχωρεί επιλογή μαθητή στο Map πολυπλοκότητας.
-    function applyComplexityRaceSelection(name, selectionKey) {
-      const safeName = String(name || "").trim().slice(0, 32);
-      const safeSelection = normalizeComplexityRaceChoice(selectionKey);
-
-      if (!safeName || !safeSelection) {
-        return;
-      }
-
-      complexityRaceSelections.set(safeName, safeSelection);
-    }
-
-    // @slide 8.2 — ξαναχτίζει Map επιλογών από classroom summary payload.
-    function rebuildComplexityRaceSelections(summary) {
-      const recent = Array.isArray(summary && summary.recent) ? summary.recent.slice() : [];
-      complexityRaceSelections.clear();
-
-      recent
-        .filter((entry) => isComplexityRaceEntry(entry))
-        .sort((a, b) => Number(a && a.ts) - Number(b && b.ts))
-        .forEach((entry) => {
-          applyComplexityRaceSelection(entry && entry.name, entry && entry.value);
-        });
-    }
-
-    // @slide 8.2 — επιστρέφει λίστα ονομάτων/μετρήσεων για κάθε μοντέλο.
-    function summarizeComplexityRaceUsers(selectionKey) {
-      const selectedUsers = [];
-
-      complexityRaceSelections.forEach((value, name) => {
-        if (value === selectionKey) {
-          selectedUsers.push(name);
-        }
-      });
-
-      selectedUsers.sort((a, b) => a.localeCompare(b, "el"));
-
-      if (!selectedUsers.length) {
-        return "-";
-      }
-
-      if (!complexityRaceUiState.revealResults) {
-        return `${selectedUsers.length} υποβολές`;
-      }
-
-      if (selectedUsers.length <= 3) {
-        return selectedUsers.join(", ");
-      }
-
-      return `${selectedUsers.slice(0, 3).join(", ")} +${selectedUsers.length - 3}`;
-    }
-
-    function renderComplexityRaceScoreboard() {
-      if (!complexityRaceScoreboard || !isTeacherMode) {
-        return;
-      }
-
-      complexityRaceScoreboard.innerHTML = "";
-
-      if (!complexityRaceUiState.revealResults) {
-        const waiting = document.createElement("div");
-        waiting.className = "fft-duel-empty";
-        waiting.textContent = "Περιμένω reveal για να εμφανιστεί κατάταξη.";
-        complexityRaceScoreboard.appendChild(waiting);
-        return;
-      }
-
-      const n = getComplexityRaceNCurrent();
-      const rows = [];
-
-      complexityRaceSelections.forEach((selectionKey, name) => {
-        const model = complexityRaceModelMap.get(selectionKey);
-        if (!model) {
-          return;
-        }
-
-        rows.push({
-          name,
-          modelLabel: model.label,
-          value: evaluateComplexityRace(selectionKey, n),
-        });
-      });
-
-      rows.sort((a, b) => {
-        const aVal = Number.isFinite(a.value) ? a.value : Number.POSITIVE_INFINITY;
-        const bVal = Number.isFinite(b.value) ? b.value : Number.POSITIVE_INFINITY;
-        if (aVal !== bVal) {
-          return aVal - bVal;
-        }
-        return String(a.name).localeCompare(String(b.name), "el");
-      });
-
-      if (!rows.length) {
-        const empty = document.createElement("div");
-        empty.className = "fft-duel-empty";
-        empty.textContent = "Δεν υπάρχουν ακόμη υποβολές.";
-        complexityRaceScoreboard.appendChild(empty);
-        return;
-      }
-
-      rows.forEach((row, index) => {
-        const line = document.createElement("div");
-        line.className = "complexity-race-score-row";
-
-        const rankNode = document.createElement("span");
-        rankNode.textContent = String(index + 1);
-
-        const nameNode = document.createElement("span");
-        nameNode.textContent = row.name;
-
-        const modelNode = document.createElement("span");
-        modelNode.textContent = row.modelLabel;
-
-        const valueNode = document.createElement("span");
-        valueNode.textContent = Number.isFinite(row.value) ? formatOps(row.value) : "∞";
-
-        line.appendChild(rankNode);
-        line.appendChild(nameNode);
-        line.appendChild(modelNode);
-        line.appendChild(valueNode);
-
-        complexityRaceScoreboard.appendChild(line);
-      });
-    }
-
-    function updateComplexityRaceTeacherControls() {
-      const submitted = getComplexityRaceSubmittedCount();
-      const threshold = getComplexityRaceRevealThreshold();
-      const n = getComplexityRaceNCurrent();
-
-      if (complexityRaceRevealBtn) {
-        complexityRaceRevealBtn.disabled = !isTeacherMode || complexityRaceUiState.revealResults || submitted < threshold;
-      }
-
-      if (complexityRaceNextBtn) {
-        complexityRaceNextBtn.disabled = !isTeacherMode || !complexityRaceUiState.revealResults || n >= 1000000;
-      }
-
-      if (complexityRaceResetBtn) {
-        complexityRaceResetBtn.disabled = !isTeacherMode;
-      }
-
-      if (isTeacherMode) {
-        if (!complexityRaceUiState.revealResults) {
-          setComplexityRaceTeacherStatus(`Υποβολές: ${submitted}/${threshold} για reveal.`);
-        } else {
-          setComplexityRaceTeacherStatus(`Reveal ενεργό. N=${n.toLocaleString("el-GR")} • Επόμενο: ×10.`);
-        }
-      }
-
-      renderComplexityRaceScoreboard();
-    }
-
-    document.addEventListener("fourier:classroom-summary", (event) => {
-      const summary = event && event.detail ? event.detail.summary : null;
-      const totalStudents = summary && summary.participants ? Number(summary.participants.students) : 0;
-      complexityRaceUiState.totalStudents = Number.isFinite(totalStudents) ? Math.max(0, totalStudents) : 0;
-      rebuildComplexityRaceSelections(summary);
-      updateComplexityRaceTeacherControls();
-      drawComplexityRace(complexityRaceCanvas, 0);
-    });
-
-    document.addEventListener("fourier:classroom-activity-event", (event) => {
-      const entry = event && event.detail ? event.detail.entry : null;
-      if (!isComplexityRaceEntry(entry)) {
-        return;
-      }
-
-      applyComplexityRaceSelection(entry && entry.name, entry && entry.value);
-      updateComplexityRaceTeacherControls();
-      drawComplexityRace(complexityRaceCanvas, 0);
-    });
-
-    complexityRaceChoiceButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        const nextKey = normalizeComplexityRaceChoice(button && button.dataset ? button.dataset.choiceKey : "");
-        if (!nextKey) {
-          return;
-        }
-
-        setComplexityRaceChoiceSelection(nextKey);
-        if (complexityRaceSubmitBtn) {
-          complexityRaceSubmitBtn.disabled = false;
-        }
-        setComplexityRaceStudentStatus(`Επέλεξες: ${complexityRaceModelMap.get(nextKey).label}. Πάτα submit.`);
-      });
-    });
-
-    complexityRaceSubmitBtn?.addEventListener("click", () => {
-      const selected = normalizeComplexityRaceChoice(complexityRaceUiState.selectedChoice);
-      if (!selected || !complexityRaceChoiceControl) {
-        setComplexityRaceStudentStatus("Διάλεξε πρώτα μία πολυπλοκότητα.");
-        return;
-      }
-
-      complexityRaceChoiceControl.value = selected;
-      complexityRaceChoiceControl.dataset.lastChoiceLabel = complexityRaceModelMap.get(selected).label;
-      complexityRaceChoiceControl.dispatchEvent(new Event("input", { bubbles: true }));
-      complexityRaceChoiceControl.dispatchEvent(new Event("change", { bubbles: true }));
-      setComplexityRaceStudentStatus(`Η επιλογή στάλθηκε: ${complexityRaceModelMap.get(selected).label}.`);
-    });
-
-    complexityRaceRevealBtn?.addEventListener("click", () => {
-      if (!isTeacherMode) {
-        return;
-      }
-
-      const submitted = getComplexityRaceSubmittedCount();
-      const threshold = getComplexityRaceRevealThreshold();
-      if (submitted < threshold) {
-        setComplexityRaceTeacherStatus(`Χρειάζονται τουλάχιστον ${threshold} υποβολές για reveal.`);
-        return;
-      }
-
-      complexityRaceUiState.revealResults = true;
-      updateComplexityRaceTeacherControls();
+    complexityRacePrevBtn?.addEventListener("click", () => {
+      complexityRaceUiState.n = Math.max(10, Math.floor(getComplexityRaceNCurrent() / 10));
+      updateComplexityRaceNLabel();
+      setComplexityRaceTeacherStatus(`N = ${getComplexityRaceNCurrent().toLocaleString("el-GR")}`);
       drawComplexityRace(complexityRaceCanvas, 0);
     });
 
     complexityRaceNextBtn?.addEventListener("click", () => {
-      if (!isTeacherMode || !complexityRaceUiState.revealResults) {
-        return;
-      }
-
-      complexityRaceUiState.n = Math.min(1000000, getComplexityRaceNCurrent() * 10);
+      complexityRaceUiState.n = Math.min(COMPLEXITY_CURVES_N_MAX, getComplexityRaceNCurrent() * 10);
       updateComplexityRaceNLabel();
-      updateComplexityRaceTeacherControls();
-      drawComplexityRace(complexityRaceCanvas, 0);
-    });
-
-    complexityRaceResetBtn?.addEventListener("click", () => {
-      complexityRaceUiState.n = 10;
-      complexityRaceUiState.revealResults = false;
-      updateComplexityRaceNLabel();
-      updateComplexityRaceTeacherControls();
+      setComplexityRaceTeacherStatus(`N = ${getComplexityRaceNCurrent().toLocaleString("el-GR")}`);
       drawComplexityRace(complexityRaceCanvas, 0);
     });
 
     updateComplexityRaceNLabel();
-    updateComplexityRaceTeacherControls();
+    setComplexityRaceTeacherStatus(`N = ${getComplexityRaceNCurrent().toLocaleString("el-GR")}`);
+
+    if (complexityRaceLegend) {
+      complexityRaceLegend.innerHTML = complexityRaceModels
+        .map((model) => `
+          <div style="display:flex; align-items:center; gap:8px; border:1px solid rgba(150,190,255,0.2); border-radius:8px; padding:6px 8px; background:rgba(6,18,32,0.45);">
+            <span style="width:18px; height:3px; display:inline-block; background:${model.color}; border-radius:2px;"></span>
+            <span style="color:#d8eeff; font-size:0.92em;">${model.greek}</span>
+            <span style="color:#9fc9f5; font-size:0.88em; margin-left:auto;">${model.oLabel}</span>
+          </div>
+        `)
+        .join("");
+    }
 
     // @slide 7.2 — υπολογίζει N, N², N·log₂N για δένδρο Cooley-Tukey.
     function getCooleyTreeValues() {
@@ -7207,9 +6866,12 @@
       const leftPanelRight = leftPanelLeft + panelWidth;
       const plotLeft = leftPanelLeft + 14;
       const plotRight = leftPanelRight - 14;
+      const segmentWidth = (plotRight - plotLeft) / 3;
+      const centerLeft = plotLeft + segmentWidth;
+      const centerRight = centerLeft + segmentWidth;
       const plotTop = 22;
       const plotBottom = height - 22;
-      return { plotLeft, plotRight, plotTop, plotBottom };
+      return { plotLeft, plotRight, centerLeft, centerRight, segmentWidth, plotTop, plotBottom };
     }
 
     function computeFourierCoeffs(maxN) {
@@ -7270,6 +6932,7 @@
 
     function updateFourierLinePointsFromPointer(clientX, clientY) {
       if (!fourierLineCanvas) return;
+      if (!isTeacherMode) return;
       const rect = fourierLineCanvas.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
       const geometry = getFourierLineGeometry();
@@ -7278,8 +6941,8 @@
       const sy = fourierLineCanvas.height / rect.height;
       const canvasX = (clientX - rect.left) * sx;
       const canvasY = (clientY - rect.top) * sy;
-      if (canvasX < geometry.plotLeft || canvasX > geometry.plotRight) return;
-      const xNorm = (canvasX - geometry.plotLeft) / Math.max(1, geometry.plotRight - geometry.plotLeft);
+      if (canvasX < geometry.centerLeft || canvasX > geometry.centerRight) return;
+      const xNorm = (canvasX - geometry.centerLeft) / Math.max(1, geometry.centerRight - geometry.centerLeft);
       const yNorm = 1 - (canvasY - geometry.plotTop) / Math.max(1, geometry.plotBottom - geometry.plotTop);
       const yValue = Math.max(FOURIER_LINE_Y_MIN, Math.min(FOURIER_LINE_Y_MAX,
         FOURIER_LINE_Y_MIN + yNorm * (FOURIER_LINE_Y_MAX - FOURIER_LINE_Y_MIN)));
@@ -7305,13 +6968,16 @@
     fourierLineTermsSlider?.addEventListener("input", updateFourierLineLabels);
 
     fourierLineCanvas?.addEventListener("pointerdown", (event) => {
+      if (!isTeacherMode) {
+        return;
+      }
       const geometry = getFourierLineGeometry();
       if (!geometry || !fourierLineCanvas) return;
       const rect = fourierLineCanvas.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
       const sx = fourierLineCanvas.width / rect.width;
       const canvasX = (event.clientX - rect.left) * sx;
-      if (canvasX < geometry.plotLeft || canvasX > geometry.plotRight) return;
+      if (canvasX < geometry.centerLeft || canvasX > geometry.centerRight) return;
       fourierLineDragActive = true;
       fourierLinePointerId = event.pointerId;
       fourierLineLastDragIdx = -1;
@@ -7338,6 +7004,9 @@
 
     fourierLineCanvas?.addEventListener("pointerup", stopFourierLineDrag);
     fourierLineCanvas?.addEventListener("pointercancel", stopFourierLineDrag);
+    if (fourierLineCanvas) {
+      fourierLineCanvas.style.cursor = isTeacherMode ? "crosshair" : "not-allowed";
+    }
     updateFourierLineLabels();
 
     // @slide 6.7 — ενημερώνει labels f1, f2, f3, probe για demo φίλτρου.
@@ -12084,32 +11753,79 @@
           ctx.fillStyle = "#c7dcff";
           ctx.font = "11px Segoe UI, sans-serif";
           ctx.fillText(title, plotLeft + 2, panelTop + 14);
-          return { mapX, mapY, plotLeft, plotRight, plotTop, plotBottom };
+          return { mapX, mapY, plotLeft, plotRight, plotTop, plotBottom, plotW, plotH };
+        }
+
+        function drawPeriodicGuides(panel) {
+          const segW = panel.plotW / 3;
+          const leftX = panel.plotLeft + segW;
+          const rightX = panel.plotLeft + 2 * segW;
+
+          ctx.fillStyle = "rgba(108, 165, 220, 0.10)";
+          ctx.fillRect(panel.plotLeft, panel.plotTop, segW, panel.plotBottom - panel.plotTop);
+          ctx.fillRect(panel.plotLeft + 2 * segW, panel.plotTop, segW, panel.plotBottom - panel.plotTop);
+
+          ctx.strokeStyle = "rgba(154, 189, 240, 0.45)";
+          ctx.lineWidth = 1.1;
+          ctx.setLineDash([4, 4]);
+          ctx.beginPath();
+          ctx.moveTo(leftX, panel.plotTop);
+          ctx.lineTo(leftX, panel.plotBottom);
+          ctx.moveTo(rightX, panel.plotTop);
+          ctx.lineTo(rightX, panel.plotBottom);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+
+        function drawPeriodicSeries(panel, valueAtX, centerColor, sideColor, lineWidth) {
+          const segW = panel.plotW / 3;
+          for (let segment = 0; segment < 3; segment += 1) {
+            const segLeft = panel.plotLeft + segment * segW;
+            const segRight = segLeft + segW;
+            const isCenter = segment === 1;
+
+            ctx.strokeStyle = isCenter ? centerColor : sideColor;
+            ctx.lineWidth = isCenter ? lineWidth : Math.max(1.2, lineWidth - 0.8);
+            ctx.beginPath();
+            for (let i = 0; i < plotPts; i += 1) {
+              const x = -1 + (2 * i) / (plotPts - 1);
+              const px = segLeft + ((x + 1) / 2) * (segRight - segLeft);
+              const py = panel.mapY(valueAtX(x));
+              if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+          }
         }
 
         // LEFT panel — user-drawn function
-        const L = drawPanelBox(leftPanelLeft, "");
-        ctx.strokeStyle = "#ffbe76";
-        ctx.lineWidth = 2.4;
-        ctx.beginPath();
-        for (let i = 0; i < N; i++) {
-          const x = -1 + 2 * i / (N - 1);
-          const px = L.mapX(x), py = L.mapY(fourierLinePoints[i]);
-          if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-        }
-        ctx.stroke();
-        ctx.fillStyle = "#ffdd99";
+        const L = drawPanelBox(leftPanelLeft, isTeacherMode ? "" : "Περιοδική συνάρτηση");
+        drawPeriodicGuides(L);
+        drawPeriodicSeries(
+          L,
+          (x) => {
+            const i = Math.min(N - 1, Math.max(0, Math.round(((x + 1) * 0.5) * (N - 1))));
+            return fourierLinePoints[i];
+          },
+          "#ffbe76",
+          "rgba(255, 190, 118, 0.48)",
+          2.4
+        );
+
+        const leftCenterStart = L.plotLeft + L.plotW / 3;
+        const leftCenterEnd = L.plotLeft + (2 * L.plotW) / 3;
+        ctx.fillStyle = "#ffdca8";
         for (let i = 0; i < N; i++) {
           if (Math.abs(fourierLinePoints[i]) > 0.02) {
-            const x = -1 + 2 * i / (N - 1);
+            const x = leftCenterStart + (i / (N - 1)) * (leftCenterEnd - leftCenterStart);
             ctx.beginPath();
-            ctx.arc(L.mapX(x), L.mapY(fourierLinePoints[i]), 2.2, 0, 2 * Math.PI);
+            ctx.arc(x, L.mapY(fourierLinePoints[i]), 2.2, 0, 2 * Math.PI);
             ctx.fill();
           }
         }
 
         // RIGHT panel — Fourier approximation
         const R = drawPanelBox(rightPanelLeft, `Προσέγγιση Fourier (N=${terms})`);
+        drawPeriodicGuides(R);
         const { a0, an, bn } = computeFourierCoeffs(terms);
 
         // faint individual harmonics
@@ -12128,33 +11844,34 @@
           ctx.stroke();
         }
 
-        // dashed reference (original user function)
+        // dashed reference (original periodic profile)
         ctx.setLineDash([5, 4]);
-        ctx.strokeStyle = "rgba(255, 190, 118, 0.8)";
-        ctx.lineWidth = 1.6;
-        ctx.beginPath();
-        for (let i = 0; i < N; i++) {
-          const x = -1 + 2 * i / (N - 1);
-          const px = R.mapX(x), py = R.mapY(fourierLinePoints[i]);
-          if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-        }
-        ctx.stroke();
+        drawPeriodicSeries(
+          R,
+          (x) => {
+            const i = Math.min(N - 1, Math.max(0, Math.round(((x + 1) * 0.5) * (N - 1))));
+            return fourierLinePoints[i];
+          },
+          "rgba(255, 190, 118, 0.8)",
+          "rgba(255, 190, 118, 0.36)",
+          1.6
+        );
         ctx.setLineDash([]);
 
-        // bright Fourier sum
-        ctx.strokeStyle = "#86d0ff";
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        for (let i = 0; i < plotPts; i++) {
-          const x = xMin + (xMax - xMin) * i / (plotPts - 1);
-          let y = a0 / 2;
-          for (let n = 1; n <= terms; n++) {
-            y += an[n - 1] * Math.cos(n * Math.PI * x) + bn[n - 1] * Math.sin(n * Math.PI * x);
-          }
-          const px = R.mapX(x), py = R.mapY(y);
-          if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-        }
-        ctx.stroke();
+        // bright Fourier sum (periodic extension in 3 segments)
+        drawPeriodicSeries(
+          R,
+          (x) => {
+            let y = a0 / 2;
+            for (let n = 1; n <= terms; n++) {
+              y += an[n - 1] * Math.cos(n * Math.PI * x) + bn[n - 1] * Math.sin(n * Math.PI * x);
+            }
+            return y;
+          },
+          "#86d0ff",
+          "rgba(134, 208, 255, 0.50)",
+          2.5
+        );
 
         ctx.fillStyle = "#a6c6ea";
         ctx.font = "11px Segoe UI, sans-serif";
@@ -15191,7 +14908,15 @@
           let cursorX = boxX + boxPadX;
           const textY = y + 5;
           values.forEach((value, index) => {
+            const sorted = Number.isFinite(options.sortedTo) && index <= options.sortedTo;
             const active = Array.isArray(options.highlight) && options.highlight.includes(index);
+            if (sorted) {
+              const sortedAlpha = options.current ? 0.46 : 0.30;
+              ctx.fillStyle = `rgba(34,150,100,${sortedAlpha.toFixed(3)})`;
+              ctx.beginPath();
+              ctx.roundRect(cursorX - 5, boxY + 4, tokenWidths[index] + 10, boxH - 8, 6);
+              ctx.fill();
+            }
             if (active) {
               const glowAlpha = options.current ? 0.36 + 0.18 * pulse : 0.26;
               ctx.fillStyle = `rgba(230,100,60,${glowAlpha.toFixed(3)})`;
@@ -15199,7 +14924,7 @@
               ctx.roundRect(cursorX - 5, boxY + 4, tokenWidths[index] + 10, boxH - 8, 6);
               ctx.fill();
             }
-            ctx.fillStyle = options.final ? "#e8fff2" : "#f7fbff";
+            ctx.fillStyle = options.final || sorted ? "#e8fff2" : "#f7fbff";
             ctx.font = tokenFont;
             ctx.fillText(String(value), cursorX, textY);
             cursorX += tokenWidths[index];
@@ -15221,70 +14946,70 @@
           return { x: boxX, y: boxY, w: boxW, h: boxH };
         };
 
-        const columnCenters = [lx + lw * 0.17, lx + lw * 0.50, lx + lw * 0.83];
+        const bubblePassCount = Math.max(1, SORT_COMPARE_SIZE - 1);
+        const bubbleColumnGap = Math.max(38, (lw - 200) / Math.max(1, bubblePassCount - 1));
+        const bubbleStartX = lx + 98;
+        const bubbleStartY = top + 42;
+        const bubbleStepY = 32;
+        const bubbleLiftPerColumn = 0;
         const visibleBubble = getVisibleBubbleSnapshots();
         const currentBubbleReveal = sortCompareState.bubbleStepIndex;
+        const currentBubble = getCurrentBubbleSnapshot();
+        const currentBubblePass = Number.isFinite(currentBubble?.pass) ? currentBubble.pass : 0;
 
-        [0, 1, 2].forEach((column) => {
-          const columnItems = visibleBubble.filter((item) => item.column === column);
-          if (!columnItems.length) {
-            return;
-          }
-          const title = columnItems.find((item) => item.title)?.title;
-          if (title) {
-            ctx.fillStyle = "#ffcc8c";
-            ctx.font = "bold 14px Segoe UI, sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText(title, columnCenters[column], top + 36);
-            ctx.textAlign = "start";
-          }
+        const previousByPass = new Map();
+        visibleBubble.forEach((item) => {
+          const pass = Number.isFinite(item.pass) ? item.pass : 0;
+          const row = Number.isFinite(item.row) ? item.row : 0;
+          const centerX = bubbleStartX + pass * bubbleColumnGap + (pass === currentBubblePass ? 10 : 0);
+          const centerY = bubbleStartY + row * bubbleStepY - pass * bubbleLiftPerColumn;
+          const sortedCount = Number(item.sortedCount) || 0;
+          const sortedTo = Math.max(-1, sortedCount - 1);
+          const passAlpha = pass < currentBubblePass ? 0.18 : 1;
 
-          let previousBox = null;
-          columnItems.forEach((item) => {
-            if (item.ellipsis) {
-              ctx.fillStyle = "#d8eeff";
-              ctx.font = "20px Cambria Math, Georgia, serif";
-              ctx.textAlign = "center";
-              ctx.fillText("⋮", columnCenters[column], top + item.y);
-              ctx.textAlign = "start";
-              return;
-            }
-
-            const box = drawSequence(columnCenters[column], top + item.y, item.values, {
-              highlight: item.highlight,
-              final: item.final,
-              emphasis: item.emphasis,
-              caption: item.caption,
-              current: item.reveal === currentBubbleReveal,
-            });
-
-            if (previousBox) {
-              ctx.strokeStyle = "rgba(34,150,100,0.62)";
-              ctx.lineWidth = 1.5;
-              ctx.beginPath();
-              ctx.moveTo(previousBox.x + previousBox.w * 0.5, previousBox.y + previousBox.h + 6);
-              ctx.lineTo(box.x + box.w * 0.5, box.y - 8);
-              ctx.stroke();
-            }
-            previousBox = box;
+          ctx.save();
+          ctx.globalAlpha = passAlpha;
+          const box = drawSequence(centerX, centerY, item.values, {
+            highlight: item.highlight,
+            final: item.final,
+            emphasis: item.emphasis,
+            sortedTo,
+            current: item.reveal === currentBubbleReveal,
           });
-        });
 
-        ctx.fillStyle = "#7fadcc";
-        ctx.font = "11px Segoe UI, sans-serif";
-        ctx.fillText("Πορτοκαλί = ζευγάρι που ελέγχεται και, αν χρειάζεται, αντιμετατίθεται.", lx + 10, bottom - 12);
+          const previousBox = previousByPass.get(pass) || null;
+          if (previousBox) {
+            ctx.strokeStyle = "rgba(34,150,100,0.62)";
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(previousBox.x + previousBox.w * 0.5, previousBox.y + previousBox.h + 6);
+            ctx.lineTo(box.x + box.w * 0.5, box.y - 8);
+            ctx.stroke();
+          }
+          previousByPass.set(pass, box);
+          ctx.restore();
+        });
 
         const nodeMap = new Map();
         const treeLeft = rx + 28;
         const treeRight = rx + rw - 18;
-        const treeTop = top + 44;
+        const treeTop = bubbleStartY;
         const treeBottom = bottom - 20;
         const logicalXMin = -10.0;
         const logicalXMax = 8.0;
         const logicalYMin = -10.2;
-        const logicalYMax = 0.8;
-        const mapTreeX = (value) => treeLeft + ((value - logicalXMin) / (logicalXMax - logicalXMin)) * (treeRight - treeLeft);
-        const mapTreeY = (value) => treeTop + ((logicalYMax - value) / (logicalYMax - logicalYMin)) * (treeBottom - treeTop);
+        const logicalYMax = 0.0;
+        const treeDenseX = 0.93;
+        const treeDenseY = 0.79;
+        const mapTreeX = (value) => {
+          const rawX = treeLeft + ((value - logicalXMin) / (logicalXMax - logicalXMin)) * (treeRight - treeLeft);
+          const cx = (treeLeft + treeRight) * 0.5;
+          return cx + (rawX - cx) * treeDenseX;
+        };
+        const mapTreeY = (value) => {
+          const rawY = treeTop + ((logicalYMax - value) / (logicalYMax - logicalYMin)) * (treeBottom - treeTop);
+          return treeTop + (rawY - treeTop) * treeDenseY;
+        };
         const drawTreeNode = (node) => {
           const centerX = mapTreeX(node.x);
           const centerY = mapTreeY(node.y);
@@ -15353,9 +15078,6 @@
           ctx.fillText(label.text, mapTreeX(label.x), mapTreeY(label.y) + 4);
         });
 
-        ctx.fillStyle = "#7fadcc";
-        ctx.font = "11px Segoe UI, sans-serif";
-        ctx.fillText("Γαλάζιο = split • πορτοκαλί = φύλλο • πράσινο = merge/conquer", rx + 10, bottom - 12);
       });
     }
 
@@ -15696,30 +15418,44 @@
       });
     }
 
-    // @slide 7.3 — σχεδιάζει histogram αγώνα πολυπλοκότητας ανά μοντέλο.
+    // @slide 8.2 — σχεδιάζει καμπύλες πολυπλοκότητας με O-notation labels.
     function drawComplexityRace(canvas, t) {
       drawAxesCanvas(canvas, (ctx, width, height) => {
         const left = 16;
         const right = width - 16;
         const top = 14;
         const bottom = height - 16;
-        const panelWidth = Math.min(300, Math.max(210, width * 0.34));
-        const gx1 = left + 44;
-        const gx2 = right - panelWidth - 12;
-        const gy1 = top + 14;
-        const gy2 = bottom - 26;
+        const gx1 = left + 56;
+        const gx2 = right - 16;
+        const gy1 = top + 16;
+        const gy2 = bottom - 32;
         const graphWidth = Math.max(10, gx2 - gx1);
         const graphHeight = Math.max(10, gy2 - gy1);
 
         const selectedN = getComplexityRaceNCurrent();
-        const axisN = Math.max(1, selectedN);
+        const axisN = Math.max(10, selectedN);
+        const xMinN = 1;
 
-        const xToCanvas = (nValue) => gx1 + (Math.max(0, Math.min(axisN, nValue)) / axisN) * graphWidth;
+        const valueToLog = (value) => {
+          if (!Number.isFinite(value) || value <= 0) {
+            return 0;
+          }
+          return Math.log10(value + 1);
+        };
+
+        const maxLogValue = complexityRaceModels.reduce((best, model) => {
+          return Math.max(best, valueToLog(evaluateComplexityRace(model.key, axisN)));
+        }, 1);
+
+        const xToCanvas = (nValue) => {
+          const safeN = Math.max(xMinN, Math.min(axisN, nValue));
+          return gx1 + ((safeN - xMinN) / Math.max(1, axisN - xMinN)) * graphWidth;
+        };
         const yToCanvas = (value) => {
           if (!Number.isFinite(value)) {
-            return gy1 - graphHeight * 1.2;
+            return gy1;
           }
-          return gy2 - (value / COMPLEXITY_RACE_MAX_VALUE) * graphHeight;
+          return gy2 - (valueToLog(value) / Math.max(1e-6, maxLogValue)) * graphHeight;
         };
 
         ctx.strokeStyle = "#345886";
@@ -15734,7 +15470,7 @@
         ctx.stroke();
 
         for (let i = 0; i <= 5; i += 1) {
-          const nTick = (axisN * i) / 5;
+          const nTick = xMinN + ((axisN - xMinN) * i) / 5;
           const x = xToCanvas(nTick);
           ctx.strokeStyle = "rgba(132, 169, 219, 0.2)";
           ctx.beginPath();
@@ -15748,32 +15484,19 @@
         }
 
         for (let i = 0; i <= 4; i += 1) {
-          const yValue = (COMPLEXITY_RACE_MAX_VALUE * i) / 4;
-          const y = yToCanvas(yValue);
+          const y = gy2 - (i / 4) * graphHeight;
           ctx.strokeStyle = "rgba(132, 169, 219, 0.2)";
           ctx.beginPath();
           ctx.moveTo(gx1, y);
           ctx.lineTo(gx2, y);
           ctx.stroke();
-
-          ctx.fillStyle = "rgba(175, 205, 244, 0.75)";
-          ctx.font = "10px Segoe UI, sans-serif";
-          ctx.fillText(Math.round(yValue).toLocaleString("el-GR"), gx1 - 40, y + 4);
         }
 
-        ctx.strokeStyle = "rgba(255, 121, 121, 0.42)";
-        ctx.lineWidth = 1.2;
-        ctx.beginPath();
-        ctx.moveTo(gx1, yToCanvas(COMPLEXITY_RACE_MAX_VALUE));
-        ctx.lineTo(gx2, yToCanvas(COMPLEXITY_RACE_MAX_VALUE));
-        ctx.stroke();
-
         const samples = 180;
-        ctx.save();
-        ctx.beginPath();
-        ctx.rect(gx1, gy1, graphWidth, graphHeight);
-        ctx.clip();
-
+        const labelOffsets = [
+          { dx: 8, dy: -10 }, { dx: 8, dy: -2 }, { dx: 8, dy: 8 }, { dx: 8, dy: -16 },
+          { dx: 8, dy: -26 }, { dx: -96, dy: -18 }, { dx: -64, dy: -34 }, { dx: -82, dy: -8 }
+        ];
         complexityRaceModels.forEach((model) => {
           ctx.strokeStyle = model.color;
           ctx.lineWidth = 2;
@@ -15781,7 +15504,7 @@
 
           for (let i = 0; i <= samples; i += 1) {
             const ratio = i / samples;
-            const nValue = axisN * ratio;
+            const nValue = xMinN + (axisN - xMinN) * ratio;
             const x = xToCanvas(nValue);
             const y = yToCanvas(evaluateComplexityRace(model.key, nValue));
 
@@ -15793,48 +15516,26 @@
           }
 
           ctx.stroke();
-        });
 
-        ctx.restore();
+          const labelN = axisN * 0.95;
+          const lx = xToCanvas(labelN);
+          const ly = yToCanvas(evaluateComplexityRace(model.key, labelN));
+          const idx = complexityRaceModels.indexOf(model);
+          const off = labelOffsets[idx] || { dx: 8, dy: 0 };
+          ctx.fillStyle = model.color;
+          ctx.font = "bold 12px Segoe UI, sans-serif";
+          ctx.fillText(model.oLabel, lx + off.dx, ly + off.dy);
+        });
 
         ctx.fillStyle = "#c7dcff";
         ctx.font = "12px Segoe UI, sans-serif";
         ctx.fillText(`N = ${selectedN.toLocaleString("el-GR")}`, gx1 + 8, gy1 + 14);
-        ctx.fillText("Άξονας Y: όριο 1.000.000", gx1 + 8, gy1 + 30);
 
-        const panelX = gx2 + 10;
-        const panelY = gy1;
-        const panelH = graphHeight;
-        ctx.fillStyle = "rgba(9, 20, 38, 0.9)";
-        ctx.fillRect(panelX, panelY, panelWidth, panelH);
-        ctx.strokeStyle = "rgba(139, 183, 244, 0.35)";
-        ctx.strokeRect(panelX, panelY, panelWidth, panelH);
-
-        ctx.fillStyle = "#d8eeff";
-        ctx.font = "12px Segoe UI, sans-serif";
-        ctx.fillText("Επιλογές μαθητών ανά πολυπλοκότητα", panelX + 9, panelY + 15);
-
-        const rowTop = panelY + 26;
-        const rowGap = (panelH - 32) / Math.max(1, complexityRaceModels.length);
-
-        complexityRaceModels.forEach((model, index) => {
-          const y = rowTop + index * rowGap;
-
-          ctx.strokeStyle = model.color;
-          ctx.lineWidth = 2.3;
-          ctx.beginPath();
-          ctx.moveTo(panelX + 9, y + 5);
-          ctx.lineTo(panelX + 23, y + 5);
-          ctx.stroke();
-
-          ctx.fillStyle = "#d8eeff";
-          ctx.font = "11px Segoe UI, sans-serif";
-          ctx.fillText(model.label, panelX + 28, y + 8);
-
-          ctx.fillStyle = "#9fbde3";
-          ctx.font = "10px Segoe UI, sans-serif";
-          ctx.fillText(summarizeComplexityRaceUsers(model.key), panelX + 9, y + 21);
-        });
+        ctx.fillStyle = "#9fbde3";
+        ctx.font = "11px Segoe UI, sans-serif";
+        ctx.fillText("O-notation (log κλίμακα στον άξονα Y)", gx1 + 8, gy1 + 30);
+        ctx.fillText("n", gx2 - 8, gy2 + 18);
+        ctx.fillText("# υπολογισμών", gx1 - 48, gy1 - 4);
       });
     }
 
