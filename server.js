@@ -2702,6 +2702,27 @@ io.on('connection', (socket) => {
       }
     });
     io.to(FOURIER_ROOM).emit('fourier:activity-event', entry);
+
+    if (activityId === 'taylor-guess' && participant.role === 'client') {
+      ensureFourierTaylorGuessRoundRunning();
+
+      const current = fourierTaylorGuessLiveCoeffs.get(socket.id) || { c0: 0, c1: 0, c2: 0, c3: 0 };
+      const nextValue = Number(clampFourierNumber(value, -4, 4, 0).toFixed(2));
+
+      if (controlId === 'c0') current.c0 = nextValue;
+      else if (controlId === 'c1') current.c1 = nextValue;
+      else if (controlId === 'c2') current.c2 = nextValue;
+      else if (controlId === 'c3') current.c3 = nextValue;
+      else return;
+
+      fourierTaylorGuessLiveCoeffs.set(socket.id, current);
+      fourierTaylorGuessState.updatedAt = entry.ts;
+
+      emitFourierTaylorGuessState();
+      emitFourierSummary();
+      return;
+    }
+
     emitFourierSummary();
   });
 

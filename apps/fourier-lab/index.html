@@ -3078,13 +3078,13 @@
         </div>
       </section>
 
-        <section class="section" id="sec-taylor-guess">
+        <section class="section activity-slide" id="sec-taylor-guess" data-activity-id="taylor-guess">
           <div class="slide-card">
             <div class="slide-content">
               <h2>4.5) Δραστηριότητα: Εύρεση συντελεστών για το \(e^{2x}\)</h2>
               <p class="teacher-only">
                 Εμφανίζονται live οι καμπύλες όλων των φοιτητών.
-                Πάτα <em>Βέλτιστη</em> για να αποκαλυφθεί το ακριβές Taylor ανάπτυγμα του \(e^{2x}\).
+                Πάτα <em>Βέλτιστη</em> για να εμφανιστεί το ακριβές Taylor ανάπτυγμα του \(e^{2x}\).
               </p>
               <p class="student-only">
                 Ρύθμισε τους συντελεστές \(c_0,\,c_1,\,c_2,\,c_3\) ώστε το πολυώνυμο
@@ -3096,22 +3096,23 @@
               <div class="taylor-guess-controls">
                 <div class="slider-group taylor-guess-slider">
                   <div class="slider-label"><span>\(c_0\)</span><span id="taylorGuessC0Value">0.00</span></div>
-                  <input id="taylorGuessC0" type="range" min="-4" max="4" step="0.05" value="0" />
+                  <input id="taylorGuessC0" type="range" min="-4" max="4" step="0.05" value="0" data-activity-control="taylor-guess" data-control-key="c0" />
                 </div>
                 <div class="slider-group taylor-guess-slider">
                   <div class="slider-label"><span>\(c_1\)</span><span id="taylorGuessC1Value">0.00</span></div>
-                  <input id="taylorGuessC1" type="range" min="-4" max="4" step="0.05" value="0" />
+                  <input id="taylorGuessC1" type="range" min="-4" max="4" step="0.05" value="0" data-activity-control="taylor-guess" data-control-key="c1" />
                 </div>
                 <div class="slider-group taylor-guess-slider">
                   <div class="slider-label"><span>\(c_2\)</span><span id="taylorGuessC2Value">0.00</span></div>
-                  <input id="taylorGuessC2" type="range" min="-4" max="4" step="0.05" value="0" />
+                  <input id="taylorGuessC2" type="range" min="-4" max="4" step="0.05" value="0" data-activity-control="taylor-guess" data-control-key="c2" />
                 </div>
                 <div class="slider-group taylor-guess-slider">
                   <div class="slider-label"><span>\(c_3\)</span><span id="taylorGuessC3Value">0.00</span></div>
-                  <input id="taylorGuessC3" type="range" min="-4" max="4" step="0.05" value="0" />
+                  <input id="taylorGuessC3" type="range" min="-4" max="4" step="0.05" value="0" data-activity-control="taylor-guess" data-control-key="c3" />
                 </div>
                 <button id="taylorGuessBestBtn" class="fft-duel-submit teacher-only" type="button" style="align-self:stretch;padding:0 14px;font-size:0.82rem;white-space:nowrap;">Βέλτιστη</button>
               </div>
+              <div class="hint" style="margin-top:8px;">Live: οι καμπύλες ενημερώνονται καθώς κινούνται τα sliders.</div>
               <div id="taylorGuessBestDerivBox" class="deriv-list teacher-only" style="display:none;margin-top:8px;"></div>
             </div>
           </div>
@@ -3670,58 +3671,63 @@
             <h2>9.6) Στρατηγική πολλαπλασιασμού χωρίς O(n²)</h2>
             <p>Αντί να πολλαπλασιάζουμε απευθείας τα coefficients (O(n²)), μετατρέπουμε σε samples, πολλαπλασιάζουμε σημείο-προς-σημείο (O(n)), και επιστρέφουμε στα coefficients:</p>
 
-            <div style="margin-top: 28px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 0 20px; font-family: serif;">
+            <div style="margin-top: 28px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: start; gap: 0 20px; font-family: serif;">
 
               <!-- Left column: Coeff A and B -->
               <div style="display:flex; flex-direction:column; gap: 16px;">
                 <div style="border: 2px solid #ef4444; border-radius: 8px; padding: 14px 18px; color: #fca5a5; font-size:1.05em; line-height:1.7;">
-                  $$A(x) = a_0 + a_1 x + \cdots + a_d x^d$$
-                  $$B(x) = b_0 + b_1 x + \cdots + b_d x^d$$
+                  $$A(x) = a_0 + a_1 x + \cdots + a_n x^n$$
+                  $$B(x) = b_0 + b_1 x + \cdots + b_n x^n$$
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center; gap:6px; color:#fca5a5;">
                   <span style="font-size:0.85em; color:var(--muted);">Αποτίμηση</span>
-                  <span style="font-size:1.5em;">⇓</span>
+                  <span style="font-size:1.5em; line-height:1;">⇓</span>
                   <span style="background:#ef4444; color:#fff; font-size:0.8em; padding:2px 10px; border-radius:4px; font-family:monospace;">O(n log n) με FFT</span>
                 </div>
                 <!-- Sample points A, B -->
                 <div style="border: 2px solid #ef4444; border-radius: 8px; padding: 14px 18px; display:grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; color:#fca5a5; font-size:0.95em;">
                   <div>
                     <div style="font-size:0.8em; color:var(--muted); margin-bottom:4px;">Samples A</div>
-                    $$A(x_0), A(x_1), \ldots, A(x_{2d})$$
+                    $$A(x_0), A(x_1), \ldots, A(x_{2n})$$
                   </div>
                   <div>
                     <div style="font-size:0.8em; color:var(--muted); margin-bottom:4px;">Samples B</div>
-                    $$B(x_0), B(x_1), \ldots, B(x_{2d})$$
+                    $$B(x_0), B(x_1), \ldots, B(x_{2n})$$
                   </div>
                 </div>
               </div>
 
               <!-- Middle: Multiply box -->
-              <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
-                <div style="width:10px;"></div>
-                <div style="height: 60px;"></div>
-                <div style="border: 2px solid #eab308; border-radius: 8px; padding: 18px 28px; color:#fef08a; font-size:1.1em; text-align:center; white-space:nowrap;">
-                  Πολ/σμός<br/>
-                  <span style="font-family:monospace; font-size:0.85em; color:#86efac;">O(n)</span><br/>
-                  $$C(x_i) = A(x_i) \cdot B(x_i)$$
+              <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding-top: 112px; min-width:170px;">
+                <div style="display:flex; align-items:center; gap:10px; color:#fef08a; white-space:nowrap;">
+                  <span style="font-size:1.55em; line-height:1;">→</span>
+                  <div style="border: 2px solid #eab308; border-radius: 8px; padding: 18px 28px; color:#fef08a; font-size:1.1em; text-align:center; white-space:nowrap; box-shadow:0 0 0 1px rgba(234,179,8,0.15) inset;">
+                    Πολ/σμός<br/>
+                    <span style="font-family:monospace; font-size:0.85em; color:#86efac;">O(n)</span><br/>
+                    $$C(x_i) = A(x_i) \cdot B(x_i)$$
+                  </div>
+                  <span style="font-size:1.55em; line-height:1; color:#86efac;">→</span>
                 </div>
-                <div style="height: 60px;"></div>
+                <div style="display:flex; align-items:center; justify-content:space-between; width:100%; color:var(--muted); font-size:0.8em; padding:0 4px; box-sizing:border-box;">
+                  <span>samples A, B</span>
+                  <span>samples C</span>
+                </div>
               </div>
 
               <!-- Right column: Coeff C and samples C -->
               <div style="display:flex; flex-direction:column; gap: 16px;">
                 <div style="border: 2px solid #22c55e; border-radius: 8px; padding: 14px 18px; color: #86efac; font-size:1.05em;">
-                  $$C(x) = c_0 + c_1 x + \cdots + c_{2d} x^{2d}$$
+                  $$C(x) = c_0 + c_1 x + \cdots + c_{2n} x^{2n}$$
                 </div>
                 <div style="display:flex; flex-direction:column; align-items:center; gap:6px; color:#86efac;">
-                  <span style="font-size:1.5em;">⇑</span>
+                  <span style="font-size:1.5em; line-height:1;">⇑</span>
                   <span style="font-size:0.85em; color:var(--muted);">Παρεμβολή</span>
                   <span style="background:#22c55e; color:#000; font-size:0.8em; padding:2px 10px; border-radius:4px; font-family:monospace;">O(n log n) με FFT</span>
                 </div>
                 <!-- Sample points C -->
                 <div style="border: 2px solid #22c55e; border-radius: 8px; padding: 14px 18px; color:#86efac; font-size:0.95em;">
                   <div style="font-size:0.8em; color:var(--muted); margin-bottom:4px;">Samples C</div>
-                  $$C(x_0), C(x_1), \ldots, C(x_{2d})$$
+                  $$C(x_0), C(x_1), \ldots, C(x_{2n})$$
                 </div>
               </div>
 
@@ -3732,14 +3738,14 @@
                 <tr style="background: rgba(88,166,255,0.12);">
                   <th style="padding:9px 12px; border:1px solid rgba(88,166,255,0.3); text-align:left;">Βήμα</th>
                   <th style="padding:9px 12px; border:1px solid rgba(88,166,255,0.3); text-align:left;">Πράξη</th>
-                  <th style="padding:9px 12px; border:1px solid rgba(88,166,255,0.3); text-align:center;">Naïve</th>
+                  <th style="padding:9px 12px; border:1px solid rgba(88,166,255,0.3); text-align:center;">Αφελής</th>
                   <th style="padding:9px 12px; border:1px solid rgba(88,166,255,0.3); text-align:center;">Με FFT</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2);">1</td>
-                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2);">Coeff → Samples (αποτίμηση Α, Β)</td>
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2);">Συντελεστές → Σημεία (αποτίμηση Α, Β)</td>
                   <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2); text-align:center; color:#ff6b6b;">O(n²)</td>
                   <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2); text-align:center; color:#90ee90;">O(n log n)</td>
                 </tr>
@@ -3751,7 +3757,7 @@
                 </tr>
                 <tr>
                   <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2);">3</td>
-                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2);">Samples → Coeff (παρεμβολή → C)</td>
+                  <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2);">Σημεία → Συντελεστές (παρεμβολή → C)</td>
                   <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2); text-align:center; color:#ff6b6b;">O(n²)</td>
                   <td style="padding:8px 12px; border:1px solid rgba(88,166,255,0.2); text-align:center; color:#90ee90;">O(n log n)</td>
                 </tr>
@@ -8296,9 +8302,7 @@
       if (isTeacherMode) {
         taylorGuessLocalState.players.forEach((player, index) => {
           const color = TAYLOR_GUESS_PALETTE[index % TAYLOR_GUESS_PALETTE.length];
-          const statusLabel = Array.isArray(player?.coeffs)
-            ? (player.submitted ? 'submitted' : 'live')
-            : 'awaiting';
+          const statusLabel = Array.isArray(player?.coeffs) ? 'live' : 'awaiting';
           const formulaHtml = Array.isArray(player?.coeffs)
             ? formatTaylorGuessFormula(player.coeffs, 'S')
             : '<span style="opacity:.7;">αναμονή για coefficients</span>';
@@ -8353,9 +8357,7 @@
         appendLegendItem('P(x)', '#ffe040', '(δικό σου)');
         taylorGuessLocalState.players.forEach((player, index) => {
           const color = TAYLOR_GUESS_PALETTE[index % TAYLOR_GUESS_PALETTE.length];
-          const extra = Array.isArray(player.coeffs)
-            ? (player.submitted ? '(submitted)' : '(live)')
-            : '(awaiting)';
+          const extra = Array.isArray(player.coeffs) ? '(live)' : '(awaiting)';
           appendLegendItem(player.name || `#${index + 1}`, color, extra);
         });
       } else {
@@ -8368,14 +8370,6 @@
     }
 
     function updateTaylorGuessUI() {
-      const s = taylorGuessLocalState;
-      if (taylorGuessProgressLabel) taylorGuessProgressLabel.textContent = `${s.submittedCount}/${s.totalPlayers}`;
-      if (taylorGuessLockLabel) taylorGuessLockLabel.style.display = s.ownSubmitted ? 'block' : 'none';
-      if (taylorGuessSubmitBtn) {
-        taylorGuessSubmitBtn.disabled = s.ownSubmitted;
-        taylorGuessSubmitBtn.textContent = s.ownSubmitted ? 'Υποβλήθηκε ✓' : 'Submit συντελεστών';
-      }
-      if (taylorGuessRevealBtn) taylorGuessRevealBtn.disabled = s.revealResults;
       updateTaylorGuessLegend();
     }
 

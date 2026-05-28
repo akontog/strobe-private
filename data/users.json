@@ -88688,5 +88688,4380 @@
         "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
       }
     }
+  ],
+  [
+    "ae088e2d-afea-4abf-a9f3-58845c05eaef",
+    {
+      "sessionId": "ae088e2d-afea-4abf-a9f3-58845c05eaef",
+      "userId": "user_1779951196831_cuyp7kzi4",
+      "createdAt": "2026-05-28T06:53:16.837Z",
+      "lastActivity": "2026-05-28T06:53:19.047Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "6bd2e7c3-b5b1-461a-b21b-d84d9572cf3d",
+    {
+      "sessionId": "6bd2e7c3-b5b1-461a-b21b-d84d9572cf3d",
+      "userId": "user_1779951211562_ek4r7mx85",
+      "createdAt": "2026-05-28T06:53:31.562Z",
+      "lastActivity": "2026-05-28T06:53:31.635Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "e070e811-945b-405c-897c-7d7527248171",
+    {
+      "sessionId": "e070e811-945b-405c-897c-7d7527248171",
+      "userId": "user_1779951211707_bq10z7wbd",
+      "createdAt": "2026-05-28T06:53:31.707Z",
+      "lastActivity": "2026-05-28T06:53:31.772Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "398da31d-d5cf-4608-aed8-84b5d1fed8fb",
+    {
+      "sessionId": "398da31d-d5cf-4608-aed8-84b5d1fed8fb",
+      "userId": "user_1779951211854_3avuszn8m",
+      "createdAt": "2026-05-28T06:53:31.854Z",
+      "lastActivity": "2026-05-28T06:53:31.908Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "45d368cb-68b7-4a9e-ac3a-096cada0399c",
+    {
+      "sessionId": "45d368cb-68b7-4a9e-ac3a-096cada0399c",
+      "userId": "user_1779951211974_pjpuytdrj",
+      "createdAt": "2026-05-28T06:53:31.974Z",
+      "lastActivity": "2026-05-28T06:53:32.051Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "d3ae713a-ed06-4338-a8a4-29c6bc94c070",
+    {
+      "sessionId": "d3ae713a-ed06-4338-a8a4-29c6bc94c070",
+      "userId": "user_1779951212107_jkyqas3x4",
+      "createdAt": "2026-05-28T06:53:32.107Z",
+      "lastActivity": "2026-05-28T06:53:32.175Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "911658ae-d301-4315-807e-dc97e810f086",
+    {
+      "sessionId": "911658ae-d301-4315-807e-dc97e810f086",
+      "userId": "user_1779951212249_bi4atetjo",
+      "createdAt": "2026-05-28T06:53:32.250Z",
+      "lastActivity": "2026-05-28T06:53:32.320Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "11f99010-79bf-45da-8056-13985c55653a",
+    {
+      "sessionId": "11f99010-79bf-45da-8056-13985c55653a",
+      "userId": "user_1779951212445_vxqlun83m",
+      "createdAt": "2026-05-28T06:53:32.445Z",
+      "lastActivity": "2026-05-28T06:53:32.542Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "351ab585-4b30-4e21-8c74-002563c7b2d0",
+    {
+      "sessionId": "351ab585-4b30-4e21-8c74-002563c7b2d0",
+      "userId": "user_1779951212631_431eva0s2",
+      "createdAt": "2026-05-28T06:53:32.631Z",
+      "lastActivity": "2026-05-28T06:53:32.711Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "ba90e326-bb99-473e-a581-1b6112a47218",
+    {
+      "sessionId": "ba90e326-bb99-473e-a581-1b6112a47218",
+      "userId": "user_1779951212787_ephxwexwf",
+      "createdAt": "2026-05-28T06:53:32.787Z",
+      "lastActivity": "2026-05-28T06:53:32.863Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "63d5170a-3a42-4b4a-85f3-92c7c47d98ac",
+    {
+      "sessionId": "63d5170a-3a42-4b4a-85f3-92c7c47d98ac",
+      "userId": "user_1779951219275_v2nz495iu",
+      "createdAt": "2026-05-28T06:53:39.275Z",
+      "lastActivity": "2026-05-28T06:53:39.445Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "dfebcee7-7f96-4ccc-aa12-35836f210b28",
+    {
+      "sessionId": "dfebcee7-7f96-4ccc-aa12-35836f210b28",
+      "userId": "user_1779952239012_eubutfrbb",
+      "createdAt": "2026-05-28T07:10:39.025Z",
+      "lastActivity": "2026-05-28T07:10:40.211Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "89dd9060-4427-474f-bc94-fbcbb7606291",
+    {
+      "sessionId": "89dd9060-4427-474f-bc94-fbcbb7606291",
+      "userId": "user_1779952241599_axrlrvn5w",
+      "createdAt": "2026-05-28T07:10:41.629Z",
+      "lastActivity": "2026-05-28T07:10:41.897Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "1079b790-6cf9-40f9-8866-4679240e6fe2",
+    {
+      "sessionId": "1079b790-6cf9-40f9-8866-4679240e6fe2",
+      "userId": "user_1779952242134_i9v9cr6hu",
+      "createdAt": "2026-05-28T07:10:42.134Z",
+      "lastActivity": "2026-05-28T07:10:42.248Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "fc42bb33-2276-46f6-a573-ed6169d8cf2f",
+    {
+      "sessionId": "fc42bb33-2276-46f6-a573-ed6169d8cf2f",
+      "userId": "user_1779952242422_lsye9cpnv",
+      "createdAt": "2026-05-28T07:10:42.422Z",
+      "lastActivity": "2026-05-28T07:10:42.552Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "9a0917ed-0780-49b1-9996-dabbe8330dfb",
+    {
+      "sessionId": "9a0917ed-0780-49b1-9996-dabbe8330dfb",
+      "userId": "user_1779952242785_klowgi6ka",
+      "createdAt": "2026-05-28T07:10:42.786Z",
+      "lastActivity": "2026-05-28T07:10:42.987Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "672322ce-0e3b-4d3e-bbf3-aa5e49933b7e",
+    {
+      "sessionId": "672322ce-0e3b-4d3e-bbf3-aa5e49933b7e",
+      "userId": "user_1779952244827_vonsapefi",
+      "createdAt": "2026-05-28T07:10:44.827Z",
+      "lastActivity": "2026-05-28T07:10:45.123Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "7680599d-e9a3-4557-86d8-29c68aa05354",
+    {
+      "sessionId": "7680599d-e9a3-4557-86d8-29c68aa05354",
+      "userId": "user_1779952245859_h0ih36wdn",
+      "createdAt": "2026-05-28T07:10:45.859Z",
+      "lastActivity": "2026-05-28T07:10:45.964Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "78b1d36d-41c1-41ff-96f4-b85bac847015",
+    {
+      "sessionId": "78b1d36d-41c1-41ff-96f4-b85bac847015",
+      "userId": "user_1779952246143_9fxo9i2ef",
+      "createdAt": "2026-05-28T07:10:46.143Z",
+      "lastActivity": "2026-05-28T07:10:46.349Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "00417798-786f-43f4-81dd-d0b72c441de3",
+    {
+      "sessionId": "00417798-786f-43f4-81dd-d0b72c441de3",
+      "userId": "user_1779952246766_833uir98r",
+      "createdAt": "2026-05-28T07:10:46.766Z",
+      "lastActivity": "2026-05-28T07:10:46.913Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "788eb3b4-b9f6-4dfc-bea7-cc3b4bd17c1e",
+    {
+      "sessionId": "788eb3b4-b9f6-4dfc-bea7-cc3b4bd17c1e",
+      "userId": "user_1779952250378_c3pyqoehm",
+      "createdAt": "2026-05-28T07:10:50.378Z",
+      "lastActivity": "2026-05-28T07:10:50.503Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "55a12eac-e857-4b73-94d5-7799af1f71be",
+    {
+      "sessionId": "55a12eac-e857-4b73-94d5-7799af1f71be",
+      "userId": "user_1779952250785_4ndepq007",
+      "createdAt": "2026-05-28T07:10:50.785Z",
+      "lastActivity": "2026-05-28T07:10:50.867Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "8d495f06-3116-42e8-8873-c8bbd65d781d",
+    {
+      "sessionId": "8d495f06-3116-42e8-8873-c8bbd65d781d",
+      "userId": "user_1779952250939_nmlxqfh1j",
+      "createdAt": "2026-05-28T07:10:50.940Z",
+      "lastActivity": "2026-05-28T07:10:51.052Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "89623c1b-cff3-4b3a-b6f9-edecea6b4b8a",
+    {
+      "sessionId": "89623c1b-cff3-4b3a-b6f9-edecea6b4b8a",
+      "userId": "user_1779952251158_9fdrucizi",
+      "createdAt": "2026-05-28T07:10:51.158Z",
+      "lastActivity": "2026-05-28T07:10:51.265Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "573c88b4-db25-436e-93e1-15c86c5162ba",
+    {
+      "sessionId": "573c88b4-db25-436e-93e1-15c86c5162ba",
+      "userId": "user_1779952251364_0acepbase",
+      "createdAt": "2026-05-28T07:10:51.364Z",
+      "lastActivity": "2026-05-28T07:10:51.497Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "429a2fb6-42a5-49ed-95b6-d953560cf1f2",
+    {
+      "sessionId": "429a2fb6-42a5-49ed-95b6-d953560cf1f2",
+      "userId": "user_1779952251652_cvx3y19iu",
+      "createdAt": "2026-05-28T07:10:51.652Z",
+      "lastActivity": "2026-05-28T07:10:51.781Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "bb7e1d9f-e24a-4a60-84f6-2e081f4ef853",
+    {
+      "sessionId": "bb7e1d9f-e24a-4a60-84f6-2e081f4ef853",
+      "userId": "user_1779952251918_388mz1bh5",
+      "createdAt": "2026-05-28T07:10:51.918Z",
+      "lastActivity": "2026-05-28T07:10:52.035Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "81144d00-6150-42f6-b56e-6f270224d4a1",
+    {
+      "sessionId": "81144d00-6150-42f6-b56e-6f270224d4a1",
+      "userId": "user_1779952252127_dduv5q4l6",
+      "createdAt": "2026-05-28T07:10:52.128Z",
+      "lastActivity": "2026-05-28T07:10:52.204Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "1e6d7ed4-b4ed-454f-bcb1-e5a00a120ed2",
+    {
+      "sessionId": "1e6d7ed4-b4ed-454f-bcb1-e5a00a120ed2",
+      "userId": "user_1779952252301_v21gl64sq",
+      "createdAt": "2026-05-28T07:10:52.301Z",
+      "lastActivity": "2026-05-28T07:10:52.380Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "7c20815a-fe82-4be7-bc60-ac1c5310a58d",
+    {
+      "sessionId": "7c20815a-fe82-4be7-bc60-ac1c5310a58d",
+      "userId": "user_1779952252457_fl4ztfqne",
+      "createdAt": "2026-05-28T07:10:52.457Z",
+      "lastActivity": "2026-05-28T07:10:52.542Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "b243dece-97c7-46ad-9cda-88c0754bb5c2",
+    {
+      "sessionId": "b243dece-97c7-46ad-9cda-88c0754bb5c2",
+      "userId": "user_1779952253261_ax2wdk8cr",
+      "createdAt": "2026-05-28T07:10:53.261Z",
+      "lastActivity": "2026-05-28T07:10:53.352Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "b6ca11b3-50db-4a1a-9034-839ebb07eff2",
+    {
+      "sessionId": "b6ca11b3-50db-4a1a-9034-839ebb07eff2",
+      "userId": "user_1779952270068_m6klg06br",
+      "createdAt": "2026-05-28T07:11:10.068Z",
+      "lastActivity": "2026-05-28T07:11:10.121Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "aef6bdbb-f050-4d7f-827f-cef684e290d8",
+    {
+      "sessionId": "aef6bdbb-f050-4d7f-827f-cef684e290d8",
+      "userId": "user_1779952270330_52lghvgy5",
+      "createdAt": "2026-05-28T07:11:10.330Z",
+      "lastActivity": "2026-05-28T07:11:10.376Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "a931e2e4-e6b5-4229-881e-fe69632b081b",
+    {
+      "sessionId": "a931e2e4-e6b5-4229-881e-fe69632b081b",
+      "userId": "user_1779952270442_ujpmjzwyb",
+      "createdAt": "2026-05-28T07:11:10.442Z",
+      "lastActivity": "2026-05-28T07:11:10.492Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "ccacb6d9-fd3c-41f4-a398-561644d8b9f2",
+    {
+      "sessionId": "ccacb6d9-fd3c-41f4-a398-561644d8b9f2",
+      "userId": "user_1779952270540_fklxknkvy",
+      "createdAt": "2026-05-28T07:11:10.540Z",
+      "lastActivity": "2026-05-28T07:11:10.594Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "c33cccdc-9498-4ed7-88c8-38ae1fa68229",
+    {
+      "sessionId": "c33cccdc-9498-4ed7-88c8-38ae1fa68229",
+      "userId": "user_1779952270634_7h78lmtry",
+      "createdAt": "2026-05-28T07:11:10.634Z",
+      "lastActivity": "2026-05-28T07:11:10.675Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "1cfa1488-9515-4114-bd7e-c1c116af1902",
+    {
+      "sessionId": "1cfa1488-9515-4114-bd7e-c1c116af1902",
+      "userId": "user_1779952271998_gbvmcsx8b",
+      "createdAt": "2026-05-28T07:11:11.998Z",
+      "lastActivity": "2026-05-28T07:11:12.024Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "c757125d-5313-44f4-b3f3-0856b58d9949",
+    {
+      "sessionId": "c757125d-5313-44f4-b3f3-0856b58d9949",
+      "userId": "user_1779952272161_bq8jlzei8",
+      "createdAt": "2026-05-28T07:11:12.161Z",
+      "lastActivity": "2026-05-28T07:11:12.252Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "3e62bb39-3e3e-4d42-b851-72def1d35b72",
+    {
+      "sessionId": "3e62bb39-3e3e-4d42-b851-72def1d35b72",
+      "userId": "user_1779952272799_122agpxub",
+      "createdAt": "2026-05-28T07:11:12.800Z",
+      "lastActivity": "2026-05-28T07:11:12.894Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "8d95c756-b86e-401d-8da1-a40c7335c00e",
+    {
+      "sessionId": "8d95c756-b86e-401d-8da1-a40c7335c00e",
+      "userId": "user_1779952283483_1sv32xw9q",
+      "createdAt": "2026-05-28T07:11:23.483Z",
+      "lastActivity": "2026-05-28T07:11:23.567Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "7bc276d6-31ea-4e74-aef7-544f24292e00",
+    {
+      "sessionId": "7bc276d6-31ea-4e74-aef7-544f24292e00",
+      "userId": "user_1779952284017_1z9akb6rk",
+      "createdAt": "2026-05-28T07:11:24.017Z",
+      "lastActivity": "2026-05-28T07:11:24.114Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "23bb4fc1-fb65-4e03-9ec7-03426baf5f58",
+    {
+      "sessionId": "23bb4fc1-fb65-4e03-9ec7-03426baf5f58",
+      "userId": "user_1779952284203_1yx6of7jo",
+      "createdAt": "2026-05-28T07:11:24.203Z",
+      "lastActivity": "2026-05-28T07:11:24.292Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "169653a9-5a76-4f06-b089-12e2f81dafab",
+    {
+      "sessionId": "169653a9-5a76-4f06-b089-12e2f81dafab",
+      "userId": "user_1779952284450_ne5543qwu",
+      "createdAt": "2026-05-28T07:11:24.451Z",
+      "lastActivity": "2026-05-28T07:11:24.567Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "a9f1f7d6-70a2-4994-b88d-181d448b9135",
+    {
+      "sessionId": "a9f1f7d6-70a2-4994-b88d-181d448b9135",
+      "userId": "user_1779952284705_7y2oocrvs",
+      "createdAt": "2026-05-28T07:11:24.705Z",
+      "lastActivity": "2026-05-28T07:11:24.794Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "42907558-2417-4e56-b924-67a935312a19",
+    {
+      "sessionId": "42907558-2417-4e56-b924-67a935312a19",
+      "userId": "user_1779952284920_a6ivbr7pw",
+      "createdAt": "2026-05-28T07:11:24.920Z",
+      "lastActivity": "2026-05-28T07:11:25.030Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "3609014a-b4e1-4e86-82d0-ecf29aa0120e",
+    {
+      "sessionId": "3609014a-b4e1-4e86-82d0-ecf29aa0120e",
+      "userId": "user_1779952285128_ajc3qchka",
+      "createdAt": "2026-05-28T07:11:25.128Z",
+      "lastActivity": "2026-05-28T07:11:25.231Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "b733ef9f-7d48-470d-bb2d-7d84a0446c8a",
+    {
+      "sessionId": "b733ef9f-7d48-470d-bb2d-7d84a0446c8a",
+      "userId": "user_1779952285582_dz62deciu",
+      "createdAt": "2026-05-28T07:11:25.582Z",
+      "lastActivity": "2026-05-28T07:11:25.997Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "9c8d1c60-dcaf-4224-9daf-99626470432e",
+    {
+      "sessionId": "9c8d1c60-dcaf-4224-9daf-99626470432e",
+      "userId": "user_1779952286806_ywopp4taa",
+      "createdAt": "2026-05-28T07:11:26.807Z",
+      "lastActivity": "2026-05-28T07:11:26.976Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "db2b1c61-e746-4758-8513-016decbfe298",
+    {
+      "sessionId": "db2b1c61-e746-4758-8513-016decbfe298",
+      "userId": "user_1779952287250_yc55sjmbe",
+      "createdAt": "2026-05-28T07:11:27.251Z",
+      "lastActivity": "2026-05-28T07:11:27.506Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "1ae1f0f1-e751-421a-81a7-76c3666bb765",
+    {
+      "sessionId": "1ae1f0f1-e751-421a-81a7-76c3666bb765",
+      "userId": "user_1779952288118_x4k3ks3jz",
+      "createdAt": "2026-05-28T07:11:28.118Z",
+      "lastActivity": "2026-05-28T07:11:28.345Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "9e97302b-c640-4f10-897f-2b91ccce1a78",
+    {
+      "sessionId": "9e97302b-c640-4f10-897f-2b91ccce1a78",
+      "userId": "user_1779952288462_6cl3dbmpz",
+      "createdAt": "2026-05-28T07:11:28.462Z",
+      "lastActivity": "2026-05-28T07:11:28.605Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "07c70202-bf8e-442e-b3e9-d0945b12a074",
+    {
+      "sessionId": "07c70202-bf8e-442e-b3e9-d0945b12a074",
+      "userId": "user_1779952805670_xfn25m10d",
+      "createdAt": "2026-05-28T07:20:05.681Z",
+      "lastActivity": "2026-05-28T07:20:10.373Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "ed45eb45-4f7f-46d9-abbd-4613c4406f16",
+    {
+      "sessionId": "ed45eb45-4f7f-46d9-abbd-4613c4406f16",
+      "userId": "user_1779952814437_xb16hmqc2",
+      "createdAt": "2026-05-28T07:20:14.438Z",
+      "lastActivity": "2026-05-28T07:20:15.055Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "1bb1d9a8-3091-4fec-94e3-ae63a64882cf",
+    {
+      "sessionId": "1bb1d9a8-3091-4fec-94e3-ae63a64882cf",
+      "userId": "user_1779952815453_24heeptp0",
+      "createdAt": "2026-05-28T07:20:15.453Z",
+      "lastActivity": "2026-05-28T07:20:15.721Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "590c8891-df35-4f96-b4ad-a58a63c0e1c1",
+    {
+      "sessionId": "590c8891-df35-4f96-b4ad-a58a63c0e1c1",
+      "userId": "user_1779952815949_7hp26ud3t",
+      "createdAt": "2026-05-28T07:20:15.949Z",
+      "lastActivity": "2026-05-28T07:20:16.199Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "a0c2d831-2eaa-49b8-9cd8-7c233902f1b1",
+    {
+      "sessionId": "a0c2d831-2eaa-49b8-9cd8-7c233902f1b1",
+      "userId": "user_1779952816383_tusvus82n",
+      "createdAt": "2026-05-28T07:20:16.383Z",
+      "lastActivity": "2026-05-28T07:20:16.496Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "abbdf757-6a08-4af5-98d2-23919a100d46",
+    {
+      "sessionId": "abbdf757-6a08-4af5-98d2-23919a100d46",
+      "userId": "user_1779952816596_xpe69hhts",
+      "createdAt": "2026-05-28T07:20:16.596Z",
+      "lastActivity": "2026-05-28T07:20:16.844Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "28f941f3-954f-4b72-85d2-62328457cd6b",
+    {
+      "sessionId": "28f941f3-954f-4b72-85d2-62328457cd6b",
+      "userId": "user_1779952816937_ssmegbfyg",
+      "createdAt": "2026-05-28T07:20:16.937Z",
+      "lastActivity": "2026-05-28T07:20:17.029Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "a3ce5b06-3bd3-4cd6-91a7-d1d982c53243",
+    {
+      "sessionId": "a3ce5b06-3bd3-4cd6-91a7-d1d982c53243",
+      "userId": "user_1779952817186_oaxv1d1m8",
+      "createdAt": "2026-05-28T07:20:17.186Z",
+      "lastActivity": "2026-05-28T07:20:17.307Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "7d433711-9d4a-41b5-9a25-619776ca417c",
+    {
+      "sessionId": "7d433711-9d4a-41b5-9a25-619776ca417c",
+      "userId": "user_1779952819643_mc8ul62pi",
+      "createdAt": "2026-05-28T07:20:19.643Z",
+      "lastActivity": "2026-05-28T07:20:19.681Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "724996b1-1b94-4394-aca2-4d69a4247b58",
+    {
+      "sessionId": "724996b1-1b94-4394-aca2-4d69a4247b58",
+      "userId": "user_1779952819729_wzxl7dast",
+      "createdAt": "2026-05-28T07:20:19.729Z",
+      "lastActivity": "2026-05-28T07:20:19.765Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "63fcbf56-eda7-4eed-bae2-d5e6670b01b4",
+    {
+      "sessionId": "63fcbf56-eda7-4eed-bae2-d5e6670b01b4",
+      "userId": "user_1779953021588_xmnh5z43h",
+      "createdAt": "2026-05-28T07:23:41.590Z",
+      "lastActivity": "2026-05-28T07:23:41.877Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "0a34057b-1e79-4966-90da-84439c02abd0",
+    {
+      "sessionId": "0a34057b-1e79-4966-90da-84439c02abd0",
+      "userId": "user_1779953022664_8oyziuwi5",
+      "createdAt": "2026-05-28T07:23:42.664Z",
+      "lastActivity": "2026-05-28T07:23:42.781Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "5d72cf4c-6fc8-4c03-830d-a1ff3e0ec835",
+    {
+      "sessionId": "5d72cf4c-6fc8-4c03-830d-a1ff3e0ec835",
+      "userId": "user_1779953022882_gvsgk3j8p",
+      "createdAt": "2026-05-28T07:23:42.882Z",
+      "lastActivity": "2026-05-28T07:23:42.959Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "82d095a7-6a7a-406b-854e-404b95c4b452",
+    {
+      "sessionId": "82d095a7-6a7a-406b-854e-404b95c4b452",
+      "userId": "user_1779953023041_nsa1fk90t",
+      "createdAt": "2026-05-28T07:23:43.041Z",
+      "lastActivity": "2026-05-28T07:23:43.121Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "a59e7bb6-47a6-4368-b924-b0da4e281ad3",
+    {
+      "sessionId": "a59e7bb6-47a6-4368-b924-b0da4e281ad3",
+      "userId": "user_1779953023210_j30larmtf",
+      "createdAt": "2026-05-28T07:23:43.210Z",
+      "lastActivity": "2026-05-28T07:23:43.286Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "b417c839-2eed-468b-b98d-47b4992cec39",
+    {
+      "sessionId": "b417c839-2eed-468b-b98d-47b4992cec39",
+      "userId": "user_1779953023378_f0ycdpzw7",
+      "createdAt": "2026-05-28T07:23:43.378Z",
+      "lastActivity": "2026-05-28T07:23:43.461Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "570eaa00-868c-42a5-b4b5-054c94357f7c",
+    {
+      "sessionId": "570eaa00-868c-42a5-b4b5-054c94357f7c",
+      "userId": "user_1779953023544_4pt0rqmj5",
+      "createdAt": "2026-05-28T07:23:43.544Z",
+      "lastActivity": "2026-05-28T07:23:43.627Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "e682e094-149b-40bd-a243-c42426167335",
+    {
+      "sessionId": "e682e094-149b-40bd-a243-c42426167335",
+      "userId": "user_1779953023705_5q2zijwi6",
+      "createdAt": "2026-05-28T07:23:43.707Z",
+      "lastActivity": "2026-05-28T07:23:43.779Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "3f6a18ba-cd08-4687-b0e0-7aaab796f4ea",
+    {
+      "sessionId": "3f6a18ba-cd08-4687-b0e0-7aaab796f4ea",
+      "userId": "user_1779953023918_t6tcrfgn7",
+      "createdAt": "2026-05-28T07:23:43.918Z",
+      "lastActivity": "2026-05-28T07:23:43.991Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "57df58b9-92f4-46bb-83a6-52cb636dec60",
+    {
+      "sessionId": "57df58b9-92f4-46bb-83a6-52cb636dec60",
+      "userId": "user_1779953024053_khnq5e6ly",
+      "createdAt": "2026-05-28T07:23:44.053Z",
+      "lastActivity": "2026-05-28T07:23:44.119Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "d9d2e116-dc4e-47f8-a434-92aec8ddb442",
+    {
+      "sessionId": "d9d2e116-dc4e-47f8-a434-92aec8ddb442",
+      "userId": "user_1779953027028_htbxvm43h",
+      "createdAt": "2026-05-28T07:23:47.028Z",
+      "lastActivity": "2026-05-28T07:23:47.083Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "8b783ffc-8dda-4d03-9e76-5dea112995a4",
+    {
+      "sessionId": "8b783ffc-8dda-4d03-9e76-5dea112995a4",
+      "userId": "user_1779953170188_h2aefvi9c",
+      "createdAt": "2026-05-28T07:26:10.188Z",
+      "lastActivity": "2026-05-28T07:26:10.375Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "f302859c-5397-42d6-8655-adf171d15296",
+    {
+      "sessionId": "f302859c-5397-42d6-8655-adf171d15296",
+      "userId": "user_1779953170716_g7r8s9ex7",
+      "createdAt": "2026-05-28T07:26:10.716Z",
+      "lastActivity": "2026-05-28T07:26:10.831Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "a3e40f26-5701-466d-ad7b-4c26672a96f9",
+    {
+      "sessionId": "a3e40f26-5701-466d-ad7b-4c26672a96f9",
+      "userId": "user_1779953170965_bgzlqz262",
+      "createdAt": "2026-05-28T07:26:10.965Z",
+      "lastActivity": "2026-05-28T07:26:11.071Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "ee06093f-f1a6-4458-a586-28e6dc041b60",
+    {
+      "sessionId": "ee06093f-f1a6-4458-a586-28e6dc041b60",
+      "userId": "user_1779953171185_xw8t8cl75",
+      "createdAt": "2026-05-28T07:26:11.185Z",
+      "lastActivity": "2026-05-28T07:26:11.293Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "c0e774e4-fe37-47ad-89fa-589b3865d6fc",
+    {
+      "sessionId": "c0e774e4-fe37-47ad-89fa-589b3865d6fc",
+      "userId": "user_1779953171388_6ad4sk7y4",
+      "createdAt": "2026-05-28T07:26:11.388Z",
+      "lastActivity": "2026-05-28T07:26:11.468Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "ccc807bd-2d77-469a-bc2d-4b9642d23dc1",
+    {
+      "sessionId": "ccc807bd-2d77-469a-bc2d-4b9642d23dc1",
+      "userId": "user_1779953171550_c8dndqk9p",
+      "createdAt": "2026-05-28T07:26:11.550Z",
+      "lastActivity": "2026-05-28T07:26:11.637Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "254a9ecd-d2c6-473c-9ded-6290308ca154",
+    {
+      "sessionId": "254a9ecd-d2c6-473c-9ded-6290308ca154",
+      "userId": "user_1779953171724_d2kabf4uk",
+      "createdAt": "2026-05-28T07:26:11.724Z",
+      "lastActivity": "2026-05-28T07:26:11.809Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "d6ba7728-f846-4530-a970-776a916d13de",
+    {
+      "sessionId": "d6ba7728-f846-4530-a970-776a916d13de",
+      "userId": "user_1779953171946_diy12brpv",
+      "createdAt": "2026-05-28T07:26:11.946Z",
+      "lastActivity": "2026-05-28T07:26:12.034Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "3bb17b57-e2ac-46d3-9d49-7f1f1e4c8f15",
+    {
+      "sessionId": "3bb17b57-e2ac-46d3-9d49-7f1f1e4c8f15",
+      "userId": "user_1779953172195_qvoyt3fwi",
+      "createdAt": "2026-05-28T07:26:12.195Z",
+      "lastActivity": "2026-05-28T07:26:12.299Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "cb275a66-d8af-4da4-b586-0898686c0733",
+    {
+      "sessionId": "cb275a66-d8af-4da4-b586-0898686c0733",
+      "userId": "user_1779953172495_4ir03g3pw",
+      "createdAt": "2026-05-28T07:26:12.495Z",
+      "lastActivity": "2026-05-28T07:26:12.589Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "312afcf0-f14c-4d2e-9386-e33b3951ca2b",
+    {
+      "sessionId": "312afcf0-f14c-4d2e-9386-e33b3951ca2b",
+      "userId": "user_1779953392740_iiw9n6aa9",
+      "createdAt": "2026-05-28T07:29:52.740Z",
+      "lastActivity": "2026-05-28T07:29:53.432Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "39c69be6-e8ae-4b99-961f-80c8d35448ba",
+    {
+      "sessionId": "39c69be6-e8ae-4b99-961f-80c8d35448ba",
+      "userId": "user_1779953396116_169npvsoh",
+      "createdAt": "2026-05-28T07:29:56.116Z",
+      "lastActivity": "2026-05-28T07:29:57.352Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "978a1962-e1ae-41c5-aa0d-98b4eaec0f03",
+    {
+      "sessionId": "978a1962-e1ae-41c5-aa0d-98b4eaec0f03",
+      "userId": "user_1779953397723_uzeqakqfc",
+      "createdAt": "2026-05-28T07:29:57.723Z",
+      "lastActivity": "2026-05-28T07:29:58.238Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "4b9d03aa-b6e5-4dfb-9a9b-fd8f3517f49d",
+    {
+      "sessionId": "4b9d03aa-b6e5-4dfb-9a9b-fd8f3517f49d",
+      "userId": "user_1779953398506_o78rtct2z",
+      "createdAt": "2026-05-28T07:29:58.506Z",
+      "lastActivity": "2026-05-28T07:29:58.867Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "7d3b1c1b-a4e5-40ba-a1e0-d599a03ce98f",
+    {
+      "sessionId": "7d3b1c1b-a4e5-40ba-a1e0-d599a03ce98f",
+      "userId": "user_1779953399287_j9uwml5br",
+      "createdAt": "2026-05-28T07:29:59.288Z",
+      "lastActivity": "2026-05-28T07:29:59.673Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "d7d3da53-6e72-40c3-965f-966a852a391c",
+    {
+      "sessionId": "d7d3da53-6e72-40c3-965f-966a852a391c",
+      "userId": "user_1779953400255_qxon4whxf",
+      "createdAt": "2026-05-28T07:30:00.255Z",
+      "lastActivity": "2026-05-28T07:30:01.628Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "2bc70e3a-86dd-4717-a501-6a7085db943a",
+    {
+      "sessionId": "2bc70e3a-86dd-4717-a501-6a7085db943a",
+      "userId": "user_1779953401825_n4ozhjn43",
+      "createdAt": "2026-05-28T07:30:01.825Z",
+      "lastActivity": "2026-05-28T07:30:01.900Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "48962ee0-8602-481e-8837-e2b3548f4e1b",
+    {
+      "sessionId": "48962ee0-8602-481e-8837-e2b3548f4e1b",
+      "userId": "user_1779953402073_oewk28ccl",
+      "createdAt": "2026-05-28T07:30:02.073Z",
+      "lastActivity": "2026-05-28T07:30:02.247Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "2c481438-738d-41aa-9814-d54ef6ff5537",
+    {
+      "sessionId": "2c481438-738d-41aa-9814-d54ef6ff5537",
+      "userId": "user_1779953402548_y1l4veh72",
+      "createdAt": "2026-05-28T07:30:02.548Z",
+      "lastActivity": "2026-05-28T07:30:02.955Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "e08088c6-367b-4131-8087-fcdf27895182",
+    {
+      "sessionId": "e08088c6-367b-4131-8087-fcdf27895182",
+      "userId": "user_1779953403378_kgjvlmrjt",
+      "createdAt": "2026-05-28T07:30:03.378Z",
+      "lastActivity": "2026-05-28T07:30:03.816Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "f5703dc6-143b-4cb8-8cbf-cfa000379270",
+    {
+      "sessionId": "f5703dc6-143b-4cb8-8cbf-cfa000379270",
+      "userId": "user_1779953406759_es29xucv6",
+      "createdAt": "2026-05-28T07:30:06.759Z",
+      "lastActivity": "2026-05-28T07:30:06.973Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "34fd827c-dc39-46bd-b5b9-3cbc70ca1a30",
+    {
+      "sessionId": "34fd827c-dc39-46bd-b5b9-3cbc70ca1a30",
+      "userId": "user_1779953473704_n53y93ng6",
+      "createdAt": "2026-05-28T07:31:13.704Z",
+      "lastActivity": "2026-05-28T07:31:14.014Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "60a4a334-ac24-4aa3-88ae-467961700bb3",
+    {
+      "sessionId": "60a4a334-ac24-4aa3-88ae-467961700bb3",
+      "userId": "user_1779953474458_9aihohn27",
+      "createdAt": "2026-05-28T07:31:14.458Z",
+      "lastActivity": "2026-05-28T07:31:14.698Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "637f203b-45ae-4f98-a3e4-c105afe1d26a",
+    {
+      "sessionId": "637f203b-45ae-4f98-a3e4-c105afe1d26a",
+      "userId": "user_1779953474841_6tu1wskz5",
+      "createdAt": "2026-05-28T07:31:14.846Z",
+      "lastActivity": "2026-05-28T07:31:14.994Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "8c80db94-f5b0-4431-83a8-32ef52b10705",
+    {
+      "sessionId": "8c80db94-f5b0-4431-83a8-32ef52b10705",
+      "userId": "user_1779953475092_8xfuiosuq",
+      "createdAt": "2026-05-28T07:31:15.092Z",
+      "lastActivity": "2026-05-28T07:31:15.228Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "08ca6164-4302-45f6-85fe-12b1d6338159",
+    {
+      "sessionId": "08ca6164-4302-45f6-85fe-12b1d6338159",
+      "userId": "user_1779953475555_ijxq1urrq",
+      "createdAt": "2026-05-28T07:31:15.555Z",
+      "lastActivity": "2026-05-28T07:31:15.637Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "8c04f94d-cdf5-446f-88bf-5cf2188bee90",
+    {
+      "sessionId": "8c04f94d-cdf5-446f-88bf-5cf2188bee90",
+      "userId": "user_1779953475779_23wh35k5d",
+      "createdAt": "2026-05-28T07:31:15.779Z",
+      "lastActivity": "2026-05-28T07:31:15.870Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "25cf8d10-b99a-46d4-896b-80a86034e83f",
+    {
+      "sessionId": "25cf8d10-b99a-46d4-896b-80a86034e83f",
+      "userId": "user_1779953476084_0qtf3tacj",
+      "createdAt": "2026-05-28T07:31:16.084Z",
+      "lastActivity": "2026-05-28T07:31:16.206Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "1d57bee6-f32e-43c8-becd-08e83d9c1177",
+    {
+      "sessionId": "1d57bee6-f32e-43c8-becd-08e83d9c1177",
+      "userId": "user_1779953476302_lyxefu9te",
+      "createdAt": "2026-05-28T07:31:16.302Z",
+      "lastActivity": "2026-05-28T07:31:16.469Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "c6cf6e61-e339-490d-bdcb-42ae44fb05b1",
+    {
+      "sessionId": "c6cf6e61-e339-490d-bdcb-42ae44fb05b1",
+      "userId": "user_1779953476629_vqkdeyca2",
+      "createdAt": "2026-05-28T07:31:16.629Z",
+      "lastActivity": "2026-05-28T07:31:17.020Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "434fa9dd-3842-430c-b3ac-19724f41983a",
+    {
+      "sessionId": "434fa9dd-3842-430c-b3ac-19724f41983a",
+      "userId": "user_1779953477323_hhsezd9wp",
+      "createdAt": "2026-05-28T07:31:17.323Z",
+      "lastActivity": "2026-05-28T07:31:17.480Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "57c72081-9194-457b-ba7e-513d29c3d1cd",
+    {
+      "sessionId": "57c72081-9194-457b-ba7e-513d29c3d1cd",
+      "userId": "user_1779953556420_wx3ozpaut",
+      "createdAt": "2026-05-28T07:32:36.420Z",
+      "lastActivity": "2026-05-28T07:32:37.007Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "2328dc3e-e525-4a94-ad44-0f7c5bbc7e80",
+    {
+      "sessionId": "2328dc3e-e525-4a94-ad44-0f7c5bbc7e80",
+      "userId": "user_1779953557824_rkos3s99g",
+      "createdAt": "2026-05-28T07:32:37.824Z",
+      "lastActivity": "2026-05-28T07:32:38.167Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "fa35c97f-5228-4180-bfdf-cb8238f403fa",
+    {
+      "sessionId": "fa35c97f-5228-4180-bfdf-cb8238f403fa",
+      "userId": "user_1779953558514_90441wmv5",
+      "createdAt": "2026-05-28T07:32:38.514Z",
+      "lastActivity": "2026-05-28T07:32:38.908Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "9842c099-a4d8-4dc5-a147-8f326a556cb5",
+    {
+      "sessionId": "9842c099-a4d8-4dc5-a147-8f326a556cb5",
+      "userId": "user_1779953559537_jve649j60",
+      "createdAt": "2026-05-28T07:32:39.537Z",
+      "lastActivity": "2026-05-28T07:32:39.709Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "9db81589-c6e1-4773-971b-8c88c0003f75",
+    {
+      "sessionId": "9db81589-c6e1-4773-971b-8c88c0003f75",
+      "userId": "user_1779953559826_cw49j6t9i",
+      "createdAt": "2026-05-28T07:32:39.826Z",
+      "lastActivity": "2026-05-28T07:32:40.006Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "16f1f1d5-b743-4b37-98e8-8ad62cd5ebb4",
+    {
+      "sessionId": "16f1f1d5-b743-4b37-98e8-8ad62cd5ebb4",
+      "userId": "user_1779953560187_mb3tza1qs",
+      "createdAt": "2026-05-28T07:32:40.187Z",
+      "lastActivity": "2026-05-28T07:32:40.287Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "e448dc0b-535b-46df-930e-7a994ba93ade",
+    {
+      "sessionId": "e448dc0b-535b-46df-930e-7a994ba93ade",
+      "userId": "user_1779953560411_opfklbih1",
+      "createdAt": "2026-05-28T07:32:40.411Z",
+      "lastActivity": "2026-05-28T07:32:40.528Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "f5d837e0-2a15-4368-8305-5ba73080d6cc",
+    {
+      "sessionId": "f5d837e0-2a15-4368-8305-5ba73080d6cc",
+      "userId": "user_1779953560722_xxeei715r",
+      "createdAt": "2026-05-28T07:32:40.722Z",
+      "lastActivity": "2026-05-28T07:32:40.870Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "9374ffb5-3a1b-4a74-851e-6615f931c539",
+    {
+      "sessionId": "9374ffb5-3a1b-4a74-851e-6615f931c539",
+      "userId": "user_1779953561361_8efeqvuz7",
+      "createdAt": "2026-05-28T07:32:41.361Z",
+      "lastActivity": "2026-05-28T07:32:41.534Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "8d1f72a1-098d-4b39-a1ce-dcf798e0a758",
+    {
+      "sessionId": "8d1f72a1-098d-4b39-a1ce-dcf798e0a758",
+      "userId": "user_1779953561719_2emv0b8vu",
+      "createdAt": "2026-05-28T07:32:41.719Z",
+      "lastActivity": "2026-05-28T07:32:41.867Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "247c9d17-aa46-4e44-b3fd-4ee90fef42f4",
+    {
+      "sessionId": "247c9d17-aa46-4e44-b3fd-4ee90fef42f4",
+      "userId": "user_1779953561993_khkhgzdws",
+      "createdAt": "2026-05-28T07:32:41.993Z",
+      "lastActivity": "2026-05-28T07:32:42.168Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "de5c24a2-1def-4dc0-af26-c61d33bce0fb",
+    {
+      "sessionId": "de5c24a2-1def-4dc0-af26-c61d33bce0fb",
+      "userId": "user_1779953606217_s7xzag8e1",
+      "createdAt": "2026-05-28T07:33:26.217Z",
+      "lastActivity": "2026-05-28T07:33:28.415Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "fc823849-f1bd-4a77-898a-66c1b1b6ecb8",
+    {
+      "sessionId": "fc823849-f1bd-4a77-898a-66c1b1b6ecb8",
+      "userId": "user_1779953615536_cb93iyax4",
+      "createdAt": "2026-05-28T07:33:35.536Z",
+      "lastActivity": "2026-05-28T07:33:36.085Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "9806b046-a292-42de-ae76-d2c42855a429",
+    {
+      "sessionId": "9806b046-a292-42de-ae76-d2c42855a429",
+      "userId": "user_1779953616238_gaxyqj2zq",
+      "createdAt": "2026-05-28T07:33:36.238Z",
+      "lastActivity": "2026-05-28T07:33:36.515Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "38adfd6b-22aa-4e42-8e45-2c7dd748b256",
+    {
+      "sessionId": "38adfd6b-22aa-4e42-8e45-2c7dd748b256",
+      "userId": "user_1779953616767_1vu8zv0yw",
+      "createdAt": "2026-05-28T07:33:36.767Z",
+      "lastActivity": "2026-05-28T07:33:37.193Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "eb1aa3d7-3b30-4636-861a-30830d19a3e6",
+    {
+      "sessionId": "eb1aa3d7-3b30-4636-861a-30830d19a3e6",
+      "userId": "user_1779953618061_hozcwb4xo",
+      "createdAt": "2026-05-28T07:33:38.062Z",
+      "lastActivity": "2026-05-28T07:33:38.445Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "70ce5dde-9843-41b7-9fba-a63ade63afbd",
+    {
+      "sessionId": "70ce5dde-9843-41b7-9fba-a63ade63afbd",
+      "userId": "user_1779953618639_ddnghbczf",
+      "createdAt": "2026-05-28T07:33:38.639Z",
+      "lastActivity": "2026-05-28T07:33:38.728Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "ad5c961d-7e46-4472-9026-8f0b48f0ae7f",
+    {
+      "sessionId": "ad5c961d-7e46-4472-9026-8f0b48f0ae7f",
+      "userId": "user_1779953618814_ljmbw56n0",
+      "createdAt": "2026-05-28T07:33:38.814Z",
+      "lastActivity": "2026-05-28T07:33:38.915Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "da4620c6-d5d8-4aef-ab38-d05bd874d7a5",
+    {
+      "sessionId": "da4620c6-d5d8-4aef-ab38-d05bd874d7a5",
+      "userId": "user_1779953619029_uirv4t07e",
+      "createdAt": "2026-05-28T07:33:39.029Z",
+      "lastActivity": "2026-05-28T07:33:39.214Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "1389e9d8-34f6-4ef8-9bc2-1f4b4c31173d",
+    {
+      "sessionId": "1389e9d8-34f6-4ef8-9bc2-1f4b4c31173d",
+      "userId": "user_1779953619363_xh9q43bja",
+      "createdAt": "2026-05-28T07:33:39.363Z",
+      "lastActivity": "2026-05-28T07:33:39.502Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "1d84d7c4-c4ce-4638-bf85-249052789183",
+    {
+      "sessionId": "1d84d7c4-c4ce-4638-bf85-249052789183",
+      "userId": "user_1779953619679_9aw97vati",
+      "createdAt": "2026-05-28T07:33:39.679Z",
+      "lastActivity": "2026-05-28T07:33:39.810Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
+  ],
+  [
+    "a1de5266-2943-46de-aeed-3622ec1ebe83",
+    {
+      "sessionId": "a1de5266-2943-46de-aeed-3622ec1ebe83",
+      "userId": "user_1779953620160_8pb3vw6m2",
+      "createdAt": "2026-05-28T07:33:40.160Z",
+      "lastActivity": "2026-05-28T07:33:40.414Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student",
+        "device": "unknown",
+        "ipAddress": "127.0.0.1",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:151.0) Gecko/20100101 Firefox/151.0"
+      }
+    }
   ]
 ]
