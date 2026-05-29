@@ -3225,8 +3225,8 @@ io.on('connection', (socket) => {
     }
 
     if (!participant || participant.role !== 'client') return;
-  ensureFourierTaylorGuessRoundRunning();
-    if (fourierTaylorGuessState.submissions.has(socket.id)) return;
+    ensureFourierTaylorGuessRoundRunning();
+    const hadSubmission = fourierTaylorGuessState.submissions.has(socket.id);
 
     const c0 = Number(clampFourierNumber(payload && payload.c0, -4, 4, 0).toFixed(2));
     const c1 = Number(clampFourierNumber(payload && payload.c1, -4, 4, 0).toFixed(2));
@@ -3242,7 +3242,17 @@ io.on('connection', (socket) => {
     const now = Date.now();
     const error = Number(Math.sqrt(mse / 21).toFixed(3));
 
-    fourierTaylorGuessState.submissions.set(socket.id, { c0, c1, c2, c3, error, submittedAt: now });
+    fourierTaylorGuessState.submissions.set(socket.id, {
+      c0,
+      c1,
+      c2,
+      c3,
+      error,
+      submittedAt: hadSubmission
+        ? (fourierTaylorGuessState.submissions.get(socket.id)?.submittedAt || now)
+        : now,
+      updatedAt: now,
+    });
     fourierTaylorGuessState.updatedAt = now;
     participant.interactions += 1;
     participant.lastActionAt = now;

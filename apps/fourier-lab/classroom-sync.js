@@ -214,11 +214,27 @@
   }
 
   function getParticipantPayload() {
-    if (state.summary && state.summary.participants) {
-      return state.summary.participants;
+    const liveParticipants = state.participants;
+    const summaryParticipants = state.summary && state.summary.participants
+      ? state.summary.participants
+      : null;
+
+    const liveRosterSize = Array.isArray(liveParticipants && liveParticipants.roster)
+      ? liveParticipants.roster.length
+      : 0;
+    const summaryRosterSize = Array.isArray(summaryParticipants && summaryParticipants.roster)
+      ? summaryParticipants.roster.length
+      : 0;
+
+    if (liveRosterSize >= summaryRosterSize && liveParticipants) {
+      return liveParticipants;
     }
 
-    return state.participants || { teachers: 0, students: 0, roster: [] };
+    if (summaryParticipants) {
+      return summaryParticipants;
+    }
+
+    return { teachers: 0, students: 0, roster: [] };
   }
 
   function computeTotalInteractions(roster) {
@@ -1639,7 +1655,10 @@
           logComm('re-emit fourier:join before taylor-guess-live', state.joinPayload);
           socket.emit('fourier:join', state.joinPayload);
         }
-        return;
+
+        // Keep emitting the current live coefficients right away.
+        // The server can recover via implicit participant registration,
+        // just like the other classroom live activities do.
       }
 
       const now = Date.now();
@@ -1682,7 +1701,9 @@
           logComm('re-emit fourier:join before taylor-guess-submit', state.joinPayload);
           socket.emit('fourier:join', state.joinPayload);
         }
-        return;
+
+        // Submit the current coefficients immediately as well, so the
+        // server can handle first-contact submissions before join settles.
       }
 
       const payload = { c0, c1, c2, c3, role: 'client', name: currentName, team: currentTeam };
@@ -1991,6 +2012,12 @@
 
     if (state.mode === "teacher" && !state.joinPayload) {
       requestJoin("teacher", state.userName || "Teacher", "Teacher");
+    }
+
+    if (state.mode === "client" && !state.joinPayload) {
+      const currentName = resolveClientName(studentNameInput ? studentNameInput.value : state.userName);
+      const currentTeam = resolveClientTeam(studentTeamInput ? studentTeamInput.value : state.userTeam, currentName);
+      requestJoin("client", currentName, currentTeam);
     }
 
     if (state.joinPayload) {

@@ -3102,6 +3102,7 @@
                   <div class="slider-label"><span>\(c_3\)</span><span id="taylorGuessC3Value">0.00</span></div>
                   <input id="taylorGuessC3" type="range" min="-4" max="4" step="0.05" value="0" data-activity-control="taylor-guess" data-control-key="c3" />
                 </div>
+                <button id="taylorGuessSubmitBtn" class="fft-duel-submit student-only" type="button" style="align-self:stretch;padding:0 14px;font-size:0.82rem;white-space:nowrap;">Submit</button>
                 <button id="taylorGuessBestBtn" class="fft-duel-submit teacher-only" type="button" style="align-self:stretch;padding:0 14px;font-size:0.82rem;white-space:nowrap;">Βέλτιστη</button>
               </div>
               <div id="taylorGuessBestDerivBox" class="deriv-list teacher-only" style="display:none;margin-top:8px;"></div>
@@ -4017,7 +4018,8 @@
                   H_0(\vec{k})=\frac{1}{\sqrt{2}}\left(\xi_r+i\xi_i\right)\sqrt{P(\vec{k})}
                 \]
                 \[
-                  P(\vec{k})=\frac{e^{-1/(k^2L^2)}}{k^4}\,e^{-k^2d^2},\qquad k=\|\vec{k}\|
+                  P(\vec{k})=A\,\frac{e^{-1/(k^2L^2)}}{k^4}\,\big|\hat{k}\cdot\hat{w}\big|^2\,e^{-k^2d^2},\qquad k=\|\vec{k}\|,
+                  \quad L=\frac{\|\vec{V}\|^2}{g},\;\hat{w}=\frac{\vec{V}}{\|\vec{V}\|}
                 \]
                 \[
                   |H_0(\vec{k})|\propto |\xi(\vec{k})|\sqrt{P(\vec{k})}
@@ -8326,6 +8328,7 @@
       };
 
       el?.addEventListener('input', emitTaylorGuessLive);
+        el?.addEventListener('change', emitTaylorGuessLive);
     });
 
     taylorGuessRevealBtn?.addEventListener('click', () => {
