@@ -1639,6 +1639,7 @@
           logComm('re-emit fourier:join before taylor-guess-live', state.joinPayload);
           socket.emit('fourier:join', state.joinPayload);
         }
+        return;
       }
 
       const now = Date.now();
@@ -1853,40 +1854,8 @@
     });
   });
 
-  // Fallback bridge for Taylor-guess activity (4.5).
-  // If index custom events are missing/broken, emit directly from DOM controls.
-  [taylorGuessC0Input, taylorGuessC1Input, taylorGuessC2Input, taylorGuessC3Input].forEach((control) => {
-    control?.addEventListener("input", () => {
-      emitTaylorGuessLive({
-        c0: Number(taylorGuessC0Input ? taylorGuessC0Input.value : 0),
-        c1: Number(taylorGuessC1Input ? taylorGuessC1Input.value : 0),
-        c2: Number(taylorGuessC2Input ? taylorGuessC2Input.value : 0),
-        c3: Number(taylorGuessC3Input ? taylorGuessC3Input.value : 0),
-      }, false);
-    });
-
-    control?.addEventListener("change", () => {
-      emitTaylorGuessLive({
-        c0: Number(taylorGuessC0Input ? taylorGuessC0Input.value : 0),
-        c1: Number(taylorGuessC1Input ? taylorGuessC1Input.value : 0),
-        c2: Number(taylorGuessC2Input ? taylorGuessC2Input.value : 0),
-        c3: Number(taylorGuessC3Input ? taylorGuessC3Input.value : 0),
-      }, true);
-    });
-  });
-
-  taylorGuessSubmitBtnInput?.addEventListener("click", () => {
-    emitTaylorGuessSubmit({
-      c0: Number(taylorGuessC0Input ? taylorGuessC0Input.value : 0),
-      c1: Number(taylorGuessC1Input ? taylorGuessC1Input.value : 0),
-      c2: Number(taylorGuessC2Input ? taylorGuessC2Input.value : 0),
-      c3: Number(taylorGuessC3Input ? taylorGuessC3Input.value : 0),
-    });
-  });
-
-  taylorGuessRevealBtnInput?.addEventListener("click", () => {
-    emitTaylorGuessReveal();
-  });
+  // Taylor-guess (4.5) events are consumed through custom document events
+  // dispatched by index.html to avoid duplicate emits from parallel listeners.
 
   function emitInteraction(control, eventType) {
     if (state.mode !== "client" || !state.joined || !socket.connected) {

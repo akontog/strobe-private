@@ -2437,7 +2437,7 @@
 
       <div class="toc-group-title" data-accordion-group="euler">5. Euler</div>
       <a href="#sec-euler-plane" data-accordion-group="euler">5.1 Τύπος του Euler</a>
-      <a href="#sec-euler-i-rotation" data-accordion-group="euler">5.2 Περιστροφή με πολλαπλασιασμό μιγαδικού</a>
+      <a href="#sec-euler-i-rotation" data-accordion-group="euler">5.2 Περιστροφή στο μιγαδικό επίπεδο</a>
 
       <div class="toc-group-title" data-accordion-group="rod">6. Σειρές Fourier</div>
       <a href="#sec-heat-sine-intro" data-accordion-group="rod">6.1 Θερμοκρασία ράβδου</a>
@@ -2454,7 +2454,7 @@
 
       <div class="toc-group-title" data-accordion-group="complexity">8. Πολυπλοκότητα</div>
       <a href="#sec-sort-compare" data-accordion-group="complexity">8.1 Divide &amp; Conquer</a>
-      <a href="#sec-activity-complexity-check" data-accordion-group="complexity">8.2 Καμπύλες πολυπλοκότητας</a>
+      <a href="#sec-activity-complexity-check" data-accordion-group="complexity">8.2 Συμβολισμός Big-O</a>
 
       <div class="toc-group-title" data-accordion-group="fft">9. FFT</div>
       <a href="#sec-polynomial-mult" data-accordion-group="fft">9.1 Πράξεις πολυωνύμων (Πολυπλοκότητα)</a>
@@ -2466,16 +2466,16 @@
       <a href="#sec-eval-complexity" data-accordion-group="fft">9.7 Αποτίμηση σε n σημεία: O(n²)</a>
       <a href="#sec-even-odd-eval" data-accordion-group="fft">9.8 Συμμετρία στην αποτίμηση: x² vs x³</a>
       <a href="#sec-even-odd-split" data-accordion-group="fft">9.9 Διάσπαση σε άρτιο/περιττό μέρος</a>
-      <a href="#sec-recursion-symmetry" data-accordion-group="fft">9.10 Αναδρομή και συμμετρικά σημεία</a>
+      <a href="#sec-recursion-symmetry" data-accordion-group="fft">9.10 Δέντρο ριζών της μονάδας</a>
       <a href="#sec-unity-roots" data-accordion-group="fft">9.11 N-ες ρίζες της μονάδας</a>
-      <a href="#sec-cooley-interactive" data-accordion-group="fft">9.12 Cooley-Tukey για n σημεία (διαδραστικό)</a>
+      <a href="#sec-cooley-interactive" data-accordion-group="fft">9.12 FFT και IFFT: ίδια δομή</a>
 
       <div class="toc-group-title" data-accordion-group="pipeline">10. Θάλασσα</div>
       <a href="#sec-ocean-waves-intro" data-accordion-group="pipeline">10.1 Θάλλασα -> Άθροισμα πολλών ημιτονοειδών κυμμάτων</a>
       <a href="#sec-bridge-1d2d" data-accordion-group="pipeline">10.2 Κυματαριθμοι (wave vectors)</a>
       <a href="#sec-spectrum" data-accordion-group="pipeline">10.3 Ενεργειακό φάσμα + Phillips</a>
-        <a href="#sec-ifft" data-accordion-group="pipeline">10.4 IFFT ανακατασκευή</a>
-        <a href="#sec-activity-ocean-config" data-accordion-group="pipeline">10.5 Θάλασσα κυμάτων (τελική εικόνα)</a>
+        <a href="#sec-ifft" data-accordion-group="pipeline">10.4 IFFT</a>
+        <a href="#sec-activity-ocean-config" data-accordion-group="pipeline">10.5 Θάλασσα </a>
     </aside>
 
     <main class="content" id="content">
@@ -2529,7 +2529,7 @@
 
                 <div class="wave-build-item">
                   <div class="wave-build-row">
-                    <label class="sum-toggle wave-build-toggle wave-tip" data-tip="A: κλιμακώνει το πλάτος, δηλαδή το ύψος της ταλάντωσης." title="A: κλιμακώνει το πλάτος, δηλαδή το ύψος της ταλάντωσης."><input id="enableA" type="checkbox" /> <span>A</span></label>
+                    <label class="sum-toggle wave-build-toggle wave-tip" data-tip="A: το ύψος της ταλάντωσης." title="A: το ύψος της ταλάντωσης."><input id="enableA" type="checkbox" /> <span>A</span></label>
                     <div class="slider-group wave-build-slider wave-tip" id="aControlWrap" data-tip="A: αλλάζει το ύψος του κύματος χωρίς να αλλάζει την πυκνότητά του." title="A: αλλάζει το ύψος του κύματος χωρίς να αλλάζει την πυκνότητά του." hidden>
                       <div class="slider-label"><span>A</span><span id="ampValue">1.00</span></div>
                       <input id="ampSlider" type="range" min="0" max="2" step="0.01" value="1" title="A: αλλάζει το ύψος (πλάτος) του κύματος." />
@@ -2574,21 +2574,21 @@
                 <span>A <strong id="wave2DAmpValue">0.80</strong></span>
                 <input id="wave2DAmp" type="range" min="0.1" max="1.8" step="0.01" value="0.8" title="A: αυξάνει ή μειώνει το πλάτος του 2D κύματος." />
               </label>
-              <label class="ocean-control" data-tip="k_x: πόσο γρήγορα αλλάζει το κύμα κατά μήκος του άξονα x.">
+              <label class="ocean-control" data-tip="k_x: ορίζει την κατεύθυνση και τη χωρική συχνότητα ως προς x. Θετικό/αρνητικό k_x αλλάζει φορά στον άξονα x.">
                 <span>k<sub>x</sub> <strong id="wave2DKxValue">1.40</strong></span>
-                <input id="wave2DKx" type="range" min="0.2" max="5" step="0.01" value="1.4" title="k_x: πόσο γρήγορα αλλάζει το κύμα κατά μήκος του άξονα x." />
+                <input id="wave2DKx" type="range" min="-5" max="5" step="0.01" value="1.4" title="k_x: ορίζει την κατεύθυνση και τη χωρική συχνότητα ως προς x. Θετικό/αρνητικό k_x αλλάζει φορά στον άξονα x." />
               </label>
-              <label class="ocean-control" data-tip="k_z: πόσο γρήγορα αλλάζει το κύμα κατά μήκος του άξονα z.">
+              <label class="ocean-control" data-tip="k_z: ορίζει την κατεύθυνση και τη χωρική συχνότητα ως προς z. Θετικό/αρνητικό k_z αλλάζει φορά στον άξονα z.">
                 <span>k<sub>z</sub> <strong id="wave2DKzValue">1.00</strong></span>
-                <input id="wave2DKz" type="range" min="0.2" max="5" step="0.01" value="1.0" title="k_z: πόσο γρήγορα αλλάζει το κύμα κατά μήκος του άξονα z." />
+                <input id="wave2DKz" type="range" min="-5" max="5" step="0.01" value="1.0" title="k_z: ορίζει την κατεύθυνση και τη χωρική συχνότητα ως προς z. Θετικό/αρνητικό k_z αλλάζει φορά στον άξονα z." />
               </label>
               <label class="ocean-control" data-tip="φ: μετατοπίζει τη φάση, δηλαδή οριζόντια μετακίνηση του μοτίβου.">
                 <span>φ <strong id="wave2DPhiValue">0.00</strong></span>
                 <input id="wave2DPhi" type="range" min="-3.14" max="3.14" step="0.01" value="0" title="φ: μετατοπίζει τη φάση, δηλαδή οριζόντια μετακίνηση του μοτίβου." />
               </label>
-              <label class="ocean-control" data-tip="ω: ελέγχει τη χρονική εξέλιξη του κύματος. Αρνητικό ω αντιστρέφει τη φορά κίνησης.">
+              <label class="ocean-control" data-tip="ω: ελέγχει τη χρονική εξέλιξη του κύματος. Μεγαλύτερο ω σημαίνει πιο γρήγορη κίνηση.">
                 <span>ω <strong id="wave2DOmegaValue">1.20</strong></span>
-                <input id="wave2DOmega" type="range" min="-25" max="25" step="0.01" value="1.2" title="ω: ελέγχει τη χρονική εξέλιξη του κύματος. Αρνητικό ω αντιστρέφει τη φορά κίνησης." />
+                <input id="wave2DOmega" type="range" min="0" max="5" step="0.01" value="1.2" title="ω: ελέγχει τη χρονική εξέλιξη του κύματος. Μεγαλύτερο ω σημαίνει πιο γρήγορη κίνηση." />
               </label>
             </div>
           </div>
@@ -2640,7 +2640,7 @@
               </div>
               <div style="flex:1;min-width:200px;text-align:center;background:rgba(255,140,80,0.07);border:1px solid rgba(255,140,80,0.22);border-radius:8px;padding:6px 10px;">
                 <div style="font-size:0.78rem;color:#9fb0d1;margin-bottom:2px;">Gerstner — <span style="color:#ffaa44;">⟳ κυκλική τροχιά</span></div>
-                \[\vec{r}(x_0) = \begin{pmatrix} x_0 + QA\cos(kx_0) \\\ A\sin(kx_0) \end{pmatrix}\]
+                \[\begin{cases}x(u,t)=u-A\sin(ku-\omega t+\varphi)\\ y(u,t)=A\cos(ku-\omega t+\varphi)\end{cases}\]
               </div>
             </div>
           </div>
@@ -2663,7 +2663,7 @@
             </div>
             <div style="display:flex;justify-content:center;align-items:center;gap:20px;flex-wrap:wrap;padding:4px 0;">
               <label class="ocean-control" style="min-width:300px;max-width:440px;" data-tip="Αλλάζει το πλάτος Α και στα δύο κύματα ταυτόχρονα. Στο Gerstner, όταν A·k > 1 (steepness > 1) η επιφάνεια αναδιπλώνεται — φυσικά αδύνατο!">
-                <span>A (κοινό πλάτος) <strong id="compareAmpValue">0.50</strong></span>
+                <span>A <strong id="compareAmpValue">0.50</strong></span>
                 <input id="compareAmp" type="range" min="0.05" max="1.6" step="0.01" value="0.5" title="Αλλάζει το πλάτος Α και στα δύο κύματα. Μεγάλο Α φανερώνει το πρόβλημα του Gerstner." />
               </label>
               <label class="sum-toggle" style="margin:0;"><input id="compareAnimate" type="checkbox" checked /> <span>▶ κίνηση</span></label>
@@ -2674,8 +2674,8 @@
                 \[y = A\sin(k_x x + k_z z + \omega t)\]
               </div>
               <div style="flex:1;min-width:220px;text-align:center;background:rgba(255,140,80,0.07);border:1px solid rgba(255,140,80,0.22);border-radius:8px;padding:6px 10px;">
-                <div style="font-size:0.78rem;color:#9fb0d1;margin-bottom:2px;">Gerstner — <span style="color:#ffaa55;">πρόβλημα για A·k &gt; 1</span></div>
-                \[\begin{cases}x = x_0 + QA\cos(\mathbf{k}\cdot\mathbf{x}_0 - \omega t)\\ y = A\sin(\mathbf{k}\cdot\mathbf{x}_0 - \omega t)\end{cases}\]
+                <div style="font-size:0.78rem;color:#9fb0d1;margin-bottom:2px;">Gerstner</div>
+                \[\begin{aligned}x(u,v,t) &= u - A\, d_x \sin\bigl( k (d_x u + d_z v) - \omega t + \phi \bigr) \\ y(u,v,t) &= A \cos\bigl( k (d_x u + d_z v) - \omega t + \phi \bigr) \\ z(u,v,t) &= v - A\, d_z \sin\bigl( k (d_x u + d_z v) - \omega t + \phi \bigr)\end{aligned}\]
               </div>
             </div>
           </div>
@@ -3082,14 +3082,6 @@
           <div class="slide-card">
             <div class="slide-content">
               <h2>4.5) Δραστηριότητα: Εύρεση συντελεστών για το \(e^{2x}\)</h2>
-              <p class="teacher-only">
-                Εμφανίζονται live οι καμπύλες όλων των φοιτητών.
-                Πάτα <em>Βέλτιστη</em> για να εμφανιστεί το ακριβές Taylor ανάπτυγμα του \(e^{2x}\).
-              </p>
-              <p class="student-only">
-                Ρύθμισε τους συντελεστές \(c_0,\,c_1,\,c_2,\,c_3\) ώστε το πολυώνυμο
-                \(P(x)=c_0+c_1 x+c_2 x^2+c_3 x^3\) να προσεγγίζει τη συνάρτηση \(e^{2x}\).
-              </p>
               <canvas id="taylorGuessCanvas" class="euler-canvas" style="width:100%;height:220px;" width="940" height="220"></canvas>
               <div id="taylorGuessMath" class="mathjax-box taylor-guess-math" style="margin-top:5px;padding:4px 12px;min-height:auto;font-size:0.93em;"></div>
               <div id="taylorGuessLegend" class="sum-legend" style="margin-top:8px;"></div>
@@ -3112,7 +3104,6 @@
                 </div>
                 <button id="taylorGuessBestBtn" class="fft-duel-submit teacher-only" type="button" style="align-self:stretch;padding:0 14px;font-size:0.82rem;white-space:nowrap;">Βέλτιστη</button>
               </div>
-              <div class="hint" style="margin-top:8px;">Live: οι καμπύλες ενημερώνονται καθώς κινούνται τα sliders.</div>
               <div id="taylorGuessBestDerivBox" class="deriv-list teacher-only" style="display:none;margin-top:8px;"></div>
             </div>
           </div>
@@ -3183,7 +3174,7 @@
       <section class="section" id="sec-euler-i-rotation">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>5.2) Περιστροφή με πολλαπλασιασμό μιγαδικού</h2>
+            <h2>5.2) Περιστροφή στο μιγαδικό επίπεδο</h2>
 
             <div style="display:flex;gap:24px;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;">
               <div class="mathjax-box" style="flex:1;min-width:220px;padding:12px 16px;">
@@ -3495,7 +3486,7 @@
       <section class="section" id="sec-activity-complexity-check">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>8.2) Καμπύλες πολυπλοκότητας</h2>
+            <h2>8.2) Συμβολισμός Big-O</h2>
             <div class="complexity-race-toolbar">
               <span class="fft-duel-pill">N: <strong id="complexityRaceNValue">10</strong></span>
               <button id="complexityRacePrevBtn" class="fft-duel-submit" type="button">N /10</button>
@@ -3777,18 +3768,23 @@
         <div class="slide-card">
           <div class="slide-content">
             <h2>9.7) Αποτίμηση σε n σημεία: O(n²)</h2>
-            <div id="evalComplexityFormula" style="text-align:center; font-size:1.05em; margin:8px 0 12px;">
-              \[P(x) = p_0 + p_1 x + p_2 x^2 + \cdots + p_d x^d\]
-              <span style="color:var(--muted); font-size:0.9em;">Αποτιμούμε σε \(n \geq d+1\) σημεία — κάθε αποτίμηση: \(d+1\) πράξεις</span>
-            </div>
-            <div style="display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap;">
-              <div style="display:flex; flex-direction:column; gap:8px; min-width:220px; max-width:260px;">
-                <div id="evalOpsDisplay" style="margin-top:10px; font-size:0.88em;"></div>
-                <div style="margin-top:6px; font-size:0.88em; color:var(--muted);">Σημεία:</div>
-                <div id="evalPointsList" style="font-family:monospace; font-size:0.86em; line-height:2; min-height:120px;"></div>
+            <div style="display:flex; flex-direction:column; gap:14px;">
+              <div class="slider-group" style="margin:0; max-width:520px; align-self:center; width:100%;">
+                <div class="slider-label" style="justify-content:space-between; gap:12px;">
+                  <span>Πλήθος σημείων / όρων</span>
+                  <span style="color:#f0f560;">n = <span id="evalComplexityValue">4</span></span>
+                </div>
+                <input id="evalComplexitySlider" type="range" min="2" max="8" step="1" value="4">
               </div>
               <canvas id="evalComplexityCanvas" width="600" height="370"
-                style="flex:1; min-width:280px; max-width:680px; border-radius:8px;"></canvas>
+                style="width:100%; min-width:280px; max-width:760px; align-self:center; border-radius:8px;"></canvas>
+              <div style="font-size:0.88em; color:var(--muted); text-align:center;">Σημεία αποτίμησης</div>
+              <div id="evalPointsList" style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap; min-height:84px;"></div>
+              <div id="evalOpsDisplay" style="max-width:760px; align-self:center; width:100%;"></div>
+              <div id="evalComplexityFormula" style="text-align:center; font-size:1.05em; margin-top:4px;">
+                \[P(x) = p_0 + p_1 x + p_2 x^2 + \cdots + p_n x^n\]
+                <span style="color:var(--muted); font-size:0.9em;">Κάθε νέος όρος και κάθε νέο σημείο αυξάνει το κόστος. Με τον naive υπολογισμό: \(n\) σημεία × \(n\) πράξεις ανά σημείο = \(O(n^2)\).</span>
+              </div>
             </div>
           </div>
         </div>
@@ -3809,7 +3805,16 @@
                     <span>Επιλογή πολυωνύμου</span>
                     <span id="evenOddModeValue">x²</span>
                   </div>
-                  <input id="evenOddModeSlider" type="range" min="2" max="3" step="1" value="2" />
+                  <button id="evenOddModeBtn" type="button" class="btn-secondary" style="width:100%;">
+                    Εναλλαγή σε x³
+                  </button>
+                </div>
+                <div class="slider-group" style="margin:0;">
+                  <div class="slider-label">
+                    <span>Πλήθος ζευγών ±x</span>
+                    <span>x έως <span id="evenOddCountValue">3</span></span>
+                  </div>
+                  <input id="evenOddCountSlider" type="range" min="1" max="5" step="1" value="3" />
                 </div>
                 <div id="evenOddFormula" style="font-size:0.95em; text-align:left;"></div>
                 <div style="font-size:0.88em; color:var(--muted);">Ζεύγη συμμετρικών σημείων:</div>
@@ -3878,62 +3883,19 @@
       <section class="section" id="sec-recursion-symmetry">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.10) Αναδρομή και συμμετρικά σημεία</h2>
-            <div style="max-width:980px; margin:0 auto;">
-              <div style="text-align:center; font-size:1.18em; margin-bottom:14px;">
-                <div style="margin-bottom:10px;">
-                  <strong>Αναδρομική σχέση</strong>
+            <h2>9.10) Δέντρο n-th roots of unity: \(z^n=1\)</h2>
+            <div style="max-width:1000px; margin:0 auto; display:flex; flex-direction:column; gap:12px;">
+              <div class="slider-group" style="margin:0; max-width:520px; align-self:center; width:100%;">
+                <div class="slider-label" style="justify-content:space-between; gap:12px;">
+                  <span>n-th roots of unity</span>
+                  <span>N = <span id="rootTreeNValue">2</span></span>
                 </div>
-                <div>
-                  \[
-                  T(N) = 2T(N/2) + N
-                  \]
-                </div>
-                <div style="font-size:0.92em; color:var(--muted); margin-top:3px;">
-                  Λύνουμε δύο προβλήματα μεγέθους N/2, συν N πράξεις για σύνδεση → \(T(N) = N\log_2 N\)
-                </div>
+                <input id="rootTreeN" type="range" min="1" max="4" step="1" value="1" />
               </div>
-
-              <div style="background:rgba(100,150,210,0.1); border-radius:8px; padding:16px; margin:12px 0;">
-                <div style="text-align:center; font-size:1.08em; font-weight:600; margin-bottom:10px;">
-                  Το κρίσιμο ερώτημα: Ποια σημεία \(x_1, x_2, \ldots, x_n\) θα χρησιμοποιήσουμε;
-                </div>
-                <div style="text-align:center; font-size:1em; margin-bottom:8px;">
-                  Αν διαλέξουμε <strong>συμμετρικά</strong> σημεία, τότε:
-                </div>
-                <div style="text-align:center; font-size:1.1em; margin:8px 0;">
-                  \[
-                  P(x_i) = P_e(x_i^2) + x_i P_o(x_i^2)
-                  \]
-                </div>
-                <div style="text-align:center; font-size:1.1em; margin-bottom:8px;">
-                  \[
-                  P(-x_i) = P_e(x_i^2) - x_i P_o(x_i^2)
-                  \]
-                </div>
-                <div style="text-align:center; font-size:0.96em; color:var(--muted);">
-                  Ίδιος υπολογισμός \(P_e(x_i^2)\) και \(P_o(x_i^2)\) και για τα δύο!
-                </div>
-              </div>
-
-              <div style="text-align:center; font-size:0.98em; margin-top:12px; line-height:1.6;">
-                <div style="margin-bottom:6px;">
-                  <strong>Παράδειγμα:</strong> αν \(n = 8\) σημεία, διαλέγουμε
-                </div>
-                <div style="font-family:monospace; color:#f0f560;">
-                  \(x_1=1, x_2=2, x_3=4, x_4=8\) και \(-x_1=-1, -x_2=-2, -x_3=-4, -x_4=-8\)
-                </div>
-                <div style="margin-top:8px; color:var(--muted);">
-                  Τότε για κάθε \(i\), τα \(P_e(x_i^2), P_o(x_i^2)\) υπολογίζονται μια φορά
-                  <br />
-                  και χρησιμοποιούνται για την εύρεση και του \(P(x_i)\) και του \(P(-x_i)\).
-                </div>
-              </div>
-
-              <div style="text-align:center; font-size:0.98em; margin-top:14px; color:#86efac; font-weight:600;">
-                Λύση: Επιλέγουμε τις <strong>N-ες ρίζες της μονάδας</strong>,
-                <br />
-                που έχουν ακριβώς τη δομή συμμετρίας που χρειαζόμαστε!
+              <canvas id="rootTreeCanvas" width="960" height="430"
+                style="width:100%; min-width:280px; max-width:960px; align-self:center; border-radius:8px;"></canvas>
+              <div id="rootTreeFormula" style="align-self:flex-end; color:var(--muted); font-size:0.95em; text-align:right;">
+                \(\omega_n^k = e^{i2\pi k/n},\; k=0,1,\ldots,n-1\)
               </div>
             </div>
           </div>
@@ -3952,12 +3914,8 @@
               <canvas id="unityRootsCanvas" class="euler-canvas unity-roots-canvas" width="600" height="520"></canvas>
               <div class="unity-roots-side">
                 <div class="slider-group" style="margin:0 0 10px;">
-                  <div class="slider-label"><span>N (αριθμός ριζών)</span><span id="unityRootsNValue">8</span></div>
-                  <input id="unityRootsN" type="range" min="2" max="16" step="1" value="8" />
-                </div>
-                <div class="slider-group" style="margin:0 0 10px;">
-                  <div class="slider-label"><span>Ανάδειξη ρίζας k</span><span id="unityRootsKValue">0</span></div>
-                  <input id="unityRootsK" type="range" min="0" max="7" step="1" value="0" />
+                  <div class="slider-label"><span>Βήμα αναδρομής (τετράγωνο)</span><span id="unityRootsNValue">16</span></div>
+                  <input id="unityRootsN" type="range" min="0" max="3" step="1" value="0" />
                 </div>
                 <div class="unity-roots-props">
                   <p>Ιδιότητες:</p>
@@ -3965,6 +3923,7 @@
                     <li>$\omega_{N}^{N} = 1$ (περιοδικότητα)</li>
                     <li>$\omega_{N}^{k+N} = \omega_{N}^{k}$</li>
                     <li>$\omega_{N}^{k+N/2} = -\omega_{N}^{k}$ (συμμετρία)</li>
+                    <li>$(\omega_N^k)^2 = \omega_{N/2}^{k}$</li>
                     <li>$\sum_{k=0}^{N-1} \omega_{N}^{jk} = 0$ για $j \neq 0$</li>
                   </ul>
                 </div>
@@ -3980,49 +3939,21 @@
       <section class="section" id="sec-cooley-interactive">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>9.12) Cooley-Tukey για n σημεία (διαδραστικό)</h2>
+            <h2>9.12) Αντίστροφος μετασχηματισμός (IFFT)</h2>
             <p>
-              Κάνε click στο γράφημα για να προχωρήσει ένα στάδιο: πρώτα divide (διάσπαση σε άρτια/περιττά),
-              μετά conquer (συνδυασμός butterfly). Το n δίνεται ως δύναμη του 2.
+              Από το φάσμα \(X_k\) επιστρέφουμε στο σήμα \(x_n\) με τον αντίστροφο τύπο,
+              όπου εμφανίζονται οι δυνάμεις \(\omega^{-k}\) (ισοδύναμα \(\omega^{-kn}\)) και ο παράγοντας \(\frac{1}{N}\).
             </p>
-            <canvas id="cooleyInteractiveCanvas" class="demo-canvas" width="940" height="330"></canvas>
-            <div class="slider-grid" style="margin-top:10px;">
-              <div class="slider-group">
-                <div class="slider-label"><span>Εκθέτης m στο n=2^m</span><span id="cooleyInteractivePowerValue">4</span></div>
-                <input id="cooleyInteractivePower" type="range" min="3" max="5" step="1" value="4" />
-              </div>
-              <div class="slider-group">
-                <div class="slider-label"><span>Κατάσταση</span><span id="cooleyInteractiveStatus">-</span></div>
-                <button id="cooleyInteractiveRefreshBtn" class="fft-duel-submit" type="button">Refresh</button>
-              </div>
-            </div>
-            <div style="margin-top:10px; overflow:auto;">
-              <table style="width:100%; border-collapse:collapse; font-size:0.92em;">
-                <thead>
-                  <tr>
-                    <th style="text-align:left; border-bottom:1px solid rgba(190,220,255,0.3); padding:6px;">Μετρική</th>
-                    <th style="text-align:center; border-bottom:1px solid rgba(190,220,255,0.3); padding:6px;">Τιμή</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">n σημεία</td>
-                    <td id="cooleyInteractiveNValue" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">16</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">Στάδιο</td>
-                    <td id="cooleyInteractiveStageValue" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">0</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">Butterflies (συνολικά)</td>
-                    <td id="cooleyInteractiveButterfliesValue" style="text-align:center; padding:6px; border-bottom:1px solid rgba(190,220,255,0.12);">0</td>
-                  </tr>
-                  <tr>
-                    <td style="padding:6px;">Επίπεδα (log2 n)</td>
-                    <td id="cooleyInteractiveLevelsValue" style="text-align:center; padding:6px;">4</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="mathjax-box" style="font-size:1.06em; line-height:1.65; margin-top:14px;">
+              \[
+              x_n = \frac{1}{N}\sum_{k=0}^{N-1} X_k\,\omega^{-kn}, \qquad n=0,1,\ldots,N-1
+              \]
+              \[
+              \omega = e^{\frac{2\pi i}{N}}
+              \]
+              \[
+              x_n = \frac{1}{N}\sum_{k=0}^{N-1} X_k\,e^{+i\frac{2\pi kn}{N}}
+              \]
             </div>
           </div>
         </div>
@@ -4115,7 +4046,7 @@
       <section class="section" id="sec-activity-ocean-config">
         <div class="slide-card">
           <div class="slide-content">
-            <h2>10.5) Θάλασσα κυμάτων (τελική εικόνα)</h2>
+            <h2>10.5) Θάλασσα</h2>
             <p>
               Η ίδια ιδέα του στόχου κλείνει την παρουσίαση: από θεμελιώδη κύματα και ήχο,
               σε μια δυναμική επιφάνεια θάλασσας με επάλληλους κυματισμούς.
@@ -4550,10 +4481,14 @@
     const pointsRepFormula = document.getElementById("pointsRepFormula");
     const unityRootsCanvas = document.getElementById("unityRootsCanvas");
     const unityRootsN = document.getElementById("unityRootsN");
-    const unityRootsK = document.getElementById("unityRootsK");
     const unityRootsNValue = document.getElementById("unityRootsNValue");
-    const unityRootsKValue = document.getElementById("unityRootsKValue");
     const unityRootsMath = document.getElementById("unityRootsMath");
+    const UNITY_ROOTS_LEVELS_DESC = [16, 8, 4, 2];
+
+    function getUnityRootsN() {
+      const idx = Math.max(0, Math.min(3, Number(unityRootsN?.value) || 0));
+      return UNITY_ROOTS_LEVELS_DESC[idx];
+    }
     const cooleyInteractivePower = document.getElementById("cooleyInteractivePower");
     const cooleyInteractivePowerValue = document.getElementById("cooleyInteractivePowerValue");
     const cooleyInteractiveStatus = document.getElementById("cooleyInteractiveStatus");
@@ -6703,9 +6638,9 @@
       heatSineMath.innerHTML = `
         <p style="margin:0 0 4px;color:#ffcc66;font-weight:bold;">Εξίσωση διάχυσης θερμότητας</p>
         \\[\\frac{\\partial u}{\\partial t} = \\kappa\\,\\frac{\\partial^2 u}{\\partial x^2}\\]
-        <p style="margin:4px 0 2px;color:#aac8ff;font-size:0.92em;">Λύση με ημίτονο (1ος όρος Fourier):</p>
-        \\[u(x,t)=A_0\\,e^{-\\kappa\\pi^2 t}\\sin(2\\pi x)\\]
-        <p style="margin:2px 0;font-size:0.88em;">\\(A_0=${HEAT_SINE_AMPLITUDE},\\;\\kappa=${HEAT_KAPPA},\\;A(t)=${A.toFixed(3)}\\)</p>
+        <p style="margin:4px 0 2px;color:#aac8ff;font-size:0.92em;">Μορφή για τη 6.1:</p>
+        \\[u(x,t)=A(t)\\sin(2\\pi x)\\]
+        <p style="margin:2px 0;font-size:0.88em;">\\(A(t)=${A.toFixed(3)}\\)</p>
       `;
       if (window.MathJax && typeof window.MathJax.typesetPromise === "function") {
         window.MathJax.typesetPromise([heatSineMath]).catch(() => {});
@@ -8391,7 +8326,6 @@
       };
 
       el?.addEventListener('input', emitTaylorGuessLive);
-      el?.addEventListener('change', emitTaylorGuessLive);
     });
 
     taylorGuessRevealBtn?.addEventListener('click', () => {
@@ -8453,16 +8387,6 @@
       updateTaylorGuessUI();
       updateTaylorGuessMath();
       drawTaylorGuessCanvas(taylorGuessCanvas);
-      if (!isTeacherMode) {
-        document.dispatchEvent(new CustomEvent('fourier:taylor-guess-live-local', {
-          detail: {
-            c0: Number(taylorGuessC0?.value || 0),
-            c1: Number(taylorGuessC1?.value || 0),
-            c2: Number(taylorGuessC2?.value || 0),
-            c3: Number(taylorGuessC3?.value || 0)
-          }
-        }));
-      }
     });
 
     updateTaylorGuessSliderLabels();
@@ -11406,7 +11330,6 @@
 
         ctx.fillStyle = "#adcfff";
         ctx.font = "12px Segoe UI, sans-serif";
-        ctx.fillText("y (Θερμοκρασία)", left + 6, graphTop + 14);
         ctx.fillText("x", left + 2, graphBottom + 16);
         ctx.fillText("x'", right - 14, graphBottom + 16);
 
@@ -11464,14 +11387,6 @@
         });
 
         ctx.fillStyle = "#c7dcff";
-        const profileLabel = activeProfile.source === "classroom"
-          ? `profile: classroom (${activeProfile.sourceCount})`
-          : activeProfile.source === "local"
-            ? "profile: local point/temperature"
-            : "profile: preset";
-        ctx.fillText(profileLabel, left + 6, graphTop + 14);
-        ctx.fillText(`y_min=${yMin.toFixed(2)}  y_max=${yMax.toFixed(2)}  κ=${kappa.toFixed(5)}`, right - 260, graphTop + 14);
-        ctx.fillText(`t = ${timeValue.toFixed(2)}`, right - 64, graphTop + 14);
       });
     }
 
@@ -12117,11 +12032,6 @@
         ctx.moveTo(topX1, pad + 6);
         ctx.lineTo(topX1, topH - 6);
         ctx.stroke();
-
-        ctx.fillStyle = "#c7dcff";
-        ctx.font = "12px Segoe UI, sans-serif";
-        ctx.fillText("x(t)", topX1 + 6, pad + 16);
-        ctx.fillText("t (s)", topX2 - 30, topMidY - 6);
 
         drawSecondGuides(ctx, topX1, topX2, pad + 6, topH - 6, durationSec);
 
@@ -14339,14 +14249,11 @@
 
     function updateUnityRootsMath() {
       if (!unityRootsMath) return;
-      const N = Number(unityRootsN?.value || 8);
-      const k = Number(unityRootsK?.value || 0);
-      const angle = (2 * Math.PI * k / N);
-      const re = Math.cos(angle).toFixed(4);
-      const im = Math.sin(angle).toFixed(4);
-      const sign = Number(im) >= 0 ? '+' : '';
+      const N = getUnityRootsN();
       unityRootsMath.innerHTML =
-        `\\[\\omega_{${N}}^{${k}} = e^{i\\cdot 2\\pi\\cdot ${k}/${N}} = ${re}${sign}${im}\\,i\\]`;
+        `\\[\\omega_N^k = e^{i2\\pi k/N},\\quad k=0,1,\\ldots,N-1\\]
+         \\[\\bigl(\\omega_N^k\\bigr)^2 = \\omega_{N/2}^{k}\\]
+         <div style="margin-top:4px;color:var(--muted);font-size:0.9em;">Τρέχον βήμα: \\(N=${N} \\Rightarrow N/2=${Math.max(1, N / 2)}\\)</div>`;
       if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
         window.MathJax.typesetPromise([unityRootsMath]).catch(() => {});
       }
@@ -14357,12 +14264,30 @@
     const evalComplexityFormula = document.getElementById("evalComplexityFormula");
     const evalOpsDisplay = document.getElementById("evalOpsDisplay");
     const evalPointsList = document.getElementById("evalPointsList");
+    const evalComplexitySlider = document.getElementById("evalComplexitySlider");
+    const evalComplexityValue = document.getElementById("evalComplexityValue");
 
     const evalComplexityState = {
-      // Static setting: visible points at x = 0,1,2,...,n
-      n: 6,
+      n: 4,
       coeffs: [1.2, -1.15, 0.55, -0.08],
     };
+    const evalComplexityMaxPoints = 8;
+
+    function evalGetFixedBounds() {
+      // Keep a stable viewport: slider adds points but does not change zoom.
+      const xmin = -0.4;
+      const xmax = (evalComplexityMaxPoints - 1) + 0.8;
+      const ys = [];
+      for (let s = 0; s <= 500; s++) {
+        const x = xmin + (s / 500) * (xmax - xmin);
+        ys.push(evalPolyAt(evalComplexityState.coeffs, x));
+      }
+      const yMin = Math.min(...ys);
+      const yMax = Math.max(...ys);
+      const yRange = Math.max(1, yMax - yMin);
+      const yPad = yRange * 0.45;
+      return { xmin, xmax, ymin: yMin - yPad, ymax: yMax + yPad, yRange };
+    }
 
     function evalPolyAt(coeffs, x) {
       let val = 0;
@@ -14371,12 +14296,20 @@
     }
 
     function evalGetXPoints(n) {
-      return Array.from({ length: n + 1 }, (_, i) => i);
+      return Array.from({ length: n }, (_, i) => i);
+    }
+
+    function updateEvalSliderState() {
+      if (!evalComplexitySlider) return;
+      const next = Math.max(2, Math.min(8, Number(evalComplexitySlider.value) || 4));
+      evalComplexityState.n = next;
+      if (evalComplexityValue) evalComplexityValue.textContent = String(next);
     }
 
     function updateEvalFormulaDisplay() {
       if (!evalComplexityFormula) return;
-      const { n, coeffs } = evalComplexityState;
+      const { n } = evalComplexityState;
+      const coeffs = evalComplexityState.coeffs;
       const terms = coeffs.map((c, i) => {
         const s = c >= 0 ? "+" : "-";
         const a = Math.abs(c).toFixed(2);
@@ -14385,40 +14318,40 @@
         return `${s} ${a}x^{${i}}`;
       }).join(" ");
       evalComplexityFormula.innerHTML =
-        `\\[P(x) = ${terms}\\]<span style="color:var(--muted);font-size:0.9em;">Αποτιμούμε στα \\(x=0,1,2,\\ldots,n\\) με \\(n=${n}\\). Κόστος ανά αποτίμηση: \\(\\sim n\\) πράξεις.</span>`;
+        `\\[P(x) = ${terms}\\]<div style="margin-top:6px; color:var(--muted); font-size:0.9em;">Το πολυώνυμο μένει σταθερό και αλλάζει μόνο το πλήθος σημείων αποτίμησης: \\(${n}\\) σημεία.</div>`;
       if (window.MathJax?.typesetPromise) window.MathJax.typesetPromise([evalComplexityFormula]).catch(() => {});
     }
 
     function updateEvalOpsDisplay() {
       if (!evalOpsDisplay) return;
       const { n } = evalComplexityState;
-      const evaluations = n + 1;
+      const evaluations = n;
       const opsPerEval = n;
       const totalOps = evaluations * opsPerEval;
       evalOpsDisplay.innerHTML = `
-        <div style="font-size:0.92em; color:var(--text); margin-bottom:8px; font-weight:600;">
-          Αποτίμηση σε σημεία x = 0,1,2,...,n
+        <div style="font-size:0.92em; color:var(--text); margin-bottom:8px; font-weight:600; text-align:center;">
+          Σύνολο πράξεων για ${evaluations} σημεία και ${opsPerEval} όρους ανά σημείο
         </div>
-        <div style="font-size:0.88em; color:var(--muted); margin-bottom:6px;">
-          Πλήθος αποτιμήσεων: <strong style="color:#58a6ff;">${evaluations}</strong>
+        <div style="display:flex; justify-content:center; flex-wrap:wrap; gap:10px; font-size:0.9em; color:var(--muted);">
+          <span style="padding:8px 12px; border-radius:999px; background:rgba(88,196,220,0.12); border:1px solid rgba(88,196,220,0.3);">${evaluations} αποτιμήσεις</span>
+          <span style="padding:8px 12px; border-radius:999px; background:rgba(251,191,36,0.12); border:1px solid rgba(251,191,36,0.35);">${opsPerEval} πράξεις/αποτίμηση</span>
+          <span style="padding:8px 12px; border-radius:999px; background:rgba(74,222,128,0.12); border:1px solid rgba(74,222,128,0.35);">${totalOps} συνολικά</span>
         </div>
-        <div style="font-size:0.88em; color:var(--muted); margin-bottom:6px;">
-          Πράξεις ανά αποτίμηση: <strong style="color:#fbbf24;">~ n = ${opsPerEval}</strong>
-        </div>
-        <div style="font-size:0.92em; color:#4ade80; margin-top:8px; font-weight:700;">
-          Σύνολο: ${evaluations} × ${opsPerEval} = ${totalOps} πράξεις <span style="color:#fbbf24;">= O(n²)</span>
+        <div style="font-size:0.95em; color:#f0f560; margin-top:10px; font-weight:700; text-align:center;">
+          ${evaluations} × ${opsPerEval} = ${totalOps} πράξεις = O(n²)
         </div>`;
     }
 
     function updateEvalPointsList() {
       if (!evalPointsList) return;
-      const { n, coeffs } = evalComplexityState;
+      const { n } = evalComplexityState;
+      const coeffs = evalComplexityState.coeffs;
       const xs = evalGetXPoints(n);
       let html = "";
-      for (let i = 0; i <= n; i++) {
+      for (let i = 0; i < n; i++) {
         const x = xs[i];
         const y = evalPolyAt(coeffs, x);
-        html += `<div style="color:#f0f560;">(${x}, ${y.toFixed(2)})</div>`;
+        html += `<div style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-width:82px; padding:8px 10px; border-radius:12px; background:rgba(240,245,96,0.12); border:1px solid rgba(240,245,96,0.45); color:#f0f560; font-family:monospace; line-height:1.3; box-shadow:0 8px 16px rgba(0,0,0,0.12);"><span>x = ${x}</span><span>y = ${y.toFixed(2)}</span></div>`;
       }
       evalPointsList.innerHTML = html;
     }
@@ -14429,14 +14362,13 @@
       const ctx = canvas.getContext("2d");
       const W = canvas.width, H = canvas.height;
       const ratio = window.devicePixelRatio || 1;
-      const { n, coeffs } = evalComplexityState;
+      const { n } = evalComplexityState;
+      const coeffs = evalComplexityState.coeffs;
+      const bounds = evalGetFixedBounds();
 
       const xs = evalGetXPoints(n);
       const ys = xs.map(x => evalPolyAt(coeffs, x));
-      const yMin = Math.min(...ys), yMax = Math.max(...ys);
-      const yRange = Math.max(1, yMax - yMin);
-      const yPad = yRange * 0.45;
-      const bounds = { xmin: -0.4, xmax: n + 0.8, ymin: yMin - yPad, ymax: yMax + yPad };
+      const yRange = bounds.yRange;
 
       const pad = 44 * ratio;
       const plot = { left: pad, top: pad * 0.7, right: W - pad * 0.4, bottom: H - pad };
@@ -14477,7 +14409,7 @@
       ctx.fillStyle = "rgba(180,210,255,0.45)";
       ctx.font = `${10 * ratio}px monospace`;
       ctx.textAlign = "center"; ctx.textBaseline = "top";
-      for (let xi = 0; xi <= n; xi++) {
+      for (let xi = 0; xi < evalComplexityMaxPoints; xi++) {
         const pc = w2c(xi, 0);
         ctx.fillText(String(xi), pc.x, pc.y + 4 * ratio);
       }
@@ -14496,7 +14428,7 @@
       ctx.stroke();
 
       // Evaluation dots + vertical guide lines at x = 0..n
-      for (let i = 0; i <= n; i++) {
+      for (let i = 0; i < n; i++) {
         const x = xs[i], y = ys[i];
         const pc = w2c(x, y), pb = w2c(x, 0);
 
@@ -14521,11 +14453,19 @@
       ctx.fillStyle = "rgba(251,191,36,0.85)";
       ctx.font = `bold ${12 * ratio}px monospace`;
       ctx.textAlign = "right"; ctx.textBaseline = "top";
-      ctx.fillText(`${n + 1} αποτιμήσεις, ~n πράξεις η καθεμία => O(n²)`, plot.right - 4 * ratio, plot.top + 4 * ratio);
+      ctx.fillText(`${n} σημεία × ${n} πράξεις ≈ O(n²)`, plot.right - 4 * ratio, plot.top + 4 * ratio);
 
       // Update side panels every frame (only when visible)
       updateEvalOpsDisplay();
       updateEvalPointsList();
+    }
+
+    if (evalComplexitySlider) {
+      evalComplexitySlider.addEventListener("input", () => {
+        updateEvalSliderState();
+        updateEvalFormulaDisplay();
+      });
+      updateEvalSliderState();
     }
 
     updateEvalFormulaDisplay();
@@ -14535,15 +14475,23 @@
 
     // ─── 9.8: Even/Odd Evaluation Symmetry ─────────────────────────────────
     const evenOddCanvas = document.getElementById("evenOddCanvas");
-    const evenOddModeSlider = document.getElementById("evenOddModeSlider");
+    const evenOddModeBtn = document.getElementById("evenOddModeBtn");
     const evenOddModeValue = document.getElementById("evenOddModeValue");
+    const evenOddCountSlider = document.getElementById("evenOddCountSlider");
+    const evenOddCountValue = document.getElementById("evenOddCountValue");
     const evenOddPairsList = document.getElementById("evenOddPairsList");
     const evenOddSummary = document.getElementById("evenOddSummary");
     const evenOddFormula = document.getElementById("evenOddFormula");
 
     const evenOddState = {
       degree: 2,
-      n: 4,
+      n: 3,
+    };
+    const evenOddFixedBounds = {
+      xmin: -5.8,
+      xmax: 5.8,
+      ymin: -140,
+      ymax: 140,
     };
 
     function evenOddEval(x) {
@@ -14553,6 +14501,12 @@
     function updateEvenOddText() {
       if (evenOddModeValue) {
         evenOddModeValue.textContent = evenOddState.degree === 2 ? "x²" : "x³";
+      }
+      if (evenOddModeBtn) {
+        evenOddModeBtn.textContent = evenOddState.degree === 2 ? "Εναλλαγή σε x³" : "Εναλλαγή σε x²";
+      }
+      if (evenOddCountValue) {
+        evenOddCountValue.textContent = String(evenOddState.n);
       }
 
       if (evenOddFormula) {
@@ -14591,13 +14545,7 @@
       const ratio = window.devicePixelRatio || 1;
 
       const n = evenOddState.n;
-      const yValues = [];
-      for (let x = -n; x <= n; x += 1) yValues.push(evenOddEval(x));
-      const yMin = Math.min(...yValues);
-      const yMax = Math.max(...yValues);
-      const yRange = Math.max(1, yMax - yMin);
-      const yPad = yRange * 0.25 + 1;
-      const bounds = { xmin: -n - 0.8, xmax: n + 0.8, ymin: yMin - yPad, ymax: yMax + yPad };
+      const bounds = evenOddFixedBounds;
 
       const pad = 42 * ratio;
       const plot = { left: pad, top: pad * 0.7, right: W - pad * 0.5, bottom: H - pad };
@@ -14661,7 +14609,7 @@
       ctx.font = `${10 * ratio}px monospace`;
       ctx.textAlign = "center";
       ctx.textBaseline = "top";
-      for (let x = -n; x <= n; x++) {
+      for (let x = -5; x <= 5; x++) {
         const p = w2c(x, 0);
         ctx.fillText(String(x), p.x, p.y + 4 * ratio);
       }
@@ -14720,12 +14668,150 @@
       }
     }
 
-    evenOddModeSlider?.addEventListener("input", () => {
-      evenOddState.degree = Number(evenOddModeSlider.value || 2);
+    evenOddModeBtn?.addEventListener("click", () => {
+      evenOddState.degree = evenOddState.degree === 2 ? 3 : 2;
+      updateEvenOddText();
+    });
+
+    evenOddCountSlider?.addEventListener("input", () => {
+      evenOddState.n = Math.max(1, Math.min(5, Number(evenOddCountSlider.value) || 1));
       updateEvenOddText();
     });
 
     updateEvenOddText();
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // ─── 9.10: Roots Tree (z^n = 1) ────────────────────────────────────────
+    const rootTreeCanvas = document.getElementById("rootTreeCanvas");
+    const rootTreeN = document.getElementById("rootTreeN");
+    const rootTreeNValue = document.getElementById("rootTreeNValue");
+    const rootTreeFormula = document.getElementById("rootTreeFormula");
+    const ROOT_TREE_LEVELS = [2, 4, 8, 16];
+    const rootTreeState = {
+      N: 2,
+    };
+
+    const scriptDigits = {
+      sub: { "0": "₀", "1": "₁", "2": "₂", "3": "₃", "4": "₄", "5": "₅", "6": "₆", "7": "₇", "8": "₈", "9": "₉", "-": "₋" },
+      sup: { "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹", "-": "⁻" },
+    };
+
+    function toScriptNumber(value, mode) {
+      const map = scriptDigits[mode] || scriptDigits.sub;
+      return String(value).split("").map((ch) => map[ch] || ch).join("");
+    }
+
+    function formatRootValue(order, k) {
+      const kk = ((k % order) + order) % order;
+      if (kk === 0) return "1";
+      if (order % 2 === 0 && kk === order / 2) return "-1";
+      if (order % 4 === 0 && kk === order / 4) return "i";
+      if (order % 4 === 0 && kk === (3 * order) / 4) return "-i";
+      return `ω${toScriptNumber(order, "sub")}${toScriptNumber(kk, "sup")}`;
+    }
+
+    function updateRootTreeState() {
+      const index = Math.max(1, Math.min(4, Number(rootTreeN?.value) || 1)) - 1;
+      rootTreeState.N = ROOT_TREE_LEVELS[index];
+      if (rootTreeNValue) rootTreeNValue.textContent = String(rootTreeState.N);
+      if (rootTreeFormula && window.MathJax?.typesetPromise) {
+        window.MathJax.typesetPromise([rootTreeFormula]).catch(() => {});
+      }
+    }
+
+    function drawRootsTree(canvas) {
+      if (!canvas) return;
+      fitCanvasToDisplaySize(canvas);
+      const ctx = canvas.getContext("2d");
+      const W = canvas.width;
+      const H = canvas.height;
+      const ratio = window.devicePixelRatio || 1;
+
+      const N = rootTreeState.N;
+      const depth = Math.max(1, Math.round(Math.log2(N)));
+      const topPad = 46 * ratio;
+      const bottomPad = 34 * ratio;
+      const sidePad = 36 * ratio;
+
+      const yAt = (level) => topPad + (level / depth) * (H - topPad - bottomPad);
+
+      ctx.fillStyle = "#05080f";
+      ctx.fillRect(0, 0, W, H);
+
+      const rows = [];
+      const topLeafCount = N;
+      const topStep = (W - 2 * sidePad) / Math.max(1, topLeafCount - 1);
+      const topY = yAt(0);
+      const top = [];
+      for (let i = 0; i < topLeafCount; i++) {
+        const x = sidePad + i * topStep;
+        const pair = Math.floor(i / 2) + 1;
+        const label = i % 2 === 0
+          ? `x${toScriptNumber(pair, "sub")}`
+          : `-x${toScriptNumber(pair, "sub")}`;
+        top.push({ x, y: topY, label });
+      }
+      rows.push(top);
+
+      for (let level = 1; level <= depth; level++) {
+        const count = N / (2 ** level);
+        const row = [];
+        const y = yAt(level);
+        for (let j = 0; j < count; j++) {
+          const leftChild = rows[level - 1][2 * j];
+          const rightChild = rows[level - 1][2 * j + 1];
+          const x = (leftChild.x + rightChild.x) * 0.5;
+          const order = N / (2 ** level);
+          const label = formatRootValue(order, j);
+          row.push({ x, y, label });
+        }
+        rows.push(row);
+      }
+
+      ctx.strokeStyle = "rgba(230,240,255,0.9)";
+      ctx.lineWidth = 2.2 * ratio;
+      for (let level = 1; level < rows.length; level++) {
+        for (let j = 0; j < rows[level].length; j++) {
+          const parent = rows[level][j];
+          const left = rows[level - 1][2 * j];
+          const right = rows[level - 1][2 * j + 1];
+          const yOffset = 8 * ratio;
+
+          ctx.beginPath();
+          ctx.moveTo(left.x, left.y + yOffset);
+          ctx.lineTo(parent.x, parent.y - yOffset);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(right.x, right.y + yOffset);
+          ctx.lineTo(parent.x, parent.y - yOffset);
+          ctx.stroke();
+        }
+      }
+
+      // Leaf labels x_k / -x_k
+      ctx.font = `${18 * ratio}px Cambria Math, Georgia, serif`;
+      ctx.fillStyle = "rgba(240,246,255,0.96)";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      rows[0].forEach((node) => {
+        ctx.fillText(node.label, node.x, node.y - 8 * ratio);
+      });
+
+      // Internal/root labels
+      ctx.font = `${30 * ratio}px Cambria Math, Georgia, serif`;
+      ctx.textBaseline = "middle";
+      for (let level = 1; level < rows.length; level++) {
+        rows[level].forEach((node) => {
+          ctx.fillText(node.label, node.x, node.y);
+        });
+      }
+    }
+
+    rootTreeN?.addEventListener("input", () => {
+      updateRootTreeState();
+    });
+    updateRootTreeState();
     // ─────────────────────────────────────────────────────────────────────────
 
     function drawUnityRoots(canvas) {
@@ -14733,116 +14819,101 @@
       fitCanvasToDisplaySize(canvas);
       const ctx = canvas.getContext('2d');
       const W = canvas.width, H = canvas.height;
-      const N = Number(unityRootsN?.value || 8);
-      const kHighlight = Number(unityRootsK?.value || 0);
-      const cx = W / 2, cy = H / 2;
-      const R = Math.min(W, H) * 0.38;
+      const N = getUnityRootsN();
+      const N2 = Math.max(1, N / 2);
+      const leftCx = W * 0.28;
+      const rightCx = W * 0.72;
+      const cy = H * 0.56;
+      const R = Math.min(W, H) * 0.22;
       const ratio = window.devicePixelRatio || 1;
 
       // Background
       ctx.fillStyle = '#07172b';
       ctx.fillRect(0, 0, W, H);
 
-      // Grid circle
-      ctx.strokeStyle = 'rgba(100,150,210,0.25)';
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2 * Math.PI); ctx.stroke();
+      const drawSet = (cx, count, dotColor, title) => {
+        ctx.strokeStyle = 'rgba(100,150,210,0.25)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2 * Math.PI); ctx.stroke();
 
-      // Axes
-      ctx.strokeStyle = 'rgba(100,150,210,0.4)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(cx - R * 1.15, cy); ctx.lineTo(cx + R * 1.15, cy);
-      ctx.moveTo(cx, cy - R * 1.15); ctx.lineTo(cx, cy + R * 1.15);
-      ctx.stroke();
+        ctx.strokeStyle = 'rgba(100,150,210,0.4)';
+        ctx.beginPath();
+        ctx.moveTo(cx - R * 1.15, cy); ctx.lineTo(cx + R * 1.15, cy);
+        ctx.moveTo(cx, cy - R * 1.15); ctx.lineTo(cx, cy + R * 1.15);
+        ctx.stroke();
 
-      // Axis labels
-      ctx.fillStyle = 'rgba(160,190,230,0.6)';
-      ctx.font = `${11 * ratio}px monospace`;
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText('Re', cx + R * 1.18, cy);
-      ctx.fillText('Im', cx, cy - R * 1.18);
+        ctx.strokeStyle = 'rgba(88,166,255,0.18)';
+        ctx.beginPath();
+        for (let k = 0; k <= count; k++) {
+          const a = 2 * Math.PI * k / count - Math.PI / 2;
+          const px = cx + R * Math.cos(a), py = cy + R * Math.sin(a);
+          if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
 
-      // Polygon connecting all roots (faint)
-      ctx.strokeStyle = 'rgba(88,166,255,0.18)';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      for (let k = 0; k <= N; k++) {
-        const a = 2 * Math.PI * k / N - Math.PI / 2;
-        const px = cx + R * Math.cos(a), py = cy + R * Math.sin(a);
-        if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-      }
-      ctx.stroke();
+        for (let k = 0; k < count; k++) {
+          const a = 2 * Math.PI * k / count - Math.PI / 2;
+          const px = cx + R * Math.cos(a), py = cy + R * Math.sin(a);
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(px, py);
+          ctx.strokeStyle = 'rgba(88,166,255,0.32)';
+          ctx.stroke();
 
-      // Spoke + dot for each root
-      for (let k = 0; k < N; k++) {
-        const a = 2 * Math.PI * k / N - Math.PI / 2;
-        const px = cx + R * Math.cos(a), py = cy + R * Math.sin(a);
-        const isHL = k === kHighlight;
-        const isConj = (N - k) % N === kHighlight && kHighlight !== 0 && kHighlight !== N / 2;
+          ctx.beginPath();
+          ctx.arc(px, py, 4.5 * ratio, 0, 2 * Math.PI);
+          ctx.fillStyle = dotColor;
+          ctx.fill();
+        }
 
-        // Spoke
-        ctx.strokeStyle = isHL ? '#ffe040' : isConj ? '#f472b6' : 'rgba(88,166,255,0.35)';
-        ctx.lineWidth = isHL ? 2 : 1;
-        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
-
-        // Dot
-        ctx.beginPath(); ctx.arc(px, py, isHL ? 7 * ratio : 4.5 * ratio, 0, 2 * Math.PI);
-        ctx.fillStyle = isHL ? '#ffe040' : isConj ? '#f472b6' : '#58a6ff';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 3 * ratio, 0, 2 * Math.PI);
+        ctx.fillStyle = 'rgba(160,200,255,0.5)';
         ctx.fill();
 
-        // Label
-        const labelR = R + 18 * ratio;
-        const lx = cx + labelR * Math.cos(a), ly = cy + labelR * Math.sin(a);
-        ctx.fillStyle = isHL ? '#ffe040' : isConj ? '#f472b6' : 'rgba(160,200,255,0.8)';
-        ctx.font = `${isHL ? 'bold ' : ''}${11 * ratio}px monospace`;
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText(`ω^${k}`, lx, ly);
-      }
+        ctx.fillStyle = 'rgba(160,200,255,0.92)';
+        ctx.font = `bold ${12 * ratio}px monospace`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(title, cx, cy - R - 14 * ratio);
+      };
 
-      // Highlighted root: Re/Im projection lines
-      if (kHighlight < N) {
-        const a = 2 * Math.PI * kHighlight / N - Math.PI / 2;
-        const px = cx + R * Math.cos(a), py = cy + R * Math.sin(a);
-        ctx.setLineDash([4, 4]);
-        ctx.strokeStyle = 'rgba(255,224,64,0.5)';
-        ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, cy); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(cx, py); ctx.stroke();
-        ctx.setLineDash([]);
-        // Re / Im value labels
-        const reV = Math.cos(a).toFixed(2), imV = Math.sin(a).toFixed(2);
-        ctx.fillStyle = '#ffe040';
-        ctx.font = `${10 * ratio}px monospace`;
-        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-        ctx.fillText(`Re=${reV}`, px, cy + 4 * ratio);
-        ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-        ctx.fillText(`Im=${imV}`, cx - 4 * ratio, py);
-      }
+      drawSet(leftCx, N, '#f0f560', `N = ${N} (πριν)`);
+      drawSet(rightCx, N2, '#58a6ff', `N/2 = ${N2} (με z→z²)`);
 
-      // Center dot
-      ctx.beginPath(); ctx.arc(cx, cy, 3 * ratio, 0, 2 * Math.PI);
-      ctx.fillStyle = 'rgba(160,200,255,0.5)'; ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.82)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(leftCx + R + 18 * ratio, cy);
+      ctx.lineTo(rightCx - R - 26 * ratio, cy);
+      ctx.stroke();
 
-      // Title
+      ctx.beginPath();
+      ctx.moveTo(rightCx - R - 26 * ratio, cy);
+      ctx.lineTo(rightCx - R - 34 * ratio, cy - 6 * ratio);
+      ctx.lineTo(rightCx - R - 34 * ratio, cy + 6 * ratio);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(255,255,255,0.82)';
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(255,230,170,0.96)';
+      ctx.font = `bold ${13 * ratio}px Cambria Math, Georgia, serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('z → z²', (leftCx + rightCx) * 0.5, cy - 8 * ratio);
+
       ctx.fillStyle = 'rgba(160,200,255,0.55)';
       ctx.font = `${11 * ratio}px monospace`;
-      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-      ctx.fillText(`N=${N}  ω_N = e^(i·2π/N)`, 8 * ratio, 6 * ratio);
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText('N: 16 → 8 → 4 → 2', 8 * ratio, 6 * ratio);
     }
 
-    [unityRootsN, unityRootsK].forEach(el => el?.addEventListener('input', () => {
-      if (unityRootsNValue) unityRootsNValue.textContent = unityRootsN?.value || 8;
-      if (unityRootsK && unityRootsN) {
-        const N = Number(unityRootsN.value);
-        unityRootsK.max = N - 1;
-        if (Number(unityRootsK.value) >= N) unityRootsK.value = 0;
-      }
-      if (unityRootsKValue) unityRootsKValue.textContent = unityRootsK?.value || 0;
+    unityRootsN?.addEventListener('input', () => {
+      if (unityRootsNValue) unityRootsNValue.textContent = String(getUnityRootsN());
       updateUnityRootsMath();
-    }));
-    if (unityRootsNValue) unityRootsNValue.textContent = unityRootsN?.value || 8;
-    if (unityRootsKValue) unityRootsKValue.textContent = unityRootsK?.value || 0;
+    });
+    if (unityRootsNValue) unityRootsNValue.textContent = String(getUnityRootsN());
     updateUnityRootsMath();
 
     function drawSortCompare(canvas, t) {
@@ -16239,7 +16310,6 @@
         ctx.beginPath();
         ctx.arc(hlPx, hlPy, 6.5, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillText('P(x)', W - 4, labelYT);
       });
     }
 
@@ -17038,6 +17108,9 @@
       }
       if (canDraw(evenOddCanvas)) {
         drawEvenOddSymmetry(evenOddCanvas);
+      }
+      if (canDraw(rootTreeCanvas)) {
+        drawRootsTree(rootTreeCanvas);
       }
       if (canDraw(unityRootsCanvas)) {
         drawUnityRoots(unityRootsCanvas);
