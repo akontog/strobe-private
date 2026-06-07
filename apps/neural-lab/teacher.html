@@ -4,26 +4,347 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Neural Lab - Teacher</title>
+<link rel="stylesheet" href="../assets/css/presentation-shell.css">
+<script src="../assets/js/presentation-shell.js"></script>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    color-scheme: dark;
+    --bg: #07111f;
+    --panel: rgba(11, 19, 34, 0.92);
+    --panel-strong: rgba(8, 14, 27, 0.98);
+    --text: #eef4ff;
+    --muted: #9bb0d1;
+    --line: #273652;
+    --accent: #5eead4;
+    --accent-2: #7dd3fc;
+    --danger: #f87171;
+    --success: #4ade80;
+    --presentation-sidebar-width: 290px;
+    --presentation-sidebar-padding: 70px 16px 18px;
+    --presentation-section-padding: 20px;
+    --presentation-menu-bg: rgba(8, 14, 27, 0.94);
+    --presentation-menu-color: var(--text);
+    --presentation-menu-border: var(--line);
+    --presentation-sidebar-hover-bg: rgba(125, 211, 252, 0.1);
+    --presentation-sidebar-hover-color: var(--text);
+    --presentation-sidebar-active-bg: rgba(94, 234, 212, 0.14);
+    --presentation-sidebar-active-border: rgba(94, 234, 212, 0.35);
+    --presentation-sidebar-active-color: #f0fdfa;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
   body {
+    margin: 0;
     font-family: "Segoe UI", Tahoma, sans-serif;
-    background: radial-gradient(circle at top, #1f2937 0%, #0b1220 55%, #060b14 100%);
-    color: #e5e7eb;
-    height: 100vh;
-    padding: 8px 10px;
-    display: grid;
-    gap: 8px;
+    color: var(--text);
+    background:
+      radial-gradient(circle at top right, rgba(125, 211, 252, 0.18), transparent 28%),
+      radial-gradient(circle at bottom left, rgba(94, 234, 212, 0.12), transparent 24%),
+      linear-gradient(180deg, #0a1324 0%, #040912 100%);
+  }
+
+  .menu-btn,
+  .edge-nav {
+    z-index: 12;
+  }
+
+  .slide-card {
+    width: min(1120px, 100%);
+    height: min(92vh, 840px);
+    background: linear-gradient(180deg, rgba(9, 16, 29, 0.96), rgba(6, 11, 21, 0.96));
+    border: 1px solid rgba(125, 211, 252, 0.15);
+    border-radius: 18px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
     overflow: hidden;
   }
-  .top {
+
+  .lesson-slide {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .slide-head {
+    padding: 20px 22px 14px;
+  }
+
+  .slide-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(125, 211, 252, 0.12);
+    border: 1px solid rgba(125, 211, 252, 0.18);
+    color: var(--accent-2);
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .slide-head h2 {
+    margin: 12px 0 0;
+    font-size: clamp(1.8rem, 2.7vw, 2.4rem);
+    line-height: 1.1;
+  }
+
+  .sum-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 14px;
+    padding: 0 22px 22px;
+    min-height: 0;
+  }
+
+  .demo-panel,
+  .result-panel,
+  .info-panel {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: rgba(11, 19, 34, 0.82);
+    padding: 18px;
+  }
+
+  .demo-panel {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+    gap: 12px;
+    align-content: start;
+    width: min(640px, 100%);
+    justify-self: center;
+  }
+
+  .panel-title {
+    margin: 0;
+    font-size: 1rem;
+    color: #dff7ff;
+  }
+
+  .slider-card {
+    border: 1px solid rgba(125, 211, 252, 0.16);
+    border-radius: 14px;
+    padding: 14px;
+    background: rgba(8, 14, 27, 0.72);
+  }
+
+  .slider-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .slider-value {
+    color: var(--accent-2);
+    font-variant-numeric: tabular-nums;
+  }
+
+  input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent);
+  }
+
+  .result-panel {
+    display: grid;
+    gap: 12px;
+    align-content: start;
+    min-height: 0;
+    width: 100%;
+    max-width: 1020px;
+    justify-self: center;
+  }
+
+  .equation-box {
+    border: 1px solid rgba(125, 211, 252, 0.16);
+    border-radius: 14px;
+    padding: 18px;
+    background: rgba(8, 14, 27, 0.78);
+  }
+
+  .equation-label {
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .equation-value {
+    margin-top: 10px;
+    font-size: clamp(1.2rem, 2.2vw, 1.9rem);
+    line-height: 1.45;
+    font-weight: 700;
+  }
+
+  .result-badge {
+    min-height: 108px;
+    border-radius: 18px;
+    padding: 18px;
+    display: grid;
+    gap: 8px;
+    align-content: center;
+    border: 1px solid rgba(125, 211, 252, 0.16);
+    background: linear-gradient(135deg, rgba(125, 211, 252, 0.12), rgba(94, 234, 212, 0.08));
+  }
+
+  .result-badge.threshold-low {
+    background: linear-gradient(135deg, rgba(248, 113, 113, 0.2), rgba(127, 29, 29, 0.18));
+    border-color: rgba(248, 113, 113, 0.32);
+    color: #fee2e2;
+  }
+
+  .result-badge.threshold-high {
+    background: linear-gradient(135deg, rgba(74, 222, 128, 0.18), rgba(20, 83, 45, 0.22));
+    border-color: rgba(74, 222, 128, 0.3);
+    color: #dcfce7;
+  }
+
+  .result-title {
+    font-size: 0.86rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.9;
+  }
+
+  .result-number {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .threshold-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(8, 14, 27, 0.72);
+    border: 1px solid rgba(125, 211, 252, 0.16);
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .threshold-value {
+    color: #fef3c7;
+    font-weight: 700;
+  }
+
+  .mini-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .mini-card {
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(125, 211, 252, 0.16);
+    background: rgba(8, 14, 27, 0.72);
+  }
+
+  .mini-card strong {
+    display: block;
+    font-size: 1.1rem;
+    margin-top: 6px;
+    color: #f8fafc;
+  }
+
+  .table-focus {
+    display: grid;
+    min-height: 0;
+    height: 100%;
+  }
+
+  .student-table-panel {
+    display: grid;
+    gap: 10px;
+    min-height: 0;
+    height: 100%;
+  }
+
+  .student-table-wrap {
+    border: 1px solid rgba(125, 211, 252, 0.16);
+    border-radius: 14px;
+    overflow: hidden;
+    background: rgba(8, 14, 27, 0.74);
+    min-height: 0;
+    height: 100%;
+    overflow: auto;
+  }
+
+  .student-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+
+  .student-table th,
+  .student-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(125, 211, 252, 0.09);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .student-table th {
+    color: var(--accent-2);
+    background: rgba(10, 17, 31, 0.86);
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .student-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .student-row-low {
+    background: rgba(127, 29, 29, 0.2);
+  }
+
+  .student-row-high {
+    background: rgba(20, 83, 45, 0.22);
+  }
+
+  .student-row-empty td {
+    color: var(--muted);
+    text-align: center;
+    padding: 16px 12px;
+  }
+
+  .dashboard-card {
+    display: grid;
+    padding: 8px;
+  }
+
+  .dashboard-shell {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 8px;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .dashboard-shell .top {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 14px;
     flex-wrap: wrap;
   }
-  h1 { font-size: 1.03rem; letter-spacing: 0.3px; }
+
+  .dashboard-shell h1 {
+    margin: 0;
+    font-size: 1.03rem;
+    letter-spacing: 0.3px;
+  }
+
   .status {
     font-size: 0.78rem;
     color: #bfdbfe;
@@ -32,25 +353,30 @@
     padding: 4px 9px;
     background: rgba(15, 23, 42, 0.75);
   }
-  .layout {
+
+  .dashboard-shell .layout {
     display: grid;
     grid-template-columns: minmax(290px, 0.95fr) minmax(420px, 1.3fr);
     gap: 8px;
-    height: calc(100vh - 62px);
     min-height: 0;
+    height: 100%;
   }
-  .panel {
+
+  .dashboard-shell .panel {
     background: rgba(15, 23, 42, 0.84);
     border: 1px solid #263247;
     border-radius: 12px;
     padding: 8px;
     min-height: 0;
+    overflow: auto;
   }
-  .panel h2 {
+
+  .dashboard-shell .panel h2 {
+    margin: 0 0 6px;
     font-size: 0.86rem;
     color: #93c5fd;
-    margin-bottom: 6px;
   }
+
   .input-row {
     border: 1px solid #2d3b54;
     border-radius: 10px;
@@ -60,33 +386,38 @@
     display: grid;
     gap: 5px;
   }
+
   .input-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 8px;
   }
+
   .toggle {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     font-size: 0.8rem;
   }
+
   .value-text {
     font-size: 0.75rem;
     color: #cbd5e1;
   }
-  input[type="range"] { width: 100%; accent-color: #38bdf8; }
+
   .bool-box {
     display: inline-flex;
     align-items: center;
     gap: 7px;
     font-size: 0.78rem;
   }
+
   .out-grid {
     display: grid;
     gap: 8px;
   }
+
   .out-item {
     border: 1px solid #2d3b54;
     border-radius: 10px;
@@ -97,13 +428,18 @@
     gap: 6px;
     background: rgba(15, 23, 42, 0.55);
   }
+
   .out-left {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     font-size: 0.83rem;
   }
-  .out-icon { font-size: 1.25rem; }
+
+  .out-icon {
+    font-size: 1.25rem;
+  }
+
   .out-pct {
     min-width: 54px;
     text-align: right;
@@ -111,10 +447,12 @@
     color: #bfdbfe;
     font-size: 0.8rem;
   }
+
   .weights-list {
     display: grid;
     gap: 5px;
   }
+
   .weight-card {
     border: 1px solid #2d3b54;
     border-radius: 10px;
@@ -123,15 +461,26 @@
     display: grid;
     gap: 4px;
   }
+
   .weight-title {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 8px;
     font-size: 0.76rem;
     color: #e2e8f0;
   }
-  .weight-meta { color: #93c5fd; }
-  .hint { color: #94a3b8; font-size: 0.72rem; margin-top: 2px; }
+
+  .weight-meta {
+    color: #93c5fd;
+  }
+
+  .hint {
+    color: #94a3b8;
+    font-size: 0.72rem;
+    margin-top: 2px;
+  }
+
   #nnCanvas {
     width: 100%;
     height: 100%;
@@ -143,50 +492,294 @@
   }
 
   @media (max-width: 980px) {
-    body { height: auto; min-height: 100vh; overflow: auto; }
-    .layout { grid-template-columns: 1fr; height: auto; }
-    #nnCanvas { height: 300px; min-height: 220px; }
+    .demo-panel,
+    .dashboard-shell .layout {
+      grid-template-columns: 1fr;
+    }
+
+    .slide-card {
+      height: auto;
+      min-height: min(92vh, 840px);
+    }
+
+    .dashboard-card {
+      min-height: 0;
+    }
+
+    .dashboard-shell .layout {
+      height: auto;
+    }
+
+    #nnCanvas {
+      height: 320px;
+      min-height: 220px;
+    }
   }
 
-  @media (max-height: 900px) {
-    body {
-      padding: 6px 8px;
-      gap: 6px;
-    }
-    .layout {
-      height: calc(100vh - 56px);
-      gap: 6px;
+  @media (max-width: 720px) {
+    .slide-head,
+    .sum-layout {
+      padding-left: 16px;
+      padding-right: 16px;
     }
   }
 </style>
 </head>
 <body>
-  <div class="top">
-    <h1>Neural Lab (Teacher)</h1>
-    <div class="status" id="statusText">Σύνδεση...</div>
-  </div>
+  <button class="menu-btn" id="menuBtn" aria-label="Άνοιγμα περιεχομένων" aria-controls="sidebar" aria-expanded="true">☰</button>
+  <button class="edge-nav left" id="prevSlideBtn" aria-label="Προηγούμενη διαφάνεια">◀</button>
+  <button class="edge-nav right" id="nextSlideBtn" aria-label="Επόμενη διαφάνεια">▶</button>
 
-  <div class="layout">
-    <div class="panel">
-      <h2>Είσοδοι</h2>
-      <div id="inputsWrap"></div>
+  <aside class="sidebar" id="sidebar">
+    <h2>Neural Lab</h2>
+    <a href="#sec-sum">1. Ζυγισμένο άθροισμα</a>
+    <a href="#sec-threshold">2. Threshold</a>
+    <a href="#sec-dashboard">3. Live dashboard</a>
+  </aside>
 
-      <h2 style="margin-top:7px;">Έξοδοι</h2>
-      <div class="out-grid" id="outputsWrap"></div>
+  <main class="content" id="content">
+    <section class="section" id="sec-sum">
+      <div class="slide-card lesson-slide">
+        <div class="slide-head">
+          <span class="slide-eyebrow">1η διαφάνεια</span>
+          <h2>w<sub>1</sub> · i<sub>1</sub> + w<sub>2</sub> · i<sub>2</sub></h2>
+        </div>
 
-      <h2 style="margin-top:7px;">Weights Μαθητών</h2>
-      <div class="weights-list" id="weightsWrap"></div>
-      <p class="hint">Κάθε μαθητής ελέγχει μόνο ένα βάρος. Αν συνδεθούν πάνω από 4, οι επιπλέον μπαίνουν σε αναμονή.</p>
-    </div>
+        <div class="sum-layout">
+          <div class="demo-panel">
+            <div class="slider-card">
+              <label class="slider-label" for="slide1-w1">
+                <span>Βάρος w<sub>1</sub></span>
+                <span class="slider-value" id="slide1-w1-value">1</span>
+              </label>
+              <input id="slide1-w1" type="range" min="-4" max="4" step="0.1" value="1">
+            </div>
 
-    <div class="panel">
-      <h2>Οπτικοποίηση Νευρωνικού</h2>
-      <canvas id="nnCanvas" width="920" height="430"></canvas>
-    </div>
-  </div>
+            <div class="slider-card">
+              <label class="slider-label" for="slide1-w2">
+                <span>Βάρος w<sub>2</sub></span>
+                <span class="slider-value" id="slide1-w2-value">1</span>
+              </label>
+              <input id="slide1-w2" type="range" min="-4" max="4" step="0.1" value="1">
+            </div>
+          </div>
+
+          <div class="result-panel">
+            <div class="info-panel student-table-panel table-focus">
+              <h3 class="panel-title">Συνδεδεμένοι χρήστες</h3>
+              <div class="student-table-wrap">
+                <table class="student-table">
+                  <thead>
+                    <tr>
+                      <th>Student</th>
+                      <th>w<sub>1</sub></th>
+                      <th>i<sub>1</sub></th>
+                      <th>w<sub>2</sub></th>
+                      <th>i<sub>2</sub></th>
+                      <th>Αποτέλεσμα</th>
+                    </tr>
+                  </thead>
+                  <tbody id="slide1-students-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="sec-threshold">
+      <div class="slide-card lesson-slide">
+        <div class="slide-head">
+          <span class="slide-eyebrow">2η διαφάνεια</span>
+          <h2>w<sub>1</sub> · i<sub>1</sub> + w<sub>2</sub> · i<sub>2</sub> &gt; threshold</h2>
+        </div>
+
+        <div class="sum-layout">
+          <div class="demo-panel">
+            <div class="slider-card">
+              <label class="slider-label" for="slide2-w1">
+                <span>Βάρος w<sub>1</sub></span>
+                <span class="slider-value" id="slide2-w1-value">1</span>
+              </label>
+              <input id="slide2-w1" type="range" min="-4" max="4" step="0.1" value="1">
+            </div>
+
+            <div class="slider-card">
+              <label class="slider-label" for="slide2-w2">
+                <span>Βάρος w<sub>2</sub></span>
+                <span class="slider-value" id="slide2-w2-value">1</span>
+              </label>
+              <input id="slide2-w2" type="range" min="-4" max="4" step="0.1" value="1">
+            </div>
+          </div>
+
+          <div class="result-panel">
+            <div class="info-panel student-table-panel table-focus">
+              <h3 class="panel-title">Συνδεδεμένοι χρήστες</h3>
+              <div class="student-table-wrap">
+                <table class="student-table">
+                  <thead>
+                    <tr>
+                      <th>Student</th>
+                      <th>w<sub>1</sub></th>
+                      <th>i<sub>1</sub></th>
+                      <th>w<sub>2</sub></th>
+                      <th>i<sub>2</sub></th>
+                      <th>Αποτέλεσμα</th>
+                    </tr>
+                  </thead>
+                  <tbody id="slide2-students-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="sec-dashboard">
+      <div class="slide-card dashboard-card">
+        <div class="dashboard-shell">
+          <div class="top">
+            <h1>Neural Lab (Teacher)</h1>
+            <div class="status" id="statusText">Σύνδεση...</div>
+          </div>
+
+          <div class="layout">
+            <div class="panel">
+              <h2>Είσοδοι</h2>
+              <div id="inputsWrap"></div>
+
+              <h2 style="margin-top:7px;">Έξοδοι</h2>
+              <div class="out-grid" id="outputsWrap"></div>
+
+              <h2 style="margin-top:7px;">Weights Μαθητών</h2>
+              <div class="weights-list" id="weightsWrap"></div>
+              <p class="hint">Live εικόνα χρηστών και τιμών στο dashboard.</p>
+            </div>
+
+            <div class="panel">
+              <h2>Οπτικοποίηση Νευρωνικού</h2>
+              <canvas id="nnCanvas" width="920" height="430"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
 <script>
 (() => {
+  const deck = window.SharedPresentationDeck ? window.SharedPresentationDeck.init({
+    menuButtonSelector: "#menuBtn",
+    sidebarSelector: "#sidebar",
+    contentSelector: "#content",
+    prevButtonSelector: "#prevSlideBtn",
+    nextButtonSelector: "#nextSlideBtn",
+    menuButtonTogglesSidebar: true,
+    initialSidebarOpen: true,
+    slideChangedEventName: "neural:slide-changed",
+    exposeAs: "neuralSlideDeck"
+  }) : null;
+
+  const DEMO_INPUTS = { i1: 2, i2: 3 };
+  const DEMO_THRESHOLD = 5;
+  const slide1StudentsBody = document.getElementById("slide1-students-body");
+  const slide2StudentsBody = document.getElementById("slide2-students-body");
+
+  function formatNumber(value) {
+    const rounded = Math.round(value * 10) / 10;
+    return Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1);
+  }
+
+  function bindWeightedDemo(config) {
+    const w1Slider = document.getElementById(config.w1Id);
+    const w2Slider = document.getElementById(config.w2Id);
+    const w1Value = document.getElementById(config.w1ValueId);
+    const w2Value = document.getElementById(config.w2ValueId);
+    const equation = config.equationId ? document.getElementById(config.equationId) : null;
+    const result = config.resultId ? document.getElementById(config.resultId) : null;
+    const contrib1 = config.contrib1Id ? document.getElementById(config.contrib1Id) : null;
+    const contrib2 = config.contrib2Id ? document.getElementById(config.contrib2Id) : null;
+    const message = config.messageId ? document.getElementById(config.messageId) : null;
+    const resultBadge = config.resultBadgeId ? document.getElementById(config.resultBadgeId) : null;
+    const diffEl = config.diffId ? document.getElementById(config.diffId) : null;
+    const stateEl = config.stateId ? document.getElementById(config.stateId) : null;
+
+    function update() {
+      const w1 = Number(w1Slider.value);
+      const w2 = Number(w2Slider.value);
+      const term1 = w1 * DEMO_INPUTS.i1;
+      const term2 = w2 * DEMO_INPUTS.i2;
+      const total = term1 + term2;
+
+      w1Value.textContent = formatNumber(w1);
+      w2Value.textContent = formatNumber(w2);
+      if (equation) {
+        equation.innerHTML = `${formatNumber(w1)} · ${DEMO_INPUTS.i1} + ${formatNumber(w2)} · ${DEMO_INPUTS.i2} = ${formatNumber(total)}`;
+      }
+      if (result) {
+        result.textContent = formatNumber(total);
+      }
+
+      if (contrib1) {
+        contrib1.textContent = `${formatNumber(w1)} · ${DEMO_INPUTS.i1} = ${formatNumber(term1)}`;
+      }
+
+      if (contrib2) {
+        contrib2.textContent = `${formatNumber(w2)} · ${DEMO_INPUTS.i2} = ${formatNumber(term2)}`;
+      }
+
+      if (config.threshold != null) {
+        const diff = total - config.threshold;
+        const passed = total >= config.threshold;
+
+        if (resultBadge) {
+          resultBadge.classList.toggle("threshold-low", !passed);
+          resultBadge.classList.toggle("threshold-high", passed);
+        }
+
+        if (message) {
+          message.textContent = "";
+        }
+
+        if (diffEl) {
+          diffEl.textContent = passed
+            ? `Πάνω από το threshold κατά ${formatNumber(diff)}`
+            : `Κάτω από το threshold κατά ${formatNumber(Math.abs(diff))}`;
+        }
+
+        if (stateEl) {
+          stateEl.textContent = passed ? "Πρασινίζει" : "Κοκκινίζει";
+        }
+      } else if (message) {
+        message.textContent = "";
+      }
+
+      renderStudentTables();
+    }
+
+    w1Slider.addEventListener("input", update);
+    w2Slider.addEventListener("input", update);
+    update();
+  }
+
+  bindWeightedDemo({
+    w1Id: "slide1-w1",
+    w2Id: "slide1-w2",
+    w1ValueId: "slide1-w1-value",
+    w2ValueId: "slide1-w2-value"
+  });
+
+  bindWeightedDemo({
+    w1Id: "slide2-w1",
+    w2Id: "slide2-w2",
+    w1ValueId: "slide2-w1-value",
+    w2ValueId: "slide2-w2-value",
+    threshold: DEMO_THRESHOLD
+  });
+
   const INPUTS = [
     { key: "wheels", label: "Αριθμός τροχών", type: "number", min: 0, max: 6, step: 1 },
     { key: "hasEngine", label: "Έχει μηχανή", type: "boolean" },
@@ -239,6 +832,10 @@
         scooter: false
       }
     },
+    lesson: {
+      inputs: { i1: 2, i2: 3 },
+      threshold: 5
+    },
     participants: []
   };
 
@@ -248,14 +845,18 @@
 
   function inputNormalized(inputKey) {
     const cfg = state.model.inputs[inputKey];
-    if (!cfg || !cfg.enabled) return 0;
+    if (!cfg || !cfg.enabled) {
+      return 0;
+    }
 
     if (inputKey === "wheels") {
       return clamp(Number(cfg.value) / 6, 0, 1.2);
     }
+
     if (inputKey === "seats") {
       return clamp(Number(cfg.value) / 8, 0, 1.2);
     }
+
     return cfg.value ? 1 : 0;
   }
 
@@ -263,8 +864,10 @@
     const scores = {};
     let activeCount = 0;
 
-    OUTPUTS.forEach((o) => {
-      if (state.model.outputsEnabled[o.key]) activeCount += 1;
+    OUTPUTS.forEach((output) => {
+      if (state.model.outputsEnabled[output.key]) {
+        activeCount += 1;
+      }
     });
 
     OUTPUTS.forEach((output) => {
@@ -276,45 +879,44 @@
       let sum = 0;
       INPUTS.forEach((input) => {
         const x = inputNormalized(input.key);
-        const w = Number(state.model.weights[input.key] || 0);
+        const weight = Number(state.model.weights[input.key] || 0);
         const proto = OUTPUT_PROTOTYPES[output.key][input.key] || 0;
-        sum += x * w * proto;
+        sum += x * weight * proto;
       });
       scores[output.key] = sum;
     });
 
     if (activeCount === 0) {
-      return OUTPUTS.reduce((acc, o) => {
-        acc[o.key] = 0;
+      return OUTPUTS.reduce((acc, output) => {
+        acc[output.key] = 0;
         return acc;
       }, {});
     }
 
-    const activeScores = OUTPUTS.filter((o) => state.model.outputsEnabled[o.key]).map((o) => scores[o.key]);
+    const activeScores = OUTPUTS
+      .filter((output) => state.model.outputsEnabled[output.key])
+      .map((output) => scores[output.key]);
     const maxScore = Math.max(...activeScores);
 
     let total = 0;
-    const probs = {};
+    const probabilities = {};
 
-    OUTPUTS.forEach((o) => {
-      if (!state.model.outputsEnabled[o.key]) {
-        probs[o.key] = 0;
+    OUTPUTS.forEach((output) => {
+      if (!state.model.outputsEnabled[output.key]) {
+        probabilities[output.key] = 0;
         return;
       }
-      const expV = Math.exp(scores[o.key] - maxScore);
-      probs[o.key] = expV;
-      total += expV;
+
+      const expValue = Math.exp(scores[output.key] - maxScore);
+      probabilities[output.key] = expValue;
+      total += expValue;
     });
 
-    OUTPUTS.forEach((o) => {
-      probs[o.key] = total > 0 ? (probs[o.key] / total) * 100 : 0;
+    OUTPUTS.forEach((output) => {
+      probabilities[output.key] = total > 0 ? (probabilities[output.key] / total) * 100 : 0;
     });
 
-    return probs;
-  }
-
-  function assignedStudentForInput(inputKey) {
-    return state.participants.find((p) => p.role === "client" && p.assignedInput === inputKey) || null;
+    return probabilities;
   }
 
   function renderInputs() {
@@ -343,14 +945,14 @@
           }
         });
       });
-      const tText = document.createElement("span");
-      tText.textContent = input.label;
-      toggle.append(enabled, tText);
+
+      const label = document.createElement("span");
+      label.textContent = input.label;
+      toggle.append(enabled, label);
 
       const meta = document.createElement("span");
       meta.className = "value-text";
       meta.textContent = cfg.enabled ? "ενεργή" : "ανενεργή";
-
       head.append(toggle, meta);
       row.appendChild(head);
 
@@ -388,6 +990,12 @@
         boolCheck.type = "checkbox";
         boolCheck.checked = Boolean(cfg.value);
         boolCheck.disabled = !cfg.enabled;
+        const txt = document.createElement("span");
+        txt.textContent = boolCheck.checked ? "Ναι" : "Όχι";
+
+        boolCheck.addEventListener("input", () => {
+          txt.textContent = boolCheck.checked ? "Ναι" : "Όχι";
+        });
         boolCheck.addEventListener("change", () => {
           sendTeacherConfig({
             inputs: {
@@ -398,11 +1006,7 @@
             }
           });
         });
-        const txt = document.createElement("span");
-        txt.textContent = boolCheck.checked ? "Ναι" : "Όχι";
-        boolCheck.addEventListener("input", () => {
-          txt.textContent = boolCheck.checked ? "Ναι" : "Όχι";
-        });
+
         boolLabel.append(boolCheck, txt);
         row.appendChild(boolLabel);
       }
@@ -412,7 +1016,7 @@
   }
 
   function renderOutputs() {
-    const probs = computeOutputScores();
+    const probabilities = computeOutputScores();
     outputsWrap.innerHTML = "";
 
     OUTPUTS.forEach((output) => {
@@ -436,14 +1040,14 @@
       icon.className = "out-icon";
       icon.textContent = output.icon;
 
-      const lbl = document.createElement("span");
-      lbl.textContent = output.label;
+      const label = document.createElement("span");
+      label.textContent = output.label;
 
-      left.append(check, icon, lbl);
+      left.append(check, icon, label);
 
       const pct = document.createElement("span");
       pct.className = "out-pct";
-      pct.textContent = `${probs[output.key].toFixed(1)}%`;
+      pct.textContent = `${probabilities[output.key].toFixed(1)}%`;
 
       item.append(left, pct);
       outputsWrap.appendChild(item);
@@ -453,43 +1057,113 @@
   function renderWeights() {
     weightsWrap.innerHTML = "";
 
-    INPUTS.forEach((input) => {
-      const student = assignedStudentForInput(input.key);
-      const value = Number(state.model.weights[input.key] || 0);
+    const students = state.participants.filter((participant) => participant.role === "client");
 
+    if (students.length === 0) {
+      const note = document.createElement("div");
+      note.className = "hint";
+      note.textContent = "Δεν υπάρχουν συνδεδεμένοι students ακόμη.";
+      weightsWrap.appendChild(note);
+      return;
+    }
+
+    students.forEach((student) => {
       const card = document.createElement("div");
       card.className = "weight-card";
 
       const title = document.createElement("div");
       title.className = "weight-title";
-
       const left = document.createElement("span");
-      left.textContent = input.label;
+      left.textContent = student.name;
       const right = document.createElement("span");
       right.className = "weight-meta";
-      right.textContent = student ? `${student.name} (${value.toFixed(2)})` : `χωρίς ανάθεση (${value.toFixed(2)})`;
-
+      right.textContent = `result = ${Number(student.result || 0).toFixed(1)}`;
       title.append(left, right);
 
-      const slider = document.createElement("input");
-      slider.type = "range";
-      slider.min = "-2";
-      slider.max = "2";
-      slider.step = "0.01";
-      slider.value = String(value);
-      slider.disabled = true;
+      const details = document.createElement("div");
+      details.className = "value-text";
+      details.textContent = `w1=${Number(student.weights && student.weights.w1 || 0).toFixed(1)}, i1=${Number(student.i1 || 0).toFixed(1)}, w2=${Number(student.weights && student.weights.w2 || 0).toFixed(1)}, i2=${Number(student.i2 || 0).toFixed(1)}`;
 
-      card.append(title, slider);
+      const stateText = document.createElement("div");
+      stateText.className = "hint";
+      stateText.textContent = student.aboveThreshold ? "Πάνω από το threshold" : "Κάτω από το threshold";
+
+      card.append(title, details, stateText);
       weightsWrap.appendChild(card);
     });
+  }
 
-    const waiting = state.participants.filter((p) => p.role === "client" && !p.assignedInput);
-    if (waiting.length > 0) {
-      const note = document.createElement("div");
-      note.className = "hint";
-      note.textContent = `Αναμονή: ${waiting.map((w) => w.name).join(", ")}`;
-      weightsWrap.appendChild(note);
-    }
+  function renderStudentTables() {
+    const students = state.participants.filter((participant) => participant.role === "client");
+    const threshold = Number(state.lesson.threshold || DEMO_THRESHOLD);
+    const bodies = [slide1StudentsBody, slide2StudentsBody];
+
+    bodies.forEach((body, tableIndex) => {
+      body.innerHTML = "";
+
+      const teacherWeights = tableIndex === 0
+        ? {
+            w1: Number(document.getElementById("slide1-w1").value || 0),
+            w2: Number(document.getElementById("slide1-w2").value || 0)
+          }
+        : {
+            w1: Number(document.getElementById("slide2-w1").value || 0),
+            w2: Number(document.getElementById("slide2-w2").value || 0)
+          };
+
+      const teacherI1 = Number(state.lesson && state.lesson.inputs && state.lesson.inputs.i1 || DEMO_INPUTS.i1);
+      const teacherI2 = Number(state.lesson && state.lesson.inputs && state.lesson.inputs.i2 || DEMO_INPUTS.i2);
+      const teacherResult = (teacherWeights.w1 * teacherI1) + (teacherWeights.w2 * teacherI2);
+
+      const teacherRow = document.createElement("tr");
+      if (tableIndex === 1) {
+        teacherRow.classList.add(teacherResult >= threshold ? "student-row-high" : "student-row-low");
+      }
+
+      [
+        "Teacher",
+        teacherWeights.w1.toFixed(1),
+        teacherI1.toFixed(1),
+        teacherWeights.w2.toFixed(1),
+        teacherI2.toFixed(1),
+        teacherResult.toFixed(1)
+      ].forEach((value) => {
+        const cell = document.createElement("td");
+        cell.textContent = value;
+        teacherRow.appendChild(cell);
+      });
+      body.appendChild(teacherRow);
+
+      if (students.length === 0) {
+        return;
+      }
+
+      students.forEach((student) => {
+        const row = document.createElement("tr");
+        const result = Number(student.result || 0);
+
+        if (tableIndex === 1) {
+          row.classList.add(result >= threshold ? "student-row-high" : "student-row-low");
+        }
+
+        const cells = [
+          student.name,
+          Number(student.weights && student.weights.w1 || 0).toFixed(1),
+          Number(student.i1 || 0).toFixed(1),
+          Number(student.weights && student.weights.w2 || 0).toFixed(1),
+          Number(student.i2 || 0).toFixed(1),
+          result.toFixed(1)
+        ];
+
+        cells.forEach((value) => {
+          const cell = document.createElement("td");
+          cell.textContent = value;
+          row.appendChild(cell);
+        });
+
+        body.appendChild(row);
+      });
+    });
   }
 
   function drawNode(x, y, radius, label, fill, isIcon = false) {
@@ -502,7 +1176,7 @@
     ctx.stroke();
 
     ctx.fillStyle = "#dbeafe";
-  ctx.font = isIcon ? "26px Segoe UI Emoji" : "12px Segoe UI";
+    ctx.font = isIcon ? "26px Segoe UI Emoji" : "12px Segoe UI";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(label, x, y);
@@ -513,9 +1187,9 @@
     const height = canvas.height;
     ctx.clearRect(0, 0, width, height);
 
-    const inputYs = INPUTS.map((_, i) => Math.round((i + 1) * height / (INPUTS.length + 1)));
-    const activeOutputs = OUTPUTS.filter((o) => state.model.outputsEnabled[o.key]);
-    const outputYs = OUTPUTS.map((_, i) => Math.round((i + 1) * height / (OUTPUTS.length + 1)));
+    const inputYs = INPUTS.map((_, index) => Math.round((index + 1) * height / (INPUTS.length + 1)));
+    const activeOutputs = OUTPUTS.filter((output) => state.model.outputsEnabled[output.key]);
+    const outputYs = OUTPUTS.map((_, index) => Math.round((index + 1) * height / (OUTPUTS.length + 1)));
 
     const xIn = 150;
     const xOut = width - 150;
@@ -529,42 +1203,42 @@
         const inputVal = inputNormalized(input.key);
         const weight = Number(state.model.weights[input.key] || 0);
         const proto = OUTPUT_PROTOTYPES[output.key][input.key] || 0;
-        const contrib = inputCfg.enabled && state.model.outputsEnabled[output.key]
+        const contribution = inputCfg.enabled && state.model.outputsEnabled[output.key]
           ? inputVal * weight * proto
           : 0;
 
-        const alpha = state.model.outputsEnabled[output.key] ? 0.3 + Math.min(0.7, Math.abs(contrib)) : 0.12;
-        const color = contrib >= 0
+        const alpha = state.model.outputsEnabled[output.key] ? 0.3 + Math.min(0.7, Math.abs(contribution)) : 0.12;
+        const color = contribution >= 0
           ? `rgba(34,197,94,${alpha.toFixed(3)})`
           : `rgba(239,68,68,${alpha.toFixed(3)})`;
 
         ctx.beginPath();
         ctx.moveTo(xIn + 34, inY);
         ctx.lineTo(xOut - 34, outY);
-        ctx.lineWidth = state.model.outputsEnabled[output.key] ? 1.2 + Math.abs(contrib) * 4.5 : 1;
+        ctx.lineWidth = state.model.outputsEnabled[output.key] ? 1.2 + Math.abs(contribution) * 4.5 : 1;
         ctx.strokeStyle = color;
         ctx.stroke();
       });
     });
 
-    INPUTS.forEach((input, idx) => {
+    INPUTS.forEach((input, index) => {
       const cfg = state.model.inputs[input.key] || { enabled: false };
-      drawNode(xIn, inputYs[idx], 26, input.label.split(" ")[0], cfg.enabled ? "#1d4ed8" : "#1f2937");
+      drawNode(xIn, inputYs[index], 26, input.label.split(" ")[0], cfg.enabled ? "#1d4ed8" : "#1f2937");
     });
 
-    OUTPUTS.forEach((output, idx) => {
+    OUTPUTS.forEach((output, index) => {
       const enabled = Boolean(state.model.outputsEnabled[output.key]);
-      drawNode(xOut, outputYs[idx], 38, output.icon, enabled ? "#7c3aed" : "#1f2937", true);
+      drawNode(xOut, outputYs[index], 38, output.icon, enabled ? "#7c3aed" : "#1f2937", true);
     });
 
-    const probs = computeOutputScores();
+    const probabilities = computeOutputScores();
     ctx.fillStyle = "#e2e8f0";
     ctx.font = "12px Segoe UI";
     ctx.textAlign = "left";
-    OUTPUTS.forEach((output, idx) => {
-      const y = outputYs[idx] + 46;
-      const txt = `${output.label}: ${probs[output.key].toFixed(1)}%`;
-      ctx.fillText(txt, xOut - 60, y);
+
+    OUTPUTS.forEach((output, index) => {
+      const y = outputYs[index] + 46;
+      ctx.fillText(`${output.label}: ${probabilities[output.key].toFixed(1)}%`, xOut - 60, y);
     });
 
     if (activeOutputs.length === 0) {
@@ -576,6 +1250,7 @@
   }
 
   function renderAll() {
+    renderStudentTables();
     renderInputs();
     renderOutputs();
     renderWeights();
@@ -583,10 +1258,26 @@
   }
 
   function applyServerState(payload) {
-    if (!payload || typeof payload !== "object") return;
+    if (!payload || typeof payload !== "object") {
+      return;
+    }
 
     if (payload.model && typeof payload.model === "object") {
       state.model = payload.model;
+    }
+
+    if (payload.lesson && typeof payload.lesson === "object") {
+      state.lesson = {
+        inputs: {
+          i1: Number(payload.lesson.inputs && payload.lesson.inputs.i1) || DEMO_INPUTS.i1,
+          i2: Number(payload.lesson.inputs && payload.lesson.inputs.i2) || DEMO_INPUTS.i2
+        },
+        threshold: Number(payload.lesson.threshold) || DEMO_THRESHOLD
+      };
+      const thresholdEl = document.getElementById("slide2-threshold");
+      if (thresholdEl) {
+        thresholdEl.textContent = String(state.lesson.threshold);
+      }
     }
 
     if (Array.isArray(payload.participants)) {
@@ -597,7 +1288,10 @@
   }
 
   function send(type, data = {}) {
-    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      return;
+    }
+
     ws.send(JSON.stringify({ type, ...data }));
   }
 
@@ -640,8 +1334,8 @@
 
   function fitCanvasToContainer() {
     const rect = canvas.getBoundingClientRect();
-    const width = Math.max(500, Math.round(rect.width));
-    const height = Math.max(260, Math.round(rect.height));
+    const width = Math.max(500, Math.round(rect.width || 0));
+    const height = Math.max(260, Math.round(rect.height || 0));
     if (canvas.width !== width || canvas.height !== height) {
       canvas.width = width;
       canvas.height = height;
@@ -651,6 +1345,16 @@
 
   const resizeObserver = new ResizeObserver(() => fitCanvasToContainer());
   resizeObserver.observe(canvas);
+
+  document.addEventListener("neural:slide-changed", (event) => {
+    if (event.detail && event.detail.slideId === "sec-dashboard") {
+      requestAnimationFrame(() => fitCanvasToContainer());
+    }
+  });
+
+  if (deck && typeof deck.goToSlide === "function") {
+    requestAnimationFrame(() => deck.goToSlide(0, { force: true, smooth: false }));
+  }
 
   fitCanvasToContainer();
   renderAll();

@@ -698,7 +698,8 @@ const COMM_EVENT_CATALOG = Object.freeze([
   { app: 'neural-lab', direction: 'in', event: 'neural-lab:ws-close', description: 'Neural-lab websocket connection closed.' },
   { app: 'neural-lab', direction: 'in', event: 'neural-lab:register_teacher', description: 'Teacher registers in neural-lab channel.' },
   { app: 'neural-lab', direction: 'in', event: 'neural-lab:register_student', description: 'Student registers in neural-lab channel.' },
-  { app: 'neural-lab', direction: 'in', event: 'neural-lab:student_weight', description: 'Student updates assigned input weight.' },
+  { app: 'neural-lab', direction: 'in', event: 'neural-lab:student_weight', description: 'Legacy student single-weight update.' },
+  { app: 'neural-lab', direction: 'in', event: 'neural-lab:student_weights', description: 'Student updates personal w1/w2 sliders.' },
   { app: 'neural-lab', direction: 'in', event: 'neural-lab:teacher_config', description: 'Teacher updates input/output configuration.' },
   { app: 'neural-lab', direction: 'out', event: 'neural-lab:canvas_state', description: 'Server pushes synchronized state to teachers/students.' }
 ]);
@@ -3640,6 +3641,11 @@ buffonWss.on('connection', (ws, request) => {
 const canvasNodeWss = new WebSocketServer({ noServer: true });
 const canvasNodeTeachers = new Set();
 const canvasNodeStudents = new Map();
+const CANVAS_NODE_SHARED_INPUTS = Object.freeze({
+  i1: 2,
+  i2: 3
+});
+const CANVAS_NODE_THRESHOLD = 5;
 
 const CANVAS_NODE_INPUTS = {
   wheels: { key: 'wheels', type: 'number', min: 0, max: 6, fallback: 4 },
@@ -3680,16 +3686,44 @@ function clampCanvasNodeNumber(value, min, max, fallback) {
   return Math.max(min, Math.min(max, parsed));
 }
 
+function normalizeCanvasNodeStudentWeights(weights, fallback = {}) {
+  const source = weights && typeof weights === 'object' ? weights : {};
+  const fallbackW1 = Number.isFinite(Number(fallback.w1)) ? Number(fallback.w1) : 1;
+  const fallbackW2 = Number.isFinite(Number(fallback.w2)) ? Number(fallback.w2) : 1;
+
+  return {
+    w1: Number(clampCanvasNodeNumber(source.w1, -4, 4, fallbackW1).toFixed(1)),
+    w2: Number(clampCanvasNodeNumber(source.w2, -4, 4, fallbackW2).toFixed(1))
+  };
+}
+
+function computeCanvasNodeStudentResult(weights) {
+  const safeWeights = normalizeCanvasNodeStudentWeights(weights, weights);
+  const result = (safeWeights.w1 * CANVAS_NODE_SHARED_INPUTS.i1) + (safeWeights.w2 * CANVAS_NODE_SHARED_INPUTS.i2);
+  return Number(result.toFixed(2));
+}
+
+function buildCanvasNodeStudentSnapshot(student) {
+  const weights = normalizeCanvasNodeStudentWeights(student && student.weights, student && student.weights);
+  const result = computeCanvasNodeStudentResult(weights);
+
+  return {
+    id: student.id,
+    role: 'client',
+    name: student.name,
+    weights,
+    i1: CANVAS_NODE_SHARED_INPUTS.i1,
+    i2: CANVAS_NODE_SHARED_INPUTS.i2,
+    result,
+    threshold: CANVAS_NODE_THRESHOLD,
+    aboveThreshold: result >= CANVAS_NODE_THRESHOLD
+  };
+}
+
 function buildCanvasNodeParticipants() {
   const students = [...canvasNodeStudents.values()]
     .sort((a, b) => (a.connectedAt - b.connectedAt) || a.name.localeCompare(b.name))
-    .map((student) => ({
-      id: student.id,
-      role: 'client',
-      name: student.name,
-      assignedInput: student.assignedInput,
-      weight: student.assignedInput ? Number(canvasNodeModel.weights[student.assignedInput] || 0) : 0
-    }));
+    .map((student) => buildCanvasNodeStudentSnapshot(student));
 
   return students;
 }
@@ -3723,12 +3757,12 @@ function canvasNodeSendStudentState(studentWs) {
 
   const payload = {
     type: 'canvas_state',
-    me: {
-      id: student.id,
-      name: student.name,
-      assignedInput: student.assignedInput,
-      weight: student.assignedInput ? Number(canvasNodeModel.weights[student.assignedInput] || 0) : 0
+    lesson: {
+      inputs: { ...CANVAS_NODE_SHARED_INPUTS },
+      threshold: CANVAS_NODE_THRESHOLD
     }
+    ,
+    me: buildCanvasNodeStudentSnapshot(student)
   };
 
   studentWs.send(JSON.stringify(payload));
@@ -3750,6 +3784,10 @@ function canvasNodeBroadcastState() {
 
   canvasNodeBroadcastTeachers({
     type: 'canvas_state',
+    lesson: {
+      inputs: { ...CANVAS_NODE_SHARED_INPUTS },
+      threshold: CANVAS_NODE_THRESHOLD
+    },
     model,
     participants
   });
@@ -3757,21 +3795,6 @@ function canvasNodeBroadcastState() {
   canvasNodeStudents.forEach((_, studentWs) => {
     canvasNodeSendStudentState(studentWs);
   });
-}
-
-function canvasNodeReassignStudents() {
-  const sorted = [...canvasNodeStudents.values()].sort((a, b) => (a.connectedAt - b.connectedAt) || a.name.localeCompare(b.name));
-  let changed = false;
-
-  sorted.forEach((student, index) => {
-    const nextAssigned = CANVAS_NODE_INPUT_KEYS[index] || null;
-    if (student.assignedInput !== nextAssigned) {
-      student.assignedInput = nextAssigned;
-      changed = true;
-    }
-  });
-
-  return changed;
 }
 
 canvasNodeWss.on('connection', (ws, request) => {
@@ -3836,12 +3859,13 @@ canvasNodeWss.on('connection', (ws, request) => {
 
       if (existing) {
         existing.name = studentName;
+        existing.weights = normalizeCanvasNodeStudentWeights(existing.weights, existing.weights);
       } else {
         canvasNodeStudents.set(ws, {
           id: `canvas-${Date.now().toString(36)}-${Math.floor(Math.random() * 10000).toString(16)}`,
           name: studentName,
           connectedAt: Date.now(),
-          assignedInput: null
+          weights: { w1: 1, w2: 1 }
         });
       }
 
@@ -3850,19 +3874,25 @@ canvasNodeWss.on('connection', (ws, request) => {
         name: studentName
       });
 
-      canvasNodeReassignStudents();
       canvasNodeBroadcastState();
       return;
     }
 
-    if (message.type === 'student_weight') {
+    if (message.type === 'student_weights' || message.type === 'student_weight') {
       const student = canvasNodeStudents.get(ws);
-      if (!student || !student.assignedInput) {
+      if (!student) {
         return;
       }
 
-      const parsedWeight = clampCanvasNodeNumber(message.value, -2, 2, canvasNodeModel.weights[student.assignedInput] || 0);
-      canvasNodeModel.weights[student.assignedInput] = Number(parsedWeight.toFixed(2));
+      const incomingWeights = message.type === 'student_weights'
+        ? (message && message.weights && typeof message.weights === 'object' ? message.weights : {})
+        : { [String(message.key || '').trim()]: message.value };
+
+      student.weights = normalizeCanvasNodeStudentWeights({
+        w1: Object.prototype.hasOwnProperty.call(incomingWeights, 'w1') ? incomingWeights.w1 : student.weights && student.weights.w1,
+        w2: Object.prototype.hasOwnProperty.call(incomingWeights, 'w2') ? incomingWeights.w2 : student.weights && student.weights.w2
+      }, student.weights);
+
       canvasNodeBroadcastState();
       return;
     }
@@ -3945,7 +3975,7 @@ canvasNodeWss.on('connection', (ws, request) => {
     canvasNodeConnectionMeta.delete(ws);
 
     if (removedStudent) {
-      canvasNodeReassignStudents();
+      // no-op: students keep their own independent w1/w2 sliders
     }
 
     canvasNodeBroadcastState();
