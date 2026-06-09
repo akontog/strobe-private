@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Buffon's Needle — Καθηγητής</title>
+<script src="../assets/js/classroom-api.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -337,7 +338,7 @@
 </div>
 
 <script>
-let ws = null;
+let classroomApi = null;
 let students = [];
 let previousLiveRanks = new Map();
 let previousTotalRanks = new Map();
@@ -366,37 +367,45 @@ const teacherChartCv = document.getElementById('teacher-chart-cv');
 const teacherChartCtx = teacherChartCv.getContext('2d');
 
 function connectWS() {
-  const proto = location.protocol === 'https:' ? 'wss' : 'ws';
-  ws = new WebSocket(`${proto}://${location.host}/ws/buffon`);
+  if (!window.SharedClassroomApi || typeof window.SharedClassroomApi.createClient !== 'function') {
+    setRoundStatus('Λείπει το shared API script.', 'ended');
+    return;
+  }
 
-  ws.onopen = () => {
-    sendWs({ type: 'register_teacher' });
-    setRoundStatus('Συνδεδεμένος.', roundActive ? 'active' : 'idle');
-  };
+  if (classroomApi) {
+    classroomApi.start();
+    return;
+  }
 
-  ws.onmessage = (e) => {
-    let msg;
-    try {
-      msg = JSON.parse(e.data);
-    } catch {
-      return;
+  classroomApi = window.SharedClassroomApi.createClient({
+    wsPath: '/ws/buffon',
+    reconnectDelayMs: 2000,
+    onOpen() {
+      sendWs({ type: 'register_teacher' });
+      setRoundStatus('Συνδεδεμένος.', roundActive ? 'active' : 'idle');
+    },
+    onMessage(type, payload) {
+      if (type === 'roster') {
+        students = Array.isArray(payload && payload.students) ? payload.students : [];
+        render();
+      }
+    },
+    onClose() {
+      setRoundStatus('Αποσύνδεση από τον server — επανασύνδεση...', 'ended');
     }
+  });
 
-    if (msg.type === 'roster') {
-      students = Array.isArray(msg.students) ? msg.students : [];
-      render();
-    }
-  };
-
-  ws.onclose = () => {
-    setRoundStatus('Αποσύνδεση από τον server — επανασύνδεση...', 'ended');
-    setTimeout(connectWS, 2000);
-  };
+  classroomApi.start();
 }
 
 function sendWs(payload) {
-  if (!ws || ws.readyState !== 1) return;
-  ws.send(JSON.stringify(payload));
+  if (!classroomApi || !payload || typeof payload !== 'object') return;
+  if (typeof payload.type === 'string' && payload.type.trim()) {
+    const type = payload.type;
+    const data = { ...payload };
+    delete data.type;
+    classroomApi.send(type, data);
+  }
 }
 
 function updateRoundActionButtons() {

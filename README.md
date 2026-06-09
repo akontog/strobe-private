@@ -18,37 +18,99 @@ Strobe Multi-App Classroom
 - Ένα κεντρικό Node server στο project root.
 - Όλες οι εφαρμογές μέσα στο apps (ξεχωριστός φάκελος ανά app).
 - Shared assets στο assets.
+- Κοινό WebSocket API client για όλα τα apps: `apps/assets/js/classroom-api.js`.
+- Κοινό classroom dock UI module: `apps/assets/js/classroom-shared.js` + `apps/assets/css/classroom-shared.css`.
 - Session/data storage στο server με in-memory + file persistence (data/users.json).
 
 # Δομή φακέλων
 
-```text
-strobe-private/
-    server.js
-    package.json
-    apps/
-        geometry-live/
-        buffon-needle/
-        fourier-lab/
-        neural-lab/
-        registry.js
-    assets/
-        css/
-        js/
-    public/
-        index.html
-        launcher.html
-        client.html
-        user.html
-    routes/
-    services/
-    middleware/
-    activities/
-    data/
-        users.json
-    camera_server.py
-    camera_tracking.py
-```
+## 📁 Ρίζα φακέλου `strobe-private/`
+
+- **`server.js`**  
+  – Κύριος διακομιστής Node.js (Express ή native http).  
+  – Ξεκινά το WebSocket server, σερβίρει στατικές σελίδες, διαχειρίζεται routes.
+
+- **`package.json`**  
+  – Λίστα dependencies (π.χ. express, ws, socket.io) και scripts εκκίνησης.
+
+- **`camera_server.py`**  
+  – Python server για λήψη ροής από κάμερα (πιθανώς HTTP ή WebSocket).  
+  – Επικοινωνεί με το `camera_tracking.py`.
+
+- **`camera_tracking.py`**  
+  – Ανίχνευση κίνησης / προσώπων / ματιών (OpenCV).  
+  – Στέλνει δεδομένα (π.χ. συντεταγμένες) στο Node server ή απευθείας στο frontend.
+
+## 📂 `apps/` – Εφαρμογές / Δραστηριότητες
+Κάθε υποφάκελος περιέχει μία αυτόνομη web app.
+
+- **`geometry-live/`**  
+  – Διαδραστική γεωμετρία (σημεία, γραμμές, κύκλους) με real-time σχεδίαση.
+
+- **`buffon-needle/`**  
+  – Προσομοίωση της βελόνας του Buffon.
+
+- **`fourier-lab/`**  
+  – 
+
+- **`neural-lab/`**  
+  – Απλό νευρωνικό δίκτυο ή επίδειξη perceptron.
+
+- **`registry.js`**  
+  – Καταγράφει όλες τις διαθέσιμες εφαρμογές (όνομα, διαδρομή, metadata).  
+  – Χρησιμοποιείται από το `launcher.html` για τη δημιουργία μενού.
+
+## 📂 `assets/` – Στατικά αρχεία (CSS, JS)
+
+### `css/`
+- **`classroom-shared.css`** – Κοινό στυλ για όλες τις σελίδες (π.χ. grid, χρώματα, τυπογραφία).  
+- **`presentation-shell.css`** – Στυλ για το “κέλυφος” παρουσίασης (πλαϊνή μπάρα, κουμπιά πλοήγησης).
+
+### `js/`
+- **`classroom-api.js`**  
+  – Διαχειρίζεται WebSocket σύνδεση με τον server.  
+  – Αποστολή / λήψη αρχείων JSON (π.χ. αποτελέσματα ασκήσεων, παραμετροποίηση).
+
+- **`classroom-shared.js`**  
+  – Υλοποιεί το γραφικό πλαϊνό **Dock**.
+    - Περιεχόμενα
+    - 
+
+- **`presentation-config.js`**  
+  – Ρυθμίσεις για τη λειτουργία “παρουσίασης” (slides, επόμενο/προηγούμενο).
+
+- **`presentation-shell.js`**  
+  – Δημιουργεί το περιβάλλον παρουσίασης (χειρισμός event, φόρτωση slides).
+
+- **`presentation-toc.js`**  
+  – Δημιουργεί αυτόματα τον πίνακα περιεχομένων (TOC) της παρουσίασης.
+
+## 📂 `public/` – HTML σελίδες (served από τον Node)
+
+- **`index.html`** – Αρχική σελίδα (ίσως επιλογή μεταξύ launcher, client, user).  
+- **`launcher.html`** – Εκκινητής εφαρμογών (πλέγμα με όλα τα apps από το registry.js).  
+- **`client.html`** – Προβολή μαθητή / συμμετέχοντα (σύνδεση στο WebSocket, αποστολή απαντήσεων).  
+- **`user.html`** – Σελίδα διαχείρισης χρήστη (login, προφίλ, στατιστικά).
+
+## 📂 `routes/` – Server-side routing (Express)
+– Κάθε αρχείο ορίζει ένα σύνολο endpoints, π.χ. `api.js`, `auth.js`, `presentation.js`.  
+– Διαχωρίζουν λογική: αποθήκευση αποτελεσμάτων, ανάκτηση δεδομένων χρήστη.
+
+## 📂 `services/` – Επιχειρηματική λογική / βοηθητικά modules
+– Π.χ. `websocket-service.js` (χειρισμός connections, broadcasts),  
+– `camera-service.js` (ενσωμάτωση με τα python scripts),  
+– `user-service.js` (εγγραφή/ταυτοποίηση).
+
+## 📂 `middleware/` – Express middleware
+– Έλεγχος ελέγχου ταυτότητας, logging, CORS, σφαλμάτων.
+
+## 📂 `activities/` – Δεδομένα / περιγραφές δραστηριοτήτων
+– Πιθανώς αρχεία JSON με οδηγίες για κάθε άσκηση.
+
+## 📂 `data/` – Αποθήκευση σε αρχεία (JSON)
+- **`users.json`** – Λίστα χρηστών (username, role, progress, settings).
+
+---
 
 # Απαιτήσεις
 - Node.js 18+
@@ -152,7 +214,7 @@ pip install --upgrade pip
 pip install opencv-python numpy ultralytics deep-sort-realtime setuptools==80.9.0
 ```
 
-### Εκκίνηση με screen
+#### Εκκίνηση με screen
 
 Για να λειτουργεί ακόμα κι αν κλείσει η σύνδεση:
 ```bash
@@ -168,7 +230,7 @@ screen -r
 detach συνεδρίας (μετά μπορώ να την πάρω με screen -r <id>)
 screen -d 2061641
 
-### Troubleshooting
+#### Troubleshooting
 
 Θύρα 3000 πιασμένη;
 ```bash
@@ -240,6 +302,15 @@ kill -9 <PID>
 
 ## Real-time (WebSockets)
 
+Κοινό client API για όλες τις εφαρμογές:
+- `window.SharedClassroomApi.createClient({ wsPath, reconnectDelayMs, onOpen, onMessage, onClose, onError })`
+- Στα app-level wrappers: `createRealtimeSocket` (geometry/fourier) και direct χρήση στο neural/buffon.
+
+Κοινό baseline event contract (προτεινόμενο):
+- register: `register_teacher`, `register_student`
+- state sync: `request_state`, `*_state`, `roster`
+- interaction: app-specific events (`fourier:*`, `update`, `student_weights`, κλπ)
+
 ### /ws/realtime
 Client -> Server (ενδεικτικά):
 - user-position
@@ -275,8 +346,11 @@ Server -> Client (ενδεικτικά):
 ### /ws/neural-lab
 - register_teacher
 - register_student
-- student_weight
-- teacher_config
+- request_state
+- student_weights
+- student_weight (legacy)
+- canvas_state
+- roster (μέσα στο `canvas_state` payload)
 
 ## Camera worker
 - Script: camera_server.py

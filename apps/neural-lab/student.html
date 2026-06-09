@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Neural Lab - Student</title>
 <link rel="stylesheet" href="../assets/css/presentation-shell.css">
+<link rel="stylesheet" href="../assets/css/classroom-shared.css">
 <script src="../assets/js/presentation-shell.js"></script>
+<script src="../assets/js/classroom-api.js"></script>
+<script src="../assets/js/classroom-shared.js"></script>
 <style>
   :root {
     color-scheme: dark;
@@ -493,6 +496,7 @@
       inputs: { i1: 2, i2: 3 },
       threshold: 5
     },
+    roster: [],
     me: {
       id: null,
       name: '',
@@ -502,9 +506,74 @@
     }
   };
 
-  let ws = null;
-  let reconnectTimer = null;
+  const sharedDock = window.SharedClassroomDock
+    ? window.SharedClassroomDock.create({ appTitle: 'Neural Lab', role: 'Student' })
+    : null;
+
   let desiredName = '';
+  const classroomApi = window.SharedClassroomApi
+    ? window.SharedClassroomApi.createClient({
+        wsPath: '/ws/neural-lab',
+        reconnectDelayMs: 1000,
+        onOpen: () => {
+          setConnectionState(true, 'Συνδεδεμένος');
+          if (sharedDock) {
+            sharedDock.setConnection({ connected: true, text: 'Συνδεδεμένος' });
+          }
+          classroomApi.send('register_student', { name: desiredName || String(nameInput.value || '').trim() || 'Student' });
+          classroomApi.send('student_weights', { weights: state.me.weights });
+          classroomApi.send('request_state');
+        },
+        onMessage: (type, message) => {
+          if (type !== 'canvas_state') {
+            return;
+          }
+
+          if (message.lesson && typeof message.lesson === 'object') {
+            state.lesson = {
+              inputs: {
+                i1: Number(message.lesson.inputs && message.lesson.inputs.i1) || 2,
+                i2: Number(message.lesson.inputs && message.lesson.inputs.i2) || 3
+              },
+              threshold: Number(message.lesson.threshold) || 5
+            };
+          }
+
+          if (Array.isArray(message.roster)) {
+            state.roster = message.roster;
+          }
+
+          if (message.me && typeof message.me === 'object') {
+            state.me = {
+              ...state.me,
+              id: message.me.id || state.me.id,
+              name: message.me.name || state.me.name,
+              weights: {
+                w1: Number(message.me.weights && message.me.weights.w1) || 0,
+                w2: Number(message.me.weights && message.me.weights.w2) || 0
+              },
+              result: Number(message.me.result) || 0,
+              aboveThreshold: Boolean(message.me.aboveThreshold)
+            };
+          }
+
+          render();
+        },
+        onClose: () => {
+          setConnectionState(false, 'Αποσυνδέθηκε - επανασύνδεση...');
+          if (sharedDock) {
+            sharedDock.setConnection({ connected: false, text: 'Αποσυνδέθηκε' });
+          }
+        },
+        onError: () => {
+          setConnectionState(false, 'Σφάλμα σύνδεσης');
+          if (sharedDock) {
+            sharedDock.setConnection({ connected: false, text: 'Σφάλμα σύνδεσης' });
+          }
+        }
+      })
+    : null;
+
 
   function formatNumber(value) {
     const rounded = Math.round(Number(value || 0) * 10) / 10;
@@ -577,95 +646,40 @@
     studentIdText.textContent = state.me.id
       ? `ID: ${state.me.id}`
       : 'Δεν έχει γίνει register ακόμη.';
+
+    if (sharedDock) {
+      const roster = Array.isArray(state.roster) ? state.roster : [];
+      sharedDock.setParticipants(roster);
+    }
   }
 
   function send(type, data = {}) {
-    if (!ws || ws.readyState !== WebSocket.OPEN) {
+    if (!classroomApi) {
       return;
     }
 
-    ws.send(JSON.stringify({ type, ...data }));
+    classroomApi.send(type, data);
   }
 
   function registerStudent() {
     desiredName = String(nameInput.value || '').trim() || 'Student';
     localStorage.setItem('neural-lab-student-name', desiredName);
 
-    if (ws && ws.readyState === WebSocket.OPEN) {
+    if (classroomApi && classroomApi.isConnected()) {
       send('register_student', { name: desiredName });
       send('student_weights', { weights: state.me.weights });
       return;
     }
 
-    connect();
+    if (classroomApi) {
+      classroomApi.start();
+    }
   }
 
   function pushWeights() {
     state.me.weights = currentWeights();
     render();
     send('student_weights', { weights: state.me.weights });
-  }
-
-  function connect() {
-    clearTimeout(reconnectTimer);
-    const proto = location.protocol === 'https:' ? 'wss' : 'ws';
-    ws = new WebSocket(`${proto}://${location.host}/ws/neural-lab`);
-    setConnectionState(false, 'Σύνδεση...');
-
-    ws.addEventListener('open', () => {
-      setConnectionState(true, 'Συνδεδεμένος');
-      send('register_student', { name: desiredName || String(nameInput.value || '').trim() || 'Student' });
-      send('student_weights', { weights: state.me.weights });
-      send('request_state');
-    });
-
-    ws.addEventListener('message', (event) => {
-      let message;
-      try {
-        message = JSON.parse(event.data);
-      } catch {
-        return;
-      }
-
-      if (message.type !== 'canvas_state') {
-        return;
-      }
-
-      if (message.lesson && typeof message.lesson === 'object') {
-        state.lesson = {
-          inputs: {
-            i1: Number(message.lesson.inputs && message.lesson.inputs.i1) || 2,
-            i2: Number(message.lesson.inputs && message.lesson.inputs.i2) || 3
-          },
-          threshold: Number(message.lesson.threshold) || 5
-        };
-      }
-
-      if (message.me && typeof message.me === 'object') {
-        state.me = {
-          ...state.me,
-          id: message.me.id || state.me.id,
-          name: message.me.name || state.me.name,
-          weights: {
-            w1: Number(message.me.weights && message.me.weights.w1) || 0,
-            w2: Number(message.me.weights && message.me.weights.w2) || 0
-          },
-          result: Number(message.me.result) || 0,
-          aboveThreshold: Boolean(message.me.aboveThreshold)
-        };
-      }
-
-      render();
-    });
-
-    ws.addEventListener('close', () => {
-      setConnectionState(false, 'Αποσυνδέθηκε - επανασύνδεση...');
-      reconnectTimer = setTimeout(() => connect(), 1000);
-    });
-
-    ws.addEventListener('error', () => {
-      setConnectionState(false, 'Σφάλμα σύνδεσης');
-    });
   }
 
   [['slide1w1', 'slide2w1'], ['slide1w2', 'slide2w2']].forEach(([primaryKey, mirrorKey]) => {
@@ -695,6 +709,12 @@
   }
 
   render();
+  if (sharedDock) {
+    sharedDock.setConnection({ connected: false, text: 'Σύνδεση...' });
+  }
+  if (classroomApi) {
+    classroomApi.start();
+  }
 })();
 </script>
 </body>

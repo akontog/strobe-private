@@ -33,6 +33,7 @@
 
     let shouldReconnect = options.reconnect !== false;
     let ws = null;
+    let sharedClient = null;
     let reconnectTimer = null;
     let connectNotifyTimer = null;
     let manualClose = false;
@@ -74,7 +75,16 @@
       },
       emit(event, data) {
         const safeEvent = String(event || '').trim();
-        if (!safeEvent || !ws || ws.readyState !== WebSocket.OPEN) {
+        if (!safeEvent) {
+          return socket;
+        }
+
+        if (sharedClient) {
+          sharedClient.sendPacket({ event: safeEvent, data });
+          return socket;
+        }
+
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
           return socket;
         }
 
@@ -97,6 +107,14 @@
         socket.active = false;
         clearReconnectTimer();
         clearConnectNotifyTimer();
+
+        if (sharedClient) {
+          try {
+            sharedClient.stop();
+          } catch {
+          }
+          sharedClient = null;
+        }
 
         if (ws) {
           try {
@@ -186,6 +204,57 @@
     }
 
     function openConnection() {
+      if (globalScope.SharedClassroomApi && typeof globalScope.SharedClassroomApi.createClient === 'function') {
+        if (sharedClient && sharedClient.isConnected()) {
+          return;
+        }
+
+        sharedClient = globalScope.SharedClassroomApi.createClient({
+          wsPath: normalizePath(),
+          url: typeof options.url === 'string' ? options.url.trim() : '',
+          reconnectDelayMs,
+          onOpen() {
+            openedAtLeastOnce = true;
+            socket.connected = true;
+            socket.active = true;
+            connectNotified = false;
+            clearConnectNotifyTimer();
+            connectNotifyTimer = setTimeout(() => {
+              notifyConnect();
+            }, 60);
+          },
+          onMessage(topic, payload) {
+            if (topic === '__meta') {
+              socket.id = payload && typeof payload.id === 'string'
+                ? payload.id
+                : null;
+              notifyConnect();
+              return;
+            }
+
+            emitLocal(topic, payload);
+          },
+          onError(error) {
+            emitLocal('connect_error', error);
+          },
+          onClose() {
+            const wasConnected = socket.connected;
+            socket.connected = false;
+            socket.active = false;
+            socket.id = null;
+            connectNotified = false;
+            clearConnectNotifyTimer();
+
+            if (wasConnected || openedAtLeastOnce) {
+              emitLocal('disconnect');
+            }
+          }
+        });
+
+        sharedClient.start();
+        return;
+      }
+
       if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
         return;
       }

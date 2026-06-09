@@ -3728,6 +3728,29 @@ function buildCanvasNodeParticipants() {
   return students;
 }
 
+function buildCanvasNodeRoster() {
+  const teachers = [...canvasNodeTeachers]
+    .map((teacherWs) => {
+      const meta = canvasNodeConnectionMeta.get(teacherWs) || {};
+      return {
+        id: meta.id || `teacher-${Math.floor(Math.random() * 100000)}`,
+        role: 'teacher',
+        name: meta.name || 'Teacher'
+      };
+    })
+    .sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+
+  const students = [...canvasNodeStudents.values()]
+    .sort((a, b) => (a.connectedAt - b.connectedAt) || a.name.localeCompare(b.name))
+    .map((student) => ({
+      id: student.id,
+      role: 'client',
+      name: student.name
+    }));
+
+  return [...teachers, ...students];
+}
+
 function canvasNodeBroadcastTeachers(data) {
   const message = JSON.stringify(data);
 
@@ -3760,8 +3783,8 @@ function canvasNodeSendStudentState(studentWs) {
     lesson: {
       inputs: { ...CANVAS_NODE_SHARED_INPUTS },
       threshold: CANVAS_NODE_THRESHOLD
-    }
-    ,
+    },
+    roster: buildCanvasNodeRoster(),
     me: buildCanvasNodeStudentSnapshot(student)
   };
 
@@ -3781,6 +3804,7 @@ function canvasNodeBroadcastState() {
   };
 
   const participants = buildCanvasNodeParticipants();
+  const roster = buildCanvasNodeRoster();
 
   canvasNodeBroadcastTeachers({
     type: 'canvas_state',
@@ -3788,6 +3812,7 @@ function canvasNodeBroadcastState() {
       inputs: { ...CANVAS_NODE_SHARED_INPUTS },
       threshold: CANVAS_NODE_THRESHOLD
     },
+    roster,
     model,
     participants
   });

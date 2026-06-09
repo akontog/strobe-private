@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Neural Lab - Teacher</title>
 <link rel="stylesheet" href="../assets/css/presentation-shell.css">
+<link rel="stylesheet" href="../assets/css/classroom-shared.css">
 <script src="../assets/js/presentation-shell.js"></script>
+<script src="../assets/js/classroom-api.js"></script>
+<script src="../assets/js/classroom-shared.js"></script>
 <style>
   :root {
     color-scheme: dark;
@@ -687,6 +690,39 @@
   const DEMO_THRESHOLD = 5;
   const slide1StudentsBody = document.getElementById("slide1-students-body");
   const slide2StudentsBody = document.getElementById("slide2-students-body");
+  const sharedDock = window.SharedClassroomDock
+    ? window.SharedClassroomDock.create({ appTitle: "Neural Lab", role: "Teacher" })
+    : null;
+  const classroomApi = window.SharedClassroomApi
+    ? window.SharedClassroomApi.createClient({
+        wsPath: "/ws/neural-lab",
+        reconnectDelayMs: 900,
+        onOpen: () => {
+          statusText.textContent = "Συνδεδεμένος ως teacher";
+          if (sharedDock) {
+            sharedDock.setConnection({ connected: true, text: "Συνδεδεμένος" });
+          }
+          classroomApi.send("register_teacher", { name: "Teacher" });
+        },
+        onMessage: (type, payload) => {
+          if (type === "canvas_state") {
+            applyServerState(payload);
+          }
+        },
+        onClose: () => {
+          statusText.textContent = "Αποσυνδέθηκε - επανασύνδεση...";
+          if (sharedDock) {
+            sharedDock.setConnection({ connected: false, text: "Αποσυνδέθηκε" });
+          }
+        },
+        onError: () => {
+          statusText.textContent = "Σφάλμα σύνδεσης";
+          if (sharedDock) {
+            sharedDock.setConnection({ connected: false, text: "Σφάλμα σύνδεσης" });
+          }
+        }
+      })
+    : null;
 
   function formatNumber(value) {
     const rounded = Math.round(value * 10) / 10;
@@ -808,9 +844,6 @@
   const canvas = document.getElementById("nnCanvas");
   const ctx = canvas.getContext("2d");
 
-  let ws = null;
-  let reconnectTimer = null;
-
   const state = {
     model: {
       inputs: {
@@ -838,6 +871,28 @@
     },
     participants: []
   };
+
+  function syncSharedDock() {
+    if (!sharedDock) {
+      return;
+    }
+
+    const rosterFromServer = Array.isArray(state.roster) ? state.roster : [];
+    if (rosterFromServer.length) {
+      sharedDock.setParticipants(rosterFromServer);
+      return;
+    }
+
+    const fallback = [
+      { id: "teacher-local", role: "teacher", name: "Teacher" },
+      ...state.participants.map((participant) => ({
+        id: participant.id,
+        role: participant.role || "client",
+        name: participant.name || "Student"
+      }))
+    ];
+    sharedDock.setParticipants(fallback);
+  }
 
   function clamp(n, min, max) {
     return Math.max(min, Math.min(max, n));
@@ -1251,6 +1306,7 @@
 
   function renderAll() {
     renderStudentTables();
+    syncSharedDock();
     renderInputs();
     renderOutputs();
     renderWeights();
@@ -1280,6 +1336,10 @@
       }
     }
 
+    if (Array.isArray(payload.roster)) {
+      state.roster = payload.roster;
+    }
+
     if (Array.isArray(payload.participants)) {
       state.participants = payload.participants;
     }
@@ -1288,48 +1348,15 @@
   }
 
   function send(type, data = {}) {
-    if (!ws || ws.readyState !== WebSocket.OPEN) {
+    if (!classroomApi) {
       return;
     }
 
-    ws.send(JSON.stringify({ type, ...data }));
+    classroomApi.send(type, data);
   }
 
   function sendTeacherConfig(configPatch) {
     send("teacher_config", { patch: configPatch });
-  }
-
-  function connect() {
-    const proto = location.protocol === "https:" ? "wss" : "ws";
-    ws = new WebSocket(`${proto}://${location.host}/ws/neural-lab`);
-
-    ws.addEventListener("open", () => {
-      statusText.textContent = "Συνδεδεμένος ως teacher";
-      send("register_teacher", { name: "Teacher" });
-    });
-
-    ws.addEventListener("message", (event) => {
-      let message;
-      try {
-        message = JSON.parse(event.data);
-      } catch {
-        return;
-      }
-
-      if (message.type === "canvas_state") {
-        applyServerState(message);
-      }
-    });
-
-    ws.addEventListener("close", () => {
-      statusText.textContent = "Αποσυνδέθηκε - επανασύνδεση...";
-      clearTimeout(reconnectTimer);
-      reconnectTimer = setTimeout(connect, 900);
-    });
-
-    ws.addEventListener("error", () => {
-      statusText.textContent = "Σφάλμα σύνδεσης";
-    });
   }
 
   function fitCanvasToContainer() {
@@ -1358,7 +1385,12 @@
 
   fitCanvasToContainer();
   renderAll();
-  connect();
+  if (sharedDock) {
+    sharedDock.setConnection({ connected: false, text: "Σύνδεση..." });
+  }
+  if (classroomApi) {
+    classroomApi.start();
+  }
 })();
 </script>
 </body>
