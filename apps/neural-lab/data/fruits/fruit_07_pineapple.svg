@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" rx="18" fill="#FFFDE7"/>
+  <!-- Crown leaves -->
+  <ellipse cx="82" cy="42" rx="8" ry="22" fill="#388E3C" transform="rotate(-25 82 42)"/>
+  <ellipse cx="93" cy="33" rx="8" ry="22" fill="#43A047" transform="rotate(-10 93 33)"/>
+  <ellipse cx="105" cy="30" rx="8" ry="22" fill="#388E3C"/>
+  <ellipse cx="117" cy="33" rx="8" ry="22" fill="#43A047" transform="rotate(10 117 33)"/>
+  <ellipse cx="127" cy="42" rx="8" ry="22" fill="#388E3C" transform="rotate(25 127 42)"/>
+  <!-- Pineapple body -->
+  <ellipse cx="100" cy="120" rx="48" ry="65" fill="#FFB300"/>
+  <!-- Diamond pattern lines horizontal -->
+  <line x1="56" y1="88" x2="144" y2="88" stroke="#E65100" stroke-width="1.5" opacity="0.5"/>
+  <line x1="52" y1="105" x2="148" y2="105" stroke="#E65100" stroke-width="1.5" opacity="0.5"/>
+  <line x1="52" y1="122" x2="148" y2="122" stroke="#E65100" stroke-width="1.5" opacity="0.5"/>
+  <line x1="54" y1="139" x2="146" y2="139" stroke="#E65100" stroke-width="1.5" opacity="0.5"/>
+  <line x1="60" y1="156" x2="140" y2="156" stroke="#E65100" stroke-width="1.5" opacity="0.5"/>
+  <!-- Diamond pattern lines diagonal -->
+  <line x1="68" y1="58" x2="148" y2="168" stroke="#E65100" stroke-width="1.5" opacity="0.4"/>
+  <line x1="84" y1="56" x2="148" y2="148" stroke="#E65100" stroke-width="1.5" opacity="0.4"/>
+  <line x1="100" y1="55" x2="148" y2="130" stroke="#E65100" stroke-width="1.5" opacity="0.4"/>
+  <line x1="116" y1="56" x2="148" y2="110" stroke="#E65100" stroke-width="1.5" opacity="0.4"/>
+  <line x1="68" y1="58" x2="52" y2="130" stroke="#E65100" stroke-width="1.5" opacity="0.4"/>
+  <line x1="84" y1="56" x2="52" y2="148" stroke="#E65100" stroke-width="1.5" opacity="0.4"/>
+  <line x1="100" y1="55" x2="52" y2="168" stroke="#E65100" stroke-width="1.5" opacity="0.4"/>
+  <!-- Shine -->
+  <ellipse cx="78" cy="90" rx="10" ry="18" fill="white" opacity="0.25" transform="rotate(-15 78 90)"/>
+  <!-- Eyes -->
+  <circle cx="88" cy="115" r="5" fill="#4E342E"/>
+  <circle cx="112" cy="115" r="5" fill="#4E342E"/>
+  <circle cx="89.5" cy="113.5" r="2" fill="white"/>
+  <circle cx="113.5" cy="113.5" r="2" fill="white"/>
+  <!-- Blush -->
+  <ellipse cx="76" cy="124" rx="10" ry="7" fill="#FF8F00" opacity="0.4"/>
+  <ellipse cx="124" cy="124" rx="10" ry="7" fill="#FF8F00" opacity="0.4"/>
+  <!-- Smile -->
+  <path d="M87 127 Q100 139 113 127" stroke="#E65100" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>
