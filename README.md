@@ -3,16 +3,13 @@ Strobe Multi-App Classroom
 Ενοποιημένο no-login περιβάλλον για classroom activities με real-time συνεργασία.
 
 # Τεχνολογίες Επικοινωνίας
-SmarT classROoms for emBodied participatory lEarning
-Strobe Multi-App Classroom
 
-Ενοποιημένο no-login περιβάλλον για classroom activities με real-time συνεργασία.
 
 # Εφαρμογές
 - Geometry Live
 - Buffon Needle
-- Fourier Lab
-- Neural Lab
+- [Fourier Lab](reports/fourier-lab/README-fourier-lab.md)
+- [Neural Lab](reports/neural-lab/README-neural-lab)
 
 # Αρχιτεκτονική
 - Ένα κεντρικό Node server στο project root.
@@ -150,8 +147,8 @@ npm start
 
 Σημείωση: ο Node server κάνει auto-spawn τον Python camera worker.
 
-### Βασικά URLs
-- Entry: http://localhost:3000/
+### URLs
+- Είσοδος: http://localhost:3000/
 - Teacher dashboard: http://localhost:3000/teacher
 - Student launcher: http://localhost:3000/student
 - Student launcher alias: http://localhost:3000/client
