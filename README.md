@@ -2,10 +2,36 @@ SmarT classROoms for emBodied participatory lEarning
 Strobe Multi-App Classroom
 Ενοποιημένο no-login περιβάλλον για classroom activities με real-time συνεργασία.
 
-# Τεχνολογίες Επικοινωνίας
+# Τεχνολογίες:
 
+## frontend
+
+- html
+- css
+- js
+- ts 
+- react
+
+## backend
+
+- node.js
+- python (computer vision)
+
+## επικοινωνία
+
+- websockets
+- WebRTC (video feed)
+
+## αρχεία
+
+- json
+
+## package manager
+
+- npm 
 
 # Εφαρμογές
+
 - Geometry Live
 - Buffon Needle
 - [Fourier Lab](reports/fourier-lab/README-fourier-lab.md)
