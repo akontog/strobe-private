@@ -5,10 +5,19 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "build:neural-lab": "npm run build:neural-lab:teacher && npm run build:neural-lab:screen && npm run build:neural-lab:student",
+    "build:neural-lab:teacher": "esbuild apps/neural-lab/teacher.jsx --bundle --format=esm --outfile=apps/neural-lab/teacher.bundle.js --loader:.jsx=jsx --loader:.css=css",
+    "build:neural-lab:screen": "esbuild apps/neural-lab/screen.jsx --bundle --format=esm --outfile=apps/neural-lab/screen.bundle.js --loader:.jsx=jsx --loader:.css=css",
+    "build:neural-lab:student": "esbuild apps/neural-lab/student.jsx --bundle --format=esm --outfile=apps/neural-lab/student.bundle.js --loader:.jsx=jsx --loader:.css=css"
   },
   "dependencies": {
     "express": "^5.2.1",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1"
   }
 }

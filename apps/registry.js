@@ -38,7 +38,8 @@ const APPS = [
     kind: 'static',
     staticDir: path.join(__dirname, 'neural-lab'),
     teacherEntry: 'teacher.html',
-    clientEntry: 'student.html'
+    clientEntry: 'student.html',
+    screenEntry: 'screen.html'
   },
   {
     slug: 'chess',
@@ -74,6 +75,9 @@ function getLaunchPath(app, role) {
   }
 
   const mode = role === 'teacher' || role === 'admin' ? 'teacher' : 'client';
+  if (role === 'screen' && app.screenEntry) {
+    return `/apps/${app.slug}/${app.screenEntry}`;
+  }
   const entry = mode === 'teacher' ? app.teacherEntry : app.clientEntry;
 
   if (app.teacherEntry === app.clientEntry) {
@@ -90,7 +94,10 @@ function toPublicApp(app, role) {
     description: app.description,
     roles: app.roles,
     kind: app.kind,
-    launchPath: getLaunchPath(app, role)
+    launchPath: getLaunchPath(app, role),
+    teacherLaunchPath: getLaunchPath(app, 'teacher'),
+    clientLaunchPath: getLaunchPath(app, 'client'),
+    screenLaunchPath: app.screenEntry ? getLaunchPath(app, 'screen') : null
   };
 }
 

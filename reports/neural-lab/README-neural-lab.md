@@ -42,40 +42,113 @@ Middle school students 12 - 15
 - [Φυσική Β Λυκείου - 2. Ηλεκτρισμός - Περίληψη](https://ebooks.edu.gr/ebooks/v/html/8547/2682/Fysiki_B-Lykeiou-GP_html-empl/index2_12.html)
 - [Φυσική Β Λυκείου - Δίοδος](https://ebooks.edu.gr/ebooks/v/html/8547/2682/Fysiki_B-Lykeiou-GP_html-empl/index2_11.html)
 
-# Τεχνολογίες
+# Χρήση
 
-- html/css/JavaScript
+## Εγκατάσταση
+
+```bash
+cd apps/neural-lab-teacher
+npm install
+```
+
+## Εκκίνηση
+
+### Τοπικά 
+
+```bash
+npm start
+```
+
+# Χρήστες
+
+## screen - οθόνη
+
+screen.html
+Ότι είναι ορατό στο εποπτικό μέσο της τάξης.
+
+## teacher - εκπαιδευτικός
+
+teacher.html
+Διάφορα μενού ελέγχου των δραστηριοτήτων που δεν πρέπει να φαίνονται στο σύνολο της τάξης
+
+## student - μαθητής
+
+student.html
+Μαθητές 
+
+# Υλοποίηση
+
+## Τεχνολογίες
+
+- html/css/JavaScript/react
 - node.js
 - json/csv
+- Vite για bundling;
 
-# Δραστηριότητες / Διαφάνειες
+## Δομή αρχείων
+
+```
+neural-lab-teacher/
+  components/
+    TeacherCard.jsx       - Main container
+    VerticalProducts.jsx  - Εμφάνιση γινομένων
+    ProductRow.jsx        - Μια γραμμή γινομένου
+    StudentTable.jsx      - Πίνακας μαθητών
+    Accordion.jsx         - Αναδιπλούμενο στοιχείο
+  App.jsx                 - Main component με όλη τη λογική
+  App.css                 - Styling
+  index.jsx               - React entry point
+  index.html              - HTML wrapper
+```
+
+
+## components 
+
+## StudentTable
+Πίνακας με στοιχεία (1 γραμμή/ συνδεδεμένο μαθητή): 
+  - όνομα (συνδεδεμένου) χρήστη
+  - $w_1$
+  - $i_1$
+  - $w_2$
+  - $i_2$
+  - Αποτέλεσμα
+
+## 
+
+## 
+
+## Σύνδεση με Shared Components
+
+Αυτή η εφαρμογή χρησιμοποιεί components από το `../shared-components/`:
+
+```javascript
+// Εάν προσθέσετε κοινά components
+import { BlueNumberBox } from '../shared-components/components/BlueNumberBox';
+```
+
+# Δραστηριότητες
 
 ## 1η δραστηριότητα
 
 - Τίτλος: $w_1 \times i_1 + w_2 \times i_2 = o$
 - Αλγεβρικές πράξεις σταθερά βάρη $w_i$ (φυσικοί αριθμοί) αλλά μεταβλητά $i_i$ ανάλογα την εικόνα
-- teacher
-  - Πάνω πάνω γραμμή:
-    - Εξίσωση $w_1 \times i_1 + w_2 \times i_2 = o$ σε MathJax
+- screen
+  - Εξίσωση $w_1 \times i_1 + w_2 \times i_2 = o$ σε MathJax
     - σχεδιάγραμμα δέντρου πράξεων (;)
   - Γραμμή πάνω από τον πίνακα:
-    - Dropdown επιλογής dataset
+    
+  
+- teacher
+  - - Dropdown επιλογής dataset
       - [Οχήματα](#datasets:vehicles)
       - [Ζώα](#datasets:animals)
       - [Φαγητά](#datasets:foods)
       - [Φρούτα](#datasets:fruits)
       - [Ψηφία](#datasets:digits)
     - Dropdown επιλογής παραδείγματος από το dataset
-  
-      - Πίνακας με στοιχεία (1 γραμμή/μαθητή): 
-        - όνομα (συνδεδεμένου) χρήστη
-        - $w_1$
-        - $i_1$
-        - $w_2$
-        - $i_2$
-        - Αποτέλεσμα
+    - Εργαλειοθήκη με ?, Βάρη, Όριο
 - students
-  -  
+  -  Αλγεβρικές πράξεις 
 
 ## 2η δραστηριότητα
 
@@ -132,7 +205,10 @@ Middle school students 12 - 15
 
 - Activation Functions
 - 
+
 # datasets
+
+Διάφορα σύνολα δεδομένων (Οχήματα, Ζώα, Φαγητά, Φρούτα, Ψηφία)
 
 ## Οχήματα {#datasets:vehicles}
 
@@ -190,6 +266,26 @@ burgers, pizza
 
 ### Είσοδοι/Χαρακτηριστικά
 
+
+## Επέκταση
+
+Για να προστεθεί νέο dataset:
+
+1. Ανοίξτε το `App.jsx`
+2. Προσθέστε νέο entry στο αντικείμενο `datasets`:
+
+```javascript
+const datasets = {
+  // ... existing datasets
+  newDataset: {
+    label: "🎨 Νέο Σύνολο",
+    examples: [
+      { name: "Παράδειγμα 1", i1: 5, i2: 2, icon: "🎯" },
+      // ... more examples
+    ]
+  }
+};
+```
 
 # Ιδέες
 

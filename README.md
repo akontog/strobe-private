@@ -67,6 +67,7 @@ Strobe Multi-App Classroom
 ## 📂 `apps/` – Εφαρμογές / Δραστηριότητες
 Κάθε υποφάκελος περιέχει μία αυτόνομη web app.
 
+### Παραδοσιακές εφαρμογές (HTML/JS)
 - **`geometry-live/`**  
   – Διαδραστική γεωμετρία (σημεία, γραμμές, κύκλους) με real-time σχεδίαση.
 
@@ -78,6 +79,18 @@ Strobe Multi-App Classroom
 
 - **`neural-lab/`**  
   – Απλό νευρωνικό δίκτυο ή επίδειξη perceptron.
+
+### React Εφαρμογές
+- **`neural-lab-teacher/`** (React)  
+  – Διδακτική εφαρμογή για νευρωνικά δίκτυα (εξίσωση w₁·i₁ + w₂·i₂ = o).  
+  – Περιέχει components από `shared-components/`.  
+  – Δείτε [neural-lab-teacher/README.md](apps/neural-lab-teacher/README.md) για λεπτομέρειες.
+
+### Κοινά Στοιχεία
+- **`shared-components/`**  
+  – Κοινά React components που χρησιμοποιούνται από πολλαπλές React εφαρμογές.  
+  – Components για αριθμητικά κουτάκια, εργαλειοθήκες, κ.λπ.  
+  – Δείτε [shared-components/README.md](apps/shared-components/README.md).
 
 - **`registry.js`**  
   – Καταγράφει όλες τις διαθέσιμες εφαρμογές (όνομα, διαδρομή, metadata).  
@@ -142,10 +155,61 @@ Strobe Multi-App Classroom
 
 # Εγκατάσταση
 
+## Node.js dependencies setup
+
 ```powershell
 cd "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private"
 npm install
 ```
+
+## React installation
+
+React έχει ήδη εγκατασταθεί για χρήση στο project. Για να δημιουργήσετε React components:
+
+```powershell
+# Το React και React-DOM είναι ήδη διαθέσιμα μετά το npm install
+# Εάν χρειαστείτε επιπλέον εργαλεία:
+npm install --save-dev @babel/core @babel/preset-react babel-loader
+npm install --save-dev webpack webpack-cli
+```
+
+### Δημιουργία React Εφαρμογής
+
+Για να δημιουργήσετε μια νέα React εφαρμογή:
+
+1. **Δημιουργήστε φάκελο** στο `apps/your-app-name/`
+2. **Δημιουργήστε components** σε `components/` folder
+3. **Δημιουργήστε App.jsx** και `index.jsx` entry points
+4. **Δημιουργήστε index.html** που φιλοξενεί το `<div id="root"></div>`
+
+### Χρήση Shared Components
+
+Προσθέστε κοινά components από το `apps/shared-components/`:
+
+```javascript
+import { BlueNumberBox, RedNumberBox, InputBoxStyle, ProductResult } from '../shared-components/components/BlueNumberBox';
+import { ToolButton, Toolbar } from '../shared-components/components/Toolbar';
+
+// Χρησιμοποίηση στο component
+export const MyComponent = () => (
+  <div>
+    <BlueNumberBox value={4} />
+    <RedNumberBox value={2} />
+  </div>
+);
+```
+
+### Παράδειγμα: Neural Lab Teacher
+
+Δείτε το `apps/neural-lab-teacher/` για πλήρες παράδειγμα React εφαρμογής με:
+- Χρήση React hooks (useState)
+- Component composition (TeacherCard, VerticalProducts, StudentTable)
+- Styling με CSS
+- Ενσωμάτωση MathJax
+
+### Δημιουργία νέας React εφαρμογής
+
+Δείτε το αρχείο [REACT_GUIDE.md](REACT_GUIDE.md) για αναλυτικές οδηγίες.
 
 ## Python worker setup (μία φορά)
 

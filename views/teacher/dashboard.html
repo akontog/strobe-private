@@ -182,6 +182,10 @@
       background: #5f6c7b;
     }
 
+    .button-link.secondary {
+      background: #5f6c7b;
+    }
+
     button.good {
       background: var(--green);
     }
@@ -471,6 +475,14 @@
         const card = document.createElement('div');
         card.className = 'app-card';
 
+        const showNeuralLinks = app.slug === 'neural-lab';
+        const launchButtons = showNeuralLinks
+          ? `
+            <a class="button-link" href="${app.teacherLaunchPath || app.launchPath}">Open Teacher View</a>
+            <a class="button-link secondary" href="${app.screenLaunchPath || app.launchPath}">Open Screen View</a>
+          `
+          : `<a class="button-link" href="${app.launchPath}">Open Teacher View</a>`;
+
         card.innerHTML = `
           <div class="app-head">
             <div class="app-title">${app.title}</div>
@@ -478,7 +490,7 @@
           </div>
           <div class="app-desc">${app.description}</div>
           <div class="btn-row">
-            <a class="button-link" href="${app.launchPath}">Open Teacher View</a>
+            ${launchButtons}
             <button class="secondary" data-slug="${app.slug}">Manage Activities</button>
           </div>
           ${createClassroomPanelSettings(app)}
