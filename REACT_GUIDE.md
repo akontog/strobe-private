@@ -93,6 +93,8 @@ import { BlueNumberBox, RedNumberBox } from '../shared-components/components/Blu
 
 ```bash
 npm run build
+npm run build:neural-lab
+npm run build:neural-lab:screen
 ```
 
 ## Δημιουργία Components
@@ -196,8 +198,5 @@ export const MySharedComponent = ({ prop1, prop2 }) => {
 - ✅ Αποφύγετε inline styles σε παραγωγή (production)
 - ✅ Δοκιμάστε τα components με React DevTools
 
-## Αναφορές
 
-- [React Documentation](https://react.dev)
-- [Strobe Neural Lab Teacher App](./apps/neural-lab-teacher/README.md) - Πλήρες παράδειγμα
 - [Shared Components](./apps/shared-components/README.md)

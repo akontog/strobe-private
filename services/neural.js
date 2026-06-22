@@ -1,0 +1,369 @@
+// Neural-lab websocket channel for neural-network classroom activity
+const canvasNodeWss = new WebSocketServer({ noServer: true });
+const canvasNodeTeachers = new Set();
+const canvasNodeStudents = new Map();
+const CANVAS_NODE_SHARED_INPUTS = Object.freeze({
+  i1: 2,
+  i2: 3
+});
+const CANVAS_NODE_THRESHOLD = 5;
+
+const CANVAS_NODE_INPUTS = {
+  wheels: { key: 'wheels', type: 'number', min: 0, max: 6, fallback: 4 },
+  hasEngine: { key: 'hasEngine', type: 'boolean', fallback: true },
+  seats: { key: 'seats', type: 'number', min: 1, max: 8, fallback: 4 },
+  hasPedals: { key: 'hasPedals', type: 'boolean', fallback: false }
+};
+const CANVAS_NODE_INPUT_KEYS = Object.keys(CANVAS_NODE_INPUTS);
+const CANVAS_NODE_OUTPUT_KEYS = ['car', 'bicycle', 'motorcycle', 'scooter'];
+
+const canvasNodeModel = {
+  inputs: {
+    wheels: { enabled: true, value: 4 },
+    hasEngine: { enabled: true, value: true },
+    seats: { enabled: true, value: 4 },
+    hasPedals: { enabled: true, value: false }
+  },
+  weights: {
+    wheels: 1,
+    hasEngine: 1,
+    seats: 1,
+    hasPedals: 1
+  },
+  outputsEnabled: {
+    car: true,
+    bicycle: false,
+    motorcycle: false,
+    scooter: false
+  }
+};
+
+function clampCanvasNodeNumber(value, min, max, fallback) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.max(min, Math.min(max, parsed));
+}
+
+function normalizeCanvasNodeStudentWeights(weights, fallback = {}) {
+  const source = weights && typeof weights === 'object' ? weights : {};
+  const fallbackW1 = Number.isFinite(Number(fallback.w1)) ? Number(fallback.w1) : 1;
+  const fallbackW2 = Number.isFinite(Number(fallback.w2)) ? Number(fallback.w2) : 1;
+
+  return {
+    w1: Number(clampCanvasNodeNumber(source.w1, -4, 4, fallbackW1).toFixed(1)),
+    w2: Number(clampCanvasNodeNumber(source.w2, -4, 4, fallbackW2).toFixed(1))
+  };
+}
+
+function computeCanvasNodeStudentResult(weights) {
+  const safeWeights = normalizeCanvasNodeStudentWeights(weights, weights);
+  const result = (safeWeights.w1 * CANVAS_NODE_SHARED_INPUTS.i1) + (safeWeights.w2 * CANVAS_NODE_SHARED_INPUTS.i2);
+  return Number(result.toFixed(2));
+}
+
+function buildCanvasNodeStudentSnapshot(student) {
+  const weights = normalizeCanvasNodeStudentWeights(student && student.weights, student && student.weights);
+  const result = computeCanvasNodeStudentResult(weights);
+
+  return {
+    id: student.id,
+    role: 'client',
+    name: student.name,
+    weights,
+    i1: CANVAS_NODE_SHARED_INPUTS.i1,
+    i2: CANVAS_NODE_SHARED_INPUTS.i2,
+    result,
+    threshold: CANVAS_NODE_THRESHOLD,
+    aboveThreshold: result >= CANVAS_NODE_THRESHOLD
+  };
+}
+
+function buildCanvasNodeParticipants() {
+  const students = [...canvasNodeStudents.values()]
+    .sort((a, b) => (a.connectedAt - b.connectedAt) || a.name.localeCompare(b.name))
+    .map((student) => buildCanvasNodeStudentSnapshot(student));
+
+  return students;
+}
+
+function buildCanvasNodeRoster() {
+  const teachers = [...canvasNodeTeachers]
+    .map((teacherWs) => {
+      const meta = canvasNodeConnectionMeta.get(teacherWs) || {};
+      return {
+        id: meta.id || `teacher-${Math.floor(Math.random() * 100000)}`,
+        role: 'teacher',
+        name: meta.name || 'Teacher'
+      };
+    })
+    .sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+
+  const students = [...canvasNodeStudents.values()]
+    .sort((a, b) => (a.connectedAt - b.connectedAt) || a.name.localeCompare(b.name))
+    .map((student) => ({
+      id: student.id,
+      role: 'client',
+      name: student.name
+    }));
+
+  return [...teachers, ...students];
+}
+
+function canvasNodeBroadcastTeachers(data) {
+  const message = JSON.stringify(data);
+
+  recordCommunication({
+    app: 'neural-lab',
+    direction: 'out',
+    event: 'neural-lab:canvas_state',
+    from: 'server',
+    to: 'neural-lab:teachers',
+    payload: {
+      participants: Array.isArray(data && data.participants) ? data.participants.length : 0
+    }
+  });
+
+  canvasNodeTeachers.forEach((teacherWs) => {
+    if (teacherWs.readyState === 1) {
+      teacherWs.send(message);
+    }
+  });
+}
+
+function canvasNodeSendStudentState(studentWs) {
+  const student = canvasNodeStudents.get(studentWs);
+  if (!student || studentWs.readyState !== 1) {
+    return;
+  }
+
+  const payload = {
+    type: 'canvas_state',
+    lesson: {
+      inputs: { ...CANVAS_NODE_SHARED_INPUTS },
+      threshold: CANVAS_NODE_THRESHOLD
+    },
+    roster: buildCanvasNodeRoster(),
+    me: buildCanvasNodeStudentSnapshot(student)
+  };
+
+  studentWs.send(JSON.stringify(payload));
+}
+
+function canvasNodeBroadcastState() {
+  const model = {
+    inputs: {
+      wheels: { ...canvasNodeModel.inputs.wheels },
+      hasEngine: { ...canvasNodeModel.inputs.hasEngine },
+      seats: { ...canvasNodeModel.inputs.seats },
+      hasPedals: { ...canvasNodeModel.inputs.hasPedals }
+    },
+    weights: { ...canvasNodeModel.weights },
+    outputsEnabled: { ...canvasNodeModel.outputsEnabled }
+  };
+
+  const participants = buildCanvasNodeParticipants();
+  const roster = buildCanvasNodeRoster();
+
+  canvasNodeBroadcastTeachers({
+    type: 'canvas_state',
+    lesson: {
+      inputs: { ...CANVAS_NODE_SHARED_INPUTS },
+      threshold: CANVAS_NODE_THRESHOLD
+    },
+    roster,
+    model,
+    participants
+  });
+
+  canvasNodeStudents.forEach((_, studentWs) => {
+    canvasNodeSendStudentState(studentWs);
+  });
+}
+
+canvasNodeWss.on('connection', (ws, request) => {
+  const connectionInfo = getUpgradeClientInfo(request);
+
+  recordCommunication({
+    app: 'neural-lab',
+    direction: 'in',
+    event: 'neural-lab:ws-connect',
+    from: connectionInfo.ip || 'unknown',
+    to: 'server',
+    payload: {
+      userAgent: connectionInfo.userAgent || 'unknown'
+    }
+  });
+
+  canvasNodeConnectionMeta.set(ws, {
+    connectedAt: Date.now(),
+    lastSeenAt: Date.now(),
+    ip: connectionInfo.ip,
+    userAgent: connectionInfo.userAgent,
+    role: 'unknown',
+    name: 'Canvas participant'
+  });
+
+  ws.on('message', (raw) => {
+    touchCanvasNodeConnection(ws);
+
+    let message;
+    try {
+      message = JSON.parse(String(raw));
+    } catch {
+      return;
+    }
+
+    const meta = canvasNodeConnectionMeta.get(ws) || {};
+    const messageType = message && message.type ? String(message.type) : 'message';
+
+    recordCommunication({
+      app: 'neural-lab',
+      direction: 'in',
+      event: `neural-lab:${messageType}`,
+      from: meta.name || meta.ip || 'canvas-client',
+      to: 'server',
+      payload: message
+    });
+
+    if (message.type === 'register_teacher') {
+      const teacherName = coerceFourierString(message.name, 40) || 'Teacher';
+      canvasNodeTeachers.add(ws);
+      touchCanvasNodeConnection(ws, {
+        role: 'teacher',
+        name: teacherName
+      });
+      canvasNodeBroadcastState();
+      return;
+    }
+
+    if (message.type === 'register_student') {
+      const studentName = coerceFourierString(message.name, 40) || `Student-${Math.floor(Math.random() * 900 + 100)}`;
+      const existing = canvasNodeStudents.get(ws);
+
+      if (existing) {
+        existing.name = studentName;
+        existing.weights = normalizeCanvasNodeStudentWeights(existing.weights, existing.weights);
+      } else {
+        canvasNodeStudents.set(ws, {
+          id: `canvas-${Date.now().toString(36)}-${Math.floor(Math.random() * 10000).toString(16)}`,
+          name: studentName,
+          connectedAt: Date.now(),
+          weights: { w1: 1, w2: 1 }
+        });
+      }
+
+      touchCanvasNodeConnection(ws, {
+        role: 'client',
+        name: studentName
+      });
+
+      canvasNodeBroadcastState();
+      return;
+    }
+
+    if (message.type === 'student_weights' || message.type === 'student_weight') {
+      const student = canvasNodeStudents.get(ws);
+      if (!student) {
+        return;
+      }
+
+      const incomingWeights = message.type === 'student_weights'
+        ? (message && message.weights && typeof message.weights === 'object' ? message.weights : {})
+        : { [String(message.key || '').trim()]: message.value };
+
+      student.weights = normalizeCanvasNodeStudentWeights({
+        w1: Object.prototype.hasOwnProperty.call(incomingWeights, 'w1') ? incomingWeights.w1 : student.weights && student.weights.w1,
+        w2: Object.prototype.hasOwnProperty.call(incomingWeights, 'w2') ? incomingWeights.w2 : student.weights && student.weights.w2
+      }, student.weights);
+
+      canvasNodeBroadcastState();
+      return;
+    }
+
+    if (message.type === 'teacher_config') {
+      if (!canvasNodeTeachers.has(ws)) {
+        return;
+      }
+
+      const patch = message && message.patch && typeof message.patch === 'object' ? message.patch : {};
+
+      if (patch.inputs && typeof patch.inputs === 'object') {
+        CANVAS_NODE_INPUT_KEYS.forEach((key) => {
+          if (!(key in patch.inputs)) {
+            return;
+          }
+
+          const next = patch.inputs[key];
+          if (!next || typeof next !== 'object') {
+            return;
+          }
+
+          const inputDef = CANVAS_NODE_INPUTS[key];
+          const current = canvasNodeModel.inputs[key];
+          const nextEnabled = typeof next.enabled === 'boolean' ? next.enabled : current.enabled;
+
+          let nextValue = current.value;
+          if (inputDef.type === 'boolean') {
+            if (typeof next.value === 'boolean') {
+              nextValue = next.value;
+            }
+          } else {
+            const fallback = Number.isFinite(Number(current.value)) ? Number(current.value) : inputDef.fallback;
+            nextValue = clampCanvasNodeNumber(next.value, inputDef.min, inputDef.max, fallback);
+            nextValue = Math.round(nextValue);
+          }
+
+          canvasNodeModel.inputs[key] = {
+            enabled: nextEnabled,
+            value: nextValue
+          };
+        });
+      }
+
+      if (patch.outputsEnabled && typeof patch.outputsEnabled === 'object') {
+        CANVAS_NODE_OUTPUT_KEYS.forEach((key) => {
+          if (Object.prototype.hasOwnProperty.call(patch.outputsEnabled, key)) {
+            canvasNodeModel.outputsEnabled[key] = Boolean(patch.outputsEnabled[key]);
+          }
+        });
+      }
+
+      canvasNodeBroadcastState();
+      return;
+    }
+
+    if (message.type === 'request_state') {
+      if (canvasNodeTeachers.has(ws)) {
+        canvasNodeBroadcastState();
+      } else {
+        canvasNodeSendStudentState(ws);
+      }
+    }
+  });
+
+  ws.on('close', () => {
+    const meta = canvasNodeConnectionMeta.get(ws) || {};
+
+    recordCommunication({
+      app: 'neural-lab',
+      direction: 'in',
+      event: 'neural-lab:ws-close',
+      from: meta.name || meta.ip || 'canvas-client',
+      to: 'server'
+    });
+
+    canvasNodeTeachers.delete(ws);
+
+    const removedStudent = canvasNodeStudents.delete(ws);
+    canvasNodeConnectionMeta.delete(ws);
+
+    if (removedStudent) {
+      // no-op: students keep their own independent w1/w2 sliders
+    }
+
+    canvasNodeBroadcastState();
+  });
+});

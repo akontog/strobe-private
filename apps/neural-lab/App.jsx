@@ -96,13 +96,28 @@ const App = ({ role = 'teacher' }) => {
   };
 
   useEffect(() => {
-    if (window.MathJax) {
-      window.MathJax.typesetPromise().catch(() => {});
-    }
-  }, [role, currentDataset, currentExample, useQuestionMarks, editWeights, thresholdEnabled, thresholdOp, thresholdValue, dynamicW1, dynamicW2]);
+  const renderMath = () => {
+    const mj = window.MathJax;
+    if (!mj) return;
 
+    if (typeof mj.typesetPromise === 'function') {
+      mj.typesetPromise().catch((err) => console.error('MathJax error:', err));
+      return;
+    }
+
+    if (mj.Hub && typeof mj.Hub.Queue === 'function') {
+      mj.Hub.Queue(['Typeset', mj.Hub]);
+    }
+  };
+
+  // Μικρή καθυστέρηση για να προλάβει το React να κάνει render το innerHTML
+  const timeoutId = setTimeout(renderMath, 50);
+  return () => clearTimeout(timeoutId);
+}, [role, currentDataset, currentExample, useQuestionMarks, editWeights, thresholdEnabled, thresholdOp, thresholdValue, dynamicW1, dynamicW2]);
+console.log("🔥 ΝΕΟ BUILD Update!");
+console.log(window.MathJax);
   return (
-    <TeacherCard title="\\[ w_1 \\times i_1 + w_2 \\times i_2 = o \\]">
+    <TeacherCard title="$$ w_1 \times i_1 + w_2 \times i_2 = o $$">
       {isScreen && (
         <>
           <div className="screen-top-bar">
@@ -226,13 +241,8 @@ const App = ({ role = 'teacher' }) => {
         </>
       )}
 
-      {isScreen && <div className="screen-table-title">Σταθερή αναφορά τάξης</div>}
-
-      {isStudent ? (
-        <div className="student-inline-note">Μαθητής: βλέπεις τις αλγεβρικές πράξεις για το τρέχον παράδειγμα.</div>
-      ) : (
-        <StudentTable i1={i1} i2={i2} w1={2} w2={3} />
-      )}
+      
+      
     </TeacherCard>
   );
 };
