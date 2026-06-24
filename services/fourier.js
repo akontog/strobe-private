@@ -1,3 +1,13 @@
+const { sanitizeString} = require('../utils/helpers');
+
+let io = null;
+let recordCommunication = () => {};
+let geometryConnectionMeta = new Map();
+let getSocketClientInfo = () => ({ ip: 'unknown', userAgent: 'unknown' });
+let touchGeometryConnection = () => {};
+let emitUsersUpdate = () => {};
+let activeUsers = new Map();
+
 const FOURIER_ROOM = 'fourier:classroom';
 const fourierParticipants = new Map();
 const fourierState = {
@@ -129,12 +139,6 @@ function normalizeFourierTeam(rawTeam, role, fallbackName, socketId) {
   return `Team-${String(socketId || '').slice(0, 4)}`;
 }
 
-function coerceFourierString(value, maxLen = 80) {
-  return String(value || '')
-    .trim()
-    .replace(/\s+/g, ' ')
-    .slice(0, maxLen);
-}
 
 function coerceFourierValue(value, depth = 0) {
   if (typeof value === 'number' && Number.isFinite(value)) {
@@ -146,7 +150,7 @@ function coerceFourierValue(value, depth = 0) {
   }
 
   if (typeof value === 'string') {
-    return coerceFourierString(value, 80);
+    return sanitizeString(value, 80);
   }
 
   if (depth > 2) {
@@ -161,7 +165,7 @@ function coerceFourierValue(value, depth = 0) {
     const result = {};
 
     Object.keys(value).slice(0, 8).forEach((key) => {
-      const safeKey = coerceFourierString(key, 24);
+      const safeKey = sanitizeString(key, 24);
       result[safeKey] = coerceFourierValue(value[key], depth + 1);
     });
 
@@ -186,7 +190,7 @@ function normalizeFourierSoundPayload(payload) {
   const sourceKey = /^[a-z0-9_-]{1,32}$/.test(rawSourceKey)
     ? rawSourceKey
     : 'main';
-  const sourceLabel = coerceFourierString(payload && payload.sourceLabel, 24) || sourceKey;
+  const sourceLabel = sanitizeString(payload && payload.sourceLabel, 24) || sourceKey;
   const frequency = Number(
     clampFourierNumber(payload && payload.frequency, 80, 1400, 440).toFixed(2)
   );
@@ -289,7 +293,7 @@ function buildFourierOceanRandomPayload() {
 }
 
 function normalizeFourierFftDuelSignalKind(rawKind) {
-  const safe = coerceFourierString(rawKind, 20).toLowerCase();
+  const safe = sanitizeString(rawKind, 20).toLowerCase();
   return FOURIER_FFT_DUEL_SIGNAL_KINDS.includes(safe) ? safe : 'sine';
 }
 
@@ -304,8 +308,8 @@ function buildFourierFftDuelAssignment(participant, socketId) {
   return {
     socketId,
     role: participant && participant.role === 'teacher' ? 'teacher' : 'client',
-    name: normalizeFourierName(participant && participant.name, 'client', socketId),
-    team: normalizeFourierTeam(participant && participant.team, 'client', participant && participant.name, socketId),
+    name: sanitizeString(participant && participant.name, 80),
+    team: sanitizeString(participant && participant.team, 80),
     signalKind,
     targetFreq,
     probeFreq,
@@ -519,7 +523,7 @@ function buildFourierSoundPayload() {
       key: stateKey,
       socketId,
       sourceKey,
-      sourceLabel: coerceFourierString(current && current.sourceLabel, 24) || sourceKey,
+      sourceLabel: sanitizeString(current && current.sourceLabel, 24) || sourceKey,
       name: participant.name,
       team: participant.team,
       role: participant.role,
@@ -587,7 +591,7 @@ function buildFourierHeatTimePayload() {
 }
 
 function incrementCounter(map, key) {
-  const safeKey = coerceFourierString(key, 80);
+  const safeKey = sanitizeString(key, 80);
   if (!safeKey) {
     return;
   }
@@ -1010,3 +1014,835 @@ function emitFourierWaveSumState(targetSocket = null) {
 
   io.to(FOURIER_ROOM).emit('fourier:wave-sum-state', payload);
 }
+
+function registerSocketHandlers(socket) {
+  socket.on('fourier:join', (data) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:join',
+      from: socket.id,
+      to: 'server',
+      payload: data
+    });
+
+    const participant = registerFourierParticipant(
+      socket,
+      data && data.role,
+      data && data.name,
+      data && data.team
+    );
+
+    logFourier('recv fourier:join', {
+      socketId: socket.id,
+      role: participant.role,
+      name: participant.name,
+      team: participant.team
+    });
+
+    recordCommunication({
+      app: 'fourier',
+      direction: 'out',
+      event: 'fourier:state',
+      from: 'server',
+      to: socket.id,
+      payload: {
+        role: participant.role,
+        name: participant.name,
+        team: participant.team
+      }
+    });
+    socket.emit('fourier:state', {
+      role: participant.role,
+      name: participant.name,
+      team: participant.team,
+      activeSlideId: fourierState.activeSlideId,
+      activeSlideIndex: fourierState.activeSlideIndex,
+      participants: buildFourierParticipantPayload(),
+      soundStates: buildFourierSoundPayload(),
+      heatStates: buildFourierHeatPayload(),
+      heatTime: buildFourierHeatTimePayload(),
+      fftDuel: buildFourierFftDuelPayload(socket.id, participant.role),
+      oceanRandom: buildFourierOceanRandomPayload(),
+      waveSum: buildFourierWaveSumPayload(),
+      summary: buildFourierSummary(),
+      taylorGuess: buildFourierTaylorGuessPayload(socket.id, participant.role),
+    });
+
+    recordCommunication({
+      app: 'fourier',
+      direction: 'out',
+      event: 'fourier:slide',
+      from: 'server',
+      to: socket.id,
+      payload: {
+        activeSlideId: fourierState.activeSlideId,
+        activeSlideIndex: fourierState.activeSlideIndex
+      }
+    });
+    socket.emit('fourier:slide', {
+      activeSlideId: fourierState.activeSlideId,
+      activeSlideIndex: fourierState.activeSlideIndex,
+      updatedAt: fourierState.updatedAt
+    });
+
+    emitFourierParticipants();
+    emitFourierSummary();
+    emitFourierSoundState();
+    emitFourierHeatState();
+    emitFourierHeatTimeState();
+    emitFourierFftDuelState();
+    emitFourierOceanRandomState();
+    emitFourierWaveSumState();
+    emitFourierTaylorGuessState();
+  });
+
+  socket.on('fourier:request-state', () => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:request-state',
+      from: socket.id,
+      to: 'server'
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant) {
+      return;
+    }
+
+    recordCommunication({
+      app: 'fourier',
+      direction: 'out',
+      event: 'fourier:state',
+      from: 'server',
+      to: socket.id,
+      payload: {
+        role: participant.role,
+        name: participant.name,
+        team: participant.team
+      }
+    });
+    socket.emit('fourier:state', {
+      role: participant.role,
+      name: participant.name,
+      team: participant.team,
+      activeSlideId: fourierState.activeSlideId,
+      activeSlideIndex: fourierState.activeSlideIndex,
+      participants: buildFourierParticipantPayload(),
+      soundStates: buildFourierSoundPayload(),
+      heatStates: buildFourierHeatPayload(),
+      heatTime: buildFourierHeatTimePayload(),
+      fftDuel: buildFourierFftDuelPayload(socket.id, participant.role),
+      oceanRandom: buildFourierOceanRandomPayload(),
+      waveSum: buildFourierWaveSumPayload(),
+      summary: buildFourierSummary()
+    });
+  });
+
+  socket.on('fourier:set-slide', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:set-slide',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'teacher') {
+      return;
+    }
+
+    const slideId = sanitizeString(payload && payload.slideId, 80);
+    const parsedIndex = Number.parseInt(payload && payload.slideIndex, 10);
+    const slideIndex = Number.isInteger(parsedIndex) ? Math.max(0, parsedIndex) : 0;
+
+    if (slideId) {
+      fourierState.activeSlideId = slideId;
+    }
+
+    fourierState.activeSlideIndex = slideIndex;
+    fourierState.updatedAt = Date.now();
+
+    recordCommunication({
+      app: 'fourier',
+      direction: 'out',
+      event: 'fourier:slide',
+      from: 'server',
+      to: FOURIER_ROOM,
+      payload: {
+        activeSlideId: fourierState.activeSlideId,
+        activeSlideIndex: fourierState.activeSlideIndex
+      }
+    });
+    io.to(FOURIER_ROOM).emit('fourier:slide', {
+      activeSlideId: fourierState.activeSlideId,
+      activeSlideIndex: fourierState.activeSlideIndex,
+      updatedAt: fourierState.updatedAt
+    });
+
+    emitFourierSummary();
+  });
+
+  socket.on('fourier:interaction', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:interaction',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'client') {
+      return;
+    }
+
+    const slideId = sanitizeString(payload && payload.slideId, 80);
+    const activityId = sanitizeString(payload && payload.activityId, 80);
+    const controlId = sanitizeString(payload && payload.controlId, 80);
+    const kind = sanitizeString(payload && payload.kind, 24) || 'input';
+    const value = coerceFourierValue(payload && payload.value);
+
+    const entry = {
+      ts: Date.now(),
+      name: participant.name,
+      slideId,
+      activityId,
+      controlId,
+      kind,
+      value
+    };
+
+    participant.interactions += 1;
+    participant.lastActionAt = entry.ts;
+    participant.lastSlideId = slideId || participant.lastSlideId;
+    fourierParticipants.set(socket.id, participant);
+
+    incrementCounter(fourierBySlideCount, slideId || 'unknown-slide');
+    incrementCounter(fourierByActivityCount, activityId || 'general');
+    pushFourierFeed(entry);
+
+    recordCommunication({
+      app: 'fourier',
+      direction: 'out',
+      event: 'fourier:activity-event',
+      from: 'server',
+      to: FOURIER_ROOM,
+      payload: {
+        name: entry.name,
+        slideId: entry.slideId,
+        activityId: entry.activityId,
+        controlId: entry.controlId,
+        kind: entry.kind
+      }
+    });
+    io.to(FOURIER_ROOM).emit('fourier:activity-event', entry);
+
+    if (activityId === 'taylor-guess' && participant.role === 'client') {
+      ensureFourierTaylorGuessRoundRunning();
+
+      const current = fourierTaylorGuessLiveCoeffs.get(socket.id) || { c0: 0, c1: 0, c2: 0, c3: 0 };
+      const nextValue = Number(clampFourierNumber(value, -4, 4, 0).toFixed(2));
+
+      if (controlId === 'c0') current.c0 = nextValue;
+      else if (controlId === 'c1') current.c1 = nextValue;
+      else if (controlId === 'c2') current.c2 = nextValue;
+      else if (controlId === 'c3') current.c3 = nextValue;
+      else return;
+
+      fourierTaylorGuessLiveCoeffs.set(socket.id, current);
+      fourierTaylorGuessState.updatedAt = entry.ts;
+
+      emitFourierTaylorGuessState();
+      emitFourierSummary();
+      return;
+    }
+
+    emitFourierSummary();
+  });
+
+  socket.on('fourier:sound-control', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:sound-control',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    let participant = fourierParticipants.get(socket.id);
+    let createdFromSoundControl = false;
+
+    if (!participant) {
+      participant = registerFourierParticipant(
+        socket,
+        payload && payload.role === 'teacher' ? 'teacher' : 'client',
+        payload && payload.name,
+        payload && payload.team
+      );
+      createdFromSoundControl = true;
+    }
+
+    if (!participant || (participant.role !== 'client' && participant.role !== 'teacher')) {
+      return;
+    }
+
+    const sound = normalizeFourierSoundPayload(payload);
+    const sourceKey = participant.role === 'teacher'
+      ? (sound.sourceKey || 'teacher-main')
+      : (sound.sourceKey || 'main');
+    const stateKey = buildFourierSoundStateKey(socket.id, sourceKey);
+
+    fourierSoundState.set(stateKey, {
+      sourceKey,
+      sourceLabel: sound.sourceLabel || sourceKey,
+      frequency: sound.frequency,
+      amplitude: sound.amplitude,
+      updatedAt: Date.now()
+    });
+
+    participant.lastActionAt = Date.now();
+    fourierParticipants.set(socket.id, participant);
+
+    if (createdFromSoundControl) {
+      recordCommunication({
+        app: 'fourier',
+        direction: 'out',
+        event: 'fourier:state',
+        from: 'server',
+        to: socket.id,
+        payload: {
+          role: participant.role,
+          name: participant.name,
+          team: participant.team,
+          reason: 'implicit-join-recovery'
+        }
+      });
+      socket.emit('fourier:state', {
+        role: participant.role,
+        name: participant.name,
+        team: participant.team,
+        activeSlideId: fourierState.activeSlideId,
+        activeSlideIndex: fourierState.activeSlideIndex,
+        participants: buildFourierParticipantPayload(),
+        soundStates: buildFourierSoundPayload(),
+        heatStates: buildFourierHeatPayload(),
+        heatTime: buildFourierHeatTimePayload(),
+        fftDuel: buildFourierFftDuelPayload(socket.id, participant.role),
+        oceanRandom: buildFourierOceanRandomPayload(),
+        summary: buildFourierSummary()
+      });
+
+      emitFourierParticipants();
+      emitFourierSummary();
+    }
+
+    emitFourierSoundState();
+    emitFourierFftDuelState();
+  });
+
+  socket.on('fourier:heat-control', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:heat-control',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    let participant = fourierParticipants.get(socket.id);
+    let createdFromHeatControl = false;
+
+    if (!participant) {
+      participant = registerFourierParticipant(
+        socket,
+        payload && payload.role,
+        payload && payload.name,
+        payload && payload.team
+      );
+      createdFromHeatControl = true;
+    }
+
+    if (!participant) {
+      return;
+    }
+
+    const heat = normalizeFourierHeatPayload(payload);
+
+    fourierHeatState.set(socket.id, {
+      position: heat.position,
+      temperature: heat.temperature,
+      updatedAt: Date.now()
+    });
+
+    participant.lastActionAt = Date.now();
+    fourierParticipants.set(socket.id, participant);
+
+    if (createdFromHeatControl) {
+      recordCommunication({
+        app: 'fourier',
+        direction: 'out',
+        event: 'fourier:state',
+        from: 'server',
+        to: socket.id,
+        payload: {
+          role: participant.role,
+          name: participant.name,
+          team: participant.team,
+          reason: 'implicit-join-recovery'
+        }
+      });
+      socket.emit('fourier:state', {
+        role: participant.role,
+        name: participant.name,
+        team: participant.team,
+        activeSlideId: fourierState.activeSlideId,
+        activeSlideIndex: fourierState.activeSlideIndex,
+        participants: buildFourierParticipantPayload(),
+        soundStates: buildFourierSoundPayload(),
+        heatStates: buildFourierHeatPayload(),
+        heatTime: buildFourierHeatTimePayload(),
+        fftDuel: buildFourierFftDuelPayload(socket.id, participant.role),
+        oceanRandom: buildFourierOceanRandomPayload(),
+        summary: buildFourierSummary()
+      });
+
+      emitFourierParticipants();
+      emitFourierSummary();
+      emitFourierSoundState();
+    }
+
+    emitFourierHeatState();
+    emitFourierFftDuelState();
+  });
+
+  socket.on('fourier:heat-time-control', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:heat-time-control',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'teacher') {
+      return;
+    }
+
+    const heatTimeValue = normalizeFourierHeatTimePayload(payload);
+    fourierHeatTimeState.value = heatTimeValue;
+    fourierHeatTimeState.updatedAt = Date.now();
+    fourierHeatTimeState.sourceSocketId = socket.id;
+
+    emitFourierHeatTimeState();
+  });
+
+  socket.on('fourier:fft-duel-start', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:fft-duel-start',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'teacher') {
+      return;
+    }
+
+    startFourierFftDuelRound();
+    emitFourierFftDuelState();
+    emitFourierSummary();
+  });
+
+  socket.on('fourier:fft-duel-probe', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:fft-duel-probe',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'client') {
+      return;
+    }
+
+    if (fourierFftDuelState.status !== 'running') {
+      return;
+    }
+
+    const assignment = ensureFourierFftDuelAssignment(socket.id);
+    if (!assignment || assignment.locked) {
+      return;
+    }
+
+    assignment.probeFreq = Number(clampFourierNumber(payload && payload.probeFreq, 0, 8, assignment.probeFreq).toFixed(1));
+    assignment.updatedAt = Date.now();
+    fourierFftDuelState.assignments.set(socket.id, assignment);
+    fourierFftDuelState.updatedAt = assignment.updatedAt;
+
+    participant.lastActionAt = assignment.updatedAt;
+    fourierParticipants.set(socket.id, participant);
+
+    emitFourierFftDuelState();
+  });
+
+  socket.on('fourier:fft-duel-submit', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:fft-duel-submit',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'client') {
+      return;
+    }
+
+    if (fourierFftDuelState.status !== 'running') {
+      return;
+    }
+
+    const assignment = ensureFourierFftDuelAssignment(socket.id);
+    if (!assignment || assignment.locked) {
+      return;
+    }
+
+    const guessFreq = Number(clampFourierNumber(payload && payload.guessFreq, 0, 8, assignment.probeFreq).toFixed(1));
+    const error = Number(Math.abs(guessFreq - assignment.targetFreq).toFixed(2));
+    const now = Date.now();
+
+    assignment.probeFreq = guessFreq;
+    assignment.guessFreq = guessFreq;
+    assignment.error = error;
+    assignment.submitted = true;
+    assignment.locked = true;
+    assignment.submittedAt = now;
+    assignment.updatedAt = now;
+
+    fourierFftDuelState.assignments.set(socket.id, assignment);
+    fourierFftDuelState.updatedAt = now;
+
+    participant.interactions += 1;
+    participant.lastActionAt = now;
+    fourierParticipants.set(socket.id, participant);
+
+    emitFourierParticipants();
+    emitFourierSummary();
+    emitFourierFftDuelState();
+  });
+
+  socket.on('fourier:fft-duel-reveal', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:fft-duel-reveal',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'teacher') {
+      return;
+    }
+
+    if (fourierFftDuelState.status !== 'running') {
+      return;
+    }
+
+    fourierFftDuelState.revealResults = true;
+    fourierFftDuelState.updatedAt = Date.now();
+    emitFourierFftDuelState();
+  });
+
+  socket.on('fourier:ocean-random-pack', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:ocean-random-pack',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'client') {
+      return;
+    }
+
+    const items = normalizeFourierOceanRandomItems(payload && payload.items);
+    if (!items.length) {
+      return;
+    }
+
+    const now = Date.now();
+    fourierOceanRandomState.packs.set(socket.id, {
+      items,
+      updatedAt: now
+    });
+    fourierOceanRandomState.updatedAt = now;
+
+    participant.lastActionAt = now;
+    fourierParticipants.set(socket.id, participant);
+
+    emitFourierOceanRandomState();
+    emitFourierSummary();
+  });
+
+  socket.on('fourier:ocean-random-clear', () => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:ocean-random-clear',
+      from: socket.id,
+      to: 'server'
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'teacher') {
+      return;
+    }
+
+    fourierOceanRandomState.packs.clear();
+    fourierOceanRandomState.updatedAt = Date.now();
+
+    emitFourierOceanRandomState();
+    emitFourierSummary();
+  });
+
+  socket.on('fourier:wave-sum-update', (payload) => {
+    touchGeometryConnection(socket.id);
+    recordCommunication({
+      app: 'fourier',
+      direction: 'in',
+      event: 'fourier:wave-sum-update',
+      from: socket.id,
+      to: 'server',
+      payload
+    });
+
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'client') {
+      return;
+    }
+
+    const freq = Number(clampFourierNumber((payload && payload.freq), 0.4, 6, 1.2).toFixed(2));
+    const amp = Number(clampFourierNumber((payload && payload.amp), 0, 1.8, 0.9).toFixed(2));
+    const phi = Number(clampFourierNumber((payload && payload.phi), -3.14, 3.14, 0).toFixed(2));
+    const now = Date.now();
+
+    fourierWaveSumState.set(socket.id, { freq, amp, phi, updatedAt: now });
+
+    participant.lastActionAt = now;
+    fourierParticipants.set(socket.id, participant);
+
+    emitFourierWaveSumState();
+  });
+
+  socket.on('fourier:taylor-guess-live', (payload) => {
+    touchGeometryConnection(socket.id);
+    let participant = fourierParticipants.get(socket.id);
+    let createdFromTaylorLive = false;
+    let startedByLive = false;
+
+    if (!participant) {
+      participant = registerFourierParticipant(
+        socket,
+        'client',
+        payload && payload.name,
+        payload && payload.team
+      );
+      createdFromTaylorLive = true;
+    }
+
+    if (!participant || participant.role !== 'client') return;
+    startedByLive = ensureFourierTaylorGuessRoundRunning();
+    const c0 = Number(clampFourierNumber(payload && payload.c0, -4, 4, 0).toFixed(2));
+    const c1 = Number(clampFourierNumber(payload && payload.c1, -4, 4, 0).toFixed(2));
+    const c2 = Number(clampFourierNumber(payload && payload.c2, -4, 4, 0).toFixed(2));
+    const c3 = Number(clampFourierNumber(payload && payload.c3, -4, 4, 0).toFixed(2));
+    fourierTaylorGuessLiveCoeffs.set(socket.id, { c0, c1, c2, c3 });
+
+    participant.lastActionAt = Date.now();
+    fourierParticipants.set(socket.id, participant);
+
+    if (createdFromTaylorLive) {
+      emitFourierParticipants();
+      emitFourierSoundState();
+      emitFourierSummary();
+    } else if (startedByLive) {
+      emitFourierSummary();
+    }
+
+    fourierParticipants.forEach((currentParticipant, sid) => {
+      if (currentParticipant && currentParticipant.role === 'teacher') {
+        const teacherPayload = buildFourierTaylorGuessPayload(sid, 'teacher');
+        io.to(sid).emit('fourier:taylor-guess-state', teacherPayload);
+      }
+    });
+  });
+
+  socket.on('fourier:taylor-guess-submit', (payload) => {
+    touchGeometryConnection(socket.id);
+    let participant = fourierParticipants.get(socket.id);
+
+    if (!participant) {
+      participant = registerFourierParticipant(
+        socket,
+        'client',
+        payload && payload.name,
+        payload && payload.team
+      );
+    }
+
+    if (!participant || participant.role !== 'client') return;
+    ensureFourierTaylorGuessRoundRunning();
+    const hadSubmission = fourierTaylorGuessState.submissions.has(socket.id);
+
+    const c0 = Number(clampFourierNumber(payload && payload.c0, -4, 4, 0).toFixed(2));
+    const c1 = Number(clampFourierNumber(payload && payload.c1, -4, 4, 0).toFixed(2));
+    const c2 = Number(clampFourierNumber(payload && payload.c2, -4, 4, 0).toFixed(2));
+    const c3 = Number(clampFourierNumber(payload && payload.c3, -4, 4, 0).toFixed(2));
+
+    let mse = 0;
+    for (let i = 0; i <= 20; i++) {
+      const x = -1.5 + (i / 20) * 3.0;
+      const diff = Math.exp(2 * x) - (c0 + c1 * x + c2 * x * x + c3 * x * x * x);
+      mse += diff * diff;
+    }
+    const now = Date.now();
+    const error = Number(Math.sqrt(mse / 21).toFixed(3));
+
+    fourierTaylorGuessState.submissions.set(socket.id, {
+      c0,
+      c1,
+      c2,
+      c3,
+      error,
+      submittedAt: hadSubmission
+        ? (fourierTaylorGuessState.submissions.get(socket.id)?.submittedAt || now)
+        : now,
+      updatedAt: now,
+    });
+    fourierTaylorGuessState.updatedAt = now;
+    participant.interactions += 1;
+    participant.lastActionAt = now;
+    fourierParticipants.set(socket.id, participant);
+
+    emitFourierParticipants();
+    emitFourierTaylorGuessState();
+    emitFourierSummary();
+  });
+
+  socket.on('fourier:taylor-guess-reveal', () => {
+    touchGeometryConnection(socket.id);
+    const participant = fourierParticipants.get(socket.id);
+    if (!participant || participant.role !== 'teacher') return;
+    ensureFourierTaylorGuessRoundRunning();
+    fourierTaylorGuessState.revealResults = true;
+    fourierTaylorGuessState.updatedAt = Date.now();
+    emitFourierTaylorGuessState();
+  });
+}
+
+function handleSocketDisconnect(socketId) {
+  const removedParticipant = fourierParticipants.delete(socketId);
+  const removedSoundState = removeFourierSoundStatesForSocket(socketId);
+  const removedHeatState = fourierHeatState.delete(socketId);
+  const removedOceanRandomPack = fourierOceanRandomState.packs.delete(socketId);
+  const removedFftDuelState = fourierFftDuelState.assignments.delete(socketId);
+  const removedWaveSumEntry = fourierWaveSumState.delete(socketId);
+
+  if (fourierFftDuelState.assignments.size === 0) {
+    fourierFftDuelState.status = 'idle';
+    fourierFftDuelState.roundId = '';
+    fourierFftDuelState.startedAt = 0;
+    fourierFftDuelState.revealResults = false;
+    fourierFftDuelState.updatedAt = Date.now();
+  }
+
+  if (removedParticipant) {
+    emitFourierParticipants();
+    emitFourierSummary();
+  }
+
+  if (removedSoundState || removedParticipant) {
+    emitFourierSoundState();
+  }
+
+  if (removedHeatState || removedParticipant) {
+    emitFourierHeatState();
+  }
+
+  if (removedFftDuelState || removedParticipant) {
+    emitFourierFftDuelState();
+  }
+
+  if (removedOceanRandomPack || removedParticipant) {
+    fourierOceanRandomState.updatedAt = Date.now();
+    emitFourierOceanRandomState();
+    emitFourierSummary();
+  }
+
+  if (removedWaveSumEntry || removedParticipant) {
+    emitFourierWaveSumState();
+  }
+
+  if (removedParticipant) {
+    emitFourierTaylorGuessState();
+  }
+
+  emitUsersUpdate();
+}
+// Επιστρέφει ένα αντικείμενο με τις συναρτήσεις και τις μεταβλητές 
+// που χρειάζονται για τη διαχείριση της εφαρμογής Fourier μέσω WebSocket.
+function initFourier(deps = {}) {
+  io = deps.io;
+  recordCommunication = typeof deps.recordCommunication === 'function' ? deps.recordCommunication : () => {};
+  geometryConnectionMeta = deps.geometryConnectionMeta;
+  getSocketClientInfo = typeof deps.getSocketClientInfo === 'function'
+    ? deps.getSocketClientInfo
+    : () => ({ ip: 'unknown', userAgent: 'unknown' });
+  touchGeometryConnection = typeof deps.touchGeometryConnection === 'function' ? deps.touchGeometryConnection : () => {};
+  emitUsersUpdate = typeof deps.emitUsersUpdate === 'function' ? deps.emitUsersUpdate : () => {};
+  activeUsers = deps.activeUsers;
+
+  return {
+    fourierParticipants,
+    registerSocketHandlers,
+    handleSocketDisconnect,
+    sanitizeString
+  };
+}
+
+module.exports = initFourier;

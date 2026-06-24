@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { TeacherCard } from './components/TeacherCard';
 import { VerticalProducts } from './components/VerticalProducts';
 import { StudentTable } from './components/StudentTable';
@@ -58,6 +58,10 @@ const DATASETS = {
 };
 
 const App = ({ role = 'teacher' }) => {
+  const wsRef = useRef(null);
+  const reconnectTimerRef = useRef(null);
+  const hasRegisteredRef = useRef(false);
+
   const [currentDataset, setCurrentDataset] = useState('vehicles');
   const [currentExample, setCurrentExample] = useState(0);
   const [useQuestionMarks, setUseQuestionMarks] = useState(false);
@@ -67,18 +71,34 @@ const App = ({ role = 'teacher' }) => {
   const [thresholdValue, setThresholdValue] = useState(10);
   const [dynamicW1, setDynamicW1] = useState(2);
   const [dynamicW2, setDynamicW2] = useState(3);
+  const [isSocketConnected, setIsSocketConnected] = useState(false);
+  const [participants, setParticipants] = useState([]);
+  const [roster, setRoster] = useState([]);
+  const [lessonInputs, setLessonInputs] = useState({ i1: 2, i2: 3 });
+  const [lessonThreshold, setLessonThreshold] = useState(5);
+
+  const studentName = useMemo(() => {
+    try {
+      const stored = String(window.localStorage.getItem('strobeStudentConnectName') || '').trim();
+      return stored || `Student-${Math.floor(Math.random() * 900 + 100)}`;
+    } catch {
+      return `Student-${Math.floor(Math.random() * 900 + 100)}`;
+    }
+  }, []);
 
   const currentExampleData = DATASETS[currentDataset].examples[currentExample];
-  const i1 = currentExampleData.i1;
-  const i2 = currentExampleData.i2;
-  const w1 = editWeights ? dynamicW1 : 2;
-  const w2 = editWeights ? dynamicW2 : 3;
-  const prod1 = w1 * i1;
-  const prod2 = w2 * i2;
-  const total = prod1 + prod2;
   const isTeacher = role === 'teacher';
   const isScreen = role === 'screen';
   const isStudent = role === 'student';
+
+  const i1 = isStudent ? lessonInputs.i1 : currentExampleData.i1;
+  const i2 = isStudent ? lessonInputs.i2 : currentExampleData.i2;
+  const isWeightEditable = isStudent || (isTeacher && editWeights);
+  const w1 = isWeightEditable ? dynamicW1 : 2;
+  const w2 = isWeightEditable ? dynamicW2 : 3;
+  const prod1 = w1 * i1;
+  const prod2 = w2 * i2;
+  const total = prod1 + prod2;
 
   const threshold = thresholdEnabled && !isStudent ? {
     satisfied: thresholdOp === 'gt' ? total > thresholdValue : total < thresholdValue,
@@ -94,6 +114,124 @@ const App = ({ role = 'teacher' }) => {
       setDynamicW2(value);
     }
   };
+
+  const sendSocketMessage = (payload) => {
+    const ws = wsRef.current;
+    if (!ws || ws.readyState !== WebSocket.OPEN) return false;
+    try {
+      ws.send(JSON.stringify(payload));
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const clearReconnect = () => {
+      if (reconnectTimerRef.current) {
+        clearTimeout(reconnectTimerRef.current);
+        reconnectTimerRef.current = null;
+      }
+    };
+
+    const registerCurrentRole = () => {
+      if (hasRegisteredRef.current) return;
+
+      if (isStudent) {
+        sendSocketMessage({ type: 'register_student', name: studentName });
+      } else if (isScreen) {
+        sendSocketMessage({ type: 'register_teacher', name: 'Screen' });
+      } else {
+        sendSocketMessage({ type: 'register_teacher', name: 'Teacher' });
+      }
+
+      sendSocketMessage({ type: 'request_state' });
+      hasRegisteredRef.current = true;
+    };
+
+    const connect = () => {
+      if (cancelled) return;
+      const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+      const ws = new WebSocket(`${protocol}://${window.location.host}/ws/neural-lab`);
+      wsRef.current = ws;
+
+      ws.addEventListener('open', () => {
+        if (cancelled) return;
+        setIsSocketConnected(true);
+        hasRegisteredRef.current = false;
+        registerCurrentRole();
+      });
+
+      ws.addEventListener('message', (event) => {
+        let message;
+        try {
+          message = JSON.parse(event.data);
+        } catch {
+          return;
+        }
+
+        if (message?.type !== 'canvas_state') return;
+
+        if (message.lesson?.inputs) {
+          setLessonInputs({
+            i1: Number.isFinite(Number(message.lesson.inputs.i1)) ? Number(message.lesson.inputs.i1) : 2,
+            i2: Number.isFinite(Number(message.lesson.inputs.i2)) ? Number(message.lesson.inputs.i2) : 3
+          });
+        }
+
+        if (Number.isFinite(Number(message.lesson?.threshold))) {
+          setLessonThreshold(Number(message.lesson.threshold));
+        }
+
+        if (Array.isArray(message.participants)) {
+          setParticipants(message.participants);
+        }
+
+        if (Array.isArray(message.roster)) {
+          setRoster(message.roster);
+        }
+
+        if (isStudent && message.me?.weights) {
+          const nextW1 = Number(message.me.weights.w1);
+          const nextW2 = Number(message.me.weights.w2);
+          if (Number.isFinite(nextW1)) setDynamicW1(nextW1);
+          if (Number.isFinite(nextW2)) setDynamicW2(nextW2);
+        }
+      });
+
+      ws.addEventListener('close', () => {
+        if (cancelled) return;
+        setIsSocketConnected(false);
+        hasRegisteredRef.current = false;
+        clearReconnect();
+        reconnectTimerRef.current = setTimeout(connect, 1000);
+      });
+
+      ws.addEventListener('error', () => {
+        if (!cancelled) setIsSocketConnected(false);
+      });
+    };
+
+    connect();
+
+    return () => {
+      cancelled = true;
+      clearReconnect();
+      const ws = wsRef.current;
+      wsRef.current = null;
+      hasRegisteredRef.current = false;
+      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+        ws.close();
+      }
+    };
+  }, [isScreen, isStudent, studentName]);
+
+  useEffect(() => {
+    if (!isStudent || !isSocketConnected) return;
+    sendSocketMessage({ type: 'student_weights', weights: { w1: dynamicW1, w2: dynamicW2 } });
+  }, [dynamicW1, dynamicW2, isSocketConnected, isStudent]);
 
   useEffect(() => {
   const renderMath = () => {
@@ -114,10 +252,18 @@ const App = ({ role = 'teacher' }) => {
   const timeoutId = setTimeout(renderMath, 50);
   return () => clearTimeout(timeoutId);
 }, [role, currentDataset, currentExample, useQuestionMarks, editWeights, thresholdEnabled, thresholdOp, thresholdValue, dynamicW1, dynamicW2]);
-console.log("🔥 ΝΕΟ BUILD Update!");
-console.log(window.MathJax);
+  const sortedParticipants = [...participants].sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+
   return (
     <TeacherCard title="$$ w_1 \times i_1 + w_2 \times i_2 = o $$">
+      <div className="connection-status">
+        <span className={`status-dot ${isSocketConnected ? 'online' : 'offline'}`}></span>
+        <strong>{isSocketConnected ? 'Συνδεδεμένο' : 'Αποσυνδεδεμένο'}</strong>
+        <span>κανάλι: /ws/neural-lab</span>
+        {isStudent && <span>όνομα: {studentName}</span>}
+        {!isStudent && <span>συνδεδεμένοι: {roster.length}</span>}
+      </div>
+
       {isScreen && (
         <>
           <div className="screen-top-bar">
@@ -152,12 +298,24 @@ console.log(window.MathJax);
           i2={i2}
           total={total}
           useQuestionMarks={useQuestionMarks}
-          editWeights={isTeacher && editWeights}
+          editWeights={isWeightEditable}
           onWeightChange={handleWeightChange}
           onRefresh={() => {}}
           threshold={threshold}
         />
       </div>
+
+      {(isTeacher || isScreen) && (
+        <div className="live-table-wrap">
+          <h3>Συνδεδεμένοι μαθητές</h3>
+          <StudentTable
+            i1={lessonInputs.i1}
+            i2={lessonInputs.i2}
+            threshold={lessonThreshold}
+            participants={sortedParticipants}
+          />
+        </div>
+      )}
 
       {isTeacher && (
         <>

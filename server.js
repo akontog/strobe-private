@@ -14,7 +14,11 @@ const clientRouter = require('./routes/client');
 const createAdminRouter = require('./routes/admin');
 const createAppsRouter = require('./routes/apps');
 const appDataRouter = require('./routes/appData');
-
+// helpers
+const { 
+  sanitizeString, 
+  parseRealtimeMessage 
+} = require('./utils/helpers');
 // 3. utilities
 const {
   CAMERA_FEATURES_ENABLED,
@@ -25,9 +29,16 @@ const {
   stopCameraWorker,
   requestCameraDetection
 } = require('./utils/cameraWorker');
-
+const { createCommunicationLog } = require('./utils/communication');
+const {
+  getSocketClientInfo,
+  getUpgradeClientInfo,
+  toIsoTimestamp
+} = require('./utils/socketHelpers');
+// Εισαγωγή υπηρεσιών
 const initFourier = require('./services/fourier');
 const initBuffon = require('./services/buffon');
+const initGeometry = require('./services/geometry');
 const initNeural = require('./services/neural');
 
 // 4. Δημιουργία εφαρμογής Express και HTTP server
@@ -45,48 +56,23 @@ const PORT = Number.isInteger(parsedPort) && parsedPort > 0 && parsedPort < 6553
 const REALTIME_WS_PATH = '/ws/realtime';
 
 
-
-function parseRealtimeMessage(raw) {
-  try {
-    const text = Buffer.isBuffer(raw) ? raw.toString('utf8') : String(raw || '');
-    const parsed = JSON.parse(text);
-
-    if (!parsed || typeof parsed !== 'object') {
-      return null;
-    }
-
-    const event = typeof parsed.event === 'string' ? parsed.event.trim() : '';
-    if (!event) {
-      return null;
-    }
-
-    return {
-      event,
-      data: parsed.data
-    };
-  } catch {
-    return null;
-  }
-}
-
-function coerceFourierString(value, maxLen = 80) {
-  return String(value || '')
-    .trim()
-    .replace(/\s+/g, ' ')
-    .slice(0, maxLen);
-}
-
+// Δημιουργεί transport για real-time επικοινωνία
 function createRealtimeTransport() {
+  // Δημιουργία WebSocketServer με noServer: 
+  // true για να χρησιμοποιηθεί με το υπάρχον HTTP server
   const wss = new WebSocketServer({ noServer: true });
+  // Map με όλους τους ενεργούς sockets
   const sockets = new Map();
+  // Map με όλα τα rooms και τα μέλη τους
   const rooms = new Map();
+  // Array με όλους τους χειριστές σύνδεσης
   const connectionHandlers = [];
   let socketSeq = 0;
-
+  // Έλεγχος αν το WebSocket είναι έτοιμο για αποστολή μηνυμάτων
   function wsReady(ws) {
     return Boolean(ws) && ws.readyState === 1;
   }
-
+  // Αποστολή μηνύματος σε WebSocket
   function wsSend(ws, event, data) {
     if (!wsReady(ws)) {
       return;
@@ -94,7 +80,8 @@ function createRealtimeTransport() {
 
     try {
       ws.send(JSON.stringify({ event, data }));
-    } catch {
+    } catch (error) {
+      console.error(`[realtime] wsSend error for ${event}:`, error && error.message ? error.message : error);
     }
   }
 
@@ -204,7 +191,8 @@ function createRealtimeTransport() {
         socket.connected = false;
         try {
           ws.close(code, reason);
-        } catch {
+        } catch (error) {
+          console.error(`[realtime] ws.close error for ${socketId}:`, error && error.message ? error.message : error);
         }
       },
       broadcast: {
@@ -404,12 +392,8 @@ app.use('/student', clientRouter);
 app.use('/client', clientRouter);
 
 // Store active users and their positions for geometry app
-const activeUsers = new Map();
-const geometryConnectionMeta = new Map();
 const buffonConnectionMeta = new WeakMap();
 const canvasNodeConnectionMeta = new WeakMap();
-const communicationLog = [];
-let communicationSeq = 0;
 const parsedCommLogLimit = Number.parseInt(process.env.ADMIN_COMM_LOG_LIMIT || '1200', 10);
 const COMM_LOG_LIMIT = Number.isInteger(parsedCommLogLimit) && parsedCommLogLimit >= 200
   ? Math.min(parsedCommLogLimit, 10000)
@@ -476,215 +460,40 @@ const COMM_EVENT_CATALOG = Object.freeze([
   { app: 'neural-lab', direction: 'out', event: 'neural-lab:canvas_state', description: 'Server pushes synchronized state to teachers/students.' }
 ]);
 
-function sanitizeCommString(value, maxLen = 200) {
-  const raw = String(value || '');
+const {
+  recordCommunication,
+  getCommunicationLog,
+  clearCommunicationLog,
+  getCommunicationCatalog
+} = createCommunicationLog({
+  limit: COMM_LOG_LIMIT,
+  catalog: COMM_EVENT_CATALOG
+});
 
-  if (!raw) {
-    return '';
-  }
+const {
+  activeUsers,
+  geometryConnectionMeta,
+  touchGeometryConnection,
+  buildUserList,
+  emitUsersUpdate,
+  detectPointsFromPython,
+  detectCameraFrameFromPython
+} = initGeometry({
+  io,
+  recordCommunication,
+  requestCameraDetection
+});
 
-  if (raw.startsWith('data:image/')) {
-    return '[image-data omitted]';
-  }
-
-  if (raw.length <= maxLen) {
-    return raw;
-  }
-
-  return `${raw.slice(0, maxLen)}...`;
-}
-
-function sanitizeCommPayload(value, depth = 0) {
-  if (value === null || typeof value === 'undefined') {
-    return null;
-  }
-
-  if (depth > 3) {
-    return '[max-depth]';
-  }
-
-  if (typeof value === 'number') {
-    return Number.isFinite(value) ? Number(value.toFixed(6)) : null;
-  }
-
-  if (typeof value === 'boolean') {
-    return value;
-  }
-
-  if (typeof value === 'string') {
-    return sanitizeCommString(value, 220);
-  }
-
-  if (Array.isArray(value)) {
-    const list = value.slice(0, 12).map((item) => sanitizeCommPayload(item, depth + 1));
-
-    if (value.length > 12) {
-      list.push(`[+${value.length - 12} more]`);
-    }
-
-    return list;
-  }
-
-  if (typeof value === 'object') {
-    const result = {};
-
-    Object.keys(value).slice(0, 14).forEach((key) => {
-      if (/image|frame|blob|buffer/i.test(key)) {
-        result[key] = '[binary omitted]';
-        return;
-      }
-
-      result[sanitizeCommString(key, 40)] = sanitizeCommPayload(value[key], depth + 1);
-    });
-
-    if (Object.keys(value).length > 14) {
-      result.__moreKeys = Object.keys(value).length - 14;
-    }
-
-    return result;
-  }
-
-  return sanitizeCommString(value, 220);
-}
-
-function recordCommunication(entry) {
-  const payload = entry && typeof entry === 'object' ? entry : {};
-  const message = {
-    id: ++communicationSeq,
-    ts: Date.now(),
-    isoTime: new Date().toISOString(),
-    app: sanitizeCommString(payload.app || 'system', 40),
-    direction: payload.direction === 'out' ? 'out' : 'in',
-    event: sanitizeCommString(payload.event || 'unknown', 90),
-    from: sanitizeCommString(payload.from || '-', 80),
-    to: sanitizeCommString(payload.to || '-', 80),
-    note: sanitizeCommString(payload.note || '', 200),
-    payload: sanitizeCommPayload(payload.payload)
-  };
-
-  communicationLog.push(message);
-
-  if (communicationLog.length > COMM_LOG_LIMIT) {
-    communicationLog.splice(0, communicationLog.length - COMM_LOG_LIMIT);
-  }
-}
-
-function getCommunicationLog(options = {}) {
-  const parsedLimit = Number.parseInt(options.limit, 10);
-  const limit = Number.isInteger(parsedLimit)
-    ? Math.max(20, Math.min(2000, parsedLimit))
-    : 300;
-
-  const source = sanitizeCommString(options.source || '', 40).toLowerCase();
-  const eventQuery = sanitizeCommString(options.event || '', 90).toLowerCase();
-
-  let list = communicationLog;
-
-  if (source) {
-    list = list.filter((item) => String(item.app || '').toLowerCase() === source);
-  }
-
-  if (eventQuery) {
-    list = list.filter((item) => String(item.event || '').toLowerCase().includes(eventQuery));
-  }
-
-  return list.slice(-limit).reverse().map((item) => ({ ...item }));
-}
-
-function clearCommunicationLog() {
-  const cleared = communicationLog.length;
-  communicationLog.length = 0;
-  communicationSeq = 0;
-  return cleared;
-}
-
-function getCommunicationCatalog() {
-  return COMM_EVENT_CATALOG.map((item) => ({ ...item }));
-}
-
-function getHeaderValue(headers, key) {
-  if (!headers || !key) {
-    return '';
-  }
-
-  const loweredKey = String(key).toLowerCase();
-  const direct = headers[loweredKey];
-
-  if (Array.isArray(direct)) {
-    return String(direct[0] || '');
-  }
-
-  if (typeof direct === 'string') {
-    return direct;
-  }
-
-  const fallbackKey = Object.keys(headers).find((headerKey) => String(headerKey).toLowerCase() === loweredKey);
-
-  if (!fallbackKey) {
-    return '';
-  }
-
-  const fallbackValue = headers[fallbackKey];
-
-  if (Array.isArray(fallbackValue)) {
-    return String(fallbackValue[0] || '');
-  }
-
-  return typeof fallbackValue === 'string' ? fallbackValue : '';
-}
-
-function extractIpFromHeaders(headers, fallback = 'unknown') {
-  const forwarded = getHeaderValue(headers, 'x-forwarded-for');
-
-  if (forwarded) {
-    return forwarded.split(',')[0].trim() || fallback;
-  }
-
-  return fallback;
-}
-
-function toIsoTimestamp(value) {
-  const numeric = Number(value);
-  if (!Number.isFinite(numeric) || numeric <= 0) {
-    return null;
-  }
-
-  return new Date(numeric).toISOString();
-}
-
-function getSocketClientInfo(socket) {
-  const handshake = socket && socket.handshake ? socket.handshake : {};
-  const headers = handshake.headers || {};
-  const fallbackIp = handshake.address || (socket && socket.conn ? socket.conn.remoteAddress : '') || 'unknown';
-
-  return {
-    ip: extractIpFromHeaders(headers, fallbackIp),
-    userAgent: getHeaderValue(headers, 'user-agent') || 'unknown'
-  };
-}
-
-function getUpgradeClientInfo(request) {
-  const headers = request && request.headers ? request.headers : {};
-  const fallbackIp = request && request.socket ? request.socket.remoteAddress : 'unknown';
-
-  return {
-    ip: extractIpFromHeaders(headers, fallbackIp),
-    userAgent: getHeaderValue(headers, 'user-agent') || 'unknown'
-  };
-}
-
-function touchGeometryConnection(socketId) {
-  const current = geometryConnectionMeta.get(socketId);
-
-  if (!current) {
-    return;
-  }
-
-  geometryConnectionMeta.set(socketId, {
-    ...current,
-    lastSeenAt: Date.now()
-  });
-}
+const fourierService = initFourier({
+  io,
+  recordCommunication,
+  geometryConnectionMeta,
+  getSocketClientInfo,
+  touchGeometryConnection,
+  emitUsersUpdate,
+  activeUsers
+});
+const { fourierParticipants, registerSocketHandlers: registerFourierSocketHandlers, handleSocketDisconnect } = fourierService;
 
 function touchBuffonConnection(ws, patch = {}) {
   const current = buffonConnectionMeta.get(ws) || {
@@ -724,46 +533,6 @@ function touchCanvasNodeConnection(ws, patch = {}) {
 
   canvasNodeConnectionMeta.set(ws, next);
   return next;
-}
-
-function buildUserList() {
-  const list = [];
-
-  activeUsers.forEach((user, socketId) => {
-    const base = {
-      id: socketId,
-      name: user.name || 'User',
-      color: user.color,
-      shape: user.shape,
-      role: user.role || 'mouse'
-    };
-
-    if (user.role === 'camera' && Array.isArray(user.points) && user.points.length) {
-      user.points.forEach((point, idx) => {
-        const pointId = typeof point.id === 'number' ? point.id : idx + 1;
-
-        list.push({
-          ...base,
-          id: `${socketId}:${pointId}`,
-          name: `${base.name} ${pointId}`,
-          x: point.x,
-          y: point.y
-        });
-      });
-
-      return;
-    }
-
-    if (typeof user.x === 'number' && typeof user.y === 'number') {
-      list.push({
-        ...base,
-        x: user.x,
-        y: user.y
-      });
-    }
-  });
-
-  return list;
 }
 
 function getRealtimeParticipants() {
@@ -888,39 +657,6 @@ app.use((err, req, res, next) => {
   return res.status(status).json({ error: status === 500 ? 'Internal server error' : 'Request failed' });
 });
 
-
-function emitUsersUpdate() {
-  const users = buildUserList();
-
-  recordCommunication({
-    app: 'geometry',
-    direction: 'out',
-    event: 'users-update',
-    from: 'server',
-    to: 'all-sockets',
-    payload: {
-      points: users.length
-    }
-  });
-
-  io.emit('users-update', users);
-}
-
-async function detectPointsFromPython(imageBase64) {
-  return requestCameraDetection(imageBase64);
-}
-
-async function detectCameraFrameFromPython(imageBase64, options = {}) {
-  return requestCameraDetection(imageBase64, options);
-}
-
-function sanitizeLegacyFilename(filename) {
-  const basename = path.basename(String(filename || ''));
-  const safe = basename.replace(/[^a-z0-9._-]/gi, '');
-
-  return safe.endsWith('.json') ? safe : '';
-}
-
 // Store current legacy geometry activity
 let currentActivity = null;
 
@@ -1034,6 +770,8 @@ io.on('connection', (socket) => {
   }
 
   socket.emit('users-update', buildUserList());
+
+  registerFourierSocketHandlers(socket);
 
   socket.on('user-position', (data) => {
     touchGeometryConnection(socket.id);
@@ -1227,813 +965,6 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('activity-loaded', currentActivity);
   });
 
-  socket.on('fourier:join', (data) => {
-    // Explicit classroom handshake.
-    // client/teacher -> server: fourier:join
-    // server -> caller: fourier:state + fourier:slide
-    // server -> room: participants/summary/sound-state refresh
-    touchGeometryConnection(socket.id);
-    recordCommunication({
-      app: 'fourier',
-      direction: 'in',
-      event: 'fourier:join',
-      from: socket.id,
-      to: 'server',
-      payload: data
-    });
-
-    const participant = registerFourierParticipant(
-      socket,
-      data && data.role,
-      data && data.name,
-      data && data.team
-    );
-
-    logFourier('recv fourier:join', {
-      socketId: socket.id,
-      role: participant.role,
-      name: participant.name,
-      team: participant.team
-    });
-
-    recordCommunication({
-      app: 'fourier',
-      direction: 'out',
-      event: 'fourier:state',
-      from: 'server',
-      to: socket.id,
-      payload: {
-        role: participant.role,
-        name: participant.name,
-        team: participant.team
-      }
-    });
-    socket.emit('fourier:state', {
-      role: participant.role,
-      name: participant.name,
-      team: participant.team,
-      activeSlideId: fourierState.activeSlideId,
-      activeSlideIndex: fourierState.activeSlideIndex,
-      participants: buildFourierParticipantPayload(),
-      soundStates: buildFourierSoundPayload(),
-      heatStates: buildFourierHeatPayload(),
-      heatTime: buildFourierHeatTimePayload(),
-      fftDuel: buildFourierFftDuelPayload(socket.id, participant.role),
-      oceanRandom: buildFourierOceanRandomPayload(),
-      waveSum: buildFourierWaveSumPayload(),
-      summary: buildFourierSummary(),
-      taylorGuess: buildFourierTaylorGuessPayload(socket.id, participant.role),
-    });
-
-    recordCommunication({
-      app: 'fourier',
-      direction: 'out',
-      event: 'fourier:slide',
-      from: 'server',
-      to: socket.id,
-      payload: {
-        activeSlideId: fourierState.activeSlideId,
-        activeSlideIndex: fourierState.activeSlideIndex
-      }
-    });
-    socket.emit('fourier:slide', {
-      activeSlideId: fourierState.activeSlideId,
-      activeSlideIndex: fourierState.activeSlideIndex,
-      updatedAt: fourierState.updatedAt
-    });
-
-    emitFourierParticipants();
-    emitFourierSummary();
-    emitFourierSoundState();
-    emitFourierHeatState();
-    emitFourierHeatTimeState();
-    emitFourierFftDuelState();
-    emitFourierOceanRandomState();
-    emitFourierWaveSumState();
-    emitFourierTaylorGuessState();
-  });
-
-  socket.on('fourier:request-state', () => {
-    touchGeometryConnection(socket.id);
-    recordCommunication({
-      app: 'fourier',
-      direction: 'in',
-      event: 'fourier:request-state',
-      from: socket.id,
-      to: 'server'
-    });
-
-    const participant = fourierParticipants.get(socket.id);
-
-    if (!participant) {
-      return;
-    }
-
-    recordCommunication({
-      app: 'fourier',
-      direction: 'out',
-      event: 'fourier:state',
-      from: 'server',
-      to: socket.id,
-      payload: {
-        role: participant.role,
-        name: participant.name,
-        team: participant.team
-      }
-    });
-    socket.emit('fourier:state', {
-      role: participant.role,
-      name: participant.name,
-      team: participant.team,
-      activeSlideId: fourierState.activeSlideId,
-      activeSlideIndex: fourierState.activeSlideIndex,
-      participants: buildFourierParticipantPayload(),
-      soundStates: buildFourierSoundPayload(),
-      heatStates: buildFourierHeatPayload(),
-      heatTime: buildFourierHeatTimePayload(),
-      fftDuel: buildFourierFftDuelPayload(socket.id, participant.role),
-      oceanRandom: buildFourierOceanRandomPayload(),
-      waveSum: buildFourierWaveSumPayload(),
-      summary: buildFourierSummary()
-    });
-  });
-
-  socket.on('fourier:set-slide', (payload) => {
-    touchGeometryConnection(socket.id);
-    recordCommunication({
-      app: 'fourier',
-      direction: 'in',
-      event: 'fourier:set-slide',
-      from: socket.id,
-      to: 'server',
-      payload
-    });
-
-    const participant = fourierParticipants.get(socket.id);
-
-    if (!participant || participant.role !== 'teacher') {
-      return;
-    }
-
-    const slideId = coerceFourierString(payload && payload.slideId, 80);
-    const parsedIndex = Number.parseInt(payload && payload.slideIndex, 10);
-    const slideIndex = Number.isInteger(parsedIndex) ? Math.max(0, parsedIndex) : 0;
-
-    if (slideId) {
-      fourierState.activeSlideId = slideId;
-    }
-
-    fourierState.activeSlideIndex = slideIndex;
-    fourierState.updatedAt = Date.now();
-
-    recordCommunication({
-      app: 'fourier',
-      direction: 'out',
-      event: 'fourier:slide',
-      from: 'server',
-      to: FOURIER_ROOM,
-      payload: {
-        activeSlideId: fourierState.activeSlideId,
-        activeSlideIndex: fourierState.activeSlideIndex
-      }
-    });
-    io.to(FOURIER_ROOM).emit('fourier:slide', {
-      activeSlideId: fourierState.activeSlideId,
-      activeSlideIndex: fourierState.activeSlideIndex,
-      updatedAt: fourierState.updatedAt
-    });
-
-    emitFourierSummary();
-  });
-
-  socket.on('fourier:interaction', (payload) => {
-    touchGeometryConnection(socket.id);
-    recordCommunication({
-      app: 'fourier',
-      direction: 'in',
-      event: 'fourier:interaction',
-      from: socket.id,
-      to: 'server',
-      payload
-    });
-
-    const participant = fourierParticipants.get(socket.id);
-
-    if (!participant || participant.role !== 'client') {
-      return;
-    }
-
-    const slideId = coerceFourierString(payload && payload.slideId, 80);
-    const activityId = coerceFourierString(payload && payload.activityId, 80);
-    const controlId = coerceFourierString(payload && payload.controlId, 80);
-    const kind = coerceFourierString(payload && payload.kind, 24) || 'input';
-    const value = coerceFourierValue(payload && payload.value);
-
-    const entry = {
-      ts: Date.now(),
-      name: participant.name,
-      slideId,
-      activityId,
-      controlId,
-      kind,
-      value
-    };
-
-    participant.interactions += 1;
-    participant.lastActionAt = entry.ts;
-    participant.lastSlideId = slideId || participant.lastSlideId;
-    fourierParticipants.set(socket.id, participant);
-
-    incrementCounter(fourierBySlideCount, slideId || 'unknown-slide');
-    incrementCounter(fourierByActivityCount, activityId || 'general');
-    pushFourierFeed(entry);
-
-    recordCommunication({
-      app: 'fourier',
-      direction: 'out',
-      event: 'fourier:activity-event',
-      from: 'server',
-      to: FOURIER_ROOM,
-      payload: {
-        name: entry.name,
-        slideId: entry.slideId,
-        activityId: entry.activityId,
-        controlId: entry.controlId,
-        kind: entry.kind
-      }
-    });
-    io.to(FOURIER_ROOM).emit('fourier:activity-event', entry);
-
-    if (activityId === 'taylor-guess' && participant.role === 'client') {
-      ensureFourierTaylorGuessRoundRunning();
-
-      const current = fourierTaylorGuessLiveCoeffs.get(socket.id) || { c0: 0, c1: 0, c2: 0, c3: 0 };
-      const nextValue = Number(clampFourierNumber(value, -4, 4, 0).toFixed(2));
-
-      if (controlId === 'c0') current.c0 = nextValue;
-      else if (controlId === 'c1') current.c1 = nextValue;
-      else if (controlId === 'c2') current.c2 = nextValue;
-      else if (controlId === 'c3') current.c3 = nextValue;
-      else return;
-
-      fourierTaylorGuessLiveCoeffs.set(socket.id, current);
-      fourierTaylorGuessState.updatedAt = entry.ts;
-
-      emitFourierTaylorGuessState();
-      emitFourierSummary();
-      return;
-    }
-
-    emitFourierSummary();
-  });
-
-  socket.on('fourier:sound-control', (payload) => {
-    // Live slider updates from students/teacher.
-    // Robustness: if explicit join has not completed, we recover by creating
-    // a client participant from this payload (implicit join fallback).
-    touchGeometryConnection(socket.id);
-    recordCommunication({
-      app: 'fourier',
-      direction: 'in',
-      event: 'fourier:sound-control',
-      from: socket.id,
-      to: 'server',
-      payload
-    });
-
-    let participant = fourierParticipants.get(socket.id);
-    let createdFromSoundControl = false;
-
-    if (!participant) {
-      participant = registerFourierParticipant(
-        socket,
-        payload && payload.role === 'teacher' ? 'teacher' : 'client',
-        payload && payload.name,
-        payload && payload.team
-      );
-      createdFromSoundControl = true;
-
-      logFourier('implicit join from fourier:sound-control', {
-        socketId: socket.id,
-        role: participant.role,
-        name: participant.name,
-        team: participant.team
-      });
-    }
-
-    if (!participant || (participant.role !== 'client' && participant.role !== 'teacher')) {
-      return;
-    }
-
-    const sound = normalizeFourierSoundPayload(payload);
-    const sourceKey = participant.role === 'teacher'
-      ? (sound.sourceKey || 'teacher-main')
-      : (sound.sourceKey || 'main');
-    const stateKey = buildFourierSoundStateKey(socket.id, sourceKey);
-
-    fourierSoundState.set(stateKey, {
-      sourceKey,
-      sourceLabel: sound.sourceLabel || sourceKey,
-      frequency: sound.frequency,
-      amplitude: sound.amplitude,
-      updatedAt: Date.now()
-    });
-
-    participant.lastActionAt = Date.now();
-    fourierParticipants.set(socket.id, participant);
-
-    if (createdFromSoundControl) {
-      // Send the missing initial snapshot to the caller so the client can
-      // mark itself as joined and continue sending without waiting manually.
-      recordCommunication({
-        app: 'fourier',
-        direction: 'out',
-        event: 'fourier:state',
-        from: 'server',
-        to: socket.id,
-        payload: {
-          role: participant.role,
-          name: participant.name,
-          team: participant.team,
-          reason: 'implicit-join-recovery'
-        }
-      });
-      socket.emit('fourier:state', {
-        role: participant.role,
-        name: participant.name,
-        team: participant.team,
-        activeSlideId: fourierState.activeSlideId,
-        activeSlideIndex: fourierState.activeSlideIndex,
-        participants: buildFourierParticipantPayload(),
-        soundStates: buildFourierSoundPayload(),
-        heatStates: buildFourierHeatPayload(),
-        heatTime: buildFourierHeatTimePayload(),
-        fftDuel: buildFourierFftDuelPayload(socket.id, participant.role),
-        oceanRandom: buildFourierOceanRandomPayload(),
-        summary: buildFourierSummary()
-      });
-
-      emitFourierParticipants();
-      emitFourierSummary();
-    }
-
-    logFourier('recv fourier:sound-control', {
-      socketId: socket.id,
-      role: participant.role,
-      sourceKey,
-      frequency: sound.frequency,
-      amplitude: sound.amplitude
-    });
-
-    emitFourierSoundState();
-    emitFourierFftDuelState();
-  });
-
-  socket.on('fourier:heat-control', (payload) => {
-    // Heat choice updates from students/teacher.
-    // Robustness: if explicit join has not completed, recover by creating
-    // a participant from this payload (implicit join fallback).
-    touchGeometryConnection(socket.id);
-    recordCommunication({
-      app: 'fourier',
-      direction: 'in',
-      event: 'fourier:heat-control',
-      from: socket.id,
-      to: 'server',
-      payload
-    });
-
-    let participant = fourierParticipants.get(socket.id);
-    let createdFromHeatControl = false;
-
-    if (!participant) {
-      participant = registerFourierParticipant(
-        socket,
-        payload && payload.role,
-        payload && payload.name,
-        payload && payload.team
-      );
-      createdFromHeatControl = true;
-
-      logFourier('implicit join from fourier:heat-control', {
-        socketId: socket.id,
-        role: participant.role,
-        name: participant.name,
-        team: participant.team
-      });
-    }
-
-    if (!participant) {
-      return;
-    }
-
-    const heat = normalizeFourierHeatPayload(payload);
-
-    fourierHeatState.set(socket.id, {
-      position: heat.position,
-      temperature: heat.temperature,
-      updatedAt: Date.now()
-    });
-
-    participant.lastActionAt = Date.now();
-    fourierParticipants.set(socket.id, participant);
-
-    if (createdFromHeatControl) {
-      recordCommunication({
-        app: 'fourier',
-        direction: 'out',
-        event: 'fourier:state',
-        from: 'server',
-        to: socket.id,
-        payload: {
-          role: participant.role,
-          name: participant.name,
-          team: participant.team,
-          reason: 'implicit-join-recovery'
-        }
-      });
-      socket.emit('fourier:state', {
-        role: participant.role,
-        name: participant.name,
-        team: participant.team,
-        activeSlideId: fourierState.activeSlideId,
-        activeSlideIndex: fourierState.activeSlideIndex,
-        participants: buildFourierParticipantPayload(),
-        soundStates: buildFourierSoundPayload(),
-        heatStates: buildFourierHeatPayload(),
-        heatTime: buildFourierHeatTimePayload(),
-        fftDuel: buildFourierFftDuelPayload(socket.id, participant.role),
-        oceanRandom: buildFourierOceanRandomPayload(),
-        summary: buildFourierSummary()
-      });
-
-      emitFourierParticipants();
-      emitFourierSummary();
-      emitFourierSoundState();
-    }
-
-    logFourier('recv fourier:heat-control', {
-      socketId: socket.id,
-      position: heat.position,
-      temperature: heat.temperature
-    });
-
-    emitFourierHeatState();
-    emitFourierFftDuelState();
-  });
-
-  socket.on('fourier:heat-time-control', (payload) => {
-    // Teacher-only time authority for section 3.5 heat rod.
-    touchGeometryConnection(socket.id);
-    recordCommunication({
-      app: 'fourier',
-      direction: 'in',
-      event: 'fourier:heat-time-control',
-      from: socket.id,
-      to: 'server',
-      payload
-    });
-
-    const participant = fourierParticipants.get(socket.id);
-    if (!participant || participant.role !== 'teacher') {
-      return;
-    }
-
-    const heatTimeValue = normalizeFourierHeatTimePayload(payload);
-    fourierHeatTimeState.value = heatTimeValue;
-    fourierHeatTimeState.updatedAt = Date.now();
-    fourierHeatTimeState.sourceSocketId = socket.id;
-
-    logFourier('recv fourier:heat-time-control', {
-      socketId: socket.id,
-      value: heatTimeValue
-    });
-
-    emitFourierHeatTimeState();
-  });
-
-  socket.on('fourier:fft-duel-start', (payload) => {
-    touchGeometryConnection(socket.id);
-    recordCommunication({
-      app: 'fourier',
-      direction: 'in',
-      event: 'fourier:fft-duel-start',
-      from: socket.id,
-      to: 'server',
-      payload
-    });
-
-    const participant = fourierParticipants.get(socket.id);
-    if (!participant || participant.role !== 'teacher') {
-      return;
-    }
-
-    startFourierFftDuelRound();
-    emitFourierFftDuelState();
-    emitFourierSummary();
-  });
-
-  socket.on('fourier:fft-duel-probe', (payload) => {
-    touchGeometryConnection(socket.id);
-    recordCommunication({
-      app: 'fourier',
-      direction: 'in',
-      event: 'fourier:fft-duel-probe',
-      from: socket.id,
-      to: 'server',
-      payload
-    });
-
-    const participant = fourierParticipants.get(socket.id);
-    if (!participant || participant.role !== 'client') {
-      return;
-    }
-
-    if (fourierFftDuelState.status !== 'running') {
-      return;
-    }
-
-    const assignment = ensureFourierFftDuelAssignment(socket.id);
-    if (!assignment || assignment.locked) {
-      return;
-    }
-
-    assignment.probeFreq = Number(clampFourierNumber(payload && payload.probeFreq, 0, 8, assignment.probeFreq).toFixed(1));
-    assignment.updatedAt = Date.now();
-    fourierFftDuelState.assignments.set(socket.id, assignment);
-    fourierFftDuelState.updatedAt = assignment.updatedAt;
-
-    participant.lastActionAt = assignment.updatedAt;
-    fourierParticipants.set(socket.id, participant);
-
-    emitFourierFftDuelState();
-  });
-
-  socket.on('fourier:fft-duel-submit', (payload) => {
-    touchGeometryConnection(socket.id);
-    recordCommunication({
-      app: 'fourier',
-      direction: 'in',
-      event: 'fourier:fft-duel-submit',
-      from: socket.id,
-      to: 'server',
-      payload
-    });
-
-    const participant = fourierParticipants.get(socket.id);
-    if (!participant || participant.role !== 'client') {
-      return;
-    }
-
-    if (fourierFftDuelState.status !== 'running') {
-      return;
-    }
-
-    const assignment = ensureFourierFftDuelAssignment(socket.id);
-    if (!assignment || assignment.locked) {
-      return;
-    }
-
-    const guessFreq = Number(clampFourierNumber(payload && payload.guessFreq, 0, 8, assignment.probeFreq).toFixed(1));
-    const error = Number(Math.abs(guessFreq - assignment.targetFreq).toFixed(2));
-    const now = Date.now();
-
-    assignment.probeFreq = guessFreq;
-    assignment.guessFreq = guessFreq;
-    assignment.error = error;
-    assignment.submitted = true;
-    assignment.locked = true;
-    assignment.submittedAt = now;
-    assignment.updatedAt = now;
-
-    fourierFftDuelState.assignments.set(socket.id, assignment);
-    fourierFftDuelState.updatedAt = now;
-
-    participant.interactions += 1;
-    participant.lastActionAt = now;
-    fourierParticipants.set(socket.id, participant);
-
-    emitFourierParticipants();
-    emitFourierSummary();
-    emitFourierFftDuelState();
-  });
-
-  socket.on('fourier:fft-duel-reveal', (payload) => {
-    touchGeometryConnection(socket.id);
-    recordCommunication({
-      app: 'fourier',
-      direction: 'in',
-      event: 'fourier:fft-duel-reveal',
-      from: socket.id,
-      to: 'server',
-      payload
-    });
-
-    const participant = fourierParticipants.get(socket.id);
-    if (!participant || participant.role !== 'teacher') {
-      return;
-    }
-
-    if (fourierFftDuelState.status !== 'running') {
-      return;
-    }
-
-    fourierFftDuelState.revealResults = true;
-    fourierFftDuelState.updatedAt = Date.now();
-    emitFourierFftDuelState();
-  });
-
-  socket.on('fourier:ocean-random-pack', (payload) => {
-    touchGeometryConnection(socket.id);
-    recordCommunication({
-      app: 'fourier',
-      direction: 'in',
-      event: 'fourier:ocean-random-pack',
-      from: socket.id,
-      to: 'server',
-      payload
-    });
-
-    const participant = fourierParticipants.get(socket.id);
-    if (!participant || participant.role !== 'client') {
-      return;
-    }
-
-    const items = normalizeFourierOceanRandomItems(payload && payload.items);
-    if (!items.length) {
-      return;
-    }
-
-    const now = Date.now();
-    fourierOceanRandomState.packs.set(socket.id, {
-      items,
-      updatedAt: now
-    });
-    fourierOceanRandomState.updatedAt = now;
-
-    participant.lastActionAt = now;
-    fourierParticipants.set(socket.id, participant);
-
-    emitFourierOceanRandomState();
-    emitFourierSummary();
-  });
-
-  socket.on('fourier:ocean-random-clear', () => {
-    touchGeometryConnection(socket.id);
-    recordCommunication({
-      app: 'fourier',
-      direction: 'in',
-      event: 'fourier:ocean-random-clear',
-      from: socket.id,
-      to: 'server'
-    });
-
-    const participant = fourierParticipants.get(socket.id);
-    if (!participant || participant.role !== 'teacher') {
-      return;
-    }
-
-    fourierOceanRandomState.packs.clear();
-    fourierOceanRandomState.updatedAt = Date.now();
-
-    emitFourierOceanRandomState();
-    emitFourierSummary();
-  });
-
-  socket.on('fourier:wave-sum-update', (payload) => {
-    touchGeometryConnection(socket.id);
-    recordCommunication({
-      app: 'fourier',
-      direction: 'in',
-      event: 'fourier:wave-sum-update',
-      from: socket.id,
-      to: 'server',
-      payload
-    });
-
-    const participant = fourierParticipants.get(socket.id);
-    if (!participant || participant.role !== 'client') {
-      return;
-    }
-
-    const freq = Number(clampFourierNumber((payload && payload.freq), 0.4, 6, 1.2).toFixed(2));
-    const amp = Number(clampFourierNumber((payload && payload.amp), 0, 1.8, 0.9).toFixed(2));
-    const phi = Number(clampFourierNumber((payload && payload.phi), -3.14, 3.14, 0).toFixed(2));
-    const now = Date.now();
-
-    fourierWaveSumState.set(socket.id, { freq, amp, phi, updatedAt: now });
-
-    participant.lastActionAt = now;
-    fourierParticipants.set(socket.id, participant);
-
-    emitFourierWaveSumState();
-  });
-
-  socket.on('fourier:taylor-guess-live', (payload) => {
-    touchGeometryConnection(socket.id);
-    let participant = fourierParticipants.get(socket.id);
-    let createdFromTaylorLive = false;
-    let startedByLive = false;
-
-    if (!participant) {
-      participant = registerFourierParticipant(
-        socket,
-        'client',
-        payload && payload.name,
-        payload && payload.team
-      );
-      createdFromTaylorLive = true;
-    }
-
-    if (!participant || participant.role !== 'client') return;
-    startedByLive = ensureFourierTaylorGuessRoundRunning();
-    const c0 = Number(clampFourierNumber(payload && payload.c0, -4, 4, 0).toFixed(2));
-    const c1 = Number(clampFourierNumber(payload && payload.c1, -4, 4, 0).toFixed(2));
-    const c2 = Number(clampFourierNumber(payload && payload.c2, -4, 4, 0).toFixed(2));
-    const c3 = Number(clampFourierNumber(payload && payload.c3, -4, 4, 0).toFixed(2));
-    fourierTaylorGuessLiveCoeffs.set(socket.id, { c0, c1, c2, c3 });
-
-    participant.lastActionAt = Date.now();
-    fourierParticipants.set(socket.id, participant);
-
-    if (createdFromTaylorLive) {
-      emitFourierParticipants();
-      emitFourierSoundState();
-      emitFourierSummary();
-    } else if (startedByLive) {
-      emitFourierSummary();
-    }
-
-    fourierParticipants.forEach((currentParticipant, sid) => {
-      if (currentParticipant && currentParticipant.role === 'teacher') {
-        const teacherPayload = buildFourierTaylorGuessPayload(sid, 'teacher');
-        io.to(sid).emit('fourier:taylor-guess-state', teacherPayload);
-      }
-    });
-  });
-
-  socket.on('fourier:taylor-guess-submit', (payload) => {
-    touchGeometryConnection(socket.id);
-    let participant = fourierParticipants.get(socket.id);
-
-    if (!participant) {
-      participant = registerFourierParticipant(
-        socket,
-        'client',
-        payload && payload.name,
-        payload && payload.team
-      );
-    }
-
-    if (!participant || participant.role !== 'client') return;
-    ensureFourierTaylorGuessRoundRunning();
-    const hadSubmission = fourierTaylorGuessState.submissions.has(socket.id);
-
-    const c0 = Number(clampFourierNumber(payload && payload.c0, -4, 4, 0).toFixed(2));
-    const c1 = Number(clampFourierNumber(payload && payload.c1, -4, 4, 0).toFixed(2));
-    const c2 = Number(clampFourierNumber(payload && payload.c2, -4, 4, 0).toFixed(2));
-    const c3 = Number(clampFourierNumber(payload && payload.c3, -4, 4, 0).toFixed(2));
-
-    let mse = 0;
-    for (let i = 0; i <= 20; i++) {
-      const x = -1.5 + (i / 20) * 3.0;
-      const diff = Math.exp(2 * x) - (c0 + c1 * x + c2 * x * x + c3 * x * x * x);
-      mse += diff * diff;
-    }
-    const now = Date.now();
-    const error = Number(Math.sqrt(mse / 21).toFixed(3));
-
-    fourierTaylorGuessState.submissions.set(socket.id, {
-      c0,
-      c1,
-      c2,
-      c3,
-      error,
-      submittedAt: hadSubmission
-        ? (fourierTaylorGuessState.submissions.get(socket.id)?.submittedAt || now)
-        : now,
-      updatedAt: now,
-    });
-    fourierTaylorGuessState.updatedAt = now;
-    participant.interactions += 1;
-    participant.lastActionAt = now;
-    fourierParticipants.set(socket.id, participant);
-
-    emitFourierParticipants();
-    emitFourierTaylorGuessState();
-    emitFourierSummary();
-  });
-
-  socket.on('fourier:taylor-guess-reveal', () => {
-    touchGeometryConnection(socket.id);
-    const participant = fourierParticipants.get(socket.id);
-    if (!participant || participant.role !== 'teacher') return;
-    ensureFourierTaylorGuessRoundRunning();
-    fourierTaylorGuessState.revealResults = true;
-    fourierTaylorGuessState.updatedAt = Date.now();
-    emitFourierTaylorGuessState();
-  });
-
   socket.on('disconnect', () => {
     console.log('[geometry] socket disconnected:', socket.id);
     recordCommunication({
@@ -2046,60 +977,36 @@ io.on('connection', (socket) => {
     activeUsers.delete(socket.id);
     geometryConnectionMeta.delete(socket.id);
 
-    const removedParticipant = fourierParticipants.delete(socket.id);
-    const removedSoundState = removeFourierSoundStatesForSocket(socket.id);
-    const removedHeatState = fourierHeatState.delete(socket.id);
-    const removedOceanRandomPack = fourierOceanRandomState.packs.delete(socket.id);
-    const removedFftDuelState = fourierFftDuelState.assignments.delete(socket.id);
-    const removedWaveSumEntry = fourierWaveSumState.delete(socket.id);
-
-    if (fourierFftDuelState.assignments.size === 0) {
-      fourierFftDuelState.status = 'idle';
-      fourierFftDuelState.roundId = '';
-      fourierFftDuelState.startedAt = 0;
-      fourierFftDuelState.revealResults = false;
-      fourierFftDuelState.updatedAt = Date.now();
-    }
-
-    if (removedParticipant) {
-      emitFourierParticipants();
-      emitFourierSummary();
-    }
-
-    if (removedSoundState || removedParticipant) {
-      emitFourierSoundState();
-    }
-
-    if (removedHeatState || removedParticipant) {
-      emitFourierHeatState();
-    }
-
-    if (removedFftDuelState || removedParticipant) {
-      emitFourierFftDuelState();
-    }
-
-    if (removedOceanRandomPack || removedParticipant) {
-      fourierOceanRandomState.updatedAt = Date.now();
-      emitFourierOceanRandomState();
-      emitFourierSummary();
-    }
-
-    if (removedWaveSumEntry || removedParticipant) {
-      emitFourierWaveSumState();
-    }
-
-    if (removedParticipant) {
-      emitFourierTaylorGuessState();
-    }
-
-    emitUsersUpdate();
+    handleSocketDisconnect(socket.id);
   });
+});
+
+
+
+initNeural({
+  recordCommunication,
+  getUpgradeClientInfo,
+  touchCanvasNodeConnection,
+  canvasNodeConnectionMeta,
+  httpServer
+});
+const { buffonWss } = initBuffon({
+  recordCommunication,
+  getUpgradeClientInfo,
+  touchBuffonConnection,
+  buffonConnectionMeta,
+  httpServer
 });
 
 // Καταχώρηση upgrade event για χειρισμό WebSocket connections
 httpServer.on('upgrade', (request, socket, head) => {
   if (request.url && request.url.startsWith(REALTIME_WS_PATH)) {
     io.handleUpgrade(request, socket, head);
+    return;
+  }
+
+  // neural-lab upgrades are handled inside services/neural.js
+  if (request.url && request.url.startsWith('/ws/neural-lab')) {
     return;
   }
 
@@ -2110,23 +1017,10 @@ httpServer.on('upgrade', (request, socket, head) => {
     return;
   }
 
-  if (request.url && request.url.startsWith('/ws/neural-lab')) {
-    canvasNodeWss.handleUpgrade(request, socket, head, (ws) => {
-      canvasNodeWss.emit('connection', ws, request);
-    });
-    return;
-  }
 
   socket.destroy();
 });
-const { buffonWss } = initBuffon({
-  recordCommunication,
-  getUpgradeClientInfo,
-  touchBuffonConnection,
-  coerceFourierString, // αυτό υπάρχει ήδη στο server.js
-  buffonConnectionMeta,
-  httpServer
-});
+
 // Εκκίνηση του HTTP server και εκτύπωση πληροφοριών σύνδεσης
 httpServer.listen(PORT, HOST, () => {
   const displayHost = HOST === '0.0.0.0' ? 'localhost' : HOST;
@@ -2152,11 +1046,6 @@ httpServer.listen(PORT, HOST, () => {
 // Τερματισμός του camera worker όταν ο server λαμβάνει σήμα τερματισμού
 // SIGINT: σήμα τερματισμού από το χρήστη (π.χ. Ctrl+C)
 process.on('SIGINT', () => {
-  stopCameraWorker();
-  process.exit(0);
-});
-// SIGTERM: σήμα τερματισμού από το σύστημα (π.χ. kill command)
-process.on('SIGTERM', () => {
   stopCameraWorker();
   process.exit(0);
 });

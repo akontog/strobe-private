@@ -21539,6 +21539,24 @@ var import_react6 = __toESM(require_react());
 
 // apps/neural-lab/components/Accordion.jsx
 var import_react5 = __toESM(require_react());
+var Accordion = ({ title, children }) => {
+  const [isOpen, setIsOpen] = (0, import_react5.useState)(false);
+  return /* @__PURE__ */ import_react5.default.createElement("div", { className: "accordion" }, /* @__PURE__ */ import_react5.default.createElement(
+    "button",
+    {
+      className: "accordion-btn",
+      onClick: () => setIsOpen(!isOpen)
+    },
+    /* @__PURE__ */ import_react5.default.createElement("span", null, title),
+    /* @__PURE__ */ import_react5.default.createElement("span", { className: "accordion-icon" }, isOpen ? "\u25B2" : "\u25BC")
+  ), /* @__PURE__ */ import_react5.default.createElement("div", { className: `accordion-content ${isOpen ? "open" : ""}` }, children));
+};
+
+// apps/neural-lab/components/StudentTable.jsx
+var StudentTable = ({ i1, i2, participants = [], threshold = 5 }) => {
+  const rows = Array.isArray(participants) ? participants : [];
+  return /* @__PURE__ */ import_react6.default.createElement(Accordion, { title: "\u{1F4CB} \u03A0\u03AF\u03BD\u03B1\u03BA\u03B1\u03C2 \u03BC\u03B1\u03B8\u03B7\u03C4\u03CE\u03BD (\u03B6\u03C9\u03BD\u03C4\u03B1\u03BD\u03AE \u03B1\u03BD\u03B1\u03C6\u03BF\u03C1\u03AC)" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "data-section" }, /* @__PURE__ */ import_react6.default.createElement("table", { className: "data-table" }, /* @__PURE__ */ import_react6.default.createElement("thead", null, /* @__PURE__ */ import_react6.default.createElement("tr", null, /* @__PURE__ */ import_react6.default.createElement("th", null, "\u039C\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2"), /* @__PURE__ */ import_react6.default.createElement("th", null, "i\u2081 (\u03C1\u03CC\u03B4\u03B5\u03C2)"), /* @__PURE__ */ import_react6.default.createElement("th", null, "w\u2081"), /* @__PURE__ */ import_react6.default.createElement("th", null, "i\u2082 (\u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2)"), /* @__PURE__ */ import_react6.default.createElement("th", null, "w\u2082"), /* @__PURE__ */ import_react6.default.createElement("th", null, "\u0391\u03C0\u03BF\u03C4\u03AD\u03BB\u03B5\u03C3\u03BC\u03B1 o"))), /* @__PURE__ */ import_react6.default.createElement("tbody", null, rows.length === 0 && /* @__PURE__ */ import_react6.default.createElement("tr", null, /* @__PURE__ */ import_react6.default.createElement("td", { colSpan: "6", style: { textAlign: "center", opacity: 0.7 } }, "\u0394\u03B5\u03BD \u03C5\u03C0\u03AC\u03C1\u03C7\u03BF\u03C5\u03BD \u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9 \u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2.")), rows.map((student) => /* @__PURE__ */ import_react6.default.createElement("tr", { key: student.id || student.name }, /* @__PURE__ */ import_react6.default.createElement("td", null, /* @__PURE__ */ import_react6.default.createElement("span", { className: "green-dot" }), " ", student.name || "\u039C\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2"), /* @__PURE__ */ import_react6.default.createElement("td", null, i1, " ", /* @__PURE__ */ import_react6.default.createElement("span", { className: "icon-in-table" }, "\u{1F6DE}")), /* @__PURE__ */ import_react6.default.createElement("td", { className: "weight-value", style: { background: "#ef4444", color: "white" } }, student.weights?.w1 ?? "-"), /* @__PURE__ */ import_react6.default.createElement("td", null, i2, " ", /* @__PURE__ */ import_react6.default.createElement("span", { className: "icon-in-table" }, "\u2699\uFE0F")), /* @__PURE__ */ import_react6.default.createElement("td", { className: "weight-value", style: { background: "#ef4444", color: "white" } }, student.weights?.w2 ?? "-"), /* @__PURE__ */ import_react6.default.createElement("td", { className: "result-visible" }, student.result ?? "-", typeof student.aboveThreshold === "boolean" && /* @__PURE__ */ import_react6.default.createElement("span", { style: { marginLeft: "0.45rem", fontWeight: 700, color: student.aboveThreshold ? "#059669" : "#dc2626" } }, student.aboveThreshold ? `>= ${threshold}` : `< ${threshold}`))))))));
+};
 
 // apps/neural-lab/App.jsx
 var DATASETS = {
@@ -21594,6 +21612,9 @@ var DATASETS = {
   }
 };
 var App = ({ role = "teacher" }) => {
+  const wsRef = (0, import_react7.useRef)(null);
+  const reconnectTimerRef = (0, import_react7.useRef)(null);
+  const hasRegisteredRef = (0, import_react7.useRef)(false);
   const [currentDataset, setCurrentDataset] = (0, import_react7.useState)("vehicles");
   const [currentExample, setCurrentExample] = (0, import_react7.useState)(0);
   const [useQuestionMarks, setUseQuestionMarks] = (0, import_react7.useState)(false);
@@ -21603,17 +21624,31 @@ var App = ({ role = "teacher" }) => {
   const [thresholdValue, setThresholdValue] = (0, import_react7.useState)(10);
   const [dynamicW1, setDynamicW1] = (0, import_react7.useState)(2);
   const [dynamicW2, setDynamicW2] = (0, import_react7.useState)(3);
+  const [isSocketConnected, setIsSocketConnected] = (0, import_react7.useState)(false);
+  const [participants, setParticipants] = (0, import_react7.useState)([]);
+  const [roster, setRoster] = (0, import_react7.useState)([]);
+  const [lessonInputs, setLessonInputs] = (0, import_react7.useState)({ i1: 2, i2: 3 });
+  const [lessonThreshold, setLessonThreshold] = (0, import_react7.useState)(5);
+  const studentName = (0, import_react7.useMemo)(() => {
+    try {
+      const stored = String(window.localStorage.getItem("strobeStudentConnectName") || "").trim();
+      return stored || `Student-${Math.floor(Math.random() * 900 + 100)}`;
+    } catch {
+      return `Student-${Math.floor(Math.random() * 900 + 100)}`;
+    }
+  }, []);
   const currentExampleData = DATASETS[currentDataset].examples[currentExample];
-  const i1 = currentExampleData.i1;
-  const i2 = currentExampleData.i2;
-  const w1 = editWeights ? dynamicW1 : 2;
-  const w2 = editWeights ? dynamicW2 : 3;
-  const prod1 = w1 * i1;
-  const prod2 = w2 * i2;
-  const total = prod1 + prod2;
   const isTeacher = role === "teacher";
   const isScreen = role === "screen";
   const isStudent = role === "student";
+  const i1 = isStudent ? lessonInputs.i1 : currentExampleData.i1;
+  const i2 = isStudent ? lessonInputs.i2 : currentExampleData.i2;
+  const isWeightEditable = isStudent || isTeacher && editWeights;
+  const w1 = isWeightEditable ? dynamicW1 : 2;
+  const w2 = isWeightEditable ? dynamicW2 : 3;
+  const prod1 = w1 * i1;
+  const prod2 = w2 * i2;
+  const total = prod1 + prod2;
   const threshold = thresholdEnabled && !isStudent ? {
     satisfied: thresholdOp === "gt" ? total > thresholdValue : total < thresholdValue,
     op: thresholdOp,
@@ -21627,6 +21662,104 @@ var App = ({ role = "teacher" }) => {
       setDynamicW2(value);
     }
   };
+  const sendSocketMessage = (payload) => {
+    const ws = wsRef.current;
+    if (!ws || ws.readyState !== WebSocket.OPEN) return false;
+    try {
+      ws.send(JSON.stringify(payload));
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  (0, import_react7.useEffect)(() => {
+    let cancelled = false;
+    const clearReconnect = () => {
+      if (reconnectTimerRef.current) {
+        clearTimeout(reconnectTimerRef.current);
+        reconnectTimerRef.current = null;
+      }
+    };
+    const registerCurrentRole = () => {
+      if (hasRegisteredRef.current) return;
+      if (isStudent) {
+        sendSocketMessage({ type: "register_student", name: studentName });
+      } else if (isScreen) {
+        sendSocketMessage({ type: "register_teacher", name: "Screen" });
+      } else {
+        sendSocketMessage({ type: "register_teacher", name: "Teacher" });
+      }
+      sendSocketMessage({ type: "request_state" });
+      hasRegisteredRef.current = true;
+    };
+    const connect = () => {
+      if (cancelled) return;
+      const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+      const ws = new WebSocket(`${protocol}://${window.location.host}/ws/neural-lab`);
+      wsRef.current = ws;
+      ws.addEventListener("open", () => {
+        if (cancelled) return;
+        setIsSocketConnected(true);
+        hasRegisteredRef.current = false;
+        registerCurrentRole();
+      });
+      ws.addEventListener("message", (event) => {
+        let message;
+        try {
+          message = JSON.parse(event.data);
+        } catch {
+          return;
+        }
+        if (message?.type !== "canvas_state") return;
+        if (message.lesson?.inputs) {
+          setLessonInputs({
+            i1: Number.isFinite(Number(message.lesson.inputs.i1)) ? Number(message.lesson.inputs.i1) : 2,
+            i2: Number.isFinite(Number(message.lesson.inputs.i2)) ? Number(message.lesson.inputs.i2) : 3
+          });
+        }
+        if (Number.isFinite(Number(message.lesson?.threshold))) {
+          setLessonThreshold(Number(message.lesson.threshold));
+        }
+        if (Array.isArray(message.participants)) {
+          setParticipants(message.participants);
+        }
+        if (Array.isArray(message.roster)) {
+          setRoster(message.roster);
+        }
+        if (isStudent && message.me?.weights) {
+          const nextW1 = Number(message.me.weights.w1);
+          const nextW2 = Number(message.me.weights.w2);
+          if (Number.isFinite(nextW1)) setDynamicW1(nextW1);
+          if (Number.isFinite(nextW2)) setDynamicW2(nextW2);
+        }
+      });
+      ws.addEventListener("close", () => {
+        if (cancelled) return;
+        setIsSocketConnected(false);
+        hasRegisteredRef.current = false;
+        clearReconnect();
+        reconnectTimerRef.current = setTimeout(connect, 1e3);
+      });
+      ws.addEventListener("error", () => {
+        if (!cancelled) setIsSocketConnected(false);
+      });
+    };
+    connect();
+    return () => {
+      cancelled = true;
+      clearReconnect();
+      const ws = wsRef.current;
+      wsRef.current = null;
+      hasRegisteredRef.current = false;
+      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+        ws.close();
+      }
+    };
+  }, [isScreen, isStudent, studentName]);
+  (0, import_react7.useEffect)(() => {
+    if (!isStudent || !isSocketConnected) return;
+    sendSocketMessage({ type: "student_weights", weights: { w1: dynamicW1, w2: dynamicW2 } });
+  }, [dynamicW1, dynamicW2, isSocketConnected, isStudent]);
   (0, import_react7.useEffect)(() => {
     const renderMath = () => {
       const mj = window.MathJax;
@@ -21642,9 +21775,8 @@ var App = ({ role = "teacher" }) => {
     const timeoutId = setTimeout(renderMath, 50);
     return () => clearTimeout(timeoutId);
   }, [role, currentDataset, currentExample, useQuestionMarks, editWeights, thresholdEnabled, thresholdOp, thresholdValue, dynamicW1, dynamicW2]);
-  console.log("\u{1F525} \u039D\u0395\u039F BUILD Update!");
-  console.log(window.MathJax);
-  return /* @__PURE__ */ import_react7.default.createElement(TeacherCard, { title: "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$" }, isScreen && /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, /* @__PURE__ */ import_react7.default.createElement("div", { className: "screen-top-bar" }, /* @__PURE__ */ import_react7.default.createElement("strong", null, "\u03A0\u03C1\u03BF\u03B2\u03BF\u03BB\u03AE \u03C4\u03AC\u03BE\u03B7\u03C2"), /* @__PURE__ */ import_react7.default.createElement("span", null, DATASETS[currentDataset].emoji, " ", DATASETS[currentDataset].label), /* @__PURE__ */ import_react7.default.createElement("span", null, currentExampleData.icon, " ", currentExampleData.name), /* @__PURE__ */ import_react7.default.createElement("span", null, "i1=", i1, ", i2=", i2), /* @__PURE__ */ import_react7.default.createElement("span", null, "w1=", w1, ", w2=", w2), /* @__PURE__ */ import_react7.default.createElement("span", null, "o=", total)), /* @__PURE__ */ import_react7.default.createElement("div", { className: "operation-tree", "aria-label": "\u0394\u03AD\u03BD\u03C4\u03C1\u03BF \u03C0\u03C1\u03AC\u03BE\u03B5\u03C9\u03BD" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-level" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-node tree-root" }, "o = ", total)), /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-connect" }), /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-level tree-two" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-node" }, "w1 \xD7 i1 = ", prod1), /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-node" }, "w2 \xD7 i2 = ", prod2)))), /* @__PURE__ */ import_react7.default.createElement("div", { className: "common-zone" }, /* @__PURE__ */ import_react7.default.createElement(
+  const sortedParticipants = [...participants].sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+  return /* @__PURE__ */ import_react7.default.createElement(TeacherCard, { title: "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "connection-status" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: `status-dot ${isSocketConnected ? "online" : "offline"}` }), /* @__PURE__ */ import_react7.default.createElement("strong", null, isSocketConnected ? "\u03A3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF" : "\u0391\u03C0\u03BF\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF"), /* @__PURE__ */ import_react7.default.createElement("span", null, "\u03BA\u03B1\u03BD\u03AC\u03BB\u03B9: /ws/neural-lab"), isStudent && /* @__PURE__ */ import_react7.default.createElement("span", null, "\u03CC\u03BD\u03BF\u03BC\u03B1: ", studentName), !isStudent && /* @__PURE__ */ import_react7.default.createElement("span", null, "\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9: ", roster.length)), isScreen && /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, /* @__PURE__ */ import_react7.default.createElement("div", { className: "screen-top-bar" }, /* @__PURE__ */ import_react7.default.createElement("strong", null, "\u03A0\u03C1\u03BF\u03B2\u03BF\u03BB\u03AE \u03C4\u03AC\u03BE\u03B7\u03C2"), /* @__PURE__ */ import_react7.default.createElement("span", null, DATASETS[currentDataset].emoji, " ", DATASETS[currentDataset].label), /* @__PURE__ */ import_react7.default.createElement("span", null, currentExampleData.icon, " ", currentExampleData.name), /* @__PURE__ */ import_react7.default.createElement("span", null, "i1=", i1, ", i2=", i2), /* @__PURE__ */ import_react7.default.createElement("span", null, "w1=", w1, ", w2=", w2), /* @__PURE__ */ import_react7.default.createElement("span", null, "o=", total)), /* @__PURE__ */ import_react7.default.createElement("div", { className: "operation-tree", "aria-label": "\u0394\u03AD\u03BD\u03C4\u03C1\u03BF \u03C0\u03C1\u03AC\u03BE\u03B5\u03C9\u03BD" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-level" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-node tree-root" }, "o = ", total)), /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-connect" }), /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-level tree-two" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-node" }, "w1 \xD7 i1 = ", prod1), /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-node" }, "w2 \xD7 i2 = ", prod2)))), /* @__PURE__ */ import_react7.default.createElement("div", { className: "common-zone" }, /* @__PURE__ */ import_react7.default.createElement(
     VerticalProducts,
     {
       icon: currentExampleData.icon,
@@ -21656,11 +21788,19 @@ var App = ({ role = "teacher" }) => {
       i2,
       total,
       useQuestionMarks,
-      editWeights: isTeacher && editWeights,
+      editWeights: isWeightEditable,
       onWeightChange: handleWeightChange,
       onRefresh: () => {
       },
       threshold
+    }
+  )), (isTeacher || isScreen) && /* @__PURE__ */ import_react7.default.createElement("div", { className: "live-table-wrap" }, /* @__PURE__ */ import_react7.default.createElement("h3", null, "\u03A3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9 \u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2"), /* @__PURE__ */ import_react7.default.createElement(
+    StudentTable,
+    {
+      i1: lessonInputs.i1,
+      i2: lessonInputs.i2,
+      threshold: lessonThreshold,
+      participants: sortedParticipants
     }
   )), isTeacher && /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, /* @__PURE__ */ import_react7.default.createElement("div", { className: "toolbar" }, /* @__PURE__ */ import_react7.default.createElement(
     "button",

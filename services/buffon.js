@@ -11,7 +11,7 @@ function initBuffon(deps) {
     recordCommunication,
     getUpgradeClientInfo,
     touchBuffonConnection,
-    coerceFourierString,
+    sanitizeString,
     buffonConnectionMeta, // WeakMap
     httpServer
   } = deps;
@@ -135,14 +135,14 @@ buffonWss.on('connection', (ws, request) => {
       buffonTeachers.add(ws);
       touchBuffonConnection(ws, {
         role: 'teacher',
-        name: coerceFourierString(message.name, 40) || 'Buffon teacher'
+        name: sanitizeString(message.name, 40) || 'Buffon teacher'
       });
       sendBuffonRoster(ws);
       return;
     }
 
     if (message.type === 'register_student') {
-      const team = coerceFourierString(message.team, 40) || 'Buffon student';
+      const team = sanitizeString(message.team, 40) || 'Buffon student';
 
       buffonStudents.set(ws, {
         team,
