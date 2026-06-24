@@ -76,6 +76,12 @@ const App = ({ role = 'teacher' }) => {
   const [roster, setRoster] = useState([]);
   const [lessonInputs, setLessonInputs] = useState({ i1: 2, i2: 3 });
   const [lessonThreshold, setLessonThreshold] = useState(5);
+  const [lessonDataset, setLessonDataset] = useState('vehicles');
+  const [lessonExampleIndex, setLessonExampleIndex] = useState(0);
+  const [lessonIcon, setLessonIcon] = useState('🚗');
+  const [lessonName, setLessonName] = useState('Αυτοκίνητο');
+  const [lessonUseQuestionMarks, setLessonUseQuestionMarks] = useState(false);
+  const [studentAnswer, setStudentAnswer] = useState('');
 
   const studentName = useMemo(() => {
     try {
@@ -91,8 +97,14 @@ const App = ({ role = 'teacher' }) => {
   const isScreen = role === 'screen';
   const isStudent = role === 'student';
 
-  const i1 = isStudent ? lessonInputs.i1 : currentExampleData.i1;
-  const i2 = isStudent ? lessonInputs.i2 : currentExampleData.i2;
+  const effectiveUseQuestionMarks = isTeacher ? useQuestionMarks : lessonUseQuestionMarks;
+  const displayIcon = isTeacher ? currentExampleData.icon : lessonIcon;
+  const displayName = isTeacher ? currentExampleData.name : lessonName;
+  const displayDataset = isTeacher ? currentDataset : lessonDataset;
+  const safeDisplayDataset = DATASETS[displayDataset] ? displayDataset : 'vehicles';
+
+  const i1 = isTeacher ? currentExampleData.i1 : lessonInputs.i1;
+  const i2 = isTeacher ? currentExampleData.i2 : lessonInputs.i2;
   const isWeightEditable = isStudent || (isTeacher && editWeights);
   const w1 = isWeightEditable ? dynamicW1 : 2;
   const w2 = isWeightEditable ? dynamicW2 : 3;
@@ -185,6 +197,31 @@ const App = ({ role = 'teacher' }) => {
           setLessonThreshold(Number(message.lesson.threshold));
         }
 
+        if (typeof message.lesson?.dataset === 'string' && DATASETS[message.lesson.dataset]) {
+          setLessonDataset(message.lesson.dataset);
+        }
+
+        if (Number.isInteger(Number(message.lesson?.exampleIndex))) {
+          const nextIndex = Number(message.lesson.exampleIndex);
+          const sourceDataset = (typeof message.lesson?.dataset === 'string' && DATASETS[message.lesson.dataset])
+            ? message.lesson.dataset
+            : 'vehicles';
+          const maxIdx = DATASETS[sourceDataset].examples.length - 1;
+          setLessonExampleIndex(Math.max(0, Math.min(maxIdx, nextIndex)));
+        }
+
+        if (typeof message.lesson?.icon === 'string' && message.lesson.icon.trim()) {
+          setLessonIcon(message.lesson.icon.trim());
+        }
+
+        if (typeof message.lesson?.exampleName === 'string' && message.lesson.exampleName.trim()) {
+          setLessonName(message.lesson.exampleName.trim());
+        }
+
+        if (typeof message.lesson?.useQuestionMarks === 'boolean') {
+          setLessonUseQuestionMarks(message.lesson.useQuestionMarks);
+        }
+
         if (Array.isArray(message.participants)) {
           setParticipants(message.participants);
         }
@@ -234,6 +271,34 @@ const App = ({ role = 'teacher' }) => {
   }, [dynamicW1, dynamicW2, isSocketConnected, isStudent]);
 
   useEffect(() => {
+    if (!isTeacher || !isSocketConnected) return;
+    sendSocketMessage({
+      type: 'teacher_lesson',
+      lesson: {
+        dataset: currentDataset,
+        exampleIndex: currentExample,
+        exampleName: currentExampleData.name,
+        icon: currentExampleData.icon,
+        inputs: {
+          i1: currentExampleData.i1,
+          i2: currentExampleData.i2
+        },
+        useQuestionMarks
+      }
+    });
+  }, [
+    isTeacher,
+    isSocketConnected,
+    currentDataset,
+    currentExample,
+    currentExampleData.name,
+    currentExampleData.icon,
+    currentExampleData.i1,
+    currentExampleData.i2,
+    useQuestionMarks
+  ]);
+
+  useEffect(() => {
   const renderMath = () => {
     const mj = window.MathJax;
     if (!mj) return;
@@ -251,7 +316,7 @@ const App = ({ role = 'teacher' }) => {
   // Μικρή καθυστέρηση για να προλάβει το React να κάνει render το innerHTML
   const timeoutId = setTimeout(renderMath, 50);
   return () => clearTimeout(timeoutId);
-}, [role, currentDataset, currentExample, useQuestionMarks, editWeights, thresholdEnabled, thresholdOp, thresholdValue, dynamicW1, dynamicW2]);
+}, [role, currentDataset, currentExample, useQuestionMarks, editWeights, thresholdEnabled, thresholdOp, thresholdValue, dynamicW1, dynamicW2, lessonDataset, lessonExampleIndex, lessonUseQuestionMarks]);
   const sortedParticipants = [...participants].sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
 
   return (
@@ -268,8 +333,8 @@ const App = ({ role = 'teacher' }) => {
         <>
           <div className="screen-top-bar">
             <strong>Προβολή τάξης</strong>
-            <span>{DATASETS[currentDataset].emoji} {DATASETS[currentDataset].label}</span>
-            <span>{currentExampleData.icon} {currentExampleData.name}</span>
+            <span>{DATASETS[safeDisplayDataset].emoji} {DATASETS[safeDisplayDataset].label}</span>
+            <span>{displayIcon} {displayName}</span>
             <span>i1={i1}, i2={i2}</span>
             <span>w1={w1}, w2={w2}</span>
             <span>o={total}</span>
@@ -289,7 +354,7 @@ const App = ({ role = 'teacher' }) => {
 
       <div className="common-zone">
         <VerticalProducts
-          icon={currentExampleData.icon}
+          icon={displayIcon}
           prod1={prod1}
           prod2={prod2}
           w1={w1}
@@ -297,11 +362,14 @@ const App = ({ role = 'teacher' }) => {
           i1={i1}
           i2={i2}
           total={total}
-          useQuestionMarks={useQuestionMarks}
+          useQuestionMarks={effectiveUseQuestionMarks}
           editWeights={isWeightEditable}
           onWeightChange={handleWeightChange}
           onRefresh={() => {}}
           threshold={threshold}
+          studentAnswerMode={isStudent && effectiveUseQuestionMarks}
+          studentAnswer={studentAnswer}
+          onStudentAnswerChange={setStudentAnswer}
         />
       </div>
 

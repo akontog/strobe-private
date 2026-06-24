@@ -14,7 +14,10 @@ export const VerticalProducts = ({
   editWeights,
   onWeightChange,
   onRefresh,
-  threshold
+  threshold,
+  studentAnswerMode,
+  studentAnswer,
+  onStudentAnswerChange
 }) => {
   const handleW1Change = (e) => {
     if (editWeights && onWeightChange) {
@@ -53,9 +56,23 @@ export const VerticalProducts = ({
           isQuestion={useQuestionMarks}
         />
         <div className="total-line">
-          <div className={`total-result ${useQuestionMarks ? 'result-question' : ''}`}>
-            {useQuestionMarks ? '?' : total}
-          </div>
+          {studentAnswerMode ? (
+            <input
+              className="student-answer-input"
+              type="number"
+              value={studentAnswer}
+              placeholder="Δώσε o"
+              onChange={(e) => {
+                if (typeof onStudentAnswerChange === 'function') {
+                  onStudentAnswerChange(e.target.value);
+                }
+              }}
+            />
+          ) : (
+            <div className={`total-result ${useQuestionMarks ? 'result-question' : ''}`}>
+              {useQuestionMarks ? '?' : total}
+            </div>
+          )}
           {threshold && (
             <div className={`threshold-indicator ${threshold.satisfied ? 'threshold-true' : 'threshold-false'}`}>
               {threshold.satisfied ? '✓ Ικανοποιείται' : '✗ Δεν ικανοποιείται'}

@@ -104,7 +104,29 @@ neural-lab-teacher/
 
 ## components 
 
-## StudentTable
+### MathFormula 
+Χρήστες: teacher, student, screen 
+Εξίσωση
+- $w_1 \times i_1 + w_2 \times i_2 = o$ σε MathJax
+
+### VerticalProducts
+Χρήστες: teacher, student, screen
+
+### Dropdown επιλογής dataset
+Χρήστες: teacher
+    - [Οχήματα](#datasets:vehicles)
+    - [Ζώα](#datasets:animals)
+    - [Φαγητά](#datasets:foods)
+    - [Φρούτα](#datasets:fruits)
+    - [Ψηφία](#datasets:digits)
+  - Dropdown επιλογής παραδείγματος από το dataset
+  - Dropdown επιλογής δραστηριότητας
+    - 
+- students
+  -  Αλγεβρικές πράξεις 
+  -  
+### StudentTable
+Χρήστες: teacher, screen
 Πίνακας με στοιχεία (1 γραμμή/ συνδεδεμένο μαθητή): 
   - όνομα (συνδεδεμένου) χρήστη
   - $w_1$
@@ -112,10 +134,7 @@ neural-lab-teacher/
   - $w_2$
   - $i_2$
   - Αποτέλεσμα
-
-## 
-
-## 
+ 
 
 ## Σύνδεση με Shared Components
 
@@ -128,27 +147,14 @@ import { BlueNumberBox } from '../shared-components/components/BlueNumberBox';
 
 # Δραστηριότητες
 
+
+
 ## 1η δραστηριότητα
 
 - Τίτλος: $w_1 \times i_1 + w_2 \times i_2 = o$
 - Αλγεβρικές πράξεις σταθερά βάρη $w_i$ (φυσικοί αριθμοί) αλλά μεταβλητά $i_i$ ανάλογα την εικόνα
 - screen
-  - Εξίσωση $w_1 \times i_1 + w_2 \times i_2 = o$ σε MathJax
-    - σχεδιάγραμμα δέντρου πράξεων (;)
-  - Γραμμή πάνω από τον πίνακα:
-    
-  
-- teacher
-  - - Dropdown επιλογής dataset
-      - [Οχήματα](#datasets:vehicles)
-      - [Ζώα](#datasets:animals)
-      - [Φαγητά](#datasets:foods)
-      - [Φρούτα](#datasets:fruits)
-      - [Ψηφία](#datasets:digits)
-    - Dropdown επιλογής παραδείγματος από το dataset
-    - Εργαλειοθήκη με ?, Βάρη, Όριο
-- students
-  -  Αλγεβρικές πράξεις 
+ 
 
 ## 2η δραστηριότητα
 

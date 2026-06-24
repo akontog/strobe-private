@@ -14,8 +14,16 @@ module.exports = function initNeural({
   const canvasNodeWss = new WebSocketServer({ noServer: true });
   const canvasNodeTeachers = new Set();
   const canvasNodeStudents = new Map();
-  const CANVAS_NODE_SHARED_INPUTS = Object.freeze({ i1: 2, i2: 3 });
   const CANVAS_NODE_THRESHOLD = 5;
+  const canvasNodeLesson = {
+    dataset: 'vehicles',
+    exampleIndex: 0,
+    exampleName: 'Αυτοκίνητο',
+    icon: '🚗',
+    inputs: { i1: 2, i2: 3 },
+    useQuestionMarks: false,
+    threshold: CANVAS_NODE_THRESHOLD
+  };
   const CANVAS_NODE_INPUTS = {
     wheels: { key: 'wheels', type: 'number', min: 0, max: 6, fallback: 4 },
     hasEngine: { key: 'hasEngine', type: 'boolean', fallback: true },
@@ -65,7 +73,7 @@ module.exports = function initNeural({
 
   function computeCanvasNodeStudentResult(weights) {
     const safeWeights = normalizeCanvasNodeStudentWeights(weights, weights);
-    const result = (safeWeights.w1 * CANVAS_NODE_SHARED_INPUTS.i1) + (safeWeights.w2 * CANVAS_NODE_SHARED_INPUTS.i2);
+    const result = (safeWeights.w1 * canvasNodeLesson.inputs.i1) + (safeWeights.w2 * canvasNodeLesson.inputs.i2);
     return Number(result.toFixed(2));
   }
 
@@ -77,8 +85,8 @@ module.exports = function initNeural({
       role: 'client',
       name: student.name,
       weights,
-      i1: CANVAS_NODE_SHARED_INPUTS.i1,
-      i2: CANVAS_NODE_SHARED_INPUTS.i2,
+      i1: canvasNodeLesson.inputs.i1,
+      i2: canvasNodeLesson.inputs.i2,
       result,
       threshold: CANVAS_NODE_THRESHOLD,
       aboveThreshold: result >= CANVAS_NODE_THRESHOLD
@@ -140,8 +148,8 @@ module.exports = function initNeural({
     const payload = {
       type: 'canvas_state',
       lesson: {
-        inputs: { ...CANVAS_NODE_SHARED_INPUTS },
-        threshold: CANVAS_NODE_THRESHOLD
+        ...canvasNodeLesson,
+        inputs: { ...canvasNodeLesson.inputs }
       },
       roster: buildCanvasNodeRoster(),
       me: buildCanvasNodeStudentSnapshot(student)
@@ -162,8 +170,8 @@ module.exports = function initNeural({
     canvasNodeBroadcastTeachers({
       type: 'canvas_state',
       lesson: {
-        inputs: { ...CANVAS_NODE_SHARED_INPUTS },
-        threshold: CANVAS_NODE_THRESHOLD
+        ...canvasNodeLesson,
+        inputs: { ...canvasNodeLesson.inputs }
       },
       roster,
       model,
@@ -296,6 +304,40 @@ module.exports = function initNeural({
             }
           });
         }
+        canvasNodeBroadcastState();
+        return;
+      }
+
+      if (message.type === 'teacher_lesson') {
+        if (!canvasNodeTeachers.has(ws)) {
+          console.log('[neural-lab] ⚠️ Non-teacher attempted teacher_lesson');
+          return;
+        }
+
+        const lesson = message?.lesson && typeof message.lesson === 'object' ? message.lesson : {};
+        const maybeDataset = sanitizeString(lesson.dataset, 40);
+        const maybeExampleName = sanitizeString(lesson.exampleName, 80);
+        const maybeIcon = sanitizeString(lesson.icon, 8);
+        const maybeExampleIndex = Number(lesson.exampleIndex);
+        const maybeI1 = Number(lesson?.inputs?.i1);
+        const maybeI2 = Number(lesson?.inputs?.i2);
+
+        if (maybeDataset) canvasNodeLesson.dataset = maybeDataset;
+        if (Number.isInteger(maybeExampleIndex)) canvasNodeLesson.exampleIndex = Math.max(0, maybeExampleIndex);
+        if (maybeExampleName) canvasNodeLesson.exampleName = maybeExampleName;
+        if (maybeIcon) canvasNodeLesson.icon = maybeIcon;
+        if (Number.isFinite(maybeI1)) canvasNodeLesson.inputs.i1 = clampCanvasNodeNumber(maybeI1, -100, 100, canvasNodeLesson.inputs.i1);
+        if (Number.isFinite(maybeI2)) canvasNodeLesson.inputs.i2 = clampCanvasNodeNumber(maybeI2, -100, 100, canvasNodeLesson.inputs.i2);
+        if (typeof lesson.useQuestionMarks === 'boolean') canvasNodeLesson.useQuestionMarks = lesson.useQuestionMarks;
+
+        console.log('[neural-lab] 📘 Teacher lesson update:', {
+          dataset: canvasNodeLesson.dataset,
+          exampleIndex: canvasNodeLesson.exampleIndex,
+          exampleName: canvasNodeLesson.exampleName,
+          icon: canvasNodeLesson.icon,
+          inputs: canvasNodeLesson.inputs,
+          useQuestionMarks: canvasNodeLesson.useQuestionMarks
+        });
         canvasNodeBroadcastState();
         return;
       }

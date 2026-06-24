@@ -21497,7 +21497,10 @@ var VerticalProducts = ({
   editWeights,
   onWeightChange,
   onRefresh,
-  threshold
+  threshold,
+  studentAnswerMode,
+  studentAnswer,
+  onStudentAnswerChange
 }) => {
   const handleW1Change = (e) => {
     if (editWeights && onWeightChange) {
@@ -21531,7 +21534,20 @@ var VerticalProducts = ({
       isSecondRow: true,
       isQuestion: useQuestionMarks
     }
-  ), /* @__PURE__ */ import_react4.default.createElement("div", { className: "total-line" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: `total-result ${useQuestionMarks ? "result-question" : ""}` }, useQuestionMarks ? "?" : total), threshold && /* @__PURE__ */ import_react4.default.createElement("div", { className: `threshold-indicator ${threshold.satisfied ? "threshold-true" : "threshold-false"}` }, threshold.satisfied ? "\u2713 \u0399\u03BA\u03B1\u03BD\u03BF\u03C0\u03BF\u03B9\u03B5\u03AF\u03C4\u03B1\u03B9" : "\u2717 \u0394\u03B5\u03BD \u03B9\u03BA\u03B1\u03BD\u03BF\u03C0\u03BF\u03B9\u03B5\u03AF\u03C4\u03B1\u03B9")), (editWeights || onRefresh) && /* @__PURE__ */ import_react4.default.createElement("button", { className: "reveal-btn", onClick: onRefresh }, "\u{1F504} \u0395\u03BD\u03B7\u03BC\u03AD\u03C1\u03C9\u03C3\u03B7")));
+  ), /* @__PURE__ */ import_react4.default.createElement("div", { className: "total-line" }, studentAnswerMode ? /* @__PURE__ */ import_react4.default.createElement(
+    "input",
+    {
+      className: "student-answer-input",
+      type: "number",
+      value: studentAnswer,
+      placeholder: "\u0394\u03CE\u03C3\u03B5 o",
+      onChange: (e) => {
+        if (typeof onStudentAnswerChange === "function") {
+          onStudentAnswerChange(e.target.value);
+        }
+      }
+    }
+  ) : /* @__PURE__ */ import_react4.default.createElement("div", { className: `total-result ${useQuestionMarks ? "result-question" : ""}` }, useQuestionMarks ? "?" : total), threshold && /* @__PURE__ */ import_react4.default.createElement("div", { className: `threshold-indicator ${threshold.satisfied ? "threshold-true" : "threshold-false"}` }, threshold.satisfied ? "\u2713 \u0399\u03BA\u03B1\u03BD\u03BF\u03C0\u03BF\u03B9\u03B5\u03AF\u03C4\u03B1\u03B9" : "\u2717 \u0394\u03B5\u03BD \u03B9\u03BA\u03B1\u03BD\u03BF\u03C0\u03BF\u03B9\u03B5\u03AF\u03C4\u03B1\u03B9")), (editWeights || onRefresh) && /* @__PURE__ */ import_react4.default.createElement("button", { className: "reveal-btn", onClick: onRefresh }, "\u{1F504} \u0395\u03BD\u03B7\u03BC\u03AD\u03C1\u03C9\u03C3\u03B7")));
 };
 
 // apps/neural-lab/components/StudentTable.jsx
@@ -21629,6 +21645,12 @@ var App = ({ role = "teacher" }) => {
   const [roster, setRoster] = (0, import_react7.useState)([]);
   const [lessonInputs, setLessonInputs] = (0, import_react7.useState)({ i1: 2, i2: 3 });
   const [lessonThreshold, setLessonThreshold] = (0, import_react7.useState)(5);
+  const [lessonDataset, setLessonDataset] = (0, import_react7.useState)("vehicles");
+  const [lessonExampleIndex, setLessonExampleIndex] = (0, import_react7.useState)(0);
+  const [lessonIcon, setLessonIcon] = (0, import_react7.useState)("\u{1F697}");
+  const [lessonName, setLessonName] = (0, import_react7.useState)("\u0391\u03C5\u03C4\u03BF\u03BA\u03AF\u03BD\u03B7\u03C4\u03BF");
+  const [lessonUseQuestionMarks, setLessonUseQuestionMarks] = (0, import_react7.useState)(false);
+  const [studentAnswer, setStudentAnswer] = (0, import_react7.useState)("");
   const studentName = (0, import_react7.useMemo)(() => {
     try {
       const stored = String(window.localStorage.getItem("strobeStudentConnectName") || "").trim();
@@ -21641,8 +21663,13 @@ var App = ({ role = "teacher" }) => {
   const isTeacher = role === "teacher";
   const isScreen = role === "screen";
   const isStudent = role === "student";
-  const i1 = isStudent ? lessonInputs.i1 : currentExampleData.i1;
-  const i2 = isStudent ? lessonInputs.i2 : currentExampleData.i2;
+  const effectiveUseQuestionMarks = isTeacher ? useQuestionMarks : lessonUseQuestionMarks;
+  const displayIcon = isTeacher ? currentExampleData.icon : lessonIcon;
+  const displayName = isTeacher ? currentExampleData.name : lessonName;
+  const displayDataset = isTeacher ? currentDataset : lessonDataset;
+  const safeDisplayDataset = DATASETS[displayDataset] ? displayDataset : "vehicles";
+  const i1 = isTeacher ? currentExampleData.i1 : lessonInputs.i1;
+  const i2 = isTeacher ? currentExampleData.i2 : lessonInputs.i2;
   const isWeightEditable = isStudent || isTeacher && editWeights;
   const w1 = isWeightEditable ? dynamicW1 : 2;
   const w2 = isWeightEditable ? dynamicW2 : 3;
@@ -21720,6 +21747,24 @@ var App = ({ role = "teacher" }) => {
         if (Number.isFinite(Number(message.lesson?.threshold))) {
           setLessonThreshold(Number(message.lesson.threshold));
         }
+        if (typeof message.lesson?.dataset === "string" && DATASETS[message.lesson.dataset]) {
+          setLessonDataset(message.lesson.dataset);
+        }
+        if (Number.isInteger(Number(message.lesson?.exampleIndex))) {
+          const nextIndex = Number(message.lesson.exampleIndex);
+          const sourceDataset = typeof message.lesson?.dataset === "string" && DATASETS[message.lesson.dataset] ? message.lesson.dataset : "vehicles";
+          const maxIdx = DATASETS[sourceDataset].examples.length - 1;
+          setLessonExampleIndex(Math.max(0, Math.min(maxIdx, nextIndex)));
+        }
+        if (typeof message.lesson?.icon === "string" && message.lesson.icon.trim()) {
+          setLessonIcon(message.lesson.icon.trim());
+        }
+        if (typeof message.lesson?.exampleName === "string" && message.lesson.exampleName.trim()) {
+          setLessonName(message.lesson.exampleName.trim());
+        }
+        if (typeof message.lesson?.useQuestionMarks === "boolean") {
+          setLessonUseQuestionMarks(message.lesson.useQuestionMarks);
+        }
         if (Array.isArray(message.participants)) {
           setParticipants(message.participants);
         }
@@ -21761,6 +21806,33 @@ var App = ({ role = "teacher" }) => {
     sendSocketMessage({ type: "student_weights", weights: { w1: dynamicW1, w2: dynamicW2 } });
   }, [dynamicW1, dynamicW2, isSocketConnected, isStudent]);
   (0, import_react7.useEffect)(() => {
+    if (!isTeacher || !isSocketConnected) return;
+    sendSocketMessage({
+      type: "teacher_lesson",
+      lesson: {
+        dataset: currentDataset,
+        exampleIndex: currentExample,
+        exampleName: currentExampleData.name,
+        icon: currentExampleData.icon,
+        inputs: {
+          i1: currentExampleData.i1,
+          i2: currentExampleData.i2
+        },
+        useQuestionMarks
+      }
+    });
+  }, [
+    isTeacher,
+    isSocketConnected,
+    currentDataset,
+    currentExample,
+    currentExampleData.name,
+    currentExampleData.icon,
+    currentExampleData.i1,
+    currentExampleData.i2,
+    useQuestionMarks
+  ]);
+  (0, import_react7.useEffect)(() => {
     const renderMath = () => {
       const mj = window.MathJax;
       if (!mj) return;
@@ -21774,12 +21846,12 @@ var App = ({ role = "teacher" }) => {
     };
     const timeoutId = setTimeout(renderMath, 50);
     return () => clearTimeout(timeoutId);
-  }, [role, currentDataset, currentExample, useQuestionMarks, editWeights, thresholdEnabled, thresholdOp, thresholdValue, dynamicW1, dynamicW2]);
+  }, [role, currentDataset, currentExample, useQuestionMarks, editWeights, thresholdEnabled, thresholdOp, thresholdValue, dynamicW1, dynamicW2, lessonDataset, lessonExampleIndex, lessonUseQuestionMarks]);
   const sortedParticipants = [...participants].sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
-  return /* @__PURE__ */ import_react7.default.createElement(TeacherCard, { title: "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "connection-status" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: `status-dot ${isSocketConnected ? "online" : "offline"}` }), /* @__PURE__ */ import_react7.default.createElement("strong", null, isSocketConnected ? "\u03A3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF" : "\u0391\u03C0\u03BF\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF"), /* @__PURE__ */ import_react7.default.createElement("span", null, "\u03BA\u03B1\u03BD\u03AC\u03BB\u03B9: /ws/neural-lab"), isStudent && /* @__PURE__ */ import_react7.default.createElement("span", null, "\u03CC\u03BD\u03BF\u03BC\u03B1: ", studentName), !isStudent && /* @__PURE__ */ import_react7.default.createElement("span", null, "\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9: ", roster.length)), isScreen && /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, /* @__PURE__ */ import_react7.default.createElement("div", { className: "screen-top-bar" }, /* @__PURE__ */ import_react7.default.createElement("strong", null, "\u03A0\u03C1\u03BF\u03B2\u03BF\u03BB\u03AE \u03C4\u03AC\u03BE\u03B7\u03C2"), /* @__PURE__ */ import_react7.default.createElement("span", null, DATASETS[currentDataset].emoji, " ", DATASETS[currentDataset].label), /* @__PURE__ */ import_react7.default.createElement("span", null, currentExampleData.icon, " ", currentExampleData.name), /* @__PURE__ */ import_react7.default.createElement("span", null, "i1=", i1, ", i2=", i2), /* @__PURE__ */ import_react7.default.createElement("span", null, "w1=", w1, ", w2=", w2), /* @__PURE__ */ import_react7.default.createElement("span", null, "o=", total)), /* @__PURE__ */ import_react7.default.createElement("div", { className: "operation-tree", "aria-label": "\u0394\u03AD\u03BD\u03C4\u03C1\u03BF \u03C0\u03C1\u03AC\u03BE\u03B5\u03C9\u03BD" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-level" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-node tree-root" }, "o = ", total)), /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-connect" }), /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-level tree-two" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-node" }, "w1 \xD7 i1 = ", prod1), /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-node" }, "w2 \xD7 i2 = ", prod2)))), /* @__PURE__ */ import_react7.default.createElement("div", { className: "common-zone" }, /* @__PURE__ */ import_react7.default.createElement(
+  return /* @__PURE__ */ import_react7.default.createElement(TeacherCard, { title: "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "connection-status" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: `status-dot ${isSocketConnected ? "online" : "offline"}` }), /* @__PURE__ */ import_react7.default.createElement("strong", null, isSocketConnected ? "\u03A3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF" : "\u0391\u03C0\u03BF\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF"), /* @__PURE__ */ import_react7.default.createElement("span", null, "\u03BA\u03B1\u03BD\u03AC\u03BB\u03B9: /ws/neural-lab"), isStudent && /* @__PURE__ */ import_react7.default.createElement("span", null, "\u03CC\u03BD\u03BF\u03BC\u03B1: ", studentName), !isStudent && /* @__PURE__ */ import_react7.default.createElement("span", null, "\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9: ", roster.length)), isScreen && /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, /* @__PURE__ */ import_react7.default.createElement("div", { className: "screen-top-bar" }, /* @__PURE__ */ import_react7.default.createElement("strong", null, "\u03A0\u03C1\u03BF\u03B2\u03BF\u03BB\u03AE \u03C4\u03AC\u03BE\u03B7\u03C2"), /* @__PURE__ */ import_react7.default.createElement("span", null, DATASETS[safeDisplayDataset].emoji, " ", DATASETS[safeDisplayDataset].label), /* @__PURE__ */ import_react7.default.createElement("span", null, displayIcon, " ", displayName), /* @__PURE__ */ import_react7.default.createElement("span", null, "i1=", i1, ", i2=", i2), /* @__PURE__ */ import_react7.default.createElement("span", null, "w1=", w1, ", w2=", w2), /* @__PURE__ */ import_react7.default.createElement("span", null, "o=", total)), /* @__PURE__ */ import_react7.default.createElement("div", { className: "operation-tree", "aria-label": "\u0394\u03AD\u03BD\u03C4\u03C1\u03BF \u03C0\u03C1\u03AC\u03BE\u03B5\u03C9\u03BD" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-level" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-node tree-root" }, "o = ", total)), /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-connect" }), /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-level tree-two" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-node" }, "w1 \xD7 i1 = ", prod1), /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-node" }, "w2 \xD7 i2 = ", prod2)))), /* @__PURE__ */ import_react7.default.createElement("div", { className: "common-zone" }, /* @__PURE__ */ import_react7.default.createElement(
     VerticalProducts,
     {
-      icon: currentExampleData.icon,
+      icon: displayIcon,
       prod1,
       prod2,
       w1,
@@ -21787,12 +21859,15 @@ var App = ({ role = "teacher" }) => {
       i1,
       i2,
       total,
-      useQuestionMarks,
+      useQuestionMarks: effectiveUseQuestionMarks,
       editWeights: isWeightEditable,
       onWeightChange: handleWeightChange,
       onRefresh: () => {
       },
-      threshold
+      threshold,
+      studentAnswerMode: isStudent && effectiveUseQuestionMarks,
+      studentAnswer,
+      onStudentAnswerChange: setStudentAnswer
     }
   )), (isTeacher || isScreen) && /* @__PURE__ */ import_react7.default.createElement("div", { className: "live-table-wrap" }, /* @__PURE__ */ import_react7.default.createElement("h3", null, "\u03A3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9 \u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2"), /* @__PURE__ */ import_react7.default.createElement(
     StudentTable,
@@ -21871,7 +21946,7 @@ var App_default = App;
 // apps/neural-lab/teacher.jsx
 var root = import_client.default.createRoot(document.getElementById("root"));
 root.render(
-  /* @__PURE__ */ import_react8.default.createElement(import_react8.default.StrictMode, null, /* @__PURE__ */ import_react8.default.createElement(App_default, { role: "teacher" }))
+  /* @__PURE__ */ import_react8.default.createElement(App_default, { role: "teacher" })
 );
 /*! Bundled license information:
 

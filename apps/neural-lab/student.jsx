@@ -5,7 +5,5 @@ import App from './App';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-  <React.StrictMode>
-    <App role="student" />
-  </React.StrictMode>
+  <App role="student" />
 );
