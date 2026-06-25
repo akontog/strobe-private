@@ -32,10 +32,15 @@ Strobe Multi-App Classroom
 
 # Εφαρμογές
 
-- Geometry Live
-- Buffon Needle
-- [Fourier Lab](reports/fourier-lab/README-fourier-lab.md)
-- [Neural Lab](reports/neural-lab/README-neural-lab)
+## Geometry Live
+
+## Buffon Needle
+
+## Fourier Lab
+- [readme](reports/fourier-lab/README-fourier-lab.md)
+
+## Neural Lab
+- [readme](reports/neural-lab/README-neural-lab)
 
 # Αρχιτεκτονική
 - Ένα κεντρικό Node server στο project root.
@@ -67,7 +72,7 @@ Strobe Multi-App Classroom
 ## 📂 `apps/` – Εφαρμογές / Δραστηριότητες
 Κάθε υποφάκελος περιέχει μία αυτόνομη web app.
 
-### Παραδοσιακές εφαρμογές (HTML/JS)
+### Υποφάκελοι (εφαρμογές)
 - **`geometry-live/`**  
   – Διαδραστική γεωμετρία (σημεία, γραμμές, κύκλους) με real-time σχεδίαση.
 
@@ -80,11 +85,8 @@ Strobe Multi-App Classroom
 - **`neural-lab/`**  
   – Απλό νευρωνικό δίκτυο ή επίδειξη perceptron.
 
-### React Εφαρμογές
-- **`neural-lab-teacher/`** (React)  
+- **`neural-lab/`** (React)  
   – Διδακτική εφαρμογή για νευρωνικά δίκτυα (εξίσωση w₁·i₁ + w₂·i₂ = o).  
-  – Περιέχει components από `shared-components/`.  
-  – Δείτε [neural-lab-teacher/README.md](apps/neural-lab-teacher/README.md) για λεπτομέρειες.
 
 ### Κοινά Στοιχεία
 - **`shared-components/`**  
@@ -143,10 +145,15 @@ Strobe Multi-App Classroom
 ## 📂 `activities/` – Δεδομένα / περιγραφές δραστηριοτήτων
 – Πιθανώς αρχεία JSON με οδηγίες για κάθε άσκηση.
 
+## 📂 `reports/` – Αναφορές δραστηριοτήτων
+
+### neural-lab
+- [readme](reports/neural-lab/README-neural-lab.md)
+
 ## 📂 `data/` – Αποθήκευση σε αρχεία (JSON)
 - **`users.json`** – Λίστα χρηστών (username, role, progress, settings).
 
----
+--- 
 
 # Απαιτήσεις
 - Node.js 18+
@@ -177,7 +184,7 @@ npm install --save-dev webpack webpack-cli
 
 Για να δημιουργήσετε μια νέα React εφαρμογή:
 
-1. **Δημιουργήστε φάκελο** στο `apps/your-app-name/`
+1. **Δημιουργήστε φάκελο** στο `apps/<όνομα εφαρμογής>/`
 2. **Δημιουργήστε components** σε `components/` folder
 3. **Δημιουργήστε App.jsx** και `index.jsx` entry points
 4. **Δημιουργήστε index.html** που φιλοξενεί το `<div id="root"></div>`
@@ -198,14 +205,6 @@ export const MyComponent = () => (
   </div>
 );
 ```
-
-### Παράδειγμα: Neural Lab Teacher
-
-Δείτε το `apps/neural-lab-teacher/` για πλήρες παράδειγμα React εφαρμογής με:
-- Χρήση React hooks (useState)
-- Component composition (TeacherCard, VerticalProducts, StudentTable)
-- Styling με CSS
-- Ενσωμάτωση MathJax
 
 ### Δημιουργία νέας React εφαρμογής
 

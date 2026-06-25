@@ -105,28 +105,44 @@ neural-lab-teacher/
 ## components 
 
 ### MathFormula 
+
 Χρήστες: teacher, student, screen 
-Εξίσωση
+Εξίσωση, τίτλος στο πάνω μέρος της σελίδας
+
 - $w_1 \times i_1 + w_2 \times i_2 = o$ σε MathJax
 
 ### VerticalProducts
 Χρήστες: teacher, student, screen
+Κεντρικό component σελίδας
 
 ### Dropdown επιλογής dataset
+
 Χρήστες: teacher
+ς από το dataset
+  - Dropdown επιλογής δραστηριότητας
     - [Οχήματα](#datasets:vehicles)
     - [Ζώα](#datasets:animals)
     - [Φαγητά](#datasets:foods)
     - [Φρούτα](#datasets:fruits)
     - [Ψηφία](#datasets:digits)
-  - Dropdown επιλογής παραδείγματος από το dataset
-  - Dropdown επιλογής δραστηριότητας
+  - Dropdown επιλογής παραδείγματος
     - 
 - students
   -  Αλγεβρικές πράξεις 
   -  
+
+### Dropdown επιλογής δραστηριότητας
+
+Χρήστες: teacher
+Ο teacher επιλέγει την δραστηριότητα που θα εκτελέσει η τάξη.
+Επιλογές dropdown:
+  - 1. Αυτόματη εκτέλεση πράξεων
+  - 2. Κενά σε πολλαπλασιασμό, πρόσθεση
+  - 3. 
 ### StudentTable
+
 Χρήστες: teacher, screen
+
 Πίνακας με στοιχεία (1 γραμμή/ συνδεδεμένο μαθητή): 
   - όνομα (συνδεδεμένου) χρήστη
   - $w_1$
@@ -150,7 +166,12 @@ import { BlueNumberBox } from '../shared-components/components/BlueNumberBox';
 
 
 ## 1η δραστηριότητα
-
+0. inputs να βάλουν μόνοι τους π.χ. ρόδες 4, μηχανές 1, ο δάσκαλος μπορεί να αλλάξει dataset/παράδειγμα
+0β. distributive 
+1α. Στο screen.html τα δεξιά πεδία πρέπει να εχουν Input box
+1β. Στο screen ερωτηματικά, στο student input boxes (πίνακας με τι τιμές έβαλαν)
+2α. Στο screen.html τα βάρη ειναι Input
+2β. Στο student.html  τα βάρη ειναι Input (Πινακας με τις τιμές)
 - Τίτλος: $w_1 \times i_1 + w_2 \times i_2 = o$
 - Αλγεβρικές πράξεις σταθερά βάρη $w_i$ (φυσικοί αριθμοί) αλλά μεταβλητά $i_i$ ανάλογα την εικόνα
 - screen

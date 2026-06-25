@@ -11,7 +11,10 @@ New-Item -ItemType Directory -Path "apps/your-app-name/components" -Force | Out-
 
 ## 2. Δημιουργήστε τα βασικά αρχεία
 
-### `apps/your-app-name/index.html`
+### `apps/your-app-name/<όνομα αρχείου>.html`
+π.χ. neural-lab
+- screen.html
+- student.html
 
 ```html
 <!DOCTYPE html>
@@ -23,12 +26,12 @@ New-Item -ItemType Directory -Path "apps/your-app-name/components" -Force | Out-
 </head>
 <body>
     <div id="root"></div>
-    <script type="module" src="./index.jsx"></script>
+    <script type="module" src="./<όνομα αρχείου>.bundle.jsx"></script>
 </body>
 </html>
 ```
 
-### `apps/your-app-name/index.jsx`
+### `apps/your-app-name/<όνομα αρχείου>.jsx`
 
 ```javascript
 import React from 'react';

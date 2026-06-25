@@ -1,5 +1,5 @@
 const path = require('path');
-
+// Εφαρμογές που είναι διαθέσιμες στο σύστημα
 const APPS = [
   {
     slug: 'geometry-live',
