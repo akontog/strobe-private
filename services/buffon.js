@@ -1,6 +1,7 @@
 
 // Buffon app websocket server over the same Node.js process
 const { WebSocketServer } = require('ws');
+const { sanitizeString } = require('../utils/helpers');
 
 /**
  * Αρχικοποιεί το Buffon WebSocket server
@@ -11,14 +12,28 @@ function initBuffon(deps) {
     recordCommunication,
     getUpgradeClientInfo,
     touchBuffonConnection,
-    sanitizeString,
     buffonConnectionMeta, // WeakMap
-    httpServer
+    httpServer,
+    sessionManager
   } = deps;
 
   const buffonWss = new WebSocketServer({ noServer: true });
   const buffonStudents = new Map();
   const buffonTeachers = new Set();
+  let buffonSessionSeq = 0;
+
+function ensureBuffonSessionId(ws) {
+  if (ws && ws.__buffonSessionId) {
+    return ws.__buffonSessionId;
+  }
+
+  buffonSessionSeq += 1;
+  const nextId = `buffon-${Date.now().toString(36)}-${buffonSessionSeq}`;
+  if (ws) {
+    ws.__buffonSessionId = nextId;
+  }
+  return nextId;
+}
 
 function buffonBroadcastTeachers(data) {
   const message = JSON.stringify(data);
@@ -89,6 +104,18 @@ function sendBuffonRoster(target) {
 
 buffonWss.on('connection', (ws, request) => {
   const connectionInfo = getUpgradeClientInfo(request);
+  const sessionId = ensureBuffonSessionId(ws);
+
+  if (sessionManager && typeof sessionManager.create === 'function') {
+    sessionManager.create(sessionId, {
+      ip: connectionInfo.ip,
+      userAgent: connectionInfo.userAgent,
+      username: 'Buffon participant',
+      role: 'client',
+      source: 'buffon'
+    });
+    sessionManager.joinApp(sessionId, 'buffon');
+  }
 
   recordCommunication({
     app: 'buffon',
@@ -132,11 +159,25 @@ buffonWss.on('connection', (ws, request) => {
     });
 
     if (message.type === 'register_teacher') {
+      const teacherName = sanitizeString(message.name, 40) || 'Buffon teacher';
       buffonTeachers.add(ws);
       touchBuffonConnection(ws, {
         role: 'teacher',
-        name: sanitizeString(message.name, 40) || 'Buffon teacher'
+        name: teacherName
       });
+      if (sessionManager && typeof sessionManager.update === 'function') {
+        sessionManager.joinApp(sessionId, 'buffon');
+        sessionManager.update(sessionId, {
+          username: teacherName,
+          role: 'teacher',
+          source: 'buffon'
+        }, {
+          buffon: {
+            name: teacherName,
+            role: 'teacher'
+          }
+        });
+      }
       sendBuffonRoster(ws);
       return;
     }
@@ -155,6 +196,22 @@ buffonWss.on('connection', (ws, request) => {
         role: 'client',
         name: team
       });
+
+      if (sessionManager && typeof sessionManager.update === 'function') {
+        sessionManager.joinApp(sessionId, 'buffon');
+        sessionManager.update(sessionId, {
+          username: team,
+          role: 'client',
+          source: 'buffon'
+        }, {
+          buffon: {
+            team,
+            drops: 0,
+            hits: 0,
+            piEst: null
+          }
+        });
+      }
 
       sendBuffonRoster();
       return;
@@ -175,6 +232,22 @@ buffonWss.on('connection', (ws, request) => {
           role: 'client',
           name: state.team
         });
+
+        if (sessionManager && typeof sessionManager.update === 'function') {
+          sessionManager.joinApp(sessionId, 'buffon');
+          sessionManager.update(sessionId, {
+            username: state.team,
+            role: 'client',
+            source: 'buffon'
+          }, {
+            buffon: {
+              team: state.team,
+              drops: message.drops,
+              hits: message.hits,
+              piEst: message.piEst
+            }
+          });
+        }
 
         sendBuffonRoster();
       }
@@ -312,6 +385,9 @@ buffonWss.on('connection', (ws, request) => {
     buffonStudents.delete(ws);
     buffonTeachers.delete(ws);
     buffonConnectionMeta.delete(ws);
+    if (sessionManager && typeof sessionManager.remove === 'function') {
+      sessionManager.remove(sessionId);
+    }
     sendBuffonRoster();
   });
 });

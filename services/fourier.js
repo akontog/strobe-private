@@ -7,6 +7,7 @@ let getSocketClientInfo = () => ({ ip: 'unknown', userAgent: 'unknown' });
 let touchGeometryConnection = () => {};
 let emitUsersUpdate = () => {};
 let activeUsers = new Map();
+let sessionManager = null;
 
 const FOURIER_ROOM = 'fourier:classroom';
 const fourierParticipants = new Map();
@@ -483,6 +484,28 @@ function registerFourierParticipant(socket, role, rawName, rawTeam) {
   };
 
   fourierParticipants.set(socket.id, participant);
+
+  if (sessionManager && typeof sessionManager.create === 'function') {
+    sessionManager.create(socket.id, {
+      ip: participant.ip,
+      userAgent: participant.userAgent,
+      username: participant.name,
+      role: participant.role,
+      source: 'fourier'
+    });
+    sessionManager.joinApp(socket.id, 'fourier');
+    sessionManager.update(socket.id, {
+      username: participant.name,
+      role: participant.role,
+      source: 'fourier'
+    }, {
+      fourier: {
+        team: participant.team,
+        lastSlideId: participant.lastSlideId,
+        interactions: participant.interactions
+      }
+    });
+  }
 
   if (safeRole === 'client') {
     const stateKey = buildFourierSoundStateKey(socket.id, 'main');
@@ -1823,6 +1846,10 @@ function handleSocketDisconnect(socketId) {
   }
 
   emitUsersUpdate();
+
+  if (removedParticipant && sessionManager && typeof sessionManager.remove === 'function') {
+    sessionManager.remove(socketId);
+  }
 }
 // Επιστρέφει ένα αντικείμενο με τις συναρτήσεις και τις μεταβλητές 
 // που χρειάζονται για τη διαχείριση της εφαρμογής Fourier μέσω WebSocket.
@@ -1836,6 +1863,7 @@ function initFourier(deps = {}) {
   touchGeometryConnection = typeof deps.touchGeometryConnection === 'function' ? deps.touchGeometryConnection : () => {};
   emitUsersUpdate = typeof deps.emitUsersUpdate === 'function' ? deps.emitUsersUpdate : () => {};
   activeUsers = deps.activeUsers;
+  sessionManager = deps.sessionManager || null;
 
   return {
     fourierParticipants,

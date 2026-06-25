@@ -32,9 +32,9 @@ const {
 const { createCommunicationLog } = require('./utils/communication');
 const {
   getSocketClientInfo,
-  getUpgradeClientInfo,
-  toIsoTimestamp
+  getUpgradeClientInfo
 } = require('./utils/socketHelpers');
+const sessionManager = require('./services/sessionManager');
 // Εισαγωγή υπηρεσιών
 const initFourier = require('./services/fourier');
 const initBuffon = require('./services/buffon');
@@ -491,7 +491,8 @@ const fourierService = initFourier({
   getSocketClientInfo,
   touchGeometryConnection,
   emitUsersUpdate,
-  activeUsers
+  activeUsers,
+  sessionManager
 });
 const { fourierParticipants, registerSocketHandlers: registerFourierSocketHandlers, handleSocketDisconnect } = fourierService;
 
@@ -536,101 +537,18 @@ function touchCanvasNodeConnection(ws, patch = {}) {
 }
 
 function getRealtimeParticipants() {
-  const participants = [];
-
-  activeUsers.forEach((user, socketId) => {
-    const meta = geometryConnectionMeta.get(socketId) || {};
-    const safeName = String((user && user.name) || `Geometry-${String(socketId).slice(0, 6)}`)
-      .trim()
-      .replace(/\s+/g, ' ')
-      .slice(0, 60) || 'Geometry user';
-
-    participants.push({
-      sessionId: `geometry:${socketId}`,
-      username: safeName,
-      displayName: safeName,
-      role: String((user && user.role) || 'client'),
-      source: 'geometry',
-      loginAt: toIsoTimestamp(meta.connectedAt),
-      lastSeen: toIsoTimestamp(meta.lastSeenAt),
-      ip: meta.ip || 'unknown',
-      userAgent: meta.userAgent || 'unknown'
-    });
-  });
-
-  fourierParticipants.forEach((participant) => {
-    const safeName = String(participant && participant.name ? participant.name : 'Fourier user')
-      .trim()
-      .replace(/\s+/g, ' ')
-      .slice(0, 60) || 'Fourier user';
-
-    participants.push({
-      sessionId: `fourier:${participant.socketId}`,
-      username: safeName,
-      displayName: safeName,
-      role: participant.role || 'client',
-      source: 'fourier',
-      loginAt: toIsoTimestamp(participant.joinedAt),
-      lastSeen: toIsoTimestamp(participant.lastActionAt || participant.joinedAt),
-      ip: participant.ip || 'unknown',
-      userAgent: participant.userAgent || 'unknown'
-    });
-  });
-
-  buffonStudents.forEach((studentState, ws) => {
-    const meta = buffonConnectionMeta.get(ws) || {};
-    const safeName = String((studentState && studentState.team) || meta.name || 'Buffon student')
-      .trim()
-      .replace(/\s+/g, ' ')
-      .slice(0, 60) || 'Buffon student';
-
-    participants.push({
-      sessionId: `buffon-student:${safeName}:${toIsoTimestamp(meta.connectedAt) || ''}`,
-      username: safeName,
-      displayName: safeName,
-      role: 'client',
-      source: 'buffon',
-      loginAt: toIsoTimestamp(meta.connectedAt),
-      lastSeen: toIsoTimestamp(meta.lastSeenAt),
-      ip: meta.ip || 'unknown',
-      userAgent: meta.userAgent || 'unknown'
-    });
-  });
-
-  buffonTeachers.forEach((ws) => {
-    const meta = buffonConnectionMeta.get(ws) || {};
-    const safeName = String(meta.name || 'Buffon teacher')
-      .trim()
-      .replace(/\s+/g, ' ')
-      .slice(0, 60) || 'Buffon teacher';
-
-    participants.push({
-      sessionId: `buffon-teacher:${safeName}:${toIsoTimestamp(meta.connectedAt) || ''}`,
-      username: safeName,
-      displayName: safeName,
-      role: 'teacher',
-      source: 'buffon',
-      loginAt: toIsoTimestamp(meta.connectedAt),
-      lastSeen: toIsoTimestamp(meta.lastSeenAt),
-      ip: meta.ip || 'unknown',
-      userAgent: meta.userAgent || 'unknown'
-    });
-  });
-
-  return participants.sort((a, b) => {
-    const aTime = String(a.lastSeen || a.loginAt || '');
-    const bTime = String(b.lastSeen || b.loginAt || '');
-    return bTime.localeCompare(aTime);
-  });
+  return sessionManager.getParticipants();
 }
 
 function getRealtimeStats() {
+  const sessionStats = sessionManager.getStats();
   return {
     connectedSockets: io.engine.clientsCount,
     activeUserPoints: buildUserList().length,
     fourierParticipants: fourierParticipants.size,
-    buffonStudents: buffonStudents.size,
-    buffonTeachers: buffonTeachers.size
+    activeSessions: sessionStats.activeSessions,
+    sessionsByRole: sessionStats.byRole,
+    sessionsByApp: sessionStats.byApp
   };
 }
 
@@ -755,6 +673,15 @@ io.on('connection', (socket) => {
     ...getSocketClientInfo(socket)
   });
 
+  const socketInfo = getSocketClientInfo(socket);
+  sessionManager.create(socket.id, {
+    ip: socketInfo.ip,
+    userAgent: socketInfo.userAgent,
+    username: `user_${String(socket.id).slice(0, 6)}`,
+    role: 'client',
+    source: 'realtime'
+  });
+
   if (currentActivity) {
     recordCommunication({
       app: 'geometry',
@@ -775,6 +702,17 @@ io.on('connection', (socket) => {
 
   socket.on('user-position', (data) => {
     touchGeometryConnection(socket.id);
+    sessionManager.joinApp(socket.id, 'geometry');
+    sessionManager.update(socket.id, {
+      username: sanitizeString(data && data.name, 60) || `user_${String(socket.id).slice(0, 6)}`,
+      role: sanitizeString(data && data.role, 20) || 'client'
+    }, {
+      geometry: {
+        x: Number(data && data.x),
+        y: Number(data && data.y),
+        color: sanitizeString(data && data.color, 20) || undefined
+      }
+    });
     recordCommunication({
       app: 'geometry',
       direction: 'in',
@@ -813,6 +751,7 @@ io.on('connection', (socket) => {
       }
 
       touchGeometryConnection(socket.id);
+      sessionManager.joinApp(socket.id, 'geometry');
       recordCommunication({
         app: 'geometry',
         direction: 'in',
@@ -870,6 +809,7 @@ io.on('connection', (socket) => {
       }
 
       touchGeometryConnection(socket.id);
+      sessionManager.joinApp(socket.id, 'geometry');
       const requestId = typeof data.requestId === 'number' || typeof data.requestId === 'string'
         ? data.requestId
         : null;
@@ -928,6 +868,7 @@ io.on('connection', (socket) => {
 
   socket.on('activity-update', (geometry) => {
     touchGeometryConnection(socket.id);
+    sessionManager.joinApp(socket.id, 'geometry');
     recordCommunication({
       app: 'geometry',
       direction: 'in',
@@ -976,6 +917,7 @@ io.on('connection', (socket) => {
     });
     activeUsers.delete(socket.id);
     geometryConnectionMeta.delete(socket.id);
+    sessionManager.remove(socket.id);
 
     handleSocketDisconnect(socket.id);
   });
@@ -988,14 +930,16 @@ initNeural({
   getUpgradeClientInfo,
   touchCanvasNodeConnection,
   canvasNodeConnectionMeta,
-  httpServer
+  httpServer,
+  sessionManager
 });
 const { buffonWss } = initBuffon({
   recordCommunication,
   getUpgradeClientInfo,
   touchBuffonConnection,
   buffonConnectionMeta,
-  httpServer
+  httpServer,
+  sessionManager
 });
 
 // Καταχώρηση upgrade event για χειρισμό WebSocket connections

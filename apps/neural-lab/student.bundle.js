@@ -21631,6 +21631,8 @@ var App = ({ role = "teacher" }) => {
   const wsRef = (0, import_react7.useRef)(null);
   const reconnectTimerRef = (0, import_react7.useRef)(null);
   const hasRegisteredRef = (0, import_react7.useRef)(false);
+  const suppressNextStudentWeightsSendRef = (0, import_react7.useRef)(false);
+  const lastSentStudentWeightsRef = (0, import_react7.useRef)({ w1: null, w2: null });
   const [currentDataset, setCurrentDataset] = (0, import_react7.useState)("vehicles");
   const [currentExample, setCurrentExample] = (0, import_react7.useState)(0);
   const [useQuestionMarks, setUseQuestionMarks] = (0, import_react7.useState)(false);
@@ -21774,8 +21776,11 @@ var App = ({ role = "teacher" }) => {
         if (isStudent && message.me?.weights) {
           const nextW1 = Number(message.me.weights.w1);
           const nextW2 = Number(message.me.weights.w2);
-          if (Number.isFinite(nextW1)) setDynamicW1(nextW1);
-          if (Number.isFinite(nextW2)) setDynamicW2(nextW2);
+          if (Number.isFinite(nextW1) && Number.isFinite(nextW2)) {
+            suppressNextStudentWeightsSendRef.current = true;
+            setDynamicW1(nextW1);
+            setDynamicW2(nextW2);
+          }
         }
       });
       ws.addEventListener("close", () => {
@@ -21803,6 +21808,14 @@ var App = ({ role = "teacher" }) => {
   }, [isScreen, isStudent, studentName]);
   (0, import_react7.useEffect)(() => {
     if (!isStudent || !isSocketConnected) return;
+    if (suppressNextStudentWeightsSendRef.current) {
+      suppressNextStudentWeightsSendRef.current = false;
+      return;
+    }
+    if (lastSentStudentWeightsRef.current.w1 === dynamicW1 && lastSentStudentWeightsRef.current.w2 === dynamicW2) {
+      return;
+    }
+    lastSentStudentWeightsRef.current = { w1: dynamicW1, w2: dynamicW2 };
     sendSocketMessage({ type: "student_weights", weights: { w1: dynamicW1, w2: dynamicW2 } });
   }, [dynamicW1, dynamicW2, isSocketConnected, isStudent]);
   (0, import_react7.useEffect)(() => {

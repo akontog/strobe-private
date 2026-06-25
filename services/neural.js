@@ -7,13 +7,15 @@ module.exports = function initNeural({
   getUpgradeClientInfo,
   touchCanvasNodeConnection,
   canvasNodeConnectionMeta,
-  httpServer
+  httpServer,
+  sessionManager
 }) {
   console.log('[neural-lab] ⚙️ Initializing Neural service...');
 
   const canvasNodeWss = new WebSocketServer({ noServer: true });
   const canvasNodeTeachers = new Set();
   const canvasNodeStudents = new Map();
+  let canvasSessionSeq = 0;
   const CANVAS_NODE_THRESHOLD = 5;
   const canvasNodeLesson = {
     dataset: 'vehicles',
@@ -32,6 +34,19 @@ module.exports = function initNeural({
   };
   const CANVAS_NODE_INPUT_KEYS = Object.keys(CANVAS_NODE_INPUTS);
   const CANVAS_NODE_OUTPUT_KEYS = ['car', 'bicycle', 'motorcycle', 'scooter'];
+
+  function ensureCanvasSessionId(ws) {
+    if (ws && ws.__canvasSessionId) {
+      return ws.__canvasSessionId;
+    }
+
+    canvasSessionSeq += 1;
+    const nextId = `neural-${Date.now().toString(36)}-${canvasSessionSeq}`;
+    if (ws) {
+      ws.__canvasSessionId = nextId;
+    }
+    return nextId;
+  }
 
   const canvasNodeModel = {
     inputs: {
@@ -183,7 +198,19 @@ module.exports = function initNeural({
   // WebSocket connection handler
   canvasNodeWss.on('connection', (ws, request) => {
     const connectionInfo = getUpgradeClientInfo(request);
+    const sessionId = ensureCanvasSessionId(ws);
     console.log(`[neural-lab] 🔌 New WebSocket connection from ${connectionInfo.ip} (${connectionInfo.userAgent || 'unknown UA'})`);
+
+    if (sessionManager && typeof sessionManager.create === 'function') {
+      sessionManager.create(sessionId, {
+        ip: connectionInfo.ip,
+        userAgent: connectionInfo.userAgent,
+        username: 'Canvas participant',
+        role: 'client',
+        source: 'neural-lab'
+      });
+      sessionManager.joinApp(sessionId, 'neural-lab');
+    }
 
     recordCommunication({
       app: 'neural-lab',
@@ -229,6 +256,23 @@ module.exports = function initNeural({
         console.log(`[neural-lab] 👨‍🏫 Registering teacher: "${teacherName}"`);
         canvasNodeTeachers.add(ws);
         touchCanvasNodeConnection(ws, { role: 'teacher', name: teacherName });
+        if (sessionManager && typeof sessionManager.update === 'function') {
+          sessionManager.joinApp(sessionId, 'neural-lab');
+          sessionManager.update(sessionId, {
+            username: teacherName,
+            role: 'teacher',
+            source: 'neural-lab'
+          }, {
+            neural: {
+              role: 'teacher',
+              lesson: {
+                dataset: canvasNodeLesson.dataset,
+                exampleName: canvasNodeLesson.exampleName,
+                useQuestionMarks: canvasNodeLesson.useQuestionMarks
+              }
+            }
+          });
+        }
         canvasNodeBroadcastState();
         return;
       }
@@ -249,6 +293,22 @@ module.exports = function initNeural({
           });
         }
         touchCanvasNodeConnection(ws, { role: 'client', name: studentName });
+        if (sessionManager && typeof sessionManager.update === 'function') {
+          sessionManager.joinApp(sessionId, 'neural-lab');
+          sessionManager.update(sessionId, {
+            username: studentName,
+            role: 'client',
+            source: 'neural-lab'
+          }, {
+            neural: {
+              role: 'client',
+              weights: {
+                w1: canvasNodeStudents.get(ws).weights.w1,
+                w2: canvasNodeStudents.get(ws).weights.w2
+              }
+            }
+          });
+        }
         canvasNodeBroadcastState();
         return;
       }
@@ -263,10 +323,34 @@ module.exports = function initNeural({
           ? (message?.weights && typeof message.weights === 'object' ? message.weights : {})
           : { [String(message.key || '').trim()]: message.value };
         console.log(`[neural-lab] ⚖️ Updating weights for student "${student.name}":`, incomingWeights);
-        student.weights = normalizeCanvasNodeStudentWeights({
+        const prevWeights = normalizeCanvasNodeStudentWeights(student.weights, student.weights);
+        const nextWeights = normalizeCanvasNodeStudentWeights({
           w1: Object.prototype.hasOwnProperty.call(incomingWeights, 'w1') ? incomingWeights.w1 : student.weights?.w1,
           w2: Object.prototype.hasOwnProperty.call(incomingWeights, 'w2') ? incomingWeights.w2 : student.weights?.w2
         }, student.weights);
+
+        if (prevWeights.w1 === nextWeights.w1 && prevWeights.w2 === nextWeights.w2) {
+          return;
+        }
+
+        student.weights = nextWeights;
+        if (sessionManager && typeof sessionManager.update === 'function') {
+          sessionManager.joinApp(sessionId, 'neural-lab');
+          sessionManager.update(sessionId, {
+            username: student.name,
+            role: 'client',
+            source: 'neural-lab'
+          }, {
+            neural: {
+              role: 'client',
+              weights: {
+                w1: nextWeights.w1,
+                w2: nextWeights.w2
+              },
+              result: computeCanvasNodeStudentResult(nextWeights)
+            }
+          });
+        }
         canvasNodeBroadcastState();
         return;
       }
@@ -330,6 +414,29 @@ module.exports = function initNeural({
         if (Number.isFinite(maybeI2)) canvasNodeLesson.inputs.i2 = clampCanvasNodeNumber(maybeI2, -100, 100, canvasNodeLesson.inputs.i2);
         if (typeof lesson.useQuestionMarks === 'boolean') canvasNodeLesson.useQuestionMarks = lesson.useQuestionMarks;
 
+        if (sessionManager && typeof sessionManager.update === 'function') {
+          sessionManager.joinApp(sessionId, 'neural-lab');
+          sessionManager.update(sessionId, {
+            role: 'teacher',
+            source: 'neural-lab'
+          }, {
+            neural: {
+              role: 'teacher',
+              lesson: {
+                dataset: canvasNodeLesson.dataset,
+                exampleIndex: canvasNodeLesson.exampleIndex,
+                exampleName: canvasNodeLesson.exampleName,
+                icon: canvasNodeLesson.icon,
+                inputs: {
+                  i1: canvasNodeLesson.inputs.i1,
+                  i2: canvasNodeLesson.inputs.i2
+                },
+                useQuestionMarks: canvasNodeLesson.useQuestionMarks
+              }
+            }
+          });
+        }
+
         console.log('[neural-lab] 📘 Teacher lesson update:', {
           dataset: canvasNodeLesson.dataset,
           exampleIndex: canvasNodeLesson.exampleIndex,
@@ -362,6 +469,9 @@ module.exports = function initNeural({
       canvasNodeTeachers.delete(ws);
       canvasNodeStudents.delete(ws);
       canvasNodeConnectionMeta.delete(ws);
+      if (sessionManager && typeof sessionManager.remove === 'function') {
+        sessionManager.remove(sessionId);
+      }
       canvasNodeBroadcastState();
     });
   });
