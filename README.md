@@ -236,6 +236,19 @@ npm start
 
 Σημείωση: ο Node server κάνει auto-spawn τον Python camera worker.
 
+## Troubleshooting
+
+Έλεγχος θύρας 3000:
+
+```powershell
+netstat -ano | findstr :3000
+```
+
+Τερματισμός process:
+
+```powershell
+taskkill /PID <PID> /F
+```
 ### URLs
 - Είσοδος: http://localhost:3000/
 - Teacher dashboard: http://localhost:3000/teacher
@@ -451,18 +464,5 @@ Server -> Client (ενδεικτικά):
 - CAMERA_WORKER_MAX_PENDING
 - DEEPSORT_USE_GPU
 
-## Troubleshooting
 
-Έλεγχος θύρας 3000:
-
-```powershell
-netstat -ano | findstr :3000
-```
-
-Τερματισμός process:
-
-```powershell
-taskkill /PID <PID> /F
-```
-2. Άνοιξε teacher και student pages:
 
