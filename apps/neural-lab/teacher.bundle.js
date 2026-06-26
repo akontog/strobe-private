@@ -1332,7 +1332,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React9 = require_react(), Internals = {
+      var React11 = require_react(), Internals = {
         d: {
           f: noop,
           r: function() {
@@ -1350,7 +1350,7 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React9.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React11.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
@@ -2885,7 +2885,7 @@ var require_react_dom_client_development = __commonJS({
         "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React9.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React11.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -18517,14 +18517,14 @@ var require_react_dom_client_development = __commonJS({
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React9 = require_react(), ReactDOM2 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React11 = require_react(), ReactDOM2 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
       /* @__PURE__ */ Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
       /* @__PURE__ */ Symbol.for("react.legacy_hidden");
       /* @__PURE__ */ Symbol.for("react.tracing_marker");
       var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
       /* @__PURE__ */ Symbol.for("react.view_transition");
-      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React9.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React11.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -21312,7 +21312,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React9.version;
+        var isomorphicReactPackageVersion = React11.version;
         if ("19.2.7" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.7\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21453,11 +21453,11 @@ var require_client = __commonJS({
 });
 
 // apps/neural-lab/teacher.jsx
-var import_react8 = __toESM(require_react());
+var import_react10 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // apps/neural-lab/App.jsx
-var import_react7 = __toESM(require_react());
+var import_react9 = __toESM(require_react());
 
 // apps/neural-lab/components/TeacherCard.jsx
 var import_react2 = __toESM(require_react());
@@ -21480,8 +21480,63 @@ var ProductRow = ({
   weight,
   product,
   isSecondRow = false,
-  isQuestion = false
-}) => /* @__PURE__ */ import_react3.default.createElement("div", { className: "product-row" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "product-left" }, /* @__PURE__ */ import_react3.default.createElement("span", { className: "icon-small" }, icon), /* @__PURE__ */ import_react3.default.createElement("span", { className: "feature-text" }, label), /* @__PURE__ */ import_react3.default.createElement("div", { className: "math-group" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "blue-number-box" }, input1), /* @__PURE__ */ import_react3.default.createElement("div", { className: "multiply-symbol" }, "\xD7"), /* @__PURE__ */ import_react3.default.createElement("div", { className: "red-number-box" }, isQuestion ? "?" : weight))), isSecondRow ? /* @__PURE__ */ import_react3.default.createElement("div", { className: "second-row-left" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "plus-symbol" }, "+"), /* @__PURE__ */ import_react3.default.createElement("div", { className: `product-result ${isQuestion ? "result-question" : ""}` }, isQuestion ? "?" : product)) : /* @__PURE__ */ import_react3.default.createElement("div", { className: `product-result ${isQuestion ? "result-question" : ""}` }, isQuestion ? "?" : product));
+  inputEditable = false,
+  weightEditable = false,
+  productEditable = false,
+  onInputChange,
+  onWeightChange,
+  onProductChange,
+  inputPlaceholder = "",
+  weightPlaceholder = "",
+  productPlaceholder = ""
+}) => {
+  const renderInputBox = (value, editable, onChange, className, placeholder) => {
+    if (!editable) {
+      return /* @__PURE__ */ import_react3.default.createElement("div", { className }, value ?? "-");
+    }
+    return /* @__PURE__ */ import_react3.default.createElement(
+      "input",
+      {
+        className: "input-box-style",
+        type: "number",
+        value: value ?? "",
+        placeholder,
+        onChange: (event) => {
+          if (typeof onChange === "function") {
+            onChange(event.target.value);
+          }
+        }
+      }
+    );
+  };
+  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "product-row" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "product-left" }, /* @__PURE__ */ import_react3.default.createElement("span", { className: "icon-small" }, icon), /* @__PURE__ */ import_react3.default.createElement("span", { className: "feature-text" }, label), /* @__PURE__ */ import_react3.default.createElement("div", { className: "math-group" }, renderInputBox(input1, inputEditable, onInputChange, "blue-number-box", inputPlaceholder), /* @__PURE__ */ import_react3.default.createElement("div", { className: "multiply-symbol" }, "\xD7"), renderInputBox(weight, weightEditable, onWeightChange, "red-number-box", weightPlaceholder))), isSecondRow ? /* @__PURE__ */ import_react3.default.createElement("div", { className: "second-row-left" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "plus-symbol" }, "+"), productEditable ? /* @__PURE__ */ import_react3.default.createElement(
+    "input",
+    {
+      className: "input-box-style",
+      type: "number",
+      value: product ?? "",
+      placeholder: productPlaceholder,
+      onChange: (event) => {
+        if (typeof onProductChange === "function") {
+          onProductChange(event.target.value);
+        }
+      }
+    }
+  ) : /* @__PURE__ */ import_react3.default.createElement("div", { className: "product-result" }, product ?? "-")) : productEditable ? /* @__PURE__ */ import_react3.default.createElement(
+    "input",
+    {
+      className: "input-box-style",
+      type: "number",
+      value: product ?? "",
+      placeholder: productPlaceholder,
+      onChange: (event) => {
+        if (typeof onProductChange === "function") {
+          onProductChange(event.target.value);
+        }
+      }
+    }
+  ) : /* @__PURE__ */ import_react3.default.createElement("div", { className: "product-result" }, product ?? "-"));
+};
 
 // apps/neural-lab/components/VerticalProducts.jsx
 var VerticalProducts = ({
@@ -21500,16 +21555,27 @@ var VerticalProducts = ({
   threshold,
   studentAnswerMode,
   studentAnswer,
-  onStudentAnswerChange
+  onStudentAnswerChange,
+  inputEditable,
+  productEditable,
+  totalEditable,
+  totalValue,
+  onInputChange,
+  onProductChange,
+  onTotalChange,
+  inputPlaceholder,
+  weightPlaceholder,
+  productPlaceholder,
+  totalPlaceholder
 }) => {
-  const handleW1Change = (e) => {
+  const handleW1Change = (value) => {
     if (editWeights && onWeightChange) {
-      onWeightChange("w1", parseInt(e.target.value) || 0);
+      onWeightChange("w1", value);
     }
   };
-  const handleW2Change = (e) => {
+  const handleW2Change = (value) => {
     if (editWeights && onWeightChange) {
-      onWeightChange("w2", parseInt(e.target.value) || 0);
+      onWeightChange("w2", value);
     }
   };
   return /* @__PURE__ */ import_react4.default.createElement("div", { className: "vertical-products" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "big-icon" }, /* @__PURE__ */ import_react4.default.createElement("span", null, icon)), /* @__PURE__ */ import_react4.default.createElement("div", { className: "products-stack" }, /* @__PURE__ */ import_react4.default.createElement(
@@ -21518,10 +21584,26 @@ var VerticalProducts = ({
       icon: "\u{1F6DE}",
       label: "\u03C1\u03CC\u03B4\u03B5\u03C2",
       input1: i1,
-      weight: editWeights ? w1 : w1,
+      weight: w1,
       product: prod1,
       isSecondRow: false,
-      isQuestion: useQuestionMarks
+      inputEditable: Boolean(inputEditable),
+      weightEditable: Boolean(editWeights),
+      productEditable: Boolean(productEditable),
+      onInputChange: (value) => {
+        if (typeof onInputChange === "function") {
+          onInputChange("i1", value);
+        }
+      },
+      onWeightChange: handleW1Change,
+      onProductChange: (value) => {
+        if (typeof onProductChange === "function") {
+          onProductChange("p1", value);
+        }
+      },
+      inputPlaceholder,
+      weightPlaceholder,
+      productPlaceholder
     }
   ), /* @__PURE__ */ import_react4.default.createElement(
     ProductRow,
@@ -21529,10 +21611,26 @@ var VerticalProducts = ({
       icon: "\u2699\uFE0F",
       label: "\u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2",
       input1: i2,
-      weight: editWeights ? w2 : w2,
+      weight: w2,
       product: prod2,
       isSecondRow: true,
-      isQuestion: useQuestionMarks
+      inputEditable: Boolean(inputEditable),
+      weightEditable: Boolean(editWeights),
+      productEditable: Boolean(productEditable),
+      onInputChange: (value) => {
+        if (typeof onInputChange === "function") {
+          onInputChange("i2", value);
+        }
+      },
+      onWeightChange: handleW2Change,
+      onProductChange: (value) => {
+        if (typeof onProductChange === "function") {
+          onProductChange("p2", value);
+        }
+      },
+      inputPlaceholder,
+      weightPlaceholder,
+      productPlaceholder
     }
   ), /* @__PURE__ */ import_react4.default.createElement("div", { className: "total-line" }, studentAnswerMode ? /* @__PURE__ */ import_react4.default.createElement(
     "input",
@@ -21547,13 +21645,29 @@ var VerticalProducts = ({
         }
       }
     }
-  ) : /* @__PURE__ */ import_react4.default.createElement("div", { className: `total-result ${useQuestionMarks ? "result-question" : ""}` }, useQuestionMarks ? "?" : total), threshold && /* @__PURE__ */ import_react4.default.createElement("div", { className: `threshold-indicator ${threshold.satisfied ? "threshold-true" : "threshold-false"}` }, threshold.satisfied ? "\u2713 \u0399\u03BA\u03B1\u03BD\u03BF\u03C0\u03BF\u03B9\u03B5\u03AF\u03C4\u03B1\u03B9" : "\u2717 \u0394\u03B5\u03BD \u03B9\u03BA\u03B1\u03BD\u03BF\u03C0\u03BF\u03B9\u03B5\u03AF\u03C4\u03B1\u03B9")), (editWeights || onRefresh) && /* @__PURE__ */ import_react4.default.createElement("button", { className: "reveal-btn", onClick: onRefresh }, "\u{1F504} \u0395\u03BD\u03B7\u03BC\u03AD\u03C1\u03C9\u03C3\u03B7")));
+  ) : totalEditable ? /* @__PURE__ */ import_react4.default.createElement(
+    "input",
+    {
+      className: "student-answer-input",
+      type: "number",
+      value: totalValue ?? "",
+      placeholder: totalPlaceholder || "\u0394\u03CE\u03C3\u03B5 o",
+      onChange: (event) => {
+        if (typeof onTotalChange === "function") {
+          onTotalChange(event.target.value);
+        }
+      }
+    }
+  ) : /* @__PURE__ */ import_react4.default.createElement("div", { className: "total-result" }, total), threshold && /* @__PURE__ */ import_react4.default.createElement("div", { className: `threshold-indicator ${threshold.satisfied ? "threshold-true" : "threshold-false"}` }, threshold.satisfied ? "\u2713 \u0399\u03BA\u03B1\u03BD\u03BF\u03C0\u03BF\u03B9\u03B5\u03AF\u03C4\u03B1\u03B9" : "\u2717 \u0394\u03B5\u03BD \u03B9\u03BA\u03B1\u03BD\u03BF\u03C0\u03BF\u03B9\u03B5\u03AF\u03C4\u03B1\u03B9")), (editWeights || onRefresh) && /* @__PURE__ */ import_react4.default.createElement("button", { className: "reveal-btn", onClick: onRefresh }, "\u{1F504} \u0395\u03BD\u03B7\u03BC\u03AD\u03C1\u03C9\u03C3\u03B7")));
 };
 
 // apps/neural-lab/components/StudentTable.jsx
+var import_react7 = __toESM(require_react());
+
+// apps/shared/components/StudentTable.jsx
 var import_react6 = __toESM(require_react());
 
-// apps/neural-lab/components/Accordion.jsx
+// apps/shared/components/Accordion.jsx
 var import_react5 = __toESM(require_react());
 var Accordion = ({ title, children }) => {
   const [isOpen, setIsOpen] = (0, import_react5.useState)(false);
@@ -21568,11 +21682,116 @@ var Accordion = ({ title, children }) => {
   ), /* @__PURE__ */ import_react5.default.createElement("div", { className: `accordion-content ${isOpen ? "open" : ""}` }, children));
 };
 
-// apps/neural-lab/components/StudentTable.jsx
-var StudentTable = ({ i1, i2, participants = [], threshold = 5 }) => {
+// apps/shared/components/StudentTable.jsx
+var defaultGetRowKey = (participant, index) => participant.id || participant.sessionId || participant.username || participant.name || index;
+var defaultGetDisplayName = (participant, fallbackName) => participant.username || participant.name || participant.displayName || fallbackName;
+var defaultGetIsConnected = (participant) => participant && typeof participant.isConnected === "boolean" ? participant.isConnected : participant && typeof participant.connected === "boolean" ? participant.connected : true;
+var StudentTable = ({
+  title = "\u{1F4CB} \u03A0\u03AF\u03BD\u03B1\u03BA\u03B1\u03C2 \u03C7\u03C1\u03B7\u03C3\u03C4\u03CE\u03BD",
+  participants = [],
+  columns = [],
+  emptyMessage = "\u0394\u03B5\u03BD \u03C5\u03C0\u03AC\u03C1\u03C7\u03BF\u03C5\u03BD \u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9 \u03C7\u03C1\u03AE\u03C3\u03C4\u03B5\u03C2.",
+  nameFallback = "\u03A7\u03C1\u03AE\u03C3\u03C4\u03B7\u03C2",
+  getRowKey = defaultGetRowKey,
+  getDisplayName = defaultGetDisplayName,
+  getIsConnected = defaultGetIsConnected
+}) => {
   const rows = Array.isArray(participants) ? participants : [];
-  return /* @__PURE__ */ import_react6.default.createElement(Accordion, { title: "\u{1F4CB} \u03A0\u03AF\u03BD\u03B1\u03BA\u03B1\u03C2 \u03BC\u03B1\u03B8\u03B7\u03C4\u03CE\u03BD (\u03B6\u03C9\u03BD\u03C4\u03B1\u03BD\u03AE \u03B1\u03BD\u03B1\u03C6\u03BF\u03C1\u03AC)" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "data-section" }, /* @__PURE__ */ import_react6.default.createElement("table", { className: "data-table" }, /* @__PURE__ */ import_react6.default.createElement("thead", null, /* @__PURE__ */ import_react6.default.createElement("tr", null, /* @__PURE__ */ import_react6.default.createElement("th", null, "\u039C\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2"), /* @__PURE__ */ import_react6.default.createElement("th", null, "i\u2081 (\u03C1\u03CC\u03B4\u03B5\u03C2)"), /* @__PURE__ */ import_react6.default.createElement("th", null, "w\u2081"), /* @__PURE__ */ import_react6.default.createElement("th", null, "i\u2082 (\u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2)"), /* @__PURE__ */ import_react6.default.createElement("th", null, "w\u2082"), /* @__PURE__ */ import_react6.default.createElement("th", null, "\u0391\u03C0\u03BF\u03C4\u03AD\u03BB\u03B5\u03C3\u03BC\u03B1 o"))), /* @__PURE__ */ import_react6.default.createElement("tbody", null, rows.length === 0 && /* @__PURE__ */ import_react6.default.createElement("tr", null, /* @__PURE__ */ import_react6.default.createElement("td", { colSpan: "6", style: { textAlign: "center", opacity: 0.7 } }, "\u0394\u03B5\u03BD \u03C5\u03C0\u03AC\u03C1\u03C7\u03BF\u03C5\u03BD \u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9 \u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2.")), rows.map((student) => /* @__PURE__ */ import_react6.default.createElement("tr", { key: student.id || student.name }, /* @__PURE__ */ import_react6.default.createElement("td", null, /* @__PURE__ */ import_react6.default.createElement("span", { className: "green-dot" }), " ", student.name || "\u039C\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2"), /* @__PURE__ */ import_react6.default.createElement("td", null, i1, " ", /* @__PURE__ */ import_react6.default.createElement("span", { className: "icon-in-table" }, "\u{1F6DE}")), /* @__PURE__ */ import_react6.default.createElement("td", { className: "weight-value", style: { background: "#ef4444", color: "white" } }, student.weights?.w1 ?? "-"), /* @__PURE__ */ import_react6.default.createElement("td", null, i2, " ", /* @__PURE__ */ import_react6.default.createElement("span", { className: "icon-in-table" }, "\u2699\uFE0F")), /* @__PURE__ */ import_react6.default.createElement("td", { className: "weight-value", style: { background: "#ef4444", color: "white" } }, student.weights?.w2 ?? "-"), /* @__PURE__ */ import_react6.default.createElement("td", { className: "result-visible" }, student.result ?? "-", typeof student.aboveThreshold === "boolean" && /* @__PURE__ */ import_react6.default.createElement("span", { style: { marginLeft: "0.45rem", fontWeight: 700, color: student.aboveThreshold ? "#059669" : "#dc2626" } }, student.aboveThreshold ? `>= ${threshold}` : `< ${threshold}`))))))));
+  const extraColumns = Array.isArray(columns) ? columns : [];
+  const totalColumns = 2 + extraColumns.length;
+  return /* @__PURE__ */ import_react6.default.createElement(Accordion, { title }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "data-section" }, /* @__PURE__ */ import_react6.default.createElement("table", { className: "data-table" }, /* @__PURE__ */ import_react6.default.createElement("thead", null, /* @__PURE__ */ import_react6.default.createElement("tr", null, /* @__PURE__ */ import_react6.default.createElement("th", null, "\u039A\u03B1\u03C4\u03AC\u03C3\u03C4\u03B1\u03C3\u03B7"), /* @__PURE__ */ import_react6.default.createElement("th", null, "\u038C\u03BD\u03BF\u03BC\u03B1 \u03C7\u03C1\u03AE\u03C3\u03C4\u03B7"), extraColumns.map((column, index) => /* @__PURE__ */ import_react6.default.createElement("th", { key: column.key || column.label || index }, column.label)))), /* @__PURE__ */ import_react6.default.createElement("tbody", null, rows.length === 0 && /* @__PURE__ */ import_react6.default.createElement("tr", null, /* @__PURE__ */ import_react6.default.createElement("td", { colSpan: totalColumns, style: { textAlign: "center", opacity: 0.7 } }, emptyMessage)), rows.map((participant, index) => {
+    const isConnected = getIsConnected(participant, index);
+    const displayName = getDisplayName(participant, nameFallback, index);
+    return /* @__PURE__ */ import_react6.default.createElement("tr", { key: getRowKey(participant, index) }, /* @__PURE__ */ import_react6.default.createElement("td", null, /* @__PURE__ */ import_react6.default.createElement(
+      "span",
+      {
+        className: "green-dot",
+        style: {
+          display: "inline-block",
+          backgroundColor: isConnected ? "#22c55e" : "#9ca3af",
+          opacity: isConnected ? 1 : 0.85
+        }
+      }
+    ), " ", isConnected ? "\u03A3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03C2" : "\u0391\u03C0\u03BF\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03C2"), /* @__PURE__ */ import_react6.default.createElement("td", null, displayName), extraColumns.map((column, columnIndex) => /* @__PURE__ */ import_react6.default.createElement(
+      "td",
+      {
+        key: column.key || column.label || columnIndex,
+        className: column.className || "",
+        style: column.style
+      },
+      typeof column.render === "function" ? column.render(participant, index) : participant?.[column.field] ?? "-"
+    )));
+  })))));
 };
+
+// apps/neural-lab/components/StudentTable.jsx
+var StudentTable2 = ({ i1, i2, participants = [], threshold = 5 }) => /* @__PURE__ */ import_react7.default.createElement(
+  StudentTable,
+  {
+    title: "\u{1F4CB} \u03A0\u03AF\u03BD\u03B1\u03BA\u03B1\u03C2 \u03BC\u03B1\u03B8\u03B7\u03C4\u03CE\u03BD (\u03B6\u03C9\u03BD\u03C4\u03B1\u03BD\u03AE \u03B1\u03BD\u03B1\u03C6\u03BF\u03C1\u03AC)",
+    participants,
+    emptyMessage: "\u0394\u03B5\u03BD \u03C5\u03C0\u03AC\u03C1\u03C7\u03BF\u03C5\u03BD \u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9 \u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2.",
+    nameFallback: "\u039C\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2",
+    getRowKey: (student, index) => student.id || student.username || student.name || index,
+    getDisplayName: (student) => student.username || student.name || student.displayName || "\u039C\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2",
+    getIsConnected: (student) => student.isConnected ?? true,
+    columns: [
+      {
+        key: "i1",
+        label: "i\u2081 (\u03C1\u03CC\u03B4\u03B5\u03C2)",
+        render: (student) => /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, student?.inputs?.i1 ?? i1, " ", /* @__PURE__ */ import_react7.default.createElement("span", { className: "icon-in-table" }, "\u{1F6DE}"))
+      },
+      {
+        key: "w1",
+        label: "w\u2081",
+        className: "weight-value",
+        style: { background: "#ef4444", color: "white" },
+        render: (student) => student.weights?.w1 ?? "-"
+      },
+      {
+        key: "i2",
+        label: "i\u2082 (\u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2)",
+        render: (student) => /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, student?.inputs?.i2 ?? i2, " ", /* @__PURE__ */ import_react7.default.createElement("span", { className: "icon-in-table" }, "\u2699\uFE0F"))
+      },
+      {
+        key: "w2",
+        label: "w\u2082",
+        className: "weight-value",
+        style: { background: "#ef4444", color: "white" },
+        render: (student) => student.weights?.w2 ?? "-"
+      },
+      {
+        key: "result",
+        label: "\u0391\u03C0\u03BF\u03C4\u03AD\u03BB\u03B5\u03C3\u03BC\u03B1 o",
+        className: "result-visible",
+        render: (student) => /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, student.total ?? student.result ?? "-", typeof student.aboveThreshold === "boolean" && /* @__PURE__ */ import_react7.default.createElement("span", { style: { marginLeft: "0.45rem", fontWeight: 700, color: student.aboveThreshold ? "#059669" : "#dc2626" } }, student.aboveThreshold ? `>= ${threshold}` : `< ${threshold}`))
+      }
+    ]
+  }
+);
+
+// apps/neural-lab/components/ActivitiesMenu.jsx
+var import_react8 = __toESM(require_react());
+var ACTIVITY_OPTIONS = [
+  { value: "1a", label: "1\u03B1. \u0395\u03B9\u03C3\u03B1\u03B3\u03C9\u03B3\u03AE \u03B5\u03B9\u03C3\u03CC\u03B4\u03C9\u03BD (\u03B5\u03C0\u03BF\u03C0\u03C4\u03B9\u03BA\u03CC \u03BC\u03AD\u03C3\u03BF)" },
+  { value: "1b", label: "1\u03B2. \u0395\u03B9\u03C3\u03B1\u03B3\u03C9\u03B3\u03AE \u03B5\u03B9\u03C3\u03CC\u03B4\u03C9\u03BD (\u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2)" },
+  { value: "2a", label: "2\u03B1. \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2 \u03B5\u03BE\u03CC\u03B4\u03C9\u03BD (\u03B5\u03C0\u03BF\u03C0\u03C4\u03B9\u03BA\u03CC \u03BC\u03AD\u03C3\u03BF)" },
+  { value: "2b", label: "2\u03B2. \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2 \u03B5\u03BE\u03CC\u03B4\u03C9\u03BD (\u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2)" },
+  { value: "3a", label: "3\u03B1. \u03A0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03B2\u03B1\u03C1\u03CE\u03BD (\u03B5\u03C0\u03BF\u03C0\u03C4\u03B9\u03BA\u03CC \u03BC\u03AD\u03C3\u03BF)" },
+  { value: "3b", label: "3\u03B2. \u03A0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03B2\u03B1\u03C1\u03CE\u03BD (\u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2)" }
+];
+var ActivitiesMenu = ({ value = "1a", onChange }) => /* @__PURE__ */ import_react8.default.createElement(Accordion, { title: "\u0394\u03C1\u03B1\u03C3\u03C4\u03B7\u03C1\u03B9\u03CC\u03C4\u03B7\u03C4\u03B5\u03C2" }, /* @__PURE__ */ import_react8.default.createElement("div", { className: "data-section activities-menu" }, /* @__PURE__ */ import_react8.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react8.default.createElement("label", null, "\u0395\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE \u03B4\u03C1\u03B1\u03C3\u03C4\u03B7\u03C1\u03B9\u03CC\u03C4\u03B7\u03C4\u03B1\u03C2"), /* @__PURE__ */ import_react8.default.createElement(
+  "select",
+  {
+    value,
+    onChange: (event) => {
+      if (typeof onChange === "function") {
+        onChange(event.target.value);
+      }
+    }
+  },
+  ACTIVITY_OPTIONS.map((option) => /* @__PURE__ */ import_react8.default.createElement("option", { key: option.value, value: option.value }, option.label))
+))));
 
 // apps/neural-lab/App.jsx
 var DATASETS = {
@@ -21628,32 +21847,34 @@ var DATASETS = {
   }
 };
 var App = ({ role = "teacher" }) => {
-  const wsRef = (0, import_react7.useRef)(null);
-  const reconnectTimerRef = (0, import_react7.useRef)(null);
-  const hasRegisteredRef = (0, import_react7.useRef)(false);
-  const suppressNextStudentWeightsSendRef = (0, import_react7.useRef)(false);
-  const lastSentStudentWeightsRef = (0, import_react7.useRef)({ w1: null, w2: null });
-  const [currentDataset, setCurrentDataset] = (0, import_react7.useState)("vehicles");
-  const [currentExample, setCurrentExample] = (0, import_react7.useState)(0);
-  const [useQuestionMarks, setUseQuestionMarks] = (0, import_react7.useState)(false);
-  const [editWeights, setEditWeights] = (0, import_react7.useState)(false);
-  const [thresholdEnabled, setThresholdEnabled] = (0, import_react7.useState)(false);
-  const [thresholdOp, setThresholdOp] = (0, import_react7.useState)("gt");
-  const [thresholdValue, setThresholdValue] = (0, import_react7.useState)(10);
-  const [dynamicW1, setDynamicW1] = (0, import_react7.useState)(2);
-  const [dynamicW2, setDynamicW2] = (0, import_react7.useState)(3);
-  const [isSocketConnected, setIsSocketConnected] = (0, import_react7.useState)(false);
-  const [participants, setParticipants] = (0, import_react7.useState)([]);
-  const [roster, setRoster] = (0, import_react7.useState)([]);
-  const [lessonInputs, setLessonInputs] = (0, import_react7.useState)({ i1: 2, i2: 3 });
-  const [lessonThreshold, setLessonThreshold] = (0, import_react7.useState)(5);
-  const [lessonDataset, setLessonDataset] = (0, import_react7.useState)("vehicles");
-  const [lessonExampleIndex, setLessonExampleIndex] = (0, import_react7.useState)(0);
-  const [lessonIcon, setLessonIcon] = (0, import_react7.useState)("\u{1F697}");
-  const [lessonName, setLessonName] = (0, import_react7.useState)("\u0391\u03C5\u03C4\u03BF\u03BA\u03AF\u03BD\u03B7\u03C4\u03BF");
-  const [lessonUseQuestionMarks, setLessonUseQuestionMarks] = (0, import_react7.useState)(false);
-  const [studentAnswer, setStudentAnswer] = (0, import_react7.useState)("");
-  const studentName = (0, import_react7.useMemo)(() => {
+  const wsRef = (0, import_react9.useRef)(null);
+  const reconnectTimerRef = (0, import_react9.useRef)(null);
+  const hasRegisteredRef = (0, import_react9.useRef)(false);
+  const suppressNextStudentStateSendRef = (0, import_react9.useRef)(false);
+  const lastSentStudentStateRef = (0, import_react9.useRef)("");
+  const [currentDataset, setCurrentDataset] = (0, import_react9.useState)("vehicles");
+  const [currentExample, setCurrentExample] = (0, import_react9.useState)(0);
+  const [selectedActivity, setSelectedActivity] = (0, import_react9.useState)("1a");
+  const [lessonActivity, setLessonActivity] = (0, import_react9.useState)("1a");
+  const [teacherInputs, setTeacherInputs] = (0, import_react9.useState)({ i1: 4, i2: 1 });
+  const [studentInputs, setStudentInputs] = (0, import_react9.useState)({ i1: "", i2: "" });
+  const [teacherProducts, setTeacherProducts] = (0, import_react9.useState)({ p1: "", p2: "" });
+  const [studentProducts, setStudentProducts] = (0, import_react9.useState)({ p1: "", p2: "" });
+  const [teacherTotal, setTeacherTotal] = (0, import_react9.useState)("");
+  const [studentTotal, setStudentTotal] = (0, import_react9.useState)("");
+  const [dynamicW1, setDynamicW1] = (0, import_react9.useState)(2);
+  const [dynamicW2, setDynamicW2] = (0, import_react9.useState)(3);
+  const [isSocketConnected, setIsSocketConnected] = (0, import_react9.useState)(false);
+  const [participants, setParticipants] = (0, import_react9.useState)([]);
+  const [roster, setRoster] = (0, import_react9.useState)([]);
+  const [lessonInputs, setLessonInputs] = (0, import_react9.useState)({ i1: 4, i2: 1 });
+  const [lessonWeights, setLessonWeights] = (0, import_react9.useState)({ w1: 2, w2: 3 });
+  const [lessonThreshold, setLessonThreshold] = (0, import_react9.useState)(5);
+  const [lessonDataset, setLessonDataset] = (0, import_react9.useState)("vehicles");
+  const [lessonExampleIndex, setLessonExampleIndex] = (0, import_react9.useState)(0);
+  const [lessonIcon, setLessonIcon] = (0, import_react9.useState)("\u{1F697}");
+  const [lessonName, setLessonName] = (0, import_react9.useState)("\u0391\u03C5\u03C4\u03BF\u03BA\u03AF\u03BD\u03B7\u03C4\u03BF");
+  const studentName = (0, import_react9.useMemo)(() => {
     try {
       const stored = String(window.localStorage.getItem("strobeStudentConnectName") || "").trim();
       return stored || `Student-${Math.floor(Math.random() * 900 + 100)}`;
@@ -21665,30 +21886,51 @@ var App = ({ role = "teacher" }) => {
   const isTeacher = role === "teacher";
   const isScreen = role === "screen";
   const isStudent = role === "student";
-  const effectiveUseQuestionMarks = isTeacher ? useQuestionMarks : lessonUseQuestionMarks;
+  const activeActivity = isTeacher ? selectedActivity : lessonActivity;
   const displayIcon = isTeacher ? currentExampleData.icon : lessonIcon;
   const displayName = isTeacher ? currentExampleData.name : lessonName;
   const displayDataset = isTeacher ? currentDataset : lessonDataset;
   const safeDisplayDataset = DATASETS[displayDataset] ? displayDataset : "vehicles";
-  const i1 = isTeacher ? currentExampleData.i1 : lessonInputs.i1;
-  const i2 = isTeacher ? currentExampleData.i2 : lessonInputs.i2;
-  const isWeightEditable = isStudent || isTeacher && editWeights;
-  const w1 = isWeightEditable ? dynamicW1 : 2;
-  const w2 = isWeightEditable ? dynamicW2 : 3;
-  const prod1 = w1 * i1;
-  const prod2 = w2 * i2;
-  const total = prod1 + prod2;
-  const threshold = thresholdEnabled && !isStudent ? {
-    satisfied: thresholdOp === "gt" ? total > thresholdValue : total < thresholdValue,
-    op: thresholdOp,
-    value: thresholdValue,
-    total
-  } : null;
+  const toFinite = (value, fallback = 0) => {
+    const num = Number(value);
+    return Number.isFinite(num) ? num : fallback;
+  };
+  const isInputEditable = isTeacher && (activeActivity === "1a" || activeActivity === "1b") || isStudent && activeActivity === "1b";
+  const isWeightEditable = isTeacher && activeActivity === "3a" || isStudent && activeActivity === "3b";
+  const isProductEditable = isTeacher && activeActivity === "2a" || isStudent && activeActivity === "2b";
+  const isTotalEditable = isProductEditable;
+  const currentInputs = isTeacher ? teacherInputs : isStudent && activeActivity === "1b" ? studentInputs : lessonInputs;
+  const i1 = currentInputs.i1;
+  const i2 = currentInputs.i2;
+  const currentW1 = isTeacher ? dynamicW1 : isStudent && activeActivity === "3b" ? dynamicW1 : lessonWeights.w1;
+  const currentW2 = isTeacher ? dynamicW2 : isStudent && activeActivity === "3b" ? dynamicW2 : lessonWeights.w2;
+  const computedProd1 = Number((toFinite(currentW1) * toFinite(i1)).toFixed(2));
+  const computedProd2 = Number((toFinite(currentW2) * toFinite(i2)).toFixed(2));
+  const currentProducts = isTeacher ? teacherProducts : studentProducts;
+  const prod1 = isProductEditable ? currentProducts.p1 : computedProd1;
+  const prod2 = isProductEditable ? currentProducts.p2 : computedProd2;
+  const computedTotal = Number((toFinite(prod1) + toFinite(prod2)).toFixed(2));
+  const total = isTotalEditable ? isTeacher ? teacherTotal : studentTotal : computedTotal;
+  const formulaByActivity = {
+    "1a": "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$",
+    "1b": "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$",
+    "2a": "$$ (w_1 \\times i_1) + (w_2 \\times i_2) = o $$",
+    "2b": "$$ (w_1 \\times i_1) + (w_2 \\times i_2) = o $$",
+    "3a": "$$ w_1 \\times i_1 + w_2 \\times i_2 = o \\; (\\text{\u03C0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03B2\u03B1\u03C1\u03CE\u03BD}) $$",
+    "3b": "$$ w_1 \\times i_1 + w_2 \\times i_2 = o \\; (\\text{\u03C0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03B2\u03B1\u03C1\u03CE\u03BD}) $$"
+  };
+  const mathTitle = formulaByActivity[activeActivity] || "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$";
+  const threshold = {
+    satisfied: toFinite(total) >= toFinite(lessonThreshold, 5),
+    value: lessonThreshold,
+    total: toFinite(total)
+  };
   const handleWeightChange = (which, value) => {
+    const normalized = value === "" ? "" : Number(value);
     if (which === "w1") {
-      setDynamicW1(value);
+      setDynamicW1(Number.isFinite(normalized) || normalized === "" ? normalized : 0);
     } else {
-      setDynamicW2(value);
+      setDynamicW2(Number.isFinite(normalized) || normalized === "" ? normalized : 0);
     }
   };
   const sendSocketMessage = (payload) => {
@@ -21701,7 +21943,7 @@ var App = ({ role = "teacher" }) => {
       return false;
     }
   };
-  (0, import_react7.useEffect)(() => {
+  (0, import_react9.useEffect)(() => {
     let cancelled = false;
     const clearReconnect = () => {
       if (reconnectTimerRef.current) {
@@ -21742,9 +21984,18 @@ var App = ({ role = "teacher" }) => {
         if (message?.type !== "canvas_state") return;
         if (message.lesson?.inputs) {
           setLessonInputs({
-            i1: Number.isFinite(Number(message.lesson.inputs.i1)) ? Number(message.lesson.inputs.i1) : 2,
-            i2: Number.isFinite(Number(message.lesson.inputs.i2)) ? Number(message.lesson.inputs.i2) : 3
+            i1: message.lesson.inputs.i1 ?? "",
+            i2: message.lesson.inputs.i2 ?? ""
           });
+        }
+        if (message.lesson?.weights && typeof message.lesson.weights === "object") {
+          setLessonWeights({
+            w1: message.lesson.weights.w1 ?? 2,
+            w2: message.lesson.weights.w2 ?? 3
+          });
+        }
+        if (typeof message.lesson?.activityId === "string") {
+          setLessonActivity(message.lesson.activityId);
         }
         if (Number.isFinite(Number(message.lesson?.threshold))) {
           setLessonThreshold(Number(message.lesson.threshold));
@@ -21764,22 +22015,32 @@ var App = ({ role = "teacher" }) => {
         if (typeof message.lesson?.exampleName === "string" && message.lesson.exampleName.trim()) {
           setLessonName(message.lesson.exampleName.trim());
         }
-        if (typeof message.lesson?.useQuestionMarks === "boolean") {
-          setLessonUseQuestionMarks(message.lesson.useQuestionMarks);
-        }
         if (Array.isArray(message.participants)) {
           setParticipants(message.participants);
         }
         if (Array.isArray(message.roster)) {
           setRoster(message.roster);
         }
-        if (isStudent && message.me?.weights) {
-          const nextW1 = Number(message.me.weights.w1);
-          const nextW2 = Number(message.me.weights.w2);
-          if (Number.isFinite(nextW1) && Number.isFinite(nextW2)) {
-            suppressNextStudentWeightsSendRef.current = true;
-            setDynamicW1(nextW1);
-            setDynamicW2(nextW2);
+        if (isStudent && message.me) {
+          suppressNextStudentStateSendRef.current = true;
+          if (message.me.weights) {
+            setDynamicW1(message.me.weights.w1 ?? 0);
+            setDynamicW2(message.me.weights.w2 ?? 0);
+          }
+          if (message.me.inputs) {
+            setStudentInputs({
+              i1: message.me.inputs.i1 ?? "",
+              i2: message.me.inputs.i2 ?? ""
+            });
+          }
+          if (message.me.products) {
+            setStudentProducts({
+              p1: message.me.products.p1 ?? "",
+              p2: message.me.products.p2 ?? ""
+            });
+          }
+          if (Object.prototype.hasOwnProperty.call(message.me, "total")) {
+            setStudentTotal(message.me.total ?? "");
           }
         }
       });
@@ -21806,46 +22067,93 @@ var App = ({ role = "teacher" }) => {
       }
     };
   }, [isScreen, isStudent, studentName]);
-  (0, import_react7.useEffect)(() => {
+  (0, import_react9.useEffect)(() => {
     if (!isStudent || !isSocketConnected) return;
-    if (suppressNextStudentWeightsSendRef.current) {
-      suppressNextStudentWeightsSendRef.current = false;
+    if (suppressNextStudentStateSendRef.current) {
+      suppressNextStudentStateSendRef.current = false;
       return;
     }
-    if (lastSentStudentWeightsRef.current.w1 === dynamicW1 && lastSentStudentWeightsRef.current.w2 === dynamicW2) {
+    const payload = {
+      type: "student_state",
+      state: {
+        weights: { w1: dynamicW1, w2: dynamicW2 },
+        inputs: { i1: studentInputs.i1, i2: studentInputs.i2 },
+        products: { p1: studentProducts.p1, p2: studentProducts.p2 },
+        total: studentTotal
+      }
+    };
+    const serialized = JSON.stringify(payload);
+    if (serialized === lastSentStudentStateRef.current) {
       return;
     }
-    lastSentStudentWeightsRef.current = { w1: dynamicW1, w2: dynamicW2 };
-    sendSocketMessage({ type: "student_weights", weights: { w1: dynamicW1, w2: dynamicW2 } });
-  }, [dynamicW1, dynamicW2, isSocketConnected, isStudent]);
-  (0, import_react7.useEffect)(() => {
+    lastSentStudentStateRef.current = serialized;
+    sendSocketMessage(payload);
+  }, [dynamicW1, dynamicW2, studentInputs.i1, studentInputs.i2, studentProducts.p1, studentProducts.p2, studentTotal, isSocketConnected, isStudent]);
+  (0, import_react9.useEffect)(() => {
     if (!isTeacher || !isSocketConnected) return;
+    const lessonInputsPayload = {
+      i1: teacherInputs.i1,
+      i2: teacherInputs.i2
+    };
     sendSocketMessage({
       type: "teacher_lesson",
       lesson: {
+        activityId: selectedActivity,
         dataset: currentDataset,
         exampleIndex: currentExample,
         exampleName: currentExampleData.name,
         icon: currentExampleData.icon,
-        inputs: {
-          i1: currentExampleData.i1,
-          i2: currentExampleData.i2
+        inputs: lessonInputsPayload,
+        weights: {
+          w1: dynamicW1,
+          w2: dynamicW2
         },
-        useQuestionMarks
+        threshold: lessonThreshold
       }
     });
   }, [
     isTeacher,
     isSocketConnected,
+    selectedActivity,
     currentDataset,
     currentExample,
     currentExampleData.name,
     currentExampleData.icon,
-    currentExampleData.i1,
-    currentExampleData.i2,
-    useQuestionMarks
+    dynamicW1,
+    dynamicW2,
+    teacherInputs.i1,
+    teacherInputs.i2,
+    lessonThreshold
   ]);
-  (0, import_react7.useEffect)(() => {
+  (0, import_react9.useEffect)(() => {
+    if (!isTeacher) {
+      return;
+    }
+    if (selectedActivity === "1a") {
+      setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
+    }
+    if (selectedActivity === "1b") {
+      setTeacherInputs({ i1: "", i2: "" });
+      setStudentInputs({ i1: "", i2: "" });
+    }
+    if (selectedActivity === "2a" || selectedActivity === "2b") {
+      setTeacherProducts({ p1: "", p2: "" });
+      setTeacherTotal("");
+      if (selectedActivity === "2b") {
+        setStudentProducts({ p1: "", p2: "" });
+        setStudentTotal("");
+      }
+    }
+    if (selectedActivity === "3a") {
+      setDynamicW1("");
+      setDynamicW2("");
+    }
+    if (selectedActivity !== "3a") {
+      setDynamicW1((prev) => prev === "" ? 2 : prev);
+      setDynamicW2((prev) => prev === "" ? 3 : prev);
+    }
+  }, [isTeacher, selectedActivity, currentExampleData.i1, currentExampleData.i2]);
+  (0, import_react9.useEffect)(() => {
     const renderMath = () => {
       const mj = window.MathJax;
       if (!mj) return;
@@ -21859,83 +22167,65 @@ var App = ({ role = "teacher" }) => {
     };
     const timeoutId = setTimeout(renderMath, 50);
     return () => clearTimeout(timeoutId);
-  }, [role, currentDataset, currentExample, useQuestionMarks, editWeights, thresholdEnabled, thresholdOp, thresholdValue, dynamicW1, dynamicW2, lessonDataset, lessonExampleIndex, lessonUseQuestionMarks]);
+  }, [role, currentDataset, currentExample, selectedActivity, lessonActivity, dynamicW1, dynamicW2, teacherInputs.i1, teacherInputs.i2, studentInputs.i1, studentInputs.i2]);
   const sortedParticipants = [...participants].sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
-  return /* @__PURE__ */ import_react7.default.createElement(TeacherCard, { title: "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "connection-status" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: `status-dot ${isSocketConnected ? "online" : "offline"}` }), /* @__PURE__ */ import_react7.default.createElement("strong", null, isSocketConnected ? "\u03A3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF" : "\u0391\u03C0\u03BF\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF"), /* @__PURE__ */ import_react7.default.createElement("span", null, "\u03BA\u03B1\u03BD\u03AC\u03BB\u03B9: /ws/neural-lab"), isStudent && /* @__PURE__ */ import_react7.default.createElement("span", null, "\u03CC\u03BD\u03BF\u03BC\u03B1: ", studentName), !isStudent && /* @__PURE__ */ import_react7.default.createElement("span", null, "\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9: ", roster.length)), isScreen && /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, /* @__PURE__ */ import_react7.default.createElement("div", { className: "screen-top-bar" }, /* @__PURE__ */ import_react7.default.createElement("strong", null, "\u03A0\u03C1\u03BF\u03B2\u03BF\u03BB\u03AE \u03C4\u03AC\u03BE\u03B7\u03C2"), /* @__PURE__ */ import_react7.default.createElement("span", null, DATASETS[safeDisplayDataset].emoji, " ", DATASETS[safeDisplayDataset].label), /* @__PURE__ */ import_react7.default.createElement("span", null, displayIcon, " ", displayName), /* @__PURE__ */ import_react7.default.createElement("span", null, "i1=", i1, ", i2=", i2), /* @__PURE__ */ import_react7.default.createElement("span", null, "w1=", w1, ", w2=", w2), /* @__PURE__ */ import_react7.default.createElement("span", null, "o=", total)), /* @__PURE__ */ import_react7.default.createElement("div", { className: "operation-tree", "aria-label": "\u0394\u03AD\u03BD\u03C4\u03C1\u03BF \u03C0\u03C1\u03AC\u03BE\u03B5\u03C9\u03BD" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-level" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-node tree-root" }, "o = ", total)), /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-connect" }), /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-level tree-two" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-node" }, "w1 \xD7 i1 = ", prod1), /* @__PURE__ */ import_react7.default.createElement("div", { className: "tree-node" }, "w2 \xD7 i2 = ", prod2)))), /* @__PURE__ */ import_react7.default.createElement("div", { className: "common-zone" }, /* @__PURE__ */ import_react7.default.createElement(
+  return /* @__PURE__ */ import_react9.default.createElement(TeacherCard, { title: mathTitle }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "connection-status" }, /* @__PURE__ */ import_react9.default.createElement("span", { className: `status-dot ${isSocketConnected ? "online" : "offline"}` }), /* @__PURE__ */ import_react9.default.createElement("strong", null, isSocketConnected ? "\u03A3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF" : "\u0391\u03C0\u03BF\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF"), /* @__PURE__ */ import_react9.default.createElement("span", null, "\u03BA\u03B1\u03BD\u03AC\u03BB\u03B9: /ws/neural-lab"), isStudent && /* @__PURE__ */ import_react9.default.createElement("span", null, "\u03CC\u03BD\u03BF\u03BC\u03B1: ", studentName), !isStudent && /* @__PURE__ */ import_react9.default.createElement("span", null, "\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9: ", roster.length)), isScreen && /* @__PURE__ */ import_react9.default.createElement(import_react9.default.Fragment, null, /* @__PURE__ */ import_react9.default.createElement("div", { className: "screen-top-bar" }, /* @__PURE__ */ import_react9.default.createElement("strong", null, "\u03A0\u03C1\u03BF\u03B2\u03BF\u03BB\u03AE \u03C4\u03AC\u03BE\u03B7\u03C2"), /* @__PURE__ */ import_react9.default.createElement("span", null, DATASETS[safeDisplayDataset].emoji, " ", DATASETS[safeDisplayDataset].label), /* @__PURE__ */ import_react9.default.createElement("span", null, displayIcon, " ", displayName), /* @__PURE__ */ import_react9.default.createElement("span", null, "i1=", i1, ", i2=", i2), /* @__PURE__ */ import_react9.default.createElement("span", null, "w1=", currentW1, ", w2=", currentW2), /* @__PURE__ */ import_react9.default.createElement("span", null, "o=", total)), /* @__PURE__ */ import_react9.default.createElement("div", { className: "operation-tree", "aria-label": "\u0394\u03AD\u03BD\u03C4\u03C1\u03BF \u03C0\u03C1\u03AC\u03BE\u03B5\u03C9\u03BD" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "tree-level" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "tree-node tree-root" }, "o = ", total)), /* @__PURE__ */ import_react9.default.createElement("div", { className: "tree-connect" }), /* @__PURE__ */ import_react9.default.createElement("div", { className: "tree-level tree-two" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "tree-node" }, "w1 \xD7 i1 = ", prod1), /* @__PURE__ */ import_react9.default.createElement("div", { className: "tree-node" }, "w2 \xD7 i2 = ", prod2)))), /* @__PURE__ */ import_react9.default.createElement("div", { className: "common-zone" }, /* @__PURE__ */ import_react9.default.createElement(
     VerticalProducts,
     {
       icon: displayIcon,
       prod1,
       prod2,
-      w1,
-      w2,
+      w1: currentW1,
+      w2: currentW2,
       i1,
       i2,
       total,
-      useQuestionMarks: effectiveUseQuestionMarks,
       editWeights: isWeightEditable,
       onWeightChange: handleWeightChange,
-      onRefresh: () => {
-      },
+      onRefresh: null,
       threshold,
-      studentAnswerMode: isStudent && effectiveUseQuestionMarks,
-      studentAnswer,
-      onStudentAnswerChange: setStudentAnswer
+      studentAnswerMode: false,
+      studentAnswer: "",
+      onStudentAnswerChange: null,
+      inputEditable: isInputEditable,
+      productEditable: isProductEditable,
+      totalEditable: isTotalEditable,
+      totalValue: isTeacher ? teacherTotal : studentTotal,
+      onInputChange: (field, value) => {
+        if (isTeacher) {
+          setTeacherInputs((prev) => ({ ...prev, [field]: value }));
+        } else if (isStudent) {
+          setStudentInputs((prev) => ({ ...prev, [field]: value }));
+        }
+      },
+      onProductChange: (field, value) => {
+        if (isTeacher) {
+          setTeacherProducts((prev) => ({ ...prev, [field]: value }));
+        } else if (isStudent) {
+          setStudentProducts((prev) => ({ ...prev, [field]: value }));
+        }
+      },
+      onTotalChange: (value) => {
+        if (isTeacher) {
+          setTeacherTotal(value);
+        } else if (isStudent) {
+          setStudentTotal(value);
+        }
+      },
+      inputPlaceholder: "\u03C3\u03C5\u03BC\u03C0\u03BB\u03AE\u03C1\u03C9\u03C3\u03B5",
+      weightPlaceholder: "\u03B2\u03AC\u03C1\u03BF\u03C2",
+      productPlaceholder: "\u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2",
+      totalPlaceholder: "\u03B4\u03CE\u03C3\u03B5 o"
     }
-  )), (isTeacher || isScreen) && /* @__PURE__ */ import_react7.default.createElement("div", { className: "live-table-wrap" }, /* @__PURE__ */ import_react7.default.createElement("h3", null, "\u03A3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9 \u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2"), /* @__PURE__ */ import_react7.default.createElement(
-    StudentTable,
+  )), (isTeacher || isScreen) && /* @__PURE__ */ import_react9.default.createElement("div", { className: "live-table-wrap" }, /* @__PURE__ */ import_react9.default.createElement("h3", null, "\u03A3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9 \u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2"), /* @__PURE__ */ import_react9.default.createElement(
+    StudentTable2,
     {
       i1: lessonInputs.i1,
       i2: lessonInputs.i2,
       threshold: lessonThreshold,
       participants: sortedParticipants
     }
-  )), isTeacher && /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, /* @__PURE__ */ import_react7.default.createElement("div", { className: "toolbar" }, /* @__PURE__ */ import_react7.default.createElement(
-    "button",
-    {
-      className: `tool-icon ${useQuestionMarks ? "active" : ""}`,
-      onClick: () => setUseQuestionMarks(!useQuestionMarks),
-      "data-tooltip": "\u0395\u03BC\u03C6\u03AC\u03BD\u03B9\u03C3\u03B7 \u03B5\u03C1\u03C9\u03C4\u03B7\u03BC\u03B1\u03C4\u03B9\u03BA\u03CE\u03BD (?)"
-    },
-    "\u2753 ?"
-  ), /* @__PURE__ */ import_react7.default.createElement(
-    "button",
-    {
-      className: `tool-icon ${editWeights ? "active" : ""}`,
-      onClick: () => {
-        setEditWeights(!editWeights);
-        setDynamicW1(2);
-        setDynamicW2(3);
-      },
-      "data-tooltip": "\u0395\u03C0\u03B5\u03BE\u03B5\u03C1\u03B3\u03B1\u03C3\u03AF\u03B1 \u03B2\u03B1\u03C1\u03CE\u03BD (w\u2081, w\u2082)"
-    },
-    "\u2699\uFE0F \u0392\u03AC\u03C1\u03B7"
-  ), /* @__PURE__ */ import_react7.default.createElement(
-    "button",
-    {
-      className: `tool-icon ${thresholdEnabled ? "active" : ""}`,
-      onClick: () => setThresholdEnabled(!thresholdEnabled),
-      "data-tooltip": "\u0395\u03BD\u03B5\u03C1\u03B3\u03BF\u03C0\u03BF\u03AF\u03B7\u03C3\u03B7 \u03BF\u03C1\u03AF\u03BF\u03C5"
-    },
-    "\u{1F4CF} \u038C\u03C1\u03B9\u03BF"
-  ), thresholdEnabled && /* @__PURE__ */ import_react7.default.createElement("div", { className: "threshold-controls" }, /* @__PURE__ */ import_react7.default.createElement(
-    "select",
-    {
-      value: thresholdOp,
-      onChange: (e) => setThresholdOp(e.target.value)
-    },
-    /* @__PURE__ */ import_react7.default.createElement("option", { value: "gt" }, ">"),
-    /* @__PURE__ */ import_react7.default.createElement("option", { value: "lt" }, "<")
-  ), /* @__PURE__ */ import_react7.default.createElement(
-    "input",
-    {
-      type: "number",
-      value: thresholdValue,
-      onChange: (e) => setThresholdValue(parseInt(e.target.value, 10) || 0),
-      step: "1",
-      style: { width: "70px" }
-    }
-  ))), /* @__PURE__ */ import_react7.default.createElement("div", { className: "control-bar" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react7.default.createElement("label", null, "\u{1F4C2} \u03A3\u03CD\u03BD\u03BF\u03BB\u03BF \u03B4\u03B5\u03B4\u03BF\u03BC\u03AD\u03BD\u03C9\u03BD"), /* @__PURE__ */ import_react7.default.createElement(
+  )), isTeacher && /* @__PURE__ */ import_react9.default.createElement(import_react9.default.Fragment, null, /* @__PURE__ */ import_react9.default.createElement(ActivitiesMenu, { value: selectedActivity, onChange: setSelectedActivity }), /* @__PURE__ */ import_react9.default.createElement("div", { className: "control-bar" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react9.default.createElement("label", null, "\u{1F4C2} \u03A3\u03CD\u03BD\u03BF\u03BB\u03BF \u03B4\u03B5\u03B4\u03BF\u03BC\u03AD\u03BD\u03C9\u03BD"), /* @__PURE__ */ import_react9.default.createElement(
     "select",
     {
       value: currentDataset,
@@ -21944,14 +22234,14 @@ var App = ({ role = "teacher" }) => {
         setCurrentExample(0);
       }
     },
-    Object.entries(DATASETS).map(([key, val]) => /* @__PURE__ */ import_react7.default.createElement("option", { key, value: key }, val.emoji, " ", val.label))
-  )), /* @__PURE__ */ import_react7.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react7.default.createElement("label", null, "\u{1F4CC} \u03A0\u03B1\u03C1\u03AC\u03B4\u03B5\u03B9\u03B3\u03BC\u03B1"), /* @__PURE__ */ import_react7.default.createElement(
+    Object.entries(DATASETS).map(([key, val]) => /* @__PURE__ */ import_react9.default.createElement("option", { key, value: key }, val.emoji, " ", val.label))
+  )), /* @__PURE__ */ import_react9.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react9.default.createElement("label", null, "\u{1F4CC} \u03A0\u03B1\u03C1\u03AC\u03B4\u03B5\u03B9\u03B3\u03BC\u03B1"), /* @__PURE__ */ import_react9.default.createElement(
     "select",
     {
       value: currentExample,
       onChange: (e) => setCurrentExample(parseInt(e.target.value, 10))
     },
-    DATASETS[currentDataset].examples.map((ex, idx) => /* @__PURE__ */ import_react7.default.createElement("option", { key: idx, value: idx }, ex.icon, " ", ex.name, " (\u03C1\u03CC\u03B4\u03B5\u03C2=", ex.i1, ", \u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2=", ex.i2, ")"))
+    DATASETS[currentDataset].examples.map((ex, idx) => /* @__PURE__ */ import_react9.default.createElement("option", { key: idx, value: idx }, ex.icon, " ", ex.name, " (\u03C1\u03CC\u03B4\u03B5\u03C2=", ex.i1, ", \u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2=", ex.i2, ")"))
   )))));
 };
 var App_default = App;
@@ -21959,7 +22249,7 @@ var App_default = App;
 // apps/neural-lab/teacher.jsx
 var root = import_client.default.createRoot(document.getElementById("root"));
 root.render(
-  /* @__PURE__ */ import_react8.default.createElement(App_default, { role: "teacher" })
+  /* @__PURE__ */ import_react10.default.createElement(App_default, { role: "teacher" })
 );
 /*! Bundled license information:
 

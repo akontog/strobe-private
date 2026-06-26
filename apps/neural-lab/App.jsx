@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { TeacherCard } from './components/TeacherCard';
 import { VerticalProducts } from './components/VerticalProducts';
 import { StudentTable } from './components/StudentTable';
+import { ActivitiesMenu } from './components/ActivitiesMenu';
+//import { StudentTable } from '../shared/components/StudentTable';
 import './App.css';
 
 const DATASETS = {
@@ -61,29 +63,31 @@ const App = ({ role = 'teacher' }) => {
   const wsRef = useRef(null);
   const reconnectTimerRef = useRef(null);
   const hasRegisteredRef = useRef(false);
-  const suppressNextStudentWeightsSendRef = useRef(false);
-  const lastSentStudentWeightsRef = useRef({ w1: null, w2: null });
+  const suppressNextStudentStateSendRef = useRef(false);
+  const lastSentStudentStateRef = useRef('');
 
   const [currentDataset, setCurrentDataset] = useState('vehicles');
   const [currentExample, setCurrentExample] = useState(0);
-  const [useQuestionMarks, setUseQuestionMarks] = useState(false);
-  const [editWeights, setEditWeights] = useState(false);
-  const [thresholdEnabled, setThresholdEnabled] = useState(false);
-  const [thresholdOp, setThresholdOp] = useState('gt');
-  const [thresholdValue, setThresholdValue] = useState(10);
+  const [selectedActivity, setSelectedActivity] = useState('1a');
+  const [lessonActivity, setLessonActivity] = useState('1a');
+  const [teacherInputs, setTeacherInputs] = useState({ i1: 4, i2: 1 });
+  const [studentInputs, setStudentInputs] = useState({ i1: '', i2: '' });
+  const [teacherProducts, setTeacherProducts] = useState({ p1: '', p2: '' });
+  const [studentProducts, setStudentProducts] = useState({ p1: '', p2: '' });
+  const [teacherTotal, setTeacherTotal] = useState('');
+  const [studentTotal, setStudentTotal] = useState('');
   const [dynamicW1, setDynamicW1] = useState(2);
   const [dynamicW2, setDynamicW2] = useState(3);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
   const [participants, setParticipants] = useState([]);
   const [roster, setRoster] = useState([]);
-  const [lessonInputs, setLessonInputs] = useState({ i1: 2, i2: 3 });
+  const [lessonInputs, setLessonInputs] = useState({ i1: 4, i2: 1 });
+  const [lessonWeights, setLessonWeights] = useState({ w1: 2, w2: 3 });
   const [lessonThreshold, setLessonThreshold] = useState(5);
   const [lessonDataset, setLessonDataset] = useState('vehicles');
   const [lessonExampleIndex, setLessonExampleIndex] = useState(0);
   const [lessonIcon, setLessonIcon] = useState('🚗');
   const [lessonName, setLessonName] = useState('Αυτοκίνητο');
-  const [lessonUseQuestionMarks, setLessonUseQuestionMarks] = useState(false);
-  const [studentAnswer, setStudentAnswer] = useState('');
 
   const studentName = useMemo(() => {
     try {
@@ -98,34 +102,79 @@ const App = ({ role = 'teacher' }) => {
   const isTeacher = role === 'teacher';
   const isScreen = role === 'screen';
   const isStudent = role === 'student';
-
-  const effectiveUseQuestionMarks = isTeacher ? useQuestionMarks : lessonUseQuestionMarks;
+  const activeActivity = isTeacher ? selectedActivity : lessonActivity;
   const displayIcon = isTeacher ? currentExampleData.icon : lessonIcon;
   const displayName = isTeacher ? currentExampleData.name : lessonName;
   const displayDataset = isTeacher ? currentDataset : lessonDataset;
   const safeDisplayDataset = DATASETS[displayDataset] ? displayDataset : 'vehicles';
 
-  const i1 = isTeacher ? currentExampleData.i1 : lessonInputs.i1;
-  const i2 = isTeacher ? currentExampleData.i2 : lessonInputs.i2;
-  const isWeightEditable = isStudent || (isTeacher && editWeights);
-  const w1 = isWeightEditable ? dynamicW1 : 2;
-  const w2 = isWeightEditable ? dynamicW2 : 3;
-  const prod1 = w1 * i1;
-  const prod2 = w2 * i2;
-  const total = prod1 + prod2;
+  const toFinite = (value, fallback = 0) => {
+    const num = Number(value);
+    return Number.isFinite(num) ? num : fallback;
+  };
 
-  const threshold = thresholdEnabled && !isStudent ? {
-    satisfied: thresholdOp === 'gt' ? total > thresholdValue : total < thresholdValue,
-    op: thresholdOp,
-    value: thresholdValue,
-    total: total
-  } : null;
+  const isInputEditable = (isTeacher && (activeActivity === '1a' || activeActivity === '1b'))
+    || (isStudent && activeActivity === '1b');
+  const isWeightEditable = (isTeacher && activeActivity === '3a')
+    || (isStudent && activeActivity === '3b');
+  const isProductEditable = (isTeacher && activeActivity === '2a')
+    || (isStudent && activeActivity === '2b');
+  const isTotalEditable = isProductEditable;
+
+  const currentInputs = isTeacher
+    ? teacherInputs
+    : isStudent && activeActivity === '1b'
+      ? studentInputs
+      : lessonInputs;
+
+  const i1 = currentInputs.i1;
+  const i2 = currentInputs.i2;
+
+  const currentW1 = isTeacher
+    ? dynamicW1
+    : isStudent && activeActivity === '3b'
+      ? dynamicW1
+      : lessonWeights.w1;
+  const currentW2 = isTeacher
+    ? dynamicW2
+    : isStudent && activeActivity === '3b'
+      ? dynamicW2
+      : lessonWeights.w2;
+
+  const computedProd1 = Number((toFinite(currentW1) * toFinite(i1)).toFixed(2));
+  const computedProd2 = Number((toFinite(currentW2) * toFinite(i2)).toFixed(2));
+
+  const currentProducts = isTeacher ? teacherProducts : studentProducts;
+  const prod1 = isProductEditable ? currentProducts.p1 : computedProd1;
+  const prod2 = isProductEditable ? currentProducts.p2 : computedProd2;
+
+  const computedTotal = Number((toFinite(prod1) + toFinite(prod2)).toFixed(2));
+  const total = isTotalEditable
+    ? (isTeacher ? teacherTotal : studentTotal)
+    : computedTotal;
+
+  const formulaByActivity = {
+    '1a': '$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$',
+    '1b': '$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$',
+    '2a': '$$ (w_1 \\times i_1) + (w_2 \\times i_2) = o $$',
+    '2b': '$$ (w_1 \\times i_1) + (w_2 \\times i_2) = o $$',
+    '3a': '$$ w_1 \\times i_1 + w_2 \\times i_2 = o \\; (\\text{προσαρμογή βαρών}) $$',
+    '3b': '$$ w_1 \\times i_1 + w_2 \\times i_2 = o \\; (\\text{προσαρμογή βαρών}) $$'
+  };
+  const mathTitle = formulaByActivity[activeActivity] || '$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$';
+
+  const threshold = {
+    satisfied: toFinite(total) >= toFinite(lessonThreshold, 5),
+    value: lessonThreshold,
+    total: toFinite(total)
+  };
 
   const handleWeightChange = (which, value) => {
+    const normalized = value === '' ? '' : Number(value);
     if (which === 'w1') {
-      setDynamicW1(value);
+      setDynamicW1(Number.isFinite(normalized) || normalized === '' ? normalized : 0);
     } else {
-      setDynamicW2(value);
+      setDynamicW2(Number.isFinite(normalized) || normalized === '' ? normalized : 0);
     }
   };
 
@@ -190,9 +239,20 @@ const App = ({ role = 'teacher' }) => {
 
         if (message.lesson?.inputs) {
           setLessonInputs({
-            i1: Number.isFinite(Number(message.lesson.inputs.i1)) ? Number(message.lesson.inputs.i1) : 2,
-            i2: Number.isFinite(Number(message.lesson.inputs.i2)) ? Number(message.lesson.inputs.i2) : 3
+            i1: message.lesson.inputs.i1 ?? '',
+            i2: message.lesson.inputs.i2 ?? ''
           });
+        }
+
+        if (message.lesson?.weights && typeof message.lesson.weights === 'object') {
+          setLessonWeights({
+            w1: message.lesson.weights.w1 ?? 2,
+            w2: message.lesson.weights.w2 ?? 3
+          });
+        }
+
+        if (typeof message.lesson?.activityId === 'string') {
+          setLessonActivity(message.lesson.activityId);
         }
 
         if (Number.isFinite(Number(message.lesson?.threshold))) {
@@ -220,10 +280,6 @@ const App = ({ role = 'teacher' }) => {
           setLessonName(message.lesson.exampleName.trim());
         }
 
-        if (typeof message.lesson?.useQuestionMarks === 'boolean') {
-          setLessonUseQuestionMarks(message.lesson.useQuestionMarks);
-        }
-
         if (Array.isArray(message.participants)) {
           setParticipants(message.participants);
         }
@@ -232,13 +288,30 @@ const App = ({ role = 'teacher' }) => {
           setRoster(message.roster);
         }
 
-        if (isStudent && message.me?.weights) {
-          const nextW1 = Number(message.me.weights.w1);
-          const nextW2 = Number(message.me.weights.w2);
-          if (Number.isFinite(nextW1) && Number.isFinite(nextW2)) {
-            suppressNextStudentWeightsSendRef.current = true;
-            setDynamicW1(nextW1);
-            setDynamicW2(nextW2);
+        if (isStudent && message.me) {
+          suppressNextStudentStateSendRef.current = true;
+
+          if (message.me.weights) {
+            setDynamicW1(message.me.weights.w1 ?? 0);
+            setDynamicW2(message.me.weights.w2 ?? 0);
+          }
+
+          if (message.me.inputs) {
+            setStudentInputs({
+              i1: message.me.inputs.i1 ?? '',
+              i2: message.me.inputs.i2 ?? ''
+            });
+          }
+
+          if (message.me.products) {
+            setStudentProducts({
+              p1: message.me.products.p1 ?? '',
+              p2: message.me.products.p2 ?? ''
+            });
+          }
+
+          if (Object.prototype.hasOwnProperty.call(message.me, 'total')) {
+            setStudentTotal(message.me.total ?? '');
           }
         }
       });
@@ -272,49 +345,100 @@ const App = ({ role = 'teacher' }) => {
 
   useEffect(() => {
     if (!isStudent || !isSocketConnected) return;
-    if (suppressNextStudentWeightsSendRef.current) {
-      suppressNextStudentWeightsSendRef.current = false;
+    if (suppressNextStudentStateSendRef.current) {
+      suppressNextStudentStateSendRef.current = false;
       return;
     }
 
-    if (
-      lastSentStudentWeightsRef.current.w1 === dynamicW1
-      && lastSentStudentWeightsRef.current.w2 === dynamicW2
-    ) {
+    const payload = {
+      type: 'student_state',
+      state: {
+        weights: { w1: dynamicW1, w2: dynamicW2 },
+        inputs: { i1: studentInputs.i1, i2: studentInputs.i2 },
+        products: { p1: studentProducts.p1, p2: studentProducts.p2 },
+        total: studentTotal
+      }
+    };
+    const serialized = JSON.stringify(payload);
+    if (serialized === lastSentStudentStateRef.current) {
       return;
     }
 
-    lastSentStudentWeightsRef.current = { w1: dynamicW1, w2: dynamicW2 };
-    sendSocketMessage({ type: 'student_weights', weights: { w1: dynamicW1, w2: dynamicW2 } });
-  }, [dynamicW1, dynamicW2, isSocketConnected, isStudent]);
+    lastSentStudentStateRef.current = serialized;
+    sendSocketMessage(payload);
+  }, [dynamicW1, dynamicW2, studentInputs.i1, studentInputs.i2, studentProducts.p1, studentProducts.p2, studentTotal, isSocketConnected, isStudent]);
 
   useEffect(() => {
     if (!isTeacher || !isSocketConnected) return;
+    const lessonInputsPayload = {
+      i1: teacherInputs.i1,
+      i2: teacherInputs.i2
+    };
+
     sendSocketMessage({
       type: 'teacher_lesson',
       lesson: {
+        activityId: selectedActivity,
         dataset: currentDataset,
         exampleIndex: currentExample,
         exampleName: currentExampleData.name,
         icon: currentExampleData.icon,
-        inputs: {
-          i1: currentExampleData.i1,
-          i2: currentExampleData.i2
+        inputs: lessonInputsPayload,
+        weights: {
+          w1: dynamicW1,
+          w2: dynamicW2
         },
-        useQuestionMarks
+        threshold: lessonThreshold
       }
     });
   }, [
     isTeacher,
     isSocketConnected,
+    selectedActivity,
     currentDataset,
     currentExample,
     currentExampleData.name,
     currentExampleData.icon,
-    currentExampleData.i1,
-    currentExampleData.i2,
-    useQuestionMarks
+    dynamicW1,
+    dynamicW2,
+    teacherInputs.i1,
+    teacherInputs.i2,
+    lessonThreshold
   ]);
+
+  useEffect(() => {
+    if (!isTeacher) {
+      return;
+    }
+
+    if (selectedActivity === '1a') {
+      setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
+    }
+
+    if (selectedActivity === '1b') {
+      setTeacherInputs({ i1: '', i2: '' });
+      setStudentInputs({ i1: '', i2: '' });
+    }
+
+    if (selectedActivity === '2a' || selectedActivity === '2b') {
+      setTeacherProducts({ p1: '', p2: '' });
+      setTeacherTotal('');
+      if (selectedActivity === '2b') {
+        setStudentProducts({ p1: '', p2: '' });
+        setStudentTotal('');
+      }
+    }
+
+    if (selectedActivity === '3a') {
+      setDynamicW1('');
+      setDynamicW2('');
+    }
+
+    if (selectedActivity !== '3a') {
+      setDynamicW1((prev) => (prev === '' ? 2 : prev));
+      setDynamicW2((prev) => (prev === '' ? 3 : prev));
+    }
+  }, [isTeacher, selectedActivity, currentExampleData.i1, currentExampleData.i2]);
 
   useEffect(() => {
   const renderMath = () => {
@@ -334,11 +458,11 @@ const App = ({ role = 'teacher' }) => {
   // Μικρή καθυστέρηση για να προλάβει το React να κάνει render το innerHTML
   const timeoutId = setTimeout(renderMath, 50);
   return () => clearTimeout(timeoutId);
-}, [role, currentDataset, currentExample, useQuestionMarks, editWeights, thresholdEnabled, thresholdOp, thresholdValue, dynamicW1, dynamicW2, lessonDataset, lessonExampleIndex, lessonUseQuestionMarks]);
+}, [role, currentDataset, currentExample, selectedActivity, lessonActivity, dynamicW1, dynamicW2, teacherInputs.i1, teacherInputs.i2, studentInputs.i1, studentInputs.i2]);
   const sortedParticipants = [...participants].sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
 
   return (
-    <TeacherCard title="$$ w_1 \times i_1 + w_2 \times i_2 = o $$">
+    <TeacherCard title={mathTitle}>
       <div className="connection-status">
         <span className={`status-dot ${isSocketConnected ? 'online' : 'offline'}`}></span>
         <strong>{isSocketConnected ? 'Συνδεδεμένο' : 'Αποσυνδεδεμένο'}</strong>
@@ -354,7 +478,7 @@ const App = ({ role = 'teacher' }) => {
             <span>{DATASETS[safeDisplayDataset].emoji} {DATASETS[safeDisplayDataset].label}</span>
             <span>{displayIcon} {displayName}</span>
             <span>i1={i1}, i2={i2}</span>
-            <span>w1={w1}, w2={w2}</span>
+            <span>w1={currentW1}, w2={currentW2}</span>
             <span>o={total}</span>
           </div>
           <div className="operation-tree" aria-label="Δέντρο πράξεων">
@@ -375,19 +499,47 @@ const App = ({ role = 'teacher' }) => {
           icon={displayIcon}
           prod1={prod1}
           prod2={prod2}
-          w1={w1}
-          w2={w2}
+          w1={currentW1}
+          w2={currentW2}
           i1={i1}
           i2={i2}
           total={total}
-          useQuestionMarks={effectiveUseQuestionMarks}
           editWeights={isWeightEditable}
           onWeightChange={handleWeightChange}
-          onRefresh={() => {}}
+          onRefresh={null}
           threshold={threshold}
-          studentAnswerMode={isStudent && effectiveUseQuestionMarks}
-          studentAnswer={studentAnswer}
-          onStudentAnswerChange={setStudentAnswer}
+          studentAnswerMode={false}
+          studentAnswer=""
+          onStudentAnswerChange={null}
+          inputEditable={isInputEditable}
+          productEditable={isProductEditable}
+          totalEditable={isTotalEditable}
+          totalValue={isTeacher ? teacherTotal : studentTotal}
+          onInputChange={(field, value) => {
+            if (isTeacher) {
+              setTeacherInputs((prev) => ({ ...prev, [field]: value }));
+            } else if (isStudent) {
+              setStudentInputs((prev) => ({ ...prev, [field]: value }));
+            }
+          }}
+          onProductChange={(field, value) => {
+            if (isTeacher) {
+              setTeacherProducts((prev) => ({ ...prev, [field]: value }));
+            } else if (isStudent) {
+              setStudentProducts((prev) => ({ ...prev, [field]: value }));
+            }
+          }}
+          onTotalChange={(value) => {
+            if (isTeacher) {
+              setTeacherTotal(value);
+            } else if (isStudent) {
+              setStudentTotal(value);
+            }
+          }}
+          inputPlaceholder="συμπλήρωσε"
+          weightPlaceholder="βάρος"
+          productPlaceholder="υπολογισμός"
+          totalPlaceholder="δώσε o"
         />
       </div>
 
@@ -405,51 +557,7 @@ const App = ({ role = 'teacher' }) => {
 
       {isTeacher && (
         <>
-          <div className="toolbar">
-            <button
-              className={`tool-icon ${useQuestionMarks ? 'active' : ''}`}
-              onClick={() => setUseQuestionMarks(!useQuestionMarks)}
-              data-tooltip="Εμφάνιση ερωτηματικών (?)"
-            >
-              ❓ ?
-            </button>
-            <button
-              className={`tool-icon ${editWeights ? 'active' : ''}`}
-              onClick={() => {
-                setEditWeights(!editWeights);
-                setDynamicW1(2);
-                setDynamicW2(3);
-              }}
-              data-tooltip="Επεξεργασία βαρών (w₁, w₂)"
-            >
-              ⚙️ Βάρη
-            </button>
-            <button
-              className={`tool-icon ${thresholdEnabled ? 'active' : ''}`}
-              onClick={() => setThresholdEnabled(!thresholdEnabled)}
-              data-tooltip="Ενεργοποίηση ορίου"
-            >
-              📏 Όριο
-            </button>
-            {thresholdEnabled && (
-              <div className="threshold-controls">
-                <select
-                  value={thresholdOp}
-                  onChange={(e) => setThresholdOp(e.target.value)}
-                >
-                  <option value="gt">&gt;</option>
-                  <option value="lt">&lt;</option>
-                </select>
-                <input
-                  type="number"
-                  value={thresholdValue}
-                  onChange={(e) => setThresholdValue(parseInt(e.target.value, 10) || 0)}
-                  step="1"
-                  style={{ width: '70px' }}
-                />
-              </div>
-            )}
-          </div>
+          <ActivitiesMenu value={selectedActivity} onChange={setSelectedActivity} />
 
           <div className="control-bar">
             <div className="select-group">

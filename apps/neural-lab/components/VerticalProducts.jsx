@@ -17,17 +17,28 @@ export const VerticalProducts = ({
   threshold,
   studentAnswerMode,
   studentAnswer,
-  onStudentAnswerChange
+  onStudentAnswerChange,
+  inputEditable,
+  productEditable,
+  totalEditable,
+  totalValue,
+  onInputChange,
+  onProductChange,
+  onTotalChange,
+  inputPlaceholder,
+  weightPlaceholder,
+  productPlaceholder,
+  totalPlaceholder
 }) => {
-  const handleW1Change = (e) => {
+  const handleW1Change = (value) => {
     if (editWeights && onWeightChange) {
-      onWeightChange('w1', parseInt(e.target.value) || 0);
+      onWeightChange('w1', value);
     }
   };
 
-  const handleW2Change = (e) => {
+  const handleW2Change = (value) => {
     if (editWeights && onWeightChange) {
-      onWeightChange('w2', parseInt(e.target.value) || 0);
+      onWeightChange('w2', value);
     }
   };
 
@@ -41,19 +52,51 @@ export const VerticalProducts = ({
           icon="🛞"
           label="ρόδες"
           input1={i1}
-          weight={editWeights ? w1 : w1}
+          weight={w1}
           product={prod1}
           isSecondRow={false}
-          isQuestion={useQuestionMarks}
+          inputEditable={Boolean(inputEditable)}
+          weightEditable={Boolean(editWeights)}
+          productEditable={Boolean(productEditable)}
+          onInputChange={(value) => {
+            if (typeof onInputChange === 'function') {
+              onInputChange('i1', value);
+            }
+          }}
+          onWeightChange={handleW1Change}
+          onProductChange={(value) => {
+            if (typeof onProductChange === 'function') {
+              onProductChange('p1', value);
+            }
+          }}
+          inputPlaceholder={inputPlaceholder}
+          weightPlaceholder={weightPlaceholder}
+          productPlaceholder={productPlaceholder}
         />
         <ProductRow
           icon="⚙️"
           label="μηχανές"
           input1={i2}
-          weight={editWeights ? w2 : w2}
+          weight={w2}
           product={prod2}
           isSecondRow={true}
-          isQuestion={useQuestionMarks}
+          inputEditable={Boolean(inputEditable)}
+          weightEditable={Boolean(editWeights)}
+          productEditable={Boolean(productEditable)}
+          onInputChange={(value) => {
+            if (typeof onInputChange === 'function') {
+              onInputChange('i2', value);
+            }
+          }}
+          onWeightChange={handleW2Change}
+          onProductChange={(value) => {
+            if (typeof onProductChange === 'function') {
+              onProductChange('p2', value);
+            }
+          }}
+          inputPlaceholder={inputPlaceholder}
+          weightPlaceholder={weightPlaceholder}
+          productPlaceholder={productPlaceholder}
         />
         <div className="total-line">
           {studentAnswerMode ? (
@@ -68,9 +111,21 @@ export const VerticalProducts = ({
                 }
               }}
             />
+          ) : totalEditable ? (
+            <input
+              className="student-answer-input"
+              type="number"
+              value={totalValue ?? ''}
+              placeholder={totalPlaceholder || 'Δώσε o'}
+              onChange={(event) => {
+                if (typeof onTotalChange === 'function') {
+                  onTotalChange(event.target.value);
+                }
+              }}
+            />
           ) : (
-            <div className={`total-result ${useQuestionMarks ? 'result-question' : ''}`}>
-              {useQuestionMarks ? '?' : total}
+            <div className="total-result">
+              {total}
             </div>
           )}
           {threshold && (

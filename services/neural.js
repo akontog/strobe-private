@@ -18,11 +18,13 @@ module.exports = function initNeural({
   let canvasSessionSeq = 0;
   const CANVAS_NODE_THRESHOLD = 5;
   const canvasNodeLesson = {
+    activityId: '1a',
     dataset: 'vehicles',
     exampleIndex: 0,
     exampleName: 'Αυτοκίνητο',
     icon: '🚗',
     inputs: { i1: 2, i2: 3 },
+    weights: { w1: 2, w2: 3 },
     useQuestionMarks: false,
     threshold: CANVAS_NODE_THRESHOLD
   };
@@ -92,19 +94,72 @@ module.exports = function initNeural({
     return Number(result.toFixed(2));
   }
 
+  function normalizeCanvasNodeStudentInputs(inputs, fallback = {}) {
+    const source = inputs && typeof inputs === 'object' ? inputs : {};
+    const fallbackI1 = Object.prototype.hasOwnProperty.call(fallback, 'i1') ? fallback.i1 : canvasNodeLesson.inputs.i1;
+    const fallbackI2 = Object.prototype.hasOwnProperty.call(fallback, 'i2') ? fallback.i2 : canvasNodeLesson.inputs.i2;
+
+    const parsedI1 = source.i1 === '' || source.i1 === null || typeof source.i1 === 'undefined'
+      ? ''
+      : clampCanvasNodeNumber(source.i1, -100, 100, Number(fallbackI1) || 0);
+    const parsedI2 = source.i2 === '' || source.i2 === null || typeof source.i2 === 'undefined'
+      ? ''
+      : clampCanvasNodeNumber(source.i2, -100, 100, Number(fallbackI2) || 0);
+
+    return {
+      i1: parsedI1,
+      i2: parsedI2
+    };
+  }
+
+  function normalizeCanvasNodeStudentProducts(products, fallback = {}) {
+    const source = products && typeof products === 'object' ? products : {};
+    const parseValue = (value, fallbackValue) => {
+      if (value === '' || value === null || typeof value === 'undefined') {
+        return '';
+      }
+      return Number(clampCanvasNodeNumber(value, -100000, 100000, Number(fallbackValue) || 0).toFixed(2));
+    };
+
+    return {
+      p1: parseValue(source.p1, fallback.p1),
+      p2: parseValue(source.p2, fallback.p2)
+    };
+  }
+
+  function normalizeCanvasNodeStudentTotal(total, fallback) {
+    if (total === '' || total === null || typeof total === 'undefined') {
+      return '';
+    }
+    return Number(clampCanvasNodeNumber(total, -100000, 100000, Number(fallback) || 0).toFixed(2));
+  }
+
   function buildCanvasNodeStudentSnapshot(student) {
     const weights = normalizeCanvasNodeStudentWeights(student && student.weights, student && student.weights);
-    const result = computeCanvasNodeStudentResult(weights);
+    const inputs = normalizeCanvasNodeStudentInputs(student && student.inputs, canvasNodeLesson.inputs);
+    const products = normalizeCanvasNodeStudentProducts(student && student.products, student && student.products);
+    const computedP1 = Number((Number(weights.w1 || 0) * Number(inputs.i1 || 0)).toFixed(2));
+    const computedP2 = Number((Number(weights.w2 || 0) * Number(inputs.i2 || 0)).toFixed(2));
+    const displayP1 = products.p1 === '' ? computedP1 : products.p1;
+    const displayP2 = products.p2 === '' ? computedP2 : products.p2;
+    const total = normalizeCanvasNodeStudentTotal(student && student.total, Number(displayP1) + Number(displayP2));
+    const result = total === '' ? Number((Number(displayP1) + Number(displayP2)).toFixed(2)) : total;
     return {
       id: student.id,
       role: 'client',
       name: student.name,
       weights,
-      i1: canvasNodeLesson.inputs.i1,
-      i2: canvasNodeLesson.inputs.i2,
+      inputs,
+      products: {
+        p1: displayP1,
+        p2: displayP2
+      },
+      total,
+      i1: inputs.i1,
+      i2: inputs.i2,
       result,
-      threshold: CANVAS_NODE_THRESHOLD,
-      aboveThreshold: result >= CANVAS_NODE_THRESHOLD
+      threshold: canvasNodeLesson.threshold,
+      aboveThreshold: result >= canvasNodeLesson.threshold
     };
   }
 
@@ -164,6 +219,7 @@ module.exports = function initNeural({
       type: 'canvas_state',
       lesson: {
         ...canvasNodeLesson,
+        weights: { ...canvasNodeLesson.weights },
         inputs: { ...canvasNodeLesson.inputs }
       },
       roster: buildCanvasNodeRoster(),
@@ -186,6 +242,7 @@ module.exports = function initNeural({
       type: 'canvas_state',
       lesson: {
         ...canvasNodeLesson,
+        weights: { ...canvasNodeLesson.weights },
         inputs: { ...canvasNodeLesson.inputs }
       },
       roster,
@@ -289,7 +346,10 @@ module.exports = function initNeural({
             id: `canvas-${Date.now().toString(36)}-${Math.floor(Math.random() * 10000).toString(16)}`,
             name: studentName,
             connectedAt: Date.now(),
-            weights: { w1: 1, w2: 1 }
+            weights: { w1: 1, w2: 1 },
+            inputs: normalizeCanvasNodeStudentInputs(canvasNodeLesson.inputs, canvasNodeLesson.inputs),
+            products: { p1: '', p2: '' },
+            total: ''
           });
         }
         touchCanvasNodeConnection(ws, { role: 'client', name: studentName });
@@ -355,6 +415,30 @@ module.exports = function initNeural({
         return;
       }
 
+      if (message.type === 'student_state') {
+        const student = canvasNodeStudents.get(ws);
+        if (!student) {
+          return;
+        }
+
+        const state = message && message.state && typeof message.state === 'object' ? message.state : {};
+        if (state.inputs && typeof state.inputs === 'object') {
+          student.inputs = normalizeCanvasNodeStudentInputs(state.inputs, student.inputs || canvasNodeLesson.inputs);
+        }
+        if (state.weights && typeof state.weights === 'object') {
+          student.weights = normalizeCanvasNodeStudentWeights(state.weights, student.weights || canvasNodeLesson.weights);
+        }
+        if (state.products && typeof state.products === 'object') {
+          student.products = normalizeCanvasNodeStudentProducts(state.products, student.products || {});
+        }
+        if (Object.prototype.hasOwnProperty.call(state, 'total')) {
+          student.total = normalizeCanvasNodeStudentTotal(state.total, student.total);
+        }
+
+        canvasNodeBroadcastState();
+        return;
+      }
+
       if (message.type === 'teacher_config') {
         if (!canvasNodeTeachers.has(ws)) {
           console.log('[neural-lab] ⚠️ Non-teacher attempted teacher_config');
@@ -405,14 +489,39 @@ module.exports = function initNeural({
         const maybeExampleIndex = Number(lesson.exampleIndex);
         const maybeI1 = Number(lesson?.inputs?.i1);
         const maybeI2 = Number(lesson?.inputs?.i2);
+        const maybeW1 = Number(lesson?.weights?.w1);
+        const maybeW2 = Number(lesson?.weights?.w2);
 
+        if (typeof lesson.activityId === 'string' && lesson.activityId.trim()) {
+          canvasNodeLesson.activityId = lesson.activityId.trim();
+        }
         if (maybeDataset) canvasNodeLesson.dataset = maybeDataset;
         if (Number.isInteger(maybeExampleIndex)) canvasNodeLesson.exampleIndex = Math.max(0, maybeExampleIndex);
         if (maybeExampleName) canvasNodeLesson.exampleName = maybeExampleName;
         if (maybeIcon) canvasNodeLesson.icon = maybeIcon;
-        if (Number.isFinite(maybeI1)) canvasNodeLesson.inputs.i1 = clampCanvasNodeNumber(maybeI1, -100, 100, canvasNodeLesson.inputs.i1);
-        if (Number.isFinite(maybeI2)) canvasNodeLesson.inputs.i2 = clampCanvasNodeNumber(maybeI2, -100, 100, canvasNodeLesson.inputs.i2);
+        if (Object.prototype.hasOwnProperty.call(lesson.inputs || {}, 'i1')) {
+          canvasNodeLesson.inputs.i1 = Number.isFinite(maybeI1)
+            ? clampCanvasNodeNumber(maybeI1, -100, 100, canvasNodeLesson.inputs.i1)
+            : '';
+        }
+        if (Object.prototype.hasOwnProperty.call(lesson.inputs || {}, 'i2')) {
+          canvasNodeLesson.inputs.i2 = Number.isFinite(maybeI2)
+            ? clampCanvasNodeNumber(maybeI2, -100, 100, canvasNodeLesson.inputs.i2)
+            : '';
+        }
+        if (Number.isFinite(maybeW1)) canvasNodeLesson.weights.w1 = clampCanvasNodeNumber(maybeW1, -10, 10, canvasNodeLesson.weights.w1);
+        if (Number.isFinite(maybeW2)) canvasNodeLesson.weights.w2 = clampCanvasNodeNumber(maybeW2, -10, 10, canvasNodeLesson.weights.w2);
         if (typeof lesson.useQuestionMarks === 'boolean') canvasNodeLesson.useQuestionMarks = lesson.useQuestionMarks;
+        if (Number.isFinite(Number(lesson.threshold))) {
+          canvasNodeLesson.threshold = clampCanvasNodeNumber(Number(lesson.threshold), -1000, 1000, canvasNodeLesson.threshold);
+        }
+
+        if (canvasNodeLesson.activityId === '1b') {
+          canvasNodeStudents.forEach((student) => {
+            if (!student) return;
+            student.inputs = { i1: '', i2: '' };
+          });
+        }
 
         if (sessionManager && typeof sessionManager.update === 'function') {
           sessionManager.joinApp(sessionId, 'neural-lab');
@@ -431,6 +540,12 @@ module.exports = function initNeural({
                   i1: canvasNodeLesson.inputs.i1,
                   i2: canvasNodeLesson.inputs.i2
                 },
+                weights: {
+                  w1: canvasNodeLesson.weights.w1,
+                  w2: canvasNodeLesson.weights.w2
+                },
+                activityId: canvasNodeLesson.activityId,
+                threshold: canvasNodeLesson.threshold,
                 useQuestionMarks: canvasNodeLesson.useQuestionMarks
               }
             }
@@ -443,6 +558,8 @@ module.exports = function initNeural({
           exampleName: canvasNodeLesson.exampleName,
           icon: canvasNodeLesson.icon,
           inputs: canvasNodeLesson.inputs,
+          weights: canvasNodeLesson.weights,
+          activityId: canvasNodeLesson.activityId,
           useQuestionMarks: canvasNodeLesson.useQuestionMarks
         });
         canvasNodeBroadcastState();

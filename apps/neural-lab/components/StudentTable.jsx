@@ -1,51 +1,55 @@
 import React from 'react';
-import { Accordion } from './Accordion';
+import { StudentTable as SharedStudentTable } from '../../shared/components/StudentTable';
 
-export const StudentTable = ({ i1, i2, participants = [], threshold = 5 }) => {
-  const rows = Array.isArray(participants) ? participants : [];
-
-  return (
-    <Accordion title="📋 Πίνακας μαθητών (ζωντανή αναφορά)">
-      <div className="data-section">
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Μαθητές</th>
-              <th>i₁ (ρόδες)</th>
-              <th>w₁</th>
-              <th>i₂ (μηχανές)</th>
-              <th>w₂</th>
-              <th>Αποτέλεσμα o</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length === 0 && (
-              <tr>
-                <td colSpan="6" style={{ textAlign: 'center', opacity: 0.7 }}>
-                  Δεν υπάρχουν συνδεδεμένοι μαθητές.
-                </td>
-              </tr>
+export const StudentTable = ({ i1, i2, participants = [], threshold = 5 }) => (
+  <SharedStudentTable
+    title="📋 Πίνακας μαθητών"
+    participants={participants}
+    emptyMessage="Δεν υπάρχουν συνδεδεμένοι μαθητές."
+    nameFallback="Μαθητής"
+    getRowKey={(student, index) => student.id || student.username || student.name || index}
+    getDisplayName={(student) => student.username || student.name || student.displayName || 'Μαθητής'}
+    getIsConnected={(student) => student.isConnected ?? true}
+    columns={[
+      {
+        key: 'i1',
+        label: 'i₁ (ρόδες)',
+        render: (student) => <>{student?.inputs?.i1 ?? i1} <span className="icon-in-table">🛞</span></>
+      },
+      {
+        key: 'w1',
+        label: 'w₁',
+        className: 'weight-value',
+        style: { background: '#ef4444', color: 'white' },
+        render: (student) => student.weights?.w1 ?? '-'
+      },
+      {
+        key: 'i2',
+        label: 'i₂ (μηχανές)',
+        render: (student) => <>{student?.inputs?.i2 ?? i2} <span className="icon-in-table">⚙️</span></>
+      },
+      {
+        key: 'w2',
+        label: 'w₂',
+        className: 'weight-value',
+        style: { background: '#ef4444', color: 'white' },
+        render: (student) => student.weights?.w2 ?? '-'
+      },
+      {
+        key: 'result',
+        label: 'Αποτέλεσμα o',
+        className: 'result-visible',
+        render: (student) => (
+          <>
+            {student.total ?? student.result ?? '-'}
+            {typeof student.aboveThreshold === 'boolean' && (
+              <span style={{ marginLeft: '0.45rem', fontWeight: 700, color: student.aboveThreshold ? '#059669' : '#dc2626' }}>
+                {student.aboveThreshold ? `>= ${threshold}` : `< ${threshold}`}
+              </span>
             )}
-            {rows.map((student) => (
-              <tr key={student.id || student.name}>
-                <td><span className="green-dot"></span> {student.name || 'Μαθητής'}</td>
-                <td>{i1} <span className="icon-in-table">🛞</span></td>
-                <td className="weight-value" style={{ background: '#ef4444', color: 'white' }}>{student.weights?.w1 ?? '-'}</td>
-                <td>{i2} <span className="icon-in-table">⚙️</span></td>
-                <td className="weight-value" style={{ background: '#ef4444', color: 'white' }}>{student.weights?.w2 ?? '-'}</td>
-                <td className="result-visible">
-                  {student.result ?? '-'}
-                  {typeof student.aboveThreshold === 'boolean' && (
-                    <span style={{ marginLeft: '0.45rem', fontWeight: 700, color: student.aboveThreshold ? '#059669' : '#dc2626' }}>
-                      {student.aboveThreshold ? `>= ${threshold}` : `< ${threshold}`}
-                    </span>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </Accordion>
-  );
-};
+          </>
+        )
+      }
+    ]}
+  />
+);
