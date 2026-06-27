@@ -3,6 +3,7 @@ import { ProductRow } from './ProductRow';
 
 export const VerticalProducts = ({
   icon = '🚗',
+  features,
   prod1,
   prod2,
   w1,
@@ -49,8 +50,8 @@ export const VerticalProducts = ({
       </div>
       <div className="products-stack">
         <ProductRow
-          icon="🛞"
-          label="ρόδες"
+          icon={features.i1.icon}   // π.χ. "🛞"
+          label={features.i1.label} // π.χ. ρόδες
           input1={i1}
           weight={w1}
           product={prod1}
@@ -74,8 +75,8 @@ export const VerticalProducts = ({
           productPlaceholder={productPlaceholder}
         />
         <ProductRow
-          icon="⚙️"
-          label="μηχανές"
+          icon={features.i2.icon}   // π.χ. "🛞"
+          label={features.i2.label} // π.χ. ρόδες
           input1={i2}
           weight={w2}
           product={prod2}

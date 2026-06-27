@@ -1,75 +1,94 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { TeacherCard } from './components/TeacherCard';
+import { DatasetSelector } from './components/DatasetSelector';
 import { VerticalProducts } from './components/VerticalProducts';
 import { StudentTable } from './components/StudentTable';
 import { ActivitiesMenu } from './components/ActivitiesMenu';
+import { Accordion } from '../shared/components/Accordion';
 //import { StudentTable } from '../shared/components/StudentTable';
 import './App.css';
 
 const DATASETS = {
   vehicles: {
-    label: 'Οχήματα',
-    emoji: '🚗',
-    examples: [
-      { name: 'Αυτοκίνητο', i1: 4, i2: 1, icon: '🚗' },
-      { name: 'Μοτοσυκλέτα', i1: 2, i2: 1, icon: '🏍️' },
-      { name: 'Φορτηγό', i1: 6, i2: 2, icon: '🚛' },
-      { name: 'Ποδήλατο', i1: 2, i2: 0, icon: '🚲' }
-    ]
-  },
-  animals: {
-    label: 'Ζώα',
-    emoji: '🐾',
-    examples: [
-      { name: 'Σκύλος', i1: 4, i2: 0, icon: '🐕' },
-      { name: 'Γάτα', i1: 4, i2: 0, icon: '🐈' },
-      { name: 'Ελέφαντας', i1: 4, i2: 0, icon: '🐘' },
-      { name: 'Πουλί', i1: 2, i2: 0, icon: '🐦' }
-    ]
-  },
-  foods: {
-    label: 'Φαγητά',
-    emoji: '🍕',
-    examples: [
-      { name: 'Πίτσα', i1: 8, i2: 1, icon: '🍕' },
-      { name: 'Σαλάτα', i1: 2, i2: 0, icon: '🥗' },
-      { name: 'Παστίτσιο', i1: 6, i2: 1, icon: '🍝' },
-      { name: 'Μπέργκερ', i1: 4, i2: 1, icon: '🍔' }
-    ]
-  },
-  fruits: {
-    label: 'Φρούτα',
-    emoji: '🍎',
-    examples: [
-      { name: 'Μήλο', i1: 1, i2: 0, icon: '🍎' },
-      { name: 'Μπανάνα', i1: 1, i2: 0, icon: '🍌' },
-      { name: 'Πορτοκάλι', i1: 1, i2: 0, icon: '🍊' },
-      { name: 'Σταφύλι', i1: 1, i2: 0, icon: '🍇' }
-    ]
+  label: 'Οχήματα',
+  emoji: '🚗',
+  features: {
+      i1: { label: 'Ρόδες', icon: '🛞' },
+      i2: { label: 'Μηχανές', icon: '⚙️' }
+    },
+  examples: [
+    // --- Με κινητήρα (i2 >= 1) ---
+    { name: 'Αυτοκίνητο',    i1: 4,  i2: 1, icon: '🚗' },
+    { name: 'Μηχανάκι',      i1: 2,  i2: 1, icon: '🛵' },
+    //{ name: 'Φορτηγό',       i1: 6,  i2: 1, icon: '🚛' },
+    //{ name: 'Τρακτέρ',       i1: 4,  i2: 1, icon: '🚜' },
+    { name: 'Λεωφορείο',     i1: 8,  i2: 1, icon: '🚌' },
+    //{ name: 'Πυροσβεστικό',  i1: 8,  i2: 1, icon: '🚒' },
+    //{ name: 'Ασθενοφόρο',    i1: 4,  i2: 1, icon: '🚑' },
+    { name: 'Ιστιοφόρο',        i1: 0,  i2: 0, icon: '⛵' },
+    { name: 'Πλοίο',        i1: 0,  i2: 1, icon: '🚢' },
+    { name: 'Αεροπλάνο',     i1: 6,  i2: 2, icon: '✈️' },
+    // --- Χωρίς κινητήρα (i2 = 0) ---
+    { name: 'Ποδήλατο',      i1: 2,  i2: 0, icon: '🚲' },
+    { name: 'Παιδικό Πατίνι',i1: 3,  i2: 0, icon: '🛴' },
+    { name: 'Καροτσάκι',     i1: 4,  i2: 0, icon: '🛒' },
+    { name: 'Αναπηρικό',     i1: 4,  i2: 0, icon: '🦽' },
+  ]
   },
   digits: {
-    label: 'Ψηφία',
-    emoji: '🔢',
-    examples: [
-      { name: 'Μηδέν', i1: 0, i2: 0, icon: '0️⃣' },
-      { name: 'Ένα', i1: 1, i2: 1, icon: '1️⃣' },
-      { name: 'Πέντε', i1: 5, i2: 5, icon: '5️⃣' },
-      { name: 'Εννέα', i1: 9, i2: 9, icon: '9️⃣' }
-    ]
+  label: 'Ψηφία',
+  emoji: '🔢',
+  features: {
+      i1: { label: 'Κύκλοι', icon: '⭕' },
+      i2: { label: 'Σταυροδρόμια', icon: '➕' }
+    },
+  examples: [
+    { name: 'Μηδέν', i1: 1, i2: 0, icon: '0️⃣' },
+    { name: 'Ένα',   i1: 0, i2: 0, icon: '1️⃣' },
+    { name: 'Δύο',   i1: 0, i2: 0, icon: '2️⃣' },
+    { name: 'Τρία',  i1: 0, i2: 0, icon: '3️⃣' },
+    { name: 'Τέσσερα', i1: 1, i2: 1, icon: '4️⃣' },
+    { name: 'Πέντε', i1: 0, i2: 0, icon: '5️⃣' },
+    { name: 'Έξι',   i1: 1, i2: 1, icon: '6️⃣' },
+    { name: 'Επτά',  i1: 0, i2: 0, icon: '7️⃣' },
+    { name: 'Οκτώ',  i1: 2, i2: 1, icon: '8️⃣' },
+    { name: 'Εννέα', i1: 1, i2: 1, icon: '9️⃣' },
+  ]
   }
 };
 
 const App = ({ role = 'teacher' }) => {
+  // Σταθερές αναφορές (refs) για την αποθήκευση αντικειμένων που 
+  // δεν προκαλούν επανασχεδιασμό όταν αλλάζουν.
+
+  // Αναφορά στο αντικείμενο WebSocket για την επικοινωνία με τον server.
   const wsRef = useRef(null);
+  // Αναφορά για τον χρονοδιακόπτη επανασύνδεσης
   const reconnectTimerRef = useRef(null);
+  // Αναφορά για να ελέγχει αν έχει γίνει ήδη η εγγραφή του ρόλου 
+  // (teacher/student/screen) στον server.
   const hasRegisteredRef = useRef(false);
+  // Αναφορά για να καταστείλει την αποστολή κατάστασης του μαθητή στον server, 
+  // όταν η κατάσταση έχει ενημερωθεί από τον server.
   const suppressNextStudentStateSendRef = useRef(false);
+  // Αναφορά για να αποθηκεύει την τελευταία κατάσταση του μαθητή που στάλθηκε στον server.
+  // αποφεύγει την αποστολή της ίδιας κατάστασης πολλές φορές.
   const lastSentStudentStateRef = useRef('');
 
+  // --- State Variables ---
+  // Δεδομένα που αλλάζουν δυναμικά, κατά τη διάρκεια ζωής της εφαρμογής, 
+  // επηρεάζοντας εμφάνιση και συμπεριφορά της εφαρμογής.
+  // const [state, setState] = useState(initialValue);
+  // σταθερά [τρέχουσα τιμή, συνάρτηση ενημέρωσης] = useState(αρχική τιμή);
+  // Αλλάζοντας το currentDataset αλλάζει το σύνολο δεδομένων
   const [currentDataset, setCurrentDataset] = useState('vehicles');
+  // Δείκτης του παραδείγματος που εμφανίζεται από το τρέχον σύνολο δεδομένων.
   const [currentExample, setCurrentExample] = useState(0);
+  // Η τρέχουσα δραστηριότητα που έχει επιλέξει ο δάσκαλος.
   const [selectedActivity, setSelectedActivity] = useState('1a');
+  // Η δραστηριότητα που έχει οριστεί από τον δάσκαλο και εμφανίζεται στους μαθητές.
   const [lessonActivity, setLessonActivity] = useState('1a');
+  // Τα υπόλοιπα state variables αφορούν τις εισόδους, τα βάρη, τα προϊόντα και το συνολικό αποτέλεσμα για τον δάσκαλο και τους μαθητές.
   const [teacherInputs, setTeacherInputs] = useState({ i1: 4, i2: 1 });
   const [studentInputs, setStudentInputs] = useState({ i1: '', i2: '' });
   const [teacherProducts, setTeacherProducts] = useState({ p1: '', p2: '' });
@@ -78,7 +97,9 @@ const App = ({ role = 'teacher' }) => {
   const [studentTotal, setStudentTotal] = useState('');
   const [dynamicW1, setDynamicW1] = useState(2);
   const [dynamicW2, setDynamicW2] = useState(3);
+  // Το isSocketConnected δείχνει αν η σύνδεση WebSocket είναι ενεργή ή όχι.
   const [isSocketConnected, setIsSocketConnected] = useState(false);
+  // Ποιοι και πόσοι συνδεδεμένοι μαθητές υπάρχουν αυτή τη στιγμή (χρησιμοποιείται μόνο από τον δάσκαλο).
   const [participants, setParticipants] = useState([]);
   const [roster, setRoster] = useState([]);
   const [lessonInputs, setLessonInputs] = useState({ i1: 4, i2: 1 });
@@ -88,16 +109,44 @@ const App = ({ role = 'teacher' }) => {
   const [lessonExampleIndex, setLessonExampleIndex] = useState(0);
   const [lessonIcon, setLessonIcon] = useState('🚗');
   const [lessonName, setLessonName] = useState('Αυτοκίνητο');
+  
 
-  const studentName = useMemo(() => {
-    try {
-      const stored = String(window.localStorage.getItem('strobeStudentConnectName') || '').trim();
-      return stored || `Student-${Math.floor(Math.random() * 900 + 100)}`;
-    } catch {
-      return `Student-${Math.floor(Math.random() * 900 + 100)}`;
-    }
-  }, []);
 
+// Δημιουργεί ένα τυχαίο όνομα μαθητή αν δεν υπάρχει αποθηκευμένο στο localStorage.
+  const [studentName, setStudentName] = useState(() => {
+  try {
+    const stored = localStorage.getItem('strobeStudentConnectName');
+    return stored || `Student-${Math.floor(Math.random() * 900 + 100)}`;
+  } catch {
+    return `Student-${Math.floor(Math.random() * 900 + 100)}`;
+  }
+});
+const saveStudentName = () => {
+  const newName = studentNameInput.trim();
+
+  if (!newName || newName === studentName) {
+    setStudentNameInput(studentName);
+    setEditingName(false);
+    return;
+  }
+
+  localStorage.setItem('strobeStudentConnectName', newName);
+
+  sendSocketMessage({
+    type: 'register_student',
+    name: newName
+  });
+
+  // αν το studentName είναι state:
+  setStudentName(newName);
+  setEditingName(false);
+};
+  // Αναφορά για να ελέγχει αν ο μαθητής επεξεργάζεται το όνομά του.
+  const [editingName, setEditingName] = useState(false);
+  // Αναφορά για να αποθηκεύει την είσοδο του ονόματος του μαθητή.
+  const [studentNameInput, setStudentNameInput] = useState(studentName);
+  
+  
   const currentExampleData = DATASETS[currentDataset].examples[currentExample];
   const isTeacher = role === 'teacher';
   const isScreen = role === 'screen';
@@ -465,9 +514,32 @@ const App = ({ role = 'teacher' }) => {
     <TeacherCard title={mathTitle}>
       <div className="connection-status">
         <span className={`status-dot ${isSocketConnected ? 'online' : 'offline'}`}></span>
-        <strong>{isSocketConnected ? 'Συνδεδεμένο' : 'Αποσυνδεδεμένο'}</strong>
-        <span>κανάλι: /ws/neural-lab</span>
-        {isStudent && <span>όνομα: {studentName}</span>}
+        <strong>{isSocketConnected ? 'Σε σύνδεση' : 'Εκτός σύνδεσης'}</strong>
+        {/*isStudent && <span>όνομα: {studentName}</span>*/}
+        {isStudent && (
+        editingName ? (
+          <input
+            autoFocus
+            value={studentNameInput}
+            onChange={(e) => setStudentNameInput(e.target.value)}
+            onBlur={saveStudentName}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') saveStudentName();
+              if (e.key === 'Escape') {
+                setStudentNameInput(studentName);
+                setEditingName(false);
+              }
+            }}
+          />
+        ) : (
+          <span
+            style={{ cursor: 'pointer', textDecoration: 'underline' }}
+            onClick={() => setEditingName(true)}
+          >
+            όνομα: {studentName}
+          </span>
+        )
+      )}
         {!isStudent && <span>συνδεδεμένοι: {roster.length}</span>}
       </div>
 
@@ -497,6 +569,7 @@ const App = ({ role = 'teacher' }) => {
       <div className="common-zone">
         <VerticalProducts
           icon={displayIcon}
+          features={DATASETS[safeDisplayDataset].features}
           prod1={prod1}
           prod2={prod2}
           w1={currentW1}
@@ -545,10 +618,10 @@ const App = ({ role = 'teacher' }) => {
 
       {(isTeacher || isScreen) && (
         <div className="live-table-wrap">
-          <h3>Συνδεδεμένοι μαθητές</h3>
           <StudentTable
             i1={lessonInputs.i1}
             i2={lessonInputs.i2}
+            features={DATASETS[safeDisplayDataset].features}
             threshold={lessonThreshold}
             participants={sortedParticipants}
           />
@@ -557,39 +630,20 @@ const App = ({ role = 'teacher' }) => {
 
       {isTeacher && (
         <>
+
           <ActivitiesMenu value={selectedActivity} onChange={setSelectedActivity} />
 
-          <div className="control-bar">
-            <div className="select-group">
-              <label>📂 Σύνολο δεδομένων</label>
-              <select
-                value={currentDataset}
-                onChange={(e) => {
-                  setCurrentDataset(e.target.value);
-                  setCurrentExample(0);
-                }}
-              >
-                {Object.entries(DATASETS).map(([key, val]) => (
-                  <option key={key} value={key}>
-                    {val.emoji} {val.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="select-group">
-              <label>📌 Παράδειγμα</label>
-              <select
-                value={currentExample}
-                onChange={(e) => setCurrentExample(parseInt(e.target.value, 10))}
-              >
-                {DATASETS[currentDataset].examples.map((ex, idx) => (
-                  <option key={idx} value={idx}>
-                    {ex.icon} {ex.name} (ρόδες={ex.i1}, μηχανές={ex.i2})
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+          <DatasetSelector
+            datasets={DATASETS}
+            currentDataset={currentDataset}
+            currentExample={currentExample}
+            onDatasetChange={(dataset) => {
+              setCurrentDataset(dataset);
+              setCurrentExample(0);
+            }}
+            onExampleChange={setCurrentExample}
+          />
+          
         </>
       )}
 

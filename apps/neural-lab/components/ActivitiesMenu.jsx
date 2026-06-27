@@ -11,7 +11,7 @@ const ACTIVITY_OPTIONS = [
 ];
 
 export const ActivitiesMenu = ({ value = '1a', onChange }) => (
-  <Accordion title="Δραστηριότητες">
+  <Accordion title="🔬 Δραστηριότητες">
     <div className="data-section activities-menu">
       <div className="select-group">
         <label>Επιλογή δραστηριότητας</label>

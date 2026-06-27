@@ -1,7 +1,11 @@
 import React from 'react';
 import { StudentTable as SharedStudentTable } from '../../shared/components/StudentTable';
 
-export const StudentTable = ({ i1, i2, participants = [], threshold = 5 }) => (
+export const StudentTable = ({ 
+    i1, 
+    i2, 
+    features,
+    participants = [], threshold = 5 }) => (
   <SharedStudentTable
     title="📋 Πίνακας μαθητών"
     participants={participants}
@@ -13,8 +17,8 @@ export const StudentTable = ({ i1, i2, participants = [], threshold = 5 }) => (
     columns={[
       {
         key: 'i1',
-        label: 'i₁ (ρόδες)',
-        render: (student) => <>{student?.inputs?.i1 ?? i1} <span className="icon-in-table">🛞</span></>
+        label:  `i₁ (${features.i1.label})`,
+        render: (student) => <>{student?.inputs?.i1 ?? i1} <span className="icon-in-table">{features.i1.icon}</span></>
       },
       {
         key: 'w1',
@@ -25,8 +29,8 @@ export const StudentTable = ({ i1, i2, participants = [], threshold = 5 }) => (
       },
       {
         key: 'i2',
-        label: 'i₂ (μηχανές)',
-        render: (student) => <>{student?.inputs?.i2 ?? i2} <span className="icon-in-table">⚙️</span></>
+        label:  `i₂ (${features.i2.label})`,
+        render: (student) => <>{student?.inputs?.i2 ?? i2} <span className="icon-in-table">{features.i2.icon} </span></>
       },
       {
         key: 'w2',

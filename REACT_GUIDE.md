@@ -102,7 +102,7 @@ npm run build:neural-lab:screen
 
 ## Δημιουργία Components
 
-### Δημιουργήστε ένα component
+### Δημιουργία jsx
 
 ```javascript
 // apps/your-app-name/components/MyComponent.jsx
@@ -120,7 +120,7 @@ export const MyComponent = ({ title, onClick }) => {
 export default MyComponent;
 ```
 
-### Χρησιμοποιήστε το στο App.jsx
+### Χρήση στο App.jsx
 
 ```javascript
 import MyComponent from './components/MyComponent';

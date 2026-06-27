@@ -120,8 +120,3 @@ import { BlueNumberBox, RedNumberBox, Toolbar } from '../shared-components/compo
 3. **State Management**: Χρησιμοποιήστε Context API ή Redux για global state
 4. **Testing**: Προσθέστε Jest + React Testing Library
 
----
-
-**Created**: 2026-06-16  
-**React Version**: 18.x  
-**Node Version**: 18+

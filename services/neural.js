@@ -17,15 +17,17 @@ module.exports = function initNeural({
   const canvasNodeStudents = new Map();
   let canvasSessionSeq = 0;
   const CANVAS_NODE_THRESHOLD = 5;
+  // Αρχική κατάσταση μαθήματος
   const canvasNodeLesson = {
-    activityId: '1a',
-    dataset: 'vehicles',
-    exampleIndex: 0,
-    exampleName: 'Αυτοκίνητο',
-    icon: '🚗',
-    inputs: { i1: 2, i2: 3 },
-    weights: { w1: 2, w2: 3 },
+    activityId: '1a', // δραστηριότητα που εκτελείται
+    dataset: 'vehicles', // σύνολο δεδομένων που χρησιμοποιείται
+    // δείκτης, όνομα, εικονίδιο παραδείγματος, 
+    exampleIndex: 0, exampleName: 'Αυτοκίνητο', icon: '🚗',
+    // κοινές είσοδοι, βάρη, 
+    inputs: { i1: 2, i2: 3 },  weights: { w1: 2, w2: 3 },
+    // αν οι μαθητές βλέπουν ερωτηματικά
     useQuestionMarks: false,
+    // κατώφλι απόφασης (default: 5)
     threshold: CANVAS_NODE_THRESHOLD
   };
   const CANVAS_NODE_INPUTS = {
@@ -49,7 +51,7 @@ module.exports = function initNeural({
     }
     return nextId;
   }
-
+  // εκτεταμένο μοντέλο για δραστηριότητες 1α, 2α, 3α (εποπτικό μέσο)
   const canvasNodeModel = {
     inputs: {
       wheels: { enabled: true, value: 4 },
@@ -71,13 +73,13 @@ module.exports = function initNeural({
     }
   };
 
-  // Όλες οι συναρτήσεις που χρησιμοποιούν τις εξαρτήσεις
+  // Περιορίζει αριθμό σε εύρος, με fallback αν είναι NaN
   function clampCanvasNodeNumber(value, min, max, fallback) {
     const parsed = Number(value);
     if (!Number.isFinite(parsed)) return fallback;
     return Math.max(min, Math.min(max, parsed));
   }
-// 
+  // Επικυρώνει w1/w2 στο [-4, 4] με 1 δεκαδικό
   function normalizeCanvasNodeStudentWeights(weights, fallback = {}) {
     const source = weights && typeof weights === 'object' ? weights : {};
     const fallbackW1 = Number.isFinite(Number(fallback.w1)) ? Number(fallback.w1) : 1;
@@ -87,13 +89,13 @@ module.exports = function initNeural({
       w2: Number(clampCanvasNodeNumber(source.w2, -4, 4, fallbackW2).toFixed(1))
     };
   }
-
+  // Υπολογίζει w1·i1 + w2·i2 με τα τρέχοντα  inputs
   function computeCanvasNodeStudentResult(weights) {
     const safeWeights = normalizeCanvasNodeStudentWeights(weights, weights);
     const result = (safeWeights.w1 * canvasNodeLesson.inputs.i1) + (safeWeights.w2 * canvasNodeLesson.inputs.i2);
     return Number(result.toFixed(2));
   }
-
+  // Επικυρώνει i1/i2 στο [-100, 100], επιτρέπει κενό string
   function normalizeCanvasNodeStudentInputs(inputs, fallback = {}) {
     const source = inputs && typeof inputs === 'object' ? inputs : {};
     const fallbackI1 = Object.prototype.hasOwnProperty.call(fallback, 'i1') ? fallback.i1 : canvasNodeLesson.inputs.i1;
@@ -111,7 +113,7 @@ module.exports = function initNeural({
       i2: parsedI2
     };
   }
-
+  //  Επικυρώνει p1/p2 στο [-100000, 100000], επιτρέπει κενό string
   function normalizeCanvasNodeStudentProducts(products, fallback = {}) {
     const source = products && typeof products === 'object' ? products : {};
     const parseValue = (value, fallbackValue) => {
@@ -127,13 +129,14 @@ module.exports = function initNeural({
     };
   }
 
+  // Επικυρώνει το συνολικό αποτέλεσμα στο [-100000, 100000], επιτρέπει κενό string
   function normalizeCanvasNodeStudentTotal(total, fallback) {
     if (total === '' || total === null || typeof total === 'undefined') {
       return '';
     }
     return Number(clampCanvasNodeNumber(total, -100000, 100000, Number(fallback) || 0).toFixed(2));
   }
-
+  // Δημιουργεί ένα στιγμιότυπο της κατάστασης ενός μαθητή για αποστολή στους δασκάλους
   function buildCanvasNodeStudentSnapshot(student) {
     const weights = normalizeCanvasNodeStudentWeights(student && student.weights, student && student.weights);
     const inputs = normalizeCanvasNodeStudentInputs(student && student.inputs, canvasNodeLesson.inputs);
@@ -163,6 +166,7 @@ module.exports = function initNeural({
     };
   }
 
+  // Δημιουργεί μια λίστα με όλους τους συμμετέχοντες, ταξινομημένη κατά σύνδεση και όνομα
   function buildCanvasNodeParticipants() {
     return [...canvasNodeStudents.values()]
       .sort((a, b) => (a.connectedAt - b.connectedAt) || a.name.localeCompare(b.name))
@@ -252,7 +256,7 @@ module.exports = function initNeural({
     canvasNodeStudents.forEach((_, studentWs) => canvasNodeSendStudentState(studentWs));
   }
 
-  // WebSocket connection handler
+  // χειριστής WebSocket σύνδεσης
   canvasNodeWss.on('connection', (ws, request) => {
     const connectionInfo = getUpgradeClientInfo(request);
     const sessionId = ensureCanvasSessionId(ws);
@@ -475,14 +479,16 @@ module.exports = function initNeural({
         canvasNodeBroadcastState();
         return;
       }
-
+      // Αλλαγή δραστηριότητας από τον δάσκαλο
       if (message.type === 'teacher_lesson') {
+        // Ελέγχει αν ο αποστολέας είναι δάσκαλος
         if (!canvasNodeTeachers.has(ws)) {
           console.log('[neural-lab] ⚠️ Non-teacher attempted teacher_lesson');
           return;
         }
-
+        // Εξάγει τα δεδομένα του μαθήματος από το μήνυμα
         const lesson = message?.lesson && typeof message.lesson === 'object' ? message.lesson : {};
+        
         const maybeDataset = sanitizeString(lesson.dataset, 40);
         const maybeExampleName = sanitizeString(lesson.exampleName, 80);
         const maybeIcon = sanitizeString(lesson.icon, 8);
