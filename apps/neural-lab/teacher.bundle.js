@@ -21491,23 +21491,45 @@ var DatasetSelector = ({
   datasets,
   currentDataset,
   currentExample,
+  currentLinearDemoIndex,
   onDatasetChange,
-  onExampleChange
-}) => /* @__PURE__ */ import_react4.default.createElement(Accordion, { title: "\u{1F5C4}\uFE0F \u0394\u03B5\u03B4\u03BF\u03BC\u03AD\u03BD\u03B1" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "control-bar" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react4.default.createElement("label", null, "\u{1F4CA} \u03A3\u03CD\u03BD\u03BF\u03BB\u03BF \u03B4\u03B5\u03B4\u03BF\u03BC\u03AD\u03BD\u03C9\u03BD"), /* @__PURE__ */ import_react4.default.createElement(
-  "select",
-  {
-    value: currentDataset,
-    onChange: (e) => onDatasetChange(e.target.value)
-  },
-  Object.entries(datasets).map(([key, val]) => /* @__PURE__ */ import_react4.default.createElement("option", { key, value: key }, val.emoji, " ", val.label))
-)), /* @__PURE__ */ import_react4.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react4.default.createElement("label", null, "\u{1F3F7}\uFE0F \u03A0\u03B1\u03C1\u03AC\u03B4\u03B5\u03B9\u03B3\u03BC\u03B1"), /* @__PURE__ */ import_react4.default.createElement(
-  "select",
-  {
-    value: currentExample,
-    onChange: (e) => onExampleChange(parseInt(e.target.value, 10))
-  },
-  datasets[currentDataset].examples.map((ex, idx) => /* @__PURE__ */ import_react4.default.createElement("option", { key: idx, value: idx }, ex.icon, " ", ex.name, " ", "(", datasets[currentDataset].features.i1.icon, " ", datasets[currentDataset].features.i1.label, "=", ex.i1, ",", " ", datasets[currentDataset].features.i2.icon, " ", datasets[currentDataset].features.i2.label, "=", ex.i2, ")"))
-))));
+  onExampleChange,
+  onLinearDemoChange
+}) => {
+  const currentData = datasets[currentDataset];
+  if (!currentData) {
+    return /* @__PURE__ */ import_react4.default.createElement("div", null, "\u0394\u03B5\u03BD \u03C5\u03C0\u03AC\u03C1\u03C7\u03BF\u03C5\u03BD \u03B4\u03B5\u03B4\u03BF\u03BC\u03AD\u03BD\u03B1 \u03B3\u03B9\u03B1 \u03C4\u03BF \u03B5\u03C0\u03B9\u03BB\u03B5\u03B3\u03BC\u03AD\u03BD\u03BF dataset");
+  }
+  const linearDemos = currentData.linear_demos || [];
+  return /* @__PURE__ */ import_react4.default.createElement(Accordion, { title: "\u{1F5C4}\uFE0F \u0394\u03B5\u03B4\u03BF\u03BC\u03AD\u03BD\u03B1" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "control-bar" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react4.default.createElement("label", null, "\u{1F4CA} \u03A3\u03CD\u03BD\u03BF\u03BB\u03BF \u03B4\u03B5\u03B4\u03BF\u03BC\u03AD\u03BD\u03C9\u03BD"), /* @__PURE__ */ import_react4.default.createElement(
+    "select",
+    {
+      value: currentDataset,
+      onChange: (e) => onDatasetChange(e.target.value)
+    },
+    Object.entries(datasets).map(([key, val]) => /* @__PURE__ */ import_react4.default.createElement("option", { key, value: key }, val.emoji, " ", val.label))
+  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react4.default.createElement("label", null, "\u{1F3F7}\uFE0F \u03A0\u03B1\u03C1\u03AC\u03B4\u03B5\u03B9\u03B3\u03BC\u03B1"), /* @__PURE__ */ import_react4.default.createElement(
+    "select",
+    {
+      value: currentExample,
+      onChange: (e) => onExampleChange(parseInt(e.target.value, 10))
+    },
+    datasets[currentDataset].examples.map((ex, idx) => /* @__PURE__ */ import_react4.default.createElement("option", { key: idx, value: idx }, ex.icon, " ", ex.name, " ", "(", datasets[currentDataset].features.i1.icon, " ", datasets[currentDataset].features.i1.label, "=", ex.i1, ",", " ", datasets[currentDataset].features.i2.icon, " ", datasets[currentDataset].features.i2.label, "=", ex.i2, ")"))
+  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react4.default.createElement("label", null, "\u{1F4D0} \u0394\u03B9\u03B1\u03C7\u03C9\u03C1\u03B9\u03C3\u03BC\u03CC\u03C2"), /* @__PURE__ */ import_react4.default.createElement(
+    "select",
+    {
+      value: currentLinearDemoIndex !== void 0 ? currentLinearDemoIndex : "",
+      onChange: (e) => onLinearDemoChange(e.target.value !== "" ? parseInt(e.target.value, 10) : void 0)
+    },
+    /* @__PURE__ */ import_react4.default.createElement("option", { value: "" }, "-- \u0395\u03C0\u03B9\u03BB\u03AD\u03BE\u03C4\u03B5 --"),
+    linearDemos.map((demo, idx) => {
+      const label = demo.example;
+      const status = demo.separable ? "\u2705" : "\u274C";
+      const thresholdInfo = demo.threshold ? ` (\u038C\u03C1\u03B9\u03BF: ${demo.threshold})` : " (\u039C\u03B7 \u03B4\u03B9\u03B1\u03C7\u03C9\u03C1\u03AF\u03C3\u03B9\u03BC\u03BF)";
+      return /* @__PURE__ */ import_react4.default.createElement("option", { key: idx, value: idx }, idx + 1, ". ", label, " ", status, thresholdInfo);
+    })
+  ))));
+};
 
 // apps/neural-lab/components/VerticalProducts.jsx
 var import_react6 = __toESM(require_react());
@@ -21539,8 +21561,9 @@ var ProductRow = ({
       "input",
       {
         className: "input-box-style",
-        type: "number",
-        value: value ?? "",
+        type: "text",
+        inputMode: "numeric",
+        value: value === null || value === void 0 ? "" : String(value),
         placeholder,
         onChange: (event) => {
           if (typeof onChange === "function") {
@@ -21554,8 +21577,9 @@ var ProductRow = ({
     "input",
     {
       className: "input-box-style",
-      type: "number",
-      value: product ?? "",
+      type: "text",
+      inputMode: "numeric",
+      value: product === null || product === void 0 ? "" : String(product),
       placeholder: productPlaceholder,
       onChange: (event) => {
         if (typeof onProductChange === "function") {
@@ -21567,8 +21591,9 @@ var ProductRow = ({
     "input",
     {
       className: "input-box-style",
-      type: "number",
-      value: product ?? "",
+      type: "text",
+      inputMode: "numeric",
+      value: product === null || product === void 0 ? "" : String(product),
       placeholder: productPlaceholder,
       onChange: (event) => {
         if (typeof onProductChange === "function") {
@@ -21608,7 +21633,9 @@ var VerticalProducts = ({
   inputPlaceholder,
   weightPlaceholder,
   productPlaceholder,
-  totalPlaceholder
+  totalPlaceholder,
+  demoIcon,
+  demoLabel
 }) => {
   const handleW1Change = (value) => {
     if (editWeights && onWeightChange) {
@@ -21678,7 +21705,8 @@ var VerticalProducts = ({
     "input",
     {
       className: "student-answer-input",
-      type: "number",
+      type: "text",
+      inputMode: "numeric",
       value: studentAnswer,
       placeholder: "\u0394\u03CE\u03C3\u03B5 o",
       onChange: (e) => {
@@ -21691,7 +21719,8 @@ var VerticalProducts = ({
     "input",
     {
       className: "student-answer-input",
-      type: "number",
+      type: "text",
+      inputMode: "numeric",
       value: totalValue ?? "",
       placeholder: totalPlaceholder || "\u0394\u03CE\u03C3\u03B5 o",
       onChange: (event) => {
@@ -21700,7 +21729,7 @@ var VerticalProducts = ({
         }
       }
     }
-  ) : /* @__PURE__ */ import_react6.default.createElement("div", { className: "total-result" }, total), threshold && /* @__PURE__ */ import_react6.default.createElement("div", { className: `threshold-indicator ${threshold.satisfied ? "threshold-true" : "threshold-false"}` }, threshold.satisfied ? "\u2713 \u0399\u03BA\u03B1\u03BD\u03BF\u03C0\u03BF\u03B9\u03B5\u03AF\u03C4\u03B1\u03B9" : "\u2717 \u0394\u03B5\u03BD \u03B9\u03BA\u03B1\u03BD\u03BF\u03C0\u03BF\u03B9\u03B5\u03AF\u03C4\u03B1\u03B9")), (editWeights || onRefresh) && /* @__PURE__ */ import_react6.default.createElement("button", { className: "reveal-btn", onClick: onRefresh }, "\u{1F504} \u0395\u03BD\u03B7\u03BC\u03AD\u03C1\u03C9\u03C3\u03B7")));
+  ) : /* @__PURE__ */ import_react6.default.createElement("div", { className: `total-result ${threshold ? threshold.satisfied ? "threshold-true" : "threshold-false" : ""}` }, total)), (editWeights || onRefresh) && /* @__PURE__ */ import_react6.default.createElement("button", { className: "reveal-btn", onClick: onRefresh }, "\u{1F504} \u0395\u03BD\u03B7\u03BC\u03AD\u03C1\u03C9\u03C3\u03B7")), /* @__PURE__ */ import_react6.default.createElement("div", { className: "demo-icon", title: demoLabel || "\u0391\u03BD\u03C4\u03B9\u03BA\u03B5\u03AF\u03BC\u03B5\u03BD\u03BF-\u03C3\u03C4\u03CC\u03C7\u03BF\u03C2" }, /* @__PURE__ */ import_react6.default.createElement("span", null, demoIcon || "\u2754")));
 };
 
 // apps/neural-lab/components/StudentTable.jsx
@@ -21809,7 +21838,9 @@ var ACTIVITY_OPTIONS = [
   { value: "2a", label: "2\u03B1. \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2 \u03B5\u03BE\u03CC\u03B4\u03C9\u03BD (\u03B5\u03C0\u03BF\u03C0\u03C4\u03B9\u03BA\u03CC \u03BC\u03AD\u03C3\u03BF)" },
   { value: "2b", label: "2\u03B2. \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2 \u03B5\u03BE\u03CC\u03B4\u03C9\u03BD (\u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2)" },
   { value: "3a", label: "3\u03B1. \u03A0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03B2\u03B1\u03C1\u03CE\u03BD (\u03B5\u03C0\u03BF\u03C0\u03C4\u03B9\u03BA\u03CC \u03BC\u03AD\u03C3\u03BF)" },
-  { value: "3b", label: "3\u03B2. \u03A0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03B2\u03B1\u03C1\u03CE\u03BD (\u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2)" }
+  { value: "3b", label: "3\u03B2. \u03A0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03B2\u03B1\u03C1\u03CE\u03BD (\u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2)" },
+  { value: "4a", label: "4\u03B1. \u039A\u03B1\u03C4\u03CE\u03C6\u03BB\u03B9 (\u03B5\u03C0\u03BF\u03C0\u03C4\u03B9\u03BA\u03CC \u03BC\u03AD\u03C3\u03BF)" },
+  { value: "4b", label: "4\u03B2. \u039A\u03B1\u03C4\u03CE\u03C6\u03BB\u03B9 (\u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2)" }
 ];
 var ActivitiesMenu = ({ value = "1a", onChange }) => /* @__PURE__ */ import_react9.default.createElement(Accordion, { title: "\u{1F52C} \u0394\u03C1\u03B1\u03C3\u03C4\u03B7\u03C1\u03B9\u03CC\u03C4\u03B7\u03C4\u03B5\u03C2" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "data-section activities-menu" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react9.default.createElement("label", null, "\u0395\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE \u03B4\u03C1\u03B1\u03C3\u03C4\u03B7\u03C1\u03B9\u03CC\u03C4\u03B7\u03C4\u03B1\u03C2"), /* @__PURE__ */ import_react9.default.createElement(
   "select",
@@ -21824,7 +21855,7 @@ var ActivitiesMenu = ({ value = "1a", onChange }) => /* @__PURE__ */ import_reac
   ACTIVITY_OPTIONS.map((option) => /* @__PURE__ */ import_react9.default.createElement("option", { key: option.value, value: option.value }, option.label))
 ))));
 
-// apps/neural-lab/App.jsx
+// apps/neural-lab/data/datasets.js
 var DATASETS = {
   vehicles: {
     label: "\u039F\u03C7\u03AE\u03BC\u03B1\u03C4\u03B1",
@@ -21850,6 +21881,32 @@ var DATASETS = {
       { name: "\u03A0\u03B1\u03B9\u03B4\u03B9\u03BA\u03CC \u03A0\u03B1\u03C4\u03AF\u03BD\u03B9", i1: 3, i2: 0, icon: "\u{1F6F4}" },
       { name: "\u039A\u03B1\u03C1\u03BF\u03C4\u03C3\u03AC\u03BA\u03B9", i1: 4, i2: 0, icon: "\u{1F6D2}" },
       { name: "\u0391\u03BD\u03B1\u03C0\u03B7\u03C1\u03B9\u03BA\u03CC", i1: 4, i2: 0, icon: "\u{1F9BD}" }
+    ],
+    linear_demos: [
+      {
+        // 1ο: Γραμμικά διαχωρίσιμο
+        example: "\u0391\u03B5\u03C1\u03BF\u03C0\u03BB\u03AC\u03BD\u03BF",
+        point: { i1: 6, i2: 2 },
+        threshold: "i2 > 1.5",
+        separable: true,
+        description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03CC\u03C7\u03B7\u03BC\u03B1 \u03BC\u03B5 2 \u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2. \u03A4\u03BF \u03BA\u03B1\u03C4\u03B1\u03BA\u03CC\u03C1\u03C5\u03C6\u03BF \u03CC\u03C1\u03B9\u03BF i2=1.5 \u03C4\u03BF \u03B1\u03C0\u03BF\u03BC\u03BF\u03BD\u03CE\u03BD\u03B5\u03B9."
+      },
+      {
+        // 2ο: Γραμμικά διαχωρίσιμο
+        example: "\u0399\u03C3\u03C4\u03B9\u03BF\u03C6\u03CC\u03C1\u03BF",
+        point: { i1: 0, i2: 0 },
+        threshold: "i1 + i2 < 0.5",
+        separable: true,
+        description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03CC\u03C7\u03B7\u03BC\u03B1 \u03BC\u03B5 0 \u03C1\u03CC\u03B4\u03B5\u03C2 \u039A\u0391\u0399 0 \u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2. \u0397 \u03B5\u03C5\u03B8\u03B5\u03AF\u03B1 i1+i2=0.5 \u03C4\u03BF \u03BE\u03B5\u03C7\u03C9\u03C1\u03AF\u03B6\u03B5\u03B9."
+      },
+      {
+        // 3ο: ΜΗ γραμμικά διαχωρίσιμο (τελευταίο)
+        example: "\u039A\u03B1\u03C1\u03BF\u03C4\u03C3\u03AC\u03BA\u03B9",
+        points: [{ i1: 4, i2: 0 }, { i1: 4, i2: 0 }],
+        threshold: null,
+        separable: false,
+        description: "\u039A\u03B1\u03B9 \u03C4\u03B1 \u03B4\u03CD\u03BF \u03AD\u03C7\u03BF\u03C5\u03BD \u03B1\u03BA\u03C1\u03B9\u03B2\u03CE\u03C2 \u03C4\u03B1 \u03AF\u03B4\u03B9\u03B1 \u03C7\u03B1\u03C1\u03B1\u03BA\u03C4\u03B7\u03C1\u03B9\u03C3\u03C4\u03B9\u03BA\u03AC (4 \u03C1\u03CC\u03B4\u03B5\u03C2, 0 \u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2). \u0395\u03AF\u03BD\u03B1\u03B9 \u03C0\u03B1\u03BD\u03BF\u03BC\u03BF\u03B9\u03CC\u03C4\u03C5\u03C0\u03B1 \u03C3\u03B7\u03BC\u03B5\u03AF\u03B1 \u03C3\u03C4\u03BF\u03BD \u03C7\u03CE\u03C1\u03BF, \u03AC\u03C1\u03B1 \u03BA\u03B1\u03BC\u03AF\u03B1 \u03B5\u03C5\u03B8\u03B5\u03AF\u03B1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B4\u03B5\u03BD \u03BC\u03C0\u03BF\u03C1\u03B5\u03AF \u03BD\u03B1 \u03C4\u03B1 \u03B4\u03B9\u03B1\u03C7\u03C9\u03C1\u03AF\u03C3\u03B5\u03B9."
+      }
     ]
   },
   digits: {
@@ -21870,9 +21927,39 @@ var DATASETS = {
       { name: "\u0395\u03C0\u03C4\u03AC", i1: 0, i2: 0, icon: "7\uFE0F\u20E3" },
       { name: "\u039F\u03BA\u03C4\u03CE", i1: 2, i2: 1, icon: "8\uFE0F\u20E3" },
       { name: "\u0395\u03BD\u03BD\u03AD\u03B1", i1: 1, i2: 1, icon: "9\uFE0F\u20E3" }
+    ],
+    // 🔥 ΝΕΟ ΠΕΔΙΟ: 3 παραδείγματα (2 διαχωρίσιμα, 1 μη-διαχωρίσιμο)
+    linear_demos: [
+      {
+        // 1ο: Γραμμικά διαχωρίσιμο
+        example: "\u039F\u03BA\u03C4\u03CE",
+        point: { i1: 2, i2: 1 },
+        threshold: "i1 > 1.5",
+        separable: true,
+        description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03C8\u03B7\u03C6\u03AF\u03BF \u03BC\u03B5 2 \u03BA\u03CD\u03BA\u03BB\u03BF\u03C5\u03C2. \u03A4\u03BF \u03CC\u03C1\u03B9\u03BF i1=1.5 \u03C4\u03BF \u03B1\u03C0\u03BF\u03BC\u03BF\u03BD\u03CE\u03BD\u03B5\u03B9 \u03B1\u03C0\u03CC\u03BB\u03C5\u03C4\u03B1."
+      },
+      {
+        // 2ο: Γραμμικά διαχωρίσιμο
+        example: "\u039C\u03B7\u03B4\u03AD\u03BD",
+        point: { i1: 1, i2: 0 },
+        threshold: "i1 - 2*i2 > 0.5",
+        separable: true,
+        description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03C8\u03B7\u03C6\u03AF\u03BF \u03BC\u03B5 1 \u03BA\u03CD\u03BA\u03BB\u03BF \u03BA\u03B1\u03B9 0 \u03C3\u03C4\u03B1\u03C5\u03C1\u03BF\u03B4\u03C1\u03CC\u03BC\u03B9\u03B1. \u0397 \u03B5\u03C5\u03B8\u03B5\u03AF\u03B1 i1 - 2*i2 = 0.5 \u03C4\u03BF \u03BE\u03B5\u03C7\u03C9\u03C1\u03AF\u03B6\u03B5\u03B9 (\u03B5\u03BB\u03AD\u03B3\u03BE\u03C4\u03B5 \u03C4\u03BF: \u03B3\u03B9\u03B1 \u03C4\u03BF 0 \u03B4\u03AF\u03BD\u03B5\u03B9 1>0.5, \u03B5\u03BD\u03CE \u03B3\u03B9\u03B1 8 \u03B4\u03AF\u03BD\u03B5\u03B9 0, \u03B3\u03B9\u03B1 4/6/9 \u03B4\u03AF\u03BD\u03B5\u03B9 -1)."
+      },
+      {
+        // 3ο: ΜΗ γραμμικά διαχωρίσιμο (τελευταίο)
+        example: "\u0388\u03BE\u03B9",
+        points: { i1: 1, i2: 1 },
+        threshold: null,
+        separable: false,
+        description: "\u039A\u03B1\u03B9 \u03C4\u03B1 \u03C4\u03C1\u03AF\u03B1 \u03C8\u03B7\u03C6\u03AF\u03B1 (4, 6, 9) \u03AD\u03C7\u03BF\u03C5\u03BD \u03B1\u03BA\u03C1\u03B9\u03B2\u03CE\u03C2 1 \u03BA\u03CD\u03BA\u03BB\u03BF \u03BA\u03B1\u03B9 1 \u03C3\u03C4\u03B1\u03C5\u03C1\u03BF\u03B4\u03C1\u03CC\u03BC\u03B9. \u0395\u03C0\u03B5\u03B9\u03B4\u03AE \u03C4\u03B1 \u03C3\u03B7\u03BC\u03B5\u03AF\u03B1 \u03C4\u03BF\u03C5\u03C2 \u03C4\u03B1\u03C5\u03C4\u03AF\u03B6\u03BF\u03BD\u03C4\u03B1\u03B9, \u03B5\u03AF\u03BD\u03B1\u03B9 \u03BC\u03B1\u03B8\u03B7\u03BC\u03B1\u03C4\u03B9\u03BA\u03AC \u03B1\u03B4\u03CD\u03BD\u03B1\u03C4\u03BF \u03BD\u03B1 \u03B2\u03C1\u03B5\u03B8\u03B5\u03AF \u03B5\u03C5\u03B8\u03B5\u03AF\u03B1 \u03C0\u03BF\u03C5 \u03BD\u03B1 \u03C7\u03C9\u03C1\u03AF\u03B6\u03B5\u03B9 \u03C4\u03BF \u03AD\u03BD\u03B1 \u03B1\u03C0\u03CC \u03C4\u03B1 \u03AC\u03BB\u03BB\u03B1 \u03B4\u03CD\u03BF."
+      }
     ]
   }
 };
+var datasets_default = DATASETS;
+
+// apps/neural-lab/App.jsx
 var App = ({ role = "teacher" }) => {
   const wsRef = (0, import_react10.useRef)(null);
   const reconnectTimerRef = (0, import_react10.useRef)(null);
@@ -21881,6 +21968,8 @@ var App = ({ role = "teacher" }) => {
   const lastSentStudentStateRef = (0, import_react10.useRef)("");
   const [currentDataset, setCurrentDataset] = (0, import_react10.useState)("vehicles");
   const [currentExample, setCurrentExample] = (0, import_react10.useState)(0);
+  const [currentLinearDemoIndex, setCurrentLinearDemoIndex] = (0, import_react10.useState)(void 0);
+  const [lessonLinearDemoIndex, setLessonLinearDemoIndex] = (0, import_react10.useState)(void 0);
   const [selectedActivity, setSelectedActivity] = (0, import_react10.useState)("1a");
   const [lessonActivity, setLessonActivity] = (0, import_react10.useState)("1a");
   const [teacherInputs, setTeacherInputs] = (0, import_react10.useState)({ i1: 4, i2: 1 });
@@ -21926,7 +22015,7 @@ var App = ({ role = "teacher" }) => {
   };
   const [editingName, setEditingName] = (0, import_react10.useState)(false);
   const [studentNameInput, setStudentNameInput] = (0, import_react10.useState)(studentName);
-  const currentExampleData = DATASETS[currentDataset].examples[currentExample];
+  const currentExampleData = datasets_default[currentDataset].examples[currentExample];
   const isTeacher = role === "teacher";
   const isScreen = role === "screen";
   const isStudent = role === "student";
@@ -21934,7 +22023,21 @@ var App = ({ role = "teacher" }) => {
   const displayIcon = isTeacher ? currentExampleData.icon : lessonIcon;
   const displayName = isTeacher ? currentExampleData.name : lessonName;
   const displayDataset = isTeacher ? currentDataset : lessonDataset;
-  const safeDisplayDataset = DATASETS[displayDataset] ? displayDataset : "vehicles";
+  const safeDisplayDataset = datasets_default[displayDataset] ? displayDataset : "vehicles";
+  const effectiveLinearDemoIndex = isTeacher ? currentLinearDemoIndex : lessonLinearDemoIndex;
+  let demoIcon = null;
+  let demoLabel = "\u039C\u03B7 \u03B5\u03C0\u03B9\u03BB\u03B5\u03B3\u03BC\u03AD\u03BD\u03BF";
+  if (effectiveLinearDemoIndex !== void 0 && datasets_default[safeDisplayDataset]?.linear_demos) {
+    const demos = datasets_default[safeDisplayDataset].linear_demos;
+    const selectedDemo = demos[effectiveLinearDemoIndex];
+    if (selectedDemo) {
+      const targetExample = datasets_default[safeDisplayDataset].examples.find(
+        (ex) => ex.name === selectedDemo.example
+      );
+      demoIcon = targetExample ? targetExample.icon : null;
+      demoLabel = selectedDemo.example || "\u039C\u03B7 \u03B5\u03C0\u03B9\u03BB\u03B5\u03B3\u03BC\u03AD\u03BD\u03BF";
+    }
+  }
   const toFinite = (value, fallback = 0) => {
     const num = Number(value);
     return Number.isFinite(num) ? num : fallback;
@@ -22044,14 +22147,22 @@ var App = ({ role = "teacher" }) => {
         if (Number.isFinite(Number(message.lesson?.threshold))) {
           setLessonThreshold(Number(message.lesson.threshold));
         }
-        if (typeof message.lesson?.dataset === "string" && DATASETS[message.lesson.dataset]) {
+        if (typeof message.lesson?.dataset === "string" && datasets_default[message.lesson.dataset]) {
           setLessonDataset(message.lesson.dataset);
         }
         if (Number.isInteger(Number(message.lesson?.exampleIndex))) {
           const nextIndex = Number(message.lesson.exampleIndex);
-          const sourceDataset = typeof message.lesson?.dataset === "string" && DATASETS[message.lesson.dataset] ? message.lesson.dataset : "vehicles";
-          const maxIdx = DATASETS[sourceDataset].examples.length - 1;
+          const sourceDataset = typeof message.lesson?.dataset === "string" && datasets_default[message.lesson.dataset] ? message.lesson.dataset : "vehicles";
+          const maxIdx = datasets_default[sourceDataset].examples.length - 1;
           setLessonExampleIndex(Math.max(0, Math.min(maxIdx, nextIndex)));
+        }
+        if (message.lesson && Object.prototype.hasOwnProperty.call(message.lesson, "linearDemoIndex")) {
+          const idx = Number(message.lesson.linearDemoIndex);
+          if (Number.isInteger(idx) && idx >= 0) {
+            setLessonLinearDemoIndex(idx);
+          } else {
+            setLessonLinearDemoIndex(void 0);
+          }
         }
         if (typeof message.lesson?.icon === "string" && message.lesson.icon.trim()) {
           setLessonIcon(message.lesson.icon.trim());
@@ -22152,7 +22263,8 @@ var App = ({ role = "teacher" }) => {
           w1: dynamicW1,
           w2: dynamicW2
         },
-        threshold: lessonThreshold
+        threshold: lessonThreshold,
+        linearDemoIndex: currentLinearDemoIndex
       }
     });
   }, [
@@ -22167,7 +22279,8 @@ var App = ({ role = "teacher" }) => {
     dynamicW2,
     teacherInputs.i1,
     teacherInputs.i2,
-    lessonThreshold
+    lessonThreshold,
+    currentLinearDemoIndex
   ]);
   (0, import_react10.useEffect)(() => {
     if (!isTeacher) {
@@ -22236,11 +22349,13 @@ var App = ({ role = "teacher" }) => {
     },
     "\u03CC\u03BD\u03BF\u03BC\u03B1: ",
     studentName
-  )), !isStudent && /* @__PURE__ */ import_react10.default.createElement("span", null, "\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9: ", roster.length)), isScreen && /* @__PURE__ */ import_react10.default.createElement(import_react10.default.Fragment, null, /* @__PURE__ */ import_react10.default.createElement("div", { className: "screen-top-bar" }, /* @__PURE__ */ import_react10.default.createElement("strong", null, "\u03A0\u03C1\u03BF\u03B2\u03BF\u03BB\u03AE \u03C4\u03AC\u03BE\u03B7\u03C2"), /* @__PURE__ */ import_react10.default.createElement("span", null, DATASETS[safeDisplayDataset].emoji, " ", DATASETS[safeDisplayDataset].label), /* @__PURE__ */ import_react10.default.createElement("span", null, displayIcon, " ", displayName), /* @__PURE__ */ import_react10.default.createElement("span", null, "i1=", i1, ", i2=", i2), /* @__PURE__ */ import_react10.default.createElement("span", null, "w1=", currentW1, ", w2=", currentW2), /* @__PURE__ */ import_react10.default.createElement("span", null, "o=", total)), /* @__PURE__ */ import_react10.default.createElement("div", { className: "operation-tree", "aria-label": "\u0394\u03AD\u03BD\u03C4\u03C1\u03BF \u03C0\u03C1\u03AC\u03BE\u03B5\u03C9\u03BD" }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "tree-level" }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "tree-node tree-root" }, "o = ", total)), /* @__PURE__ */ import_react10.default.createElement("div", { className: "tree-connect" }), /* @__PURE__ */ import_react10.default.createElement("div", { className: "tree-level tree-two" }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "tree-node" }, "w1 \xD7 i1 = ", prod1), /* @__PURE__ */ import_react10.default.createElement("div", { className: "tree-node" }, "w2 \xD7 i2 = ", prod2)))), /* @__PURE__ */ import_react10.default.createElement("div", { className: "common-zone" }, /* @__PURE__ */ import_react10.default.createElement(
+  )), !isStudent && /* @__PURE__ */ import_react10.default.createElement("span", null, "\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9: ", roster.length)), isScreen && /* @__PURE__ */ import_react10.default.createElement(import_react10.default.Fragment, null, /* @__PURE__ */ import_react10.default.createElement("div", { className: "screen-top-bar" }, /* @__PURE__ */ import_react10.default.createElement("strong", null, "\u03A0\u03C1\u03BF\u03B2\u03BF\u03BB\u03AE \u03C4\u03AC\u03BE\u03B7\u03C2"), /* @__PURE__ */ import_react10.default.createElement("span", null, datasets_default[safeDisplayDataset].emoji, " ", datasets_default[safeDisplayDataset].label), /* @__PURE__ */ import_react10.default.createElement("span", null, displayIcon, " ", displayName), /* @__PURE__ */ import_react10.default.createElement("span", null, "i1=", i1, ", i2=", i2), /* @__PURE__ */ import_react10.default.createElement("span", null, "w1=", currentW1, ", w2=", currentW2), /* @__PURE__ */ import_react10.default.createElement("span", null, "o=", total)), /* @__PURE__ */ import_react10.default.createElement("div", { className: "operation-tree", "aria-label": "\u0394\u03AD\u03BD\u03C4\u03C1\u03BF \u03C0\u03C1\u03AC\u03BE\u03B5\u03C9\u03BD" }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "tree-level" }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "tree-node tree-root" }, "o = ", total)), /* @__PURE__ */ import_react10.default.createElement("div", { className: "tree-connect" }), /* @__PURE__ */ import_react10.default.createElement("div", { className: "tree-level tree-two" }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "tree-node" }, "w1 \xD7 i1 = ", prod1), /* @__PURE__ */ import_react10.default.createElement("div", { className: "tree-node" }, "w2 \xD7 i2 = ", prod2)))), /* @__PURE__ */ import_react10.default.createElement("div", { className: "common-zone" }, /* @__PURE__ */ import_react10.default.createElement(
     VerticalProducts,
     {
       icon: displayIcon,
-      features: DATASETS[safeDisplayDataset].features,
+      demoIcon,
+      demoLabel,
+      features: datasets_default[safeDisplayDataset].features,
       prod1,
       prod2,
       w1: currentW1,
@@ -22290,21 +22405,24 @@ var App = ({ role = "teacher" }) => {
     {
       i1: lessonInputs.i1,
       i2: lessonInputs.i2,
-      features: DATASETS[safeDisplayDataset].features,
+      features: datasets_default[safeDisplayDataset].features,
       threshold: lessonThreshold,
       participants: sortedParticipants
     }
   )), isTeacher && /* @__PURE__ */ import_react10.default.createElement(import_react10.default.Fragment, null, /* @__PURE__ */ import_react10.default.createElement(ActivitiesMenu, { value: selectedActivity, onChange: setSelectedActivity }), /* @__PURE__ */ import_react10.default.createElement(
     DatasetSelector,
     {
-      datasets: DATASETS,
+      datasets: datasets_default,
       currentDataset,
       currentExample,
+      currentLinearDemoIndex,
       onDatasetChange: (dataset) => {
         setCurrentDataset(dataset);
         setCurrentExample(0);
+        setCurrentLinearDemoIndex(0);
       },
-      onExampleChange: setCurrentExample
+      onExampleChange: setCurrentExample,
+      onLinearDemoChange: setCurrentLinearDemoIndex
     }
   )));
 };

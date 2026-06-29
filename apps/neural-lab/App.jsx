@@ -5,57 +5,11 @@ import { VerticalProducts } from './components/VerticalProducts';
 import { StudentTable } from './components/StudentTable';
 import { ActivitiesMenu } from './components/ActivitiesMenu';
 import { Accordion } from '../shared/components/Accordion';
+import DATASETS from './data/datasets';
 //import { StudentTable } from '../shared/components/StudentTable';
 import './App.css';
 
-const DATASETS = {
-  vehicles: {
-  label: 'Οχήματα',
-  emoji: '🚗',
-  features: {
-      i1: { label: 'Ρόδες', icon: '🛞' },
-      i2: { label: 'Μηχανές', icon: '⚙️' }
-    },
-  examples: [
-    // --- Με κινητήρα (i2 >= 1) ---
-    { name: 'Αυτοκίνητο',    i1: 4,  i2: 1, icon: '🚗' },
-    { name: 'Μηχανάκι',      i1: 2,  i2: 1, icon: '🛵' },
-    //{ name: 'Φορτηγό',       i1: 6,  i2: 1, icon: '🚛' },
-    //{ name: 'Τρακτέρ',       i1: 4,  i2: 1, icon: '🚜' },
-    { name: 'Λεωφορείο',     i1: 8,  i2: 1, icon: '🚌' },
-    //{ name: 'Πυροσβεστικό',  i1: 8,  i2: 1, icon: '🚒' },
-    //{ name: 'Ασθενοφόρο',    i1: 4,  i2: 1, icon: '🚑' },
-    { name: 'Ιστιοφόρο',        i1: 0,  i2: 0, icon: '⛵' },
-    { name: 'Πλοίο',        i1: 0,  i2: 1, icon: '🚢' },
-    { name: 'Αεροπλάνο',     i1: 6,  i2: 2, icon: '✈️' },
-    // --- Χωρίς κινητήρα (i2 = 0) ---
-    { name: 'Ποδήλατο',      i1: 2,  i2: 0, icon: '🚲' },
-    { name: 'Παιδικό Πατίνι',i1: 3,  i2: 0, icon: '🛴' },
-    { name: 'Καροτσάκι',     i1: 4,  i2: 0, icon: '🛒' },
-    { name: 'Αναπηρικό',     i1: 4,  i2: 0, icon: '🦽' },
-  ]
-  },
-  digits: {
-  label: 'Ψηφία',
-  emoji: '🔢',
-  features: {
-      i1: { label: 'Κύκλοι', icon: '⭕' },
-      i2: { label: 'Σταυροδρόμια', icon: '➕' }
-    },
-  examples: [
-    { name: 'Μηδέν', i1: 1, i2: 0, icon: '0️⃣' },
-    { name: 'Ένα',   i1: 0, i2: 0, icon: '1️⃣' },
-    { name: 'Δύο',   i1: 0, i2: 0, icon: '2️⃣' },
-    { name: 'Τρία',  i1: 0, i2: 0, icon: '3️⃣' },
-    { name: 'Τέσσερα', i1: 1, i2: 1, icon: '4️⃣' },
-    { name: 'Πέντε', i1: 0, i2: 0, icon: '5️⃣' },
-    { name: 'Έξι',   i1: 1, i2: 1, icon: '6️⃣' },
-    { name: 'Επτά',  i1: 0, i2: 0, icon: '7️⃣' },
-    { name: 'Οκτώ',  i1: 2, i2: 1, icon: '8️⃣' },
-    { name: 'Εννέα', i1: 1, i2: 1, icon: '9️⃣' },
-  ]
-  }
-};
+
 
 const App = ({ role = 'teacher' }) => {
   // Σταθερές αναφορές (refs) για την αποθήκευση αντικειμένων που 
@@ -84,6 +38,10 @@ const App = ({ role = 'teacher' }) => {
   const [currentDataset, setCurrentDataset] = useState('vehicles');
   // Δείκτης του παραδείγματος που εμφανίζεται από το τρέχον σύνολο δεδομένων.
   const [currentExample, setCurrentExample] = useState(0);
+  // Δείκτης του γραμμικού demo που εμφανίζεται από το τρέχον σύνολο δεδομένων (για τον δάσκαλο).
+  const [currentLinearDemoIndex, setCurrentLinearDemoIndex] = useState(undefined);
+  // Δείκτης του γραμμικού demo που εμφανίζεται από το τρέχον σύνολο δεδομένων (για τον μαθητή).
+  const [lessonLinearDemoIndex, setLessonLinearDemoIndex] = useState(undefined);
   // Η τρέχουσα δραστηριότητα που έχει επιλέξει ο δάσκαλος.
   const [selectedActivity, setSelectedActivity] = useState('1a');
   // Η δραστηριότητα που έχει οριστεί από τον δάσκαλο και εμφανίζεται στους μαθητές.
@@ -154,8 +112,26 @@ const saveStudentName = () => {
   const activeActivity = isTeacher ? selectedActivity : lessonActivity;
   const displayIcon = isTeacher ? currentExampleData.icon : lessonIcon;
   const displayName = isTeacher ? currentExampleData.name : lessonName;
+
   const displayDataset = isTeacher ? currentDataset : lessonDataset;
   const safeDisplayDataset = DATASETS[displayDataset] ? displayDataset : 'vehicles';
+
+  const effectiveLinearDemoIndex = isTeacher ? currentLinearDemoIndex : lessonLinearDemoIndex;
+
+  let demoIcon = null;
+  let demoLabel = 'Μη επιλεγμένο';
+
+  if (effectiveLinearDemoIndex !== undefined && DATASETS[safeDisplayDataset]?.linear_demos) {
+    const demos = DATASETS[safeDisplayDataset].linear_demos;
+    const selectedDemo = demos[effectiveLinearDemoIndex];
+    if (selectedDemo) {
+      const targetExample = DATASETS[safeDisplayDataset].examples.find(
+        ex => ex.name === selectedDemo.example
+      );
+      demoIcon = targetExample ? targetExample.icon : null;
+      demoLabel = selectedDemo.example || 'Μη επιλεγμένο';
+    }
+  }
 
   const toFinite = (value, fallback = 0) => {
     const num = Number(value);
@@ -268,14 +244,14 @@ const saveStudentName = () => {
       const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
       const ws = new WebSocket(`${protocol}://${window.location.host}/ws/neural-lab`);
       wsRef.current = ws;
-
+      // Όταν ανοίξει η σύνδεση WebSocket
       ws.addEventListener('open', () => {
         if (cancelled) return;
         setIsSocketConnected(true);
         hasRegisteredRef.current = false;
         registerCurrentRole();
       });
-
+      // Όταν ληφθεί μήνυμα από τον server
       ws.addEventListener('message', (event) => {
         let message;
         try {
@@ -320,7 +296,14 @@ const saveStudentName = () => {
           const maxIdx = DATASETS[sourceDataset].examples.length - 1;
           setLessonExampleIndex(Math.max(0, Math.min(maxIdx, nextIndex)));
         }
-
+        if (message.lesson && Object.prototype.hasOwnProperty.call(message.lesson, 'linearDemoIndex')) {
+          const idx = Number(message.lesson.linearDemoIndex);
+          if (Number.isInteger(idx) && idx >= 0) {
+            setLessonLinearDemoIndex(idx);
+          } else {
+            setLessonLinearDemoIndex(undefined);
+          }
+        }
         if (typeof message.lesson?.icon === 'string' && message.lesson.icon.trim()) {
           setLessonIcon(message.lesson.icon.trim());
         }
@@ -364,7 +347,7 @@ const saveStudentName = () => {
           }
         }
       });
-
+      // Όταν κλείσει η σύνδεση WebSocket
       ws.addEventListener('close', () => {
         if (cancelled) return;
         setIsSocketConnected(false);
@@ -373,6 +356,7 @@ const saveStudentName = () => {
         reconnectTimerRef.current = setTimeout(connect, 1000);
       });
 
+      // Όταν παρουσιαστεί σφάλμα στη σύνδεση WebSocket
       ws.addEventListener('error', () => {
         if (!cancelled) setIsSocketConnected(false);
       });
@@ -437,7 +421,8 @@ const saveStudentName = () => {
           w1: dynamicW1,
           w2: dynamicW2
         },
-        threshold: lessonThreshold
+        threshold: lessonThreshold,
+        linearDemoIndex: currentLinearDemoIndex
       }
     });
   }, [
@@ -452,7 +437,8 @@ const saveStudentName = () => {
     dynamicW2,
     teacherInputs.i1,
     teacherInputs.i2,
-    lessonThreshold
+    lessonThreshold,
+    currentLinearDemoIndex
   ]);
 
   useEffect(() => {
@@ -569,6 +555,8 @@ const saveStudentName = () => {
       <div className="common-zone">
         <VerticalProducts
           icon={displayIcon}
+          demoIcon={demoIcon}
+          demoLabel={demoLabel}
           features={DATASETS[safeDisplayDataset].features}
           prod1={prod1}
           prod2={prod2}
@@ -637,11 +625,14 @@ const saveStudentName = () => {
             datasets={DATASETS}
             currentDataset={currentDataset}
             currentExample={currentExample}
+            currentLinearDemoIndex={currentLinearDemoIndex}
             onDatasetChange={(dataset) => {
               setCurrentDataset(dataset);
               setCurrentExample(0);
+              setCurrentLinearDemoIndex(0);
             }}
             onExampleChange={setCurrentExample}
+            onLinearDemoChange={setCurrentLinearDemoIndex}
           />
           
         </>

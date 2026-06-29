@@ -29,7 +29,9 @@ export const VerticalProducts = ({
   inputPlaceholder,
   weightPlaceholder,
   productPlaceholder,
-  totalPlaceholder
+  totalPlaceholder,
+  demoIcon,
+  demoLabel
 }) => {
   const handleW1Change = (value) => {
     if (editWeights && onWeightChange) {
@@ -103,7 +105,7 @@ export const VerticalProducts = ({
           {studentAnswerMode ? (
             <input
               className="student-answer-input"
-              type="number"
+              type="text" inputMode="numeric"
               value={studentAnswer}
               placeholder="Δώσε o"
               onChange={(e) => {
@@ -115,7 +117,7 @@ export const VerticalProducts = ({
           ) : totalEditable ? (
             <input
               className="student-answer-input"
-              type="number"
+              type="text" inputMode="numeric"
               value={totalValue ?? ''}
               placeholder={totalPlaceholder || 'Δώσε o'}
               onChange={(event) => {
@@ -125,21 +127,20 @@ export const VerticalProducts = ({
               }}
             />
           ) : (
-            <div className="total-result">
+             <div className={`total-result ${threshold ? (threshold.satisfied ? 'threshold-true' : 'threshold-false') : ''}`}>
               {total}
             </div>
           )}
-          {threshold && (
-            <div className={`threshold-indicator ${threshold.satisfied ? 'threshold-true' : 'threshold-false'}`}>
-              {threshold.satisfied ? '✓ Ικανοποιείται' : '✗ Δεν ικανοποιείται'}
-            </div>
-          )}
+          
         </div>
         {(editWeights || onRefresh) && (
           <button className="reveal-btn" onClick={onRefresh}>
             🔄 Ενημέρωση
           </button>
         )}
+      </div>
+      <div className="demo-icon" title={demoLabel || 'Αντικείμενο-στόχος'}>
+        <span>{demoIcon || '❔'}</span>
       </div>
     </div>
   );

@@ -19,8 +19,10 @@ module.exports = function initNeural({
   const CANVAS_NODE_THRESHOLD = 5;
   // Αρχική κατάσταση μαθήματος
   const canvasNodeLesson = {
-    activityId: '1a', // δραστηριότητα που εκτελείται
-    dataset: 'vehicles', // σύνολο δεδομένων που χρησιμοποιείται
+    // δραστηριότητα που εκτελείται
+    activityId: '1a',
+    // σύνολο δεδομένων που χρησιμοποιείται
+    dataset: 'vehicles', 
     // δείκτης, όνομα, εικονίδιο παραδείγματος, 
     exampleIndex: 0, exampleName: 'Αυτοκίνητο', icon: '🚗',
     // κοινές είσοδοι, βάρη, 
@@ -28,7 +30,9 @@ module.exports = function initNeural({
     // αν οι μαθητές βλέπουν ερωτηματικά
     useQuestionMarks: false,
     // κατώφλι απόφασης (default: 5)
-    threshold: CANVAS_NODE_THRESHOLD
+    threshold: CANVAS_NODE_THRESHOLD,
+    // γραμμικά ή μη διαχωρίσιμο παράδειγμα
+    linearDemoIndex: undefined
   };
   const CANVAS_NODE_INPUTS = {
     wheels: { key: 'wheels', type: 'number', min: 0, max: 6, fallback: 4 },
@@ -224,7 +228,8 @@ module.exports = function initNeural({
       lesson: {
         ...canvasNodeLesson,
         weights: { ...canvasNodeLesson.weights },
-        inputs: { ...canvasNodeLesson.inputs }
+        inputs: { ...canvasNodeLesson.inputs },
+        linearDemoIndex: canvasNodeLesson.linearDemoIndex
       },
       roster: buildCanvasNodeRoster(),
       me: buildCanvasNodeStudentSnapshot(student)
@@ -238,7 +243,8 @@ module.exports = function initNeural({
     const model = {
       inputs: { ...canvasNodeModel.inputs },
       weights: { ...canvasNodeModel.weights },
-      outputsEnabled: { ...canvasNodeModel.outputsEnabled }
+      outputsEnabled: { ...canvasNodeModel.outputsEnabled },
+      linearDemoIndex: canvasNodeLesson.linearDemoIndex
     };
     const participants = buildCanvasNodeParticipants();
     const roster = buildCanvasNodeRoster();
@@ -515,6 +521,14 @@ module.exports = function initNeural({
             ? clampCanvasNodeNumber(maybeI2, -100, 100, canvasNodeLesson.inputs.i2)
             : '';
         }
+        if (Object.prototype.hasOwnProperty.call(lesson, 'linearDemoIndex')) {
+          const idx = Number(lesson.linearDemoIndex);
+          if (Number.isInteger(idx) && idx >= 0) {
+            canvasNodeLesson.linearDemoIndex = idx;
+          } else if (lesson.linearDemoIndex === undefined || lesson.linearDemoIndex === null) {
+            canvasNodeLesson.linearDemoIndex = undefined;
+          }
+        }
         if (Number.isFinite(maybeW1)) canvasNodeLesson.weights.w1 = clampCanvasNodeNumber(maybeW1, -10, 10, canvasNodeLesson.weights.w1);
         if (Number.isFinite(maybeW2)) canvasNodeLesson.weights.w2 = clampCanvasNodeNumber(maybeW2, -10, 10, canvasNodeLesson.weights.w2);
         if (typeof lesson.useQuestionMarks === 'boolean') canvasNodeLesson.useQuestionMarks = lesson.useQuestionMarks;
@@ -552,7 +566,8 @@ module.exports = function initNeural({
                 },
                 activityId: canvasNodeLesson.activityId,
                 threshold: canvasNodeLesson.threshold,
-                useQuestionMarks: canvasNodeLesson.useQuestionMarks
+                useQuestionMarks: canvasNodeLesson.useQuestionMarks,
+                linearDemoIndex: canvasNodeLesson.linearDemoIndex
               }
             }
           });

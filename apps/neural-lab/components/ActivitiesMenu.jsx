@@ -7,7 +7,9 @@ const ACTIVITY_OPTIONS = [
   { value: '2a', label: '2α. Υπολογισμός εξόδων (εποπτικό μέσο)' },
   { value: '2b', label: '2β. Υπολογισμός εξόδων (μαθητές)' },
   { value: '3a', label: '3α. Προσαρμογή βαρών (εποπτικό μέσο)' },
-  { value: '3b', label: '3β. Προσαρμογή βαρών (μαθητές)' }
+  { value: '3b', label: '3β. Προσαρμογή βαρών (μαθητές)' },
+  { value: '4a', label: '4α. Κατώφλι (εποπτικό μέσο)' },
+  { value: '4b', label: '4β. Κατώφλι (μαθητές)' }
 ];
 
 export const ActivitiesMenu = ({ value = '1a', onChange }) => (

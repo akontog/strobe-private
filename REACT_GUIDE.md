@@ -92,12 +92,9 @@ import { BlueNumberBox, RedNumberBox } from '../shared-components/components/Blu
 
 ## 5. Bundling (για production)
 
-Χρησιμοποιήστε webpack ή Vite για bundle της εφαρμογής:
-
 ```bash
 npm run build
 npm run build:neural-lab
-npm run build:neural-lab:screen
 ```
 
 ## Δημιουργία Components

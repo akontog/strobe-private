@@ -4,10 +4,21 @@ export const DatasetSelector = ({
   datasets,
   currentDataset,
   currentExample,
+  currentLinearDemoIndex,
   onDatasetChange,
-  onExampleChange
-}) => 
-  (
+  onExampleChange,
+  onLinearDemoChange
+}) => {
+  // Παίρνουμε τα δεδομένα του τρέχοντος dataset
+  const currentData = datasets[currentDataset];
+  if (!currentData) {
+    return <div>Δεν υπάρχουν δεδομένα για το επιλεγμένο dataset</div>;
+  }
+
+  // Ο πίνακας linear_demos (αν υπάρχει)
+  const linearDemos = currentData.linear_demos || [];
+  
+  return (
     <Accordion title="🗄️ Δεδομένα">
     <div className="control-bar">
       <div className="select-group">
@@ -48,6 +59,27 @@ export const DatasetSelector = ({
           ))}
         </select>
       </div>
+      
+      <div className="select-group">
+          <label>📐 Διαχωρισμός</label>
+          <select 
+            value={currentLinearDemoIndex !== undefined ? currentLinearDemoIndex : ''} 
+            onChange={(e) => onLinearDemoChange(e.target.value !== '' ? parseInt(e.target.value, 10) : undefined)}
+          >
+            <option value="">-- Επιλέξτε --</option>
+            {linearDemos.map((demo, idx) => {
+              const label = demo.example;
+              const status = demo.separable ? '✅' : '❌';
+              const thresholdInfo = demo.threshold ? ` (Όριο: ${demo.threshold})` : ' (Μη διαχωρίσιμο)';
+              return (
+                <option key={idx} value={idx}>
+                  {idx+1}. {label} {status}{thresholdInfo}
+                </option>
+              );
+            })}
+          </select>
+        </div>
     </div>
   </Accordion>
   );
+};

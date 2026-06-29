@@ -50,13 +50,34 @@ body,
   border: 3px solid #3b82f6;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
+.demo-icon {
+  background: #fef3c7;
+  border-radius: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  min-width: 110px;
+  border: 2px solid #f59e0b;
+  transition: all 0.2s ease;
+}
+.demo-icon span {
+  font-size: 5.5rem;
+  line-height: 1;
+}
+.demo-icon.placeholder {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  opacity: 0.6;
+}
 .vertical-products {
   background: #fcfdff;
   border-radius: 2rem;
   padding: 1.2rem;
   display: flex;
-  align-items: stretch;
+  align-items: center;
   gap: 1.5rem;
+  justify-content: space-between;
   border: 2px solid #cbd5e1;
 }
 .big-icon {
@@ -79,6 +100,7 @@ body,
   gap: 1rem;
 }
 .product-row {
+  flex-wrap: nowrap;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -98,17 +120,21 @@ body,
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  min-width: 200px;
+  flex: 0 0 auto;
+  min-width: auto;
 }
 .blue-number-box,
 .red-number-box,
-.input-box-style {
-  padding: 0.4rem 1.2rem;
-  border-radius: 2.5rem;
-  font-weight: bold;
-  font-size: 1.4rem;
-  min-width: 90px;
+.input-box-style,
+.product-result {
+  box-sizing: border-box;
+  padding: 0.2rem 0.4rem;
+  width: 90px;
+  flex-shrink: 0;
   text-align: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 2.5rem;
 }
 .blue-number-box {
   background: #3b82f6;
@@ -123,6 +149,10 @@ body,
   border: 2px solid #94a3b8;
   color: #1e293b;
   font-family: monospace;
+}
+.product-result {
+  background: #e2e8f0;
+  color: #1e293b;
 }
 .multiply-symbol,
 .plus-symbol {
@@ -158,9 +188,11 @@ body,
 }
 .feature-text {
   font-weight: bold;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   color: #1e293b;
-  min-width: 85px;
+  width: 120px;
+  flex-shrink: 0;
+  text-align: left;
 }
 .product-result {
   background: #e2e8f0;
@@ -192,6 +224,7 @@ body,
   flex-wrap: wrap;
 }
 .total-result {
+  width: 120px;
   background: #10b981;
   padding: 0.4rem 1.5rem;
   border-radius: 2.5rem;
@@ -200,6 +233,12 @@ body,
   font-weight: bold;
   min-width: 120px;
   text-align: center;
+}
+.total-result.threshold-true {
+  background: #22c55e;
+}
+.total-result.threshold-false {
+  background: #ef4444;
 }
 .total-result.result-question {
   background: #f3f4f6;
@@ -215,20 +254,6 @@ body,
   font-weight: 700;
   text-align: center;
   padding: 0.4rem 0.9rem;
-}
-.threshold-indicator {
-  font-size: 1.2rem;
-  font-weight: bold;
-  padding: 0.3rem 1rem;
-  border-radius: 2rem;
-}
-.threshold-true {
-  background: #22c55e;
-  color: white;
-}
-.threshold-false {
-  background: #ef4444;
-  color: white;
 }
 .reveal-btn {
   background: #f59e0b;

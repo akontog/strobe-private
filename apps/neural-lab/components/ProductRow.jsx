@@ -25,8 +25,8 @@ export const ProductRow = ({
     return (
       <input
         className="input-box-style"
-        type="number"
-        value={value ?? ''}
+        type="text" inputMode="numeric"
+        value={value === null || value === undefined ? '' : String(value)}
         placeholder={placeholder}
         onChange={(event) => {
           if (typeof onChange === 'function') {
@@ -54,8 +54,8 @@ export const ProductRow = ({
           {productEditable ? (
             <input
               className="input-box-style"
-              type="number"
-              value={product ?? ''}
+              type="text" inputMode="numeric"
+              value={product === null || product === undefined ? '' : String(product)}
               placeholder={productPlaceholder}
               onChange={(event) => {
                 if (typeof onProductChange === 'function') {
@@ -70,8 +70,8 @@ export const ProductRow = ({
       ) : productEditable ? (
         <input
           className="input-box-style"
-          type="number"
-          value={product ?? ''}
+          type="text" inputMode="numeric"
+          value={product === null || product === undefined ? '' : String(product)}
           placeholder={productPlaceholder}
           onChange={(event) => {
             if (typeof onProductChange === 'function') {
