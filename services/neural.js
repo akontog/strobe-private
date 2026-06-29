@@ -16,7 +16,8 @@ module.exports = function initNeural({
   const canvasNodeTeachers = new Set();
   const canvasNodeStudents = new Map();
   let canvasSessionSeq = 0;
-  const CANVAS_NODE_THRESHOLD = 5;
+  const CANVAS_NODE_THRESHOLD = { op: '>=', boundary: 5 };
+  const THRESHOLD_OPS = new Set(['>', '<', '>=', '<=']);
   // Αρχική κατάσταση μαθήματος
   const canvasNodeLesson = {
     // δραστηριότητα που εκτελείται
@@ -30,7 +31,7 @@ module.exports = function initNeural({
     products: { p1: '', p2: '' }, total: '',
     // αν οι μαθητές βλέπουν ερωτηματικά
     useQuestionMarks: false,
-    // κατώφλι απόφασης (default: 5)
+    // κανόνας κατωφλίου απόφασης
     threshold: CANVAS_NODE_THRESHOLD,
     // γραμμικά ή μη διαχωρίσιμο παράδειγμα
     linearDemoIndex: undefined
@@ -83,6 +84,37 @@ module.exports = function initNeural({
     const parsed = Number(value);
     if (!Number.isFinite(parsed)) return fallback;
     return Math.max(min, Math.min(max, parsed));
+  }
+
+  function normalizeThresholdRule(rule, fallback = CANVAS_NODE_THRESHOLD) {
+    if (!rule || typeof rule !== 'object') {
+      return { ...fallback };
+    }
+
+    const op = THRESHOLD_OPS.has(rule.op) ? rule.op : fallback.op;
+    const boundary = Number.isFinite(Number(rule.boundary))
+      ? Number(rule.boundary)
+      : Number(fallback.boundary);
+
+    return { op, boundary };
+  }
+
+  function evaluateThresholdRule(value, rule) {
+    const safeRule = normalizeThresholdRule(rule);
+    const numericValue = Number(value);
+    const safeValue = Number.isFinite(numericValue) ? numericValue : 0;
+
+    switch (safeRule.op) {
+      case '>':
+        return safeValue > safeRule.boundary;
+      case '<':
+        return safeValue < safeRule.boundary;
+      case '<=':
+        return safeValue <= safeRule.boundary;
+      case '>=':
+      default:
+        return safeValue >= safeRule.boundary;
+    }
   }
   // Επικυρώνει w1/w2 στο [-10, 10] με 1 δεκαδικό, επιτρέπει κενό string
   function normalizeCanvasNodeStudentWeights(weights, fallback = {}) {
@@ -176,7 +208,7 @@ module.exports = function initNeural({
       i2: inputs.i2,
       result,
       threshold: canvasNodeLesson.threshold,
-      aboveThreshold: result >= canvasNodeLesson.threshold
+      aboveThreshold: evaluateThresholdRule(result, canvasNodeLesson.threshold)
     };
   }
 
@@ -571,8 +603,13 @@ module.exports = function initNeural({
             : '';
         }
         if (typeof lesson.useQuestionMarks === 'boolean') canvasNodeLesson.useQuestionMarks = lesson.useQuestionMarks;
-        if (Number.isFinite(Number(lesson.threshold))) {
-          canvasNodeLesson.threshold = clampCanvasNodeNumber(Number(lesson.threshold), -1000, 1000, canvasNodeLesson.threshold);
+        if (Object.prototype.hasOwnProperty.call(lesson, 'threshold')) {
+          const incomingThreshold = lesson.threshold;
+          if (Number.isFinite(Number(incomingThreshold))) {
+            canvasNodeLesson.threshold = normalizeThresholdRule({ op: '>=', boundary: Number(incomingThreshold) }, canvasNodeLesson.threshold);
+          } else {
+            canvasNodeLesson.threshold = normalizeThresholdRule(incomingThreshold, canvasNodeLesson.threshold);
+          }
         }
 
         const lessonContextChanged = prevActivityId !== canvasNodeLesson.activityId

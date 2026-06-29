@@ -9,6 +9,37 @@ import DATASETS from './data/datasets';
 //import { StudentTable } from '../shared/components/StudentTable';
 import './App.css';
 
+const DEFAULT_THRESHOLD_RULE = { op: '>=', boundary: 5 };
+const THRESHOLD_OPS = new Set(['>', '<', '>=', '<=']);
+
+const normalizeThresholdRule = (rule, fallback = DEFAULT_THRESHOLD_RULE) => {
+  if (!rule || typeof rule !== 'object') {
+    return { ...fallback };
+  }
+
+  const op = THRESHOLD_OPS.has(rule.op) ? rule.op : fallback.op;
+  const boundary = Number.isFinite(Number(rule.boundary)) ? Number(rule.boundary) : Number(fallback.boundary);
+  return { op, boundary };
+};
+
+const evaluateThresholdRule = (value, rule) => {
+  const numericValue = Number(value);
+  const safeValue = Number.isFinite(numericValue) ? numericValue : 0;
+  const safeRule = normalizeThresholdRule(rule);
+
+  switch (safeRule.op) {
+    case '>':
+      return safeValue > safeRule.boundary;
+    case '<':
+      return safeValue < safeRule.boundary;
+    case '<=':
+      return safeValue <= safeRule.boundary;
+    case '>=':
+    default:
+      return safeValue >= safeRule.boundary;
+  }
+};
+
 
 
 const App = ({ role = 'teacher' }) => {
@@ -64,7 +95,7 @@ const App = ({ role = 'teacher' }) => {
   const [lessonProducts, setLessonProducts] = useState({ p1: '', p2: '' });
   const [lessonTotal, setLessonTotal] = useState('');
   const [lessonWeights, setLessonWeights] = useState({ w1: 2, w2: 3 });
-  const [lessonThreshold, setLessonThreshold] = useState(5);
+  const [lessonThreshold, setLessonThreshold] = useState(DEFAULT_THRESHOLD_RULE);
   const [lessonDataset, setLessonDataset] = useState('vehicles');
   const [lessonExampleIndex, setLessonExampleIndex] = useState(0);
   const [lessonIcon, setLessonIcon] = useState('🚗');
@@ -108,6 +139,9 @@ const saveStudentName = () => {
   
   
   const currentExampleData = DATASETS[currentDataset].examples[currentExample];
+  const currentDatasetLinearDemos = DATASETS[currentDataset]?.linear_demos || [];
+  const teacherThresholdFromDemo = currentDatasetLinearDemos[currentLinearDemoIndex]?.threshold || DEFAULT_THRESHOLD_RULE;
+  const teacherThresholdRule = normalizeThresholdRule(teacherThresholdFromDemo);
   const isTeacher = role === 'teacher';
   const isScreen = role === 'screen';
   const isStudent = role === 'student';
@@ -145,13 +179,15 @@ const saveStudentName = () => {
 
   const isInputEditable = (isTeacher && (activeActivity === '1a' || activeActivity === '1b'))
     || (isStudent && activeActivity === '1b');
-  const isWeightEditable = (isTeacher && (activeActivity === '3a' || activeActivity === '3b' || activeActivity === '4a'))
+  const isWeightEditable = (isTeacher && (activeActivity === '3a' || activeActivity === '3b' || activeActivity === '4a' || activeActivity === '4b'))
     || (isStudent && (activeActivity === '3b' || activeActivity === '4b'));
   const isProductEditable = (isTeacher && (activeActivity === '2a' || activeActivity === '2b'))
     || (isStudent && activeActivity === '2b');
   const isTotalEditable = isProductEditable;
   const isThresholdVisible = activeActivity === '3a' || activeActivity === '3b' || activeActivity === '4a' || activeActivity === '4b';
   const showThresholdUnderIcon = activeActivity === '4a' || activeActivity === '4b';
+  const effectiveThresholdRule = isTeacher ? teacherThresholdRule : lessonThreshold;
+  const thresholdDisplayText = `${effectiveThresholdRule.op} ${effectiveThresholdRule.boundary}`;
 
   const currentInputs = isTeacher
     ? teacherInputs
@@ -203,8 +239,9 @@ const saveStudentName = () => {
   const mathTitle = formulaByActivity[activeActivity] || '$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$';
 
   const threshold = {
-    satisfied: toFinite(total) >= toFinite(lessonThreshold, 5),
-    value: lessonThreshold,
+    satisfied: evaluateThresholdRule(total, effectiveThresholdRule),
+    value: thresholdDisplayText,
+    rule: effectiveThresholdRule,
     total: toFinite(total)
   };
 
@@ -309,8 +346,13 @@ const saveStudentName = () => {
           setLessonTarget(Number(message.lesson.targetIndex));
         }
 
-        if (Number.isFinite(Number(message.lesson?.threshold))) {
-          setLessonThreshold(Number(message.lesson.threshold));
+        if (Object.prototype.hasOwnProperty.call(message.lesson, 'threshold')) {
+          const incomingThreshold = message.lesson.threshold;
+          if (Number.isFinite(Number(incomingThreshold))) {
+            setLessonThreshold(normalizeThresholdRule({ op: '>=', boundary: Number(incomingThreshold) }));
+          } else {
+            setLessonThreshold(normalizeThresholdRule(incomingThreshold));
+          }
         }
 
         if (typeof message.lesson?.dataset === 'string' && DATASETS[message.lesson.dataset]) {
@@ -455,7 +497,7 @@ const saveStudentName = () => {
           w1: dynamicW1,
           w2: dynamicW2
         },
-        threshold: lessonThreshold,
+        threshold: teacherThresholdRule,
         linearDemoIndex: currentLinearDemoIndex
       }
     });
@@ -474,7 +516,8 @@ const saveStudentName = () => {
     teacherProducts.p1,
     teacherProducts.p2,
     teacherTotal,
-    lessonThreshold,
+    teacherThresholdRule.op,
+    teacherThresholdRule.boundary,
     currentLinearDemoIndex
   ]);
 
@@ -646,7 +689,7 @@ const saveStudentName = () => {
             }
           }}
           showThreshold={isThresholdVisible}
-          thresholdValue={lessonThreshold}
+          thresholdValue={thresholdDisplayText}
           showThresholdUnderIcon={showThresholdUnderIcon}
         />
       </div>
@@ -657,7 +700,7 @@ const saveStudentName = () => {
             i1={lessonInputs.i1}
             i2={lessonInputs.i2}
             features={DATASETS[safeDisplayDataset].features}
-            threshold={lessonThreshold}
+            threshold={effectiveThresholdRule}
             participants={sortedParticipants}
             activity={lessonActivity}
           />

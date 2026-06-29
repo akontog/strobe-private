@@ -21570,7 +21570,7 @@ var DatasetSelector = ({
     linearDemos.map((demo, idx) => {
       const label = demo.example;
       const status = demo.separable ? "\u2705" : "\u274C";
-      const thresholdInfo = demo.threshold ? ` (\u038C\u03C1\u03B9\u03BF: ${demo.threshold})` : " (\u039C\u03B7 \u03B4\u03B9\u03B1\u03C7\u03C9\u03C1\u03AF\u03C3\u03B9\u03BC\u03BF)";
+      const thresholdInfo = demo.threshold && typeof demo.threshold === "object" ? ` (\u038C\u03C1\u03B9\u03BF: ${demo.threshold.op} ${demo.threshold.boundary})` : " (\u039C\u03B7 \u03B4\u03B9\u03B1\u03C7\u03C9\u03C1\u03AF\u03C3\u03B9\u03BC\u03BF)";
       return /* @__PURE__ */ import_react4.default.createElement("option", { key: idx, value: idx }, idx + 1, ". ", label, " ", status, thresholdInfo);
     })
   ))));
@@ -21817,7 +21817,7 @@ var StudentTable2 = ({
   i2,
   features,
   participants = [],
-  threshold = 5,
+  threshold = { op: ">=", boundary: 5 },
   activity = "1a"
 }) => {
   let columns = [
@@ -21867,7 +21867,7 @@ var StudentTable2 = ({
     render: (student) => {
       const resultValue = student.total ?? student.result ?? "-";
       const showThreshold = activity === "4a" || activity === "4b";
-      return /* @__PURE__ */ import_react8.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "0.3rem" } }, /* @__PURE__ */ import_react8.default.createElement("span", null, resultValue), showThreshold && typeof student.aboveThreshold === "boolean" && /* @__PURE__ */ import_react8.default.createElement("span", { style: { marginLeft: "0.45rem", fontWeight: 700, color: student.aboveThreshold ? "#059669" : "#dc2626" } }, student.aboveThreshold ? `>= ${threshold}` : `< ${threshold}`));
+      return /* @__PURE__ */ import_react8.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "0.3rem" } }, /* @__PURE__ */ import_react8.default.createElement("span", null, resultValue), showThreshold && typeof student.aboveThreshold === "boolean" && /* @__PURE__ */ import_react8.default.createElement("span", { style: { marginLeft: "0.45rem", fontWeight: 700, color: student.aboveThreshold ? "#059669" : "#dc2626" } }, student.aboveThreshold ? `${threshold.op} ${threshold.boundary}` : `\u03CC\u03C7\u03B9 ${threshold.op} ${threshold.boundary}`));
     }
   });
   return /* @__PURE__ */ import_react8.default.createElement(
@@ -21942,7 +21942,7 @@ var DATASETS = {
         // 1ο: Γραμμικά διαχωρίσιμο
         example: "\u0391\u03B5\u03C1\u03BF\u03C0\u03BB\u03AC\u03BD\u03BF",
         point: { i1: 6, i2: 2 },
-        threshold: "i2 > 1.5",
+        threshold: { op: ">", boundary: 1.5 },
         separable: true,
         description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03CC\u03C7\u03B7\u03BC\u03B1 \u03BC\u03B5 2 \u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2. \u03A4\u03BF \u03BA\u03B1\u03C4\u03B1\u03BA\u03CC\u03C1\u03C5\u03C6\u03BF \u03CC\u03C1\u03B9\u03BF i2=1.5 \u03C4\u03BF \u03B1\u03C0\u03BF\u03BC\u03BF\u03BD\u03CE\u03BD\u03B5\u03B9."
       },
@@ -21950,7 +21950,7 @@ var DATASETS = {
         // 2ο: Γραμμικά διαχωρίσιμο
         example: "\u0399\u03C3\u03C4\u03B9\u03BF\u03C6\u03CC\u03C1\u03BF",
         point: { i1: 0, i2: 0 },
-        threshold: "i1 + i2 < 0.5",
+        threshold: { op: "<", boundary: 0.5 },
         separable: true,
         description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03CC\u03C7\u03B7\u03BC\u03B1 \u03BC\u03B5 0 \u03C1\u03CC\u03B4\u03B5\u03C2 \u039A\u0391\u0399 0 \u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2. \u0397 \u03B5\u03C5\u03B8\u03B5\u03AF\u03B1 i1+i2=0.5 \u03C4\u03BF \u03BE\u03B5\u03C7\u03C9\u03C1\u03AF\u03B6\u03B5\u03B9."
       },
@@ -21958,7 +21958,7 @@ var DATASETS = {
         // 3ο: ΜΗ γραμμικά διαχωρίσιμο (τελευταίο)
         example: "\u039A\u03B1\u03C1\u03BF\u03C4\u03C3\u03AC\u03BA\u03B9",
         points: [{ i1: 4, i2: 0 }, { i1: 4, i2: 0 }],
-        threshold: null,
+        threshold: { op: ">=", boundary: 5 },
         separable: false,
         description: "\u039A\u03B1\u03B9 \u03C4\u03B1 \u03B4\u03CD\u03BF \u03AD\u03C7\u03BF\u03C5\u03BD \u03B1\u03BA\u03C1\u03B9\u03B2\u03CE\u03C2 \u03C4\u03B1 \u03AF\u03B4\u03B9\u03B1 \u03C7\u03B1\u03C1\u03B1\u03BA\u03C4\u03B7\u03C1\u03B9\u03C3\u03C4\u03B9\u03BA\u03AC (4 \u03C1\u03CC\u03B4\u03B5\u03C2, 0 \u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2). \u0395\u03AF\u03BD\u03B1\u03B9 \u03C0\u03B1\u03BD\u03BF\u03BC\u03BF\u03B9\u03CC\u03C4\u03C5\u03C0\u03B1 \u03C3\u03B7\u03BC\u03B5\u03AF\u03B1 \u03C3\u03C4\u03BF\u03BD \u03C7\u03CE\u03C1\u03BF, \u03AC\u03C1\u03B1 \u03BA\u03B1\u03BC\u03AF\u03B1 \u03B5\u03C5\u03B8\u03B5\u03AF\u03B1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B4\u03B5\u03BD \u03BC\u03C0\u03BF\u03C1\u03B5\u03AF \u03BD\u03B1 \u03C4\u03B1 \u03B4\u03B9\u03B1\u03C7\u03C9\u03C1\u03AF\u03C3\u03B5\u03B9."
       }
@@ -21989,7 +21989,7 @@ var DATASETS = {
         // 1ο: Γραμμικά διαχωρίσιμο
         example: "\u039F\u03BA\u03C4\u03CE",
         point: { i1: 2, i2: 1 },
-        threshold: "i1 > 1.5",
+        threshold: { op: ">", boundary: 1.5 },
         separable: true,
         description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03C8\u03B7\u03C6\u03AF\u03BF \u03BC\u03B5 2 \u03BA\u03CD\u03BA\u03BB\u03BF\u03C5\u03C2. \u03A4\u03BF \u03CC\u03C1\u03B9\u03BF i1=1.5 \u03C4\u03BF \u03B1\u03C0\u03BF\u03BC\u03BF\u03BD\u03CE\u03BD\u03B5\u03B9 \u03B1\u03C0\u03CC\u03BB\u03C5\u03C4\u03B1."
       },
@@ -21997,7 +21997,7 @@ var DATASETS = {
         // 2ο: Γραμμικά διαχωρίσιμο
         example: "\u039C\u03B7\u03B4\u03AD\u03BD",
         point: { i1: 1, i2: 0 },
-        threshold: "i1 - 2*i2 > 0.5",
+        threshold: { op: ">", boundary: 0.5 },
         separable: true,
         description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03C8\u03B7\u03C6\u03AF\u03BF \u03BC\u03B5 1 \u03BA\u03CD\u03BA\u03BB\u03BF \u03BA\u03B1\u03B9 0 \u03C3\u03C4\u03B1\u03C5\u03C1\u03BF\u03B4\u03C1\u03CC\u03BC\u03B9\u03B1. \u0397 \u03B5\u03C5\u03B8\u03B5\u03AF\u03B1 i1 - 2*i2 = 0.5 \u03C4\u03BF \u03BE\u03B5\u03C7\u03C9\u03C1\u03AF\u03B6\u03B5\u03B9 (\u03B5\u03BB\u03AD\u03B3\u03BE\u03C4\u03B5 \u03C4\u03BF: \u03B3\u03B9\u03B1 \u03C4\u03BF 0 \u03B4\u03AF\u03BD\u03B5\u03B9 1>0.5, \u03B5\u03BD\u03CE \u03B3\u03B9\u03B1 8 \u03B4\u03AF\u03BD\u03B5\u03B9 0, \u03B3\u03B9\u03B1 4/6/9 \u03B4\u03AF\u03BD\u03B5\u03B9 -1)."
       },
@@ -22005,7 +22005,7 @@ var DATASETS = {
         // 3ο: ΜΗ γραμμικά διαχωρίσιμο (τελευταίο)
         example: "\u0388\u03BE\u03B9",
         points: { i1: 1, i2: 1 },
-        threshold: null,
+        threshold: { op: ">=", boundary: 5 },
         separable: false,
         description: "\u039A\u03B1\u03B9 \u03C4\u03B1 \u03C4\u03C1\u03AF\u03B1 \u03C8\u03B7\u03C6\u03AF\u03B1 (4, 6, 9) \u03AD\u03C7\u03BF\u03C5\u03BD \u03B1\u03BA\u03C1\u03B9\u03B2\u03CE\u03C2 1 \u03BA\u03CD\u03BA\u03BB\u03BF \u03BA\u03B1\u03B9 1 \u03C3\u03C4\u03B1\u03C5\u03C1\u03BF\u03B4\u03C1\u03CC\u03BC\u03B9. \u0395\u03C0\u03B5\u03B9\u03B4\u03AE \u03C4\u03B1 \u03C3\u03B7\u03BC\u03B5\u03AF\u03B1 \u03C4\u03BF\u03C5\u03C2 \u03C4\u03B1\u03C5\u03C4\u03AF\u03B6\u03BF\u03BD\u03C4\u03B1\u03B9, \u03B5\u03AF\u03BD\u03B1\u03B9 \u03BC\u03B1\u03B8\u03B7\u03BC\u03B1\u03C4\u03B9\u03BA\u03AC \u03B1\u03B4\u03CD\u03BD\u03B1\u03C4\u03BF \u03BD\u03B1 \u03B2\u03C1\u03B5\u03B8\u03B5\u03AF \u03B5\u03C5\u03B8\u03B5\u03AF\u03B1 \u03C0\u03BF\u03C5 \u03BD\u03B1 \u03C7\u03C9\u03C1\u03AF\u03B6\u03B5\u03B9 \u03C4\u03BF \u03AD\u03BD\u03B1 \u03B1\u03C0\u03CC \u03C4\u03B1 \u03AC\u03BB\u03BB\u03B1 \u03B4\u03CD\u03BF."
       }
@@ -22015,6 +22015,32 @@ var DATASETS = {
 var datasets_default = DATASETS;
 
 // apps/neural-lab/App.jsx
+var DEFAULT_THRESHOLD_RULE = { op: ">=", boundary: 5 };
+var THRESHOLD_OPS = /* @__PURE__ */ new Set([">", "<", ">=", "<="]);
+var normalizeThresholdRule = (rule, fallback = DEFAULT_THRESHOLD_RULE) => {
+  if (!rule || typeof rule !== "object") {
+    return { ...fallback };
+  }
+  const op = THRESHOLD_OPS.has(rule.op) ? rule.op : fallback.op;
+  const boundary = Number.isFinite(Number(rule.boundary)) ? Number(rule.boundary) : Number(fallback.boundary);
+  return { op, boundary };
+};
+var evaluateThresholdRule = (value, rule) => {
+  const numericValue = Number(value);
+  const safeValue = Number.isFinite(numericValue) ? numericValue : 0;
+  const safeRule = normalizeThresholdRule(rule);
+  switch (safeRule.op) {
+    case ">":
+      return safeValue > safeRule.boundary;
+    case "<":
+      return safeValue < safeRule.boundary;
+    case "<=":
+      return safeValue <= safeRule.boundary;
+    case ">=":
+    default:
+      return safeValue >= safeRule.boundary;
+  }
+};
 var App = ({ role = "teacher" }) => {
   const wsRef = (0, import_react10.useRef)(null);
   const reconnectTimerRef = (0, import_react10.useRef)(null);
@@ -22042,7 +22068,7 @@ var App = ({ role = "teacher" }) => {
   const [lessonProducts, setLessonProducts] = (0, import_react10.useState)({ p1: "", p2: "" });
   const [lessonTotal, setLessonTotal] = (0, import_react10.useState)("");
   const [lessonWeights, setLessonWeights] = (0, import_react10.useState)({ w1: 2, w2: 3 });
-  const [lessonThreshold, setLessonThreshold] = (0, import_react10.useState)(5);
+  const [lessonThreshold, setLessonThreshold] = (0, import_react10.useState)(DEFAULT_THRESHOLD_RULE);
   const [lessonDataset, setLessonDataset] = (0, import_react10.useState)("vehicles");
   const [lessonExampleIndex, setLessonExampleIndex] = (0, import_react10.useState)(0);
   const [lessonIcon, setLessonIcon] = (0, import_react10.useState)("\u{1F697}");
@@ -22073,6 +22099,9 @@ var App = ({ role = "teacher" }) => {
   const [editingName, setEditingName] = (0, import_react10.useState)(false);
   const [studentNameInput, setStudentNameInput] = (0, import_react10.useState)(studentName);
   const currentExampleData = datasets_default[currentDataset].examples[currentExample];
+  const currentDatasetLinearDemos = datasets_default[currentDataset]?.linear_demos || [];
+  const teacherThresholdFromDemo = currentDatasetLinearDemos[currentLinearDemoIndex]?.threshold || DEFAULT_THRESHOLD_RULE;
+  const teacherThresholdRule = normalizeThresholdRule(teacherThresholdFromDemo);
   const isTeacher = role === "teacher";
   const isScreen = role === "screen";
   const isStudent = role === "student";
@@ -22102,11 +22131,13 @@ var App = ({ role = "teacher" }) => {
     return Number.isFinite(num) ? num : fallback;
   };
   const isInputEditable = isTeacher && (activeActivity === "1a" || activeActivity === "1b") || isStudent && activeActivity === "1b";
-  const isWeightEditable = isTeacher && (activeActivity === "3a" || activeActivity === "3b" || activeActivity === "4a") || isStudent && (activeActivity === "3b" || activeActivity === "4b");
+  const isWeightEditable = isTeacher && (activeActivity === "3a" || activeActivity === "3b" || activeActivity === "4a" || activeActivity === "4b") || isStudent && (activeActivity === "3b" || activeActivity === "4b");
   const isProductEditable = isTeacher && (activeActivity === "2a" || activeActivity === "2b") || isStudent && activeActivity === "2b";
   const isTotalEditable = isProductEditable;
   const isThresholdVisible = activeActivity === "3a" || activeActivity === "3b" || activeActivity === "4a" || activeActivity === "4b";
   const showThresholdUnderIcon = activeActivity === "4a" || activeActivity === "4b";
+  const effectiveThresholdRule = isTeacher ? teacherThresholdRule : lessonThreshold;
+  const thresholdDisplayText = `${effectiveThresholdRule.op} ${effectiveThresholdRule.boundary}`;
   const currentInputs = isTeacher ? teacherInputs : isStudent && activeActivity === "1b" ? studentInputs : lessonInputs;
   const i1 = currentInputs.i1;
   const i2 = currentInputs.i2;
@@ -22134,8 +22165,9 @@ var App = ({ role = "teacher" }) => {
   };
   const mathTitle = formulaByActivity[activeActivity] || "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$";
   const threshold = {
-    satisfied: toFinite(total) >= toFinite(lessonThreshold, 5),
-    value: lessonThreshold,
+    satisfied: evaluateThresholdRule(total, effectiveThresholdRule),
+    value: thresholdDisplayText,
+    rule: effectiveThresholdRule,
     total: toFinite(total)
   };
   const handleWeightChange = (which, value) => {
@@ -22222,8 +22254,13 @@ var App = ({ role = "teacher" }) => {
         if (Number.isInteger(Number(message.lesson?.targetIndex))) {
           setLessonTarget(Number(message.lesson.targetIndex));
         }
-        if (Number.isFinite(Number(message.lesson?.threshold))) {
-          setLessonThreshold(Number(message.lesson.threshold));
+        if (Object.prototype.hasOwnProperty.call(message.lesson, "threshold")) {
+          const incomingThreshold = message.lesson.threshold;
+          if (Number.isFinite(Number(incomingThreshold))) {
+            setLessonThreshold(normalizeThresholdRule({ op: ">=", boundary: Number(incomingThreshold) }));
+          } else {
+            setLessonThreshold(normalizeThresholdRule(incomingThreshold));
+          }
         }
         if (typeof message.lesson?.dataset === "string" && datasets_default[message.lesson.dataset]) {
           setLessonDataset(message.lesson.dataset);
@@ -22346,7 +22383,7 @@ var App = ({ role = "teacher" }) => {
           w1: dynamicW1,
           w2: dynamicW2
         },
-        threshold: lessonThreshold,
+        threshold: teacherThresholdRule,
         linearDemoIndex: currentLinearDemoIndex
       }
     });
@@ -22365,7 +22402,8 @@ var App = ({ role = "teacher" }) => {
     teacherProducts.p1,
     teacherProducts.p2,
     teacherTotal,
-    lessonThreshold,
+    teacherThresholdRule.op,
+    teacherThresholdRule.boundary,
     currentLinearDemoIndex
   ]);
   (0, import_react10.useEffect)(() => {
@@ -22486,7 +22524,7 @@ var App = ({ role = "teacher" }) => {
         }
       },
       showThreshold: isThresholdVisible,
-      thresholdValue: lessonThreshold,
+      thresholdValue: thresholdDisplayText,
       showThresholdUnderIcon
     }
   )), (isTeacher || isScreen) && /* @__PURE__ */ import_react10.default.createElement("div", { className: "live-table-wrap" }, /* @__PURE__ */ import_react10.default.createElement(
@@ -22495,7 +22533,7 @@ var App = ({ role = "teacher" }) => {
       i1: lessonInputs.i1,
       i2: lessonInputs.i2,
       features: datasets_default[safeDisplayDataset].features,
-      threshold: lessonThreshold,
+      threshold: effectiveThresholdRule,
       participants: sortedParticipants,
       activity: lessonActivity
     }

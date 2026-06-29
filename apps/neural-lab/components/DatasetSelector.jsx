@@ -63,7 +63,9 @@ export const DatasetSelector = ({
             {linearDemos.map((demo, idx) => {
               const label = demo.example;
               const status = demo.separable ? '✅' : '❌';
-              const thresholdInfo = demo.threshold ? ` (Όριο: ${demo.threshold})` : ' (Μη διαχωρίσιμο)';
+              const thresholdInfo = demo.threshold && typeof demo.threshold === 'object'
+                ? ` (Όριο: ${demo.threshold.op} ${demo.threshold.boundary})`
+                : ' (Μη διαχωρίσιμο)';
               return (
                 <option key={idx} value={idx}>
                   {idx+1}. {label} {status}{thresholdInfo}

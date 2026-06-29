@@ -6,7 +6,7 @@ export const StudentTable = ({
     i2, 
     features,
     participants = [], 
-    threshold = 5,
+  threshold = { op: '>=', boundary: 5 },
     activity = '1a'
   }) => {
   
@@ -65,7 +65,7 @@ export const StudentTable = ({
           <span>{resultValue}</span>
           {showThreshold && typeof student.aboveThreshold === 'boolean' && (
             <span style={{ marginLeft: '0.45rem', fontWeight: 700, color: student.aboveThreshold ? '#059669' : '#dc2626' }}>
-              {student.aboveThreshold ? `>= ${threshold}` : `< ${threshold}`}
+              {student.aboveThreshold ? `${threshold.op} ${threshold.boundary}` : `όχι ${threshold.op} ${threshold.boundary}`}
             </span>
           )}
         </div>
