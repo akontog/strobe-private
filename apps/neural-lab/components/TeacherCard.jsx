@@ -5,7 +5,9 @@ export const TeacherCard = ({ children, title }) => (
   <div className="teacher-card">
     {title && (
       <div className="hero-title">
-        <div className="main-equation" dangerouslySetInnerHTML={{ __html: title }} />
+        <div className="main-equation">
+          <MathFormula formula={title} />
+        </div>
       </div>
     )}
     {children}

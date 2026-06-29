@@ -21464,9 +21464,51 @@ var import_react2 = __toESM(require_react());
 
 // apps/neural-lab/components/MathFormula.jsx
 var import_react = __toESM(require_react());
+var MathFormula = ({ formula }) => {
+  const containerRef = (0, import_react.useRef)(null);
+  (0, import_react.useEffect)(() => {
+    if (!containerRef.current) return;
+    containerRef.current.innerHTML = formula || "";
+    const tryTypeset = () => {
+      if (!containerRef.current || !window.MathJax) return false;
+      const mj = window.MathJax;
+      if (mj.Hub && typeof mj.Hub.Queue === "function") {
+        mj.Hub.Queue(["Typeset", mj.Hub, containerRef.current]);
+        return true;
+      }
+      if (typeof mj.typesetPromise !== "function") {
+        return false;
+      }
+      const doTypeset = () => {
+        mj.typesetPromise([containerRef.current]).catch((err) => {
+          console.warn("MathJax error:", err);
+        });
+      };
+      if (mj.startup && mj.startup.promise) {
+        mj.startup.promise.then(doTypeset).catch((err) => {
+          console.warn("MathJax startup error:", err);
+        });
+      } else {
+        doTypeset();
+      }
+      return true;
+    };
+    if (tryTypeset()) return;
+    const intervalId = window.setInterval(() => {
+      if (tryTypeset()) {
+        window.clearInterval(intervalId);
+      }
+    }, 120);
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [formula]);
+  return /* @__PURE__ */ import_react.default.createElement("span", { ref: containerRef });
+};
+var MathFormula_default = MathFormula;
 
 // apps/neural-lab/components/TeacherCard.jsx
-var TeacherCard = ({ children, title }) => /* @__PURE__ */ import_react2.default.createElement("div", { className: "teacher-card" }, title && /* @__PURE__ */ import_react2.default.createElement("div", { className: "hero-title" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "main-equation", dangerouslySetInnerHTML: { __html: title } })), children);
+var TeacherCard = ({ children, title }) => /* @__PURE__ */ import_react2.default.createElement("div", { className: "teacher-card" }, title && /* @__PURE__ */ import_react2.default.createElement("div", { className: "hero-title" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "main-equation" }, /* @__PURE__ */ import_react2.default.createElement(MathFormula_default, { formula: title }))), children);
 
 // apps/neural-lab/components/DatasetSelector.jsx
 var import_react4 = __toESM(require_react());
@@ -22374,21 +22416,6 @@ var App = ({ role = "teacher" }) => {
       setDynamicW2("");
     }
   }, [isStudent, lessonActivity, lessonExampleIndex]);
-  (0, import_react10.useEffect)(() => {
-    const renderMath = () => {
-      const mj = window.MathJax;
-      if (!mj) return;
-      if (typeof mj.typesetPromise === "function") {
-        mj.typesetPromise().catch((err) => console.error("MathJax error:", err));
-        return;
-      }
-      if (mj.Hub && typeof mj.Hub.Queue === "function") {
-        mj.Hub.Queue(["Typeset", mj.Hub]);
-      }
-    };
-    const timeoutId = setTimeout(renderMath, 50);
-    return () => clearTimeout(timeoutId);
-  }, [role, currentDataset, currentExample, selectedActivity, lessonActivity]);
   const sortedParticipants = [...participants].sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
   return /* @__PURE__ */ import_react10.default.createElement(TeacherCard, { title: mathTitle }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "connection-status" }, /* @__PURE__ */ import_react10.default.createElement("span", { className: `status-dot ${isSocketConnected ? "online" : "offline"}` }), /* @__PURE__ */ import_react10.default.createElement("strong", null, isSocketConnected ? "\u03A3\u03B5 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7" : "\u0395\u03BA\u03C4\u03CC\u03C2 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7\u03C2"), isStudent && (editingName ? /* @__PURE__ */ import_react10.default.createElement(
     "input",

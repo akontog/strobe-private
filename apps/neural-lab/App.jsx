@@ -543,25 +543,6 @@ const saveStudentName = () => {
     }
   }, [isStudent, lessonActivity, lessonExampleIndex]);
 
-  useEffect(() => {
-  const renderMath = () => {
-    const mj = window.MathJax;
-    if (!mj) return;
-
-    if (typeof mj.typesetPromise === 'function') {
-      mj.typesetPromise().catch((err) => console.error('MathJax error:', err));
-      return;
-    }
-
-    if (mj.Hub && typeof mj.Hub.Queue === 'function') {
-      mj.Hub.Queue(['Typeset', mj.Hub]);
-    }
-  };
-
-  // Μικρή καθυστέρηση για να προλάβει το React να κάνει render το innerHTML
-  const timeoutId = setTimeout(renderMath, 50);
-  return () => clearTimeout(timeoutId);
-}, [role, currentDataset, currentExample, selectedActivity, lessonActivity]);
   const sortedParticipants = [...participants].sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
 
   return (
