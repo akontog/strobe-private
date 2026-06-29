@@ -5,9 +5,12 @@ export const DatasetSelector = ({
   currentDataset,
   currentExample,
   currentLinearDemoIndex,
+  selectedInputs,
+  features,
   onDatasetChange,
   onExampleChange,
   onLinearDemoChange,
+  onSelectedInputsChange,
   isLinearDemoDisabled = false,
   demoIconWhenDisabled = '?'
 }) => {
@@ -19,6 +22,34 @@ export const DatasetSelector = ({
 
   // Ο πίνακας linear_demos (αν υπάρχει)
   const linearDemos = currentData.linear_demos || [];
+
+  const activeInputSelection = {
+    i1: selectedInputs?.i1 !== false,
+    i2: Boolean(selectedInputs?.i2)
+  };
+
+  const resolveThresholdLabel = (threshold) => {
+    if (!threshold || typeof threshold !== 'object') {
+      return ' (Μη διαχωρίσιμο)';
+    }
+
+    if (!threshold.both && !threshold.i1 && !threshold.i2) {
+      return ` (Όριο: ${threshold.op} ${threshold.boundary})`;
+    }
+
+    const key = activeInputSelection.i1 && activeInputSelection.i2
+      ? 'both'
+      : activeInputSelection.i1
+        ? 'i1'
+        : activeInputSelection.i2
+          ? 'i2'
+          : 'both';
+
+    const selectedThreshold = threshold[key] || threshold.both || threshold.i1 || threshold.i2;
+    return selectedThreshold
+      ? ` (Όριο: ${selectedThreshold.op} ${selectedThreshold.boundary})`
+      : ' (Μη διαχωρίσιμο)';
+  };
   
   return (
     <Accordion title="🗄️ Δεδομένα">
@@ -51,6 +82,42 @@ export const DatasetSelector = ({
           ))}
         </select>
       </div>
+
+      <div className="select-group">
+        <label>🎛️ Ενεργά Inputs</label>
+        <div className="inputs-toggle-group">
+          <label className="input-toggle-item">
+            <input
+              type="checkbox"
+              checked={Boolean(activeInputSelection.i1)}
+              onChange={(e) => {
+                if (typeof onSelectedInputsChange === 'function') {
+                  onSelectedInputsChange({
+                    ...activeInputSelection,
+                    i1: e.target.checked
+                  });
+                }
+              }}
+            />
+            <span>{features?.i1?.icon} {features?.i1?.label || 'Input 1'}</span>
+          </label>
+          <label className="input-toggle-item">
+            <input
+              type="checkbox"
+              checked={Boolean(activeInputSelection.i2)}
+              onChange={(e) => {
+                if (typeof onSelectedInputsChange === 'function') {
+                  onSelectedInputsChange({
+                    ...activeInputSelection,
+                    i2: e.target.checked
+                  });
+                }
+              }}
+            />
+            <span>{features?.i2?.icon} {features?.i2?.label || 'Input 2'}</span>
+          </label>
+        </div>
+      </div>
       
       <div className="select-group">
           <label>📐 Διαχωρισμός {isLinearDemoDisabled ? demoIconWhenDisabled : ''}</label>
@@ -63,9 +130,7 @@ export const DatasetSelector = ({
             {linearDemos.map((demo, idx) => {
               const label = demo.example;
               const status = demo.separable ? '✅' : '❌';
-              const thresholdInfo = demo.threshold && typeof demo.threshold === 'object'
-                ? ` (Όριο: ${demo.threshold.op} ${demo.threshold.boundary})`
-                : ' (Μη διαχωρίσιμο)';
+              const thresholdInfo = resolveThresholdLabel(demo.threshold);
               return (
                 <option key={idx} value={idx}>
                   {idx+1}. {label} {status}{thresholdInfo}

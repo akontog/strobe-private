@@ -10,6 +10,7 @@ import DATASETS from './data/datasets';
 import './App.css';
 
 const DEFAULT_THRESHOLD_RULE = { op: '>=', boundary: 5 };
+const DEFAULT_SELECTED_INPUTS = { i1: true, i2: false };
 const THRESHOLD_OPS = new Set(['>', '<', '>=', '<=']);
 
 const normalizeThresholdRule = (rule, fallback = DEFAULT_THRESHOLD_RULE) => {
@@ -38,6 +39,37 @@ const evaluateThresholdRule = (value, rule) => {
     default:
       return safeValue >= safeRule.boundary;
   }
+};
+
+const normalizeSelectedInputs = (value, fallback = DEFAULT_SELECTED_INPUTS) => {
+  const source = value && typeof value === 'object' ? value : {};
+  return {
+    i1: typeof source.i1 === 'boolean' ? source.i1 : Boolean(fallback.i1),
+    i2: typeof source.i2 === 'boolean' ? source.i2 : Boolean(fallback.i2)
+  };
+};
+
+const resolveThresholdBySelectedInputs = (threshold, selectedInputs) => {
+  if (!threshold || typeof threshold !== 'object') {
+    return DEFAULT_THRESHOLD_RULE;
+  }
+
+  const hasThresholdVariants = threshold.both || threshold.i1 || threshold.i2;
+  if (!hasThresholdVariants) {
+    return normalizeThresholdRule(threshold);
+  }
+
+  const normalizedSelection = normalizeSelectedInputs(selectedInputs);
+  const key = normalizedSelection.i1 && normalizedSelection.i2
+    ? 'both'
+    : normalizedSelection.i1
+      ? 'i1'
+      : normalizedSelection.i2
+        ? 'i2'
+        : 'both';
+
+  const selectedThreshold = threshold[key] || threshold.both || threshold.i1 || threshold.i2;
+  return normalizeThresholdRule(selectedThreshold);
 };
 
 
@@ -96,6 +128,8 @@ const App = ({ role = 'teacher' }) => {
   const [lessonTotal, setLessonTotal] = useState('');
   const [lessonWeights, setLessonWeights] = useState({ w1: 2, w2: 3 });
   const [lessonThreshold, setLessonThreshold] = useState(DEFAULT_THRESHOLD_RULE);
+  const [selectedInputs, setSelectedInputs] = useState(DEFAULT_SELECTED_INPUTS);
+  const [lessonSelectedInputs, setLessonSelectedInputs] = useState(DEFAULT_SELECTED_INPUTS);
   const [lessonDataset, setLessonDataset] = useState('vehicles');
   const [lessonExampleIndex, setLessonExampleIndex] = useState(0);
   const [lessonIcon, setLessonIcon] = useState('🚗');
@@ -140,7 +174,10 @@ const saveStudentName = () => {
   
   const currentExampleData = DATASETS[currentDataset].examples[currentExample];
   const currentDatasetLinearDemos = DATASETS[currentDataset]?.linear_demos || [];
-  const teacherThresholdFromDemo = currentDatasetLinearDemos[currentLinearDemoIndex]?.threshold || DEFAULT_THRESHOLD_RULE;
+  const teacherThresholdFromDemo = resolveThresholdBySelectedInputs(
+    currentDatasetLinearDemos[currentLinearDemoIndex]?.threshold,
+    selectedInputs
+  );
   const teacherThresholdRule = normalizeThresholdRule(teacherThresholdFromDemo);
   const isTeacher = role === 'teacher';
   const isScreen = role === 'screen';
@@ -151,6 +188,10 @@ const saveStudentName = () => {
 
   const displayDataset = isTeacher ? currentDataset : lessonDataset;
   const safeDisplayDataset = DATASETS[displayDataset] ? displayDataset : 'vehicles';
+  const effectiveSelectedInputs = isTeacher ? selectedInputs : lessonSelectedInputs;
+  const showInput1 = Boolean(effectiveSelectedInputs.i1);
+  const showInput2 = Boolean(effectiveSelectedInputs.i2);
+  const showTotalRow = showInput1 && showInput2;
 
   const effectiveLinearDemoIndex = isTeacher ? currentLinearDemoIndex : lessonLinearDemoIndex;
 
@@ -204,33 +245,50 @@ const saveStudentName = () => {
       ? dynamicW2
       : lessonWeights.w2;
 
-  const computedProd1 = Number((toFinite(currentW1) * toFinite(i1)).toFixed(2));
-  const computedProd2 = Number((toFinite(currentW2) * toFinite(i2)).toFixed(2));
+  const effectiveI1 = showInput1 ? i1 : 0;
+  const effectiveI2 = showInput2 ? i2 : 0;
+  const effectiveW1 = showInput1 ? currentW1 : 0;
+  const effectiveW2 = showInput2 ? currentW2 : 0;
+
+  const computedProd1 = showInput1 ? Number((toFinite(effectiveW1) * toFinite(effectiveI1)).toFixed(2)) : '';
+  const computedProd2 = showInput2 ? Number((toFinite(effectiveW2) * toFinite(effectiveI2)).toFixed(2)) : '';
 
   const currentProducts = isTeacher ? teacherProducts : studentProducts;
-  const prod1 = isProductEditable ? currentProducts.p1 : computedProd1;
-  const prod2 = isProductEditable ? currentProducts.p2 : computedProd2;
+  const prod1 = showInput1 ? (isProductEditable ? currentProducts.p1 : computedProd1) : '';
+  const prod2 = showInput2 ? (isProductEditable ? currentProducts.p2 : computedProd2) : '';
 
   const computedTotal = Number((toFinite(prod1) + toFinite(prod2)).toFixed(2));
   const total = isTotalEditable
     ? (isTeacher ? teacherTotal : studentTotal)
-    : computedTotal;
+    : (showTotalRow ? computedTotal : '');
   const isEmptyCalcInput = (value) => value === '' || value === null || typeof value === 'undefined' || value === '-';
   const useQuestionForOutputs = activeActivity === '1' || activeActivity === '3' || activeActivity === '4';
   const missingP1Input = activeActivity === '1'
-    ? isEmptyCalcInput(i1)
+    ? showInput1 && isEmptyCalcInput(i1)
     : activeActivity === '3' || activeActivity === '4'
-      ? isEmptyCalcInput(currentW1)
+      ? showInput1 && isEmptyCalcInput(currentW1)
       : false;
   const missingP2Input = activeActivity === '1'
-    ? isEmptyCalcInput(i2)
+    ? showInput2 && isEmptyCalcInput(i2)
     : activeActivity === '3' || activeActivity === '4'
-      ? isEmptyCalcInput(currentW2)
+      ? showInput2 && isEmptyCalcInput(currentW2)
       : false;
-  const missingTotalInput = missingP1Input || missingP2Input;
-  const displayedProd1 = useQuestionForOutputs && !isProductEditable && missingP1Input ? '?' : prod1;
-  const displayedProd2 = useQuestionForOutputs && !isProductEditable && missingP2Input ? '?' : prod2;
-  const displayedTotal = useQuestionForOutputs && !isTotalEditable && missingTotalInput ? '?' : total;
+  const missingTotalInput = showTotalRow && (missingP1Input || missingP2Input);
+  const displayedProd1 = !showInput1
+    ? ''
+    : useQuestionForOutputs && !isProductEditable && missingP1Input
+      ? '?'
+      : prod1;
+  const displayedProd2 = !showInput2
+    ? ''
+    : useQuestionForOutputs && !isProductEditable && missingP2Input
+      ? '?'
+      : prod2;
+  const displayedTotal = !showTotalRow
+    ? ''
+    : useQuestionForOutputs && !isTotalEditable && missingTotalInput
+      ? '?'
+      : total;
 
   const formulaByActivity = {
     '1': '$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$',
@@ -241,12 +299,12 @@ const saveStudentName = () => {
   const mathTitle = formulaByActivity[activeActivity] || '$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$';
 
   const threshold = {
-    satisfied: !missingTotalInput && evaluateThresholdRule(total, effectiveThresholdRule),
+    satisfied: showTotalRow && !missingTotalInput && evaluateThresholdRule(total, effectiveThresholdRule),
     value: thresholdDisplayText,
     rule: effectiveThresholdRule,
     total: toFinite(total)
   };
-  const demoFooterText = activeActivity === '4' ? `άθροισμα: ${displayedTotal}` : '';
+  const demoFooterText = activeActivity === '4' ? (showTotalRow ? `άθροισμα: ${displayedTotal}` : 'άθροισμα: -') : '';
 
   const handleWeightChange = (which, value) => {
     const normalized = value === '' || value === '-' ? value : Number(value);
@@ -356,6 +414,10 @@ const saveStudentName = () => {
           } else {
             setLessonThreshold(normalizeThresholdRule(incomingThreshold));
           }
+        }
+
+        if (Object.prototype.hasOwnProperty.call(message.lesson, 'selectedInputs')) {
+          setLessonSelectedInputs(normalizeSelectedInputs(message.lesson.selectedInputs));
         }
 
         if (typeof message.lesson?.dataset === 'string' && DATASETS[message.lesson.dataset]) {
@@ -495,6 +557,7 @@ const saveStudentName = () => {
           w1: dynamicW1,
           w2: dynamicW2
         },
+        selectedInputs,
         threshold: teacherThresholdRule,
         linearDemoIndex: currentLinearDemoIndex
       }
@@ -511,8 +574,22 @@ const saveStudentName = () => {
     dynamicW2,
     teacherThresholdRule.op,
     teacherThresholdRule.boundary,
-    currentLinearDemoIndex
+    currentLinearDemoIndex,
+    selectedInputs.i1,
+    selectedInputs.i2
   ]);
+
+  useEffect(() => {
+    if (!isTeacher || !isSocketConnected) return;
+
+    // Push checkbox changes immediately so students add/remove ProductRow in real time.
+    sendSocketMessage({
+      type: 'teacher_lesson',
+      lesson: {
+        selectedInputs
+      }
+    });
+  }, [isTeacher, isSocketConnected, selectedInputs.i1, selectedInputs.i2]);
 
   useEffect(() => {
     if (!isTeacher) {
@@ -650,6 +727,9 @@ const saveStudentName = () => {
           i1={i1}
           i2={i2}
           total={displayedTotal}
+          showInput1={showInput1}
+          showInput2={showInput2}
+          showTotal={showTotalRow}
           editWeights={isWeightEditable}
           onWeightChange={handleWeightChange}
           threshold={threshold}
@@ -692,6 +772,7 @@ const saveStudentName = () => {
           <StudentTable
             i1={lessonInputs.i1}
             i2={lessonInputs.i2}
+            selectedInputs={lessonSelectedInputs}
             features={DATASETS[safeDisplayDataset].features}
             threshold={effectiveThresholdRule}
             participants={sortedParticipants}
@@ -710,6 +791,8 @@ const saveStudentName = () => {
             currentDataset={currentDataset}
             currentExample={currentExample}
             currentLinearDemoIndex={currentLinearDemoIndex}
+            selectedInputs={selectedInputs}
+            features={DATASETS[safeDisplayDataset].features}
             onDatasetChange={(dataset) => {
               setCurrentDataset(dataset);
               setCurrentExample(0);
@@ -717,6 +800,9 @@ const saveStudentName = () => {
             }}
             onExampleChange={setCurrentExample}
             onLinearDemoChange={setCurrentLinearDemoIndex}
+            onSelectedInputsChange={(next) => {
+              setSelectedInputs(normalizeSelectedInputs(next));
+            }}
             isLinearDemoDisabled={['1', '2', '3'].includes(selectedActivity)}
             demoIconWhenDisabled="?"
           />

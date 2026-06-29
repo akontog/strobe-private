@@ -399,6 +399,25 @@ body,
   font-weight: 600;
   color: #475569;
 }
+.inputs-toggle-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.85rem;
+  padding: 0.45rem 0.65rem;
+}
+.input-toggle-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: #0f172a;
+}
+.input-toggle-item input {
+  margin: 0;
+}
 select {
   background: #ffffff;
   border: 1px solid #cbd5e1;

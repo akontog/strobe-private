@@ -31,6 +31,8 @@ module.exports = function initNeural({
     products: { p1: '', p2: '' }, total: '',
     // αν οι μαθητές βλέπουν ερωτηματικά
     useQuestionMarks: false,
+    // ποια inputs είναι ενεργά στην εκάστοτε δραστηριότητα
+    selectedInputs: { i1: true, i2: false },
     // κανόνας κατωφλίου απόφασης
     threshold: CANVAS_NODE_THRESHOLD,
     // γραμμικά ή μη διαχωρίσιμο παράδειγμα
@@ -116,6 +118,14 @@ module.exports = function initNeural({
         return safeValue >= safeRule.boundary;
     }
   }
+
+  function normalizeSelectedInputs(value, fallback = canvasNodeLesson.selectedInputs) {
+    const source = value && typeof value === 'object' ? value : {};
+    return {
+      i1: typeof source.i1 === 'boolean' ? source.i1 : Boolean(fallback.i1),
+      i2: typeof source.i2 === 'boolean' ? source.i2 : Boolean(fallback.i2)
+    };
+  }
   // Επικυρώνει w1/w2 στο [-10, 10] με 1 δεκαδικό, επιτρέπει κενό string
   function normalizeCanvasNodeStudentWeights(weights, fallback = {}) {
     const source = weights && typeof weights === 'object' ? weights : {};
@@ -135,7 +145,10 @@ module.exports = function initNeural({
   // Υπολογίζει w1·i1 + w2·i2 με τα τρέχοντα  inputs
   function computeCanvasNodeStudentResult(weights) {
     const safeWeights = normalizeCanvasNodeStudentWeights(weights, weights);
-    const result = (Number(safeWeights.w1 || 0) * canvasNodeLesson.inputs.i1) + (Number(safeWeights.w2 || 0) * canvasNodeLesson.inputs.i2);
+    const selectedInputs = normalizeSelectedInputs(canvasNodeLesson.selectedInputs);
+    const part1 = selectedInputs.i1 ? (Number(safeWeights.w1 || 0) * Number(canvasNodeLesson.inputs.i1 || 0)) : 0;
+    const part2 = selectedInputs.i2 ? (Number(safeWeights.w2 || 0) * Number(canvasNodeLesson.inputs.i2 || 0)) : 0;
+    const result = part1 + part2;
     return Number(result.toFixed(2));
   }
   // Επικυρώνει i1/i2 στο [-100, 100], επιτρέπει κενό string
@@ -181,18 +194,29 @@ module.exports = function initNeural({
   }
   // Δημιουργεί ένα στιγμιότυπο της κατάστασης ενός μαθητή για αποστολή στους δασκάλους
   function buildCanvasNodeStudentSnapshot(student) {
+    const selectedInputs = normalizeSelectedInputs(canvasNodeLesson.selectedInputs);
+    const includeI1 = Boolean(selectedInputs.i1);
+    const includeI2 = Boolean(selectedInputs.i2);
     const weights = normalizeCanvasNodeStudentWeights(student && student.weights, student && student.weights);
     const inputs = normalizeCanvasNodeStudentInputs(student && student.inputs, canvasNodeLesson.inputs);
     const products = normalizeCanvasNodeStudentProducts(student && student.products, student && student.products);
-    const computedP1 = Number((Number(weights.w1 || 0) * Number(inputs.i1 || 0)).toFixed(2));
-    const computedP2 = Number((Number(weights.w2 || 0) * Number(inputs.i2 || 0)).toFixed(2));
+    const computedP1 = includeI1 ? Number((Number(weights.w1 || 0) * Number(inputs.i1 || 0)).toFixed(2)) : '';
+    const computedP2 = includeI2 ? Number((Number(weights.w2 || 0) * Number(inputs.i2 || 0)).toFixed(2)) : '';
     const preserveBlankOutputs = canvasNodeLesson.activityId === '2';
-    const displayP1 = preserveBlankOutputs ? products.p1 : (products.p1 === '' ? computedP1 : products.p1);
-    const displayP2 = preserveBlankOutputs ? products.p2 : (products.p2 === '' ? computedP2 : products.p2);
-    const total = preserveBlankOutputs
-      ? normalizeCanvasNodeStudentTotal(student && student.total, '')
-      : normalizeCanvasNodeStudentTotal(student && student.total, Number(displayP1) + Number(displayP2));
-    const result = total === '' ? Number((Number(displayP1 || 0) + Number(displayP2 || 0)).toFixed(2)) : total;
+    const displayP1 = includeI1
+      ? (preserveBlankOutputs ? products.p1 : (products.p1 === '' ? computedP1 : products.p1))
+      : '';
+    const displayP2 = includeI2
+      ? (preserveBlankOutputs ? products.p2 : (products.p2 === '' ? computedP2 : products.p2))
+      : '';
+    const hasBothInputs = includeI1 && includeI2;
+    const computedResult = Number((Number(displayP1 || 0) + Number(displayP2 || 0)).toFixed(2));
+    const total = hasBothInputs
+      ? (preserveBlankOutputs
+        ? normalizeCanvasNodeStudentTotal(student && student.total, '')
+        : normalizeCanvasNodeStudentTotal(student && student.total, computedResult))
+      : '';
+    const result = total === '' ? computedResult : total;
     return {
       id: student.id,
       role: 'client',
@@ -208,7 +232,8 @@ module.exports = function initNeural({
       i2: inputs.i2,
       result,
       threshold: canvasNodeLesson.threshold,
-      aboveThreshold: evaluateThresholdRule(result, canvasNodeLesson.threshold)
+      selectedInputs,
+      aboveThreshold: hasBothInputs ? evaluateThresholdRule(result, canvasNodeLesson.threshold) : false
     };
   }
 
@@ -611,6 +636,9 @@ module.exports = function initNeural({
             canvasNodeLesson.threshold = normalizeThresholdRule(incomingThreshold, canvasNodeLesson.threshold);
           }
         }
+        if (Object.prototype.hasOwnProperty.call(lesson, 'selectedInputs')) {
+          canvasNodeLesson.selectedInputs = normalizeSelectedInputs(lesson.selectedInputs, canvasNodeLesson.selectedInputs);
+        }
 
         const lessonContextChanged = prevActivityId !== canvasNodeLesson.activityId
           || prevDataset !== canvasNodeLesson.dataset
@@ -666,6 +694,7 @@ module.exports = function initNeural({
                 },
                 activityId: canvasNodeLesson.activityId,
                 threshold: canvasNodeLesson.threshold,
+                selectedInputs: canvasNodeLesson.selectedInputs,
                 useQuestionMarks: canvasNodeLesson.useQuestionMarks,
                 linearDemoIndex: canvasNodeLesson.linearDemoIndex
               }
@@ -681,6 +710,7 @@ module.exports = function initNeural({
           inputs: canvasNodeLesson.inputs,
           weights: canvasNodeLesson.weights,
           activityId: canvasNodeLesson.activityId,
+          selectedInputs: canvasNodeLesson.selectedInputs,
           useQuestionMarks: canvasNodeLesson.useQuestionMarks
         });
         canvasNodeBroadcastState();

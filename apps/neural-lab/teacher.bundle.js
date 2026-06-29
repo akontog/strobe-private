@@ -21534,9 +21534,12 @@ var DatasetSelector = ({
   currentDataset,
   currentExample,
   currentLinearDemoIndex,
+  selectedInputs,
+  features,
   onDatasetChange,
   onExampleChange,
   onLinearDemoChange,
+  onSelectedInputsChange,
   isLinearDemoDisabled = false,
   demoIconWhenDisabled = "?"
 }) => {
@@ -21545,6 +21548,21 @@ var DatasetSelector = ({
     return /* @__PURE__ */ import_react4.default.createElement("div", null, "\u0394\u03B5\u03BD \u03C5\u03C0\u03AC\u03C1\u03C7\u03BF\u03C5\u03BD \u03B4\u03B5\u03B4\u03BF\u03BC\u03AD\u03BD\u03B1 \u03B3\u03B9\u03B1 \u03C4\u03BF \u03B5\u03C0\u03B9\u03BB\u03B5\u03B3\u03BC\u03AD\u03BD\u03BF dataset");
   }
   const linearDemos = currentData.linear_demos || [];
+  const activeInputSelection = {
+    i1: selectedInputs?.i1 !== false,
+    i2: Boolean(selectedInputs?.i2)
+  };
+  const resolveThresholdLabel = (threshold) => {
+    if (!threshold || typeof threshold !== "object") {
+      return " (\u039C\u03B7 \u03B4\u03B9\u03B1\u03C7\u03C9\u03C1\u03AF\u03C3\u03B9\u03BC\u03BF)";
+    }
+    if (!threshold.both && !threshold.i1 && !threshold.i2) {
+      return ` (\u038C\u03C1\u03B9\u03BF: ${threshold.op} ${threshold.boundary})`;
+    }
+    const key = activeInputSelection.i1 && activeInputSelection.i2 ? "both" : activeInputSelection.i1 ? "i1" : activeInputSelection.i2 ? "i2" : "both";
+    const selectedThreshold = threshold[key] || threshold.both || threshold.i1 || threshold.i2;
+    return selectedThreshold ? ` (\u038C\u03C1\u03B9\u03BF: ${selectedThreshold.op} ${selectedThreshold.boundary})` : " (\u039C\u03B7 \u03B4\u03B9\u03B1\u03C7\u03C9\u03C1\u03AF\u03C3\u03B9\u03BC\u03BF)";
+  };
   return /* @__PURE__ */ import_react4.default.createElement(Accordion, { title: "\u{1F5C4}\uFE0F \u0394\u03B5\u03B4\u03BF\u03BC\u03AD\u03BD\u03B1" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "control-bar" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react4.default.createElement("label", null, "\u{1F4CA} \u03A3\u03CD\u03BD\u03BF\u03BB\u03BF \u03B4\u03B5\u03B4\u03BF\u03BC\u03AD\u03BD\u03C9\u03BD"), /* @__PURE__ */ import_react4.default.createElement(
     "select",
     {
@@ -21559,7 +21577,35 @@ var DatasetSelector = ({
       onChange: (e) => onExampleChange(parseInt(e.target.value, 10))
     },
     datasets[currentDataset].examples.map((ex, idx) => /* @__PURE__ */ import_react4.default.createElement("option", { key: idx, value: idx }, ex.icon, " ", ex.name))
-  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react4.default.createElement("label", null, "\u{1F4D0} \u0394\u03B9\u03B1\u03C7\u03C9\u03C1\u03B9\u03C3\u03BC\u03CC\u03C2 ", isLinearDemoDisabled ? demoIconWhenDisabled : ""), /* @__PURE__ */ import_react4.default.createElement(
+  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react4.default.createElement("label", null, "\u{1F39B}\uFE0F \u0395\u03BD\u03B5\u03C1\u03B3\u03AC Inputs"), /* @__PURE__ */ import_react4.default.createElement("div", { className: "inputs-toggle-group" }, /* @__PURE__ */ import_react4.default.createElement("label", { className: "input-toggle-item" }, /* @__PURE__ */ import_react4.default.createElement(
+    "input",
+    {
+      type: "checkbox",
+      checked: Boolean(activeInputSelection.i1),
+      onChange: (e) => {
+        if (typeof onSelectedInputsChange === "function") {
+          onSelectedInputsChange({
+            ...activeInputSelection,
+            i1: e.target.checked
+          });
+        }
+      }
+    }
+  ), /* @__PURE__ */ import_react4.default.createElement("span", null, features?.i1?.icon, " ", features?.i1?.label || "Input 1")), /* @__PURE__ */ import_react4.default.createElement("label", { className: "input-toggle-item" }, /* @__PURE__ */ import_react4.default.createElement(
+    "input",
+    {
+      type: "checkbox",
+      checked: Boolean(activeInputSelection.i2),
+      onChange: (e) => {
+        if (typeof onSelectedInputsChange === "function") {
+          onSelectedInputsChange({
+            ...activeInputSelection,
+            i2: e.target.checked
+          });
+        }
+      }
+    }
+  ), /* @__PURE__ */ import_react4.default.createElement("span", null, features?.i2?.icon, " ", features?.i2?.label || "Input 2")))), /* @__PURE__ */ import_react4.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react4.default.createElement("label", null, "\u{1F4D0} \u0394\u03B9\u03B1\u03C7\u03C9\u03C1\u03B9\u03C3\u03BC\u03CC\u03C2 ", isLinearDemoDisabled ? demoIconWhenDisabled : ""), /* @__PURE__ */ import_react4.default.createElement(
     "select",
     {
       value: currentLinearDemoIndex !== void 0 ? currentLinearDemoIndex : "",
@@ -21570,7 +21616,7 @@ var DatasetSelector = ({
     linearDemos.map((demo, idx) => {
       const label = demo.example;
       const status = demo.separable ? "\u2705" : "\u274C";
-      const thresholdInfo = demo.threshold && typeof demo.threshold === "object" ? ` (\u038C\u03C1\u03B9\u03BF: ${demo.threshold.op} ${demo.threshold.boundary})` : " (\u039C\u03B7 \u03B4\u03B9\u03B1\u03C7\u03C9\u03C1\u03AF\u03C3\u03B9\u03BC\u03BF)";
+      const thresholdInfo = resolveThresholdLabel(demo.threshold);
       return /* @__PURE__ */ import_react4.default.createElement("option", { key: idx, value: idx }, idx + 1, ". ", label, " ", status, thresholdInfo);
     })
   ))));
@@ -21651,6 +21697,9 @@ var VerticalProducts = ({
   i1,
   i2,
   total,
+  showInput1 = true,
+  showInput2 = true,
+  showTotal = true,
   useQuestionMarks,
   editWeights,
   onWeightChange,
@@ -21715,7 +21764,7 @@ var VerticalProducts = ({
     }
     return /* @__PURE__ */ import_react6.default.createElement("div", { className: `total-result ${showThreshold && threshold ? threshold.satisfied ? "threshold-true" : "threshold-false" : ""}` }, total);
   };
-  return /* @__PURE__ */ import_react6.default.createElement("div", { className: "vertical-products" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "big-icon" }, /* @__PURE__ */ import_react6.default.createElement("span", null, icon)), /* @__PURE__ */ import_react6.default.createElement("div", { className: "products-stack" }, /* @__PURE__ */ import_react6.default.createElement(
+  return /* @__PURE__ */ import_react6.default.createElement("div", { className: "vertical-products" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "big-icon" }, /* @__PURE__ */ import_react6.default.createElement("span", null, icon)), /* @__PURE__ */ import_react6.default.createElement("div", { className: "products-stack" }, showInput1 && /* @__PURE__ */ import_react6.default.createElement(
     ProductRow,
     {
       icon: features.i1.icon,
@@ -21739,7 +21788,7 @@ var VerticalProducts = ({
         }
       }
     }
-  ), /* @__PURE__ */ import_react6.default.createElement(
+  ), showInput2 && /* @__PURE__ */ import_react6.default.createElement(
     ProductRow,
     {
       icon: features.i2.icon,
@@ -21747,7 +21796,7 @@ var VerticalProducts = ({
       input1: i2,
       weight: w2,
       product: prod2,
-      isSecondRow: true,
+      isSecondRow: showInput1 && showInput2,
       inputEditable: Boolean(inputEditable),
       weightEditable: Boolean(editWeights),
       productEditable: Boolean(productEditable),
@@ -21763,7 +21812,7 @@ var VerticalProducts = ({
         }
       }
     }
-  ), /* @__PURE__ */ import_react6.default.createElement("div", { className: "product-row total-product-row" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "product-left total-row-ghost", "aria-hidden": "true" }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "icon-small total-row-ghost-item" }, "+"), /* @__PURE__ */ import_react6.default.createElement("span", { className: "feature-text total-row-ghost-item" }, "placeholder"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "math-group total-row-ghost-item" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "blue-number-box" }, "0"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "multiply-symbol" }, "\xD7"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "red-number-box" }, "0"))), /* @__PURE__ */ import_react6.default.createElement("div", { className: "total-line total-row-output" }, renderTotalControl()))), /* @__PURE__ */ import_react6.default.createElement("div", { className: `demo-icon ${hasDemoIcon ? "has-icon" : "no-frame"}`, title: demoLabel || "\u0391\u03BD\u03C4\u03B9\u03BA\u03B5\u03AF\u03BC\u03B5\u03BD\u03BF-\u03C3\u03C4\u03CC\u03C7\u03BF\u03C2" }, /* @__PURE__ */ import_react6.default.createElement("span", null, demoIcon || ""), showThresholdUnderIcon && /* @__PURE__ */ import_react6.default.createElement("div", { className: "demo-icon-threshold" }, thresholdValue)));
+  ), showTotal && /* @__PURE__ */ import_react6.default.createElement("div", { className: "product-row total-product-row" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "product-left total-row-ghost", "aria-hidden": "true" }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "icon-small total-row-ghost-item" }, "+"), /* @__PURE__ */ import_react6.default.createElement("span", { className: "feature-text total-row-ghost-item" }, "placeholder"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "math-group total-row-ghost-item" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "blue-number-box" }, "0"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "multiply-symbol" }, "\xD7"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "red-number-box" }, "0"))), /* @__PURE__ */ import_react6.default.createElement("div", { className: "total-line total-row-output" }, renderTotalControl()))), /* @__PURE__ */ import_react6.default.createElement("div", { className: `demo-icon ${hasDemoIcon ? "has-icon" : "no-frame"}`, title: demoLabel || "\u0391\u03BD\u03C4\u03B9\u03BA\u03B5\u03AF\u03BC\u03B5\u03BD\u03BF-\u03C3\u03C4\u03CC\u03C7\u03BF\u03C2" }, /* @__PURE__ */ import_react6.default.createElement("span", null, demoIcon || ""), showThresholdUnderIcon && /* @__PURE__ */ import_react6.default.createElement("div", { className: "demo-icon-threshold" }, thresholdValue)));
 };
 
 // apps/neural-lab/components/StudentTable.jsx
@@ -21816,50 +21865,61 @@ var StudentTable = ({
 var StudentTable2 = ({
   i1,
   i2,
+  selectedInputs = { i1: true, i2: false },
   features,
   participants = [],
   threshold = { op: ">=", boundary: 5 },
   activity = "1"
 }) => {
-  let columns = [
-    {
-      key: "i1",
-      label: `i\u2081 (${features.i1.label})`,
-      render: (student) => /* @__PURE__ */ import_react8.default.createElement(import_react8.default.Fragment, null, student?.inputs?.i1 ?? i1, " ", /* @__PURE__ */ import_react8.default.createElement("span", { className: "icon-in-table" }, features.i1.icon))
-    },
-    {
-      key: "w1",
-      label: "w\u2081",
-      className: "weight-value",
-      style: { background: "#ef4444", color: "white" },
-      render: (student) => student.weights?.w1 ?? (activity !== "3" && activity !== "4" ? 2 : "-")
-    },
-    {
-      key: "i2",
-      label: `i\u2082 (${features.i2.label})`,
-      render: (student) => /* @__PURE__ */ import_react8.default.createElement(import_react8.default.Fragment, null, student?.inputs?.i2 ?? i2, " ", /* @__PURE__ */ import_react8.default.createElement("span", { className: "icon-in-table" }, features.i2.icon, " "))
-    },
-    {
-      key: "w2",
-      label: "w\u2082",
-      className: "weight-value",
-      style: { background: "#ef4444", color: "white" },
-      render: (student) => student.weights?.w2 ?? (activity !== "3" && activity !== "4" ? 3 : "-")
-    }
-  ];
-  if (activity === "2" || activity === "3" || activity === "4") {
+  const showInput1 = Boolean(selectedInputs?.i1);
+  const showInput2 = Boolean(selectedInputs?.i2);
+  const showProducts = activity === "2" || activity === "3" || activity === "4";
+  let columns = [];
+  if (showInput1) {
     columns.push(
       {
-        key: "p1",
-        label: "p\u2081 (w\u2081\xD7i\u2081)",
-        render: (student) => student?.products?.p1 ?? "-"
+        key: "i1",
+        label: `i\u2081 (${features.i1.label})`,
+        render: (student) => /* @__PURE__ */ import_react8.default.createElement(import_react8.default.Fragment, null, student?.inputs?.i1 ?? i1, " ", /* @__PURE__ */ import_react8.default.createElement("span", { className: "icon-in-table" }, features.i1.icon))
       },
       {
-        key: "p2",
-        label: "p\u2082 (w\u2082\xD7i\u2082)",
-        render: (student) => student?.products?.p2 ?? "-"
+        key: "w1",
+        label: "w\u2081",
+        className: "weight-value",
+        style: { background: "#ef4444", color: "white" },
+        render: (student) => student.weights?.w1 ?? (activity !== "3" && activity !== "4" ? 2 : "-")
       }
     );
+  }
+  if (showInput2) {
+    columns.push(
+      {
+        key: "i2",
+        label: `i\u2082 (${features.i2.label})`,
+        render: (student) => /* @__PURE__ */ import_react8.default.createElement(import_react8.default.Fragment, null, student?.inputs?.i2 ?? i2, " ", /* @__PURE__ */ import_react8.default.createElement("span", { className: "icon-in-table" }, features.i2.icon, " "))
+      },
+      {
+        key: "w2",
+        label: "w\u2082",
+        className: "weight-value",
+        style: { background: "#ef4444", color: "white" },
+        render: (student) => student.weights?.w2 ?? (activity !== "3" && activity !== "4" ? 3 : "-")
+      }
+    );
+  }
+  if (showProducts && showInput1) {
+    columns.push({
+      key: "p1",
+      label: "p\u2081 (w\u2081\xD7i\u2081)",
+      render: (student) => student?.products?.p1 ?? "-"
+    });
+  }
+  if (showProducts && showInput2) {
+    columns.push({
+      key: "p2",
+      label: "p\u2082 (w\u2082\xD7i\u2082)",
+      render: (student) => student?.products?.p2 ?? "-"
+    });
   }
   columns.push({
     key: "result",
@@ -21939,7 +21999,11 @@ var DATASETS = {
         // 1ο: Γραμμικά διαχωρίσιμο
         example: "\u0391\u03B5\u03C1\u03BF\u03C0\u03BB\u03AC\u03BD\u03BF",
         point: { i1: 6, i2: 2 },
-        threshold: { op: ">", boundary: 1.5 },
+        threshold: {
+          both: { op: ">", boundary: 1.5 },
+          i1: { op: ">=", boundary: 6 },
+          i2: { op: ">=", boundary: 2 }
+        },
         separable: true,
         description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03CC\u03C7\u03B7\u03BC\u03B1 \u03BC\u03B5 2 \u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2. \u03A4\u03BF \u03BA\u03B1\u03C4\u03B1\u03BA\u03CC\u03C1\u03C5\u03C6\u03BF \u03CC\u03C1\u03B9\u03BF i2=1.5 \u03C4\u03BF \u03B1\u03C0\u03BF\u03BC\u03BF\u03BD\u03CE\u03BD\u03B5\u03B9."
       },
@@ -21947,7 +22011,11 @@ var DATASETS = {
         // 2ο: Γραμμικά διαχωρίσιμο
         example: "\u0399\u03C3\u03C4\u03B9\u03BF\u03C6\u03CC\u03C1\u03BF",
         point: { i1: 0, i2: 0 },
-        threshold: { op: "<", boundary: 0.5 },
+        threshold: {
+          both: { op: "<", boundary: 0.5 },
+          i1: { op: "<=", boundary: 0 },
+          i2: { op: "<=", boundary: 0 }
+        },
         separable: true,
         description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03CC\u03C7\u03B7\u03BC\u03B1 \u03BC\u03B5 0 \u03C1\u03CC\u03B4\u03B5\u03C2 \u039A\u0391\u0399 0 \u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2. \u0397 \u03B5\u03C5\u03B8\u03B5\u03AF\u03B1 i1+i2=0.5 \u03C4\u03BF \u03BE\u03B5\u03C7\u03C9\u03C1\u03AF\u03B6\u03B5\u03B9."
       },
@@ -21955,7 +22023,11 @@ var DATASETS = {
         // 3ο: ΜΗ γραμμικά διαχωρίσιμο (τελευταίο)
         example: "\u039A\u03B1\u03C1\u03BF\u03C4\u03C3\u03AC\u03BA\u03B9",
         points: [{ i1: 4, i2: 0 }, { i1: 4, i2: 0 }],
-        threshold: { op: ">=", boundary: 5 },
+        threshold: {
+          both: { op: ">=", boundary: 5 },
+          i1: { op: ">=", boundary: 5 },
+          i2: { op: ">=", boundary: 1 }
+        },
         separable: false,
         description: "\u039A\u03B1\u03B9 \u03C4\u03B1 \u03B4\u03CD\u03BF \u03AD\u03C7\u03BF\u03C5\u03BD \u03B1\u03BA\u03C1\u03B9\u03B2\u03CE\u03C2 \u03C4\u03B1 \u03AF\u03B4\u03B9\u03B1 \u03C7\u03B1\u03C1\u03B1\u03BA\u03C4\u03B7\u03C1\u03B9\u03C3\u03C4\u03B9\u03BA\u03AC (4 \u03C1\u03CC\u03B4\u03B5\u03C2, 0 \u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2). \u0395\u03AF\u03BD\u03B1\u03B9 \u03C0\u03B1\u03BD\u03BF\u03BC\u03BF\u03B9\u03CC\u03C4\u03C5\u03C0\u03B1 \u03C3\u03B7\u03BC\u03B5\u03AF\u03B1 \u03C3\u03C4\u03BF\u03BD \u03C7\u03CE\u03C1\u03BF, \u03AC\u03C1\u03B1 \u03BA\u03B1\u03BC\u03AF\u03B1 \u03B5\u03C5\u03B8\u03B5\u03AF\u03B1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B4\u03B5\u03BD \u03BC\u03C0\u03BF\u03C1\u03B5\u03AF \u03BD\u03B1 \u03C4\u03B1 \u03B4\u03B9\u03B1\u03C7\u03C9\u03C1\u03AF\u03C3\u03B5\u03B9."
       }
@@ -21986,7 +22058,11 @@ var DATASETS = {
         // 1ο: Γραμμικά διαχωρίσιμο
         example: "\u039F\u03BA\u03C4\u03CE",
         point: { i1: 2, i2: 1 },
-        threshold: { op: ">", boundary: 1.5 },
+        threshold: {
+          both: { op: ">", boundary: 1.5 },
+          i1: { op: ">=", boundary: 2 },
+          i2: { op: ">=", boundary: 1 }
+        },
         separable: true,
         description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03C8\u03B7\u03C6\u03AF\u03BF \u03BC\u03B5 2 \u03BA\u03CD\u03BA\u03BB\u03BF\u03C5\u03C2. \u03A4\u03BF \u03CC\u03C1\u03B9\u03BF i1=1.5 \u03C4\u03BF \u03B1\u03C0\u03BF\u03BC\u03BF\u03BD\u03CE\u03BD\u03B5\u03B9 \u03B1\u03C0\u03CC\u03BB\u03C5\u03C4\u03B1."
       },
@@ -21994,7 +22070,11 @@ var DATASETS = {
         // 2ο: Γραμμικά διαχωρίσιμο
         example: "\u039C\u03B7\u03B4\u03AD\u03BD",
         point: { i1: 1, i2: 0 },
-        threshold: { op: ">", boundary: 0.5 },
+        threshold: {
+          both: { op: ">", boundary: 0.5 },
+          i1: { op: ">=", boundary: 1 },
+          i2: { op: "<=", boundary: 0 }
+        },
         separable: true,
         description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03C8\u03B7\u03C6\u03AF\u03BF \u03BC\u03B5 1 \u03BA\u03CD\u03BA\u03BB\u03BF \u03BA\u03B1\u03B9 0 \u03C3\u03C4\u03B1\u03C5\u03C1\u03BF\u03B4\u03C1\u03CC\u03BC\u03B9\u03B1. \u0397 \u03B5\u03C5\u03B8\u03B5\u03AF\u03B1 i1 - 2*i2 = 0.5 \u03C4\u03BF \u03BE\u03B5\u03C7\u03C9\u03C1\u03AF\u03B6\u03B5\u03B9 (\u03B5\u03BB\u03AD\u03B3\u03BE\u03C4\u03B5 \u03C4\u03BF: \u03B3\u03B9\u03B1 \u03C4\u03BF 0 \u03B4\u03AF\u03BD\u03B5\u03B9 1>0.5, \u03B5\u03BD\u03CE \u03B3\u03B9\u03B1 8 \u03B4\u03AF\u03BD\u03B5\u03B9 0, \u03B3\u03B9\u03B1 4/6/9 \u03B4\u03AF\u03BD\u03B5\u03B9 -1)."
       },
@@ -22002,7 +22082,11 @@ var DATASETS = {
         // 3ο: ΜΗ γραμμικά διαχωρίσιμο (τελευταίο)
         example: "\u0388\u03BE\u03B9",
         points: { i1: 1, i2: 1 },
-        threshold: { op: ">=", boundary: 5 },
+        threshold: {
+          both: { op: ">=", boundary: 5 },
+          i1: { op: ">=", boundary: 2 },
+          i2: { op: ">=", boundary: 2 }
+        },
         separable: false,
         description: "\u039A\u03B1\u03B9 \u03C4\u03B1 \u03C4\u03C1\u03AF\u03B1 \u03C8\u03B7\u03C6\u03AF\u03B1 (4, 6, 9) \u03AD\u03C7\u03BF\u03C5\u03BD \u03B1\u03BA\u03C1\u03B9\u03B2\u03CE\u03C2 1 \u03BA\u03CD\u03BA\u03BB\u03BF \u03BA\u03B1\u03B9 1 \u03C3\u03C4\u03B1\u03C5\u03C1\u03BF\u03B4\u03C1\u03CC\u03BC\u03B9. \u0395\u03C0\u03B5\u03B9\u03B4\u03AE \u03C4\u03B1 \u03C3\u03B7\u03BC\u03B5\u03AF\u03B1 \u03C4\u03BF\u03C5\u03C2 \u03C4\u03B1\u03C5\u03C4\u03AF\u03B6\u03BF\u03BD\u03C4\u03B1\u03B9, \u03B5\u03AF\u03BD\u03B1\u03B9 \u03BC\u03B1\u03B8\u03B7\u03BC\u03B1\u03C4\u03B9\u03BA\u03AC \u03B1\u03B4\u03CD\u03BD\u03B1\u03C4\u03BF \u03BD\u03B1 \u03B2\u03C1\u03B5\u03B8\u03B5\u03AF \u03B5\u03C5\u03B8\u03B5\u03AF\u03B1 \u03C0\u03BF\u03C5 \u03BD\u03B1 \u03C7\u03C9\u03C1\u03AF\u03B6\u03B5\u03B9 \u03C4\u03BF \u03AD\u03BD\u03B1 \u03B1\u03C0\u03CC \u03C4\u03B1 \u03AC\u03BB\u03BB\u03B1 \u03B4\u03CD\u03BF."
       }
@@ -22013,6 +22097,7 @@ var datasets_default = DATASETS;
 
 // apps/neural-lab/App.jsx
 var DEFAULT_THRESHOLD_RULE = { op: ">=", boundary: 5 };
+var DEFAULT_SELECTED_INPUTS = { i1: true, i2: false };
 var THRESHOLD_OPS = /* @__PURE__ */ new Set([">", "<", ">=", "<="]);
 var normalizeThresholdRule = (rule, fallback = DEFAULT_THRESHOLD_RULE) => {
   if (!rule || typeof rule !== "object") {
@@ -22037,6 +22122,26 @@ var evaluateThresholdRule = (value, rule) => {
     default:
       return safeValue >= safeRule.boundary;
   }
+};
+var normalizeSelectedInputs = (value, fallback = DEFAULT_SELECTED_INPUTS) => {
+  const source = value && typeof value === "object" ? value : {};
+  return {
+    i1: typeof source.i1 === "boolean" ? source.i1 : Boolean(fallback.i1),
+    i2: typeof source.i2 === "boolean" ? source.i2 : Boolean(fallback.i2)
+  };
+};
+var resolveThresholdBySelectedInputs = (threshold, selectedInputs) => {
+  if (!threshold || typeof threshold !== "object") {
+    return DEFAULT_THRESHOLD_RULE;
+  }
+  const hasThresholdVariants = threshold.both || threshold.i1 || threshold.i2;
+  if (!hasThresholdVariants) {
+    return normalizeThresholdRule(threshold);
+  }
+  const normalizedSelection = normalizeSelectedInputs(selectedInputs);
+  const key = normalizedSelection.i1 && normalizedSelection.i2 ? "both" : normalizedSelection.i1 ? "i1" : normalizedSelection.i2 ? "i2" : "both";
+  const selectedThreshold = threshold[key] || threshold.both || threshold.i1 || threshold.i2;
+  return normalizeThresholdRule(selectedThreshold);
 };
 var App = ({ role = "teacher" }) => {
   const wsRef = (0, import_react10.useRef)(null);
@@ -22066,6 +22171,8 @@ var App = ({ role = "teacher" }) => {
   const [lessonTotal, setLessonTotal] = (0, import_react10.useState)("");
   const [lessonWeights, setLessonWeights] = (0, import_react10.useState)({ w1: 2, w2: 3 });
   const [lessonThreshold, setLessonThreshold] = (0, import_react10.useState)(DEFAULT_THRESHOLD_RULE);
+  const [selectedInputs, setSelectedInputs] = (0, import_react10.useState)(DEFAULT_SELECTED_INPUTS);
+  const [lessonSelectedInputs, setLessonSelectedInputs] = (0, import_react10.useState)(DEFAULT_SELECTED_INPUTS);
   const [lessonDataset, setLessonDataset] = (0, import_react10.useState)("vehicles");
   const [lessonExampleIndex, setLessonExampleIndex] = (0, import_react10.useState)(0);
   const [lessonIcon, setLessonIcon] = (0, import_react10.useState)("\u{1F697}");
@@ -22097,7 +22204,10 @@ var App = ({ role = "teacher" }) => {
   const [studentNameInput, setStudentNameInput] = (0, import_react10.useState)(studentName);
   const currentExampleData = datasets_default[currentDataset].examples[currentExample];
   const currentDatasetLinearDemos = datasets_default[currentDataset]?.linear_demos || [];
-  const teacherThresholdFromDemo = currentDatasetLinearDemos[currentLinearDemoIndex]?.threshold || DEFAULT_THRESHOLD_RULE;
+  const teacherThresholdFromDemo = resolveThresholdBySelectedInputs(
+    currentDatasetLinearDemos[currentLinearDemoIndex]?.threshold,
+    selectedInputs
+  );
   const teacherThresholdRule = normalizeThresholdRule(teacherThresholdFromDemo);
   const isTeacher = role === "teacher";
   const isScreen = role === "screen";
@@ -22107,6 +22217,10 @@ var App = ({ role = "teacher" }) => {
   const displayName = isTeacher ? currentExampleData.name : lessonName;
   const displayDataset = isTeacher ? currentDataset : lessonDataset;
   const safeDisplayDataset = datasets_default[displayDataset] ? displayDataset : "vehicles";
+  const effectiveSelectedInputs = isTeacher ? selectedInputs : lessonSelectedInputs;
+  const showInput1 = Boolean(effectiveSelectedInputs.i1);
+  const showInput2 = Boolean(effectiveSelectedInputs.i2);
+  const showTotalRow = showInput1 && showInput2;
   const effectiveLinearDemoIndex = isTeacher ? currentLinearDemoIndex : lessonLinearDemoIndex;
   let demoIcon = null;
   let demoLabel = "\u039C\u03B7 \u03B5\u03C0\u03B9\u03BB\u03B5\u03B3\u03BC\u03AD\u03BD\u03BF";
@@ -22138,21 +22252,25 @@ var App = ({ role = "teacher" }) => {
   const i2 = currentInputs.i2;
   const currentW1 = isTeacher ? dynamicW1 : isStudent && (activeActivity === "3" || activeActivity === "4") ? dynamicW1 : lessonWeights.w1;
   const currentW2 = isTeacher ? dynamicW2 : isStudent && (activeActivity === "3" || activeActivity === "4") ? dynamicW2 : lessonWeights.w2;
-  const computedProd1 = Number((toFinite(currentW1) * toFinite(i1)).toFixed(2));
-  const computedProd2 = Number((toFinite(currentW2) * toFinite(i2)).toFixed(2));
+  const effectiveI1 = showInput1 ? i1 : 0;
+  const effectiveI2 = showInput2 ? i2 : 0;
+  const effectiveW1 = showInput1 ? currentW1 : 0;
+  const effectiveW2 = showInput2 ? currentW2 : 0;
+  const computedProd1 = showInput1 ? Number((toFinite(effectiveW1) * toFinite(effectiveI1)).toFixed(2)) : "";
+  const computedProd2 = showInput2 ? Number((toFinite(effectiveW2) * toFinite(effectiveI2)).toFixed(2)) : "";
   const currentProducts = isTeacher ? teacherProducts : studentProducts;
-  const prod1 = isProductEditable ? currentProducts.p1 : computedProd1;
-  const prod2 = isProductEditable ? currentProducts.p2 : computedProd2;
+  const prod1 = showInput1 ? isProductEditable ? currentProducts.p1 : computedProd1 : "";
+  const prod2 = showInput2 ? isProductEditable ? currentProducts.p2 : computedProd2 : "";
   const computedTotal = Number((toFinite(prod1) + toFinite(prod2)).toFixed(2));
-  const total = isTotalEditable ? isTeacher ? teacherTotal : studentTotal : computedTotal;
+  const total = isTotalEditable ? isTeacher ? teacherTotal : studentTotal : showTotalRow ? computedTotal : "";
   const isEmptyCalcInput = (value) => value === "" || value === null || typeof value === "undefined" || value === "-";
   const useQuestionForOutputs = activeActivity === "1" || activeActivity === "3" || activeActivity === "4";
-  const missingP1Input = activeActivity === "1" ? isEmptyCalcInput(i1) : activeActivity === "3" || activeActivity === "4" ? isEmptyCalcInput(currentW1) : false;
-  const missingP2Input = activeActivity === "1" ? isEmptyCalcInput(i2) : activeActivity === "3" || activeActivity === "4" ? isEmptyCalcInput(currentW2) : false;
-  const missingTotalInput = missingP1Input || missingP2Input;
-  const displayedProd1 = useQuestionForOutputs && !isProductEditable && missingP1Input ? "?" : prod1;
-  const displayedProd2 = useQuestionForOutputs && !isProductEditable && missingP2Input ? "?" : prod2;
-  const displayedTotal = useQuestionForOutputs && !isTotalEditable && missingTotalInput ? "?" : total;
+  const missingP1Input = activeActivity === "1" ? showInput1 && isEmptyCalcInput(i1) : activeActivity === "3" || activeActivity === "4" ? showInput1 && isEmptyCalcInput(currentW1) : false;
+  const missingP2Input = activeActivity === "1" ? showInput2 && isEmptyCalcInput(i2) : activeActivity === "3" || activeActivity === "4" ? showInput2 && isEmptyCalcInput(currentW2) : false;
+  const missingTotalInput = showTotalRow && (missingP1Input || missingP2Input);
+  const displayedProd1 = !showInput1 ? "" : useQuestionForOutputs && !isProductEditable && missingP1Input ? "?" : prod1;
+  const displayedProd2 = !showInput2 ? "" : useQuestionForOutputs && !isProductEditable && missingP2Input ? "?" : prod2;
+  const displayedTotal = !showTotalRow ? "" : useQuestionForOutputs && !isTotalEditable && missingTotalInput ? "?" : total;
   const formulaByActivity = {
     "1": "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$",
     "2": "$$ (w_1 \\times i_1) + (w_2 \\times i_2) = o $$",
@@ -22161,12 +22279,12 @@ var App = ({ role = "teacher" }) => {
   };
   const mathTitle = formulaByActivity[activeActivity] || "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$";
   const threshold = {
-    satisfied: !missingTotalInput && evaluateThresholdRule(total, effectiveThresholdRule),
+    satisfied: showTotalRow && !missingTotalInput && evaluateThresholdRule(total, effectiveThresholdRule),
     value: thresholdDisplayText,
     rule: effectiveThresholdRule,
     total: toFinite(total)
   };
-  const demoFooterText = activeActivity === "4" ? `\u03AC\u03B8\u03C1\u03BF\u03B9\u03C3\u03BC\u03B1: ${displayedTotal}` : "";
+  const demoFooterText = activeActivity === "4" ? showTotalRow ? `\u03AC\u03B8\u03C1\u03BF\u03B9\u03C3\u03BC\u03B1: ${displayedTotal}` : "\u03AC\u03B8\u03C1\u03BF\u03B9\u03C3\u03BC\u03B1: -" : "";
   const handleWeightChange = (which, value) => {
     const normalized = value === "" || value === "-" ? value : Number(value);
     if (which === "w1") {
@@ -22258,6 +22376,9 @@ var App = ({ role = "teacher" }) => {
           } else {
             setLessonThreshold(normalizeThresholdRule(incomingThreshold));
           }
+        }
+        if (Object.prototype.hasOwnProperty.call(message.lesson, "selectedInputs")) {
+          setLessonSelectedInputs(normalizeSelectedInputs(message.lesson.selectedInputs));
         }
         if (typeof message.lesson?.dataset === "string" && datasets_default[message.lesson.dataset]) {
           setLessonDataset(message.lesson.dataset);
@@ -22375,6 +22496,7 @@ var App = ({ role = "teacher" }) => {
           w1: dynamicW1,
           w2: dynamicW2
         },
+        selectedInputs,
         threshold: teacherThresholdRule,
         linearDemoIndex: currentLinearDemoIndex
       }
@@ -22391,8 +22513,19 @@ var App = ({ role = "teacher" }) => {
     dynamicW2,
     teacherThresholdRule.op,
     teacherThresholdRule.boundary,
-    currentLinearDemoIndex
+    currentLinearDemoIndex,
+    selectedInputs.i1,
+    selectedInputs.i2
   ]);
+  (0, import_react10.useEffect)(() => {
+    if (!isTeacher || !isSocketConnected) return;
+    sendSocketMessage({
+      type: "teacher_lesson",
+      lesson: {
+        selectedInputs
+      }
+    });
+  }, [isTeacher, isSocketConnected, selectedInputs.i1, selectedInputs.i2]);
   (0, import_react10.useEffect)(() => {
     if (!isTeacher) {
       return;
@@ -22479,6 +22612,9 @@ var App = ({ role = "teacher" }) => {
       i1,
       i2,
       total: displayedTotal,
+      showInput1,
+      showInput2,
+      showTotal: showTotalRow,
       editWeights: isWeightEditable,
       onWeightChange: handleWeightChange,
       threshold,
@@ -22519,6 +22655,7 @@ var App = ({ role = "teacher" }) => {
     {
       i1: lessonInputs.i1,
       i2: lessonInputs.i2,
+      selectedInputs: lessonSelectedInputs,
       features: datasets_default[safeDisplayDataset].features,
       threshold: effectiveThresholdRule,
       participants: sortedParticipants,
@@ -22531,6 +22668,8 @@ var App = ({ role = "teacher" }) => {
       currentDataset,
       currentExample,
       currentLinearDemoIndex,
+      selectedInputs,
+      features: datasets_default[safeDisplayDataset].features,
       onDatasetChange: (dataset) => {
         setCurrentDataset(dataset);
         setCurrentExample(0);
@@ -22538,6 +22677,9 @@ var App = ({ role = "teacher" }) => {
       },
       onExampleChange: setCurrentExample,
       onLinearDemoChange: setCurrentLinearDemoIndex,
+      onSelectedInputsChange: (next) => {
+        setSelectedInputs(normalizeSelectedInputs(next));
+      },
       isLinearDemoDisabled: ["1", "2", "3"].includes(selectedActivity),
       demoIconWhenDisabled: "?"
     }
