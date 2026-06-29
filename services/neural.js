@@ -21,7 +21,7 @@ module.exports = function initNeural({
   // Αρχική κατάσταση μαθήματος
   const canvasNodeLesson = {
     // δραστηριότητα που εκτελείται
-    activityId: '1a',
+    activityId: '1',
     // σύνολο δεδομένων που χρησιμοποιείται
     dataset: 'vehicles', 
     // δείκτης, όνομα, εικονίδιο παραδείγματος, 
@@ -186,7 +186,7 @@ module.exports = function initNeural({
     const products = normalizeCanvasNodeStudentProducts(student && student.products, student && student.products);
     const computedP1 = Number((Number(weights.w1 || 0) * Number(inputs.i1 || 0)).toFixed(2));
     const computedP2 = Number((Number(weights.w2 || 0) * Number(inputs.i2 || 0)).toFixed(2));
-    const preserveBlankOutputs = canvasNodeLesson.activityId === '2b';
+    const preserveBlankOutputs = canvasNodeLesson.activityId === '2';
     const displayP1 = preserveBlankOutputs ? products.p1 : (products.p1 === '' ? computedP1 : products.p1);
     const displayP2 = preserveBlankOutputs ? products.p2 : (products.p2 === '' ? computedP2 : products.p2);
     const total = preserveBlankOutputs
@@ -616,14 +616,14 @@ module.exports = function initNeural({
           || prevDataset !== canvasNodeLesson.dataset
           || prevExampleIndex !== canvasNodeLesson.exampleIndex;
 
-        if (canvasNodeLesson.activityId === '1b') {
+        if (lessonContextChanged && canvasNodeLesson.activityId === '1') {
           canvasNodeStudents.forEach((student) => {
             if (!student) return;
             student.inputs = { i1: '', i2: '' };
           });
         }
 
-        if (lessonContextChanged && canvasNodeLesson.activityId === '2b') {
+        if (lessonContextChanged && canvasNodeLesson.activityId === '2') {
           canvasNodeStudents.forEach((student) => {
             if (!student) return;
             student.products = { p1: '', p2: '' };
@@ -631,7 +631,7 @@ module.exports = function initNeural({
           });
         }
 
-        if (lessonContextChanged && (canvasNodeLesson.activityId === '3b' || canvasNodeLesson.activityId === '4b')) {
+        if (lessonContextChanged && (canvasNodeLesson.activityId === '3' || canvasNodeLesson.activityId === '4')) {
           canvasNodeStudents.forEach((student) => {
             if (!student) return;
             student.weights = { w1: '', w2: '' };

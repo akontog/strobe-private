@@ -1,6 +1,6 @@
 const DATASETS = {
   vehicles: {
-  label: 'Οχήματα',
+  label: 'Μέσα μεταφοράς',
   emoji: '🚗',
   features: {
       i1: { label: 'Ρόδες', icon: '🛞' },

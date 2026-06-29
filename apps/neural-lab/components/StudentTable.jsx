@@ -7,7 +7,7 @@ export const StudentTable = ({
     features,
     participants = [], 
   threshold = { op: '>=', boundary: 5 },
-    activity = '1a'
+  activity = '1'
   }) => {
   
   // Determine which columns to show based on activity
@@ -22,7 +22,7 @@ export const StudentTable = ({
       label: 'w₁',
       className: 'weight-value',
       style: { background: '#ef4444', color: 'white' },
-      render: (student) => student.weights?.w1 ?? (activity !== '3b' && activity !== '4b' ? 2 : '-')
+      render: (student) => student.weights?.w1 ?? (activity !== '3' && activity !== '4' ? 2 : '-')
     },
     {
       key: 'i2',
@@ -34,12 +34,12 @@ export const StudentTable = ({
       label: 'w₂',
       className: 'weight-value',
       style: { background: '#ef4444', color: 'white' },
-      render: (student) => student.weights?.w2 ?? (activity !== '3b' && activity !== '4b' ? 3 : '-')
+      render: (student) => student.weights?.w2 ?? (activity !== '3' && activity !== '4' ? 3 : '-')
     }
   ];
 
   // Add products columns for activities 2+
-  if (activity === '2a' || activity === '2b' || activity === '3a' || activity === '3b' || activity === '4a' || activity === '4b') {
+  if (activity === '2' || activity === '3' || activity === '4') {
     columns.push({
       key: 'p1',
       label: 'p₁ (w₁×i₁)',
@@ -59,7 +59,7 @@ export const StudentTable = ({
     className: 'result-visible',
     render: (student) => {
       const resultValue = student.total ?? student.result ?? '-';
-      const showThreshold = activity === '4a' || activity === '4b';
+      const showThreshold = activity === '4';
       return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
           <span>{resultValue}</span>

@@ -21671,6 +21671,7 @@ var VerticalProducts = ({
   thresholdValue,
   showThresholdUnderIcon
 }) => {
+  const hasDemoIcon = Boolean(demoIcon);
   const handleW1Change = (value) => {
     if (editWeights && onWeightChange) {
       onWeightChange("w1", value);
@@ -21762,7 +21763,7 @@ var VerticalProducts = ({
         }
       }
     }
-  ), /* @__PURE__ */ import_react6.default.createElement("div", { className: "product-row total-product-row" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "product-left total-row-ghost", "aria-hidden": "true" }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "icon-small total-row-ghost-item" }, "+"), /* @__PURE__ */ import_react6.default.createElement("span", { className: "feature-text total-row-ghost-item" }, "placeholder"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "math-group total-row-ghost-item" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "blue-number-box" }, "0"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "multiply-symbol" }, "\xD7"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "red-number-box" }, "0"))), /* @__PURE__ */ import_react6.default.createElement("div", { className: "total-line total-row-output" }, renderTotalControl()))), /* @__PURE__ */ import_react6.default.createElement("div", { className: "demo-icon", title: demoLabel || "\u0391\u03BD\u03C4\u03B9\u03BA\u03B5\u03AF\u03BC\u03B5\u03BD\u03BF-\u03C3\u03C4\u03CC\u03C7\u03BF\u03C2" }, /* @__PURE__ */ import_react6.default.createElement("span", null, demoIcon || "\u2754"), showThresholdUnderIcon && /* @__PURE__ */ import_react6.default.createElement("div", { className: "demo-icon-threshold" }, "threshold: ", thresholdValue)));
+  ), /* @__PURE__ */ import_react6.default.createElement("div", { className: "product-row total-product-row" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "product-left total-row-ghost", "aria-hidden": "true" }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "icon-small total-row-ghost-item" }, "+"), /* @__PURE__ */ import_react6.default.createElement("span", { className: "feature-text total-row-ghost-item" }, "placeholder"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "math-group total-row-ghost-item" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "blue-number-box" }, "0"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "multiply-symbol" }, "\xD7"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "red-number-box" }, "0"))), /* @__PURE__ */ import_react6.default.createElement("div", { className: "total-line total-row-output" }, renderTotalControl()))), /* @__PURE__ */ import_react6.default.createElement("div", { className: `demo-icon ${hasDemoIcon ? "has-icon" : "no-frame"}`, title: demoLabel || "\u0391\u03BD\u03C4\u03B9\u03BA\u03B5\u03AF\u03BC\u03B5\u03BD\u03BF-\u03C3\u03C4\u03CC\u03C7\u03BF\u03C2" }, /* @__PURE__ */ import_react6.default.createElement("span", null, demoIcon || ""), showThresholdUnderIcon && /* @__PURE__ */ import_react6.default.createElement("div", { className: "demo-icon-threshold" }, thresholdValue)));
 };
 
 // apps/neural-lab/components/StudentTable.jsx
@@ -21818,7 +21819,7 @@ var StudentTable2 = ({
   features,
   participants = [],
   threshold = { op: ">=", boundary: 5 },
-  activity = "1a"
+  activity = "1"
 }) => {
   let columns = [
     {
@@ -21831,7 +21832,7 @@ var StudentTable2 = ({
       label: "w\u2081",
       className: "weight-value",
       style: { background: "#ef4444", color: "white" },
-      render: (student) => student.weights?.w1 ?? (activity !== "3b" && activity !== "4b" ? 2 : "-")
+      render: (student) => student.weights?.w1 ?? (activity !== "3" && activity !== "4" ? 2 : "-")
     },
     {
       key: "i2",
@@ -21843,10 +21844,10 @@ var StudentTable2 = ({
       label: "w\u2082",
       className: "weight-value",
       style: { background: "#ef4444", color: "white" },
-      render: (student) => student.weights?.w2 ?? (activity !== "3b" && activity !== "4b" ? 3 : "-")
+      render: (student) => student.weights?.w2 ?? (activity !== "3" && activity !== "4" ? 3 : "-")
     }
   ];
-  if (activity === "2a" || activity === "2b" || activity === "3a" || activity === "3b" || activity === "4a" || activity === "4b") {
+  if (activity === "2" || activity === "3" || activity === "4") {
     columns.push(
       {
         key: "p1",
@@ -21866,7 +21867,7 @@ var StudentTable2 = ({
     className: "result-visible",
     render: (student) => {
       const resultValue = student.total ?? student.result ?? "-";
-      const showThreshold = activity === "4a" || activity === "4b";
+      const showThreshold = activity === "4";
       return /* @__PURE__ */ import_react8.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "0.3rem" } }, /* @__PURE__ */ import_react8.default.createElement("span", null, resultValue), showThreshold && typeof student.aboveThreshold === "boolean" && /* @__PURE__ */ import_react8.default.createElement("span", { style: { marginLeft: "0.45rem", fontWeight: 700, color: student.aboveThreshold ? "#059669" : "#dc2626" } }, student.aboveThreshold ? `${threshold.op} ${threshold.boundary}` : `\u03CC\u03C7\u03B9 ${threshold.op} ${threshold.boundary}`));
     }
   });
@@ -21888,16 +21889,12 @@ var StudentTable2 = ({
 // apps/neural-lab/components/ActivitiesMenu.jsx
 var import_react9 = __toESM(require_react());
 var ACTIVITY_OPTIONS = [
-  { value: "1a", label: "1\u03B1. \u0395\u03B9\u03C3\u03B1\u03B3\u03C9\u03B3\u03AE \u03B5\u03B9\u03C3\u03CC\u03B4\u03C9\u03BD (\u03B5\u03C0\u03BF\u03C0\u03C4\u03B9\u03BA\u03CC \u03BC\u03AD\u03C3\u03BF)" },
-  { value: "1b", label: "1\u03B2. \u0395\u03B9\u03C3\u03B1\u03B3\u03C9\u03B3\u03AE \u03B5\u03B9\u03C3\u03CC\u03B4\u03C9\u03BD (\u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2)" },
-  { value: "2a", label: "2\u03B1. \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2 \u03B5\u03BE\u03CC\u03B4\u03C9\u03BD (\u03B5\u03C0\u03BF\u03C0\u03C4\u03B9\u03BA\u03CC \u03BC\u03AD\u03C3\u03BF)" },
-  { value: "2b", label: "2\u03B2. \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2 \u03B5\u03BE\u03CC\u03B4\u03C9\u03BD (\u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2)" },
-  { value: "3a", label: "3\u03B1. \u03A0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03B2\u03B1\u03C1\u03CE\u03BD (\u03B5\u03C0\u03BF\u03C0\u03C4\u03B9\u03BA\u03CC \u03BC\u03AD\u03C3\u03BF)" },
-  { value: "3b", label: "3\u03B2. \u03A0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03B2\u03B1\u03C1\u03CE\u03BD (\u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2)" },
-  { value: "4a", label: "4\u03B1. \u039A\u03B1\u03C4\u03CE\u03C6\u03BB\u03B9 (\u03B5\u03C0\u03BF\u03C0\u03C4\u03B9\u03BA\u03CC \u03BC\u03AD\u03C3\u03BF)" },
-  { value: "4b", label: "4\u03B2. \u039A\u03B1\u03C4\u03CE\u03C6\u03BB\u03B9 (\u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2)" }
+  { value: "1", label: "1. \u0395\u03B9\u03C3\u03B1\u03B3\u03C9\u03B3\u03AE \u03B5\u03B9\u03C3\u03CC\u03B4\u03C9\u03BD" },
+  { value: "2", label: "2. \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2 \u03B5\u03BE\u03CC\u03B4\u03C9\u03BD" },
+  { value: "3", label: "3. \u03A0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03B2\u03B1\u03C1\u03CE\u03BD" },
+  { value: "4", label: "4. \u039A\u03B1\u03C4\u03CE\u03C6\u03BB\u03B9" }
 ];
-var ActivitiesMenu = ({ value = "1a", onChange }) => /* @__PURE__ */ import_react9.default.createElement(Accordion, { title: "\u{1F52C} \u0394\u03C1\u03B1\u03C3\u03C4\u03B7\u03C1\u03B9\u03CC\u03C4\u03B7\u03C4\u03B5\u03C2" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "data-section activities-menu" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react9.default.createElement("label", null, "\u0395\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE \u03B4\u03C1\u03B1\u03C3\u03C4\u03B7\u03C1\u03B9\u03CC\u03C4\u03B7\u03C4\u03B1\u03C2"), /* @__PURE__ */ import_react9.default.createElement(
+var ActivitiesMenu = ({ value = "1", onChange }) => /* @__PURE__ */ import_react9.default.createElement(Accordion, { title: "\u{1F52C} \u0394\u03C1\u03B1\u03C3\u03C4\u03B7\u03C1\u03B9\u03CC\u03C4\u03B7\u03C4\u03B5\u03C2" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "data-section activities-menu" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react9.default.createElement("label", null, "\u0395\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE \u03B4\u03C1\u03B1\u03C3\u03C4\u03B7\u03C1\u03B9\u03CC\u03C4\u03B7\u03C4\u03B1\u03C2"), /* @__PURE__ */ import_react9.default.createElement(
   "select",
   {
     value,
@@ -21913,7 +21910,7 @@ var ActivitiesMenu = ({ value = "1a", onChange }) => /* @__PURE__ */ import_reac
 // apps/neural-lab/data/datasets.js
 var DATASETS = {
   vehicles: {
-    label: "\u039F\u03C7\u03AE\u03BC\u03B1\u03C4\u03B1",
+    label: "\u039C\u03AD\u03C3\u03B1 \u03BC\u03B5\u03C4\u03B1\u03C6\u03BF\u03C1\u03AC\u03C2",
     emoji: "\u{1F697}",
     features: {
       i1: { label: "\u03A1\u03CC\u03B4\u03B5\u03C2", icon: "\u{1F6DE}" },
@@ -22051,8 +22048,8 @@ var App = ({ role = "teacher" }) => {
   const [currentExample, setCurrentExample] = (0, import_react10.useState)(0);
   const [currentLinearDemoIndex, setCurrentLinearDemoIndex] = (0, import_react10.useState)(void 0);
   const [lessonLinearDemoIndex, setLessonLinearDemoIndex] = (0, import_react10.useState)(void 0);
-  const [selectedActivity, setSelectedActivity] = (0, import_react10.useState)("1a");
-  const [lessonActivity, setLessonActivity] = (0, import_react10.useState)("1a");
+  const [selectedActivity, setSelectedActivity] = (0, import_react10.useState)("1");
+  const [lessonActivity, setLessonActivity] = (0, import_react10.useState)("1");
   const [teacherInputs, setTeacherInputs] = (0, import_react10.useState)({ i1: 4, i2: 1 });
   const [studentInputs, setStudentInputs] = (0, import_react10.useState)({ i1: "", i2: "" });
   const [teacherProducts, setTeacherProducts] = (0, import_react10.useState)({ p1: "", p2: "" });
@@ -22113,9 +22110,7 @@ var App = ({ role = "teacher" }) => {
   const effectiveLinearDemoIndex = isTeacher ? currentLinearDemoIndex : lessonLinearDemoIndex;
   let demoIcon = null;
   let demoLabel = "\u039C\u03B7 \u03B5\u03C0\u03B9\u03BB\u03B5\u03B3\u03BC\u03AD\u03BD\u03BF";
-  if (["1a", "1b", "2a", "2b", "3a", "3b"].includes(activeActivity)) {
-    demoIcon = "?";
-  } else if (effectiveLinearDemoIndex !== void 0 && datasets_default[safeDisplayDataset]?.linear_demos) {
+  if (activeActivity === "4" && effectiveLinearDemoIndex !== void 0 && datasets_default[safeDisplayDataset]?.linear_demos) {
     const demos = datasets_default[safeDisplayDataset].linear_demos;
     const selectedDemo = demos[effectiveLinearDemoIndex];
     if (selectedDemo) {
@@ -22130,19 +22125,19 @@ var App = ({ role = "teacher" }) => {
     const num = Number(value);
     return Number.isFinite(num) ? num : fallback;
   };
-  const isInputEditable = isTeacher && (activeActivity === "1a" || activeActivity === "1b") || isStudent && activeActivity === "1b";
-  const isWeightEditable = isTeacher && (activeActivity === "3a" || activeActivity === "3b" || activeActivity === "4a" || activeActivity === "4b") || isStudent && (activeActivity === "3b" || activeActivity === "4b");
-  const isProductEditable = isTeacher && (activeActivity === "2a" || activeActivity === "2b") || isStudent && activeActivity === "2b";
+  const isInputEditable = activeActivity === "1";
+  const isWeightEditable = activeActivity === "3" || activeActivity === "4";
+  const isProductEditable = activeActivity === "2";
   const isTotalEditable = isProductEditable;
-  const isThresholdVisible = activeActivity === "3a" || activeActivity === "3b" || activeActivity === "4a" || activeActivity === "4b";
-  const showThresholdUnderIcon = activeActivity === "4a" || activeActivity === "4b";
+  const isThresholdVisible = activeActivity === "3" || activeActivity === "4";
+  const showThresholdUnderIcon = activeActivity === "4";
   const effectiveThresholdRule = isTeacher ? teacherThresholdRule : lessonThreshold;
   const thresholdDisplayText = `${effectiveThresholdRule.op} ${effectiveThresholdRule.boundary}`;
-  const currentInputs = isTeacher ? teacherInputs : isStudent && activeActivity === "1b" ? studentInputs : lessonInputs;
+  const currentInputs = isTeacher ? teacherInputs : isStudent && activeActivity === "1" ? studentInputs : lessonInputs;
   const i1 = currentInputs.i1;
   const i2 = currentInputs.i2;
-  const currentW1 = isTeacher ? dynamicW1 : isStudent && (activeActivity === "3b" || activeActivity === "4b") ? dynamicW1 : lessonWeights.w1;
-  const currentW2 = isTeacher ? dynamicW2 : isStudent && (activeActivity === "3b" || activeActivity === "4b") ? dynamicW2 : lessonWeights.w2;
+  const currentW1 = isTeacher ? dynamicW1 : isStudent && (activeActivity === "3" || activeActivity === "4") ? dynamicW1 : lessonWeights.w1;
+  const currentW2 = isTeacher ? dynamicW2 : isStudent && (activeActivity === "3" || activeActivity === "4") ? dynamicW2 : lessonWeights.w2;
   const computedProd1 = Number((toFinite(currentW1) * toFinite(i1)).toFixed(2));
   const computedProd2 = Number((toFinite(currentW2) * toFinite(i2)).toFixed(2));
   const currentProducts = isTeacher ? teacherProducts : studentProducts;
@@ -22150,26 +22145,28 @@ var App = ({ role = "teacher" }) => {
   const prod2 = isProductEditable ? currentProducts.p2 : computedProd2;
   const computedTotal = Number((toFinite(prod1) + toFinite(prod2)).toFixed(2));
   const total = isTotalEditable ? isTeacher ? teacherTotal : studentTotal : computedTotal;
-  const displayedProd1 = !isTeacher && activeActivity === "2a" ? lessonProducts.p1 : prod1;
-  const displayedProd2 = !isTeacher && activeActivity === "2a" ? lessonProducts.p2 : prod2;
-  const displayedTotal = !isTeacher && activeActivity === "2a" ? lessonTotal : total;
+  const isEmptyCalcInput = (value) => value === "" || value === null || typeof value === "undefined" || value === "-";
+  const useQuestionForOutputs = activeActivity === "1" || activeActivity === "3" || activeActivity === "4";
+  const missingP1Input = activeActivity === "1" ? isEmptyCalcInput(i1) : activeActivity === "3" || activeActivity === "4" ? isEmptyCalcInput(currentW1) : false;
+  const missingP2Input = activeActivity === "1" ? isEmptyCalcInput(i2) : activeActivity === "3" || activeActivity === "4" ? isEmptyCalcInput(currentW2) : false;
+  const missingTotalInput = missingP1Input || missingP2Input;
+  const displayedProd1 = useQuestionForOutputs && !isProductEditable && missingP1Input ? "?" : prod1;
+  const displayedProd2 = useQuestionForOutputs && !isProductEditable && missingP2Input ? "?" : prod2;
+  const displayedTotal = useQuestionForOutputs && !isTotalEditable && missingTotalInput ? "?" : total;
   const formulaByActivity = {
-    "1a": "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$",
-    "1b": "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$",
-    "2a": "$$ (w_1 \\times i_1) + (w_2 \\times i_2) = o $$",
-    "2b": "$$ (w_1 \\times i_1) + (w_2 \\times i_2) = o $$",
-    "3a": "$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$",
-    "3b": "$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$",
-    "4a": "$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$",
-    "4b": "$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$"
+    "1": "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$",
+    "2": "$$ (w_1 \\times i_1) + (w_2 \\times i_2) = o $$",
+    "3": "$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$",
+    "4": "$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$"
   };
   const mathTitle = formulaByActivity[activeActivity] || "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$";
   const threshold = {
-    satisfied: evaluateThresholdRule(total, effectiveThresholdRule),
+    satisfied: !missingTotalInput && evaluateThresholdRule(total, effectiveThresholdRule),
     value: thresholdDisplayText,
     rule: effectiveThresholdRule,
     total: toFinite(total)
   };
+  const demoFooterText = activeActivity === "4" ? `\u03AC\u03B8\u03C1\u03BF\u03B9\u03C3\u03BC\u03B1: ${displayedTotal}` : "";
   const handleWeightChange = (which, value) => {
     const normalized = value === "" || value === "-" ? value : Number(value);
     if (which === "w1") {
@@ -22362,8 +22359,8 @@ var App = ({ role = "teacher" }) => {
   (0, import_react10.useEffect)(() => {
     if (!isTeacher || !isSocketConnected) return;
     const lessonInputsPayload = {
-      i1: teacherInputs.i1,
-      i2: teacherInputs.i2
+      i1: currentExampleData.i1,
+      i2: currentExampleData.i2
     };
     sendSocketMessage({
       type: "teacher_lesson",
@@ -22374,11 +22371,6 @@ var App = ({ role = "teacher" }) => {
         exampleName: currentExampleData.name,
         icon: currentExampleData.icon,
         inputs: lessonInputsPayload,
-        products: {
-          p1: teacherProducts.p1,
-          p2: teacherProducts.p2
-        },
-        total: teacherTotal,
         weights: {
           w1: dynamicW1,
           w2: dynamicW2
@@ -22397,11 +22389,6 @@ var App = ({ role = "teacher" }) => {
     currentExampleData.icon,
     dynamicW1,
     dynamicW2,
-    teacherInputs.i1,
-    teacherInputs.i2,
-    teacherProducts.p1,
-    teacherProducts.p2,
-    teacherTotal,
     teacherThresholdRule.op,
     teacherThresholdRule.boundary,
     currentLinearDemoIndex
@@ -22410,12 +22397,12 @@ var App = ({ role = "teacher" }) => {
     if (!isTeacher) {
       return;
     }
-    if (selectedActivity === "1a" || selectedActivity === "1b") {
+    if (selectedActivity === "1") {
       setTeacherInputs({ i1: "", i2: "" });
       setStudentInputs({ i1: "", i2: "" });
       setCurrentLinearDemoIndex(void 0);
     }
-    if (selectedActivity === "2a" || selectedActivity === "2b") {
+    if (selectedActivity === "2") {
       setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
       setTeacherProducts({ p1: "", p2: "" });
       setTeacherTotal("");
@@ -22424,19 +22411,19 @@ var App = ({ role = "teacher" }) => {
       setStudentInputs({ i1: "", i2: "" });
       setCurrentLinearDemoIndex(void 0);
     }
-    if (selectedActivity === "3a" || selectedActivity === "3b") {
+    if (selectedActivity === "3") {
       setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
       setDynamicW1("");
       setDynamicW2("");
       setCurrentLinearDemoIndex(void 0);
     }
-    if (selectedActivity === "4a" || selectedActivity === "4b") {
+    if (selectedActivity === "4") {
       setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
       setDynamicW1("");
       setDynamicW2("");
       setCurrentLinearDemoIndex(0);
     }
-    if (selectedActivity !== "3a" && selectedActivity !== "3b" && selectedActivity !== "4a" && selectedActivity !== "4b") {
+    if (selectedActivity !== "3" && selectedActivity !== "4") {
       setDynamicW1((prev) => prev === "" ? 2 : prev);
       setDynamicW2((prev) => prev === "" ? 3 : prev);
     }
@@ -22445,11 +22432,11 @@ var App = ({ role = "teacher" }) => {
     if (!isStudent) {
       return;
     }
-    if (lessonActivity === "2b") {
+    if (lessonActivity === "2") {
       setStudentProducts({ p1: "", p2: "" });
       setStudentTotal("");
     }
-    if (lessonActivity === "3b" || lessonActivity === "4b") {
+    if (lessonActivity === "3" || lessonActivity === "4") {
       setDynamicW1("");
       setDynamicW2("");
     }
@@ -22524,7 +22511,7 @@ var App = ({ role = "teacher" }) => {
         }
       },
       showThreshold: isThresholdVisible,
-      thresholdValue: thresholdDisplayText,
+      thresholdValue: demoFooterText,
       showThresholdUnderIcon
     }
   )), (isTeacher || isScreen) && /* @__PURE__ */ import_react10.default.createElement("div", { className: "live-table-wrap" }, /* @__PURE__ */ import_react10.default.createElement(
@@ -22551,7 +22538,7 @@ var App = ({ role = "teacher" }) => {
       },
       onExampleChange: setCurrentExample,
       onLinearDemoChange: setCurrentLinearDemoIndex,
-      isLinearDemoDisabled: ["1a", "1b", "2a", "2b", "3a", "3b"].includes(selectedActivity),
+      isLinearDemoDisabled: ["1", "2", "3"].includes(selectedActivity),
       demoIconWhenDisabled: "?"
     }
   )));

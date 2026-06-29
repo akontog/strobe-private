@@ -31,6 +31,8 @@ export const VerticalProducts = ({
   thresholdValue,
   showThresholdUnderIcon
 }) => {
+  const hasDemoIcon = Boolean(demoIcon);
+
   const handleW1Change = (value) => {
     if (editWeights && onWeightChange) {
       onWeightChange('w1', value);
@@ -148,10 +150,10 @@ export const VerticalProducts = ({
           </div>
         </div>
       </div>
-      <div className="demo-icon" title={demoLabel || 'Αντικείμενο-στόχος'}>
-        <span>{demoIcon || '❔'}</span>
+      <div className={`demo-icon ${hasDemoIcon ? 'has-icon' : 'no-frame'}`} title={demoLabel || 'Αντικείμενο-στόχος'}>
+        <span>{demoIcon || ''}</span>
         {showThresholdUnderIcon && (
-          <div className="demo-icon-threshold">threshold: {thresholdValue}</div>
+          <div className="demo-icon-threshold">{thresholdValue}</div>
         )}
       </div>
     </div>

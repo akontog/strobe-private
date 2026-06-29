@@ -608,6 +608,17 @@ select {
   justify-content: center;
   gap: 0.65rem;
 }
+.demo-icon.no-frame {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+.demo-icon.no-frame span {
+  width: 1px;
+  height: 5.5rem;
+  line-height: 1;
+  opacity: 0;
+}
 .demo-icon-threshold {
   font-size: 0.95rem;
   font-weight: 700;

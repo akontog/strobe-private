@@ -2,17 +2,13 @@ import React from 'react';
 import { Accordion } from '../../shared/components/Accordion';
 
 const ACTIVITY_OPTIONS = [
-  { value: '1a', label: '1α. Εισαγωγή εισόδων (εποπτικό μέσο)' },
-  { value: '1b', label: '1β. Εισαγωγή εισόδων (μαθητές)' },
-  { value: '2a', label: '2α. Υπολογισμός εξόδων (εποπτικό μέσο)' },
-  { value: '2b', label: '2β. Υπολογισμός εξόδων (μαθητές)' },
-  { value: '3a', label: '3α. Προσαρμογή βαρών (εποπτικό μέσο)' },
-  { value: '3b', label: '3β. Προσαρμογή βαρών (μαθητές)' },
-  { value: '4a', label: '4α. Κατώφλι (εποπτικό μέσο)' },
-  { value: '4b', label: '4β. Κατώφλι (μαθητές)' }
+  { value: '1', label: '1. Εισαγωγή εισόδων' },
+  { value: '2', label: '2. Υπολογισμός εξόδων' },
+  { value: '3', label: '3. Προσαρμογή βαρών' },
+  { value: '4', label: '4. Κατώφλι' }
 ];
 
-export const ActivitiesMenu = ({ value = '1a', onChange }) => (
+export const ActivitiesMenu = ({ value = '1', onChange }) => (
   <Accordion title="🔬 Δραστηριότητες">
     <div className="data-section activities-menu">
       <div className="select-group">
