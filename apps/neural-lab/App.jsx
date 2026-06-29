@@ -61,6 +61,8 @@ const App = ({ role = 'teacher' }) => {
   const [participants, setParticipants] = useState([]);
   const [roster, setRoster] = useState([]);
   const [lessonInputs, setLessonInputs] = useState({ i1: 4, i2: 1 });
+  const [lessonProducts, setLessonProducts] = useState({ p1: '', p2: '' });
+  const [lessonTotal, setLessonTotal] = useState('');
   const [lessonWeights, setLessonWeights] = useState({ w1: 2, w2: 3 });
   const [lessonThreshold, setLessonThreshold] = useState(5);
   const [lessonDataset, setLessonDataset] = useState('vehicles');
@@ -121,7 +123,10 @@ const saveStudentName = () => {
   let demoIcon = null;
   let demoLabel = 'Μη επιλεγμένο';
 
-  if (effectiveLinearDemoIndex !== undefined && DATASETS[safeDisplayDataset]?.linear_demos) {
+  // Activities 1-3 always show "?" as demo icon
+  if (['1a', '1b', '2a', '2b', '3a', '3b'].includes(activeActivity)) {
+    demoIcon = '?';
+  } else if (effectiveLinearDemoIndex !== undefined && DATASETS[safeDisplayDataset]?.linear_demos) {
     const demos = DATASETS[safeDisplayDataset].linear_demos;
     const selectedDemo = demos[effectiveLinearDemoIndex];
     if (selectedDemo) {
@@ -140,11 +145,13 @@ const saveStudentName = () => {
 
   const isInputEditable = (isTeacher && (activeActivity === '1a' || activeActivity === '1b'))
     || (isStudent && activeActivity === '1b');
-  const isWeightEditable = (isTeacher && activeActivity === '3a')
-    || (isStudent && activeActivity === '3b');
-  const isProductEditable = (isTeacher && activeActivity === '2a')
+  const isWeightEditable = (isTeacher && (activeActivity === '3a' || activeActivity === '3b' || activeActivity === '4a'))
+    || (isStudent && (activeActivity === '3b' || activeActivity === '4b'));
+  const isProductEditable = (isTeacher && (activeActivity === '2a' || activeActivity === '2b'))
     || (isStudent && activeActivity === '2b');
   const isTotalEditable = isProductEditable;
+  const isThresholdVisible = activeActivity === '3a' || activeActivity === '3b' || activeActivity === '4a' || activeActivity === '4b';
+  const showThresholdUnderIcon = activeActivity === '4a' || activeActivity === '4b';
 
   const currentInputs = isTeacher
     ? teacherInputs
@@ -157,12 +164,12 @@ const saveStudentName = () => {
 
   const currentW1 = isTeacher
     ? dynamicW1
-    : isStudent && activeActivity === '3b'
+    : isStudent && (activeActivity === '3b' || activeActivity === '4b')
       ? dynamicW1
       : lessonWeights.w1;
   const currentW2 = isTeacher
     ? dynamicW2
-    : isStudent && activeActivity === '3b'
+    : isStudent && (activeActivity === '3b' || activeActivity === '4b')
       ? dynamicW2
       : lessonWeights.w2;
 
@@ -177,14 +184,21 @@ const saveStudentName = () => {
   const total = isTotalEditable
     ? (isTeacher ? teacherTotal : studentTotal)
     : computedTotal;
+  const displayedProd1 = !isTeacher && activeActivity === '2a' ? lessonProducts.p1 : prod1;
+  const displayedProd2 = !isTeacher && activeActivity === '2a' ? lessonProducts.p2 : prod2;
+  const displayedTotal = !isTeacher && activeActivity === '2a'
+    ? lessonTotal
+    : total;
 
   const formulaByActivity = {
     '1a': '$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$',
     '1b': '$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$',
     '2a': '$$ (w_1 \\times i_1) + (w_2 \\times i_2) = o $$',
     '2b': '$$ (w_1 \\times i_1) + (w_2 \\times i_2) = o $$',
-    '3a': '$$ w_1 \\times i_1 + w_2 \\times i_2 = o \\; (\\text{προσαρμογή βαρών}) $$',
-    '3b': '$$ w_1 \\times i_1 + w_2 \\times i_2 = o \\; (\\text{προσαρμογή βαρών}) $$'
+    '3a': '$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$',
+    '3b': '$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$',
+    '4a': '$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$',
+    '4b': '$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$'
   };
   const mathTitle = formulaByActivity[activeActivity] || '$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$';
 
@@ -195,11 +209,11 @@ const saveStudentName = () => {
   };
 
   const handleWeightChange = (which, value) => {
-    const normalized = value === '' ? '' : Number(value);
+    const normalized = value === '' || value === '-' ? value : Number(value);
     if (which === 'w1') {
-      setDynamicW1(Number.isFinite(normalized) || normalized === '' ? normalized : 0);
+      setDynamicW1(Number.isFinite(normalized) || normalized === '' || normalized === '-' ? normalized : 0);
     } else {
-      setDynamicW2(Number.isFinite(normalized) || normalized === '' ? normalized : 0);
+      setDynamicW2(Number.isFinite(normalized) || normalized === '' || normalized === '-' ? normalized : 0);
     }
   };
 
@@ -269,6 +283,17 @@ const saveStudentName = () => {
           });
         }
 
+        if (message.lesson?.products) {
+          setLessonProducts({
+            p1: message.lesson.products.p1 ?? '',
+            p2: message.lesson.products.p2 ?? ''
+          });
+        }
+
+        if (Object.prototype.hasOwnProperty.call(message.lesson, 'total')) {
+          setLessonTotal(message.lesson.total ?? '');
+        }
+
         if (message.lesson?.weights && typeof message.lesson.weights === 'object') {
           setLessonWeights({
             w1: message.lesson.weights.w1 ?? 2,
@@ -278,6 +303,10 @@ const saveStudentName = () => {
 
         if (typeof message.lesson?.activityId === 'string') {
           setLessonActivity(message.lesson.activityId);
+        }
+
+        if (Number.isInteger(Number(message.lesson?.targetIndex))) {
+          setLessonTarget(Number(message.lesson.targetIndex));
         }
 
         if (Number.isFinite(Number(message.lesson?.threshold))) {
@@ -324,8 +353,8 @@ const saveStudentName = () => {
           suppressNextStudentStateSendRef.current = true;
 
           if (message.me.weights) {
-            setDynamicW1(message.me.weights.w1 ?? 0);
-            setDynamicW2(message.me.weights.w2 ?? 0);
+            setDynamicW1((prev) => (prev === '-' ? prev : (message.me.weights.w1 ?? '')));
+            setDynamicW2((prev) => (prev === '-' ? prev : (message.me.weights.w2 ?? '')));
           }
 
           if (message.me.inputs) {
@@ -417,6 +446,11 @@ const saveStudentName = () => {
         exampleName: currentExampleData.name,
         icon: currentExampleData.icon,
         inputs: lessonInputsPayload,
+        products: {
+          p1: teacherProducts.p1,
+          p2: teacherProducts.p2
+        },
+        total: teacherTotal,
         weights: {
           w1: dynamicW1,
           w2: dynamicW2
@@ -437,6 +471,9 @@ const saveStudentName = () => {
     dynamicW2,
     teacherInputs.i1,
     teacherInputs.i2,
+    teacherProducts.p1,
+    teacherProducts.p2,
+    teacherTotal,
     lessonThreshold,
     currentLinearDemoIndex
   ]);
@@ -446,34 +483,65 @@ const saveStudentName = () => {
       return;
     }
 
-    if (selectedActivity === '1a') {
-      setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
-    }
-
-    if (selectedActivity === '1b') {
+    if (selectedActivity === '1a' || selectedActivity === '1b') {
+      // Activity 1: Inputs always empty for teacher to provide
       setTeacherInputs({ i1: '', i2: '' });
       setStudentInputs({ i1: '', i2: '' });
+      // Reset linear demo to disabled state
+      setCurrentLinearDemoIndex(undefined);
     }
 
     if (selectedActivity === '2a' || selectedActivity === '2b') {
+      // Auto-fill inputs from example
+      setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
       setTeacherProducts({ p1: '', p2: '' });
       setTeacherTotal('');
-      if (selectedActivity === '2b') {
-        setStudentProducts({ p1: '', p2: '' });
-        setStudentTotal('');
-      }
+      setStudentProducts({ p1: '', p2: '' });
+      setStudentTotal('');
+      setStudentInputs({ i1: '', i2: '' });
+      // Reset linear demo to disabled state
+      setCurrentLinearDemoIndex(undefined);
     }
 
-    if (selectedActivity === '3a') {
+    if (selectedActivity === '3a' || selectedActivity === '3b') {
+      // Auto-fill inputs from example for weight adjustment activity
+      setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
       setDynamicW1('');
       setDynamicW2('');
+      // Reset linear demo to disabled state
+      setCurrentLinearDemoIndex(undefined);
     }
 
-    if (selectedActivity !== '3a') {
+    if (selectedActivity === '4a' || selectedActivity === '4b') {
+      // Auto-fill inputs from example for threshold activity
+      setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
+      setDynamicW1('');
+      setDynamicW2('');
+      // Auto-select first linear_demo for threshold activity
+      setCurrentLinearDemoIndex(0);
+    }
+
+    if (selectedActivity !== '3a' && selectedActivity !== '3b' && selectedActivity !== '4a' && selectedActivity !== '4b') {
       setDynamicW1((prev) => (prev === '' ? 2 : prev));
       setDynamicW2((prev) => (prev === '' ? 3 : prev));
     }
   }, [isTeacher, selectedActivity, currentExampleData.i1, currentExampleData.i2]);
+
+  useEffect(() => {
+    if (!isStudent) {
+      return;
+    }
+
+    if (lessonActivity === '2b') {
+      setStudentProducts({ p1: '', p2: '' });
+      setStudentTotal('');
+    }
+
+    if (lessonActivity === '3b' || lessonActivity === '4b') {
+      setDynamicW1('');
+      setDynamicW2('');
+    }
+  }, [isStudent, lessonActivity, lessonExampleIndex]);
 
   useEffect(() => {
   const renderMath = () => {
@@ -493,7 +561,7 @@ const saveStudentName = () => {
   // Μικρή καθυστέρηση για να προλάβει το React να κάνει render το innerHTML
   const timeoutId = setTimeout(renderMath, 50);
   return () => clearTimeout(timeoutId);
-}, [role, currentDataset, currentExample, selectedActivity, lessonActivity, dynamicW1, dynamicW2, teacherInputs.i1, teacherInputs.i2, studentInputs.i1, studentInputs.i2]);
+}, [role, currentDataset, currentExample, selectedActivity, lessonActivity]);
   const sortedParticipants = [...participants].sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
 
   return (
@@ -558,16 +626,15 @@ const saveStudentName = () => {
           demoIcon={demoIcon}
           demoLabel={demoLabel}
           features={DATASETS[safeDisplayDataset].features}
-          prod1={prod1}
-          prod2={prod2}
+          prod1={displayedProd1}
+          prod2={displayedProd2}
           w1={currentW1}
           w2={currentW2}
           i1={i1}
           i2={i2}
-          total={total}
+          total={displayedTotal}
           editWeights={isWeightEditable}
           onWeightChange={handleWeightChange}
-          onRefresh={null}
           threshold={threshold}
           studentAnswerMode={false}
           studentAnswer=""
@@ -597,10 +664,9 @@ const saveStudentName = () => {
               setStudentTotal(value);
             }
           }}
-          inputPlaceholder="συμπλήρωσε"
-          weightPlaceholder="βάρος"
-          productPlaceholder="υπολογισμός"
-          totalPlaceholder="δώσε o"
+          showThreshold={isThresholdVisible}
+          thresholdValue={lessonThreshold}
+          showThresholdUnderIcon={showThresholdUnderIcon}
         />
       </div>
 
@@ -612,6 +678,7 @@ const saveStudentName = () => {
             features={DATASETS[safeDisplayDataset].features}
             threshold={lessonThreshold}
             participants={sortedParticipants}
+            activity={lessonActivity}
           />
         </div>
       )}
@@ -633,6 +700,8 @@ const saveStudentName = () => {
             }}
             onExampleChange={setCurrentExample}
             onLinearDemoChange={setCurrentLinearDemoIndex}
+            isLinearDemoDisabled={['1a', '1b', '2a', '2b', '3a', '3b'].includes(selectedActivity)}
+            demoIconWhenDisabled="?"
           />
           
         </>

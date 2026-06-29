@@ -14,7 +14,6 @@ export const VerticalProducts = ({
   useQuestionMarks,
   editWeights,
   onWeightChange,
-  onRefresh,
   threshold,
   studentAnswerMode,
   studentAnswer,
@@ -26,12 +25,11 @@ export const VerticalProducts = ({
   onInputChange,
   onProductChange,
   onTotalChange,
-  inputPlaceholder,
-  weightPlaceholder,
-  productPlaceholder,
-  totalPlaceholder,
   demoIcon,
-  demoLabel
+  demoLabel,
+  showThreshold,
+  thresholdValue,
+  showThresholdUnderIcon
 }) => {
   const handleW1Change = (value) => {
     if (editWeights && onWeightChange) {
@@ -45,6 +43,46 @@ export const VerticalProducts = ({
     }
   };
 
+  const renderTotalControl = () => {
+    if (studentAnswerMode) {
+      return (
+        <input
+          className="student-answer-input"
+          type="text"
+          value={studentAnswer}
+          onChange={(e) => {
+            if (typeof onStudentAnswerChange === 'function') {
+              onStudentAnswerChange(e.target.value);
+            }
+          }}
+        />
+      );
+    }
+
+    if (totalEditable) {
+      return (
+        <div className={`input-wrapper ${showThreshold && threshold ? (threshold.satisfied ? 'threshold-true' : 'threshold-false') : ''}`}>
+          <input
+            className="student-answer-input"
+            type="text"
+            value={totalValue ?? ''}
+            onChange={(event) => {
+              if (typeof onTotalChange === 'function') {
+                onTotalChange(event.target.value);
+              }
+            }}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className={`total-result ${showThreshold && threshold ? (threshold.satisfied ? 'threshold-true' : 'threshold-false') : ''}`}>
+        {total}
+      </div>
+    );
+  };
+
   return (
     <div className="vertical-products">
       <div className="big-icon">
@@ -52,8 +90,8 @@ export const VerticalProducts = ({
       </div>
       <div className="products-stack">
         <ProductRow
-          icon={features.i1.icon}   // π.χ. "🛞"
-          label={features.i1.label} // π.χ. ρόδες
+          icon={features.i1.icon}
+          label={features.i1.label}
           input1={i1}
           weight={w1}
           product={prod1}
@@ -72,13 +110,10 @@ export const VerticalProducts = ({
               onProductChange('p1', value);
             }
           }}
-          inputPlaceholder={inputPlaceholder}
-          weightPlaceholder={weightPlaceholder}
-          productPlaceholder={productPlaceholder}
         />
         <ProductRow
-          icon={features.i2.icon}   // π.χ. "🛞"
-          label={features.i2.label} // π.χ. ρόδες
+          icon={features.i2.icon}
+          label={features.i2.label}
           input1={i2}
           weight={w2}
           product={prod2}
@@ -97,50 +132,27 @@ export const VerticalProducts = ({
               onProductChange('p2', value);
             }
           }}
-          inputPlaceholder={inputPlaceholder}
-          weightPlaceholder={weightPlaceholder}
-          productPlaceholder={productPlaceholder}
         />
-        <div className="total-line">
-          {studentAnswerMode ? (
-            <input
-              className="student-answer-input"
-              type="text" inputMode="numeric"
-              value={studentAnswer}
-              placeholder="Δώσε o"
-              onChange={(e) => {
-                if (typeof onStudentAnswerChange === 'function') {
-                  onStudentAnswerChange(e.target.value);
-                }
-              }}
-            />
-          ) : totalEditable ? (
-            <input
-              className="student-answer-input"
-              type="text" inputMode="numeric"
-              value={totalValue ?? ''}
-              placeholder={totalPlaceholder || 'Δώσε o'}
-              onChange={(event) => {
-                if (typeof onTotalChange === 'function') {
-                  onTotalChange(event.target.value);
-                }
-              }}
-            />
-          ) : (
-             <div className={`total-result ${threshold ? (threshold.satisfied ? 'threshold-true' : 'threshold-false') : ''}`}>
-              {total}
+        <div className="product-row total-product-row">
+          <div className="product-left total-row-ghost" aria-hidden="true">
+            <span className="icon-small total-row-ghost-item">+</span>
+            <span className="feature-text total-row-ghost-item">placeholder</span>
+            <div className="math-group total-row-ghost-item">
+              <div className="blue-number-box">0</div>
+              <div className="multiply-symbol">×</div>
+              <div className="red-number-box">0</div>
             </div>
-          )}
-          
+          </div>
+          <div className="total-line total-row-output">
+            {renderTotalControl()}
+          </div>
         </div>
-        {(editWeights || onRefresh) && (
-          <button className="reveal-btn" onClick={onRefresh}>
-            🔄 Ενημέρωση
-          </button>
-        )}
       </div>
       <div className="demo-icon" title={demoLabel || 'Αντικείμενο-στόχος'}>
         <span>{demoIcon || '❔'}</span>
+        {showThresholdUnderIcon && (
+          <div className="demo-icon-threshold">threshold: {thresholdValue}</div>
+        )}
       </div>
     </div>
   );

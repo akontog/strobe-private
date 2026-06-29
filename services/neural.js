@@ -25,8 +25,9 @@ module.exports = function initNeural({
     dataset: 'vehicles', 
     // δείκτης, όνομα, εικονίδιο παραδείγματος, 
     exampleIndex: 0, exampleName: 'Αυτοκίνητο', icon: '🚗',
-    // κοινές είσοδοι, βάρη, 
+    // κοινές είσοδοι, βάρη, προϊόντα και άθροισμα
     inputs: { i1: 2, i2: 3 },  weights: { w1: 2, w2: 3 },
+    products: { p1: '', p2: '' }, total: '',
     // αν οι μαθητές βλέπουν ερωτηματικά
     useQuestionMarks: false,
     // κατώφλι απόφασης (default: 5)
@@ -83,20 +84,26 @@ module.exports = function initNeural({
     if (!Number.isFinite(parsed)) return fallback;
     return Math.max(min, Math.min(max, parsed));
   }
-  // Επικυρώνει w1/w2 στο [-4, 4] με 1 δεκαδικό
+  // Επικυρώνει w1/w2 στο [-10, 10] με 1 δεκαδικό, επιτρέπει κενό string
   function normalizeCanvasNodeStudentWeights(weights, fallback = {}) {
     const source = weights && typeof weights === 'object' ? weights : {};
-    const fallbackW1 = Number.isFinite(Number(fallback.w1)) ? Number(fallback.w1) : 1;
-    const fallbackW2 = Number.isFinite(Number(fallback.w2)) ? Number(fallback.w2) : 1;
+    const parseValue = (value, fallbackValue) => {
+      if (value === '' || value === '-' || value === null || typeof value === 'undefined') {
+        return '';
+      }
+      const fallbackNumber = Number.isFinite(Number(fallbackValue)) ? Number(fallbackValue) : 1;
+      return Number(clampCanvasNodeNumber(value, -10, 10, fallbackNumber).toFixed(1));
+    };
+
     return {
-      w1: Number(clampCanvasNodeNumber(source.w1, -4, 4, fallbackW1).toFixed(1)),
-      w2: Number(clampCanvasNodeNumber(source.w2, -4, 4, fallbackW2).toFixed(1))
+      w1: parseValue(source.w1, fallback.w1),
+      w2: parseValue(source.w2, fallback.w2)
     };
   }
   // Υπολογίζει w1·i1 + w2·i2 με τα τρέχοντα  inputs
   function computeCanvasNodeStudentResult(weights) {
     const safeWeights = normalizeCanvasNodeStudentWeights(weights, weights);
-    const result = (safeWeights.w1 * canvasNodeLesson.inputs.i1) + (safeWeights.w2 * canvasNodeLesson.inputs.i2);
+    const result = (Number(safeWeights.w1 || 0) * canvasNodeLesson.inputs.i1) + (Number(safeWeights.w2 || 0) * canvasNodeLesson.inputs.i2);
     return Number(result.toFixed(2));
   }
   // Επικυρώνει i1/i2 στο [-100, 100], επιτρέπει κενό string
@@ -147,10 +154,13 @@ module.exports = function initNeural({
     const products = normalizeCanvasNodeStudentProducts(student && student.products, student && student.products);
     const computedP1 = Number((Number(weights.w1 || 0) * Number(inputs.i1 || 0)).toFixed(2));
     const computedP2 = Number((Number(weights.w2 || 0) * Number(inputs.i2 || 0)).toFixed(2));
-    const displayP1 = products.p1 === '' ? computedP1 : products.p1;
-    const displayP2 = products.p2 === '' ? computedP2 : products.p2;
-    const total = normalizeCanvasNodeStudentTotal(student && student.total, Number(displayP1) + Number(displayP2));
-    const result = total === '' ? Number((Number(displayP1) + Number(displayP2)).toFixed(2)) : total;
+    const preserveBlankOutputs = canvasNodeLesson.activityId === '2b';
+    const displayP1 = preserveBlankOutputs ? products.p1 : (products.p1 === '' ? computedP1 : products.p1);
+    const displayP2 = preserveBlankOutputs ? products.p2 : (products.p2 === '' ? computedP2 : products.p2);
+    const total = preserveBlankOutputs
+      ? normalizeCanvasNodeStudentTotal(student && student.total, '')
+      : normalizeCanvasNodeStudentTotal(student && student.total, Number(displayP1) + Number(displayP2));
+    const result = total === '' ? Number((Number(displayP1 || 0) + Number(displayP2 || 0)).toFixed(2)) : total;
     return {
       id: student.id,
       role: 'client',
@@ -503,6 +513,11 @@ module.exports = function initNeural({
         const maybeI2 = Number(lesson?.inputs?.i2);
         const maybeW1 = Number(lesson?.weights?.w1);
         const maybeW2 = Number(lesson?.weights?.w2);
+        const maybeP1 = Number(lesson?.products?.p1);
+        const maybeP2 = Number(lesson?.products?.p2);
+        const prevActivityId = canvasNodeLesson.activityId;
+        const prevDataset = canvasNodeLesson.dataset;
+        const prevExampleIndex = canvasNodeLesson.exampleIndex;
 
         if (typeof lesson.activityId === 'string' && lesson.activityId.trim()) {
           canvasNodeLesson.activityId = lesson.activityId.trim();
@@ -521,6 +536,22 @@ module.exports = function initNeural({
             ? clampCanvasNodeNumber(maybeI2, -100, 100, canvasNodeLesson.inputs.i2)
             : '';
         }
+        if (Object.prototype.hasOwnProperty.call(lesson.products || {}, 'p1')) {
+          canvasNodeLesson.products.p1 = Number.isFinite(maybeP1)
+            ? Number(clampCanvasNodeNumber(maybeP1, -100000, 100000, 0).toFixed(2))
+            : '';
+        }
+        if (Object.prototype.hasOwnProperty.call(lesson.products || {}, 'p2')) {
+          canvasNodeLesson.products.p2 = Number.isFinite(maybeP2)
+            ? Number(clampCanvasNodeNumber(maybeP2, -100000, 100000, 0).toFixed(2))
+            : '';
+        }
+        if (Object.prototype.hasOwnProperty.call(lesson, 'total')) {
+          const maybeTotal = Number(lesson.total);
+          canvasNodeLesson.total = Number.isFinite(maybeTotal)
+            ? Number(clampCanvasNodeNumber(maybeTotal, -100000, 100000, 0).toFixed(2))
+            : '';
+        }
         if (Object.prototype.hasOwnProperty.call(lesson, 'linearDemoIndex')) {
           const idx = Number(lesson.linearDemoIndex);
           if (Number.isInteger(idx) && idx >= 0) {
@@ -529,17 +560,44 @@ module.exports = function initNeural({
             canvasNodeLesson.linearDemoIndex = undefined;
           }
         }
-        if (Number.isFinite(maybeW1)) canvasNodeLesson.weights.w1 = clampCanvasNodeNumber(maybeW1, -10, 10, canvasNodeLesson.weights.w1);
-        if (Number.isFinite(maybeW2)) canvasNodeLesson.weights.w2 = clampCanvasNodeNumber(maybeW2, -10, 10, canvasNodeLesson.weights.w2);
+        if (Object.prototype.hasOwnProperty.call(lesson.weights || {}, 'w1')) {
+          canvasNodeLesson.weights.w1 = Number.isFinite(maybeW1)
+            ? clampCanvasNodeNumber(maybeW1, -10, 10, canvasNodeLesson.weights.w1)
+            : '';
+        }
+        if (Object.prototype.hasOwnProperty.call(lesson.weights || {}, 'w2')) {
+          canvasNodeLesson.weights.w2 = Number.isFinite(maybeW2)
+            ? clampCanvasNodeNumber(maybeW2, -10, 10, canvasNodeLesson.weights.w2)
+            : '';
+        }
         if (typeof lesson.useQuestionMarks === 'boolean') canvasNodeLesson.useQuestionMarks = lesson.useQuestionMarks;
         if (Number.isFinite(Number(lesson.threshold))) {
           canvasNodeLesson.threshold = clampCanvasNodeNumber(Number(lesson.threshold), -1000, 1000, canvasNodeLesson.threshold);
         }
 
+        const lessonContextChanged = prevActivityId !== canvasNodeLesson.activityId
+          || prevDataset !== canvasNodeLesson.dataset
+          || prevExampleIndex !== canvasNodeLesson.exampleIndex;
+
         if (canvasNodeLesson.activityId === '1b') {
           canvasNodeStudents.forEach((student) => {
             if (!student) return;
             student.inputs = { i1: '', i2: '' };
+          });
+        }
+
+        if (lessonContextChanged && canvasNodeLesson.activityId === '2b') {
+          canvasNodeStudents.forEach((student) => {
+            if (!student) return;
+            student.products = { p1: '', p2: '' };
+            student.total = '';
+          });
+        }
+
+        if (lessonContextChanged && (canvasNodeLesson.activityId === '3b' || canvasNodeLesson.activityId === '4b')) {
+          canvasNodeStudents.forEach((student) => {
+            if (!student) return;
+            student.weights = { w1: '', w2: '' };
           });
         }
 
@@ -560,6 +618,11 @@ module.exports = function initNeural({
                   i1: canvasNodeLesson.inputs.i1,
                   i2: canvasNodeLesson.inputs.i2
                 },
+                products: {
+                  p1: canvasNodeLesson.products.p1,
+                  p2: canvasNodeLesson.products.p2
+                },
+                total: canvasNodeLesson.total,
                 weights: {
                   w1: canvasNodeLesson.weights.w1,
                   w2: canvasNodeLesson.weights.w2

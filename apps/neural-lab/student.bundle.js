@@ -21494,7 +21494,9 @@ var DatasetSelector = ({
   currentLinearDemoIndex,
   onDatasetChange,
   onExampleChange,
-  onLinearDemoChange
+  onLinearDemoChange,
+  isLinearDemoDisabled = false,
+  demoIconWhenDisabled = "?"
 }) => {
   const currentData = datasets[currentDataset];
   if (!currentData) {
@@ -21514,12 +21516,13 @@ var DatasetSelector = ({
       value: currentExample,
       onChange: (e) => onExampleChange(parseInt(e.target.value, 10))
     },
-    datasets[currentDataset].examples.map((ex, idx) => /* @__PURE__ */ import_react4.default.createElement("option", { key: idx, value: idx }, ex.icon, " ", ex.name, " ", "(", datasets[currentDataset].features.i1.icon, " ", datasets[currentDataset].features.i1.label, "=", ex.i1, ",", " ", datasets[currentDataset].features.i2.icon, " ", datasets[currentDataset].features.i2.label, "=", ex.i2, ")"))
-  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react4.default.createElement("label", null, "\u{1F4D0} \u0394\u03B9\u03B1\u03C7\u03C9\u03C1\u03B9\u03C3\u03BC\u03CC\u03C2"), /* @__PURE__ */ import_react4.default.createElement(
+    datasets[currentDataset].examples.map((ex, idx) => /* @__PURE__ */ import_react4.default.createElement("option", { key: idx, value: idx }, ex.icon, " ", ex.name))
+  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react4.default.createElement("label", null, "\u{1F4D0} \u0394\u03B9\u03B1\u03C7\u03C9\u03C1\u03B9\u03C3\u03BC\u03CC\u03C2 ", isLinearDemoDisabled ? demoIconWhenDisabled : ""), /* @__PURE__ */ import_react4.default.createElement(
     "select",
     {
       value: currentLinearDemoIndex !== void 0 ? currentLinearDemoIndex : "",
-      onChange: (e) => onLinearDemoChange(e.target.value !== "" ? parseInt(e.target.value, 10) : void 0)
+      onChange: (e) => onLinearDemoChange(e.target.value !== "" ? parseInt(e.target.value, 10) : void 0),
+      disabled: isLinearDemoDisabled
     },
     /* @__PURE__ */ import_react4.default.createElement("option", { value: "" }, "-- \u0395\u03C0\u03B9\u03BB\u03AD\u03BE\u03C4\u03B5 --"),
     linearDemos.map((demo, idx) => {
@@ -21548,12 +21551,9 @@ var ProductRow = ({
   productEditable = false,
   onInputChange,
   onWeightChange,
-  onProductChange,
-  inputPlaceholder = "",
-  weightPlaceholder = "",
-  productPlaceholder = ""
+  onProductChange
 }) => {
-  const renderInputBox = (value, editable, onChange, className, placeholder) => {
+  const renderInputBox = (value, editable, onChange, className) => {
     if (!editable) {
       return /* @__PURE__ */ import_react5.default.createElement("div", { className }, value ?? "-");
     }
@@ -21562,9 +21562,7 @@ var ProductRow = ({
       {
         className: "input-box-style",
         type: "text",
-        inputMode: "numeric",
         value: value === null || value === void 0 ? "" : String(value),
-        placeholder,
         onChange: (event) => {
           if (typeof onChange === "function") {
             onChange(event.target.value);
@@ -21573,14 +21571,12 @@ var ProductRow = ({
       }
     );
   };
-  return /* @__PURE__ */ import_react5.default.createElement("div", { className: "product-row" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "product-left" }, /* @__PURE__ */ import_react5.default.createElement("span", { className: "icon-small" }, icon), /* @__PURE__ */ import_react5.default.createElement("span", { className: "feature-text" }, label), /* @__PURE__ */ import_react5.default.createElement("div", { className: "math-group" }, renderInputBox(input1, inputEditable, onInputChange, "blue-number-box", inputPlaceholder), /* @__PURE__ */ import_react5.default.createElement("div", { className: "multiply-symbol" }, "\xD7"), renderInputBox(weight, weightEditable, onWeightChange, "red-number-box", weightPlaceholder))), isSecondRow ? /* @__PURE__ */ import_react5.default.createElement("div", { className: "second-row-left" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "plus-symbol" }, "+"), productEditable ? /* @__PURE__ */ import_react5.default.createElement(
+  return /* @__PURE__ */ import_react5.default.createElement("div", { className: "product-row" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "product-left" }, /* @__PURE__ */ import_react5.default.createElement("span", { className: "icon-small" }, icon), /* @__PURE__ */ import_react5.default.createElement("span", { className: "feature-text" }, label), /* @__PURE__ */ import_react5.default.createElement("div", { className: "math-group" }, renderInputBox(input1, inputEditable, onInputChange, "blue-number-box"), /* @__PURE__ */ import_react5.default.createElement("div", { className: "multiply-symbol" }, "\xD7"), renderInputBox(weight, weightEditable, onWeightChange, "red-number-box"))), isSecondRow ? /* @__PURE__ */ import_react5.default.createElement("div", { className: "second-row-left" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "plus-symbol" }, "+"), productEditable ? /* @__PURE__ */ import_react5.default.createElement(
     "input",
     {
       className: "input-box-style",
       type: "text",
-      inputMode: "numeric",
       value: product === null || product === void 0 ? "" : String(product),
-      placeholder: productPlaceholder,
       onChange: (event) => {
         if (typeof onProductChange === "function") {
           onProductChange(event.target.value);
@@ -21592,9 +21588,7 @@ var ProductRow = ({
     {
       className: "input-box-style",
       type: "text",
-      inputMode: "numeric",
       value: product === null || product === void 0 ? "" : String(product),
-      placeholder: productPlaceholder,
       onChange: (event) => {
         if (typeof onProductChange === "function") {
           onProductChange(event.target.value);
@@ -21618,7 +21612,6 @@ var VerticalProducts = ({
   useQuestionMarks,
   editWeights,
   onWeightChange,
-  onRefresh,
   threshold,
   studentAnswerMode,
   studentAnswer,
@@ -21630,12 +21623,11 @@ var VerticalProducts = ({
   onInputChange,
   onProductChange,
   onTotalChange,
-  inputPlaceholder,
-  weightPlaceholder,
-  productPlaceholder,
-  totalPlaceholder,
   demoIcon,
-  demoLabel
+  demoLabel,
+  showThreshold,
+  thresholdValue,
+  showThresholdUnderIcon
 }) => {
   const handleW1Change = (value) => {
     if (editWeights && onWeightChange) {
@@ -21646,6 +21638,39 @@ var VerticalProducts = ({
     if (editWeights && onWeightChange) {
       onWeightChange("w2", value);
     }
+  };
+  const renderTotalControl = () => {
+    if (studentAnswerMode) {
+      return /* @__PURE__ */ import_react6.default.createElement(
+        "input",
+        {
+          className: "student-answer-input",
+          type: "text",
+          value: studentAnswer,
+          onChange: (e) => {
+            if (typeof onStudentAnswerChange === "function") {
+              onStudentAnswerChange(e.target.value);
+            }
+          }
+        }
+      );
+    }
+    if (totalEditable) {
+      return /* @__PURE__ */ import_react6.default.createElement("div", { className: `input-wrapper ${showThreshold && threshold ? threshold.satisfied ? "threshold-true" : "threshold-false" : ""}` }, /* @__PURE__ */ import_react6.default.createElement(
+        "input",
+        {
+          className: "student-answer-input",
+          type: "text",
+          value: totalValue ?? "",
+          onChange: (event) => {
+            if (typeof onTotalChange === "function") {
+              onTotalChange(event.target.value);
+            }
+          }
+        }
+      ));
+    }
+    return /* @__PURE__ */ import_react6.default.createElement("div", { className: `total-result ${showThreshold && threshold ? threshold.satisfied ? "threshold-true" : "threshold-false" : ""}` }, total);
   };
   return /* @__PURE__ */ import_react6.default.createElement("div", { className: "vertical-products" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "big-icon" }, /* @__PURE__ */ import_react6.default.createElement("span", null, icon)), /* @__PURE__ */ import_react6.default.createElement("div", { className: "products-stack" }, /* @__PURE__ */ import_react6.default.createElement(
     ProductRow,
@@ -21669,10 +21694,7 @@ var VerticalProducts = ({
         if (typeof onProductChange === "function") {
           onProductChange("p1", value);
         }
-      },
-      inputPlaceholder,
-      weightPlaceholder,
-      productPlaceholder
+      }
     }
   ), /* @__PURE__ */ import_react6.default.createElement(
     ProductRow,
@@ -21696,40 +21718,9 @@ var VerticalProducts = ({
         if (typeof onProductChange === "function") {
           onProductChange("p2", value);
         }
-      },
-      inputPlaceholder,
-      weightPlaceholder,
-      productPlaceholder
-    }
-  ), /* @__PURE__ */ import_react6.default.createElement("div", { className: "total-line" }, studentAnswerMode ? /* @__PURE__ */ import_react6.default.createElement(
-    "input",
-    {
-      className: "student-answer-input",
-      type: "text",
-      inputMode: "numeric",
-      value: studentAnswer,
-      placeholder: "\u0394\u03CE\u03C3\u03B5 o",
-      onChange: (e) => {
-        if (typeof onStudentAnswerChange === "function") {
-          onStudentAnswerChange(e.target.value);
-        }
       }
     }
-  ) : totalEditable ? /* @__PURE__ */ import_react6.default.createElement(
-    "input",
-    {
-      className: "student-answer-input",
-      type: "text",
-      inputMode: "numeric",
-      value: totalValue ?? "",
-      placeholder: totalPlaceholder || "\u0394\u03CE\u03C3\u03B5 o",
-      onChange: (event) => {
-        if (typeof onTotalChange === "function") {
-          onTotalChange(event.target.value);
-        }
-      }
-    }
-  ) : /* @__PURE__ */ import_react6.default.createElement("div", { className: `total-result ${threshold ? threshold.satisfied ? "threshold-true" : "threshold-false" : ""}` }, total)), (editWeights || onRefresh) && /* @__PURE__ */ import_react6.default.createElement("button", { className: "reveal-btn", onClick: onRefresh }, "\u{1F504} \u0395\u03BD\u03B7\u03BC\u03AD\u03C1\u03C9\u03C3\u03B7")), /* @__PURE__ */ import_react6.default.createElement("div", { className: "demo-icon", title: demoLabel || "\u0391\u03BD\u03C4\u03B9\u03BA\u03B5\u03AF\u03BC\u03B5\u03BD\u03BF-\u03C3\u03C4\u03CC\u03C7\u03BF\u03C2" }, /* @__PURE__ */ import_react6.default.createElement("span", null, demoIcon || "\u2754")));
+  ), /* @__PURE__ */ import_react6.default.createElement("div", { className: "product-row total-product-row" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "product-left total-row-ghost", "aria-hidden": "true" }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "icon-small total-row-ghost-item" }, "+"), /* @__PURE__ */ import_react6.default.createElement("span", { className: "feature-text total-row-ghost-item" }, "placeholder"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "math-group total-row-ghost-item" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "blue-number-box" }, "0"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "multiply-symbol" }, "\xD7"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "red-number-box" }, "0"))), /* @__PURE__ */ import_react6.default.createElement("div", { className: "total-line total-row-output" }, renderTotalControl()))), /* @__PURE__ */ import_react6.default.createElement("div", { className: "demo-icon", title: demoLabel || "\u0391\u03BD\u03C4\u03B9\u03BA\u03B5\u03AF\u03BC\u03B5\u03BD\u03BF-\u03C3\u03C4\u03CC\u03C7\u03BF\u03C2" }, /* @__PURE__ */ import_react6.default.createElement("span", null, demoIcon || "\u2754"), showThresholdUnderIcon && /* @__PURE__ */ import_react6.default.createElement("div", { className: "demo-icon-threshold" }, "threshold: ", thresholdValue)));
 };
 
 // apps/neural-lab/components/StudentTable.jsx
@@ -21784,51 +21775,73 @@ var StudentTable2 = ({
   i2,
   features,
   participants = [],
-  threshold = 5
-}) => /* @__PURE__ */ import_react8.default.createElement(
-  StudentTable,
-  {
-    title: "\u{1F4CB} \u03A0\u03AF\u03BD\u03B1\u03BA\u03B1\u03C2 \u03BC\u03B1\u03B8\u03B7\u03C4\u03CE\u03BD",
-    participants,
-    emptyMessage: "\u0394\u03B5\u03BD \u03C5\u03C0\u03AC\u03C1\u03C7\u03BF\u03C5\u03BD \u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9 \u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2.",
-    nameFallback: "\u039C\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2",
-    getRowKey: (student, index) => student.id || student.username || student.name || index,
-    getDisplayName: (student) => student.username || student.name || student.displayName || "\u039C\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2",
-    getIsConnected: (student) => student.isConnected ?? true,
-    columns: [
+  threshold = 5,
+  activity = "1a"
+}) => {
+  let columns = [
+    {
+      key: "i1",
+      label: `i\u2081 (${features.i1.label})`,
+      render: (student) => /* @__PURE__ */ import_react8.default.createElement(import_react8.default.Fragment, null, student?.inputs?.i1 ?? i1, " ", /* @__PURE__ */ import_react8.default.createElement("span", { className: "icon-in-table" }, features.i1.icon))
+    },
+    {
+      key: "w1",
+      label: "w\u2081",
+      className: "weight-value",
+      style: { background: "#ef4444", color: "white" },
+      render: (student) => student.weights?.w1 ?? (activity !== "3b" && activity !== "4b" ? 2 : "-")
+    },
+    {
+      key: "i2",
+      label: `i\u2082 (${features.i2.label})`,
+      render: (student) => /* @__PURE__ */ import_react8.default.createElement(import_react8.default.Fragment, null, student?.inputs?.i2 ?? i2, " ", /* @__PURE__ */ import_react8.default.createElement("span", { className: "icon-in-table" }, features.i2.icon, " "))
+    },
+    {
+      key: "w2",
+      label: "w\u2082",
+      className: "weight-value",
+      style: { background: "#ef4444", color: "white" },
+      render: (student) => student.weights?.w2 ?? (activity !== "3b" && activity !== "4b" ? 3 : "-")
+    }
+  ];
+  if (activity === "2a" || activity === "2b" || activity === "3a" || activity === "3b" || activity === "4a" || activity === "4b") {
+    columns.push(
       {
-        key: "i1",
-        label: `i\u2081 (${features.i1.label})`,
-        render: (student) => /* @__PURE__ */ import_react8.default.createElement(import_react8.default.Fragment, null, student?.inputs?.i1 ?? i1, " ", /* @__PURE__ */ import_react8.default.createElement("span", { className: "icon-in-table" }, features.i1.icon))
+        key: "p1",
+        label: "p\u2081 (w\u2081\xD7i\u2081)",
+        render: (student) => student?.products?.p1 ?? "-"
       },
       {
-        key: "w1",
-        label: "w\u2081",
-        className: "weight-value",
-        style: { background: "#ef4444", color: "white" },
-        render: (student) => student.weights?.w1 ?? "-"
-      },
-      {
-        key: "i2",
-        label: `i\u2082 (${features.i2.label})`,
-        render: (student) => /* @__PURE__ */ import_react8.default.createElement(import_react8.default.Fragment, null, student?.inputs?.i2 ?? i2, " ", /* @__PURE__ */ import_react8.default.createElement("span", { className: "icon-in-table" }, features.i2.icon, " "))
-      },
-      {
-        key: "w2",
-        label: "w\u2082",
-        className: "weight-value",
-        style: { background: "#ef4444", color: "white" },
-        render: (student) => student.weights?.w2 ?? "-"
-      },
-      {
-        key: "result",
-        label: "\u0391\u03C0\u03BF\u03C4\u03AD\u03BB\u03B5\u03C3\u03BC\u03B1 o",
-        className: "result-visible",
-        render: (student) => /* @__PURE__ */ import_react8.default.createElement(import_react8.default.Fragment, null, student.total ?? student.result ?? "-", typeof student.aboveThreshold === "boolean" && /* @__PURE__ */ import_react8.default.createElement("span", { style: { marginLeft: "0.45rem", fontWeight: 700, color: student.aboveThreshold ? "#059669" : "#dc2626" } }, student.aboveThreshold ? `>= ${threshold}` : `< ${threshold}`))
+        key: "p2",
+        label: "p\u2082 (w\u2082\xD7i\u2082)",
+        render: (student) => student?.products?.p2 ?? "-"
       }
-    ]
+    );
   }
-);
+  columns.push({
+    key: "result",
+    label: "\u0391\u03C0\u03BF\u03C4\u03AD\u03BB\u03B5\u03C3\u03BC\u03B1 o",
+    className: "result-visible",
+    render: (student) => {
+      const resultValue = student.total ?? student.result ?? "-";
+      const showThreshold = activity === "4a" || activity === "4b";
+      return /* @__PURE__ */ import_react8.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "0.3rem" } }, /* @__PURE__ */ import_react8.default.createElement("span", null, resultValue), showThreshold && typeof student.aboveThreshold === "boolean" && /* @__PURE__ */ import_react8.default.createElement("span", { style: { marginLeft: "0.45rem", fontWeight: 700, color: student.aboveThreshold ? "#059669" : "#dc2626" } }, student.aboveThreshold ? `>= ${threshold}` : `< ${threshold}`));
+    }
+  });
+  return /* @__PURE__ */ import_react8.default.createElement(
+    StudentTable,
+    {
+      title: "\u{1F4CB} \u03A0\u03AF\u03BD\u03B1\u03BA\u03B1\u03C2 \u03BC\u03B1\u03B8\u03B7\u03C4\u03CE\u03BD",
+      participants,
+      emptyMessage: "\u0394\u03B5\u03BD \u03C5\u03C0\u03AC\u03C1\u03C7\u03BF\u03C5\u03BD \u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9 \u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2.",
+      nameFallback: "\u039C\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2",
+      getRowKey: (student, index) => student.id || student.username || student.name || index,
+      getDisplayName: (student) => student.username || student.name || student.displayName || "\u039C\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2",
+      getIsConnected: (student) => student.isConnected ?? true,
+      columns
+    }
+  );
+};
 
 // apps/neural-lab/components/ActivitiesMenu.jsx
 var import_react9 = __toESM(require_react());
@@ -21984,6 +21997,8 @@ var App = ({ role = "teacher" }) => {
   const [participants, setParticipants] = (0, import_react10.useState)([]);
   const [roster, setRoster] = (0, import_react10.useState)([]);
   const [lessonInputs, setLessonInputs] = (0, import_react10.useState)({ i1: 4, i2: 1 });
+  const [lessonProducts, setLessonProducts] = (0, import_react10.useState)({ p1: "", p2: "" });
+  const [lessonTotal, setLessonTotal] = (0, import_react10.useState)("");
   const [lessonWeights, setLessonWeights] = (0, import_react10.useState)({ w1: 2, w2: 3 });
   const [lessonThreshold, setLessonThreshold] = (0, import_react10.useState)(5);
   const [lessonDataset, setLessonDataset] = (0, import_react10.useState)("vehicles");
@@ -22027,7 +22042,9 @@ var App = ({ role = "teacher" }) => {
   const effectiveLinearDemoIndex = isTeacher ? currentLinearDemoIndex : lessonLinearDemoIndex;
   let demoIcon = null;
   let demoLabel = "\u039C\u03B7 \u03B5\u03C0\u03B9\u03BB\u03B5\u03B3\u03BC\u03AD\u03BD\u03BF";
-  if (effectiveLinearDemoIndex !== void 0 && datasets_default[safeDisplayDataset]?.linear_demos) {
+  if (["1a", "1b", "2a", "2b", "3a", "3b"].includes(activeActivity)) {
+    demoIcon = "?";
+  } else if (effectiveLinearDemoIndex !== void 0 && datasets_default[safeDisplayDataset]?.linear_demos) {
     const demos = datasets_default[safeDisplayDataset].linear_demos;
     const selectedDemo = demos[effectiveLinearDemoIndex];
     if (selectedDemo) {
@@ -22043,14 +22060,16 @@ var App = ({ role = "teacher" }) => {
     return Number.isFinite(num) ? num : fallback;
   };
   const isInputEditable = isTeacher && (activeActivity === "1a" || activeActivity === "1b") || isStudent && activeActivity === "1b";
-  const isWeightEditable = isTeacher && activeActivity === "3a" || isStudent && activeActivity === "3b";
-  const isProductEditable = isTeacher && activeActivity === "2a" || isStudent && activeActivity === "2b";
+  const isWeightEditable = isTeacher && (activeActivity === "3a" || activeActivity === "3b" || activeActivity === "4a") || isStudent && (activeActivity === "3b" || activeActivity === "4b");
+  const isProductEditable = isTeacher && (activeActivity === "2a" || activeActivity === "2b") || isStudent && activeActivity === "2b";
   const isTotalEditable = isProductEditable;
+  const isThresholdVisible = activeActivity === "3a" || activeActivity === "3b" || activeActivity === "4a" || activeActivity === "4b";
+  const showThresholdUnderIcon = activeActivity === "4a" || activeActivity === "4b";
   const currentInputs = isTeacher ? teacherInputs : isStudent && activeActivity === "1b" ? studentInputs : lessonInputs;
   const i1 = currentInputs.i1;
   const i2 = currentInputs.i2;
-  const currentW1 = isTeacher ? dynamicW1 : isStudent && activeActivity === "3b" ? dynamicW1 : lessonWeights.w1;
-  const currentW2 = isTeacher ? dynamicW2 : isStudent && activeActivity === "3b" ? dynamicW2 : lessonWeights.w2;
+  const currentW1 = isTeacher ? dynamicW1 : isStudent && (activeActivity === "3b" || activeActivity === "4b") ? dynamicW1 : lessonWeights.w1;
+  const currentW2 = isTeacher ? dynamicW2 : isStudent && (activeActivity === "3b" || activeActivity === "4b") ? dynamicW2 : lessonWeights.w2;
   const computedProd1 = Number((toFinite(currentW1) * toFinite(i1)).toFixed(2));
   const computedProd2 = Number((toFinite(currentW2) * toFinite(i2)).toFixed(2));
   const currentProducts = isTeacher ? teacherProducts : studentProducts;
@@ -22058,13 +22077,18 @@ var App = ({ role = "teacher" }) => {
   const prod2 = isProductEditable ? currentProducts.p2 : computedProd2;
   const computedTotal = Number((toFinite(prod1) + toFinite(prod2)).toFixed(2));
   const total = isTotalEditable ? isTeacher ? teacherTotal : studentTotal : computedTotal;
+  const displayedProd1 = !isTeacher && activeActivity === "2a" ? lessonProducts.p1 : prod1;
+  const displayedProd2 = !isTeacher && activeActivity === "2a" ? lessonProducts.p2 : prod2;
+  const displayedTotal = !isTeacher && activeActivity === "2a" ? lessonTotal : total;
   const formulaByActivity = {
     "1a": "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$",
     "1b": "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$",
     "2a": "$$ (w_1 \\times i_1) + (w_2 \\times i_2) = o $$",
     "2b": "$$ (w_1 \\times i_1) + (w_2 \\times i_2) = o $$",
-    "3a": "$$ w_1 \\times i_1 + w_2 \\times i_2 = o \\; (\\text{\u03C0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03B2\u03B1\u03C1\u03CE\u03BD}) $$",
-    "3b": "$$ w_1 \\times i_1 + w_2 \\times i_2 = o \\; (\\text{\u03C0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03B2\u03B1\u03C1\u03CE\u03BD}) $$"
+    "3a": "$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$",
+    "3b": "$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$",
+    "4a": "$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$",
+    "4b": "$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$"
   };
   const mathTitle = formulaByActivity[activeActivity] || "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$";
   const threshold = {
@@ -22073,11 +22097,11 @@ var App = ({ role = "teacher" }) => {
     total: toFinite(total)
   };
   const handleWeightChange = (which, value) => {
-    const normalized = value === "" ? "" : Number(value);
+    const normalized = value === "" || value === "-" ? value : Number(value);
     if (which === "w1") {
-      setDynamicW1(Number.isFinite(normalized) || normalized === "" ? normalized : 0);
+      setDynamicW1(Number.isFinite(normalized) || normalized === "" || normalized === "-" ? normalized : 0);
     } else {
-      setDynamicW2(Number.isFinite(normalized) || normalized === "" ? normalized : 0);
+      setDynamicW2(Number.isFinite(normalized) || normalized === "" || normalized === "-" ? normalized : 0);
     }
   };
   const sendSocketMessage = (payload) => {
@@ -22135,6 +22159,15 @@ var App = ({ role = "teacher" }) => {
             i2: message.lesson.inputs.i2 ?? ""
           });
         }
+        if (message.lesson?.products) {
+          setLessonProducts({
+            p1: message.lesson.products.p1 ?? "",
+            p2: message.lesson.products.p2 ?? ""
+          });
+        }
+        if (Object.prototype.hasOwnProperty.call(message.lesson, "total")) {
+          setLessonTotal(message.lesson.total ?? "");
+        }
         if (message.lesson?.weights && typeof message.lesson.weights === "object") {
           setLessonWeights({
             w1: message.lesson.weights.w1 ?? 2,
@@ -22143,6 +22176,9 @@ var App = ({ role = "teacher" }) => {
         }
         if (typeof message.lesson?.activityId === "string") {
           setLessonActivity(message.lesson.activityId);
+        }
+        if (Number.isInteger(Number(message.lesson?.targetIndex))) {
+          setLessonTarget(Number(message.lesson.targetIndex));
         }
         if (Number.isFinite(Number(message.lesson?.threshold))) {
           setLessonThreshold(Number(message.lesson.threshold));
@@ -22179,8 +22215,8 @@ var App = ({ role = "teacher" }) => {
         if (isStudent && message.me) {
           suppressNextStudentStateSendRef.current = true;
           if (message.me.weights) {
-            setDynamicW1(message.me.weights.w1 ?? 0);
-            setDynamicW2(message.me.weights.w2 ?? 0);
+            setDynamicW1((prev) => prev === "-" ? prev : message.me.weights.w1 ?? "");
+            setDynamicW2((prev) => prev === "-" ? prev : message.me.weights.w2 ?? "");
           }
           if (message.me.inputs) {
             setStudentInputs({
@@ -22259,6 +22295,11 @@ var App = ({ role = "teacher" }) => {
         exampleName: currentExampleData.name,
         icon: currentExampleData.icon,
         inputs: lessonInputsPayload,
+        products: {
+          p1: teacherProducts.p1,
+          p2: teacherProducts.p2
+        },
+        total: teacherTotal,
         weights: {
           w1: dynamicW1,
           w2: dynamicW2
@@ -22279,6 +22320,9 @@ var App = ({ role = "teacher" }) => {
     dynamicW2,
     teacherInputs.i1,
     teacherInputs.i2,
+    teacherProducts.p1,
+    teacherProducts.p2,
+    teacherTotal,
     lessonThreshold,
     currentLinearDemoIndex
   ]);
@@ -22286,30 +22330,50 @@ var App = ({ role = "teacher" }) => {
     if (!isTeacher) {
       return;
     }
-    if (selectedActivity === "1a") {
-      setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
-    }
-    if (selectedActivity === "1b") {
+    if (selectedActivity === "1a" || selectedActivity === "1b") {
       setTeacherInputs({ i1: "", i2: "" });
       setStudentInputs({ i1: "", i2: "" });
+      setCurrentLinearDemoIndex(void 0);
     }
     if (selectedActivity === "2a" || selectedActivity === "2b") {
+      setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
       setTeacherProducts({ p1: "", p2: "" });
       setTeacherTotal("");
-      if (selectedActivity === "2b") {
-        setStudentProducts({ p1: "", p2: "" });
-        setStudentTotal("");
-      }
+      setStudentProducts({ p1: "", p2: "" });
+      setStudentTotal("");
+      setStudentInputs({ i1: "", i2: "" });
+      setCurrentLinearDemoIndex(void 0);
     }
-    if (selectedActivity === "3a") {
+    if (selectedActivity === "3a" || selectedActivity === "3b") {
+      setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
       setDynamicW1("");
       setDynamicW2("");
+      setCurrentLinearDemoIndex(void 0);
     }
-    if (selectedActivity !== "3a") {
+    if (selectedActivity === "4a" || selectedActivity === "4b") {
+      setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
+      setDynamicW1("");
+      setDynamicW2("");
+      setCurrentLinearDemoIndex(0);
+    }
+    if (selectedActivity !== "3a" && selectedActivity !== "3b" && selectedActivity !== "4a" && selectedActivity !== "4b") {
       setDynamicW1((prev) => prev === "" ? 2 : prev);
       setDynamicW2((prev) => prev === "" ? 3 : prev);
     }
   }, [isTeacher, selectedActivity, currentExampleData.i1, currentExampleData.i2]);
+  (0, import_react10.useEffect)(() => {
+    if (!isStudent) {
+      return;
+    }
+    if (lessonActivity === "2b") {
+      setStudentProducts({ p1: "", p2: "" });
+      setStudentTotal("");
+    }
+    if (lessonActivity === "3b" || lessonActivity === "4b") {
+      setDynamicW1("");
+      setDynamicW2("");
+    }
+  }, [isStudent, lessonActivity, lessonExampleIndex]);
   (0, import_react10.useEffect)(() => {
     const renderMath = () => {
       const mj = window.MathJax;
@@ -22324,7 +22388,7 @@ var App = ({ role = "teacher" }) => {
     };
     const timeoutId = setTimeout(renderMath, 50);
     return () => clearTimeout(timeoutId);
-  }, [role, currentDataset, currentExample, selectedActivity, lessonActivity, dynamicW1, dynamicW2, teacherInputs.i1, teacherInputs.i2, studentInputs.i1, studentInputs.i2]);
+  }, [role, currentDataset, currentExample, selectedActivity, lessonActivity]);
   const sortedParticipants = [...participants].sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
   return /* @__PURE__ */ import_react10.default.createElement(TeacherCard, { title: mathTitle }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "connection-status" }, /* @__PURE__ */ import_react10.default.createElement("span", { className: `status-dot ${isSocketConnected ? "online" : "offline"}` }), /* @__PURE__ */ import_react10.default.createElement("strong", null, isSocketConnected ? "\u03A3\u03B5 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7" : "\u0395\u03BA\u03C4\u03CC\u03C2 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7\u03C2"), isStudent && (editingName ? /* @__PURE__ */ import_react10.default.createElement(
     "input",
@@ -22356,16 +22420,15 @@ var App = ({ role = "teacher" }) => {
       demoIcon,
       demoLabel,
       features: datasets_default[safeDisplayDataset].features,
-      prod1,
-      prod2,
+      prod1: displayedProd1,
+      prod2: displayedProd2,
       w1: currentW1,
       w2: currentW2,
       i1,
       i2,
-      total,
+      total: displayedTotal,
       editWeights: isWeightEditable,
       onWeightChange: handleWeightChange,
-      onRefresh: null,
       threshold,
       studentAnswerMode: false,
       studentAnswer: "",
@@ -22395,10 +22458,9 @@ var App = ({ role = "teacher" }) => {
           setStudentTotal(value);
         }
       },
-      inputPlaceholder: "\u03C3\u03C5\u03BC\u03C0\u03BB\u03AE\u03C1\u03C9\u03C3\u03B5",
-      weightPlaceholder: "\u03B2\u03AC\u03C1\u03BF\u03C2",
-      productPlaceholder: "\u03C5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2",
-      totalPlaceholder: "\u03B4\u03CE\u03C3\u03B5 o"
+      showThreshold: isThresholdVisible,
+      thresholdValue: lessonThreshold,
+      showThresholdUnderIcon
     }
   )), (isTeacher || isScreen) && /* @__PURE__ */ import_react10.default.createElement("div", { className: "live-table-wrap" }, /* @__PURE__ */ import_react10.default.createElement(
     StudentTable2,
@@ -22407,7 +22469,8 @@ var App = ({ role = "teacher" }) => {
       i2: lessonInputs.i2,
       features: datasets_default[safeDisplayDataset].features,
       threshold: lessonThreshold,
-      participants: sortedParticipants
+      participants: sortedParticipants,
+      activity: lessonActivity
     }
   )), isTeacher && /* @__PURE__ */ import_react10.default.createElement(import_react10.default.Fragment, null, /* @__PURE__ */ import_react10.default.createElement(ActivitiesMenu, { value: selectedActivity, onChange: setSelectedActivity }), /* @__PURE__ */ import_react10.default.createElement(
     DatasetSelector,
@@ -22422,7 +22485,9 @@ var App = ({ role = "teacher" }) => {
         setCurrentLinearDemoIndex(0);
       },
       onExampleChange: setCurrentExample,
-      onLinearDemoChange: setCurrentLinearDemoIndex
+      onLinearDemoChange: setCurrentLinearDemoIndex,
+      isLinearDemoDisabled: ["1a", "1b", "2a", "2b", "3a", "3b"].includes(selectedActivity),
+      demoIconWhenDisabled: "?"
     }
   )));
 };

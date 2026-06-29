@@ -34,7 +34,7 @@ const APPS = [
     slug: 'neural-lab',
     title: 'Neural Lab',
     description: 'Collaborative neural-network weights activity with teacher/student live sync.',
-    roles: ['teacher', 'student'],
+    roles: ['teacher', 'student', 'client'],
     kind: 'static',
     staticDir: path.join(__dirname, 'neural-lab'),
     teacherEntry: 'teacher.html',

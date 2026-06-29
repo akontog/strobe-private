@@ -7,12 +7,13 @@
 body {
   background: #f0f4f9;
   font-family: 'Segoe UI', 'Roboto', 'Comic Neue', 'Fredoka One', sans-serif;
+  overflow-y: scroll;
 }
 
 body, #root {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: flex-start;
   min-height: 100vh;
   padding: 2rem;
 }
@@ -118,11 +119,15 @@ body, #root {
   border: 2px solid #e2e8f0;
 }
 
+.total-product-row {
+  margin-top: 0.2rem;
+}
+
 .product-left {
   display: flex;
   align-items: center;
   gap: 14px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .math-group {
@@ -134,16 +139,19 @@ body, #root {
 }
 .blue-number-box,
 .red-number-box,
-.input-box-style,
 .product-result {
   box-sizing: border-box;
-  padding: 0.2rem 0.4rem;      /* ίδιο padding με το input */
-  width: 90px;                 /* σταθερό πλάτος για όλα */
+  padding: 0.2rem 0.4rem;
+  width: 90px;
+  height: 38px;
   flex-shrink: 0;
   text-align: center;
   font-size: 1.1rem;
   font-weight: bold;
   border-radius: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .blue-number-box {
   background: #3b82f6;
@@ -153,15 +161,38 @@ body, #root {
   background: #ef4444;
   color: white;
 }
-.input-box-style {
-  background: #f8fafc;
-  border: 2px solid #94a3b8;
-  color: #1e293b;
-  font-family: monospace;
-}
 .product-result {
   background: #e2e8f0;
   color: #1e293b;
+}
+
+.input-box-style {
+  appearance: none;
+  -webkit-appearance: none;
+  background: #ffffff;
+  border: 2px solid #94a3b8;
+  color: #1e293b;
+  font-family: monospace;
+  font-size: 1.1rem;
+  font-weight: bold;
+  width: 90px;
+  height: 38px;
+  min-width: 90px;
+  margin: 0;
+  padding: 0.2rem 0.4rem;
+  line-height: 1;
+  text-align: center;
+  display: block;
+  flex: 0 0 90px;
+  border-radius: 2.5rem;
+  outline: none;
+  box-shadow: none;
+}
+
+.input-box-style:focus {
+  outline: none;
+  box-shadow: none;
+  border: 2px solid #94a3b8;
 }
 
 
@@ -232,14 +263,25 @@ body, #root {
 }
 
 .total-line {
-  margin-top: 0.5rem;
-  border-top: 3px dashed #cbd5e1;
-  padding-top: 1rem;
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
+  gap: 0;
+  flex-wrap: nowrap;
+  margin-left: auto;
+}
+
+.total-row-output {
+  flex: 0 0 auto;
+}
+
+.total-row-ghost {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.total-row-ghost-item {
+  visibility: hidden;
 }
 
 .total-result {
@@ -268,15 +310,33 @@ body, #root {
 }
 
 .student-answer-input {
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
   background: #ffffff;
   border: 2px solid #3b82f6;
   color: #0f172a;
   border-radius: 2.5rem;
-  min-width: 130px;
-  font-size: 1.2rem;
-  font-weight: 700;
+  width: 90px;
+  min-width: 90px;
+  height: 38px;
+  font-size: 1.1rem;
+  font-weight: bold;
   text-align: center;
-  padding: 0.4rem 0.9rem;
+  padding: 0.2rem 0.4rem;
+  line-height: 1;
+  margin: 0;
+  display: block;
+  flex: 0 0 90px;
+  outline: none;
+  box-shadow: none;
+  font-family: monospace;
+}
+
+.student-answer-input:focus {
+  outline: none;
+  box-shadow: none;
+  border: 2px solid #3b82f6;
 }
 
 
@@ -604,4 +664,46 @@ select {
   font-size: 1rem;
   color: #334e68;
   margin-bottom: 0.35rem;
+}
+
+/* Input wrapper για threshold coloring */
+.input-wrapper {
+  width: 90px;
+  min-width: 90px;
+  height: 38px;
+  border-radius: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.demo-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+}
+
+.demo-icon-threshold {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.input-wrapper.threshold-true {
+  background: #dcfce7;
+  border: 2px solid #22c55e;
+}
+
+.input-wrapper.threshold-false {
+  background: #fee2e2;
+  border: 2px solid #ef4444;
 }

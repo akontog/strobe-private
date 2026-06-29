@@ -12,12 +12,9 @@ export const ProductRow = ({
   productEditable = false,
   onInputChange,
   onWeightChange,
-  onProductChange,
-  inputPlaceholder = '',
-  weightPlaceholder = '',
-  productPlaceholder = ''
+  onProductChange
 }) => {
-  const renderInputBox = (value, editable, onChange, className, placeholder) => {
+  const renderInputBox = (value, editable, onChange, className) => {
     if (!editable) {
       return <div className={className}>{value ?? '-'}</div>;
     }
@@ -25,9 +22,8 @@ export const ProductRow = ({
     return (
       <input
         className="input-box-style"
-        type="text" inputMode="numeric"
+        type="text"
         value={value === null || value === undefined ? '' : String(value)}
-        placeholder={placeholder}
         onChange={(event) => {
           if (typeof onChange === 'function') {
             onChange(event.target.value);
@@ -43,9 +39,9 @@ export const ProductRow = ({
         <span className="icon-small">{icon}</span>
         <span className="feature-text">{label}</span>
         <div className="math-group">
-          {renderInputBox(input1, inputEditable, onInputChange, 'blue-number-box', inputPlaceholder)}
+          {renderInputBox(input1, inputEditable, onInputChange, 'blue-number-box')}
           <div className="multiply-symbol">×</div>
-          {renderInputBox(weight, weightEditable, onWeightChange, 'red-number-box', weightPlaceholder)}
+          {renderInputBox(weight, weightEditable, onWeightChange, 'red-number-box')}
         </div>
       </div>
       {isSecondRow ? (
@@ -54,9 +50,8 @@ export const ProductRow = ({
           {productEditable ? (
             <input
               className="input-box-style"
-              type="text" inputMode="numeric"
+              type="text"
               value={product === null || product === undefined ? '' : String(product)}
-              placeholder={productPlaceholder}
               onChange={(event) => {
                 if (typeof onProductChange === 'function') {
                   onProductChange(event.target.value);
@@ -70,9 +65,8 @@ export const ProductRow = ({
       ) : productEditable ? (
         <input
           className="input-box-style"
-          type="text" inputMode="numeric"
+          type="text"
           value={product === null || product === undefined ? '' : String(product)}
-          placeholder={productPlaceholder}
           onChange={(event) => {
             if (typeof onProductChange === 'function') {
               onProductChange(event.target.value);

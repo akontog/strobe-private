@@ -7,7 +7,9 @@ export const DatasetSelector = ({
   currentLinearDemoIndex,
   onDatasetChange,
   onExampleChange,
-  onLinearDemoChange
+  onLinearDemoChange,
+  isLinearDemoDisabled = false,
+  demoIconWhenDisabled = '?'
 }) => {
   // Παίρνουμε τα δεδομένα του τρέχοντος dataset
   const currentData = datasets[currentDataset];
@@ -45,26 +47,17 @@ export const DatasetSelector = ({
           {datasets[currentDataset].examples.map((ex, idx) => (
             <option key={idx} value={idx}>
               {ex.icon} {ex.name}
-              {' '}
-              (
-              {datasets[currentDataset].features.i1.icon}
-              {' '}
-              {datasets[currentDataset].features.i1.label}={ex.i1},
-              {' '}
-              {datasets[currentDataset].features.i2.icon}
-              {' '}
-              {datasets[currentDataset].features.i2.label}={ex.i2}
-              )
             </option>
           ))}
         </select>
       </div>
       
       <div className="select-group">
-          <label>📐 Διαχωρισμός</label>
+          <label>📐 Διαχωρισμός {isLinearDemoDisabled ? demoIconWhenDisabled : ''}</label>
           <select 
             value={currentLinearDemoIndex !== undefined ? currentLinearDemoIndex : ''} 
             onChange={(e) => onLinearDemoChange(e.target.value !== '' ? parseInt(e.target.value, 10) : undefined)}
+            disabled={isLinearDemoDisabled}
           >
             <option value="">-- Επιλέξτε --</option>
             {linearDemos.map((demo, idx) => {
