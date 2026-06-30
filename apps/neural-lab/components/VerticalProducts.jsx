@@ -82,9 +82,12 @@ export const VerticalProducts = ({
     }
 
     return (
+      <>  
+      <div className="equal-symbol">=</div>
       <div className={`total-result ${showThreshold && threshold ? (threshold.satisfied ? 'threshold-true' : 'threshold-false') : ''}`}>
         {total}
       </div>
+      </>
     );
   };
 

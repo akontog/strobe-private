@@ -3,6 +3,7 @@ import { TeacherCard } from './components/TeacherCard';
 import { DatasetSelector } from './components/DatasetSelector';
 import { VerticalProducts } from './components/VerticalProducts';
 import { StudentTable } from './components/StudentTable';
+import { ExamplesClassifier } from './components/ExamplesClassifier';
 import { ActivitiesMenu } from './components/ActivitiesMenu';
 import { Accordion } from '../shared/components/Accordion';
 import DATASETS from './data/datasets';
@@ -326,6 +327,14 @@ const saveStudentName = () => {
     }
   };
 
+  const sendTeacherLessonPatch = (lessonPatch) => {
+    if (!isTeacher || !isSocketConnected) return;
+    sendSocketMessage({
+      type: 'teacher_lesson',
+      lesson: lessonPatch
+    });
+  };
+
   useEffect(() => {
     let cancelled = false;
 
@@ -580,18 +589,6 @@ const saveStudentName = () => {
   ]);
 
   useEffect(() => {
-    if (!isTeacher || !isSocketConnected) return;
-
-    // Push checkbox changes immediately so students add/remove ProductRow in real time.
-    sendSocketMessage({
-      type: 'teacher_lesson',
-      lesson: {
-        selectedInputs
-      }
-    });
-  }, [isTeacher, isSocketConnected, selectedInputs.i1, selectedInputs.i2]);
-
-  useEffect(() => {
     if (!isTeacher) {
       return;
     }
@@ -766,6 +763,20 @@ const saveStudentName = () => {
           showThresholdUnderIcon={showThresholdUnderIcon}
         />
       </div>
+        
+      {(isTeacher || isScreen || isStudent) && (
+        <div className="live-table-wrap">
+          <ExamplesClassifier
+            datasets={DATASETS}
+            currentDataset={safeDisplayDataset}
+            currentLinearDemoIndex={effectiveLinearDemoIndex}
+            activityId={activeActivity}
+            selectedInputs={effectiveSelectedInputs}
+            features={DATASETS[safeDisplayDataset].features}
+            weights={{ w1: currentW1, w2: currentW2 }}
+          />
+        </div>
+      )}
 
       {(isTeacher || isScreen) && (
         <div className="live-table-wrap">
@@ -794,14 +805,33 @@ const saveStudentName = () => {
             selectedInputs={selectedInputs}
             features={DATASETS[safeDisplayDataset].features}
             onDatasetChange={(dataset) => {
+              const nextExampleData = DATASETS[dataset]?.examples?.[0];
               setCurrentDataset(dataset);
               setCurrentExample(0);
               setCurrentLinearDemoIndex(0);
+
+              if (nextExampleData) {
+                sendTeacherLessonPatch({
+                  dataset,
+                  exampleIndex: 0,
+                  exampleName: nextExampleData.name,
+                  icon: nextExampleData.icon,
+                  inputs: {
+                    i1: nextExampleData.i1,
+                    i2: nextExampleData.i2
+                  },
+                  linearDemoIndex: 0
+                });
+              } else {
+                sendTeacherLessonPatch({ dataset });
+              }
             }}
             onExampleChange={setCurrentExample}
             onLinearDemoChange={setCurrentLinearDemoIndex}
             onSelectedInputsChange={(next) => {
-              setSelectedInputs(normalizeSelectedInputs(next));
+              const normalized = normalizeSelectedInputs(next);
+              setSelectedInputs(normalized);
+              sendTeacherLessonPatch({ selectedInputs: normalized });
             }}
             isLinearDemoDisabled={['1', '2', '3'].includes(selectedActivity)}
             demoIconWhenDisabled="?"

@@ -196,7 +196,7 @@ body, #root {
 }
 
 
-.multiply-symbol, .plus-symbol {
+.multiply-symbol, .equal-symbol { /* .plus-symbol, */
   font-size: 1.9rem;
   font-weight: bold;
   min-width: 45px;
@@ -207,7 +207,10 @@ body, #root {
   color: #f59e0b;
 }
 
-.plus-symbol {
+.equal-symbol {
+  color: #3b82f6;
+}
+/*.plus-symbol {
   color: #10b981;
   background: #dcfce7;
   width: 50px;
@@ -218,7 +221,7 @@ body, #root {
   border-radius: 60px;
   border: 2px solid #86efac;
 }
-
+*/
 .icon-small {
   display: inline-flex;
   align-items: center;
@@ -500,7 +503,9 @@ select {
 }
 
 .accordion-content.open {
-  max-height: 600px;
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   transition: max-height 0.4s ease-in;
 }
 
@@ -531,6 +536,18 @@ select {
   padding: 0.6rem;
   border-bottom: 1px solid #cbd5e1;
   background: #ffffff;
+}
+
+.result-positive {
+  background: #dcfce7;
+  color: #166534;
+  font-weight: bold;
+}
+
+.result-negative {
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: bold;
 }
 
 .green-dot {

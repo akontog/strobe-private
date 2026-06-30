@@ -183,7 +183,7 @@ body,
   border: 2px solid #94a3b8;
 }
 .multiply-symbol,
-.plus-symbol {
+.equal-symbol {
   font-size: 1.9rem;
   font-weight: bold;
   min-width: 45px;
@@ -192,16 +192,8 @@ body,
 .multiply-symbol {
   color: #f59e0b;
 }
-.plus-symbol {
-  color: #10b981;
-  background: #dcfce7;
-  width: 50px;
-  height: 50px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 60px;
-  border: 2px solid #86efac;
+.equal-symbol {
+  color: #3b82f6;
 }
 .icon-small {
   display: inline-flex;
@@ -449,7 +441,9 @@ select {
   transition: max-height 0.3s ease-out;
 }
 .accordion-content.open {
-  max-height: 600px;
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
   transition: max-height 0.4s ease-in;
 }
 .data-section {
@@ -475,6 +469,16 @@ select {
   padding: 0.6rem;
   border-bottom: 1px solid #cbd5e1;
   background: #ffffff;
+}
+.result-positive {
+  background: #dcfce7;
+  color: #166534;
+  font-weight: bold;
+}
+.result-negative {
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: bold;
 }
 .green-dot {
   display: inline-block;

@@ -42,11 +42,12 @@ export const ProductRow = ({
           {renderInputBox(input1, inputEditable, onInputChange, 'blue-number-box')}
           <div className="multiply-symbol">×</div>
           {renderInputBox(weight, weightEditable, onWeightChange, 'red-number-box')}
+          <div className="equal-symbol">=</div>
         </div>
       </div>
       {isSecondRow ? (
         <div className="second-row-left">
-          <div className="plus-symbol">+</div>
+          {/*<div className="plus-symbol">+</div>*/}
           {productEditable ? (
             <input
               className="input-box-style"
