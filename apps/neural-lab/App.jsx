@@ -51,6 +51,14 @@ const normalizeSelectedInputs = (value, fallback = DEFAULT_SELECTED_INPUTS) => {
   };
 };
 
+const resolveSelectedInputKey = (selectedInputs) => {
+  const normalizedSelection = normalizeSelectedInputs(selectedInputs);
+  if (normalizedSelection.i1 && normalizedSelection.i2) return 'both';
+  if (normalizedSelection.i1) return 'i1';
+  if (normalizedSelection.i2) return 'i2';
+  return 'both';
+};
+
 const resolveThresholdBySelectedInputs = (threshold, selectedInputs) => {
   if (!threshold || typeof threshold !== 'object') {
     return DEFAULT_THRESHOLD_RULE;
@@ -61,17 +69,33 @@ const resolveThresholdBySelectedInputs = (threshold, selectedInputs) => {
     return normalizeThresholdRule(threshold);
   }
 
-  const normalizedSelection = normalizeSelectedInputs(selectedInputs);
-  const key = normalizedSelection.i1 && normalizedSelection.i2
-    ? 'both'
-    : normalizedSelection.i1
-      ? 'i1'
-      : normalizedSelection.i2
-        ? 'i2'
-        : 'both';
+  const key = resolveSelectedInputKey(selectedInputs);
 
   const selectedThreshold = threshold[key] || threshold.both || threshold.i1 || threshold.i2;
   return normalizeThresholdRule(selectedThreshold);
+};
+
+const resolveSeparableBySelectedInputs = (separable, selectedInputs) => {
+  if (typeof separable === 'boolean') {
+    return separable;
+  }
+
+  if (!separable || typeof separable !== 'object') {
+    return null;
+  }
+
+  const key = resolveSelectedInputKey(selectedInputs);
+  const selectedValue = separable[key];
+
+  if (typeof selectedValue === 'boolean') {
+    return selectedValue;
+  }
+
+  if (typeof separable.both === 'boolean') return separable.both;
+  if (typeof separable.i1 === 'boolean') return separable.i1;
+  if (typeof separable.i2 === 'boolean') return separable.i2;
+
+  return null;
 };
 
 
@@ -93,6 +117,7 @@ const App = ({ role = 'teacher' }) => {
   // Αναφορά για να αποθηκεύει την τελευταία κατάσταση του μαθητή που στάλθηκε στον server.
   // αποφεύγει την αποστολή της ίδιας κατάστασης πολλές φορές.
   const lastSentStudentStateRef = useRef('');
+  const prevTeacherActivityRef = useRef('1');
 
   // --- State Variables ---
   // Δεδομένα που αλλάζουν δυναμικά, κατά τη διάρκεια ζωής της εφαρμογής, 
@@ -197,6 +222,10 @@ const saveStudentName = () => {
   const showTotalRow = showInput1 && showInput2;
 
   const effectiveLinearDemoIndex = isTeacher ? currentLinearDemoIndex : lessonLinearDemoIndex;
+  const effectiveLinearDemos = DATASETS[safeDisplayDataset]?.linear_demos || [];
+  const effectiveLinearDemo = Number.isInteger(Number(effectiveLinearDemoIndex))
+    ? effectiveLinearDemos[Number(effectiveLinearDemoIndex)]
+    : null;
 
   let demoIcon = null;
   let demoLabel = 'Μη επιλεγμένο';
@@ -309,7 +338,18 @@ const saveStudentName = () => {
     rule: effectiveThresholdRule,
     total: toFinite(total)
   };
-  const demoFooterText = activeActivity === '4' ? (showTotalRow ? `άθροισμα: ${displayedTotal}` : 'άθροισμα: -') : '';
+  const effectiveSeparable = resolveSeparableBySelectedInputs(
+    effectiveLinearDemo?.separable,
+    effectiveSelectedInputs
+  );
+  const separableLabel = effectiveSeparable === null
+    ? 'Διαχωρισμός: -'
+    : effectiveSeparable
+      ? 'Διαχωρισμός: ✅'
+      : 'Διαχωρισμός: ❌';
+  const demoFooterText = activeActivity === '4'
+    ? `Όριο: ${thresholdDisplayText} | ${separableLabel}`
+    : '';
 
   const handleWeightChange = (which, value) => {
     const normalized = value === '' || value === '-' ? value : Number(value);
@@ -605,6 +645,8 @@ const saveStudentName = () => {
       return;
     }
 
+    const activityChanged = prevTeacherActivityRef.current !== selectedActivity;
+
     if (selectedActivity === '1') {
       // Activity 1: Inputs always empty for teacher to provide
       setTeacherInputs({ i1: '', i2: '' });
@@ -628,8 +670,10 @@ const saveStudentName = () => {
     if (selectedActivity === '3') {
       // Auto-fill inputs from example for weight adjustment activity
       setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
-      setDynamicW1('');
-      setDynamicW2('');
+      if (activityChanged) {
+        setDynamicW1('');
+        setDynamicW2('');
+      }
       // Reset linear demo to disabled state
       setCurrentLinearDemoIndex(undefined);
     }
@@ -637,8 +681,10 @@ const saveStudentName = () => {
     if (selectedActivity === '4') {
       // Auto-fill inputs from example for threshold activity
       setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
-      setDynamicW1('');
-      setDynamicW2('');
+      if (activityChanged) {
+        setDynamicW1('');
+        setDynamicW2('');
+      }
       // Auto-select first linear_demo for threshold activity
       setCurrentLinearDemoIndex(0);
     }
@@ -647,6 +693,8 @@ const saveStudentName = () => {
       setDynamicW1((prev) => (prev === '' ? 2 : prev));
       setDynamicW2((prev) => (prev === '' ? 3 : prev));
     }
+
+    prevTeacherActivityRef.current = selectedActivity;
   }, [isTeacher, selectedActivity, currentExampleData.i1, currentExampleData.i2]);
 
   useEffect(() => {

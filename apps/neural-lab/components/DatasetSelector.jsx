@@ -28,6 +28,13 @@ export const DatasetSelector = ({
     i2: Boolean(selectedInputs?.i2)
   };
 
+  const resolveSelectionKey = () => {
+    if (activeInputSelection.i1 && activeInputSelection.i2) return 'both';
+    if (activeInputSelection.i1) return 'i1';
+    if (activeInputSelection.i2) return 'i2';
+    return 'both';
+  };
+
   const resolveThresholdLabel = (threshold) => {
     if (!threshold || typeof threshold !== 'object') {
       return ' (Μη διαχωρίσιμο)';
@@ -37,18 +44,35 @@ export const DatasetSelector = ({
       return ` (Όριο: ${threshold.op} ${threshold.boundary})`;
     }
 
-    const key = activeInputSelection.i1 && activeInputSelection.i2
-      ? 'both'
-      : activeInputSelection.i1
-        ? 'i1'
-        : activeInputSelection.i2
-          ? 'i2'
-          : 'both';
+    const key = resolveSelectionKey();
 
     const selectedThreshold = threshold[key] || threshold.both || threshold.i1 || threshold.i2;
     return selectedThreshold
       ? ` (Όριο: ${selectedThreshold.op} ${selectedThreshold.boundary})`
       : ' (Μη διαχωρίσιμο)';
+  };
+
+  const resolveSeparableStatus = (separable) => {
+    if (typeof separable === 'boolean') {
+      return separable ? '✅' : '❌';
+    }
+
+    if (!separable || typeof separable !== 'object') {
+      return '❌';
+    }
+
+    const key = resolveSelectionKey();
+    const selectedValue = separable[key];
+
+    if (typeof selectedValue === 'boolean') {
+      return selectedValue ? '✅' : '❌';
+    }
+
+    if (typeof separable.both === 'boolean') return separable.both ? '✅' : '❌';
+    if (typeof separable.i1 === 'boolean') return separable.i1 ? '✅' : '❌';
+    if (typeof separable.i2 === 'boolean') return separable.i2 ? '✅' : '❌';
+
+    return '❌';
   };
   
   return (
@@ -129,7 +153,7 @@ export const DatasetSelector = ({
             <option value="">-- Επιλέξτε --</option>
             {linearDemos.map((demo, idx) => {
               const label = demo.example;
-              const status = demo.separable ? '✅' : '❌';
+              const status = resolveSeparableStatus(demo.separable);
               const thresholdInfo = resolveThresholdLabel(demo.threshold);
               return (
                 <option key={idx} value={idx}>

@@ -146,8 +146,7 @@ export const ExamplesClassifier = ({
         <table className="data-table">
             <thead>
             <tr>
-                {/* 1η γραμμή: Ο τίτλος ενώνει και τις 4 στήλες */}
-                <th colSpan="4" style={{ 
+                <th colSpan="3" style={{ 
                 textAlign: 'center', 
                 fontSize: '1.2rem', 
                 fontWeight: 'bold',
@@ -159,7 +158,6 @@ export const ExamplesClassifier = ({
             </tr>
             <tr>
                 {/* 2η γραμμή: Οι κύριες κατηγορίες στηλών */}
-                <th rowSpan="2">Μετρικές</th>
                 <th rowSpan="2">Πραγματική κλάση</th>
                 <th colSpan="2">Πρόβλεψη</th>
             </tr>
@@ -171,7 +169,6 @@ export const ExamplesClassifier = ({
             </thead>
             <tbody>
             <tr>
-                <td rowSpan="2">Μετρικές</td>
                 <td>Θετική</td>
                 <td className="result-positive">TP: {metricValue('tp')}</td>
                 <td className="result-negative">FN: {metricValue('fn')}</td>

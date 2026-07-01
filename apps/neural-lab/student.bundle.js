@@ -21552,6 +21552,12 @@ var DatasetSelector = ({
     i1: selectedInputs?.i1 !== false,
     i2: Boolean(selectedInputs?.i2)
   };
+  const resolveSelectionKey = () => {
+    if (activeInputSelection.i1 && activeInputSelection.i2) return "both";
+    if (activeInputSelection.i1) return "i1";
+    if (activeInputSelection.i2) return "i2";
+    return "both";
+  };
   const resolveThresholdLabel = (threshold) => {
     if (!threshold || typeof threshold !== "object") {
       return " (\u039C\u03B7 \u03B4\u03B9\u03B1\u03C7\u03C9\u03C1\u03AF\u03C3\u03B9\u03BC\u03BF)";
@@ -21559,9 +21565,26 @@ var DatasetSelector = ({
     if (!threshold.both && !threshold.i1 && !threshold.i2) {
       return ` (\u038C\u03C1\u03B9\u03BF: ${threshold.op} ${threshold.boundary})`;
     }
-    const key = activeInputSelection.i1 && activeInputSelection.i2 ? "both" : activeInputSelection.i1 ? "i1" : activeInputSelection.i2 ? "i2" : "both";
+    const key = resolveSelectionKey();
     const selectedThreshold = threshold[key] || threshold.both || threshold.i1 || threshold.i2;
     return selectedThreshold ? ` (\u038C\u03C1\u03B9\u03BF: ${selectedThreshold.op} ${selectedThreshold.boundary})` : " (\u039C\u03B7 \u03B4\u03B9\u03B1\u03C7\u03C9\u03C1\u03AF\u03C3\u03B9\u03BC\u03BF)";
+  };
+  const resolveSeparableStatus = (separable) => {
+    if (typeof separable === "boolean") {
+      return separable ? "\u2705" : "\u274C";
+    }
+    if (!separable || typeof separable !== "object") {
+      return "\u274C";
+    }
+    const key = resolveSelectionKey();
+    const selectedValue = separable[key];
+    if (typeof selectedValue === "boolean") {
+      return selectedValue ? "\u2705" : "\u274C";
+    }
+    if (typeof separable.both === "boolean") return separable.both ? "\u2705" : "\u274C";
+    if (typeof separable.i1 === "boolean") return separable.i1 ? "\u2705" : "\u274C";
+    if (typeof separable.i2 === "boolean") return separable.i2 ? "\u2705" : "\u274C";
+    return "\u274C";
   };
   return /* @__PURE__ */ import_react4.default.createElement(Accordion, { title: "\u{1F5C4}\uFE0F \u0394\u03B5\u03B4\u03BF\u03BC\u03AD\u03BD\u03B1" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "control-bar" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react4.default.createElement("label", null, "\u{1F4CA} \u03A3\u03CD\u03BD\u03BF\u03BB\u03BF \u03B4\u03B5\u03B4\u03BF\u03BC\u03AD\u03BD\u03C9\u03BD"), /* @__PURE__ */ import_react4.default.createElement(
     "select",
@@ -21615,7 +21638,7 @@ var DatasetSelector = ({
     /* @__PURE__ */ import_react4.default.createElement("option", { value: "" }, "-- \u0395\u03C0\u03B9\u03BB\u03AD\u03BE\u03C4\u03B5 --"),
     linearDemos.map((demo, idx) => {
       const label = demo.example;
-      const status = demo.separable ? "\u2705" : "\u274C";
+      const status = resolveSeparableStatus(demo.separable);
       const thresholdInfo = resolveThresholdLabel(demo.threshold);
       return /* @__PURE__ */ import_react4.default.createElement("option", { key: idx, value: idx }, idx + 1, ". ", label, " ", status, thresholdInfo);
     })
@@ -22033,13 +22056,13 @@ var ExamplesClassifier = ({
   if (!datasetData) {
     return null;
   }
-  return /* @__PURE__ */ import_react9.default.createElement(Accordion, { title: "\u{1F50E} \u03A4\u03B1\u03BE\u03B9\u03BD\u03CC\u03BC\u03B7\u03C3\u03B7 \u03A0\u03B1\u03C1\u03B1\u03B4\u03B5\u03B9\u03B3\u03BC\u03AC\u03C4\u03C9\u03BD" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "data-section" }, /* @__PURE__ */ import_react9.default.createElement("table", { className: "data-table" }, /* @__PURE__ */ import_react9.default.createElement("thead", null, /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("th", null, "\u03A0\u03B1\u03C1\u03AC\u03B4\u03B5\u03B9\u03B3\u03BC\u03B1"), activeInputs.i1 && /* @__PURE__ */ import_react9.default.createElement("th", null, features?.i1?.icon, " ", features?.i1?.label), activeInputs.i2 && /* @__PURE__ */ import_react9.default.createElement("th", null, features?.i2?.icon, " ", features?.i2?.label), /* @__PURE__ */ import_react9.default.createElement("th", null, "w1\xB7i1 + w2\xB7i2"), showResultDetails && /* @__PURE__ */ import_react9.default.createElement("th", null, "\u0391\u03C0\u03BF\u03C4\u03AD\u03BB\u03B5\u03C3\u03BC\u03B1"))), /* @__PURE__ */ import_react9.default.createElement("tbody", null, classifiedExamples.map((ex, idx) => /* @__PURE__ */ import_react9.default.createElement("tr", { key: idx }, /* @__PURE__ */ import_react9.default.createElement("td", null, /* @__PURE__ */ import_react9.default.createElement("span", { className: "icon-in-table" }, ex.icon), " ", ex.name), activeInputs.i1 && /* @__PURE__ */ import_react9.default.createElement("td", { className: "weight-value" }, ex.i1), activeInputs.i2 && /* @__PURE__ */ import_react9.default.createElement("td", { className: "weight-value" }, ex.i2), /* @__PURE__ */ import_react9.default.createElement("td", { className: "weight-value" }, ex.output.toFixed(2)), showResultDetails && /* @__PURE__ */ import_react9.default.createElement("td", { className: threshold ? ex.result ? "result-positive" : "result-negative" : "" }, threshold ? ex.result ? "\u2705 \u0398\u03B5\u03C4\u03B9\u03BA\u03CC" : "\u274C \u0391\u03C1\u03BD\u03B7\u03C4\u03B9\u03BA\u03CC" : ""))))), /* @__PURE__ */ import_react9.default.createElement("div", { className: "data-section", style: { marginTop: "0.8rem" } }, /* @__PURE__ */ import_react9.default.createElement("table", { className: "data-table" }, /* @__PURE__ */ import_react9.default.createElement("thead", null, /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("th", { colSpan: "4", style: {
+  return /* @__PURE__ */ import_react9.default.createElement(Accordion, { title: "\u{1F50E} \u03A4\u03B1\u03BE\u03B9\u03BD\u03CC\u03BC\u03B7\u03C3\u03B7 \u03A0\u03B1\u03C1\u03B1\u03B4\u03B5\u03B9\u03B3\u03BC\u03AC\u03C4\u03C9\u03BD" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "data-section" }, /* @__PURE__ */ import_react9.default.createElement("table", { className: "data-table" }, /* @__PURE__ */ import_react9.default.createElement("thead", null, /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("th", null, "\u03A0\u03B1\u03C1\u03AC\u03B4\u03B5\u03B9\u03B3\u03BC\u03B1"), activeInputs.i1 && /* @__PURE__ */ import_react9.default.createElement("th", null, features?.i1?.icon, " ", features?.i1?.label), activeInputs.i2 && /* @__PURE__ */ import_react9.default.createElement("th", null, features?.i2?.icon, " ", features?.i2?.label), /* @__PURE__ */ import_react9.default.createElement("th", null, "w1\xB7i1 + w2\xB7i2"), showResultDetails && /* @__PURE__ */ import_react9.default.createElement("th", null, "\u0391\u03C0\u03BF\u03C4\u03AD\u03BB\u03B5\u03C3\u03BC\u03B1"))), /* @__PURE__ */ import_react9.default.createElement("tbody", null, classifiedExamples.map((ex, idx) => /* @__PURE__ */ import_react9.default.createElement("tr", { key: idx }, /* @__PURE__ */ import_react9.default.createElement("td", null, /* @__PURE__ */ import_react9.default.createElement("span", { className: "icon-in-table" }, ex.icon), " ", ex.name), activeInputs.i1 && /* @__PURE__ */ import_react9.default.createElement("td", { className: "weight-value" }, ex.i1), activeInputs.i2 && /* @__PURE__ */ import_react9.default.createElement("td", { className: "weight-value" }, ex.i2), /* @__PURE__ */ import_react9.default.createElement("td", { className: "weight-value" }, ex.output.toFixed(2)), showResultDetails && /* @__PURE__ */ import_react9.default.createElement("td", { className: threshold ? ex.result ? "result-positive" : "result-negative" : "" }, threshold ? ex.result ? "\u2705 \u0398\u03B5\u03C4\u03B9\u03BA\u03CC" : "\u274C \u0391\u03C1\u03BD\u03B7\u03C4\u03B9\u03BA\u03CC" : ""))))), /* @__PURE__ */ import_react9.default.createElement("div", { className: "data-section", style: { marginTop: "0.8rem" } }, /* @__PURE__ */ import_react9.default.createElement("table", { className: "data-table" }, /* @__PURE__ */ import_react9.default.createElement("thead", null, /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("th", { colSpan: "3", style: {
     textAlign: "center",
     fontSize: "1.2rem",
     fontWeight: "bold",
     padding: "10px 0",
     borderBottom: "2px solid #e2e8f0"
-  } }, "Confusion Matrix")), /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("th", { rowSpan: "2" }, "\u039C\u03B5\u03C4\u03C1\u03B9\u03BA\u03AD\u03C2"), /* @__PURE__ */ import_react9.default.createElement("th", { rowSpan: "2" }, "\u03A0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03AE \u03BA\u03BB\u03AC\u03C3\u03B7"), /* @__PURE__ */ import_react9.default.createElement("th", { colSpan: "2" }, "\u03A0\u03C1\u03CC\u03B2\u03BB\u03B5\u03C8\u03B7")), /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("th", null, "\u0398\u03B5\u03C4\u03B9\u03BA\u03CC"), /* @__PURE__ */ import_react9.default.createElement("th", null, "\u0391\u03C1\u03BD\u03B7\u03C4\u03B9\u03BA\u03CC"))), /* @__PURE__ */ import_react9.default.createElement("tbody", null, /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("td", { rowSpan: "2" }, "\u039C\u03B5\u03C4\u03C1\u03B9\u03BA\u03AD\u03C2"), /* @__PURE__ */ import_react9.default.createElement("td", null, "\u0398\u03B5\u03C4\u03B9\u03BA\u03AE"), /* @__PURE__ */ import_react9.default.createElement("td", { className: "result-positive" }, "TP: ", metricValue("tp")), /* @__PURE__ */ import_react9.default.createElement("td", { className: "result-negative" }, "FN: ", metricValue("fn"))), /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("td", null, "\u0391\u03C1\u03BD\u03B7\u03C4\u03B9\u03BA\u03AE"), /* @__PURE__ */ import_react9.default.createElement("td", { className: "result-negative" }, "FP: ", metricValue("fp")), /* @__PURE__ */ import_react9.default.createElement("td", { className: "result-positive" }, "TN: ", metricValue("tn")))))), /* @__PURE__ */ import_react9.default.createElement("div", { className: "student-inline-note", style: { marginTop: "0.6rem" } }, "\u03A4\u03C1\u03AD\u03C7\u03BF\u03BD\u03C4\u03B1 \u03B2\u03AC\u03C1\u03B7: w1 = ", safeWeights.w1, ", w2 = ", safeWeights.w2, showResultDetails && threshold && ` | threshold: ${threshold.op} ${threshold.boundary}`)));
+  } }, "Confusion Matrix")), /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("th", { rowSpan: "2" }, "\u03A0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03AE \u03BA\u03BB\u03AC\u03C3\u03B7"), /* @__PURE__ */ import_react9.default.createElement("th", { colSpan: "2" }, "\u03A0\u03C1\u03CC\u03B2\u03BB\u03B5\u03C8\u03B7")), /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("th", null, "\u0398\u03B5\u03C4\u03B9\u03BA\u03CC"), /* @__PURE__ */ import_react9.default.createElement("th", null, "\u0391\u03C1\u03BD\u03B7\u03C4\u03B9\u03BA\u03CC"))), /* @__PURE__ */ import_react9.default.createElement("tbody", null, /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("td", null, "\u0398\u03B5\u03C4\u03B9\u03BA\u03AE"), /* @__PURE__ */ import_react9.default.createElement("td", { className: "result-positive" }, "TP: ", metricValue("tp")), /* @__PURE__ */ import_react9.default.createElement("td", { className: "result-negative" }, "FN: ", metricValue("fn"))), /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("td", null, "\u0391\u03C1\u03BD\u03B7\u03C4\u03B9\u03BA\u03AE"), /* @__PURE__ */ import_react9.default.createElement("td", { className: "result-negative" }, "FP: ", metricValue("fp")), /* @__PURE__ */ import_react9.default.createElement("td", { className: "result-positive" }, "TN: ", metricValue("tn")))))), /* @__PURE__ */ import_react9.default.createElement("div", { className: "student-inline-note", style: { marginTop: "0.6rem" } }, "\u03A4\u03C1\u03AD\u03C7\u03BF\u03BD\u03C4\u03B1 \u03B2\u03AC\u03C1\u03B7: w1 = ", safeWeights.w1, ", w2 = ", safeWeights.w2, showResultDetails && threshold && ` | threshold: ${threshold.op} ${threshold.boundary}`)));
 };
 
 // apps/neural-lab/components/ActivitiesMenu.jsx
@@ -22086,63 +22109,121 @@ var DATASETS = {
     label: "\u039C\u03AD\u03C3\u03B1 \u03BC\u03B5\u03C4\u03B1\u03C6\u03BF\u03C1\u03AC\u03C2",
     emoji: "\u{1F697}",
     features: {
-      i1: { label: "\u03A1\u03CC\u03B4\u03B5\u03C2", icon: "\u{1F6DE}" },
-      i2: { label: "\u039C\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2", icon: "\u2699\uFE0F" }
+      i1: { label: "\u03A4\u03C1\u03BF\u03C7\u03BF\u03AF", icon: "\u{1F6DE}" },
+      i2: { label: "\u039C\u03B7\u03C7\u03B1\u03BD\u03AE", icon: "\u2699\uFE0F" }
     },
     examples: [
-      // --- Με κινητήρα (i2 >= 1) ---
+      { name: "\u03A0\u03BF\u03B4\u03AE\u03BB\u03B1\u03C4\u03BF", i1: 2, i2: 0, icon: "\u{1F6B2}" },
+      { name: "\u039C\u03BF\u03C4\u03BF\u03C3\u03C5\u03BA\u03BB\u03AD\u03C4\u03B1", i1: 2, i2: 1, icon: "\u{1F6F5}" },
       { name: "\u0391\u03C5\u03C4\u03BF\u03BA\u03AF\u03BD\u03B7\u03C4\u03BF", i1: 4, i2: 1, icon: "\u{1F697}" },
-      { name: "\u039C\u03B7\u03C7\u03B1\u03BD\u03AC\u03BA\u03B9", i1: 2, i2: 1, icon: "\u{1F6F5}" },
+      { name: "\u03A0\u03B1\u03C4\u03AF\u03BD\u03B9", i1: 3, i2: 0, icon: "\u{1F6F4}" }
       //{ name: 'Φορτηγό',       i1: 6,  i2: 1, icon: '🚛' },
       //{ name: 'Τρακτέρ',       i1: 4,  i2: 1, icon: '🚜' },
-      { name: "\u039B\u03B5\u03C9\u03C6\u03BF\u03C1\u03B5\u03AF\u03BF", i1: 8, i2: 1, icon: "\u{1F68C}" },
+      //{ name: 'Λεωφορείο',      i1: 8,  i2: 1, icon: '🚌' },
       //{ name: 'Πυροσβεστικό',  i1: 8,  i2: 1, icon: '🚒' },
       //{ name: 'Ασθενοφόρο',    i1: 4,  i2: 1, icon: '🚑' },
-      { name: "\u0399\u03C3\u03C4\u03B9\u03BF\u03C6\u03CC\u03C1\u03BF", i1: 0, i2: 0, icon: "\u26F5" },
-      { name: "\u03A0\u03BB\u03BF\u03AF\u03BF", i1: 0, i2: 1, icon: "\u{1F6A2}" },
-      { name: "\u0391\u03B5\u03C1\u03BF\u03C0\u03BB\u03AC\u03BD\u03BF", i1: 6, i2: 2, icon: "\u2708\uFE0F" },
-      // --- Χωρίς κινητήρα (i2 = 0) ---
-      { name: "\u03A0\u03BF\u03B4\u03AE\u03BB\u03B1\u03C4\u03BF", i1: 2, i2: 0, icon: "\u{1F6B2}" },
-      { name: "\u03A0\u03B1\u03B9\u03B4\u03B9\u03BA\u03CC \u03A0\u03B1\u03C4\u03AF\u03BD\u03B9", i1: 3, i2: 0, icon: "\u{1F6F4}" },
-      { name: "\u039A\u03B1\u03C1\u03BF\u03C4\u03C3\u03AC\u03BA\u03B9", i1: 4, i2: 0, icon: "\u{1F6D2}" },
-      { name: "\u0391\u03BD\u03B1\u03C0\u03B7\u03C1\u03B9\u03BA\u03CC", i1: 4, i2: 0, icon: "\u{1F9BD}" }
+      //{ name: 'Ιστιοφόρο',      i1: 0,  i2: 0, icon: '⛵' },
+      //{ name: 'Πλοίο',          i1: 0,  i2: 1, icon: '🚢' },
+      //{ name: 'Αεροπλάνο',      i1: 6,  i2: 2, icon: '✈️' },
+      //{ name: 'Καροτσάκι',      i1: 4,  i2: 0, icon: '🛒' },
+      //{ name: 'Αναπηρικό',      i1: 4,  i2: 0, icon: '🦽' },
     ],
     linear_demos: [
+      // --------------------------------------------------------------
+      // 1. Ποδήλατο (2,0)
+      //    Βάρη: w1=1, w2=2  →  score = 1*i1 + 2*i2
+      //    Για το Ποδήλατο: score = 2, για τα άλλα: >2.5
+      //    Άρα με όριο 2.5 και σύγκριση '<' το ξεχωρίζει τέλεια.
+      // --------------------------------------------------------------
       {
-        // 1ο: Γραμμικά διαχωρίσιμο
-        example: "\u0391\u03B5\u03C1\u03BF\u03C0\u03BB\u03AC\u03BD\u03BF",
-        point: { i1: 6, i2: 2 },
+        example: "\u03A0\u03BF\u03B4\u03AE\u03BB\u03B1\u03C4\u03BF",
+        point: { i1: 2, i2: 0 },
         threshold: {
-          both: { op: ">", boundary: 1.5 },
-          i1: { op: ">=", boundary: 6 },
-          i2: { op: ">=", boundary: 2 }
-        },
-        separable: true,
-        description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03CC\u03C7\u03B7\u03BC\u03B1 \u03BC\u03B5 2 \u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2. \u03A4\u03BF \u03BA\u03B1\u03C4\u03B1\u03BA\u03CC\u03C1\u03C5\u03C6\u03BF \u03CC\u03C1\u03B9\u03BF i2=1.5 \u03C4\u03BF \u03B1\u03C0\u03BF\u03BC\u03BF\u03BD\u03CE\u03BD\u03B5\u03B9."
-      },
-      {
-        // 2ο: Γραμμικά διαχωρίσιμο
-        example: "\u0399\u03C3\u03C4\u03B9\u03BF\u03C6\u03CC\u03C1\u03BF",
-        point: { i1: 0, i2: 0 },
-        threshold: {
-          both: { op: "<", boundary: 0.5 },
-          i1: { op: "<=", boundary: 0 },
+          both: { op: ">=", boundary: -2 },
+          i1: { op: "<=", boundary: 2 },
           i2: { op: "<=", boundary: 0 }
         },
-        separable: true,
-        description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03CC\u03C7\u03B7\u03BC\u03B1 \u03BC\u03B5 0 \u03C1\u03CC\u03B4\u03B5\u03C2 \u039A\u0391\u0399 0 \u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2. \u0397 \u03B5\u03C5\u03B8\u03B5\u03AF\u03B1 i1+i2=0.5 \u03C4\u03BF \u03BE\u03B5\u03C7\u03C9\u03C1\u03AF\u03B6\u03B5\u03B9."
+        separable: {
+          both: true,
+          i1: false,
+          // και η Μοτοσυκλέτα έχει i1=2
+          i2: false
+          // και το Πατίνι έχει i2=0
+        },
+        weights: { w1: -1, w2: -1 }
+        // προτεινόμενα βάρη
       },
+      // --------------------------------------------------------------
+      // 2. Μοτοσυκλέτα (2,1)
+      //    Βάρη: w1=-1, w2=2  →  score = -1*i1 + 2*i2
+      //    Για τη Μοτοσυκλέτα: score = 0, για τα άλλα: αρνητικά (-2, -3, -2)
+      //    Με όριο -0.5 και σύγκριση '>' μόνο αυτή περνάει.
+      // --------------------------------------------------------------
       {
-        // 3ο: ΜΗ γραμμικά διαχωρίσιμο (τελευταίο)
-        example: "\u039A\u03B1\u03C1\u03BF\u03C4\u03C3\u03AC\u03BA\u03B9",
-        points: [{ i1: 4, i2: 0 }, { i1: 4, i2: 0 }],
+        example: "\u039C\u03BF\u03C4\u03BF\u03C3\u03C5\u03BA\u03BB\u03AD\u03C4\u03B1",
+        point: { i1: 2, i2: 1 },
         threshold: {
-          both: { op: ">=", boundary: 5 },
-          i1: { op: ">=", boundary: 5 },
+          both: { op: ">=", boundary: -1 },
+          i1: { op: "<=", boundary: 2 },
           i2: { op: ">=", boundary: 1 }
         },
-        separable: false,
-        description: "\u039A\u03B1\u03B9 \u03C4\u03B1 \u03B4\u03CD\u03BF \u03AD\u03C7\u03BF\u03C5\u03BD \u03B1\u03BA\u03C1\u03B9\u03B2\u03CE\u03C2 \u03C4\u03B1 \u03AF\u03B4\u03B9\u03B1 \u03C7\u03B1\u03C1\u03B1\u03BA\u03C4\u03B7\u03C1\u03B9\u03C3\u03C4\u03B9\u03BA\u03AC (4 \u03C1\u03CC\u03B4\u03B5\u03C2, 0 \u03BC\u03B7\u03C7\u03B1\u03BD\u03AD\u03C2). \u0395\u03AF\u03BD\u03B1\u03B9 \u03C0\u03B1\u03BD\u03BF\u03BC\u03BF\u03B9\u03CC\u03C4\u03C5\u03C0\u03B1 \u03C3\u03B7\u03BC\u03B5\u03AF\u03B1 \u03C3\u03C4\u03BF\u03BD \u03C7\u03CE\u03C1\u03BF, \u03AC\u03C1\u03B1 \u03BA\u03B1\u03BC\u03AF\u03B1 \u03B5\u03C5\u03B8\u03B5\u03AF\u03B1 \u03B3\u03C1\u03B1\u03BC\u03BC\u03AE \u03B4\u03B5\u03BD \u03BC\u03C0\u03BF\u03C1\u03B5\u03AF \u03BD\u03B1 \u03C4\u03B1 \u03B4\u03B9\u03B1\u03C7\u03C9\u03C1\u03AF\u03C3\u03B5\u03B9."
+        separable: {
+          both: true,
+          i1: false,
+          // και το Ποδήλατο έχει i1=2
+          i2: false
+          // και το Αυτοκίνητο έχει i2=1
+        },
+        weights: { w1: -1, w2: 1 }
+        // προτεινόμενα βάρη (αρνητικό w1)
+      },
+      // --------------------------------------------------------------
+      // 3. Πατίνι (3,0)
+      //    Βάρη: w1=1, w2=-2  →  score = 1*i1 - 2*i2
+      //    Για το Πατίνι: score = 3, για τα άλλα: ≤2
+      //    Με όριο 2.5 και σύγκριση '>' μόνο το Πατίνι περνάει.
+      // --------------------------------------------------------------
+      {
+        example: "\u03A0\u03B1\u03C4\u03AF\u03BD\u03B9",
+        point: { i1: 3, i2: 0 },
+        threshold: {
+          both: { op: ">=", boundary: 3 },
+          i1: { op: ">=", boundary: 3 },
+          i2: { op: "<=", boundary: 0 }
+        },
+        separable: {
+          both: false,
+          // και η Μοτοσυκλέτα (2,1) έχει άθροισμα 3>2.5
+          i1: false,
+          // και το Αυτοκίνητο έχει i1=4 ≥3
+          i2: false
+          // και το Ποδήλατο έχει i2=0
+        },
+        weights: { w1: 1, w2: -2 }
+        // προτεινόμενα βάρη (αρνητικό w2)
+      },
+      // --------------------------------------------------------------
+      // 4. Αυτοκίνητο (4,1)
+      //    Βάρη: w1=1, w2=1  →  score = i1 + i2
+      //    Για το Αυτοκίνητο: score = 5, για τα άλλα: ≤3
+      //    Με όριο 4 και σύγκριση '>' μόνο το Αυτοκίνητο περνάει.
+      // --------------------------------------------------------------
+      {
+        example: "\u0391\u03C5\u03C4\u03BF\u03BA\u03AF\u03BD\u03B7\u03C4\u03BF",
+        point: { i1: 4, i2: 1 },
+        threshold: {
+          both: { op: ">=", boundary: 4 },
+          i1: { op: ">=", boundary: 4 },
+          i2: { op: ">=", boundary: 1 }
+        },
+        separable: {
+          both: true,
+          i1: true,
+          // μόνο το Αυτοκίνητο έχει i1 ≥4
+          i2: false
+        },
+        weights: { w1: 1, w2: 0 }
+        // προτεινόμενα βάρη
       }
     ]
   },
@@ -22156,19 +22237,18 @@ var DATASETS = {
     examples: [
       { name: "\u039C\u03B7\u03B4\u03AD\u03BD", i1: 1, i2: 0, icon: "0\uFE0F\u20E3" },
       { name: "\u0388\u03BD\u03B1", i1: 0, i2: 0, icon: "1\uFE0F\u20E3" },
-      { name: "\u0394\u03CD\u03BF", i1: 0, i2: 0, icon: "2\uFE0F\u20E3" },
-      { name: "\u03A4\u03C1\u03AF\u03B1", i1: 0, i2: 0, icon: "3\uFE0F\u20E3" },
-      { name: "\u03A4\u03AD\u03C3\u03C3\u03B5\u03C1\u03B1", i1: 1, i2: 1, icon: "4\uFE0F\u20E3" },
-      { name: "\u03A0\u03AD\u03BD\u03C4\u03B5", i1: 0, i2: 0, icon: "5\uFE0F\u20E3" },
+      // { name: 'Δύο',   i1: 0, i2: 0, icon: '2️⃣' },   // διπλότυπο του 1
+      // { name: 'Τρία',  i1: 0, i2: 0, icon: '3️⃣' },   // διπλότυπο
+      { name: "\u03A4\u03AD\u03C3\u03C3\u03B5\u03C1\u03B1", i1: 0, i2: 1, icon: "4\uFE0F\u20E3" },
+      // { name: 'Πέντε', i1: 0, i2: 0, icon: '5️⃣' },   // διπλότυπο
       { name: "\u0388\u03BE\u03B9", i1: 1, i2: 1, icon: "6\uFE0F\u20E3" },
-      { name: "\u0395\u03C0\u03C4\u03AC", i1: 0, i2: 0, icon: "7\uFE0F\u20E3" },
-      { name: "\u039F\u03BA\u03C4\u03CE", i1: 2, i2: 1, icon: "8\uFE0F\u20E3" },
-      { name: "\u0395\u03BD\u03BD\u03AD\u03B1", i1: 1, i2: 1, icon: "9\uFE0F\u20E3" }
+      // διπλότυπο του 4 (για το μη-διαχωρίσιμο παράδειγμα)
+      // { name: 'Επτά',  i1: 0, i2: 0, icon: '7️⃣' },   // διπλότυπο
+      { name: "\u039F\u03BA\u03C4\u03CE", i1: 2, i2: 1, icon: "8\uFE0F\u20E3" }
+      // { name: 'Εννέα', i1: 1, i2: 1, icon: '9️⃣' }    // διπλότυπο του 4/6
     ],
-    // 🔥 ΝΕΟ ΠΕΔΙΟ: 3 παραδείγματα (2 διαχωρίσιμα, 1 μη-διαχωρίσιμο)
     linear_demos: [
       {
-        // 1ο: Γραμμικά διαχωρίσιμο
         example: "\u039F\u03BA\u03C4\u03CE",
         point: { i1: 2, i2: 1 },
         threshold: {
@@ -22176,32 +22256,75 @@ var DATASETS = {
           i1: { op: ">=", boundary: 2 },
           i2: { op: ">=", boundary: 1 }
         },
-        separable: true,
-        description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03C8\u03B7\u03C6\u03AF\u03BF \u03BC\u03B5 2 \u03BA\u03CD\u03BA\u03BB\u03BF\u03C5\u03C2. \u03A4\u03BF \u03CC\u03C1\u03B9\u03BF i1=1.5 \u03C4\u03BF \u03B1\u03C0\u03BF\u03BC\u03BF\u03BD\u03CE\u03BD\u03B5\u03B9 \u03B1\u03C0\u03CC\u03BB\u03C5\u03C4\u03B1."
+        separable: {
+          both: true,
+          i1: true,
+          // Το μοναδικό ψηφίο με 2 κύκλους. Το όριο i1 ≥ 1.5 το απομονώνει απόλυτα.
+          i2: false
+        },
+        weights: { w1: 1, w2: 1 },
+        description: ""
       },
       {
-        // 2ο: Γραμμικά διαχωρίσιμο
         example: "\u039C\u03B7\u03B4\u03AD\u03BD",
         point: { i1: 1, i2: 0 },
         threshold: {
-          both: { op: ">", boundary: 0.5 },
+          both: { op: ">=", boundary: 1 },
           i1: { op: ">=", boundary: 1 },
           i2: { op: "<=", boundary: 0 }
         },
-        separable: true,
-        description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03C8\u03B7\u03C6\u03AF\u03BF \u03BC\u03B5 1 \u03BA\u03CD\u03BA\u03BB\u03BF \u03BA\u03B1\u03B9 0 \u03C3\u03C4\u03B1\u03C5\u03C1\u03BF\u03B4\u03C1\u03CC\u03BC\u03B9\u03B1. \u0397 \u03B5\u03C5\u03B8\u03B5\u03AF\u03B1 i1 - 2*i2 = 0.5 \u03C4\u03BF \u03BE\u03B5\u03C7\u03C9\u03C1\u03AF\u03B6\u03B5\u03B9 (\u03B5\u03BB\u03AD\u03B3\u03BE\u03C4\u03B5 \u03C4\u03BF: \u03B3\u03B9\u03B1 \u03C4\u03BF 0 \u03B4\u03AF\u03BD\u03B5\u03B9 1>0.5, \u03B5\u03BD\u03CE \u03B3\u03B9\u03B1 8 \u03B4\u03AF\u03BD\u03B5\u03B9 0, \u03B3\u03B9\u03B1 4/6/9 \u03B4\u03AF\u03BD\u03B5\u03B9 -1)."
+        separable: {
+          both: false,
+          i1: false,
+          i2: false
+        },
+        weights: { w1: 1, w2: -2 }
       },
       {
-        // 3ο: ΜΗ γραμμικά διαχωρίσιμο (τελευταίο)
-        example: "\u0388\u03BE\u03B9",
-        points: { i1: 1, i2: 1 },
+        example: "\u0388\u03BD\u03B1",
+        point: { i1: -1, i2: -1 },
         threshold: {
-          both: { op: ">=", boundary: 5 },
+          both: { op: ">=", boundary: 0 },
+          i1: { op: "<=", boundary: 0 },
+          i2: { op: "<=", boundary: 0 }
+        },
+        separable: {
+          both: true,
+          i1: false,
+          i2: false
+        },
+        weights: { w1: 1, w2: 1 },
+        description: "\u03A4\u03BF \u03BC\u03BF\u03BD\u03B1\u03B4\u03B9\u03BA\u03CC \u03C8\u03B7\u03C6\u03AF\u03BF \u03BC\u03B5 0 \u03BA\u03CD\u03BA\u03BB\u03BF\u03C5\u03C2 \u03BA\u03B1\u03B9 0 \u03C3\u03C4\u03B1\u03C5\u03C1\u03BF\u03B4\u03C1\u03CC\u03BC\u03B9\u03B1. \u03A4\u03BF \u03CC\u03C1\u03B9\u03BF i1 \u2264 0 \u03C4\u03BF \u03BE\u03B5\u03C7\u03C9\u03C1\u03AF\u03B6\u03B5\u03B9 (\u03BC\u03B1\u03B6\u03AF \u03BC\u03B5 \u03C4\u03BF both)."
+      },
+      {
+        example: "\u03A4\u03AD\u03C3\u03C3\u03B5\u03C1\u03B1",
+        point: { i1: 1, i2: 1 },
+        threshold: {
+          both: { op: ">=", boundary: 1 },
           i1: { op: ">=", boundary: 2 },
           i2: { op: ">=", boundary: 2 }
         },
-        separable: false,
-        description: "\u039A\u03B1\u03B9 \u03C4\u03B1 \u03C4\u03C1\u03AF\u03B1 \u03C8\u03B7\u03C6\u03AF\u03B1 (4, 6, 9) \u03AD\u03C7\u03BF\u03C5\u03BD \u03B1\u03BA\u03C1\u03B9\u03B2\u03CE\u03C2 1 \u03BA\u03CD\u03BA\u03BB\u03BF \u03BA\u03B1\u03B9 1 \u03C3\u03C4\u03B1\u03C5\u03C1\u03BF\u03B4\u03C1\u03CC\u03BC\u03B9. \u0395\u03C0\u03B5\u03B9\u03B4\u03AE \u03C4\u03B1 \u03C3\u03B7\u03BC\u03B5\u03AF\u03B1 \u03C4\u03BF\u03C5\u03C2 \u03C4\u03B1\u03C5\u03C4\u03AF\u03B6\u03BF\u03BD\u03C4\u03B1\u03B9, \u03B5\u03AF\u03BD\u03B1\u03B9 \u03BC\u03B1\u03B8\u03B7\u03BC\u03B1\u03C4\u03B9\u03BA\u03AC \u03B1\u03B4\u03CD\u03BD\u03B1\u03C4\u03BF \u03BD\u03B1 \u03B2\u03C1\u03B5\u03B8\u03B5\u03AF \u03B5\u03C5\u03B8\u03B5\u03AF\u03B1 \u03C0\u03BF\u03C5 \u03BD\u03B1 \u03C7\u03C9\u03C1\u03AF\u03B6\u03B5\u03B9 \u03C4\u03BF \u03AD\u03BD\u03B1 \u03B1\u03C0\u03CC \u03C4\u03B1 \u03AC\u03BB\u03BB\u03B1 \u03B4\u03CD\u03BF."
+        separable: {
+          both: false,
+          i1: false,
+          i2: false
+        },
+        weights: { w1: -1, w2: 1 }
+      },
+      {
+        example: "\u0388\u03BE\u03B9",
+        point: { i1: 1, i2: 1 },
+        threshold: {
+          both: { op: ">", boundary: 5 },
+          i1: { op: ">=", boundary: 2 },
+          i2: { op: ">=", boundary: 2 }
+        },
+        separable: {
+          both: false,
+          i1: false,
+          i2: false
+        },
+        weights: { w1: 1, w2: 1 }
       }
     ]
   }
@@ -22243,6 +22366,13 @@ var normalizeSelectedInputs = (value, fallback = DEFAULT_SELECTED_INPUTS) => {
     i2: typeof source.i2 === "boolean" ? source.i2 : Boolean(fallback.i2)
   };
 };
+var resolveSelectedInputKey = (selectedInputs) => {
+  const normalizedSelection = normalizeSelectedInputs(selectedInputs);
+  if (normalizedSelection.i1 && normalizedSelection.i2) return "both";
+  if (normalizedSelection.i1) return "i1";
+  if (normalizedSelection.i2) return "i2";
+  return "both";
+};
 var resolveThresholdBySelectedInputs = (threshold, selectedInputs) => {
   if (!threshold || typeof threshold !== "object") {
     return DEFAULT_THRESHOLD_RULE;
@@ -22251,10 +22381,26 @@ var resolveThresholdBySelectedInputs = (threshold, selectedInputs) => {
   if (!hasThresholdVariants) {
     return normalizeThresholdRule(threshold);
   }
-  const normalizedSelection = normalizeSelectedInputs(selectedInputs);
-  const key = normalizedSelection.i1 && normalizedSelection.i2 ? "both" : normalizedSelection.i1 ? "i1" : normalizedSelection.i2 ? "i2" : "both";
+  const key = resolveSelectedInputKey(selectedInputs);
   const selectedThreshold = threshold[key] || threshold.both || threshold.i1 || threshold.i2;
   return normalizeThresholdRule(selectedThreshold);
+};
+var resolveSeparableBySelectedInputs = (separable, selectedInputs) => {
+  if (typeof separable === "boolean") {
+    return separable;
+  }
+  if (!separable || typeof separable !== "object") {
+    return null;
+  }
+  const key = resolveSelectedInputKey(selectedInputs);
+  const selectedValue = separable[key];
+  if (typeof selectedValue === "boolean") {
+    return selectedValue;
+  }
+  if (typeof separable.both === "boolean") return separable.both;
+  if (typeof separable.i1 === "boolean") return separable.i1;
+  if (typeof separable.i2 === "boolean") return separable.i2;
+  return null;
 };
 var App = ({ role = "teacher" }) => {
   const wsRef = (0, import_react12.useRef)(null);
@@ -22262,6 +22408,7 @@ var App = ({ role = "teacher" }) => {
   const hasRegisteredRef = (0, import_react12.useRef)(false);
   const suppressNextStudentStateSendRef = (0, import_react12.useRef)(false);
   const lastSentStudentStateRef = (0, import_react12.useRef)("");
+  const prevTeacherActivityRef = (0, import_react12.useRef)("1");
   const [currentDataset, setCurrentDataset] = (0, import_react12.useState)("vehicles");
   const [currentExample, setCurrentExample] = (0, import_react12.useState)(0);
   const [currentLinearDemoIndex, setCurrentLinearDemoIndex] = (0, import_react12.useState)(void 0);
@@ -22336,6 +22483,8 @@ var App = ({ role = "teacher" }) => {
   const showInput2 = Boolean(effectiveSelectedInputs.i2);
   const showTotalRow = showInput1 && showInput2;
   const effectiveLinearDemoIndex = isTeacher ? currentLinearDemoIndex : lessonLinearDemoIndex;
+  const effectiveLinearDemos = datasets_default[safeDisplayDataset]?.linear_demos || [];
+  const effectiveLinearDemo = Number.isInteger(Number(effectiveLinearDemoIndex)) ? effectiveLinearDemos[Number(effectiveLinearDemoIndex)] : null;
   let demoIcon = null;
   let demoLabel = "\u039C\u03B7 \u03B5\u03C0\u03B9\u03BB\u03B5\u03B3\u03BC\u03AD\u03BD\u03BF";
   if (activeActivity === "4" && effectiveLinearDemoIndex !== void 0 && datasets_default[safeDisplayDataset]?.linear_demos) {
@@ -22393,7 +22542,12 @@ var App = ({ role = "teacher" }) => {
     rule: effectiveThresholdRule,
     total: toFinite(total)
   };
-  const demoFooterText = activeActivity === "4" ? showTotalRow ? `\u03AC\u03B8\u03C1\u03BF\u03B9\u03C3\u03BC\u03B1: ${displayedTotal}` : "\u03AC\u03B8\u03C1\u03BF\u03B9\u03C3\u03BC\u03B1: -" : "";
+  const effectiveSeparable = resolveSeparableBySelectedInputs(
+    effectiveLinearDemo?.separable,
+    effectiveSelectedInputs
+  );
+  const separableLabel = effectiveSeparable === null ? "\u0394\u03B9\u03B1\u03C7\u03C9\u03C1\u03B9\u03C3\u03BC\u03CC\u03C2: -" : effectiveSeparable ? "\u0394\u03B9\u03B1\u03C7\u03C9\u03C1\u03B9\u03C3\u03BC\u03CC\u03C2: \u2705" : "\u0394\u03B9\u03B1\u03C7\u03C9\u03C1\u03B9\u03C3\u03BC\u03CC\u03C2: \u274C";
+  const demoFooterText = activeActivity === "4" ? `\u038C\u03C1\u03B9\u03BF: ${thresholdDisplayText} | ${separableLabel}` : "";
   const handleWeightChange = (which, value) => {
     const normalized = value === "" || value === "-" ? value : Number(value);
     if (which === "w1") {
@@ -22644,6 +22798,7 @@ var App = ({ role = "teacher" }) => {
     if (!isTeacher) {
       return;
     }
+    const activityChanged = prevTeacherActivityRef.current !== selectedActivity;
     if (selectedActivity === "1") {
       setTeacherInputs({ i1: "", i2: "" });
       setStudentInputs({ i1: "", i2: "" });
@@ -22660,20 +22815,25 @@ var App = ({ role = "teacher" }) => {
     }
     if (selectedActivity === "3") {
       setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
-      setDynamicW1("");
-      setDynamicW2("");
+      if (activityChanged) {
+        setDynamicW1("");
+        setDynamicW2("");
+      }
       setCurrentLinearDemoIndex(void 0);
     }
     if (selectedActivity === "4") {
       setTeacherInputs({ i1: currentExampleData.i1, i2: currentExampleData.i2 });
-      setDynamicW1("");
-      setDynamicW2("");
+      if (activityChanged) {
+        setDynamicW1("");
+        setDynamicW2("");
+      }
       setCurrentLinearDemoIndex(0);
     }
     if (selectedActivity !== "3" && selectedActivity !== "4") {
       setDynamicW1((prev) => prev === "" ? 2 : prev);
       setDynamicW2((prev) => prev === "" ? 3 : prev);
     }
+    prevTeacherActivityRef.current = selectedActivity;
   }, [isTeacher, selectedActivity, currentExampleData.i1, currentExampleData.i2]);
   (0, import_react12.useEffect)(() => {
     if (!isStudent) {
