@@ -2,11 +2,17 @@ import React from 'react';
 import { Accordion } from '../../shared/components/Accordion';
 
 const ACTIVITY_OPTIONS = [
-  { value: '1', label: '1. Εισαγωγή εισόδων' },
-  { value: '2', label: '2. Υπολογισμός εξόδων' },
-  { value: '3', label: '3. Προσαρμογή βαρών' },
-  { value: '4', label: '4. Κατώφλι' }
+  { value: '1', label: '1. Βρίσκω την είσοδο' },
+  { value: '2', label: '2. Υπολογίζω την έξοδο' },
+  { value: '3', label: '3. Προσαρμόζω τα βάρη' },
+  { value: '4', label: '4. Συγκρίνω' }
 ];
+
+export const getNeuralActivityTitle = (activityId, fallback = ACTIVITY_OPTIONS[0].label) => {
+  const normalizedId = String(activityId ?? '').trim();
+  const match = ACTIVITY_OPTIONS.find((option) => option.value === normalizedId);
+  return match ? match.label : fallback;
+};
 
 export const ActivitiesMenu = ({ value = '1', onChange }) => (
   <Accordion title="🔬 Δραστηριότητες">

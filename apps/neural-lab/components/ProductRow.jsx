@@ -6,7 +6,6 @@ export const ProductRow = ({
   input1,
   weight,
   product,
-  isSecondRow = false,
   inputEditable = false,
   weightEditable = false,
   productEditable = false,
@@ -33,37 +32,9 @@ export const ProductRow = ({
     );
   };
 
-  return (
-    <div className="product-row">
-      <div className="product-left">
-        <span className="icon-small">{icon}</span>
-        <span className="feature-text">{label}</span>
-        <div className="math-group">
-          {renderInputBox(input1, inputEditable, onInputChange, 'blue-number-box')}
-          <div className="multiply-symbol">×</div>
-          {renderInputBox(weight, weightEditable, onWeightChange, 'red-number-box')}
-          <div className="equal-symbol">=</div>
-        </div>
-      </div>
-      {isSecondRow ? (
-        <div className="second-row-left">
-          {/*<div className="plus-symbol">+</div>*/}
-          {productEditable ? (
-            <input
-              className="input-box-style"
-              type="text"
-              value={product === null || product === undefined ? '' : String(product)}
-              onChange={(event) => {
-                if (typeof onProductChange === 'function') {
-                  onProductChange(event.target.value);
-                }
-              }}
-            />
-          ) : (
-            <div className="product-result">{product ?? '-'}</div>
-          )}
-        </div>
-      ) : productEditable ? (
+  const renderProductControl = () => {
+    if (productEditable) {
+      return (
         <input
           className="input-box-style"
           type="text"
@@ -74,9 +45,31 @@ export const ProductRow = ({
             }
           }}
         />
-      ) : (
-        <div className="product-result">{product ?? '-'}</div>
-      )}
+      );
+    }
+
+    return <div className="product-result">{product ?? '-'}</div>;
+  };
+
+  return (
+    <div className="product-row">
+      <div className="product-left">
+        <div className="feature-label">
+          <span className="icon-small">{icon}</span>
+          <span className="feature-text">{label}</span>
+        </div>
+        <div className="math-group">
+          <div className="math-input-slot">
+            {renderInputBox(input1, inputEditable, onInputChange, 'blue-number-box')}
+          </div>
+          <div className="multiply-symbol">×</div>
+          <div className="math-weight-slot">
+            {renderInputBox(weight, weightEditable, onWeightChange, 'red-number-box')}
+          </div>
+          <div className="equal-symbol">=</div>
+          <div className="product-output">{renderProductControl()}</div>
+        </div>
+      </div>
     </div>
   );
 };

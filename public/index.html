@@ -45,29 +45,16 @@
                 </ul>
             </div>
 
-            <div class="role-card" onclick="goTo('/user.html')">
-                <span class="role-icon">📐</span>
-                <div class="role-title">Geometry Direct</div>
+            <div class="role-card" onclick="goTo('/tools')">
+                <span class="role-icon">🧰</span>
+                <div class="role-title">Tools</div>
                 <div class="role-description">
-                    Άμεσο άνοιγμα geometry app. Ξεκινά disconnected μέχρι να συνδεθείς με όνομα.
+                    Συγκεντρωμένη είσοδος για τα εργαλεία Geometry Direct, Camera Speed Test και Linear Seperation.
                 </div>
                 <ul class="role-features">
-                    <li>Κατάλληλο για test direct links</li>
-                    <li>Χειροκίνητο connect</li>
-                    <li>Real-time συνεργασία</li>
-                </ul>
-            </div>
-
-            <div class="role-card" onclick="goTo('/camera-speed-test')">
-                <span class="role-icon">🎥</span>
-                <div class="role-title">Camera Speed Test</div>
-                <div class="role-description">
-                    Δοκιμή ταχύτητας αποστολής/επιστροφής καρέ με server-side tracking.
-                </div>
-                <ul class="role-features">
-                    <li>2 κανβάδες: raw και tracked</li>
-                    <li>Round-trip latency metrics</li>
-                    <li>Annotated frame από Python worker</li>
+                    <li>Geometry Direct</li>
+                    <li>Camera Speed Test</li>
+                    <li>Linear Seperation</li>
                 </ul>
             </div>
         </div>
@@ -84,8 +71,8 @@
                     <p>Μπαίνει από student launcher, βάζει όνομα και επιλέγει εφαρμογή.</p>
                 </div>
                 <div class="info-item">
-                    <h3>3. Direct App Link</h3>
-                    <p>Ανοίγει app μόνο του και παραμένει disconnected μέχρι manual connect.</p>
+                    <h3>3. Tools Hub</h3>
+                    <p>Ανοίγει το tools hub και διαλέγεις Geometry Direct, Camera Speed Test ή Linear Seperation.</p>
                 </div>
             </div>
         </div>
@@ -117,8 +104,7 @@
         document.addEventListener('keydown', (event) => {
             if (event.key === '1') goTo('/teacher');
             if (event.key === '2') goTo('/student');
-            if (event.key === '3') goTo('/user.html');
-            if (event.key === '4') goTo('/camera-speed-test');
+            if (event.key === '3') goTo('/tools');
         });
     </script>
 </body>

@@ -22,6 +22,7 @@ module.exports = function initNeural({
   const canvasNodeLesson = {
     // δραστηριότητα που εκτελείται
     activityId: '1',
+    activityTitle: '1. Βρίσκω την είσοδο',
     // σύνολο δεδομένων που χρησιμοποιείται
     dataset: 'vehicles', 
     // δείκτης, όνομα, εικονίδιο παραδείγματος, 
@@ -565,6 +566,7 @@ module.exports = function initNeural({
         const maybeDataset = sanitizeString(lesson.dataset, 40);
         const maybeExampleName = sanitizeString(lesson.exampleName, 80);
         const maybeIcon = sanitizeString(lesson.icon, 8);
+        const maybeActivityTitle = sanitizeString(lesson.activityTitle, 120);
         const maybeExampleIndex = Number(lesson.exampleIndex);
         const maybeI1 = Number(lesson?.inputs?.i1);
         const maybeI2 = Number(lesson?.inputs?.i2);
@@ -578,6 +580,9 @@ module.exports = function initNeural({
 
         if (typeof lesson.activityId === 'string' && lesson.activityId.trim()) {
           canvasNodeLesson.activityId = lesson.activityId.trim();
+        }
+        if (maybeActivityTitle) {
+          canvasNodeLesson.activityTitle = maybeActivityTitle;
         }
         if (maybeDataset) canvasNodeLesson.dataset = maybeDataset;
         if (Number.isInteger(maybeExampleIndex)) canvasNodeLesson.exampleIndex = Math.max(0, maybeExampleIndex);
@@ -693,6 +698,7 @@ module.exports = function initNeural({
                   w2: canvasNodeLesson.weights.w2
                 },
                 activityId: canvasNodeLesson.activityId,
+                activityTitle: canvasNodeLesson.activityTitle,
                 threshold: canvasNodeLesson.threshold,
                 selectedInputs: canvasNodeLesson.selectedInputs,
                 useQuestionMarks: canvasNodeLesson.useQuestionMarks,
@@ -710,6 +716,7 @@ module.exports = function initNeural({
           inputs: canvasNodeLesson.inputs,
           weights: canvasNodeLesson.weights,
           activityId: canvasNodeLesson.activityId,
+          activityTitle: canvasNodeLesson.activityTitle,
           selectedInputs: canvasNodeLesson.selectedInputs,
           useQuestionMarks: canvasNodeLesson.useQuestionMarks
         });

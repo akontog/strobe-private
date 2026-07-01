@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tools | Strobe</title>
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <style>
+    .tools-note {
+      margin-top: -18px;
+      margin-bottom: 26px;
+      opacity: 0.92;
+    }
+
+    .links-panel {
+      margin: 0 auto 28px;
+      max-width: 920px;
+      padding: 24px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      text-align: left;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+    }
+
+    .links-panel h2 {
+      margin-bottom: 10px;
+      font-size: 1.35rem;
+    }
+
+    .links-panel p {
+      opacity: 0.92;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .link-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .link-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      text-decoration: none;
+      transition: transform 0.2s ease, background 0.2s ease;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .link-item:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .link-item strong {
+      display: block;
+      font-size: 1.02rem;
+      margin-bottom: 3px;
+    }
+
+    .link-item span {
+      opacity: 0.88;
+      font-size: 0.92rem;
+    }
+
+    .link-route {
+      white-space: nowrap;
+      font-size: 0.88rem;
+      color: #dbeafe;
+      opacity: 0.95;
+    }
+
+    .links-hint {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      opacity: 0.82;
+    }
+
+    .tool-card {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .tool-card .role-description {
+      min-height: 72px;
+    }
+
+    .tool-meta {
+      margin-top: 16px;
+      font-size: 0.95rem;
+      opacity: 0.95;
+      color: #dbeafe;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: #fff;
+      text-decoration: underline;
+      cursor: pointer;
+      opacity: 0.95;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header" style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;">
+      <h1><img src="icons/strobelogo.svg" style="height:50px;" alt="Strobe Logo"> | Tools</h1>
+      <p class="tools-note">Τρία εργαλεία μαζεμένα σε ένα σημείο. Διάλεξε αυτό που θες να τρέξεις.</p>
+      <a class="back-link" href="/">← Επιστροφή στην αρχική</a>
+    </div>
+
+    <div class="links-panel">
+      <h2>Links</h2>
+      <p>Άνοιξε απευθείας το εργαλείο που θέλεις. Κάθε link σε πάει στο αντίστοιχο route του Node server.</p>
+
+      <div class="link-list">
+        <a class="link-item" href="/user.html">
+          <div>
+            <strong>Geometry Direct</strong>
+            <span>Άμεσο άνοιγμα geometry app με manual σύνδεση για test και συνεργασία.</span>
+          </div>
+          <div class="link-route">/user.html</div>
+        </a>
+
+        <a class="link-item" href="/camera-speed-test">
+          <div>
+            <strong>Camera Speed Test</strong>
+            <span>Δοκιμή αποστολής/επιστροφής καρέ και server-side tracking.</span>
+          </div>
+          <div class="link-route">/camera-speed-test</div>
+        </a>
+
+        <a class="link-item" href="/tools/linear-seperation">
+          <div>
+            <strong>Linear Seperation</strong>
+            <span>React εργαλείο για γραμμικό διαχωρισμό από JSON datasets και upload αρχείων.</span>
+          </div>
+          <div class="link-route">/tools/linear-seperation</div>
+        </a>
+      </div>
+
+      <div class="links-hint">Keyboard shortcuts: `1` Geometry, `2` Camera, `3` Linear Separation, `0` Back.</div>
+    </div>
+
+    <div class="roles">
+      <a class="role-card tool-card" href="/user.html">
+        <span class="role-icon">📐</span>
+        <div class="role-title">Geometry Direct</div>
+        <div class="role-description">Άμεσο άνοιγμα geometry app με manual σύνδεση για test και συνεργασία.</div>
+        <div class="tool-meta">Route: /user.html</div>
+      </a>
+
+      <a class="role-card tool-card" href="/camera-speed-test">
+        <span class="role-icon">🎥</span>
+        <div class="role-title">Camera Speed Test</div>
+        <div class="role-description">Δοκιμή αποστολής/επιστροφής καρέ και server-side tracking.</div>
+        <div class="tool-meta">Route: /camera-speed-test</div>
+      </a>
+
+      <a class="role-card tool-card" href="/tools/linear-seperation">
+        <span class="role-icon">🧠</span>
+        <div class="role-title">Linear Seperation</div>
+        <div class="role-description">React εργαλείο για γραμμικό διαχωρισμό από JSON datasets και upload αρχείων.</div>
+        <div class="tool-meta">Route: /tools/linear-seperation</div>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('keydown', (event) => {
+      if (event.key === '1') window.location.href = '/user.html';
+      if (event.key === '2') window.location.href = '/camera-speed-test';
+      if (event.key === '3') window.location.href = '/tools/linear-seperation';
+      if (event.key === '0') window.location.href = '/';
+    });
+  </script>
+</body>
+</html>

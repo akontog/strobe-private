@@ -363,6 +363,19 @@ app.get('/camera-speed-test', (req, res) => {
   res.sendFile(path.join(publicDir, 'camera-speed-test.html'));
 });
 
+app.get('/tools', (req, res) => {
+  res.sendFile(path.join(publicDir, 'tools.html'));
+});
+
+app.get(['/tools/linear-seperation', '/tools/linear-seperation/'], (req, res) => {
+  const linearSeperationIndex = path.join(__dirname, 'tools', 'linear-seperation', 'dist', 'index.html');
+  if (!fs.existsSync(linearSeperationIndex)) {
+    return res.status(503).send('Linear separation tool has not been built yet. Run `npm run build:linear`.');
+  }
+
+  return res.sendFile(linearSeperationIndex);
+});
+
 app.get('/launcher.html', (req, res) => {
   res.sendFile(path.join(publicDir, 'launcher.html'));
 });
@@ -376,6 +389,8 @@ app.use('/css', express.static(path.join(publicDir, 'css')));
 app.use('/icons', express.static(path.join(publicDir, 'icons')));
 app.use('/js', express.static(path.join(publicDir, 'js')));
 app.use('/public', express.static(publicDir));
+
+app.use('/tools/linear-seperation', express.static(path.join(__dirname, 'tools', 'linear-seperation', 'dist')));
 
 // Unified assets (new structure)
 app.use('/assets', express.static(path.join(__dirname, 'assets')));

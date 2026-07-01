@@ -1332,7 +1332,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React13 = require_react(), Internals = {
+      var React14 = require_react(), Internals = {
         d: {
           f: noop,
           r: function() {
@@ -1350,7 +1350,7 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React13.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React14.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
@@ -2885,7 +2885,7 @@ var require_react_dom_client_development = __commonJS({
         "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React13.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React14.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -18517,14 +18517,14 @@ var require_react_dom_client_development = __commonJS({
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React13 = require_react(), ReactDOM2 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React14 = require_react(), ReactDOM2 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
       /* @__PURE__ */ Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
       /* @__PURE__ */ Symbol.for("react.legacy_hidden");
       /* @__PURE__ */ Symbol.for("react.tracing_marker");
       var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
       /* @__PURE__ */ Symbol.for("react.view_transition");
-      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React13.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React14.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -21312,7 +21312,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React13.version;
+        var isomorphicReactPackageVersion = React14.version;
         if ("19.2.7" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.7\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21453,11 +21453,11 @@ var require_client = __commonJS({
 });
 
 // apps/neural-lab/student.jsx
-var import_react12 = __toESM(require_react());
+var import_react13 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // apps/neural-lab/App.jsx
-var import_react11 = __toESM(require_react());
+var import_react12 = __toESM(require_react());
 
 // apps/neural-lab/components/TeacherCard.jsx
 var import_react2 = __toESM(require_react());
@@ -21633,7 +21633,6 @@ var ProductRow = ({
   input1,
   weight,
   product,
-  isSecondRow = false,
   inputEditable = false,
   weightEditable = false,
   productEditable = false,
@@ -21659,31 +21658,25 @@ var ProductRow = ({
       }
     );
   };
-  return /* @__PURE__ */ import_react5.default.createElement("div", { className: "product-row" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "product-left" }, /* @__PURE__ */ import_react5.default.createElement("span", { className: "icon-small" }, icon), /* @__PURE__ */ import_react5.default.createElement("span", { className: "feature-text" }, label), /* @__PURE__ */ import_react5.default.createElement("div", { className: "math-group" }, renderInputBox(input1, inputEditable, onInputChange, "blue-number-box"), /* @__PURE__ */ import_react5.default.createElement("div", { className: "multiply-symbol" }, "\xD7"), renderInputBox(weight, weightEditable, onWeightChange, "red-number-box"), /* @__PURE__ */ import_react5.default.createElement("div", { className: "equal-symbol" }, "="))), isSecondRow ? /* @__PURE__ */ import_react5.default.createElement("div", { className: "second-row-left" }, productEditable ? /* @__PURE__ */ import_react5.default.createElement(
-    "input",
-    {
-      className: "input-box-style",
-      type: "text",
-      value: product === null || product === void 0 ? "" : String(product),
-      onChange: (event) => {
-        if (typeof onProductChange === "function") {
-          onProductChange(event.target.value);
+  const renderProductControl = () => {
+    if (productEditable) {
+      return /* @__PURE__ */ import_react5.default.createElement(
+        "input",
+        {
+          className: "input-box-style",
+          type: "text",
+          value: product === null || product === void 0 ? "" : String(product),
+          onChange: (event) => {
+            if (typeof onProductChange === "function") {
+              onProductChange(event.target.value);
+            }
+          }
         }
-      }
+      );
     }
-  ) : /* @__PURE__ */ import_react5.default.createElement("div", { className: "product-result" }, product ?? "-")) : productEditable ? /* @__PURE__ */ import_react5.default.createElement(
-    "input",
-    {
-      className: "input-box-style",
-      type: "text",
-      value: product === null || product === void 0 ? "" : String(product),
-      onChange: (event) => {
-        if (typeof onProductChange === "function") {
-          onProductChange(event.target.value);
-        }
-      }
-    }
-  ) : /* @__PURE__ */ import_react5.default.createElement("div", { className: "product-result" }, product ?? "-"));
+    return /* @__PURE__ */ import_react5.default.createElement("div", { className: "product-result" }, product ?? "-");
+  };
+  return /* @__PURE__ */ import_react5.default.createElement("div", { className: "product-row" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "product-left" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "feature-label" }, /* @__PURE__ */ import_react5.default.createElement("span", { className: "icon-small" }, icon), /* @__PURE__ */ import_react5.default.createElement("span", { className: "feature-text" }, label)), /* @__PURE__ */ import_react5.default.createElement("div", { className: "math-group" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "math-input-slot" }, renderInputBox(input1, inputEditable, onInputChange, "blue-number-box")), /* @__PURE__ */ import_react5.default.createElement("div", { className: "multiply-symbol" }, "\xD7"), /* @__PURE__ */ import_react5.default.createElement("div", { className: "math-weight-slot" }, renderInputBox(weight, weightEditable, onWeightChange, "red-number-box")), /* @__PURE__ */ import_react5.default.createElement("div", { className: "equal-symbol" }, "="), /* @__PURE__ */ import_react5.default.createElement("div", { className: "product-output" }, renderProductControl()))));
 };
 
 // apps/neural-lab/components/VerticalProducts.jsx
@@ -21772,7 +21765,6 @@ var VerticalProducts = ({
       input1: i1,
       weight: w1,
       product: prod1,
-      isSecondRow: false,
       inputEditable: Boolean(inputEditable),
       weightEditable: Boolean(editWeights),
       productEditable: Boolean(productEditable),
@@ -21796,7 +21788,6 @@ var VerticalProducts = ({
       input1: i2,
       weight: w2,
       product: prod2,
-      isSecondRow: showInput1 && showInput2,
       inputEditable: Boolean(inputEditable),
       weightEditable: Boolean(editWeights),
       productEditable: Boolean(productEditable),
@@ -22054,11 +22045,16 @@ var ExamplesClassifier = ({
 // apps/neural-lab/components/ActivitiesMenu.jsx
 var import_react10 = __toESM(require_react());
 var ACTIVITY_OPTIONS = [
-  { value: "1", label: "1. \u0395\u03B9\u03C3\u03B1\u03B3\u03C9\u03B3\u03AE \u03B5\u03B9\u03C3\u03CC\u03B4\u03C9\u03BD" },
-  { value: "2", label: "2. \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03B9\u03C3\u03BC\u03CC\u03C2 \u03B5\u03BE\u03CC\u03B4\u03C9\u03BD" },
-  { value: "3", label: "3. \u03A0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03BF\u03B3\u03AE \u03B2\u03B1\u03C1\u03CE\u03BD" },
-  { value: "4", label: "4. \u039A\u03B1\u03C4\u03CE\u03C6\u03BB\u03B9" }
+  { value: "1", label: "1. \u0392\u03C1\u03AF\u03C3\u03BA\u03C9 \u03C4\u03B7\u03BD \u03B5\u03AF\u03C3\u03BF\u03B4\u03BF" },
+  { value: "2", label: "2. \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03AF\u03B6\u03C9 \u03C4\u03B7\u03BD \u03AD\u03BE\u03BF\u03B4\u03BF" },
+  { value: "3", label: "3. \u03A0\u03C1\u03BF\u03C3\u03B1\u03C1\u03BC\u03CC\u03B6\u03C9 \u03C4\u03B1 \u03B2\u03AC\u03C1\u03B7" },
+  { value: "4", label: "4. \u03A3\u03C5\u03B3\u03BA\u03C1\u03AF\u03BD\u03C9" }
 ];
+var getNeuralActivityTitle = (activityId, fallback = ACTIVITY_OPTIONS[0].label) => {
+  const normalizedId = String(activityId ?? "").trim();
+  const match = ACTIVITY_OPTIONS.find((option) => option.value === normalizedId);
+  return match ? match.label : fallback;
+};
 var ActivitiesMenu = ({ value = "1", onChange }) => /* @__PURE__ */ import_react10.default.createElement(Accordion, { title: "\u{1F52C} \u0394\u03C1\u03B1\u03C3\u03C4\u03B7\u03C1\u03B9\u03CC\u03C4\u03B7\u03C4\u03B5\u03C2" }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "data-section activities-menu" }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react10.default.createElement("label", null, "\u0395\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE \u03B4\u03C1\u03B1\u03C3\u03C4\u03B7\u03C1\u03B9\u03CC\u03C4\u03B7\u03C4\u03B1\u03C2"), /* @__PURE__ */ import_react10.default.createElement(
   "select",
   {
@@ -22071,6 +22067,18 @@ var ActivitiesMenu = ({ value = "1", onChange }) => /* @__PURE__ */ import_react
   },
   ACTIVITY_OPTIONS.map((option) => /* @__PURE__ */ import_react10.default.createElement("option", { key: option.value, value: option.value }, option.label))
 ))));
+
+// apps/neural-lab/components/StudentQrAccordion.jsx
+var import_react11 = __toESM(require_react());
+var STUDENT_QR_SRC = "/apps/neural-lab/media/neural_lab_student_qrcode.png";
+var StudentQrAccordion = () => /* @__PURE__ */ import_react11.default.createElement(Accordion, { title: "\u{1F4F1} \u03A3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7 \u03BC\u03B1\u03B8\u03B7\u03C4\u03CE\u03BD" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "data-section student-qr-section" }, /* @__PURE__ */ import_react11.default.createElement(
+  "img",
+  {
+    className: "student-qr-image",
+    src: STUDENT_QR_SRC,
+    alt: "QR code \u03B3\u03B9\u03B1 \u03C4\u03BF Neural Lab student link"
+  }
+)));
 
 // apps/neural-lab/data/datasets.js
 var DATASETS = {
@@ -22249,40 +22257,41 @@ var resolveThresholdBySelectedInputs = (threshold, selectedInputs) => {
   return normalizeThresholdRule(selectedThreshold);
 };
 var App = ({ role = "teacher" }) => {
-  const wsRef = (0, import_react11.useRef)(null);
-  const reconnectTimerRef = (0, import_react11.useRef)(null);
-  const hasRegisteredRef = (0, import_react11.useRef)(false);
-  const suppressNextStudentStateSendRef = (0, import_react11.useRef)(false);
-  const lastSentStudentStateRef = (0, import_react11.useRef)("");
-  const [currentDataset, setCurrentDataset] = (0, import_react11.useState)("vehicles");
-  const [currentExample, setCurrentExample] = (0, import_react11.useState)(0);
-  const [currentLinearDemoIndex, setCurrentLinearDemoIndex] = (0, import_react11.useState)(void 0);
-  const [lessonLinearDemoIndex, setLessonLinearDemoIndex] = (0, import_react11.useState)(void 0);
-  const [selectedActivity, setSelectedActivity] = (0, import_react11.useState)("1");
-  const [lessonActivity, setLessonActivity] = (0, import_react11.useState)("1");
-  const [teacherInputs, setTeacherInputs] = (0, import_react11.useState)({ i1: 4, i2: 1 });
-  const [studentInputs, setStudentInputs] = (0, import_react11.useState)({ i1: "", i2: "" });
-  const [teacherProducts, setTeacherProducts] = (0, import_react11.useState)({ p1: "", p2: "" });
-  const [studentProducts, setStudentProducts] = (0, import_react11.useState)({ p1: "", p2: "" });
-  const [teacherTotal, setTeacherTotal] = (0, import_react11.useState)("");
-  const [studentTotal, setStudentTotal] = (0, import_react11.useState)("");
-  const [dynamicW1, setDynamicW1] = (0, import_react11.useState)(2);
-  const [dynamicW2, setDynamicW2] = (0, import_react11.useState)(3);
-  const [isSocketConnected, setIsSocketConnected] = (0, import_react11.useState)(false);
-  const [participants, setParticipants] = (0, import_react11.useState)([]);
-  const [roster, setRoster] = (0, import_react11.useState)([]);
-  const [lessonInputs, setLessonInputs] = (0, import_react11.useState)({ i1: 4, i2: 1 });
-  const [lessonProducts, setLessonProducts] = (0, import_react11.useState)({ p1: "", p2: "" });
-  const [lessonTotal, setLessonTotal] = (0, import_react11.useState)("");
-  const [lessonWeights, setLessonWeights] = (0, import_react11.useState)({ w1: 2, w2: 3 });
-  const [lessonThreshold, setLessonThreshold] = (0, import_react11.useState)(DEFAULT_THRESHOLD_RULE);
-  const [selectedInputs, setSelectedInputs] = (0, import_react11.useState)(DEFAULT_SELECTED_INPUTS);
-  const [lessonSelectedInputs, setLessonSelectedInputs] = (0, import_react11.useState)(DEFAULT_SELECTED_INPUTS);
-  const [lessonDataset, setLessonDataset] = (0, import_react11.useState)("vehicles");
-  const [lessonExampleIndex, setLessonExampleIndex] = (0, import_react11.useState)(0);
-  const [lessonIcon, setLessonIcon] = (0, import_react11.useState)("\u{1F697}");
-  const [lessonName, setLessonName] = (0, import_react11.useState)("\u0391\u03C5\u03C4\u03BF\u03BA\u03AF\u03BD\u03B7\u03C4\u03BF");
-  const [studentName, setStudentName] = (0, import_react11.useState)(() => {
+  const wsRef = (0, import_react12.useRef)(null);
+  const reconnectTimerRef = (0, import_react12.useRef)(null);
+  const hasRegisteredRef = (0, import_react12.useRef)(false);
+  const suppressNextStudentStateSendRef = (0, import_react12.useRef)(false);
+  const lastSentStudentStateRef = (0, import_react12.useRef)("");
+  const [currentDataset, setCurrentDataset] = (0, import_react12.useState)("vehicles");
+  const [currentExample, setCurrentExample] = (0, import_react12.useState)(0);
+  const [currentLinearDemoIndex, setCurrentLinearDemoIndex] = (0, import_react12.useState)(void 0);
+  const [lessonLinearDemoIndex, setLessonLinearDemoIndex] = (0, import_react12.useState)(void 0);
+  const [selectedActivity, setSelectedActivity] = (0, import_react12.useState)("1");
+  const [lessonActivity, setLessonActivity] = (0, import_react12.useState)("1");
+  const [teacherInputs, setTeacherInputs] = (0, import_react12.useState)({ i1: 4, i2: 1 });
+  const [studentInputs, setStudentInputs] = (0, import_react12.useState)({ i1: "", i2: "" });
+  const [teacherProducts, setTeacherProducts] = (0, import_react12.useState)({ p1: "", p2: "" });
+  const [studentProducts, setStudentProducts] = (0, import_react12.useState)({ p1: "", p2: "" });
+  const [teacherTotal, setTeacherTotal] = (0, import_react12.useState)("");
+  const [studentTotal, setStudentTotal] = (0, import_react12.useState)("");
+  const [dynamicW1, setDynamicW1] = (0, import_react12.useState)(2);
+  const [dynamicW2, setDynamicW2] = (0, import_react12.useState)(3);
+  const [isSocketConnected, setIsSocketConnected] = (0, import_react12.useState)(false);
+  const [participants, setParticipants] = (0, import_react12.useState)([]);
+  const [roster, setRoster] = (0, import_react12.useState)([]);
+  const [lessonInputs, setLessonInputs] = (0, import_react12.useState)({ i1: 4, i2: 1 });
+  const [lessonProducts, setLessonProducts] = (0, import_react12.useState)({ p1: "", p2: "" });
+  const [lessonTotal, setLessonTotal] = (0, import_react12.useState)("");
+  const [lessonWeights, setLessonWeights] = (0, import_react12.useState)({ w1: 2, w2: 3 });
+  const [lessonThreshold, setLessonThreshold] = (0, import_react12.useState)(DEFAULT_THRESHOLD_RULE);
+  const [selectedInputs, setSelectedInputs] = (0, import_react12.useState)(DEFAULT_SELECTED_INPUTS);
+  const [lessonSelectedInputs, setLessonSelectedInputs] = (0, import_react12.useState)(DEFAULT_SELECTED_INPUTS);
+  const [lessonDataset, setLessonDataset] = (0, import_react12.useState)("vehicles");
+  const [lessonExampleIndex, setLessonExampleIndex] = (0, import_react12.useState)(0);
+  const [lessonIcon, setLessonIcon] = (0, import_react12.useState)("\u{1F697}");
+  const [lessonName, setLessonName] = (0, import_react12.useState)("\u0391\u03C5\u03C4\u03BF\u03BA\u03AF\u03BD\u03B7\u03C4\u03BF");
+  const [lessonActivityTitle, setLessonActivityTitle] = (0, import_react12.useState)(getNeuralActivityTitle("1"));
+  const [studentName, setStudentName] = (0, import_react12.useState)(() => {
     try {
       const stored = localStorage.getItem("strobeStudentConnectName");
       return stored || `Student-${Math.floor(Math.random() * 900 + 100)}`;
@@ -22305,8 +22314,8 @@ var App = ({ role = "teacher" }) => {
     setStudentName(newName);
     setEditingName(false);
   };
-  const [editingName, setEditingName] = (0, import_react11.useState)(false);
-  const [studentNameInput, setStudentNameInput] = (0, import_react11.useState)(studentName);
+  const [editingName, setEditingName] = (0, import_react12.useState)(false);
+  const [studentNameInput, setStudentNameInput] = (0, import_react12.useState)(studentName);
   const currentExampleData = datasets_default[currentDataset].examples[currentExample];
   const currentDatasetLinearDemos = datasets_default[currentDataset]?.linear_demos || [];
   const teacherThresholdFromDemo = resolveThresholdBySelectedInputs(
@@ -22376,13 +22385,8 @@ var App = ({ role = "teacher" }) => {
   const displayedProd1 = !showInput1 ? "" : useQuestionForOutputs && !isProductEditable && missingP1Input ? "?" : prod1;
   const displayedProd2 = !showInput2 ? "" : useQuestionForOutputs && !isProductEditable && missingP2Input ? "?" : prod2;
   const displayedTotal = !showTotalRow ? "" : useQuestionForOutputs && !isTotalEditable && missingTotalInput ? "?" : total;
-  const formulaByActivity = {
-    "1": "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$",
-    "2": "$$ (w_1 \\times i_1) + (w_2 \\times i_2) = o $$",
-    "3": "$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$",
-    "4": "$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$"
-  };
-  const mathTitle = formulaByActivity[activeActivity] || "$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$";
+  const teacherActivityTitle = getNeuralActivityTitle(selectedActivity);
+  const heroTitle = isTeacher ? teacherActivityTitle : lessonActivityTitle || getNeuralActivityTitle(activeActivity);
   const threshold = {
     satisfied: showTotalRow && !missingTotalInput && evaluateThresholdRule(total, effectiveThresholdRule),
     value: thresholdDisplayText,
@@ -22415,7 +22419,7 @@ var App = ({ role = "teacher" }) => {
       lesson: lessonPatch
     });
   };
-  (0, import_react11.useEffect)(() => {
+  (0, import_react12.useEffect)(() => {
     let cancelled = false;
     const clearReconnect = () => {
       if (reconnectTimerRef.current) {
@@ -22477,6 +22481,11 @@ var App = ({ role = "teacher" }) => {
         }
         if (typeof message.lesson?.activityId === "string") {
           setLessonActivity(message.lesson.activityId);
+        }
+        if (typeof message.lesson?.activityTitle === "string" && message.lesson.activityTitle.trim()) {
+          setLessonActivityTitle(message.lesson.activityTitle.trim());
+        } else if (typeof message.lesson?.activityId === "string") {
+          setLessonActivityTitle(getNeuralActivityTitle(message.lesson.activityId));
         }
         if (Number.isInteger(Number(message.lesson?.targetIndex))) {
           setLessonTarget(Number(message.lesson.targetIndex));
@@ -22567,7 +22576,7 @@ var App = ({ role = "teacher" }) => {
       }
     };
   }, [isScreen, isStudent, studentName]);
-  (0, import_react11.useEffect)(() => {
+  (0, import_react12.useEffect)(() => {
     if (!isStudent || !isSocketConnected) return;
     if (suppressNextStudentStateSendRef.current) {
       suppressNextStudentStateSendRef.current = false;
@@ -22589,7 +22598,7 @@ var App = ({ role = "teacher" }) => {
     lastSentStudentStateRef.current = serialized;
     sendSocketMessage(payload);
   }, [dynamicW1, dynamicW2, studentInputs.i1, studentInputs.i2, studentProducts.p1, studentProducts.p2, studentTotal, isSocketConnected, isStudent]);
-  (0, import_react11.useEffect)(() => {
+  (0, import_react12.useEffect)(() => {
     if (!isTeacher || !isSocketConnected) return;
     const lessonInputsPayload = {
       i1: currentExampleData.i1,
@@ -22599,6 +22608,7 @@ var App = ({ role = "teacher" }) => {
       type: "teacher_lesson",
       lesson: {
         activityId: selectedActivity,
+        activityTitle: teacherActivityTitle,
         dataset: currentDataset,
         exampleIndex: currentExample,
         exampleName: currentExampleData.name,
@@ -22617,6 +22627,7 @@ var App = ({ role = "teacher" }) => {
     isTeacher,
     isSocketConnected,
     selectedActivity,
+    teacherActivityTitle,
     currentDataset,
     currentExample,
     currentExampleData.name,
@@ -22629,7 +22640,7 @@ var App = ({ role = "teacher" }) => {
     selectedInputs.i1,
     selectedInputs.i2
   ]);
-  (0, import_react11.useEffect)(() => {
+  (0, import_react12.useEffect)(() => {
     if (!isTeacher) {
       return;
     }
@@ -22664,7 +22675,7 @@ var App = ({ role = "teacher" }) => {
       setDynamicW2((prev) => prev === "" ? 3 : prev);
     }
   }, [isTeacher, selectedActivity, currentExampleData.i1, currentExampleData.i2]);
-  (0, import_react11.useEffect)(() => {
+  (0, import_react12.useEffect)(() => {
     if (!isStudent) {
       return;
     }
@@ -22678,7 +22689,7 @@ var App = ({ role = "teacher" }) => {
     }
   }, [isStudent, lessonActivity, lessonExampleIndex]);
   const sortedParticipants = [...participants].sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
-  return /* @__PURE__ */ import_react11.default.createElement(TeacherCard, { title: mathTitle }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "connection-status" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: `status-dot ${isSocketConnected ? "online" : "offline"}` }), /* @__PURE__ */ import_react11.default.createElement("strong", null, isSocketConnected ? "\u03A3\u03B5 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7" : "\u0395\u03BA\u03C4\u03CC\u03C2 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7\u03C2"), isStudent && (editingName ? /* @__PURE__ */ import_react11.default.createElement(
+  return /* @__PURE__ */ import_react12.default.createElement(TeacherCard, { title: heroTitle }, /* @__PURE__ */ import_react12.default.createElement("div", { className: "connection-status" }, /* @__PURE__ */ import_react12.default.createElement("span", { className: `status-dot ${isSocketConnected ? "online" : "offline"}` }), /* @__PURE__ */ import_react12.default.createElement("strong", null, isSocketConnected ? "\u03A3\u03B5 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7" : "\u0395\u03BA\u03C4\u03CC\u03C2 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7\u03C2"), isStudent && (editingName ? /* @__PURE__ */ import_react12.default.createElement(
     "input",
     {
       autoFocus: true,
@@ -22693,7 +22704,7 @@ var App = ({ role = "teacher" }) => {
         }
       }
     }
-  ) : /* @__PURE__ */ import_react11.default.createElement(
+  ) : /* @__PURE__ */ import_react12.default.createElement(
     "span",
     {
       style: { cursor: "pointer", textDecoration: "underline" },
@@ -22701,7 +22712,7 @@ var App = ({ role = "teacher" }) => {
     },
     "\u03CC\u03BD\u03BF\u03BC\u03B1: ",
     studentName
-  )), !isStudent && /* @__PURE__ */ import_react11.default.createElement("span", null, "\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9: ", roster.length)), isScreen && /* @__PURE__ */ import_react11.default.createElement(import_react11.default.Fragment, null, /* @__PURE__ */ import_react11.default.createElement("div", { className: "screen-top-bar" }, /* @__PURE__ */ import_react11.default.createElement("strong", null, "\u03A0\u03C1\u03BF\u03B2\u03BF\u03BB\u03AE \u03C4\u03AC\u03BE\u03B7\u03C2"), /* @__PURE__ */ import_react11.default.createElement("span", null, datasets_default[safeDisplayDataset].emoji, " ", datasets_default[safeDisplayDataset].label), /* @__PURE__ */ import_react11.default.createElement("span", null, displayIcon, " ", displayName), /* @__PURE__ */ import_react11.default.createElement("span", null, "i1=", i1, ", i2=", i2), /* @__PURE__ */ import_react11.default.createElement("span", null, "w1=", currentW1, ", w2=", currentW2), /* @__PURE__ */ import_react11.default.createElement("span", null, "o=", total)), /* @__PURE__ */ import_react11.default.createElement("div", { className: "operation-tree", "aria-label": "\u0394\u03AD\u03BD\u03C4\u03C1\u03BF \u03C0\u03C1\u03AC\u03BE\u03B5\u03C9\u03BD" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "tree-level" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "tree-node tree-root" }, "o = ", total)), /* @__PURE__ */ import_react11.default.createElement("div", { className: "tree-connect" }), /* @__PURE__ */ import_react11.default.createElement("div", { className: "tree-level tree-two" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "tree-node" }, "w1 \xD7 i1 = ", prod1), /* @__PURE__ */ import_react11.default.createElement("div", { className: "tree-node" }, "w2 \xD7 i2 = ", prod2)))), /* @__PURE__ */ import_react11.default.createElement("div", { className: "common-zone" }, /* @__PURE__ */ import_react11.default.createElement(
+  )), !isStudent && /* @__PURE__ */ import_react12.default.createElement("span", null, "\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9: ", roster.length)), isScreen && /* @__PURE__ */ import_react12.default.createElement(import_react12.default.Fragment, null, /* @__PURE__ */ import_react12.default.createElement("div", { className: "screen-top-bar" }, /* @__PURE__ */ import_react12.default.createElement("strong", null, "\u03A0\u03C1\u03BF\u03B2\u03BF\u03BB\u03AE \u03C4\u03AC\u03BE\u03B7\u03C2"), /* @__PURE__ */ import_react12.default.createElement("span", null, datasets_default[safeDisplayDataset].emoji, " ", datasets_default[safeDisplayDataset].label), /* @__PURE__ */ import_react12.default.createElement("span", null, displayIcon, " ", displayName), /* @__PURE__ */ import_react12.default.createElement("span", null, "i1=", i1, ", i2=", i2), /* @__PURE__ */ import_react12.default.createElement("span", null, "w1=", currentW1, ", w2=", currentW2), /* @__PURE__ */ import_react12.default.createElement("span", null, "o=", total)), /* @__PURE__ */ import_react12.default.createElement("div", { className: "operation-tree", "aria-label": "\u0394\u03AD\u03BD\u03C4\u03C1\u03BF \u03C0\u03C1\u03AC\u03BE\u03B5\u03C9\u03BD" }, /* @__PURE__ */ import_react12.default.createElement("div", { className: "tree-level" }, /* @__PURE__ */ import_react12.default.createElement("div", { className: "tree-node tree-root" }, "o = ", total)), /* @__PURE__ */ import_react12.default.createElement("div", { className: "tree-connect" }), /* @__PURE__ */ import_react12.default.createElement("div", { className: "tree-level tree-two" }, /* @__PURE__ */ import_react12.default.createElement("div", { className: "tree-node" }, "w1 \xD7 i1 = ", prod1), /* @__PURE__ */ import_react12.default.createElement("div", { className: "tree-node" }, "w2 \xD7 i2 = ", prod2)))), /* @__PURE__ */ import_react12.default.createElement("div", { className: "common-zone" }, /* @__PURE__ */ import_react12.default.createElement(
     VerticalProducts,
     {
       icon: displayIcon,
@@ -22753,7 +22764,7 @@ var App = ({ role = "teacher" }) => {
       thresholdValue: demoFooterText,
       showThresholdUnderIcon
     }
-  )), (isTeacher || isScreen || isStudent) && /* @__PURE__ */ import_react11.default.createElement("div", { className: "live-table-wrap" }, /* @__PURE__ */ import_react11.default.createElement(
+  )), (isTeacher || isScreen || isStudent) && /* @__PURE__ */ import_react12.default.createElement("div", { className: "live-table-wrap" }, /* @__PURE__ */ import_react12.default.createElement(
     ExamplesClassifier,
     {
       datasets: datasets_default,
@@ -22764,7 +22775,7 @@ var App = ({ role = "teacher" }) => {
       features: datasets_default[safeDisplayDataset].features,
       weights: { w1: currentW1, w2: currentW2 }
     }
-  )), (isTeacher || isScreen) && /* @__PURE__ */ import_react11.default.createElement("div", { className: "live-table-wrap" }, /* @__PURE__ */ import_react11.default.createElement(
+  )), (isTeacher || isScreen) && /* @__PURE__ */ import_react12.default.createElement("div", { className: "live-table-wrap" }, /* @__PURE__ */ import_react12.default.createElement(
     StudentTable2,
     {
       i1: lessonInputs.i1,
@@ -22775,7 +22786,7 @@ var App = ({ role = "teacher" }) => {
       participants: sortedParticipants,
       activity: lessonActivity
     }
-  )), isTeacher && /* @__PURE__ */ import_react11.default.createElement(import_react11.default.Fragment, null, /* @__PURE__ */ import_react11.default.createElement(ActivitiesMenu, { value: selectedActivity, onChange: setSelectedActivity }), /* @__PURE__ */ import_react11.default.createElement(
+  )), isTeacher && /* @__PURE__ */ import_react12.default.createElement(import_react12.default.Fragment, null, /* @__PURE__ */ import_react12.default.createElement(ActivitiesMenu, { value: selectedActivity, onChange: setSelectedActivity }), /* @__PURE__ */ import_react12.default.createElement(
     DatasetSelector,
     {
       datasets: datasets_default,
@@ -22815,14 +22826,14 @@ var App = ({ role = "teacher" }) => {
       isLinearDemoDisabled: ["1", "2", "3"].includes(selectedActivity),
       demoIconWhenDisabled: "?"
     }
-  )));
+  ), /* @__PURE__ */ import_react12.default.createElement(StudentQrAccordion, null)));
 };
 var App_default = App;
 
 // apps/neural-lab/student.jsx
 var root = import_client.default.createRoot(document.getElementById("root"));
 root.render(
-  /* @__PURE__ */ import_react12.default.createElement(App_default, { role: "student" })
+  /* @__PURE__ */ import_react13.default.createElement(App_default, { role: "student" })
 );
 /*! Bundled license information:
 

@@ -4,7 +4,8 @@ import { DatasetSelector } from './components/DatasetSelector';
 import { VerticalProducts } from './components/VerticalProducts';
 import { StudentTable } from './components/StudentTable';
 import { ExamplesClassifier } from './components/ExamplesClassifier';
-import { ActivitiesMenu } from './components/ActivitiesMenu';
+import { ActivitiesMenu, getNeuralActivityTitle } from './components/ActivitiesMenu';
+import { StudentQrAccordion } from './components/StudentQrAccordion';
 import { Accordion } from '../shared/components/Accordion';
 import DATASETS from './data/datasets';
 //import { StudentTable } from '../shared/components/StudentTable';
@@ -135,6 +136,7 @@ const App = ({ role = 'teacher' }) => {
   const [lessonExampleIndex, setLessonExampleIndex] = useState(0);
   const [lessonIcon, setLessonIcon] = useState('🚗');
   const [lessonName, setLessonName] = useState('Αυτοκίνητο');
+  const [lessonActivityTitle, setLessonActivityTitle] = useState(getNeuralActivityTitle('1'));
   
 
 
@@ -291,13 +293,15 @@ const saveStudentName = () => {
       ? '?'
       : total;
 
-  const formulaByActivity = {
-    '1': '$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$',
-    '2': '$$ (w_1 \\times i_1) + (w_2 \\times i_2) = o $$',
-    '3': '$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$',
-    '4': '$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$'
-  };
-  const mathTitle = formulaByActivity[activeActivity] || '$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$';
+  // const formulaByActivity = {
+  //   '1': '$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$',
+  //   '2': '$$ (w_1 \\times i_1) + (w_2 \\times i_2) = o $$',
+  //   '3': '$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$',
+  //   '4': '$$ w_1 \\times i_1 + w_2 \\times i_2 \\gt \\text{threshold} $$'
+  // };
+  // const mathTitle = formulaByActivity[activeActivity] || '$$ w_1 \\times i_1 + w_2 \\times i_2 = o $$';
+  const teacherActivityTitle = getNeuralActivityTitle(selectedActivity);
+  const heroTitle = isTeacher ? teacherActivityTitle : (lessonActivityTitle || getNeuralActivityTitle(activeActivity));
 
   const threshold = {
     satisfied: showTotalRow && !missingTotalInput && evaluateThresholdRule(total, effectiveThresholdRule),
@@ -410,6 +414,12 @@ const saveStudentName = () => {
 
         if (typeof message.lesson?.activityId === 'string') {
           setLessonActivity(message.lesson.activityId);
+        }
+
+        if (typeof message.lesson?.activityTitle === 'string' && message.lesson.activityTitle.trim()) {
+          setLessonActivityTitle(message.lesson.activityTitle.trim());
+        } else if (typeof message.lesson?.activityId === 'string') {
+          setLessonActivityTitle(getNeuralActivityTitle(message.lesson.activityId));
         }
 
         if (Number.isInteger(Number(message.lesson?.targetIndex))) {
@@ -557,6 +567,7 @@ const saveStudentName = () => {
       type: 'teacher_lesson',
       lesson: {
         activityId: selectedActivity,
+        activityTitle: teacherActivityTitle,
         dataset: currentDataset,
         exampleIndex: currentExample,
         exampleName: currentExampleData.name,
@@ -575,6 +586,7 @@ const saveStudentName = () => {
     isTeacher,
     isSocketConnected,
     selectedActivity,
+    teacherActivityTitle,
     currentDataset,
     currentExample,
     currentExampleData.name,
@@ -656,7 +668,7 @@ const saveStudentName = () => {
   const sortedParticipants = [...participants].sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
 
   return (
-    <TeacherCard title={mathTitle}>
+    <TeacherCard title={heroTitle}>
       <div className="connection-status">
         <span className={`status-dot ${isSocketConnected ? 'online' : 'offline'}`}></span>
         <strong>{isSocketConnected ? 'Σε σύνδεση' : 'Εκτός σύνδεσης'}</strong>
@@ -836,6 +848,8 @@ const saveStudentName = () => {
             isLinearDemoDisabled={['1', '2', '3'].includes(selectedActivity)}
             demoIconWhenDisabled="?"
           />
+
+          <StudentQrAccordion />
           
         </>
       )}

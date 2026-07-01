@@ -127,6 +127,13 @@ body,
   flex: 0 0 auto;
   min-width: auto;
 }
+.math-input-slot,
+.math-weight-slot,
+.product-output {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .blue-number-box,
 .red-number-box,
 .product-result {
@@ -206,13 +213,19 @@ body,
   font-size: 1.8rem;
   border: 1px solid #fcd34d;
 }
+.feature-label {
+  display: grid;
+  grid-template-columns: 44px 120px;
+  align-items: center;
+  gap: 0.8rem;
+}
 .feature-text {
   font-weight: bold;
   font-size: 1.1rem;
   color: #1e293b;
-  width: 120px;
-  flex-shrink: 0;
+  width: auto;
   text-align: left;
+  flex-shrink: 0;
 }
 .product-result {
   background: #e2e8f0;
@@ -227,11 +240,6 @@ body,
 .product-result.result-question {
   background: #f3f4f6;
   color: #6b7280;
-}
-.second-row-left {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
 }
 .total-line {
   display: flex;
@@ -660,4 +668,311 @@ select {
 .input-wrapper.threshold-false {
   background: #fee2e2;
   border: 2px solid #ef4444;
+}
+.student-qr-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.student-qr-text {
+  text-align: center;
+  color: #334155;
+  font-weight: 600;
+}
+.student-qr-image {
+  width: min(260px, 100%);
+  height: auto;
+  border-radius: 1rem;
+  border: 2px solid #cbd5e1;
+  background: #ffffff;
+  padding: 0.4rem;
+}
+@media (max-width: 900px) {
+  body,
+  #root {
+    padding: 1rem;
+    align-items: flex-start;
+  }
+  .teacher-card {
+    padding: 1.2rem 1.2rem 1.5rem;
+    border-radius: 1.5rem;
+  }
+  .main-equation {
+    font-size: 1.4rem;
+    padding: 0.5rem 1.2rem;
+  }
+  .vertical-products {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .big-icon,
+  .demo-icon {
+    min-width: unset;
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+    padding: 0.6rem 1rem;
+  }
+  .big-icon span,
+  .demo-icon span {
+    font-size: 3.5rem;
+  }
+  .product-row {
+    gap: 0.5rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .product-left {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .feature-label {
+    grid-template-columns: 36px 90px;
+    gap: 0.5rem;
+  }
+  .feature-text {
+    font-size: 0.95rem;
+  }
+  .icon-small {
+    width: 36px;
+    height: 36px;
+    font-size: 1.4rem;
+  }
+  .math-group {
+    gap: 0.4rem;
+  }
+  .blue-number-box,
+  .red-number-box,
+  .product-result,
+  .input-box-style,
+  .input-wrapper,
+  .student-answer-input {
+    width: 75px;
+    min-width: 75px;
+    flex: 0 0 75px;
+    font-size: 1rem;
+  }
+  .multiply-symbol,
+  .equal-symbol {
+    font-size: 1.4rem;
+    min-width: 30px;
+  }
+  .total-result {
+    width: 100px;
+    min-width: 100px;
+    font-size: 1.2rem;
+  }
+  .control-bar {
+    gap: 0.6rem;
+  }
+  .select-group {
+    flex: 1 1 45%;
+  }
+  .toolbar {
+    gap: 0.5rem;
+    padding: 0.4rem 0.7rem;
+  }
+  .data-table th,
+  .data-table td {
+    padding: 0.45rem 0.4rem;
+    font-size: 0.8rem;
+  }
+}
+@media (max-width: 480px) {
+  body,
+  #root {
+    padding: 0.5rem;
+  }
+  .teacher-card {
+    padding: 0.9rem 0.75rem 1.2rem;
+    border-radius: 1.2rem;
+  }
+  .main-equation {
+    font-size: 1.1rem;
+    padding: 0.4rem 0.9rem;
+  }
+  .big-icon span,
+  .demo-icon span {
+    font-size: 2.8rem;
+  }
+  .product-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: 1.2rem;
+  }
+  .product-left {
+    width: 100%;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .feature-label {
+    grid-template-columns: 32px 80px;
+  }
+  .feature-text {
+    font-size: 0.85rem;
+  }
+  .icon-small {
+    width: 32px;
+    height: 32px;
+    font-size: 1.2rem;
+    border-radius: 10px;
+  }
+  .math-group {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 22px 68px;
+    grid-template-areas: ". input" "mult weight" "equal output";
+    justify-content: flex-start;
+    align-items: center;
+    column-gap: 0.5rem;
+    row-gap: 0.3rem;
+    padding-left: 0.2rem;
+  }
+  .math-input-slot {
+    grid-area: input;
+  }
+  .math-weight-slot {
+    grid-area: weight;
+  }
+  .product-output {
+    grid-area: output;
+  }
+  .blue-number-box,
+  .red-number-box,
+  .product-result,
+  .input-box-style,
+  .input-wrapper,
+  .student-answer-input {
+    width: 68px;
+    min-width: 68px;
+    flex: 0 0 68px;
+    font-size: 0.95rem;
+    height: 34px;
+  }
+  .multiply-symbol,
+  .equal-symbol {
+    font-size: 1.2rem;
+    min-width: 22px;
+    justify-self: center;
+    align-self: center;
+  }
+  .multiply-symbol {
+    grid-area: mult;
+  }
+  .equal-symbol {
+    grid-area: equal;
+  }
+  .total-product-row {
+    padding: 0.45rem 0.6rem;
+    border-radius: 0.9rem;
+    gap: 0.25rem;
+    align-items: flex-start;
+  }
+  .total-product-row .total-row-ghost {
+    display: none;
+  }
+  .total-line {
+    width: auto;
+    justify-content: flex-start;
+    padding-left: 0.2rem;
+    margin-top: 0;
+    margin-left: 0;
+    align-self: flex-start;
+  }
+  .total-result {
+    width: 68px;
+    min-width: 68px;
+    font-size: 1.1rem;
+    padding: 0.3rem 0.4rem;
+  }
+  .control-bar {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .select-group {
+    flex: 1 1 100%;
+  }
+  select {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.6rem;
+  }
+  .toolbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.4rem;
+    padding: 0.4rem 0.5rem;
+    border-radius: 1.2rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tool-icon {
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    padding: 0.35rem 0.8rem;
+  }
+  .tool-icon:hover::after {
+    display: none;
+  }
+  .accordion-btn {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+  .accordion-content.open {
+    max-height: 80vh;
+  }
+  .data-section {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .data-table {
+    font-size: 0.75rem;
+    min-width: 320px;
+  }
+  .data-table th,
+  .data-table td {
+    padding: 0.35rem 0.3rem;
+  }
+  .data-table th:first-child,
+  .data-table td:first-child {
+    position: sticky;
+    left: 0;
+    background: inherit;
+    z-index: 1;
+  }
+  .student-inline-note {
+    font-size: 0.85rem;
+    padding: 0.6rem 0.75rem;
+  }
+  .screen-top-bar {
+    gap: 0.4rem;
+    padding: 0.5rem 0.6rem;
+  }
+  .screen-top-bar span,
+  .screen-top-bar strong {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+  }
+  .connection-status {
+    gap: 0.35rem;
+    padding: 0.4rem 0.6rem;
+  }
+  .connection-status span,
+  .connection-status strong {
+    font-size: 0.75rem;
+  }
+  .demo-icon-threshold {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.5rem;
+  }
+  .reveal-btn {
+    font-size: 0.85rem;
+    padding: 0.5rem 1.1rem;
+  }
 }
