@@ -8,7 +8,8 @@
     "dev": "node server.js",
     "build:neural-lab": "npm run build:neural-lab:teacher && npm run build:neural-lab:student",
     "build:neural-lab:teacher": "esbuild apps/neural-lab/teacher.jsx --bundle --format=esm --outfile=apps/neural-lab/teacher.bundle.js --loader:.jsx=jsx --loader:.css=css",
-    "build:neural-lab:student": "esbuild apps/neural-lab/student.jsx --bundle --format=esm --outfile=apps/neural-lab/student.bundle.js --loader:.jsx=jsx --loader:.css=css"
+    "build:neural-lab:student": "esbuild apps/neural-lab/student.jsx --bundle --format=esm --outfile=apps/neural-lab/student.bundle.js --loader:.jsx=jsx --loader:.css=css",
+    "build:linear": "npm run build --prefix tools/linear-seperation"
   },
   "dependencies": {
     "express": "^5.2.1",
