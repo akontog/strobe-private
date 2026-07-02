@@ -304,7 +304,7 @@ import { BlueNumberBox } from '../shared-components/components/BlueNumberBox';
 
 Διάφορα σύνολα δεδομένων (Οχήματα, Ζώα, Φαγητά, Φρούτα, Ψηφία)
 
-## Οχήματα {#datasets:vehicles}
+## Μέσα μεταφοράς {#datasets:vehicles}
 
 ### Είσοδοι/Χαρακτηριστικά
 

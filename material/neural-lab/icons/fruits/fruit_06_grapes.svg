@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" rx="18" fill="#F3E5F5"/>
+  <!-- Stem and leaf -->
+  <line x1="100" y1="45" x2="100" y2="62" stroke="#5D4037" stroke-width="3" stroke-linecap="round"/>
+  <ellipse cx="112" cy="48" rx="14" ry="8" fill="#66BB6A" transform="rotate(-20 112 48)"/>
+  <line x1="100" y1="50" x2="112" y2="46" stroke="#4CAF50" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Grapes cluster - back row -->
+  <circle cx="84" cy="85" r="20" fill="#7B1FA2"/>
+  <circle cx="116" cy="85" r="20" fill="#7B1FA2"/>
+  <!-- Middle row -->
+  <circle cx="68" cy="112" r="20" fill="#8E24AA"/>
+  <circle cx="100" cy="112" r="20" fill="#8E24AA"/>
+  <circle cx="132" cy="112" r="20" fill="#8E24AA"/>
+  <!-- Front row -->
+  <circle cx="84" cy="139" r="20" fill="#9C27B0"/>
+  <circle cx="116" cy="139" r="20" fill="#9C27B0"/>
+  <!-- Bottom grape -->
+  <circle cx="100" cy="160" r="20" fill="#AB47BC"/>
+  <!-- Shine on each grape -->
+  <circle cx="78" cy="79" r="6" fill="white" opacity="0.35"/>
+  <circle cx="110" cy="79" r="6" fill="white" opacity="0.35"/>
+  <circle cx="62" cy="106" r="6" fill="white" opacity="0.35"/>
+  <circle cx="94" cy="106" r="6" fill="white" opacity="0.35"/>
+  <circle cx="126" cy="106" r="6" fill="white" opacity="0.35"/>
+  <circle cx="78" cy="133" r="6" fill="white" opacity="0.35"/>
+  <circle cx="110" cy="133" r="6" fill="white" opacity="0.35"/>
+  <circle cx="94" cy="154" r="6" fill="white" opacity="0.35"/>
+  <!-- Face on center grape -->
+  <circle cx="95" cy="115" r="4" fill="#4A148C"/>
+  <circle cx="107" cy="115" r="4" fill="#4A148C"/>
+  <circle cx="96.5" cy="113.5" r="1.6" fill="white"/>
+  <circle cx="108.5" cy="113.5" r="1.6" fill="white"/>
+  <path d="M93 123 Q101 130 109 123" stroke="#4A148C" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="88" cy="122" rx="7" ry="5" fill="#CE93D8" opacity="0.5"/>
+  <ellipse cx="113" cy="122" rx="7" ry="5" fill="#CE93D8" opacity="0.5"/>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <rect width="200" height="200" rx="18" fill="#FFFDE7"/>
+  <!-- Leaf -->
+  <ellipse cx="112" cy="50" rx="15" ry="8" fill="#66BB6A" transform="rotate(-20 112 50)"/>
+  <!-- Stem -->
+  <line x1="100" y1="60" x2="105" y2="48" stroke="#5D4037" stroke-width="3" stroke-linecap="round"/>
+  <!-- Lemon body - oval with pointy ends -->
+  <ellipse cx="100" cy="112" rx="52" ry="48" fill="#FDD835"/>
+  <ellipse cx="148" cy="108" rx="10" ry="8" fill="#F9A825" transform="rotate(10 148 108)"/>
+  <ellipse cx="52" cy="116" rx="10" ry="8" fill="#F9A825" transform="rotate(-10 52 116)"/>
+  <!-- Texture dots -->
+  <circle cx="80" cy="90" r="2" fill="#F9A825" opacity="0.5"/>
+  <circle cx="95" cy="83" r="2" fill="#F9A825" opacity="0.5"/>
+  <circle cx="113" cy="85" r="2" fill="#F9A825" opacity="0.5"/>
+  <circle cx="120" cy="98" r="2" fill="#F9A825" opacity="0.5"/>
+  <circle cx="72" cy="105" r="2" fill="#F9A825" opacity="0.5"/>
+  <!-- Shine -->
+  <ellipse cx="78" cy="92" rx="10" ry="15" fill="white" opacity="0.3" transform="rotate(-20 78 92)"/>
+  <!-- Eyes -->
+  <circle cx="88" cy="110" r="5" fill="#4E342E"/>
+  <circle cx="112" cy="110" r="5" fill="#4E342E"/>
+  <circle cx="89.5" cy="108.5" r="2" fill="white"/>
+  <circle cx="113.5" cy="108.5" r="2" fill="white"/>
+  <!-- Blush -->
+  <ellipse cx="76" cy="120" rx="10" ry="7" fill="#F57F17" opacity="0.3"/>
+  <ellipse cx="124" cy="120" rx="10" ry="7" fill="#F57F17" opacity="0.3"/>
+  <!-- Smile -->
+  <path d="M87 122 Q100 134 113 122" stroke="#F57F17" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>

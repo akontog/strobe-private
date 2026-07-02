@@ -82,7 +82,7 @@ const DATASETS = {
       i2:   { op: '<=', boundary: 0 }
     },
     separable: {
-      both: false,  // και η Μοτοσυκλέτα (2,1) έχει άθροισμα 3>2.5
+      both: true,  // και η Μοτοσυκλέτα (2,1) έχει άθροισμα 3>2.5
       i1: false,    // και το Αυτοκίνητο έχει i1=4 ≥3
       i2: false     // και το Ποδήλατο έχει i2=0
     },
@@ -188,7 +188,7 @@ const DATASETS = {
       i2: { op: '>=', boundary: 2 }
     },
     separable: {
-      both: false,
+      both: true,
       i1: false,
       i2: false
     },
