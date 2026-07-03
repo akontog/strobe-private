@@ -42,6 +42,7 @@ Strobe Multi-App Classroom
 ## Neural Lab
 - [readme](reports/neural-lab/README-neural-lab)
 
+
 # Αρχιτεκτονική
 - Ένα κεντρικό Node server στο project root.
 - Όλες οι εφαρμογές μέσα στο apps (ξεχωριστός φάκελος ανά app).
@@ -81,9 +82,6 @@ Strobe Multi-App Classroom
 
 - **`fourier-lab/`**  
   – 
-
-- **`neural-lab/`**  
-  – Απλό νευρωνικό δίκτυο ή επίδειξη perceptron.
 
 - **`neural-lab/`** (React)  
   – Διδακτική εφαρμογή για νευρωνικά δίκτυα (εξίσωση w₁·i₁ + w₂·i₂ = o).  
