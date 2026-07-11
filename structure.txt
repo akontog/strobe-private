@@ -1,5 +1,5 @@
 Folder PATH listing for volume OS
-Volume serial number is 0000005F 4EE2:6C3B
+Volume serial number is 000000E5 4EE2:6C3B
 C:.
 |   .gitignore
 |   camera_server.py
@@ -33489,8 +33489,21 @@ C:.
 |   |           presentation-toc.js
 |   |           
 |   +---buffon-needle
+|   |       BuffonApp.jsx
+|   |       student-logic.js
+|   |       student-styles.css
+|   |       student-template.js
+|   |       student.bundle.css
+|   |       student.bundle.js
 |   |       student.html
+|   |       student.jsx
+|   |       teacher-logic.js
+|   |       teacher-styles.css
+|   |       teacher-template.js
+|   |       teacher.bundle.css
+|   |       teacher.bundle.js
 |   |       teacher.html
+|   |       teacher.jsx
 |   |       
 |   +---fourier-lab
 |   |   |   classroom-sync.js
@@ -33530,56 +33543,29 @@ C:.
 |   |   |   teacher.jsx
 |   |   |   
 |   |   +---components
-|   |   |       Accordion.jsx
+|   |   |       ActivitiesMenu.jsx
+|   |   |       DatasetSelector.jsx
+|   |   |       ExamplesClassifier.jsx
 |   |   |       index.js
 |   |   |       MathFormula.jsx
 |   |   |       ProductRow.jsx
+|   |   |       StudentQrAccordion.jsx
 |   |   |       StudentTable.jsx
 |   |   |       TeacherCard.jsx
 |   |   |       VerticalProducts.jsx
 |   |   |       
-|   |   \---data
-|   |       +---animals
-|   |       |       animals_dataset.csv
-|   |       |       animal_01.png
-|   |       |       animal_02.png
-|   |       |       animal_03.png
-|   |       |       animal_04.png
-|   |       |       animal_05.png
-|   |       |       animal_06.png
-|   |       |       animal_07.png
-|   |       |       animal_08.png
-|   |       |       animal_09.png
-|   |       |       animal_10.png
-|   |       |       animal_11.png
-|   |       |       animal_12.png
-|   |       |       animal_13.png
-|   |       |       animal_14.png
-|   |       |       animal_15.png
-|   |       |       animal_16.png
-|   |       |       animal_17.png
-|   |       |       animal_18.png
-|   |       |       animal_19.png
-|   |       |       animal_20.png
-|   |       |       animal_21.png
-|   |       |       animal_22.png
-|   |       |       animal_23.png
-|   |       |       animal_24.png
-|   |       |       
-|   |       \---fruits
-|   |               fruits_dataset.csv
-|   |               fruit_01_apple.svg
-|   |               fruit_02_banana.svg
-|   |               fruit_03_strawberry.svg
-|   |               fruit_04_watermelon.svg
-|   |               fruit_05_orange.svg
-|   |               fruit_06_grapes.svg
-|   |               fruit_07_pineapple.svg
-|   |               fruit_08_cherry.svg
-|   |               fruit_09_lemon.svg
-|   |               fruit_10_peach.svg
-|   |               preview.html
-|   |               
+|   |   +---data
+|   |   |       datasets.js
+|   |   |       
+|   |   \---media
+|   |           neural_lab_student_qrcode.png
+|   |           
+|   +---shared
+|   |   \---components
+|   |           Accordion.jsx
+|   |           StudentTable.jsx
+|   |           studentTableColumnPresets.jsx
+|   |           
 |   \---shared-components
 |       |   README.md
 |       |   
@@ -33595,6 +33581,62 @@ C:.
 |       users-DESKTOP-R0988N4.json
 |       users.json
 |       
++---material
+|   \---neural-lab
+|       |   mathjax τύπος.html
+|       |   perceptron-claude.html
+|       |   
+|       +---data
+|       |       animals.js
+|       |       foods.js
+|       |       fruits.js
+|       |       
+|       +---icons
+|       |   +---animals
+|       |   |       animals_dataset.csv
+|       |   |       animal_01.png
+|       |   |       animal_02.png
+|       |   |       animal_03.png
+|       |   |       animal_04.png
+|       |   |       animal_05.png
+|       |   |       animal_06.png
+|       |   |       animal_07.png
+|       |   |       animal_08.png
+|       |   |       animal_09.png
+|       |   |       animal_10.png
+|       |   |       animal_11.png
+|       |   |       animal_12.png
+|       |   |       animal_13.png
+|       |   |       animal_14.png
+|       |   |       animal_15.png
+|       |   |       animal_16.png
+|       |   |       animal_17.png
+|       |   |       animal_18.png
+|       |   |       animal_19.png
+|       |   |       animal_20.png
+|       |   |       animal_21.png
+|       |   |       animal_22.png
+|       |   |       animal_23.png
+|       |   |       animal_24.png
+|       |   |       
+|       |   \---fruits
+|       |           fruits_dataset.csv
+|       |           fruit_01_apple.svg
+|       |           fruit_02_banana.svg
+|       |           fruit_03_strawberry.svg
+|       |           fruit_04_watermelon.svg
+|       |           fruit_05_orange.svg
+|       |           fruit_06_grapes.svg
+|       |           fruit_07_pineapple.svg
+|       |           fruit_08_cherry.svg
+|       |           fruit_09_lemon.svg
+|       |           fruit_10_peach.svg
+|       |           preview.html
+|       |           
+|       \---papers
+|               Learning to Think Like A Neuron in Middle School.pdf
+|               Neural Networks in Middle School.pdf
+|               
 +---middleware
 |       checkRole.js
 |       sessionMiddleware.js
@@ -34592,9 +34634,11 @@ C:.
 |   |   client.html
 |   |   index.html
 |   |   launcher.html
+|   |   tools.html
 |   |   user.html
 |   |   
 |   +---css
+|   |       postit-cards.css
 |   |       presentation-shell-v2.css
 |   |       presentation-shell.css
 |   |       styles.css
@@ -34604,6 +34648,7 @@ C:.
 |   |       strobelogo.svg
 |   |       
 |   +---js
+|   |       postit-cards-react.js
 |   |       presentation-shell.js
 |   |       presentation-sidebar-manager.js
 |   |       realtime-socket.js
@@ -34613,6 +34658,10 @@ C:.
 |           presentation-sidebar-template.html
 |           
 +---reports
+|   |   brainstorming.md
+|   |   strobe-architecture.drawio
+|   |   strobe.svg
+|   |   
 |   +---fourier-lab
 |   |       current_test_output.log
 |   |       current_test_output.tex
@@ -34630,6 +34679,7 @@ C:.
 |   |       report-debug.tex
 |   |       report.md
 |   |       report.pdf
+|   |       report.tex
 |   |       report_debug.tex
 |   |       report_debug2.tex
 |   |       report_debug3.tex
@@ -34659,9 +34709,437 @@ C:.
 |       fourier.js
 |       geometry.js
 |       neural.js
+|       sessionManager.js
 |       sessionTracker.js
 |       UserManager.js
 |       
++---tools
+|   \---linear-seperation
+|       |   index.html
+|       |   package-lock.json
+|       |   package.json
+|       |   README.md
+|       |   vite.config.js
+|       |   
+|       +---dist
+|       |   |   index.html
+|       |   |   
+|       |   \---assets
+|       |           index-BWnkNSGJ.js
+|       |           index-DHGeWn1L.css
+|       |           
+|       +---node_modules
+|       |   |   .package-lock.json
+|       |   |   
+|       |   +---.bin
+|       |   |       esbuild
+|       |   |       esbuild.cmd
+|       |   |       esbuild.ps1
+|       |   |       nanoid
+|       |   |       nanoid.cmd
+|       |   |       nanoid.ps1
+|       |   |       rollup
+|       |   |       rollup.cmd
+|       |   |       rollup.ps1
+|       |   |       vite
+|       |   |       vite.cmd
+|       |   |       vite.ps1
+|       |   |       
+|       |   +---.vite-temp
+|       |   +---@esbuild
+|       |   |   \---win32-x64
+|       |   |           esbuild.exe
+|       |   |           package.json
+|       |   |           README.md
+|       |   |           
+|       |   +---@rollup
+|       |   |   +---rollup-win32-x64-gnu
+|       |   |   |       package.json
+|       |   |   |       README.md
+|       |   |   |       rollup.win32-x64-gnu.node
+|       |   |   |       
+|       |   |   \---rollup-win32-x64-msvc
+|       |   |           package.json
+|       |   |           README.md
+|       |   |           rollup.win32-x64-msvc.node
+|       |   |           
+|       |   +---@types
+|       |   |   \---estree
+|       |   |           flow.d.ts
+|       |   |           index.d.ts
+|       |   |           LICENSE
+|       |   |           package.json
+|       |   |           README.md
+|       |   |           
+|       |   +---esbuild
+|       |   |   |   install.js
+|       |   |   |   LICENSE.md
+|       |   |   |   package.json
+|       |   |   |   README.md
+|       |   |   |   
+|       |   |   +---bin
+|       |   |   |       esbuild
+|       |   |   |       
+|       |   |   \---lib
+|       |   |           main.d.ts
+|       |   |           main.js
+|       |   |           
+|       |   +---fdir
+|       |   |   |   LICENSE
+|       |   |   |   package.json
+|       |   |   |   README.md
+|       |   |   |   
+|       |   |   \---dist
+|       |   |           index.cjs
+|       |   |           index.d.cts
+|       |   |           index.d.mts
+|       |   |           index.mjs
+|       |   |           
+|       |   +---nanoid
+|       |   |   |   index.browser.cjs
+|       |   |   |   index.browser.js
+|       |   |   |   index.cjs
+|       |   |   |   index.d.cts
+|       |   |   |   index.d.ts
+|       |   |   |   index.js
+|       |   |   |   LICENSE
+|       |   |   |   nanoid.js
+|       |   |   |   package.json
+|       |   |   |   README.md
+|       |   |   |   
+|       |   |   +---async
+|       |   |   |       index.browser.cjs
+|       |   |   |       index.browser.js
+|       |   |   |       index.cjs
+|       |   |   |       index.d.ts
+|       |   |   |       index.js
+|       |   |   |       index.native.js
+|       |   |   |       package.json
+|       |   |   |       
+|       |   |   +---bin
+|       |   |   |       nanoid.cjs
+|       |   |   |       
+|       |   |   +---non-secure
+|       |   |   |       index.cjs
+|       |   |   |       index.d.ts
+|       |   |   |       index.js
+|       |   |   |       package.json
+|       |   |   |       
+|       |   |   \---url-alphabet
+|       |   |           index.cjs
+|       |   |           index.js
+|       |   |           package.json
+|       |   |           
+|       |   +---picocolors
+|       |   |       LICENSE
+|       |   |       package.json
+|       |   |       picocolors.browser.js
+|       |   |       picocolors.d.ts
+|       |   |       picocolors.js
+|       |   |       README.md
+|       |   |       types.d.ts
+|       |   |       
+|       |   +---picomatch
+|       |   |   |   index.js
+|       |   |   |   LICENSE
+|       |   |   |   package.json
+|       |   |   |   posix.js
+|       |   |   |   README.md
+|       |   |   |   
+|       |   |   \---lib
+|       |   |           constants.js
+|       |   |           parse.js
+|       |   |           picomatch.js
+|       |   |           scan.js
+|       |   |           utils.js
+|       |   |           
+|       |   +---postcss
+|       |   |   |   LICENSE
+|       |   |   |   package.json
+|       |   |   |   README.md
+|       |   |   |   
+|       |   |   \---lib
+|       |   |           at-rule.d.ts
+|       |   |           at-rule.js
+|       |   |           comment.d.ts
+|       |   |           comment.js
+|       |   |           container.d.ts
+|       |   |           container.js
+|       |   |           css-syntax-error.d.ts
+|       |   |           css-syntax-error.js
+|       |   |           declaration.d.ts
+|       |   |           declaration.js
+|       |   |           document.d.ts
+|       |   |           document.js
+|       |   |           fromJSON.d.ts
+|       |   |           fromJSON.js
+|       |   |           input.d.ts
+|       |   |           input.js
+|       |   |           lazy-result.d.ts
+|       |   |           lazy-result.js
+|       |   |           list.d.ts
+|       |   |           list.js
+|       |   |           map-generator.js
+|       |   |           no-work-result.d.ts
+|       |   |           no-work-result.js
+|       |   |           node.d.ts
+|       |   |           node.js
+|       |   |           parse.d.ts
+|       |   |           parse.js
+|       |   |           parser.js
+|       |   |           postcss.d.mts
+|       |   |           postcss.d.ts
+|       |   |           postcss.js
+|       |   |           postcss.mjs
+|       |   |           previous-map.d.ts
+|       |   |           previous-map.js
+|       |   |           processor.d.ts
+|       |   |           processor.js
+|       |   |           result.d.ts
+|       |   |           result.js
+|       |   |           root.d.ts
+|       |   |           root.js
+|       |   |           rule.d.ts
+|       |   |           rule.js
+|       |   |           stringifier.d.ts
+|       |   |           stringifier.js
+|       |   |           stringify.d.ts
+|       |   |           stringify.js
+|       |   |           symbols.js
+|       |   |           terminal-highlight.js
+|       |   |           tokenize.js
+|       |   |           warn-once.js
+|       |   |           warning.d.ts
+|       |   |           warning.js
+|       |   |           
+|       |   +---react
+|       |   |   |   compiler-runtime.js
+|       |   |   |   index.js
+|       |   |   |   jsx-dev-runtime.js
+|       |   |   |   jsx-dev-runtime.react-server.js
+|       |   |   |   jsx-runtime.js
+|       |   |   |   jsx-runtime.react-server.js
+|       |   |   |   LICENSE
+|       |   |   |   package.json
+|       |   |   |   react.react-server.js
+|       |   |   |   README.md
+|       |   |   |   
+|       |   |   \---cjs
+|       |   |           react-compiler-runtime.development.js
+|       |   |           react-compiler-runtime.production.js
+|       |   |           react-compiler-runtime.profiling.js
+|       |   |           react-jsx-dev-runtime.development.js
+|       |   |           react-jsx-dev-runtime.production.js
+|       |   |           react-jsx-dev-runtime.profiling.js
+|       |   |           react-jsx-dev-runtime.react-server.development.js
+|       |   |           react-jsx-dev-runtime.react-server.production.js
+|       |   |           react-jsx-runtime.development.js
+|       |   |           react-jsx-runtime.production.js
+|       |   |           react-jsx-runtime.profiling.js
+|       |   |           react-jsx-runtime.react-server.development.js
+|       |   |           react-jsx-runtime.react-server.production.js
+|       |   |           react.development.js
+|       |   |           react.production.js
+|       |   |           react.react-server.development.js
+|       |   |           react.react-server.production.js
+|       |   |           
+|       |   +---react-dom
+|       |   |   |   client.js
+|       |   |   |   client.react-server.js
+|       |   |   |   index.js
+|       |   |   |   LICENSE
+|       |   |   |   package.json
+|       |   |   |   profiling.js
+|       |   |   |   profiling.react-server.js
+|       |   |   |   react-dom.react-server.js
+|       |   |   |   README.md
+|       |   |   |   server.browser.js
+|       |   |   |   server.bun.js
+|       |   |   |   server.edge.js
+|       |   |   |   server.js
+|       |   |   |   server.node.js
+|       |   |   |   server.react-server.js
+|       |   |   |   static.browser.js
+|       |   |   |   static.edge.js
+|       |   |   |   static.js
+|       |   |   |   static.node.js
+|       |   |   |   static.react-server.js
+|       |   |   |   test-utils.js
+|       |   |   |   
+|       |   |   \---cjs
+|       |   |           react-dom-client.development.js
+|       |   |           react-dom-client.production.js
+|       |   |           react-dom-profiling.development.js
+|       |   |           react-dom-profiling.profiling.js
+|       |   |           react-dom-server-legacy.browser.development.js
+|       |   |           react-dom-server-legacy.browser.production.js
+|       |   |           react-dom-server-legacy.node.development.js
+|       |   |           react-dom-server-legacy.node.production.js
+|       |   |           react-dom-server.browser.development.js
+|       |   |           react-dom-server.browser.production.js
+|       |   |           react-dom-server.bun.development.js
+|       |   |           react-dom-server.bun.production.js
+|       |   |           react-dom-server.edge.development.js
+|       |   |           react-dom-server.edge.production.js
+|       |   |           react-dom-server.node.development.js
+|       |   |           react-dom-server.node.production.js
+|       |   |           react-dom-test-utils.development.js
+|       |   |           react-dom-test-utils.production.js
+|       |   |           react-dom.development.js
+|       |   |           react-dom.production.js
+|       |   |           react-dom.react-server.development.js
+|       |   |           react-dom.react-server.production.js
+|       |   |           
+|       |   +---rollup
+|       |   |   |   LICENSE.md
+|       |   |   |   package.json
+|       |   |   |   README.md
+|       |   |   |   
+|       |   |   \---dist
+|       |   |       |   getLogFilter.d.ts
+|       |   |       |   getLogFilter.js
+|       |   |       |   loadConfigFile.d.ts
+|       |   |       |   loadConfigFile.js
+|       |   |       |   native.js
+|       |   |       |   parseAst.d.ts
+|       |   |       |   parseAst.js
+|       |   |       |   rollup.d.ts
+|       |   |       |   rollup.js
+|       |   |       |   
+|       |   |       +---bin
+|       |   |       |       rollup
+|       |   |       |       
+|       |   |       +---es
+|       |   |       |   |   getLogFilter.js
+|       |   |       |   |   package.json
+|       |   |       |   |   parseAst.js
+|       |   |       |   |   rollup.js
+|       |   |       |   |   
+|       |   |       |   \---shared
+|       |   |       |           node-entry.js
+|       |   |       |           parseAst.js
+|       |   |       |           watch.js
+|       |   |       |           
+|       |   |       \---shared
+|       |   |               fsevents-importer.js
+|       |   |               index.js
+|       |   |               loadConfigFile.js
+|       |   |               parseAst.js
+|       |   |               rollup.js
+|       |   |               watch-cli.js
+|       |   |               watch.js
+|       |   |               
+|       |   +---scheduler
+|       |   |   |   index.js
+|       |   |   |   index.native.js
+|       |   |   |   LICENSE
+|       |   |   |   package.json
+|       |   |   |   README.md
+|       |   |   |   unstable_mock.js
+|       |   |   |   unstable_post_task.js
+|       |   |   |   
+|       |   |   \---cjs
+|       |   |           scheduler-unstable_mock.development.js
+|       |   |           scheduler-unstable_mock.production.js
+|       |   |           scheduler-unstable_post_task.development.js
+|       |   |           scheduler-unstable_post_task.production.js
+|       |   |           scheduler.development.js
+|       |   |           scheduler.native.development.js
+|       |   |           scheduler.native.production.js
+|       |   |           scheduler.production.js
+|       |   |           
+|       |   +---source-map-js
+|       |   |   |   LICENSE
+|       |   |   |   package.json
+|       |   |   |   README.md
+|       |   |   |   source-map.d.ts
+|       |   |   |   source-map.js
+|       |   |   |   
+|       |   |   \---lib
+|       |   |           array-set.js
+|       |   |           base64-vlq.js
+|       |   |           base64.js
+|       |   |           binary-search.js
+|       |   |           mapping-list.js
+|       |   |           quick-sort.js
+|       |   |           source-map-consumer.d.ts
+|       |   |           source-map-consumer.js
+|       |   |           source-map-generator.d.ts
+|       |   |           source-map-generator.js
+|       |   |           source-node.d.ts
+|       |   |           source-node.js
+|       |   |           util.js
+|       |   |           
+|       |   +---tinyglobby
+|       |   |   |   LICENSE
+|       |   |   |   package.json
+|       |   |   |   README.md
+|       |   |   |   
+|       |   |   \---dist
+|       |   |           index.cjs
+|       |   |           index.d.cts
+|       |   |           index.d.mts
+|       |   |           index.mjs
+|       |   |           
+|       |   \---vite
+|       |       |   client.d.ts
+|       |       |   index.cjs
+|       |       |   index.d.cts
+|       |       |   LICENSE.md
+|       |       |   package.json
+|       |       |   README.md
+|       |       |   
+|       |       +---bin
+|       |       |       openChrome.applescript
+|       |       |       vite.js
+|       |       |       
+|       |       +---dist
+|       |       |   +---client
+|       |       |   |       client.mjs
+|       |       |   |       env.mjs
+|       |       |   |       
+|       |       |   +---node
+|       |       |   |   |   cli.js
+|       |       |   |   |   constants.js
+|       |       |   |   |   index.d.ts
+|       |       |   |   |   index.js
+|       |       |   |   |   module-runner.d.ts
+|       |       |   |   |   module-runner.js
+|       |       |   |   |   moduleRunnerTransport.d-DJ_mE5sf.d.ts
+|       |       |   |   |   
+|       |       |   |   \---chunks
+|       |       |   |           dep-3RmXg9uo.js
+|       |       |   |           dep-CV-fz3CQ.js
+|       |       |   |           dep-CvfTChi5.js
+|       |       |   |           dep-DDtvSN7_.js
+|       |       |   |           dep-Dm0c1Wj2.js
+|       |       |   |           
+|       |       |   \---node-cjs
+|       |       |           publicUtils.cjs
+|       |       |           
+|       |       +---misc
+|       |       |       false.js
+|       |       |       true.js
+|       |       |       
+|       |       \---types
+|       |           |   customEvent.d.ts
+|       |           |   hmrPayload.d.ts
+|       |           |   hot.d.ts
+|       |           |   import-meta.d.ts
+|       |           |   importGlob.d.ts
+|       |           |   importMeta.d.ts
+|       |           |   metadata.d.ts
+|       |           |   package.json
+|       |           |   
+|       |           \---internal
+|       |                   cssPreprocessorOptions.d.ts
+|       |                   lightningcssOptions.d.ts
+|       |                   
+|       \---src
+|               App.jsx
+|               main.jsx
+|               styles.css
+|               
 +---utils
 |       cameraWorker.js
 |       communication.js

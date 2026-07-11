@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 
-const { getAppBySlug, listAppsForRole, toPublicApp } = require('../apps/registry');
+const { getAppBySlug, listAppsForRole, toPublicApp } = require('../../apps/registry');
 const { saveActivity, listActivities, getActivity } = require('../services/appActivities');
 
 const router = express.Router();

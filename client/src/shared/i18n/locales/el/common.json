@@ -1,0 +1,20 @@
+{
+  "ok": "OK",
+  "cancel": "Ακύρωση",
+  "save": "Αποθήκευση",
+  "close": "Κλείσιμο",
+  "loading": "Φόρτωση...",
+  "home": "Αρχική",
+  "teacher": "Καθηγητής",
+  "student": "Μαθητής",
+  "settings": "Ρυθμίσεις",
+  "language": "Γλώσσα",
+  "greek": "Ελληνικά",
+  "english": "English",
+  "input": "Είσοδος",
+  "notAvailable": "Δεν είναι διαθέσιμο",
+  "status": "Κατάσταση",
+  "username": "Όνομα χρήστη",
+  "connected": "Συνδεδεμένος",
+  "disconnected": "Αποσυνδεδεμένος"
+}

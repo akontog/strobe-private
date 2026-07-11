@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tools | Strobe</title>
   <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <link rel="stylesheet" type="text/css" href="css/postit-cards.css">
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="/js/postit-cards-react.js"></script>
   <style>
     .tools-note {
       margin-top: -18px;
@@ -12,91 +16,16 @@
       opacity: 0.92;
     }
 
-    .links-panel {
-      margin: 0 auto 28px;
-      max-width: 920px;
-      padding: 24px;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(10px);
+    .board-section {
       text-align: left;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18);
+      margin-bottom: 20px;
     }
 
-    .links-panel h2 {
-      margin-bottom: 10px;
-      font-size: 1.35rem;
-    }
-
-    .links-panel p {
-      opacity: 0.92;
-      line-height: 1.6;
-      margin-bottom: 18px;
-    }
-
-    .link-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .link-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      text-decoration: none;
-      transition: transform 0.2s ease, background 0.2s ease;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-    }
-
-    .link-item:hover {
-      transform: translateY(-2px);
-      background: rgba(255, 255, 255, 0.18);
-    }
-
-    .link-item strong {
-      display: block;
-      font-size: 1.02rem;
-      margin-bottom: 3px;
-    }
-
-    .link-item span {
-      opacity: 0.88;
-      font-size: 0.92rem;
-    }
-
-    .link-route {
-      white-space: nowrap;
-      font-size: 0.88rem;
-      color: #dbeafe;
-      opacity: 0.95;
-    }
-
-    .links-hint {
-      margin-top: 12px;
-      font-size: 0.9rem;
-      opacity: 0.82;
-    }
-
-    .tool-card {
-      text-decoration: none;
-      color: inherit;
-      display: block;
-    }
-
-    .tool-card .role-description {
-      min-height: 72px;
-    }
-
-    .tool-meta {
-      margin-top: 16px;
-      font-size: 0.95rem;
-      opacity: 0.95;
-      color: #dbeafe;
+    .board-section h2 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+      color: #ffffff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     }
 
     .back-link {
@@ -107,80 +36,354 @@
       cursor: pointer;
       opacity: 0.95;
     }
+
+    .builder-fields {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .builder-fields label {
+      display: grid;
+      gap: 6px;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .builder-fields input,
+    .builder-fields select,
+    .builder-fields textarea {
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      background: rgba(255, 255, 255, 0.2);
+      color: inherit;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font: inherit;
+    }
+
+    .builder-fields textarea {
+      min-height: 110px;
+      resize: vertical;
+      font-family: Consolas, 'Courier New', monospace;
+      font-size: 0.86rem;
+    }
+
+    .builder-status {
+      margin-top: 8px;
+      min-height: 20px;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .builder-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+      max-height: 220px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .builder-item {
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 10px;
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.18);
+      cursor: pointer;
+    }
+
+    .builder-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .builder-preview {
+      margin-top: 10px;
+      background: rgba(15, 23, 42, 0.78);
+      border-radius: 10px;
+      padding: 10px;
+      color: #f8fafc;
+      max-height: 220px;
+      overflow: auto;
+      font-size: 0.78rem;
+    }
+
+    .tools-shortcuts {
+      margin-top: 8px;
+      color: #fef3c7;
+      font-size: 0.88rem;
+      opacity: 0.95;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header" style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;">
       <h1><img src="icons/strobelogo.svg" style="height:50px;" alt="Strobe Logo"> | Tools</h1>
-      <p class="tools-note">Τρία εργαλεία μαζεμένα σε ένα σημείο. Διάλεξε αυτό που θες να τρέξεις.</p>
+      <p class="tools-note">Πίνακας εργαλείων και Activity Builder, όλα ως Post-it.</p>
       <a class="back-link" href="/">← Επιστροφή στην αρχική</a>
     </div>
 
-    <div class="links-panel">
-      <h2>Links</h2>
-      <p>Άνοιξε απευθείας το εργαλείο που θέλεις. Κάθε link σε πάει στο αντίστοιχο route του Node server.</p>
+    <section class="board-section">
+      <h2>Tool Actions</h2>
+      <div id="toolCardsRoot"></div>
+      <div class="tools-shortcuts">Keyboard shortcuts: `1` Geometry, `2` Camera, `3` Linear Separation, `4` Activity Builder, `0` Back.</div>
+    </section>
 
-      <div class="link-list">
-        <a class="link-item" href="/user.html">
-          <div>
-            <strong>Geometry Direct</strong>
-            <span>Άμεσο άνοιγμα geometry app με manual σύνδεση για test και συνεργασία.</span>
-          </div>
-          <div class="link-route">/user.html</div>
-        </a>
-
-        <a class="link-item" href="/camera-speed-test">
-          <div>
-            <strong>Camera Speed Test</strong>
-            <span>Δοκιμή αποστολής/επιστροφής καρέ και server-side tracking.</span>
-          </div>
-          <div class="link-route">/camera-speed-test</div>
-        </a>
-
-        <a class="link-item" href="/tools/linear-seperation">
-          <div>
-            <strong>Linear Seperation</strong>
-            <span>React εργαλείο για γραμμικό διαχωρισμό από JSON datasets και upload αρχείων.</span>
-          </div>
-          <div class="link-route">/tools/linear-seperation</div>
-        </a>
-      </div>
-
-      <div class="links-hint">Keyboard shortcuts: `1` Geometry, `2` Camera, `3` Linear Separation, `0` Back.</div>
-    </div>
-
-    <div class="roles">
-      <a class="role-card tool-card" href="/user.html">
-        <span class="role-icon">📐</span>
-        <div class="role-title">Geometry Direct</div>
-        <div class="role-description">Άμεσο άνοιγμα geometry app με manual σύνδεση για test και συνεργασία.</div>
-        <div class="tool-meta">Route: /user.html</div>
-      </a>
-
-      <a class="role-card tool-card" href="/camera-speed-test">
-        <span class="role-icon">🎥</span>
-        <div class="role-title">Camera Speed Test</div>
-        <div class="role-description">Δοκιμή αποστολής/επιστροφής καρέ και server-side tracking.</div>
-        <div class="tool-meta">Route: /camera-speed-test</div>
-      </a>
-
-      <a class="role-card tool-card" href="/tools/linear-seperation">
-        <span class="role-icon">🧠</span>
-        <div class="role-title">Linear Seperation</div>
-        <div class="role-description">React εργαλείο για γραμμικό διαχωρισμό από JSON datasets και upload αρχείων.</div>
-        <div class="tool-meta">Route: /tools/linear-seperation</div>
-      </a>
-    </div>
+    <section class="board-section" id="activity-builder">
+      <h2>Activity Builder</h2>
+      <div id="builderCardsRoot"></div>
+    </section>
   </div>
 
   <script>
-    document.addEventListener('keydown', (event) => {
-      if (event.key === '1') window.location.href = '/user.html';
-      if (event.key === '2') window.location.href = '/camera-speed-test';
-      if (event.key === '3') window.location.href = '/tools/linear-seperation';
-      if (event.key === '0') window.location.href = '/';
-    });
+    (function mountToolsBoard() {
+      if (!window.PostitCards) return;
+
+      const { React, h, renderReactNode, Components } = window.PostitCards;
+      const { useEffect, useMemo, useState } = React;
+
+      const TOOL_CARD_ITEMS = [
+        { id: 'geometry-direct', href: '/user.html', icon: '📐', tone: 'green', title: 'Geometry Direct', description: 'Άμεσο άνοιγμα geometry app με manual σύνδεση για test και συνεργασία.', features: ['/user.html'] },
+        { id: 'camera-speed-test', href: '/camera-speed-test', icon: '🎥', tone: 'blue', title: 'Camera Speed Test', description: 'Δοκιμή αποστολής/επιστροφής καρέ και server-side tracking.', features: ['/camera-speed-test'] },
+        { id: 'linear-separation', href: '/tools/linear-seperation', icon: '🧠', tone: 'orange', title: 'Linear Seperation', description: 'React εργαλείο για γραμμικό διαχωρισμό από JSON datasets και upload αρχείων.', features: ['/tools/linear-seperation'] },
+        { id: 'open-builder', href: '#activity-builder', icon: '🗂️', tone: 'magenta', title: 'Activity Builder', description: 'Δημιουργία και διαχείριση activity JSON για όλα τα teacher apps.', features: ['Save', 'Load', 'Preview'] }
+      ];
+
+      function BuilderList({ items, onSelect }) {
+        if (!items.length) {
+          return h('div', { className: 'builder-item' }, 'No activities saved yet for this app.');
+        }
+
+        return h('div', { className: 'builder-list' },
+          items.map((item) => {
+            const when = item.createdAt ? new Date(item.createdAt).toLocaleString() : 'unknown time';
+            const author = item.author && item.author.username ? item.author.username : 'unknown author';
+            return h('div', {
+              key: item.filename,
+              className: 'builder-item',
+              onClick: function onClick() { onSelect(item.filename); }
+            },
+              h('strong', null, item.name),
+              h('div', null, item.filename),
+              h('div', null, `${when} | ${author}`)
+            );
+          })
+        );
+      }
+
+      function ActivityBuilderNote() {
+        const [apps, setApps] = useState([]);
+        const [selectedApp, setSelectedApp] = useState('');
+        const [activityName, setActivityName] = useState('');
+        const [configText, setConfigText] = useState('{\n  "roundTimeSec": 60,\n  "targetError": 0.005\n}');
+        const [notes, setNotes] = useState('Preparation notes...');
+        const [status, setStatus] = useState('');
+        const [statusError, setStatusError] = useState(false);
+        const [items, setItems] = useState([]);
+        const [preview, setPreview] = useState('Select an activity to preview JSON.');
+
+        const preferredApp = useMemo(() => {
+          const params = new URLSearchParams(window.location.search);
+          return (params.get('app') || '').trim();
+        }, []);
+
+        async function api(url, options) {
+          const response = await fetch(url, {
+            headers: {
+              Accept: 'application/json',
+              ...(options && options.body ? { 'Content-Type': 'application/json' } : {})
+            },
+            ...(options || {})
+          });
+          const payload = await response.json();
+          if (!response.ok) throw new Error(payload.error || 'Request failed');
+          return payload;
+        }
+
+        async function loadActivities(appSlug) {
+          if (!appSlug) return;
+          setStatusError(false);
+          setStatus('Loading activities...');
+          try {
+            const list = await api(`/teacher/activities/${appSlug}`);
+            setItems(Array.isArray(list) ? list : []);
+            setStatus(`Loaded ${Array.isArray(list) ? list.length : 0} activities for ${appSlug}.`);
+          } catch (error) {
+            setStatusError(true);
+            setStatus(error.message);
+          }
+        }
+
+        async function loadActivity(filename) {
+          if (!selectedApp || !filename) return;
+          try {
+            const item = await api(`/teacher/activities/${selectedApp}/${filename}`);
+            setPreview(JSON.stringify(item, null, 2));
+          } catch (error) {
+            setStatusError(true);
+            setStatus(error.message);
+          }
+        }
+
+        async function saveActivity() {
+          if (!selectedApp) {
+            setStatusError(true);
+            setStatus('Please select an app first.');
+            return;
+          }
+
+          let config = {};
+          if (configText.trim()) {
+            try {
+              config = JSON.parse(configText);
+            } catch (_error) {
+              setStatusError(true);
+              setStatus('Config JSON is not valid.');
+              return;
+            }
+          }
+
+          setStatusError(false);
+          setStatus('Saving activity...');
+
+          try {
+            const result = await api(`/teacher/activities/${selectedApp}`, {
+              method: 'POST',
+              body: JSON.stringify({
+                name: activityName.trim() || 'Untitled activity',
+                notes,
+                config
+              })
+            });
+            setStatus(`Saved ${result.filename}.`);
+            await loadActivities(selectedApp);
+          } catch (error) {
+            setStatusError(true);
+            setStatus(error.message);
+          }
+        }
+
+        async function reloadActivities() {
+          await loadActivities(selectedApp);
+        }
+
+        useEffect(() => {
+          let mounted = true;
+          (async function init() {
+            try {
+              const loadedApps = await api('/teacher/apps');
+              if (!mounted) return;
+              setApps(Array.isArray(loadedApps) ? loadedApps : []);
+              const hasPreferred = preferredApp && loadedApps.some((app) => app.slug === preferredApp);
+              const initial = hasPreferred ? preferredApp : (loadedApps[0] ? loadedApps[0].slug : '');
+              setSelectedApp(initial);
+            } catch (error) {
+              if (!mounted) return;
+              setStatusError(true);
+              setStatus(error.message);
+            }
+          })();
+
+          return function cleanup() { mounted = false; };
+        }, [preferredApp]);
+
+        useEffect(() => {
+          if (!selectedApp) return;
+          loadActivities(selectedApp);
+        }, [selectedApp]);
+
+        return h(Components.AppNote, {
+          item: {
+            id: 'activity-builder-card',
+            slug: 'activity-builder',
+            tone: 'yellow',
+            title: 'Teacher Activity Builder',
+            eyebrow: 'tools',
+            description: 'Αποθηκεύει activity definitions για teacher views. Επιλογή app, save, reload και preview.',
+            actions: [
+              { kind: 'button', label: 'Save Activity', action: 'save' },
+              { kind: 'button', label: 'Reload List', action: 'reload', variant: 'secondary' }
+            ]
+          },
+          onAction: function onAction(_item, action) {
+            if (!action || !action.action) return;
+            if (action.action === 'save') saveActivity();
+            if (action.action === 'reload') reloadActivities();
+          }
+        },
+          h('div', { className: 'builder-fields' },
+            h('label', null,
+              'App',
+              h('select', {
+                value: selectedApp,
+                onChange: (event) => setSelectedApp(event.target.value)
+              }, apps.map((app) => h('option', { key: app.slug, value: app.slug }, `${app.title} (${app.slug})`)))
+            ),
+            h('label', null,
+              'Activity name',
+              h('input', {
+                value: activityName,
+                onChange: (event) => setActivityName(event.target.value),
+                placeholder: 'Example: Buffon round - week 3'
+              })
+            ),
+            h('label', null,
+              'Config JSON',
+              h('textarea', {
+                value: configText,
+                onChange: (event) => setConfigText(event.target.value)
+              })
+            ),
+            h('label', null,
+              'Teacher notes',
+              h('textarea', {
+                value: notes,
+                style: { minHeight: '80px', fontFamily: 'inherit' },
+                onChange: (event) => setNotes(event.target.value)
+              })
+            )
+          ),
+          h('div', { className: 'builder-status', style: { color: statusError ? '#fee2e2' : '#fef3c7' } }, status),
+          h(BuilderList, { items, onSelect: loadActivity }),
+          h('pre', { className: 'builder-preview' }, preview)
+        );
+      }
+
+      function ToolsBoardApp() {
+        return h(React.Fragment, null,
+          h(Components.CardsGrid, { className: 'roles postit-grid', items: TOOL_CARD_ITEMS, type: 'role', cardClickable: true }),
+          h(ActivityBuilderNote)
+        );
+      }
+
+      const toolRoot = document.getElementById('toolCardsRoot');
+      const builderRoot = document.getElementById('builderCardsRoot');
+
+      if (toolRoot) {
+        renderReactNode(toolRoot, h(Components.CardsGrid, { className: 'roles postit-grid', items: TOOL_CARD_ITEMS, type: 'role', cardClickable: true }));
+      }
+      if (builderRoot) {
+        renderReactNode(builderRoot, h(ActivityBuilderNote));
+      }
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === '1') window.location.href = '/user.html';
+        if (event.key === '2') window.location.href = '/camera-speed-test';
+        if (event.key === '3') window.location.href = '/tools/linear-seperation';
+        if (event.key === '4') window.location.hash = 'activity-builder';
+        if (event.key === '0') window.location.href = '/';
+      });
+
+      const params = new URLSearchParams(window.location.search);
+      if ((params.get('builder') || '') === '1') {
+        setTimeout(() => {
+          document.getElementById('activity-builder')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 60);
+      }
+    })();
   </script>
+  <script src="/js/language-switcher-react.js"></script>
 </body>
 </html>

@@ -4,6 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Student Launcher</title>
+  <link rel="stylesheet" href="/css/postit-cards.css">
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="/js/postit-cards-react.js"></script>
   <style>
     :root {
       --bg: #fff9f1;
@@ -105,7 +109,7 @@
 
     .grid {
       display: grid;
-      gap: 10px;
+      gap: 16px;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
 
@@ -266,33 +270,47 @@
     }
 
     function renderApps(apps) {
-      appGrid.innerHTML = '';
-
       if (!apps.length) {
         appGrid.innerHTML = '<div class="muted">Δεν υπάρχουν διαθέσιμες εφαρμογές.</div>';
         return;
       }
 
-      apps.forEach((app) => {
-        const card = document.createElement('article');
-        card.className = 'card';
+      if (!window.PostitCards) {
+        appGrid.innerHTML = '<div class="muted">Post-it components are unavailable.</div>';
+        return;
+      }
 
+      const toneBySlug = {
+        'geometry-live': 'green',
+        'buffon-needle': 'yellow',
+        'fourier-lab': 'indigo',
+        'neural-lab': 'orange',
+        chess: 'magenta'
+      };
+
+      const cardItems = apps.map((app) => {
         const directLink = appendParams(app.launchPath, {
           mode: app.launchPath.includes('mode=') ? undefined : 'client'
         });
 
-        card.innerHTML = `
-          <div class="title">${app.title}</div>
-          <div class="muted">${app.description}</div>
-          <div class="slug">${app.slug}</div>
-          <div class="btn-row">
-            <button class="open" type="button">Άνοιγμα με σύνδεση</button>
-            <a class="direct" href="${directLink}">Direct link (disconnected)</a>
-          </div>
-        `;
+        return {
+          id: app.slug,
+          slug: app.slug,
+          tone: toneBySlug[app.slug],
+          title: app.title,
+          eyebrow: app.slug,
+          description: app.description,
+          actions: [
+            { kind: 'button', label: 'Άνοιγμα με σύνδεση', action: 'open-connected' },
+            { kind: 'link', label: 'Direct link (disconnected)', href: directLink, variant: 'secondary' }
+          ]
+        };
+      });
 
-        card.querySelector('button').addEventListener('click', () => openAppConnected(app));
-        appGrid.appendChild(card);
+      window.PostitCards.renderAppCards(appGrid, cardItems, (item, action) => {
+        if (!item || !action || action.action !== 'open-connected') return;
+        const app = apps.find((a) => a.slug === item.slug);
+        if (app) openAppConnected(app);
       });
     }
 
@@ -323,5 +341,6 @@
 
     init();
   </script>
+  <script src="/js/language-switcher-react.js"></script>
 </body>
 </html>

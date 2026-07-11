@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Strobe | Entry</title>
   <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <link rel="stylesheet" type="text/css" href="css/postit-cards.css">
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="/js/postit-cards-react.js"></script>
 </head>
 <body>
   <div class="status-badge">
@@ -18,46 +22,7 @@
             <p>Χωρίς login. Επέλεξε πού θέλεις να μπεις.</p>
         </div>
 
-        <div class="roles">
-            <div class="role-card" onclick="goTo('/teacher')">
-                <span class="role-icon">👨‍🏫</span>
-                <div class="role-title">Teacher Dashboard</div>
-                <div class="role-description">
-                    Εκκίνηση εφαρμογών σε teacher mode και διαχείριση δραστηριοτήτων ανά app.
-                </div>
-                <ul class="role-features">
-                    <li>Λίστα εφαρμογών</li>
-                    <li>Αποθήκευση/φόρτωση δραστηριοτήτων</li>
-                    <li>Παρακολούθηση τάξης</li>
-                </ul>
-            </div>
-
-            <div class="role-card" onclick="goTo('/student')">
-                <span class="role-icon">🧑‍🎓</span>
-                <div class="role-title">Student Launcher</div>
-                <div class="role-description">
-                    Επιλογή app και ονόματος σύνδεσης. Το launcher μεταφέρει το όνομα στην εφαρμογή.
-                </div>
-                <ul class="role-features">
-                    <li>Εισαγωγή ονόματος σύνδεσης</li>
-                    <li>Άνοιγμα app με auto-connect</li>
-                    <li>Direct links για disconnected δοκιμή</li>
-                </ul>
-            </div>
-
-            <div class="role-card" onclick="goTo('/tools')">
-                <span class="role-icon">🧰</span>
-                <div class="role-title">Tools</div>
-                <div class="role-description">
-                    Συγκεντρωμένη είσοδος για τα εργαλεία Geometry Direct, Camera Speed Test και Linear Seperation.
-                </div>
-                <ul class="role-features">
-                    <li>Geometry Direct</li>
-                    <li>Camera Speed Test</li>
-                    <li>Linear Seperation</li>
-                </ul>
-            </div>
-        </div>
+        <div id="roleCardsRoot"></div>
 
         <div class="info-section">
             <h2>Flow</h2>
@@ -98,7 +63,45 @@
             window.location.href = path;
         }
 
+        function renderRoleCards() {
+            const mountNode = document.getElementById('roleCardsRoot');
+            if (!mountNode || !window.PostitCards) return;
+
+            const cards = [
+                {
+                    id: 'teacher',
+                    href: '/teacher',
+                    icon: '👨‍🏫',
+                    tone: 'indigo',
+                    title: 'Teacher Dashboard',
+                    description: 'Εκκίνηση εφαρμογών σε teacher mode και διαχείριση δραστηριοτήτων ανά app.',
+                    features: ['Λίστα εφαρμογών', 'Αποθήκευση/φόρτωση δραστηριοτήτων', 'Παρακολούθηση τάξης']
+                },
+                {
+                    id: 'student',
+                    href: '/student',
+                    icon: '🧑‍🎓',
+                    tone: 'orange',
+                    title: 'Student Launcher',
+                    description: 'Επιλογή app και ονόματος σύνδεσης. Το launcher μεταφέρει το όνομα στην εφαρμογή.',
+                    features: ['Εισαγωγή ονόματος σύνδεσης', 'Άνοιγμα app με auto-connect', 'Direct links για disconnected δοκιμή']
+                },
+                {
+                    id: 'tools',
+                    href: '/tools',
+                    icon: '🧰',
+                    tone: 'green',
+                    title: 'Tools',
+                    description: 'Συγκεντρωμένη είσοδος για τα εργαλεία Geometry Direct, Camera Speed Test και Linear Seperation.',
+                    features: ['Geometry Direct', 'Camera Speed Test', 'Linear Seperation']
+                }
+            ];
+
+            window.PostitCards.renderRoleCards(mountNode, cards);
+        }
+
         checkServer();
+        renderRoleCards();
         setInterval(checkServer, 5000);
 
         document.addEventListener('keydown', (event) => {
@@ -107,5 +110,6 @@
             if (event.key === '3') goTo('/tools');
         });
     </script>
+    <script src="/js/language-switcher-react.js"></script>
 </body>
 </html>

@@ -1,0 +1,20 @@
+{
+  "ok": "OK",
+  "cancel": "Cancel",
+  "save": "Save",
+  "close": "Close",
+  "loading": "Loading...",
+  "home": "Home",
+  "teacher": "Teacher",
+  "student": "Student",
+  "settings": "Settings",
+  "language": "Language",
+  "greek": "Greek",
+  "english": "English",
+  "input": "Input",
+  "notAvailable": "Not available",
+  "status": "Status",
+  "username": "Username",
+  "connected": "Connected",
+  "disconnected": "Disconnected"
+}

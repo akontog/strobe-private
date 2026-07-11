@@ -15,6 +15,8 @@ const crypto = require('crypto');
 class UserManager {
     constructor() {
         this.users = new Map();
+        this.lastHeartbeatPersist = new Map();
+        this.lastSaveErrorAt = 0;
         this.dataDir = path.join(__dirname, '..', 'data');
         this.usersFile = path.join(this.dataDir, 'users.json');
         
@@ -75,7 +77,14 @@ class UserManager {
         const session = this.users.get(sessionId);
         if (session) {
             session.lastActivity = new Date().toISOString();
-            this.saveToFile();
+
+            // Avoid writing to disk on every single request heartbeat.
+            const now = Date.now();
+            const lastPersist = this.lastHeartbeatPersist.get(sessionId) || 0;
+            if ((now - lastPersist) >= 30 * 1000) {
+                this.lastHeartbeatPersist.set(sessionId, now);
+                this.saveToFile();
+            }
         }
         return session || null;
     }
@@ -148,6 +157,7 @@ class UserManager {
     deleteSession(sessionId) {
         const deleted = this.users.delete(sessionId);
         if (deleted) {
+            this.lastHeartbeatPersist.delete(sessionId);
             this.saveToFile();
         }
         return deleted;
@@ -221,6 +231,7 @@ class UserManager {
             const lastActivity = new Date(session.lastActivity);
             if (lastActivity < cutoff) {
                 this.users.delete(sessionId);
+                this.lastHeartbeatPersist.delete(sessionId);
                 cleaned++;
             }
         }
@@ -246,14 +257,30 @@ class UserManager {
      */
     saveToFile() {
         try {
-            const data = Array.from(this.users.entries());
-            fs.writeFileSync(
-                this.usersFile,
-                JSON.stringify(data, null, 2),
-                'utf-8'
-            );
+            if (!fs.existsSync(this.dataDir)) {
+                fs.mkdirSync(this.dataDir, { recursive: true });
+            }
+
+            const data = JSON.stringify(Array.from(this.users.entries()), null, 2);
+            const tempFile = `${this.usersFile}.tmp`;
+
+            // Write to temp first, then atomically replace target.
+            fs.writeFileSync(tempFile, data, 'utf-8');
+            fs.renameSync(tempFile, this.usersFile);
         } catch (error) {
-            console.error('Error saving users to file:', error);
+            // OneDrive/Windows can transiently lock files. Keep runtime healthy and limit log spam.
+            const now = Date.now();
+            if ((now - this.lastSaveErrorAt) > 30 * 1000) {
+                this.lastSaveErrorAt = now;
+                console.warn('Warning: users persistence temporarily unavailable:', error && error.message ? error.message : error);
+            }
+
+            try {
+                // Fallback attempt for environments where rename can fail under sync/lock pressure.
+                fs.writeFileSync(this.usersFile, JSON.stringify(Array.from(this.users.entries()), null, 2), 'utf-8');
+            } catch (_) {
+                // Keep running; data remains in-memory and next save attempt may succeed.
+            }
         }
     }
 
@@ -295,6 +322,7 @@ class UserManager {
      */
     clearAll() {
         this.users.clear();
+        this.lastHeartbeatPersist.clear();
         try {
             fs.unlinkSync(this.usersFile);
         } catch (e) {}

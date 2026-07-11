@@ -2,10 +2,17 @@
   "name": "strobe-unified-server",
   "version": "1.0.0",
   "private": true,
-  "main": "server.js",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "main": "server/server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
+    "start": "npm run start --workspace server",
+    "dev": "npm run dev --workspace server",
+    "start:server": "npm run start --workspace server",
+    "start:client": "npm run dev --workspace client",
+    "build:client": "npm run build --workspace client",
     "build:neural-lab": "npm run build:neural-lab:teacher && npm run build:neural-lab:student",
     "build:neural-lab:teacher": "esbuild apps/neural-lab/teacher.jsx --bundle --format=esm --outfile=apps/neural-lab/teacher.bundle.js --loader:.jsx=jsx --loader:.css=css",
     "build:neural-lab:student": "esbuild apps/neural-lab/student.jsx --bundle --format=esm --outfile=apps/neural-lab/student.bundle.js --loader:.jsx=jsx --loader:.css=css",

@@ -1,0 +1,157 @@
+/* Shared sticky-note cards for role/app surfaces */
+:root {
+  --strobe-violet: #794287;
+  --strobe-indigo: #3b3fba;
+  --strobe-magenta: #b44655;
+  --strobe-red: #f04923;
+  --strobe-orange: #f57117;
+  --strobe-amber: #fa980c;
+  --strobe-yellow: #ffbf00;
+  --strobe-green: #31c94a;
+  --strobe-blue: #1d78d6;
+}
+
+.postit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.strobe-note {
+  --note-bg: var(--strobe-blue);
+  --note-text: #fff;
+  --note-pin: rgba(0, 0, 0, 0.16);
+  --note-fold-light: rgba(255, 255, 255, 0.9);
+  --note-fold-dark: rgba(0, 0, 0, 0.12);
+  position: relative;
+  border-radius: 14px;
+  min-height: 220px;
+  padding: 26px 24px 20px;
+  color: var(--note-text);
+  background:
+    radial-gradient(circle at 22% 18%, rgba(255, 255, 255, 0.2), transparent 46%),
+    linear-gradient(145deg, color-mix(in srgb, var(--note-bg) 88%, #fff 12%), var(--note-bg));
+  box-shadow:
+    0 14px 30px rgba(17, 24, 39, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  transform-origin: center;
+  transition: transform 0.24s ease, box-shadow 0.24s ease;
+  overflow: hidden;
+}
+
+.strobe-note::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 84px;
+  height: 84px;
+  background: linear-gradient(135deg, var(--note-fold-dark), var(--note-fold-light));
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+  box-shadow: -6px 8px 12px rgba(15, 23, 42, 0.2);
+}
+
+.strobe-note::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.strobe-note.is-clickable {
+  cursor: pointer;
+}
+
+.strobe-note.is-clickable:hover {
+  transform: translateY(-7px) rotate(-0.8deg);
+  box-shadow:
+    0 20px 38px rgba(17, 24, 39, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.strobe-note.is-clickable:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.84);
+  outline-offset: 2px;
+}
+
+.strobe-note--violet { --note-bg: var(--strobe-violet); }
+.strobe-note--indigo { --note-bg: var(--strobe-indigo); }
+.strobe-note--magenta { --note-bg: var(--strobe-magenta); }
+.strobe-note--red { --note-bg: var(--strobe-red); }
+.strobe-note--orange { --note-bg: var(--strobe-orange); }
+.strobe-note--amber { --note-bg: var(--strobe-amber); }
+.strobe-note--yellow {
+  --note-bg: var(--strobe-yellow);
+  --note-text: #1f2937;
+}
+.strobe-note--green { --note-bg: var(--strobe-green); }
+.strobe-note--blue { --note-bg: var(--strobe-blue); }
+
+.strobe-note .role-icon {
+  font-size: 2.35rem;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+.strobe-note .role-title,
+.strobe-note .app-title {
+  margin: 0;
+  font-size: 1.24rem;
+  line-height: 1.25;
+  font-weight: 800;
+}
+
+.strobe-note .role-description,
+.strobe-note .app-desc {
+  margin-top: 10px;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  opacity: 0.96;
+}
+
+.strobe-note .role-features {
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 7px;
+}
+
+.strobe-note .role-features li {
+  position: relative;
+  padding-left: 19px;
+  font-size: 0.92rem;
+}
+
+.strobe-note .role-features li::before {
+  content: "•";
+  position: absolute;
+  left: 3px;
+  top: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.strobe-note .app-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: start;
+  flex-wrap: wrap;
+}
+
+.strobe-note .app-head .muted {
+  opacity: 0.86;
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+}
+
+.strobe-note .btn-row {
+  margin-top: 12px;
+}

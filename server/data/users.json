@@ -1,0 +1,34 @@
+[
+  [
+    "e2e5f1a3-457e-4cb2-9f02-eec292f70b2e",
+    {
+      "sessionId": "e2e5f1a3-457e-4cb2-9f02-eec292f70b2e",
+      "userId": "user_1783679846444_ekk1tiqry",
+      "createdAt": "2026-07-10T10:37:26.444Z",
+      "lastActivity": "2026-07-10T10:37:26.461Z",
+      "apps": {
+        "geometry-live": {
+          "active": false,
+          "data": {}
+        },
+        "fourier-lab": {
+          "active": false,
+          "data": {},
+          "currentSlide": 0
+        },
+        "buffon-needle": {
+          "active": false,
+          "data": {},
+          "score": 0
+        },
+        "neural-lab": {
+          "active": false,
+          "data": {}
+        }
+      },
+      "metadata": {
+        "role": "student"
+      }
+    }
+  ]
+]
