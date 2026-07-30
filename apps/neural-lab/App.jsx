@@ -7,6 +7,7 @@ import { ExamplesClassifier } from './components/ExamplesClassifier';
 import { ActivitiesMenu, getNeuralActivityTitle } from './components/ActivitiesMenu';
 import { StudentQrAccordion } from './components/StudentQrAccordion';
 import { Accordion } from '../shared/components/Accordion';
+import { ConnectionNameControl } from '../shared-components/components';
 import DATASETS from './data/datasets';
 //import { StudentTable } from '../shared/components/StudentTable';
 import './App.css';
@@ -717,36 +718,23 @@ const saveStudentName = () => {
 
   return (
     <TeacherCard title={heroTitle}>
-      <div className="connection-status">
-        <span className={`status-dot ${isSocketConnected ? 'online' : 'offline'}`}></span>
-        <strong>{isSocketConnected ? 'Σε σύνδεση' : 'Εκτός σύνδεσης'}</strong>
-        {/*isStudent && <span>όνομα: {studentName}</span>*/}
-        {isStudent && (
-        editingName ? (
-          <input
-            autoFocus
-            value={studentNameInput}
-            onChange={(e) => setStudentNameInput(e.target.value)}
-            onBlur={saveStudentName}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') saveStudentName();
-              if (e.key === 'Escape') {
-                setStudentNameInput(studentName);
-                setEditingName(false);
-              }
-            }}
-          />
-        ) : (
-          <span
-            style={{ cursor: 'pointer', textDecoration: 'underline' }}
-            onClick={() => setEditingName(true)}
-          >
-            όνομα: {studentName}
-          </span>
-        )
-      )}
-        {!isStudent && <span>συνδεδεμένοι: {roster.length}</span>}
-      </div>
+      <ConnectionNameControl
+        connected={isSocketConnected}
+        name={isStudent ? studentName : `συνδεδεμένοι: ${roster.length}`}
+        editing={isStudent && editingName}
+        value={studentNameInput}
+        onChange={setStudentNameInput}
+        onStartEdit={() => isStudent && setEditingName(true)}
+        onCommit={saveStudentName}
+        onCancel={() => {
+          setStudentNameInput(studentName);
+          setEditingName(false);
+        }}
+        connectedLabel="Σε σύνδεση"
+        disconnectedLabel="Εκτός σύνδεσης"
+        namePrefix="όνομα"
+        showNameLabel={isStudent}
+      />
 
       {isScreen && (
         <>

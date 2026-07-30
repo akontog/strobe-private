@@ -1332,7 +1332,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React8 = require_react(), Internals = {
+      var React11 = require_react(), Internals = {
         d: {
           f: noop,
           r: function() {
@@ -1350,7 +1350,7 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React8.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React11.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
@@ -2885,7 +2885,7 @@ var require_react_dom_client_development = __commonJS({
         "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React8.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React11.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -18517,14 +18517,14 @@ var require_react_dom_client_development = __commonJS({
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React8 = require_react(), ReactDOM2 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React11 = require_react(), ReactDOM2 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
       /* @__PURE__ */ Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
       /* @__PURE__ */ Symbol.for("react.legacy_hidden");
       /* @__PURE__ */ Symbol.for("react.tracing_marker");
       var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
       /* @__PURE__ */ Symbol.for("react.view_transition");
-      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React8.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React11.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -21312,7 +21312,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React8.version;
+        var isomorphicReactPackageVersion = React11.version;
         if ("19.2.7" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.7\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21453,11 +21453,11 @@ var require_client = __commonJS({
 });
 
 // apps/primes-lab/student.jsx
-var import_react7 = __toESM(require_react());
+var import_react10 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // apps/primes-lab/App.jsx
-var import_react6 = __toESM(require_react());
+var import_react9 = __toESM(require_react());
 
 // apps/primes-lab/components/Accordion.jsx
 var import_react = __toESM(require_react());
@@ -21475,11 +21475,16 @@ var NumberGrid = ({
   correctOwnerByNumber,
   wrongSelectionsByNumber,
   activeStudentId,
+  mode = "teacher",
   onToggleNumber,
   readonly = false
 }) => {
   const primeSet = primeNumbers instanceof Set ? primeNumbers : new Set(primeNumbers);
-  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "prime-grid", role: "grid", "aria-label": "\u03A0\u03AF\u03BD\u03B1\u03BA\u03B1\u03C2 \u03B1\u03C1\u03B9\u03B8\u03BC\u03CE\u03BD \u03B1\u03C0\u03CC \u03C4\u03BF 2 \u03AD\u03C9\u03C2 \u03C4\u03BF 100" }, numbers.map((number) => {
+  const items = [null, ...numbers];
+  return /* @__PURE__ */ import_react2.default.createElement("div", { className: "prime-grid", role: "grid", "aria-label": "\u03A0\u03AF\u03BD\u03B1\u03BA\u03B1\u03C2 \u03B1\u03C1\u03B9\u03B8\u03BC\u03CE\u03BD \u03B1\u03C0\u03CC \u03C4\u03BF 2 \u03AD\u03C9\u03C2 \u03C4\u03BF 100" }, items.map((number, index) => {
+    if (number === null) {
+      return /* @__PURE__ */ import_react2.default.createElement("div", { key: "blank", className: "prime-grid__cell prime-grid__cell--blank", "aria-hidden": "true" });
+    }
     const isCurrentPrime = number === currentPrime;
     const isPrime = primeSet.has(number);
     const isTarget = number > currentPrime && number % currentPrime === 0;
@@ -21489,13 +21494,19 @@ var NumberGrid = ({
     const isLockedByActiveStudent = ownerId === activeStudentId;
     const isWrong = wrongOwners.length > 0;
     const isComposite = number > 1 && !isPrime;
+    const teacherLocked = mode === "teacher" && isLocked;
+    const studentOwnCorrect = mode === "student" && isLockedByActiveStudent;
+    const studentOtherCorrect = mode === "student" && isLocked && !isLockedByActiveStudent;
+    const studentWrong = mode === "student" && isWrong && !isLocked;
+    const ownerLabel = ownerId ? ownerId.replace("student-", "\u03A3") : "";
     const classNames = [
       "prime-grid__cell",
+      teacherLocked ? "is-teacher-locked" : "",
       isCurrentPrime ? "is-current-prime" : "",
-      isTarget ? "is-target" : "",
-      isLocked ? "is-locked" : "",
-      isLockedByActiveStudent ? "is-locked-by-me" : "",
-      isWrong ? "is-wrong" : "",
+      mode === "teacher" && isLocked ? "is-locked" : "",
+      studentOwnCorrect ? "is-owned-correct" : "",
+      studentOtherCorrect ? "is-other-correct" : "",
+      studentWrong ? "is-owned-wrong" : "",
       isPrime ? "is-prime" : "",
       isComposite ? "is-composite" : ""
     ].filter(Boolean).join(" ");
@@ -21510,12 +21521,12 @@ var NumberGrid = ({
             onToggleNumber(number);
           }
         },
-        "aria-pressed": isLockedByActiveStudent || isWrong,
-        disabled: isLocked && !isLockedByActiveStudent,
-        title: isLocked && !isLockedByActiveStudent ? `${number} \u03AD\u03C7\u03B5\u03B9 \u03AE\u03B4\u03B7 \u03BA\u03BB\u03B5\u03B9\u03B4\u03CE\u03C3\u03B5\u03B9 \u03B1\u03C0\u03CC \u03AC\u03BB\u03BB\u03BF\u03BD \u03BC\u03B1\u03B8\u03B7\u03C4\u03AE` : isTarget ? `${number} \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C0\u03BF\u03BB\u03BB\u03B1\u03C0\u03BB\u03AC\u03C3\u03B9\u03BF \u03C4\u03BF\u03C5 ${currentPrime}` : `\u0391\u03C1\u03B9\u03B8\u03BC\u03CC\u03C2 ${number}`
+        "aria-pressed": studentOwnCorrect || studentWrong || teacherLocked,
+        disabled: mode === "student" && isLocked && !isLockedByActiveStudent || readonly,
+        title: mode === "teacher" && isLocked ? `${number} \u03AD\u03C7\u03B5\u03B9 \u03BA\u03BB\u03B5\u03B9\u03B4\u03C9\u03B8\u03B5\u03AF \u03B1\u03C0\u03CC ${ownerLabel}` : mode === "student" && isLocked && !isLockedByActiveStudent ? `${number} \u03AD\u03C7\u03B5\u03B9 \u03AE\u03B4\u03B7 \u03BA\u03BB\u03B5\u03B9\u03B4\u03CE\u03C3\u03B5\u03B9 \u03B1\u03C0\u03CC \u03AC\u03BB\u03BB\u03BF\u03BD \u03BC\u03B1\u03B8\u03B7\u03C4\u03AE` : isTarget ? `${number} \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C0\u03BF\u03BB\u03BB\u03B1\u03C0\u03BB\u03AC\u03C3\u03B9\u03BF \u03C4\u03BF\u03C5 ${currentPrime}` : `\u0391\u03C1\u03B9\u03B8\u03BC\u03CC\u03C2 ${number}`
       },
       /* @__PURE__ */ import_react2.default.createElement("span", { className: "prime-grid__number" }, number),
-      /* @__PURE__ */ import_react2.default.createElement("span", { className: "prime-grid__badge" }, isCurrentPrime ? "\u03B2\u03AC\u03C3\u03B7" : isLockedByActiveStudent ? "\u03BA\u03BB\u03B5\u03B9\u03B4\u03C9\u03BC\u03AD\u03BD\u03BF" : isLocked ? "\u03AD\u03C7\u03B5\u03B9 \u03B2\u03C1\u03B5\u03B8\u03B5\u03AF" : isWrong ? "\u03BB\u03AC\u03B8\u03BF\u03C2" : isTarget ? "\u03C3\u03C4\u03CC\u03C7\u03BF\u03C2" : isPrime ? "\u03C0\u03C1\u03CE\u03C4\u03BF\u03C2" : "\u03B5\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE")
+      mode === "teacher" && ownerId ? /* @__PURE__ */ import_react2.default.createElement("span", { className: "prime-grid__owner" }, ownerLabel) : null
     );
   }));
 };
@@ -21589,6 +21600,50 @@ var TeacherPanel = ({
 };
 var TeacherPanel_default = TeacherPanel;
 
+// apps/shared-components/components/BlueNumberBox.jsx
+var import_react6 = __toESM(require_react());
+
+// apps/shared-components/components/Toolbar.jsx
+var import_react7 = __toESM(require_react());
+
+// apps/shared-components/components/ConnectionNameControl.jsx
+var import_react8 = __toESM(require_react());
+var ConnectionNameControl = ({
+  connected = true,
+  name,
+  editing = false,
+  value = "",
+  onChange,
+  onStartEdit,
+  onCommit,
+  onCancel,
+  connectedLabel = "\u03A3\u03B5 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7",
+  disconnectedLabel = "\u0395\u03BA\u03C4\u03CC\u03C2 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7\u03C2",
+  namePrefix = "\u03CC\u03BD\u03BF\u03BC\u03B1 \u03C7\u03C1\u03AE\u03C3\u03C4\u03B7",
+  showNameLabel = true,
+  className = ""
+}) => {
+  return /* @__PURE__ */ import_react8.default.createElement("div", { className: `connection-name-control ${className}`.trim() }, /* @__PURE__ */ import_react8.default.createElement("span", { className: `connection-name-control__dot ${connected ? "online" : "offline"}` }), /* @__PURE__ */ import_react8.default.createElement("strong", { className: "connection-name-control__status" }, connected ? connectedLabel : disconnectedLabel), editing ? /* @__PURE__ */ import_react8.default.createElement(
+    "input",
+    {
+      autoFocus: true,
+      className: "connection-name-control__input",
+      value,
+      onChange: (event) => onChange?.(event.target.value),
+      onBlur: onCommit,
+      onKeyDown: (event) => {
+        if (event.key === "Enter") {
+          onCommit?.();
+        }
+        if (event.key === "Escape") {
+          onCancel?.();
+        }
+      }
+    }
+  ) : showNameLabel ? /* @__PURE__ */ import_react8.default.createElement("button", { type: "button", className: "connection-name-control__name", onClick: onStartEdit }, namePrefix, ": ", name || "\u2014") : null);
+};
+var ConnectionNameControl_default = ConnectionNameControl;
+
 // apps/primes-lab/data/primes.js
 var NUMBER_RANGE = Array.from({ length: 99 }, (_, index) => index + 2);
 var PRIME_NUMBERS = NUMBER_RANGE.filter((number) => {
@@ -21635,12 +21690,22 @@ var isPrimeNumber = (number) => {
 };
 var App = ({ role = "teacher" }) => {
   const isTeacher = role === "teacher";
-  const [currentPrime, setCurrentPrime] = (0, import_react6.useState)(INITIAL_PRIME);
-  const [students, setStudents] = (0, import_react6.useState)(createInitialStudents);
-  const [activeStudentId, setActiveStudentId] = (0, import_react6.useState)(STUDENT_DEFS[0].id);
-  const [message, setMessage] = (0, import_react6.useState)("\u0394\u03B9\u03AC\u03BB\u03B5\u03BE\u03B5 \u03BC\u03B9\u03B1 \u03B2\u03AC\u03C3\u03B7 \u03BA\u03B1\u03B9 \u03BE\u03B5\u03BA\u03AF\u03BD\u03B1 \u03C4\u03BF \u03BA\u03CC\u03C3\u03BA\u03B9\u03BD\u03BF.");
+  const [currentPrime, setCurrentPrime] = (0, import_react9.useState)(INITIAL_PRIME);
+  const [students, setStudents] = (0, import_react9.useState)(createInitialStudents);
+  const [activeStudentId, setActiveStudentId] = (0, import_react9.useState)(STUDENT_DEFS[0].id);
+  const [studentName, setStudentName] = (0, import_react9.useState)(() => {
+    try {
+      return localStorage.getItem("strobeStudentConnectName") || "\u039C\u03B1\u03C1\u03AF\u03B1";
+    } catch {
+      return "\u039C\u03B1\u03C1\u03AF\u03B1";
+    }
+  });
+  const [editingName, setEditingName] = (0, import_react9.useState)(false);
+  const [studentNameInput, setStudentNameInput] = (0, import_react9.useState)(studentName);
+  const [message, setMessage] = (0, import_react9.useState)("\u0394\u03B9\u03AC\u03BB\u03B5\u03BE\u03B5 \u03BC\u03B9\u03B1 \u03B2\u03AC\u03C3\u03B7 \u03BA\u03B1\u03B9 \u03BE\u03B5\u03BA\u03AF\u03BD\u03B1 \u03C4\u03BF \u03BA\u03CC\u03C3\u03BA\u03B9\u03BD\u03BF.");
   const activeStudent = students.find((student) => student.id === activeStudentId) || students[0];
-  const correctOwnerByNumber = (0, import_react6.useMemo)(() => {
+  const viewerName = isTeacher ? activeStudent?.name || "\u2014" : studentName;
+  const correctOwnerByNumber = (0, import_react9.useMemo)(() => {
     const ownerMap = {};
     students.forEach((student) => {
       student.selectedCorrect.forEach((number) => {
@@ -21649,7 +21714,7 @@ var App = ({ role = "teacher" }) => {
     });
     return ownerMap;
   }, [students]);
-  const wrongSelectionsByNumber = (0, import_react6.useMemo)(() => {
+  const wrongSelectionsByNumber = (0, import_react9.useMemo)(() => {
     const selectionMap = {};
     students.forEach((student) => {
       student.selectedWrong.forEach((number) => {
@@ -21661,23 +21726,23 @@ var App = ({ role = "teacher" }) => {
     });
     return selectionMap;
   }, [students]);
-  const claimedNumbers = (0, import_react6.useMemo)(
+  const claimedNumbers = (0, import_react9.useMemo)(
     () => new Set(Object.keys(correctOwnerByNumber).map(Number)),
     [correctOwnerByNumber]
   );
-  const currentTargetNumbers = (0, import_react6.useMemo)(
+  const currentTargetNumbers = (0, import_react9.useMemo)(
     () => NUMBER_RANGE.filter((number) => number > currentPrime && number % currentPrime === 0),
     [currentPrime]
   );
-  const remainingTargetNumbers = (0, import_react6.useMemo)(
+  const remainingTargetNumbers = (0, import_react9.useMemo)(
     () => currentTargetNumbers.filter((number) => !claimedNumbers.has(number)),
     [currentTargetNumbers, claimedNumbers]
   );
-  const nextPrime = (0, import_react6.useMemo)(
+  const nextPrime = (0, import_react9.useMemo)(
     () => PRIME_NUMBERS.find((prime) => prime > currentPrime),
     [currentPrime]
   );
-  const progress = (0, import_react6.useMemo)(() => {
+  const progress = (0, import_react9.useMemo)(() => {
     const solved = SIEVE_STEPS.filter((step) => step.multiples.every((number) => claimedNumbers.has(number)));
     const remaining = NUMBER_RANGE.filter((number) => !claimedNumbers.has(number));
     const wrongTotal = students.reduce((sum, student) => sum + student.selectedWrong.length, 0);
@@ -21691,6 +21756,24 @@ var App = ({ role = "teacher" }) => {
   const handleSelectPrime = (prime) => {
     setCurrentPrime(prime);
     setMessage(`\u03A4\u03CE\u03C1\u03B1 \u03B4\u03BF\u03C5\u03BB\u03B5\u03CD\u03BF\u03C5\u03BC\u03B5 \u03BC\u03B5 \u03C4\u03B7 \u03B2\u03AC\u03C3\u03B7 ${prime}. \u03A4\u03B1 \u03C0\u03BF\u03BB\u03BB\u03B1\u03C0\u03BB\u03AC\u03C3\u03B9\u03AC \u03C4\u03B7\u03C2 \u03C6\u03C9\u03C4\u03AF\u03B6\u03BF\u03BD\u03C4\u03B1\u03B9 \u03C3\u03C4\u03BF\u03BD \u03C0\u03AF\u03BD\u03B1\u03BA\u03B1.`);
+  };
+  const saveStudentName = () => {
+    const nextName = studentNameInput.trim();
+    if (!nextName) {
+      setStudentNameInput(studentName);
+      setEditingName(false);
+      return;
+    }
+    try {
+      localStorage.setItem("strobeStudentConnectName", nextName);
+    } catch {
+    }
+    setStudentName(nextName);
+    setStudentNameInput(nextName);
+    setStudents(
+      (previousStudents) => previousStudents.map((student) => student.id === activeStudentId ? { ...student, name: nextName } : student)
+    );
+    setEditingName(false);
   };
   const updateStudent = (studentId, updater) => {
     setStudents(
@@ -21718,7 +21801,7 @@ var App = ({ role = "teacher" }) => {
         ...student,
         selectedCorrect: [...student.selectedCorrect, number]
       }));
-      setMessage(`${activeStudent?.name || "\u039F \u03BC\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2"} \u03BA\u03BB\u03B5\u03AF\u03B4\u03C9\u03C3\u03B5 \u03C3\u03C9\u03C3\u03C4\u03AC \u03C4\u03BF ${number}.`);
+      setMessage(`${viewerName || "\u039F \u03BC\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2"} \u03BA\u03BB\u03B5\u03AF\u03B4\u03C9\u03C3\u03B5 \u03C3\u03C9\u03C3\u03C4\u03AC \u03C4\u03BF ${number}.`);
       return;
     }
     updateStudent(activeStudentId, (student) => {
@@ -21728,10 +21811,30 @@ var App = ({ role = "teacher" }) => {
         selectedWrong: hasNumber ? student.selectedWrong.filter((item) => item !== number) : [...student.selectedWrong, number]
       };
     });
-    setMessage(`${activeStudent?.name || "\u039F \u03BC\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2"} \u03C3\u03B7\u03BC\u03B5\u03AF\u03C9\u03C3\u03B5 \u03C4\u03BF ${number} \u03C9\u03C2 \u03BB\u03AC\u03B8\u03BF\u03C2 \u03B5\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE.`);
+    setMessage(`${viewerName || "\u039F \u03BC\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2"} \u03C3\u03B7\u03BC\u03B5\u03AF\u03C9\u03C3\u03B5 \u03C4\u03BF ${number} \u03C9\u03C2 \u03BB\u03AC\u03B8\u03BF\u03C2 \u03B5\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE.`);
   };
   const visibleStudents = isTeacher ? students : students.slice(0, 1);
-  return /* @__PURE__ */ import_react6.default.createElement("div", { className: isTeacher ? "primes-app is-teacher" : "primes-app is-student" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "teacher-card primes-card" }, /* @__PURE__ */ import_react6.default.createElement("header", { className: "hero-title primes-hero" }, /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("p", { className: "primes-kicker" }, "Sieve of Eratosthenes"), /* @__PURE__ */ import_react6.default.createElement("h1", null, "\u039A\u03CC\u03C3\u03BA\u03B9\u03BD\u03BF \u03C4\u03BF\u03C5 \u0395\u03C1\u03B1\u03C4\u03BF\u03C3\u03B8\u03AD\u03BD\u03B7"), /* @__PURE__ */ import_react6.default.createElement("p", { className: "primes-subtitle" }, "\u0391\u03C0\u03CC \u03C4\u03BF 2 \u03AD\u03C9\u03C2 \u03C4\u03BF 100, \u03BF\u03B9 \u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2 \u03B1\u03BD\u03B1\u03BA\u03B1\u03BB\u03CD\u03C0\u03C4\u03BF\u03C5\u03BD \u03C0\u03BF\u03B9\u03BF\u03B9 \u03B1\u03C1\u03B9\u03B8\u03BC\u03BF\u03AF \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C0\u03BF\u03BB\u03BB\u03B1\u03C0\u03BB\u03AC\u03C3\u03B9\u03B1 \u03BA\u03B1\u03B9 \u03C0\u03BF\u03B9\u03BF\u03B9 \u03BC\u03AD\u03BD\u03BF\u03C5\u03BD \u03C9\u03C2 \u03C0\u03C1\u03CE\u03C4\u03BF\u03B9.")), /* @__PURE__ */ import_react6.default.createElement("div", { className: "primes-status" }, /* @__PURE__ */ import_react6.default.createElement("span", null, "\u03A1\u03CC\u03BB\u03BF\u03C2"), /* @__PURE__ */ import_react6.default.createElement("strong", null, isTeacher ? "teacher" : "student"), /* @__PURE__ */ import_react6.default.createElement("small", null, "\u0395\u03C0\u03CC\u03BC\u03B5\u03BD\u03B7 \u03B2\u03AC\u03C3\u03B7: ", nextPrime || "\u03C4\u03AD\u03BB\u03BF\u03C2"))), /* @__PURE__ */ import_react6.default.createElement("section", { className: "common-zone primes-board-zone" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "primes-board-header" }, /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("p", null, "\u039A\u03B5\u03BD\u03C4\u03C1\u03B9\u03BA\u03CC \u03C0\u03AC\u03BD\u03B5\u03BB"), /* @__PURE__ */ import_react6.default.createElement("h2", null, "\u0391\u03C1\u03B9\u03B8\u03BC\u03BF\u03AF 2 \u03AD\u03C9\u03C2 100")), /* @__PURE__ */ import_react6.default.createElement("div", { className: "primes-board-header__legend" }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "legend-item" }, /* @__PURE__ */ import_react6.default.createElement("i", { className: "legend-dot legend-dot--target" }), "\u03C3\u03C4\u03CC\u03C7\u03BF\u03C2"), /* @__PURE__ */ import_react6.default.createElement("span", { className: "legend-item" }, /* @__PURE__ */ import_react6.default.createElement("i", { className: "legend-dot legend-dot--eliminated" }), "\u03BA\u03BB\u03B5\u03B9\u03B4\u03C9\u03BC\u03AD\u03BD\u03BF"), /* @__PURE__ */ import_react6.default.createElement("span", { className: "legend-item" }, /* @__PURE__ */ import_react6.default.createElement("i", { className: "legend-dot legend-dot--prime" }), "\u03C0\u03C1\u03CE\u03C4\u03BF\u03C2"))), /* @__PURE__ */ import_react6.default.createElement(
+  return /* @__PURE__ */ import_react9.default.createElement("div", { className: isTeacher ? "primes-app is-teacher" : "primes-app is-student" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "teacher-card primes-card" }, /* @__PURE__ */ import_react9.default.createElement("header", { className: "hero-title primes-hero" }, /* @__PURE__ */ import_react9.default.createElement("div", null, /* @__PURE__ */ import_react9.default.createElement("p", { className: "primes-kicker" }, "Sieve of Eratosthenes"), /* @__PURE__ */ import_react9.default.createElement("h1", null, "\u039A\u03CC\u03C3\u03BA\u03B9\u03BD\u03BF \u03C4\u03BF\u03C5 \u0395\u03C1\u03B1\u03C4\u03BF\u03C3\u03B8\u03AD\u03BD\u03B7"), /* @__PURE__ */ import_react9.default.createElement("p", { className: "primes-subtitle" }, "\u0391\u03C0\u03CC \u03C4\u03BF 2 \u03AD\u03C9\u03C2 \u03C4\u03BF 100, \u03BF\u03B9 \u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2 \u03B1\u03BD\u03B1\u03BA\u03B1\u03BB\u03CD\u03C0\u03C4\u03BF\u03C5\u03BD \u03C0\u03BF\u03B9\u03BF\u03B9 \u03B1\u03C1\u03B9\u03B8\u03BC\u03BF\u03AF \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C0\u03BF\u03BB\u03BB\u03B1\u03C0\u03BB\u03AC\u03C3\u03B9\u03B1 \u03BA\u03B1\u03B9 \u03C0\u03BF\u03B9\u03BF\u03B9 \u03BC\u03AD\u03BD\u03BF\u03C5\u03BD \u03C9\u03C2 \u03C0\u03C1\u03CE\u03C4\u03BF\u03B9.")), /* @__PURE__ */ import_react9.default.createElement(
+    ConnectionNameControl_default,
+    {
+      connected: true,
+      name: viewerName,
+      editing: !isTeacher && editingName,
+      value: studentNameInput,
+      onChange: setStudentNameInput,
+      onStartEdit: () => !isTeacher && setEditingName(true),
+      onCommit: saveStudentName,
+      onCancel: () => {
+        setStudentNameInput(studentName);
+        setEditingName(false);
+      },
+      connectedLabel: isTeacher ? "\u03A3\u03B5 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7" : "\u03A3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03C2",
+      disconnectedLabel: "\u0395\u03BA\u03C4\u03CC\u03C2 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7\u03C2",
+      namePrefix: "\u03CC\u03BD\u03BF\u03BC\u03B1 \u03C7\u03C1\u03AE\u03C3\u03C4\u03B7",
+      showNameLabel: !isTeacher,
+      className: "primes-identity"
+    }
+  )), /* @__PURE__ */ import_react9.default.createElement("section", { className: "common-zone primes-board-zone primes-board-zone--compact" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "primes-board-header" }, /* @__PURE__ */ import_react9.default.createElement("div", null, /* @__PURE__ */ import_react9.default.createElement("p", null, "\u039A\u03B5\u03BD\u03C4\u03C1\u03B9\u03BA\u03CC \u03C0\u03AC\u03BD\u03B5\u03BB"), /* @__PURE__ */ import_react9.default.createElement("h2", null, "\u0391\u03C1\u03B9\u03B8\u03BC\u03BF\u03AF 2 \u03AD\u03C9\u03C2 100")), isTeacher ? /* @__PURE__ */ import_react9.default.createElement("div", { className: "primes-board-header__legend" }, /* @__PURE__ */ import_react9.default.createElement("span", { className: "legend-item" }, /* @__PURE__ */ import_react9.default.createElement("i", { className: "legend-dot legend-dot--eliminated" }), "\u03BA\u03BB\u03B5\u03B9\u03B4\u03C9\u03BC\u03AD\u03BD\u03BF"), /* @__PURE__ */ import_react9.default.createElement("span", { className: "legend-item" }, /* @__PURE__ */ import_react9.default.createElement("i", { className: "legend-dot legend-dot--prime" }), "\u03C0\u03C1\u03CE\u03C4\u03BF\u03C2")) : null), /* @__PURE__ */ import_react9.default.createElement(
     NumberGrid_default,
     {
       numbers: NUMBER_RANGE,
@@ -21740,9 +21843,11 @@ var App = ({ role = "teacher" }) => {
       correctOwnerByNumber,
       wrongSelectionsByNumber,
       activeStudentId,
-      onToggleNumber: handleToggleNumber
+      onToggleNumber: handleToggleNumber,
+      mode: isTeacher ? "teacher" : "student",
+      readonly: isTeacher
     }
-  )), /* @__PURE__ */ import_react6.default.createElement("section", { className: "primes-lower-grid" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "primes-lower-column" }, isTeacher ? /* @__PURE__ */ import_react6.default.createElement(
+  )), isTeacher ? /* @__PURE__ */ import_react9.default.createElement("section", { className: "primes-lower-grid" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "primes-lower-column" }, /* @__PURE__ */ import_react9.default.createElement(
     TeacherPanel_default,
     {
       currentPrime,
@@ -21752,7 +21857,7 @@ var App = ({ role = "teacher" }) => {
       activeStudentId,
       onSelectActiveStudent: setActiveStudentId
     }
-  ) : /* @__PURE__ */ import_react6.default.createElement(Accordion_default, { title: "\u039F\u03B4\u03B7\u03B3\u03AF\u03B5\u03C2 \u03BC\u03B1\u03B8\u03B7\u03C4\u03AE", subtitle: "\u03A4\u03B9 \u03BA\u03AC\u03BD\u03BF\u03C5\u03BC\u03B5 \u03C3\u03C4\u03BF \u03C4\u03C1\u03AD\u03C7\u03BF\u03BD \u03B2\u03AE\u03BC\u03B1", defaultOpen: true }, /* @__PURE__ */ import_react6.default.createElement("p", { className: "student-guide" }, "\u039F teacher \u03AD\u03C7\u03B5\u03B9 \u03BF\u03C1\u03AF\u03C3\u03B5\u03B9 \u03C4\u03B7 \u03B2\u03AC\u03C3\u03B7 ", /* @__PURE__ */ import_react6.default.createElement("strong", null, currentPrime), ". \u0392\u03C1\u03B5\u03C2 \u03BA\u03B1\u03B9 \u03C0\u03AC\u03C4\u03B1 \u03CC\u03BB\u03B1 \u03C4\u03B1 \u03C0\u03BF\u03BB\u03BB\u03B1\u03C0\u03BB\u03AC\u03C3\u03B9\u03B1 \u03C4\u03B7\u03C2 \u03C0\u03BF\u03C5 \u03B5\u03AF\u03BD\u03B1\u03B9 \u03BC\u03B5\u03B3\u03B1\u03BB\u03CD\u03C4\u03B5\u03C1\u03B1 \u03B1\u03C0\u03CC \u03C4\u03BF\u03BD \u03AF\u03B4\u03B9\u03BF \u03C4\u03BF\u03BD \u03B1\u03C1\u03B9\u03B8\u03BC\u03CC."), /* @__PURE__ */ import_react6.default.createElement("ul", { className: "teacher-panel__goals" }, /* @__PURE__ */ import_react6.default.createElement("li", null, "\u03A4\u03B1 \u03C3\u03C9\u03C3\u03C4\u03AC \u03C0\u03BF\u03BB\u03BB\u03B1\u03C0\u03BB\u03AC\u03C3\u03B9\u03B1 \u03BA\u03BB\u03B5\u03B9\u03B4\u03CE\u03BD\u03BF\u03C5\u03BD \u03B3\u03B9\u03B1 \u03CC\u03BB\u03B7 \u03C4\u03B7\u03BD \u03C4\u03AC\u03BE\u03B7."), /* @__PURE__ */ import_react6.default.createElement("li", null, "\u039F\u03B9 \u03C3\u03C9\u03C3\u03C4\u03AD\u03C2 \u03B5\u03C0\u03B9\u03BB\u03BF\u03B3\u03AD\u03C2 \u03B4\u03B5\u03BD \u03BC\u03C0\u03BF\u03C1\u03BF\u03CD\u03BD \u03BD\u03B1 \u03C4\u03B9\u03C2 \u03C0\u03AC\u03C1\u03BF\u03C5\u03BD \u03AC\u03BB\u03BB\u03BF\u03B9 \u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2."), /* @__PURE__ */ import_react6.default.createElement("li", null, "\u03A4\u03B1 \u03BB\u03AC\u03B8\u03B7 \u03C6\u03B1\u03AF\u03BD\u03BF\u03BD\u03C4\u03B1\u03B9 \u03B1\u03BB\u03BB\u03AC \u03B4\u03B5\u03BD \u03B4\u03B5\u03C3\u03BC\u03B5\u03CD\u03BF\u03C5\u03BD \u03C4\u03BF\u03BD \u03B1\u03C1\u03B9\u03B8\u03BC\u03CC."))), /* @__PURE__ */ import_react6.default.createElement(
+  ), /* @__PURE__ */ import_react9.default.createElement(
     SelectionSummaryAccordion_default,
     {
       currentPrime,
@@ -21762,7 +21867,7 @@ var App = ({ role = "teacher" }) => {
       targetNumbers: currentTargetNumbers,
       remainingTargetNumbers
     }
-  ), /* @__PURE__ */ import_react6.default.createElement("div", { className: "primes-note" }, /* @__PURE__ */ import_react6.default.createElement("h2", null, "\u039A\u03B1\u03C4\u03AC\u03C3\u03C4\u03B1\u03C3\u03B7"), /* @__PURE__ */ import_react6.default.createElement("p", null, message), /* @__PURE__ */ import_react6.default.createElement("div", { className: "primes-note__stats" }, /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("span", null, "\u039A\u03BB\u03B5\u03B9\u03B4\u03C9\u03BC\u03AD\u03BD\u03B1 \u03C3\u03C9\u03C3\u03C4\u03AC"), /* @__PURE__ */ import_react6.default.createElement("strong", null, claimedNumbers.size)), /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("span", null, "\u039B\u03AC\u03B8\u03BF\u03C2 \u03B5\u03C0\u03B9\u03BB\u03BF\u03B3\u03AD\u03C2"), /* @__PURE__ */ import_react6.default.createElement("strong", null, progress.wrongTotal)), /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("span", null, "\u0392\u03AE\u03BC\u03B1\u03C4\u03B1 \u03C0\u03BF\u03C5 \u03BF\u03BB\u03BF\u03BA\u03BB\u03B7\u03C1\u03CE\u03B8\u03B7\u03BA\u03B1\u03BD"), /* @__PURE__ */ import_react6.default.createElement("strong", null, progress.solvedCount))))), /* @__PURE__ */ import_react6.default.createElement("div", { className: "primes-lower-column" }, /* @__PURE__ */ import_react6.default.createElement(
+  )), /* @__PURE__ */ import_react9.default.createElement("div", { className: "primes-lower-column" }, /* @__PURE__ */ import_react9.default.createElement(
     StudentsTable_default,
     {
       students: visibleStudents,
@@ -21771,13 +21876,13 @@ var App = ({ role = "teacher" }) => {
       claimedNumbers,
       wrongSelectionsByNumber
     }
-  ), /* @__PURE__ */ import_react6.default.createElement("div", { className: "primes-note primes-compact-note" }, /* @__PURE__ */ import_react6.default.createElement("h2", null, "\u03A4\u03B9 \u03B1\u03C0\u03BF\u03BC\u03AD\u03BD\u03B5\u03B9"), /* @__PURE__ */ import_react6.default.createElement("p", null, "\u0391\u03C0\u03CC \u03C4\u03BF\u03C5\u03C2 \u03B1\u03C1\u03B9\u03B8\u03BC\u03BF\u03CD\u03C2 \u03C0\u03BF\u03C5 \u03B4\u03B5\u03BD \u03AD\u03C7\u03BF\u03C5\u03BD \u03BA\u03BB\u03B5\u03B9\u03B4\u03C9\u03B8\u03B5\u03AF, \u03BC\u03AD\u03BD\u03BF\u03C5\u03BD ", progress.remainingCount, " \u03BA\u03B1\u03B9 \u03B1\u03C0\u03CC \u03B1\u03C5\u03C4\u03BF\u03CD\u03C2 ", progress.primeCount, " \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C0\u03C1\u03CE\u03C4\u03BF\u03B9."), /* @__PURE__ */ import_react6.default.createElement("div", { className: "primes-note__stats primes-note__stats--compact" }, /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("span", null, "\u03A0\u03BF\u03BB\u03BB\u03B1\u03C0\u03BB\u03AC\u03C3\u03B9\u03B1 \u03C0\u03BF\u03C5 \u03C0\u03B5\u03C1\u03B9\u03BC\u03AD\u03BD\u03BF\u03C5\u03BD"), /* @__PURE__ */ import_react6.default.createElement("strong", null, remainingTargetNumbers.length)), /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("span", null, "\u039F\u03BB\u03BF\u03BA\u03BB\u03B7\u03C1\u03C9\u03BC\u03AD\u03BD\u03B1 \u03B2\u03AE\u03BC\u03B1\u03C4\u03B1"), /* @__PURE__ */ import_react6.default.createElement("strong", null, progress.solvedCount)), /* @__PURE__ */ import_react6.default.createElement("div", null, /* @__PURE__ */ import_react6.default.createElement("span", null, "\u03A4\u03C1\u03AD\u03C7\u03C9\u03BD \u03BC\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2"), /* @__PURE__ */ import_react6.default.createElement("strong", null, activeStudent?.name || "\u2014"))))))));
+  ), /* @__PURE__ */ import_react9.default.createElement("div", { className: "primes-note primes-compact-note" }, /* @__PURE__ */ import_react9.default.createElement("h2", null, "\u03A4\u03B9 \u03B1\u03C0\u03BF\u03BC\u03AD\u03BD\u03B5\u03B9"), /* @__PURE__ */ import_react9.default.createElement("p", null, "\u0391\u03C0\u03CC \u03C4\u03BF\u03C5\u03C2 \u03B1\u03C1\u03B9\u03B8\u03BC\u03BF\u03CD\u03C2 \u03C0\u03BF\u03C5 \u03B4\u03B5\u03BD \u03AD\u03C7\u03BF\u03C5\u03BD \u03BA\u03BB\u03B5\u03B9\u03B4\u03C9\u03B8\u03B5\u03AF, \u03BC\u03AD\u03BD\u03BF\u03C5\u03BD ", progress.remainingCount, " \u03BA\u03B1\u03B9 \u03B1\u03C0\u03CC \u03B1\u03C5\u03C4\u03BF\u03CD\u03C2 ", progress.primeCount, " \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C0\u03C1\u03CE\u03C4\u03BF\u03B9."), /* @__PURE__ */ import_react9.default.createElement("div", { className: "primes-note__stats primes-note__stats--compact" }, /* @__PURE__ */ import_react9.default.createElement("div", null, /* @__PURE__ */ import_react9.default.createElement("span", null, "\u03A0\u03BF\u03BB\u03BB\u03B1\u03C0\u03BB\u03AC\u03C3\u03B9\u03B1 \u03C0\u03BF\u03C5 \u03C0\u03B5\u03C1\u03B9\u03BC\u03AD\u03BD\u03BF\u03C5\u03BD"), /* @__PURE__ */ import_react9.default.createElement("strong", null, remainingTargetNumbers.length)), /* @__PURE__ */ import_react9.default.createElement("div", null, /* @__PURE__ */ import_react9.default.createElement("span", null, "\u039F\u03BB\u03BF\u03BA\u03BB\u03B7\u03C1\u03C9\u03BC\u03AD\u03BD\u03B1 \u03B2\u03AE\u03BC\u03B1\u03C4\u03B1"), /* @__PURE__ */ import_react9.default.createElement("strong", null, progress.solvedCount)), /* @__PURE__ */ import_react9.default.createElement("div", null, /* @__PURE__ */ import_react9.default.createElement("span", null, "\u03A4\u03C1\u03AD\u03C7\u03C9\u03BD \u03BC\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2"), /* @__PURE__ */ import_react9.default.createElement("strong", null, activeStudent?.name || "\u2014")))))) : null));
 };
 var App_default = App;
 
 // apps/primes-lab/student.jsx
 var root = import_client.default.createRoot(document.getElementById("root"));
-root.render(/* @__PURE__ */ import_react7.default.createElement(App_default, { role: "student" }));
+root.render(/* @__PURE__ */ import_react10.default.createElement(App_default, { role: "student" }));
 /*! Bundled license information:
 
 react/cjs/react.development.js:

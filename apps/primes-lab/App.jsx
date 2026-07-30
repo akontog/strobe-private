@@ -4,6 +4,7 @@ import NumberGrid from './components/NumberGrid';
 import SelectionSummaryAccordion from './components/SelectionSummaryAccordion';
 import StudentsTable from './components/StudentsTable';
 import TeacherPanel from './components/TeacherPanel';
+import { ConnectionNameControl } from '../shared-components/components';
 import { INITIAL_PRIME, NUMBER_RANGE, PRIME_NUMBERS, SIEVE_STEPS } from './data/primes';
 import './App.css';
 
@@ -34,16 +35,24 @@ const isPrimeNumber = (number) => {
   return true;
 };
 
-const toNumberList = (value) => (Array.isArray(value) ? value : []);
-
 const App = ({ role = 'teacher' }) => {
   const isTeacher = role === 'teacher';
   const [currentPrime, setCurrentPrime] = useState(INITIAL_PRIME);
   const [students, setStudents] = useState(createInitialStudents);
   const [activeStudentId, setActiveStudentId] = useState(STUDENT_DEFS[0].id);
+  const [studentName, setStudentName] = useState(() => {
+    try {
+      return localStorage.getItem('strobeStudentConnectName') || 'Μαρία';
+    } catch {
+      return 'Μαρία';
+    }
+  });
+  const [editingName, setEditingName] = useState(false);
+  const [studentNameInput, setStudentNameInput] = useState(studentName);
   const [message, setMessage] = useState('Διάλεξε μια βάση και ξεκίνα το κόσκινο.');
 
   const activeStudent = students.find((student) => student.id === activeStudentId) || students[0];
+  const viewerName = isTeacher ? activeStudent?.name || '—' : studentName;
 
   const correctOwnerByNumber = useMemo(() => {
     const ownerMap = {};
@@ -106,6 +115,28 @@ const App = ({ role = 'teacher' }) => {
     setMessage(`Τώρα δουλεύουμε με τη βάση ${prime}. Τα πολλαπλάσιά της φωτίζονται στον πίνακα.`);
   };
 
+  const saveStudentName = () => {
+    const nextName = studentNameInput.trim();
+    if (!nextName) {
+      setStudentNameInput(studentName);
+      setEditingName(false);
+      return;
+    }
+
+    try {
+      localStorage.setItem('strobeStudentConnectName', nextName);
+    } catch {
+      // ignore storage failures
+    }
+
+    setStudentName(nextName);
+    setStudentNameInput(nextName);
+    setStudents((previousStudents) =>
+      previousStudents.map((student) => (student.id === activeStudentId ? { ...student, name: nextName } : student))
+    );
+    setEditingName(false);
+  };
+
   const updateStudent = (studentId, updater) => {
     setStudents((previousStudents) =>
       previousStudents.map((student) => (student.id === studentId ? updater(student) : student))
@@ -138,7 +169,7 @@ const App = ({ role = 'teacher' }) => {
         selectedCorrect: [...student.selectedCorrect, number]
       }));
 
-      setMessage(`${activeStudent?.name || 'Ο μαθητής'} κλείδωσε σωστά το ${number}.`);
+      setMessage(`${viewerName || 'Ο μαθητής'} κλείδωσε σωστά το ${number}.`);
       return;
     }
 
@@ -152,7 +183,7 @@ const App = ({ role = 'teacher' }) => {
       };
     });
 
-    setMessage(`${activeStudent?.name || 'Ο μαθητής'} σημείωσε το ${number} ως λάθος επιλογή.`);
+    setMessage(`${viewerName || 'Ο μαθητής'} σημείωσε το ${number} ως λάθος επιλογή.`);
   };
 
   const visibleStudents = isTeacher ? students : students.slice(0, 1);
@@ -168,24 +199,38 @@ const App = ({ role = 'teacher' }) => {
               Από το 2 έως το 100, οι μαθητές ανακαλύπτουν ποιοι αριθμοί είναι πολλαπλάσια και ποιοι μένουν ως πρώτοι.
             </p>
           </div>
-          <div className="primes-status">
-            <span>Ρόλος</span>
-            <strong>{isTeacher ? 'teacher' : 'student'}</strong>
-            <small>Επόμενη βάση: {nextPrime || 'τέλος'}</small>
-          </div>
+          <ConnectionNameControl
+            connected
+            name={viewerName}
+            editing={!isTeacher && editingName}
+            value={studentNameInput}
+            onChange={setStudentNameInput}
+            onStartEdit={() => !isTeacher && setEditingName(true)}
+            onCommit={saveStudentName}
+            onCancel={() => {
+              setStudentNameInput(studentName);
+              setEditingName(false);
+            }}
+            connectedLabel={isTeacher ? 'Σε σύνδεση' : 'Συνδεδεμένος'}
+            disconnectedLabel="Εκτός σύνδεσης"
+            namePrefix="όνομα χρήστη"
+            showNameLabel={!isTeacher}
+            className="primes-identity"
+          />
         </header>
 
-        <section className="common-zone primes-board-zone">
+        <section className="common-zone primes-board-zone primes-board-zone--compact">
           <div className="primes-board-header">
             <div>
               <p>Κεντρικό πάνελ</p>
               <h2>Αριθμοί 2 έως 100</h2>
             </div>
-            <div className="primes-board-header__legend">
-              <span className="legend-item"><i className="legend-dot legend-dot--target" />στόχος</span>
-              <span className="legend-item"><i className="legend-dot legend-dot--eliminated" />κλειδωμένο</span>
-              <span className="legend-item"><i className="legend-dot legend-dot--prime" />πρώτος</span>
-            </div>
+            {isTeacher ? (
+              <div className="primes-board-header__legend">
+                <span className="legend-item"><i className="legend-dot legend-dot--eliminated" />κλειδωμένο</span>
+                <span className="legend-item"><i className="legend-dot legend-dot--prime" />πρώτος</span>
+              </div>
+            ) : null}
           </div>
 
           <NumberGrid
@@ -196,12 +241,14 @@ const App = ({ role = 'teacher' }) => {
             wrongSelectionsByNumber={wrongSelectionsByNumber}
             activeStudentId={activeStudentId}
             onToggleNumber={handleToggleNumber}
+            mode={isTeacher ? 'teacher' : 'student'}
+            readonly={isTeacher}
           />
         </section>
 
-        <section className="primes-lower-grid">
-          <div className="primes-lower-column">
-            {isTeacher ? (
+        {isTeacher ? (
+          <section className="primes-lower-grid">
+            <div className="primes-lower-column">
               <TeacherPanel
                 currentPrime={currentPrime}
                 primeNumbers={PRIME_NUMBERS}
@@ -210,77 +257,47 @@ const App = ({ role = 'teacher' }) => {
                 activeStudentId={activeStudentId}
                 onSelectActiveStudent={setActiveStudentId}
               />
-            ) : (
-              <Accordion title="Οδηγίες μαθητή" subtitle="Τι κάνουμε στο τρέχον βήμα" defaultOpen>
-                <p className="student-guide">
-                  Ο teacher έχει ορίσει τη βάση <strong>{currentPrime}</strong>. Βρες και πάτα όλα τα πολλαπλάσια της που είναι μεγαλύτερα από τον ίδιο τον αριθμό.
-                </p>
-                <ul className="teacher-panel__goals">
-                  <li>Τα σωστά πολλαπλάσια κλειδώνουν για όλη την τάξη.</li>
-                  <li>Οι σωστές επιλογές δεν μπορούν να τις πάρουν άλλοι μαθητές.</li>
-                  <li>Τα λάθη φαίνονται αλλά δεν δεσμεύουν τον αριθμό.</li>
-                </ul>
-              </Accordion>
-            )}
 
-            <SelectionSummaryAccordion
-              currentPrime={currentPrime}
-              students={students}
-              claimedNumbers={claimedNumbers}
-              wrongSelectionsByNumber={wrongSelectionsByNumber}
-              targetNumbers={currentTargetNumbers}
-              remainingTargetNumbers={remainingTargetNumbers}
-            />
+              <SelectionSummaryAccordion
+                currentPrime={currentPrime}
+                students={students}
+                claimedNumbers={claimedNumbers}
+                wrongSelectionsByNumber={wrongSelectionsByNumber}
+                targetNumbers={currentTargetNumbers}
+                remainingTargetNumbers={remainingTargetNumbers}
+              />
+            </div>
 
-            <div className="primes-note">
-              <h2>Κατάσταση</h2>
-              <p>{message}</p>
-              <div className="primes-note__stats">
-                <div>
-                  <span>Κλειδωμένα σωστά</span>
-                  <strong>{claimedNumbers.size}</strong>
-                </div>
-                <div>
-                  <span>Λάθος επιλογές</span>
-                  <strong>{progress.wrongTotal}</strong>
-                </div>
-                <div>
-                  <span>Βήματα που ολοκληρώθηκαν</span>
-                  <strong>{progress.solvedCount}</strong>
+            <div className="primes-lower-column">
+              <StudentsTable
+                students={visibleStudents}
+                activeStudentId={activeStudentId}
+                currentPrime={currentPrime}
+                claimedNumbers={claimedNumbers}
+                wrongSelectionsByNumber={wrongSelectionsByNumber}
+              />
+
+              <div className="primes-note primes-compact-note">
+                <h2>Τι απομένει</h2>
+                <p>Από τους αριθμούς που δεν έχουν κλειδωθεί, μένουν {progress.remainingCount} και από αυτούς {progress.primeCount} είναι πρώτοι.</p>
+                <div className="primes-note__stats primes-note__stats--compact">
+                  <div>
+                    <span>Πολλαπλάσια που περιμένουν</span>
+                    <strong>{remainingTargetNumbers.length}</strong>
+                  </div>
+                  <div>
+                    <span>Ολοκληρωμένα βήματα</span>
+                    <strong>{progress.solvedCount}</strong>
+                  </div>
+                  <div>
+                    <span>Τρέχων μαθητής</span>
+                    <strong>{activeStudent?.name || '—'}</strong>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className="primes-lower-column">
-            <StudentsTable
-              students={visibleStudents}
-              activeStudentId={activeStudentId}
-              currentPrime={currentPrime}
-              claimedNumbers={claimedNumbers}
-              wrongSelectionsByNumber={wrongSelectionsByNumber}
-            />
-
-            <div className="primes-note primes-compact-note">
-              <h2>Τι απομένει</h2>
-              <p>Από τους αριθμούς που δεν έχουν κλειδωθεί, μένουν {progress.remainingCount} και από αυτούς {progress.primeCount} είναι πρώτοι.</p>
-              <div className="primes-note__stats primes-note__stats--compact">
-                <div>
-                  <span>Πολλαπλάσια που περιμένουν</span>
-                  <strong>{remainingTargetNumbers.length}</strong>
-                </div>
-                <div>
-                  <span>Ολοκληρωμένα βήματα</span>
-                  <strong>{progress.solvedCount}</strong>
-                </div>
-                <div>
-                  <span>Τρέχων μαθητής</span>
-                  <strong>{activeStudent?.name || '—'}</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
       </div>
     </div>
   );
