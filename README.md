@@ -14,13 +14,24 @@ Strobe Multi-App Classroom
 
 ## backend
 
+1 ή 2 server;; (Ξεκίνημα με 1 και βλέπουμε)
 - node.js
-- python (computer vision)
+  - Στήσιμο σε myria
+  - cloudflared tunnel
+- FastAPI 
+
+## CV
+
+- python (OpenCV + να επιλέξω αλγόριθμο)
 
 ## επικοινωνία
 
-- websockets
-- WebRTC (video feed)
+- websockets (ταχύτητα, ευελιξία π.χ. message format - json)
+- WebRTC (video feed) STUN / TURN;;;
+
+## κατάσταση;;;
+
+- redis;;; (να τσεκάρω)
 
 ## αρχεία
 

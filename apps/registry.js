@@ -41,6 +41,16 @@ const APPS = [
     clientEntry: 'student.html',
   },
   {
+    slug: 'primes-lab',
+    title: 'Primes Lab',
+    description: 'Sieve of Eratosthenes activity with teacher-controlled steps and a shared number grid.',
+    roles: ['teacher', 'student', 'client'],
+    kind: 'static',
+    staticDir: path.join(__dirname, 'primes-lab'),
+    teacherEntry: 'teacher.html',
+    clientEntry: 'student.html',
+  },
+  {
     slug: 'chess',
     title: 'Chess Lab',
     description: 'Interactive chess presentation with board demos and puzzles.',

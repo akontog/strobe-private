@@ -1,0 +1,553 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f0f4f9;
+  font-family: 'Segoe UI', 'Roboto', 'Comic Neue', 'Fredoka One', sans-serif;
+  overflow-y: auto;
+}
+
+body,
+#root {
+  min-height: 100vh;
+}
+
+#root {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 2rem;
+}
+
+button,
+summary,
+table {
+  font: inherit;
+}
+
+.primes-app {
+  width: 100%;
+}
+
+.teacher-card {
+  max-width: 1400px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 2rem;
+  padding: 1.5rem 2rem 2rem;
+  box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+  border: 2px solid #dce3ec;
+}
+
+.hero-title {
+  text-align: center;
+  margin-bottom: 1.2rem;
+}
+
+.primes-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.primes-kicker {
+  margin: 0 0 0.45rem;
+  color: #2563eb;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.primes-hero h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+}
+
+.primes-subtitle {
+  margin: 0.85rem 0 0;
+  color: #64748b;
+  max-width: 65ch;
+  text-align: left;
+}
+
+.primes-status {
+  min-width: 180px;
+  background: #f8fbff;
+  border: 2px solid #cbd5e1;
+  border-radius: 1.4rem;
+  padding: 1rem 1.1rem;
+  text-align: right;
+}
+
+.primes-status span,
+.primes-status small {
+  display: block;
+  color: #64748b;
+}
+
+.primes-status strong {
+  display: block;
+  margin: 0.35rem 0;
+  font-size: 1.35rem;
+  color: #1d4ed8;
+}
+
+.common-zone {
+  background: #ffffff;
+  border-radius: 2rem;
+  padding: 1.5rem;
+  margin-bottom: 1.2rem;
+  border: 3px solid #3b82f6;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.primes-board-zone {
+  max-width: 1040px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.primes-board-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.primes-board-header p {
+  margin: 0 0 0.2rem;
+  color: #2563eb;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.primes-board-header h2,
+.students-table-card h2,
+.primes-note h2 {
+  margin: 0;
+  color: #1e293b;
+}
+
+.primes-board-header__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem 1rem;
+  color: #475569;
+}
+
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.legend-dot {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.legend-dot--target {
+  background: #f59e0b;
+}
+
+.legend-dot--eliminated {
+  background: #3b82f6;
+}
+
+.legend-dot--prime {
+  background: #10b981;
+}
+
+.prime-grid {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.prime-grid__cell {
+  aspect-ratio: 1 / 1;
+  min-height: 0;
+  border-radius: 0.55rem;
+  border: 2px solid #dce3ec;
+  background: #ffffff;
+  color: #0f172a;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  cursor: pointer;
+  transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+  padding: 0.25rem;
+}
+
+.prime-grid__cell:hover {
+  transform: translateY(-2px);
+  border-color: #93c5fd;
+  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.12);
+}
+
+.prime-grid__cell:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.prime-grid__number {
+  font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.prime-grid__badge {
+  display: none;
+}
+
+.prime-grid__cell.is-current-prime {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.prime-grid__cell.is-target {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.prime-grid__cell.is-locked {
+  border-color: #10b981;
+  background: #ecfdf5;
+}
+
+.prime-grid__cell.is-locked-by-me {
+  box-shadow: inset 0 0 0 2px rgba(16, 185, 129, 0.18);
+}
+
+.prime-grid__cell.is-wrong {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.prime-grid__cell.is-prime:not(.is-current-prime):not(.is-locked) {
+  box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.14);
+}
+
+.prime-grid__cell.is-composite:not(.is-target):not(.is-current-prime) .prime-grid__badge {
+  color: #94a3b8;
+}
+
+.primes-lower-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.95fr);
+  gap: 1.2rem;
+}
+
+.primes-lower-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.teacher-panel,
+.students-table-card,
+.primes-note {
+  background: #ffffff;
+  border-radius: 1.7rem;
+  border: 2px solid #dce3ec;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+}
+
+.teacher-panel {
+  padding: 1rem;
+}
+
+.prime-accordion {
+  border: 2px solid #dce3ec;
+  border-radius: 1.4rem;
+  overflow: hidden;
+  background: #f8fbff;
+  margin-bottom: 0.85rem;
+}
+
+.prime-accordion summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 1rem 1.05rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.8rem;
+  color: #1e293b;
+}
+
+.prime-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.prime-accordion__title {
+  font-weight: 800;
+}
+
+.prime-accordion__subtitle {
+  color: #64748b;
+  font-size: 0.92rem;
+  text-align: right;
+}
+
+.prime-accordion__body {
+  padding: 0 1.05rem 1rem;
+}
+
+.teacher-panel__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.teacher-chip,
+.primary-action,
+.secondary-action {
+  border: 2px solid #cbd5e1;
+  border-radius: 999px;
+  padding: 0.65rem 0.95rem;
+  background: #ffffff;
+  color: #0f172a;
+  cursor: pointer;
+  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+
+.teacher-chip:hover,
+.primary-action:hover,
+.secondary-action:hover {
+  transform: translateY(-1px);
+  border-color: #60a5fa;
+}
+
+.teacher-chip.is-active {
+  background: #dbeafe;
+  border-color: #3b82f6;
+}
+
+.teacher-panel__formula,
+.student-guide,
+.primes-note p,
+.summary-block p {
+  color: #475569;
+  line-height: 1.6;
+}
+
+.teacher-panel__formula--soft {
+  margin-top: 0.75rem;
+}
+
+.teacher-panel__goals {
+  margin: 0;
+  padding-left: 1.15rem;
+  color: #475569;
+  line-height: 1.55;
+}
+
+.teacher-panel__goals--compact {
+  margin-top: 0.35rem;
+}
+
+.students-table-card {
+  padding: 1rem;
+}
+
+.students-table-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.students-table-card__header p {
+  margin: 0 0 0.25rem;
+  color: #2563eb;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.students-table-card__meta {
+  min-width: 94px;
+  border-radius: 1.2rem;
+  border: 2px solid #dce3ec;
+  background: #f8fbff;
+  padding: 0.65rem 0.85rem;
+  text-align: center;
+}
+
+.students-table-card__meta span {
+  display: block;
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.students-table-card__meta strong {
+  display: block;
+  color: #1d4ed8;
+  font-size: 1.25rem;
+}
+
+.students-table-wrap {
+  overflow-x: auto;
+}
+
+.students-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 520px;
+}
+
+.students-table th,
+.students-table td {
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.85rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.students-table th {
+  color: #475569;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.students-table tr.is-active-student {
+  background: #eff6ff;
+}
+
+.number-chips {
+  min-height: 2.1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  color: #0f172a;
+}
+
+.number-chips--success {
+  color: #047857;
+}
+
+.number-chips--danger {
+  color: #b91c1c;
+}
+
+.summary-grid,
+.primes-note__stats,
+.teacher-panel__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.summary-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.summary-block,
+.primes-note__stats div,
+.teacher-panel__stats div {
+  padding: 0.9rem;
+  border-radius: 1.2rem;
+  background: #f8fbff;
+  border: 2px solid #dce3ec;
+}
+
+.summary-block h3 {
+  margin: 0 0 0.45rem;
+  font-size: 0.95rem;
+  color: #1e293b;
+}
+
+.primes-note {
+  padding: 1rem;
+}
+
+.primes-compact-note {
+  margin-bottom: 0;
+}
+
+.primes-note h2 {
+  margin-bottom: 0.65rem;
+}
+
+.primes-note__stats span,
+.teacher-panel__stats span {
+  display: block;
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+.primes-note__stats strong,
+.teacher-panel__stats strong {
+  display: block;
+  margin-top: 0.35rem;
+  color: #1d4ed8;
+  font-size: 1.1rem;
+}
+
+.primes-lower-column .prime-accordion:last-child {
+  margin-bottom: 0;
+}
+
+.is-student .primes-lower-grid {
+  grid-template-columns: 1fr;
+}
+
+.is-student .students-table-card {
+  display: none;
+}
+
+@media (max-width: 1120px) {
+  .primes-lower-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .primes-hero {
+    flex-direction: column;
+  }
+
+  .primes-status {
+    text-align: left;
+  }
+}
+
+@media (max-width: 980px) {
+  .prime-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  #root {
+    padding: 1rem;
+  }
+
+  .teacher-card {
+    padding: 1rem;
+    border-radius: 1.5rem;
+  }
+
+  .summary-grid,
+  .primes-note__stats,
+  .teacher-panel__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .prime-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
