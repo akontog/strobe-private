@@ -92,6 +92,13 @@ input {
   gap: 0.25rem;
 }
 
+.connection-name-control__row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
 .connection-name-control__dot {
   width: 0.75rem;
   height: 0.75rem;
@@ -128,6 +135,35 @@ input {
 .connection-name-control__name {
   cursor: pointer;
   font-weight: 700;
+}
+
+.connection-name-control__color-wrap {
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 2px solid #cbd5e1;
+  background: #ffffff;
+  flex: 0 0 auto;
+}
+
+.connection-name-control__color {
+  width: 120%;
+  height: 120%;
+  margin: -10%;
+  border: none;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.connection-name-control__info {
+  color: #64748b;
+  font-size: 0.78rem;
+  background: #ffffff;
+  border: 1px solid #dbe2ea;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
 }
 
 .common-zone {
@@ -273,6 +309,7 @@ input {
   color: #1d4ed8;
   font-size: 0.5rem;
   font-weight: 800;
+  border: 1px solid #93c5fd;
   line-height: 1;
   display: inline-flex;
   align-items: center;
@@ -503,6 +540,15 @@ input {
 
 .number-chips--danger {
   color: #b91c1c;
+}
+
+.student-color-chip {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  border: 1px solid #94a3b8;
+  vertical-align: middle;
 }
 
 .summary-grid,

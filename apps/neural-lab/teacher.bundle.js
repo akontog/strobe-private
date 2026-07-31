@@ -22120,13 +22120,17 @@ var ConnectionNameControl = ({
   onStartEdit,
   onCommit,
   onCancel,
+  color = "#3b82f6",
+  showColorPicker = false,
+  onColorChange,
+  infoText = "",
   connectedLabel = "\u03A3\u03B5 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7",
   disconnectedLabel = "\u0395\u03BA\u03C4\u03CC\u03C2 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7\u03C2",
   namePrefix = "\u03CC\u03BD\u03BF\u03BC\u03B1 \u03C7\u03C1\u03AE\u03C3\u03C4\u03B7",
   showNameLabel = true,
   className = ""
 }) => {
-  return /* @__PURE__ */ import_react14.default.createElement("div", { className: `connection-name-control ${className}`.trim() }, /* @__PURE__ */ import_react14.default.createElement("span", { className: `connection-name-control__dot ${connected ? "online" : "offline"}` }), /* @__PURE__ */ import_react14.default.createElement("strong", { className: "connection-name-control__status" }, connected ? connectedLabel : disconnectedLabel), editing ? /* @__PURE__ */ import_react14.default.createElement(
+  return /* @__PURE__ */ import_react14.default.createElement("div", { className: `connection-name-control ${className}`.trim() }, /* @__PURE__ */ import_react14.default.createElement("span", { className: `connection-name-control__dot ${connected ? "online" : "offline"}` }), /* @__PURE__ */ import_react14.default.createElement("strong", { className: "connection-name-control__status" }, connected ? connectedLabel : disconnectedLabel), showNameLabel || showColorPicker ? /* @__PURE__ */ import_react14.default.createElement("div", { className: "connection-name-control__row" }, editing ? /* @__PURE__ */ import_react14.default.createElement(
     "input",
     {
       autoFocus: true,
@@ -22143,9 +22147,50 @@ var ConnectionNameControl = ({
         }
       }
     }
-  ) : showNameLabel ? /* @__PURE__ */ import_react14.default.createElement("button", { type: "button", className: "connection-name-control__name", onClick: onStartEdit }, namePrefix, ": ", name || "\u2014") : null);
+  ) : showNameLabel ? /* @__PURE__ */ import_react14.default.createElement("button", { type: "button", className: "connection-name-control__name", onClick: onStartEdit }, namePrefix, ": ", name || "\u2014") : null, showColorPicker ? /* @__PURE__ */ import_react14.default.createElement("label", { className: "connection-name-control__color-wrap", title: "\u0395\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE \u03C7\u03C1\u03CE\u03BC\u03B1\u03C4\u03BF\u03C2" }, /* @__PURE__ */ import_react14.default.createElement(
+    "input",
+    {
+      type: "color",
+      className: "connection-name-control__color",
+      value: color,
+      onChange: (event) => onColorChange?.(event.target.value),
+      "aria-label": "\u0395\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE \u03C7\u03C1\u03CE\u03BC\u03B1\u03C4\u03BF\u03C2"
+    }
+  )) : null) : null, infoText ? /* @__PURE__ */ import_react14.default.createElement("span", { className: "connection-name-control__info" }, infoText) : null);
 };
 var ConnectionNameControl_default = ConnectionNameControl;
+
+// apps/shared-components/components/identityStorage.js
+var IDENTITY_NAME_KEY = "strobeStudentConnectName";
+var IDENTITY_COLOR_KEY = "strobeStudentColor";
+var IDENTITY_COLORS = ["#22c55e", "#f97316", "#6366f1", "#e11d48", "#14b8a6", "#f59e0b", "#0ea5e9", "#8b5cf6"];
+var randomIdentityColor = () => IDENTITY_COLORS[Math.floor(Math.random() * IDENTITY_COLORS.length)];
+function readIdentityName(fallback) {
+  try {
+    return localStorage.getItem(IDENTITY_NAME_KEY) || fallback;
+  } catch {
+    return fallback;
+  }
+}
+function writeIdentityName(name) {
+  try {
+    localStorage.setItem(IDENTITY_NAME_KEY, name);
+  } catch {
+  }
+}
+function readIdentityColor(fallback) {
+  try {
+    return localStorage.getItem(IDENTITY_COLOR_KEY) || fallback;
+  } catch {
+    return fallback;
+  }
+}
+function writeIdentityColor(color) {
+  try {
+    localStorage.setItem(IDENTITY_COLOR_KEY, color);
+  } catch {
+  }
+}
 
 // apps/neural-lab/data/datasets.js
 var DATASETS = {
@@ -22483,12 +22528,10 @@ var App = ({ role = "teacher" }) => {
   const [lessonName, setLessonName] = (0, import_react15.useState)("\u0391\u03C5\u03C4\u03BF\u03BA\u03AF\u03BD\u03B7\u03C4\u03BF");
   const [lessonActivityTitle, setLessonActivityTitle] = (0, import_react15.useState)(getNeuralActivityTitle("1"));
   const [studentName, setStudentName] = (0, import_react15.useState)(() => {
-    try {
-      const stored = localStorage.getItem("strobeStudentConnectName");
-      return stored || `Student-${Math.floor(Math.random() * 900 + 100)}`;
-    } catch {
-      return `Student-${Math.floor(Math.random() * 900 + 100)}`;
-    }
+    return readIdentityName(`Student-${Math.floor(Math.random() * 900 + 100)}`);
+  });
+  const [studentColor, setStudentColor] = (0, import_react15.useState)(() => {
+    return readIdentityColor(randomIdentityColor());
   });
   const saveStudentName = () => {
     const newName = studentNameInput.trim();
@@ -22497,13 +22540,23 @@ var App = ({ role = "teacher" }) => {
       setEditingName(false);
       return;
     }
-    localStorage.setItem("strobeStudentConnectName", newName);
+    writeIdentityName(newName);
     sendSocketMessage({
       type: "register_student",
-      name: newName
+      name: newName,
+      color: studentColor
     });
     setStudentName(newName);
     setEditingName(false);
+  };
+  const saveStudentColor = (newColor) => {
+    setStudentColor(newColor);
+    writeIdentityColor(newColor);
+    sendSocketMessage({
+      type: "register_student",
+      name: studentName,
+      color: newColor
+    });
   };
   const [editingName, setEditingName] = (0, import_react15.useState)(false);
   const [studentNameInput, setStudentNameInput] = (0, import_react15.useState)(studentName);
@@ -22628,7 +22681,7 @@ var App = ({ role = "teacher" }) => {
     const registerCurrentRole = () => {
       if (hasRegisteredRef.current) return;
       if (isStudent) {
-        sendSocketMessage({ type: "register_student", name: studentName });
+        sendSocketMessage({ type: "register_student", name: studentName, color: studentColor });
       } else if (isScreen) {
         sendSocketMessage({ type: "register_teacher", name: "Screen" });
       } else {
@@ -22773,7 +22826,7 @@ var App = ({ role = "teacher" }) => {
         ws.close();
       }
     };
-  }, [isScreen, isStudent, studentName]);
+  }, [isScreen, isStudent, studentName, studentColor]);
   (0, import_react15.useEffect)(() => {
     if (!isStudent || !isSocketConnected) return;
     if (suppressNextStudentStateSendRef.current) {
@@ -22907,10 +22960,15 @@ var App = ({ role = "teacher" }) => {
         setStudentNameInput(studentName);
         setEditingName(false);
       },
+      color: studentColor,
+      showColorPicker: isStudent,
+      onColorChange: saveStudentColor,
+      infoText: !isStudent ? `\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9: ${roster.length}` : "",
       connectedLabel: "\u03A3\u03B5 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7",
       disconnectedLabel: "\u0395\u03BA\u03C4\u03CC\u03C2 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7\u03C2",
       namePrefix: "\u03CC\u03BD\u03BF\u03BC\u03B1",
-      showNameLabel: isStudent
+      showNameLabel: isStudent,
+      className: "connection-status"
     }
   ), isScreen && /* @__PURE__ */ import_react15.default.createElement(import_react15.default.Fragment, null, /* @__PURE__ */ import_react15.default.createElement("div", { className: "screen-top-bar" }, /* @__PURE__ */ import_react15.default.createElement("strong", null, "\u03A0\u03C1\u03BF\u03B2\u03BF\u03BB\u03AE \u03C4\u03AC\u03BE\u03B7\u03C2"), /* @__PURE__ */ import_react15.default.createElement("span", null, datasets_default[safeDisplayDataset].emoji, " ", datasets_default[safeDisplayDataset].label), /* @__PURE__ */ import_react15.default.createElement("span", null, displayIcon, " ", displayName), /* @__PURE__ */ import_react15.default.createElement("span", null, "i1=", i1, ", i2=", i2), /* @__PURE__ */ import_react15.default.createElement("span", null, "w1=", currentW1, ", w2=", currentW2), /* @__PURE__ */ import_react15.default.createElement("span", null, "o=", total)), /* @__PURE__ */ import_react15.default.createElement("div", { className: "operation-tree", "aria-label": "\u0394\u03AD\u03BD\u03C4\u03C1\u03BF \u03C0\u03C1\u03AC\u03BE\u03B5\u03C9\u03BD" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "tree-level" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "tree-node tree-root" }, "o = ", total)), /* @__PURE__ */ import_react15.default.createElement("div", { className: "tree-connect" }), /* @__PURE__ */ import_react15.default.createElement("div", { className: "tree-level tree-two" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "tree-node" }, "w1 \xD7 i1 = ", prod1), /* @__PURE__ */ import_react15.default.createElement("div", { className: "tree-node" }, "w2 \xD7 i2 = ", prod2)))), /* @__PURE__ */ import_react15.default.createElement("div", { className: "common-zone" }, /* @__PURE__ */ import_react15.default.createElement(
     VerticalProducts,

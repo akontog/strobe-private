@@ -7,7 +7,14 @@ import { ExamplesClassifier } from './components/ExamplesClassifier';
 import { ActivitiesMenu, getNeuralActivityTitle } from './components/ActivitiesMenu';
 import { StudentQrAccordion } from './components/StudentQrAccordion';
 import { Accordion } from '../shared/components/Accordion';
-import { ConnectionNameControl } from '../shared-components/components';
+import {
+  ConnectionNameControl,
+  randomIdentityColor,
+  readIdentityColor,
+  readIdentityName,
+  writeIdentityColor,
+  writeIdentityName
+} from '../shared-components/components';
 import DATASETS from './data/datasets';
 //import { StudentTable } from '../shared/components/StudentTable';
 import './App.css';
@@ -168,12 +175,10 @@ const App = ({ role = 'teacher' }) => {
 
 // Δημιουργεί ένα τυχαίο όνομα μαθητή αν δεν υπάρχει αποθηκευμένο στο localStorage.
   const [studentName, setStudentName] = useState(() => {
-  try {
-    const stored = localStorage.getItem('strobeStudentConnectName');
-    return stored || `Student-${Math.floor(Math.random() * 900 + 100)}`;
-  } catch {
-    return `Student-${Math.floor(Math.random() * 900 + 100)}`;
-  }
+  return readIdentityName(`Student-${Math.floor(Math.random() * 900 + 100)}`);
+});
+const [studentColor, setStudentColor] = useState(() => {
+  return readIdentityColor(randomIdentityColor());
 });
 const saveStudentName = () => {
   const newName = studentNameInput.trim();
@@ -184,16 +189,27 @@ const saveStudentName = () => {
     return;
   }
 
-  localStorage.setItem('strobeStudentConnectName', newName);
+  writeIdentityName(newName);
 
   sendSocketMessage({
     type: 'register_student',
-    name: newName
+    name: newName,
+    color: studentColor
   });
 
   // αν το studentName είναι state:
   setStudentName(newName);
   setEditingName(false);
+};
+const saveStudentColor = (newColor) => {
+  setStudentColor(newColor);
+  writeIdentityColor(newColor);
+
+  sendSocketMessage({
+    type: 'register_student',
+    name: studentName,
+    color: newColor
+  });
 };
   // Αναφορά για να ελέγχει αν ο μαθητής επεξεργάζεται το όνομά του.
   const [editingName, setEditingName] = useState(false);
@@ -394,7 +410,7 @@ const saveStudentName = () => {
       if (hasRegisteredRef.current) return;
 
       if (isStudent) {
-        sendSocketMessage({ type: 'register_student', name: studentName });
+        sendSocketMessage({ type: 'register_student', name: studentName, color: studentColor });
       } else if (isScreen) {
         sendSocketMessage({ type: 'register_teacher', name: 'Screen' });
       } else {
@@ -570,7 +586,7 @@ const saveStudentName = () => {
         ws.close();
       }
     };
-  }, [isScreen, isStudent, studentName]);
+  }, [isScreen, isStudent, studentName, studentColor]);
 
   useEffect(() => {
     if (!isStudent || !isSocketConnected) return;
@@ -730,10 +746,15 @@ const saveStudentName = () => {
           setStudentNameInput(studentName);
           setEditingName(false);
         }}
+        color={studentColor}
+        showColorPicker={isStudent}
+        onColorChange={saveStudentColor}
+        infoText={!isStudent ? `συνδεδεμένοι: ${roster.length}` : ''}
         connectedLabel="Σε σύνδεση"
         disconnectedLabel="Εκτός σύνδεσης"
         namePrefix="όνομα"
         showNameLabel={isStudent}
+        className="connection-status"
       />
 
       {isScreen && (

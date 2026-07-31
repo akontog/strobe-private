@@ -5,6 +5,7 @@ const NumberGrid = ({
   currentPrime,
   primeNumbers,
   correctOwnerByNumber,
+  studentColorById,
   wrongSelectionsByNumber,
   activeStudentId,
   mode = 'teacher',
@@ -13,6 +14,23 @@ const NumberGrid = ({
 }) => {
   const primeSet = primeNumbers instanceof Set ? primeNumbers : new Set(primeNumbers);
   const items = [null, ...numbers];
+
+  const toRgba = (hex, alpha) => {
+    if (!hex || typeof hex !== 'string') {
+      return `rgba(59, 130, 246, ${alpha})`;
+    }
+    const cleaned = hex.replace('#', '');
+    const normalized = cleaned.length === 3
+      ? cleaned.split('').map((char) => `${char}${char}`).join('')
+      : cleaned;
+    const r = Number.parseInt(normalized.slice(0, 2), 16);
+    const g = Number.parseInt(normalized.slice(2, 4), 16);
+    const b = Number.parseInt(normalized.slice(4, 6), 16);
+    if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) {
+      return `rgba(59, 130, 246, ${alpha})`;
+    }
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
 
   return (
     <div className="prime-grid" role="grid" aria-label="Πίνακας αριθμών από το 2 έως το 100">
@@ -35,6 +53,27 @@ const NumberGrid = ({
         const studentOtherCorrect = mode === 'student' && isLocked && !isLockedByActiveStudent;
         const studentWrong = mode === 'student' && isWrong && !isLocked;
         const ownerLabel = ownerId ? ownerId.replace('student-', 'Σ') : '';
+        const ownerColor = ownerId ? (studentColorById?.[ownerId] || '#3b82f6') : '#3b82f6';
+
+        let inlineStyle = undefined;
+        if (teacherLocked) {
+          inlineStyle = {
+            backgroundColor: toRgba(ownerColor, 0.24),
+            borderColor: ownerColor
+          };
+        }
+        if (studentOwnCorrect) {
+          inlineStyle = {
+            backgroundColor: toRgba(ownerColor, 0.3),
+            borderColor: ownerColor
+          };
+        }
+        if (studentOtherCorrect) {
+          inlineStyle = {
+            backgroundColor: toRgba(ownerColor, 0.22),
+            borderColor: ownerColor
+          };
+        }
 
         const classNames = [
           'prime-grid__cell',
@@ -55,6 +94,7 @@ const NumberGrid = ({
             key={number}
             type="button"
             className={classNames}
+            style={inlineStyle}
             onClick={() => {
               if (!readonly) {
                 onToggleNumber(number);
@@ -65,7 +105,7 @@ const NumberGrid = ({
             title={mode === 'teacher' && isLocked ? `${number} έχει κλειδωθεί από ${ownerLabel}` : mode === 'student' && isLocked && !isLockedByActiveStudent ? `${number} έχει ήδη κλειδώσει από άλλον μαθητή` : isTarget ? `${number} είναι πολλαπλάσιο του ${currentPrime}` : `Αριθμός ${number}`}
           >
             <span className="prime-grid__number">{number}</span>
-            {mode === 'teacher' && ownerId ? <span className="prime-grid__owner">{ownerLabel}</span> : null}
+            {mode === 'teacher' && ownerId ? <span className="prime-grid__owner" style={{ borderColor: ownerColor }}>{ownerLabel}</span> : null}
           </button>
         );
       })}

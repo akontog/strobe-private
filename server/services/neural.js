@@ -89,6 +89,12 @@ module.exports = function initNeural({
     return Math.max(min, Math.min(max, parsed));
   }
 
+  function normalizeStudentColor(value, fallback = '#3b82f6') {
+    const raw = sanitizeString(value, 16) || '';
+    const match = raw.match(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/);
+    return match ? match[0].toLowerCase() : fallback;
+  }
+
   function normalizeThresholdRule(rule, fallback = CANVAS_NODE_THRESHOLD) {
     if (!rule || typeof rule !== 'object') {
       return { ...fallback };
@@ -222,6 +228,7 @@ module.exports = function initNeural({
       id: student.id,
       role: 'client',
       name: student.name,
+      color: normalizeStudentColor(student.color, '#3b82f6'),
       weights,
       inputs,
       products: {
@@ -260,7 +267,8 @@ module.exports = function initNeural({
       .map((student) => ({
         id: student.id,
         role: 'client',
-        name: student.name
+        name: student.name,
+        color: normalizeStudentColor(student.color, '#3b82f6')
       }));
 
     return [...teachers, ...students];
@@ -414,15 +422,18 @@ module.exports = function initNeural({
 
       if (message.type === 'register_student') {
         const studentName = sanitizeString(message.name, 40) || `Student-${Math.floor(Math.random() * 900 + 100)}`;
+        const studentColor = normalizeStudentColor(message.color, '#3b82f6');
         console.log(`[neural-lab] 🧑‍🎓 Registering student: "${studentName}"`);
         const existing = canvasNodeStudents.get(ws);
         if (existing) {
           existing.name = studentName;
+          existing.color = studentColor;
           existing.weights = normalizeCanvasNodeStudentWeights(existing.weights, existing.weights);
         } else {
           canvasNodeStudents.set(ws, {
             id: `canvas-${Date.now().toString(36)}-${Math.floor(Math.random() * 10000).toString(16)}`,
             name: studentName,
+            color: studentColor,
             connectedAt: Date.now(),
             weights: { w1: 1, w2: 1 },
             inputs: normalizeCanvasNodeStudentInputs(canvasNodeLesson.inputs, canvasNodeLesson.inputs),
@@ -430,7 +441,7 @@ module.exports = function initNeural({
             total: ''
           });
         }
-        touchCanvasNodeConnection(ws, { role: 'client', name: studentName });
+        touchCanvasNodeConnection(ws, { role: 'client', name: studentName, color: studentColor });
         if (sessionManager && typeof sessionManager.update === 'function') {
           sessionManager.joinApp(sessionId, 'neural-lab');
           sessionManager.update(sessionId, {
@@ -440,6 +451,7 @@ module.exports = function initNeural({
           }, {
             neural: {
               role: 'client',
+              color: studentColor,
               weights: {
                 w1: canvasNodeStudents.get(ws).weights.w1,
                 w2: canvasNodeStudents.get(ws).weights.w2

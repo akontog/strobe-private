@@ -40,6 +40,7 @@ const initFourier = require('./services/fourier');
 const initBuffon = require('./services/buffon');
 const initGeometry = require('./services/geometry');
 const initNeural = require('./services/neural');
+const initPrimes = require('./services/primes');
 
 // 4. Δημιουργία εφαρμογής Express και HTTP server
 const app = express();
@@ -956,6 +957,11 @@ const { buffonWss } = initBuffon({
   httpServer,
   sessionManager
 });
+const { primesWss } = initPrimes({
+  recordCommunication,
+  getUpgradeClientInfo,
+  sessionManager
+});
 
 // Καταχώρηση upgrade event για χειρισμό WebSocket connections
 httpServer.on('upgrade', (request, socket, head) => {
@@ -972,6 +978,13 @@ httpServer.on('upgrade', (request, socket, head) => {
   if (request.url && request.url.startsWith('/ws/buffon')) {
     buffonWss.handleUpgrade(request, socket, head, (ws) => {
       buffonWss.emit('connection', ws, request);
+    });
+    return;
+  }
+
+  if (request.url && request.url.startsWith('/ws/primes-lab')) {
+    primesWss.handleUpgrade(request, socket, head, (ws) => {
+      primesWss.emit('connection', ws, request);
     });
     return;
   }

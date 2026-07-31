@@ -1,10 +1,16 @@
-import React, { useMemo, useState } from 'react';
-import Accordion from './components/Accordion';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import NumberGrid from './components/NumberGrid';
 import SelectionSummaryAccordion from './components/SelectionSummaryAccordion';
 import StudentsTable from './components/StudentsTable';
 import TeacherPanel from './components/TeacherPanel';
-import { ConnectionNameControl } from '../shared-components/components';
+import {
+  ConnectionNameControl,
+  randomIdentityColor,
+  readIdentityColor,
+  readIdentityName,
+  writeIdentityColor,
+  writeIdentityName
+} from '../shared-components/components';
 import { INITIAL_PRIME, NUMBER_RANGE, PRIME_NUMBERS, SIEVE_STEPS } from './data/primes';
 import './App.css';
 
@@ -15,8 +21,14 @@ const STUDENT_DEFS = [
   { id: 'student-4', name: 'Νίκος' }
 ];
 
-const createInitialStudents = () => STUDENT_DEFS.map((student) => ({
+const PRIMES_STUDENT_ID_KEY = 'strobePrimesStudentId';
+
+const randomColor = () => randomIdentityColor();
+
+const createInitialStudents = (viewerName, viewerColor) => STUDENT_DEFS.map((student, index) => ({
   ...student,
+  name: index === 0 ? viewerName : student.name,
+  color: index === 0 ? viewerColor : randomColor(),
   selectedCorrect: [],
   selectedWrong: []
 }));
@@ -37,22 +49,28 @@ const isPrimeNumber = (number) => {
 
 const App = ({ role = 'teacher' }) => {
   const isTeacher = role === 'teacher';
+  const wsRef = useRef(null);
+  const reconnectTimerRef = useRef(null);
+
   const [currentPrime, setCurrentPrime] = useState(INITIAL_PRIME);
-  const [students, setStudents] = useState(createInitialStudents);
+  const [studentName, setStudentName] = useState(() => readIdentityName('Μαρία'));
+  const [studentColor, setStudentColor] = useState(() => readIdentityColor(randomColor()));
+  const [students, setStudents] = useState(() => createInitialStudents(studentName, studentColor));
   const [activeStudentId, setActiveStudentId] = useState(STUDENT_DEFS[0].id);
-  const [studentName, setStudentName] = useState(() => {
-    try {
-      return localStorage.getItem('strobeStudentConnectName') || 'Μαρία';
-    } catch {
-      return 'Μαρία';
+  const [localStudentId, setLocalStudentId] = useState(() => {
+    if (typeof window === 'undefined') {
+      return STUDENT_DEFS[0].id;
     }
+    return window.localStorage.getItem(PRIMES_STUDENT_ID_KEY) || STUDENT_DEFS[0].id;
   });
   const [editingName, setEditingName] = useState(false);
   const [studentNameInput, setStudentNameInput] = useState(studentName);
   const [message, setMessage] = useState('Διάλεξε μια βάση και ξεκίνα το κόσκινο.');
 
-  const activeStudent = students.find((student) => student.id === activeStudentId) || students[0];
+  const effectiveStudentId = isTeacher ? activeStudentId : localStudentId;
+  const activeStudent = students.find((student) => student.id === effectiveStudentId) || students[0];
   const viewerName = isTeacher ? activeStudent?.name || '—' : studentName;
+  const viewerColor = isTeacher ? activeStudent?.color || '#22c55e' : studentColor;
 
   const correctOwnerByNumber = useMemo(() => {
     const ownerMap = {};
@@ -77,6 +95,14 @@ const App = ({ role = 'teacher' }) => {
     return selectionMap;
   }, [students]);
 
+  const studentColorById = useMemo(() => {
+    const map = {};
+    students.forEach((student) => {
+      map[student.id] = student.color;
+    });
+    return map;
+  }, [students]);
+
   const claimedNumbers = useMemo(
     () => new Set(Object.keys(correctOwnerByNumber).map(Number)),
     [correctOwnerByNumber]
@@ -92,11 +118,6 @@ const App = ({ role = 'teacher' }) => {
     [currentTargetNumbers, claimedNumbers]
   );
 
-  const nextPrime = useMemo(
-    () => PRIME_NUMBERS.find((prime) => prime > currentPrime),
-    [currentPrime]
-  );
-
   const progress = useMemo(() => {
     const solved = SIEVE_STEPS.filter((step) => step.multiples.every((number) => claimedNumbers.has(number)));
     const remaining = NUMBER_RANGE.filter((number) => !claimedNumbers.has(number));
@@ -110,9 +131,28 @@ const App = ({ role = 'teacher' }) => {
     };
   }, [students, claimedNumbers]);
 
+  const sendMessage = (payload) => {
+    const ws = wsRef.current;
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      return false;
+    }
+    ws.send(JSON.stringify(payload));
+    return true;
+  };
+
   const handleSelectPrime = (prime) => {
+    if (sendMessage({ type: 'select_prime', prime })) {
+      return;
+    }
     setCurrentPrime(prime);
     setMessage(`Τώρα δουλεύουμε με τη βάση ${prime}. Τα πολλαπλάσιά της φωτίζονται στον πίνακα.`);
+  };
+
+  const handleSelectActiveStudent = (studentId) => {
+    if (sendMessage({ type: 'select_active_student', studentId })) {
+      return;
+    }
+    setActiveStudentId(studentId);
   };
 
   const saveStudentName = () => {
@@ -123,18 +163,42 @@ const App = ({ role = 'teacher' }) => {
       return;
     }
 
-    try {
-      localStorage.setItem('strobeStudentConnectName', nextName);
-    } catch {
-      // ignore storage failures
-    }
-
+    writeIdentityName(nextName);
     setStudentName(nextName);
     setStudentNameInput(nextName);
+
+    if (sendMessage({
+      type: 'register_student',
+      studentId: localStudentId,
+      name: nextName,
+      color: studentColor
+    })) {
+      setEditingName(false);
+      return;
+    }
+
     setStudents((previousStudents) =>
-      previousStudents.map((student) => (student.id === activeStudentId ? { ...student, name: nextName } : student))
+      previousStudents.map((student) => (student.id === effectiveStudentId ? { ...student, name: nextName } : student))
     );
     setEditingName(false);
+  };
+
+  const saveStudentColor = (nextColor) => {
+    setStudentColor(nextColor);
+    writeIdentityColor(nextColor);
+
+    if (sendMessage({
+      type: 'register_student',
+      studentId: localStudentId,
+      name: studentName,
+      color: nextColor
+    })) {
+      return;
+    }
+
+    setStudents((previousStudents) =>
+      previousStudents.map((student) => (student.id === effectiveStudentId ? { ...student, color: nextColor } : student))
+    );
   };
 
   const updateStudent = (studentId, updater) => {
@@ -144,6 +208,10 @@ const App = ({ role = 'teacher' }) => {
   };
 
   const handleToggleNumber = (number) => {
+    if (sendMessage({ type: 'student_toggle_number', number })) {
+      return;
+    }
+
     if (number === currentPrime) {
       setMessage(`Ο ${number} είναι η βάση του βήματος, όχι πολλαπλάσιο.`);
       return;
@@ -153,27 +221,28 @@ const App = ({ role = 'teacher' }) => {
 
     if (isTarget) {
       const ownerId = correctOwnerByNumber[number];
-      if (ownerId && ownerId !== activeStudentId) {
+      if (ownerId && ownerId !== effectiveStudentId) {
         const ownerName = students.find((student) => student.id === ownerId)?.name || 'άλλος μαθητής';
         setMessage(`${number} έχει ήδη κλειδωθεί σωστά από τη/τον ${ownerName}.`);
         return;
       }
 
-      if (ownerId === activeStudentId) {
+      if (ownerId === effectiveStudentId) {
         setMessage(`${number} έχει ήδη κλειδωθεί σωστά από τη/τον ${activeStudent?.name || 'μαθητή'}.`);
         return;
       }
 
-      updateStudent(activeStudentId, (student) => ({
+      updateStudent(effectiveStudentId, (student) => ({
         ...student,
-        selectedCorrect: [...student.selectedCorrect, number]
+        selectedCorrect: [...student.selectedCorrect, number],
+        selectedWrong: student.selectedWrong.filter((item) => item !== number)
       }));
 
       setMessage(`${viewerName || 'Ο μαθητής'} κλείδωσε σωστά το ${number}.`);
       return;
     }
 
-    updateStudent(activeStudentId, (student) => {
+    updateStudent(effectiveStudentId, (student) => {
       const hasNumber = student.selectedWrong.includes(number);
       return {
         ...student,
@@ -186,7 +255,122 @@ const App = ({ role = 'teacher' }) => {
     setMessage(`${viewerName || 'Ο μαθητής'} σημείωσε το ${number} ως λάθος επιλογή.`);
   };
 
-  const visibleStudents = isTeacher ? students : students.slice(0, 1);
+  useEffect(() => {
+    let cancelled = false;
+
+    const clearReconnect = () => {
+      if (reconnectTimerRef.current) {
+        clearTimeout(reconnectTimerRef.current);
+        reconnectTimerRef.current = null;
+      }
+    };
+
+    const scheduleReconnect = () => {
+      if (cancelled || reconnectTimerRef.current) {
+        return;
+      }
+      reconnectTimerRef.current = setTimeout(() => {
+        reconnectTimerRef.current = null;
+        connect();
+      }, 1200);
+    };
+
+    const registerRole = () => {
+      if (isTeacher) {
+        sendMessage({ type: 'register_teacher' });
+        sendMessage({ type: 'request_state' });
+        return;
+      }
+
+      sendMessage({
+        type: 'register_student',
+        studentId: localStudentId,
+        name: studentName,
+        color: studentColor
+      });
+      sendMessage({ type: 'request_state' });
+    };
+
+    const handleServerState = (payload) => {
+      if (!payload || typeof payload !== 'object') {
+        return;
+      }
+
+      if (Number.isFinite(Number(payload.currentPrime))) {
+        setCurrentPrime(Number(payload.currentPrime));
+      }
+
+      if (typeof payload.activeStudentId === 'string' && payload.activeStudentId.trim()) {
+        setActiveStudentId(payload.activeStudentId.trim());
+      }
+
+      if (Array.isArray(payload.students)) {
+        setStudents(payload.students.map((student) => ({
+          ...student,
+          selectedCorrect: Array.isArray(student.selectedCorrect) ? student.selectedCorrect : [],
+          selectedWrong: Array.isArray(student.selectedWrong) ? student.selectedWrong : []
+        })));
+      }
+
+      if (!isTeacher && typeof payload.viewerStudentId === 'string' && payload.viewerStudentId.trim()) {
+        const nextId = payload.viewerStudentId.trim();
+        setLocalStudentId(nextId);
+        window.localStorage.setItem(PRIMES_STUDENT_ID_KEY, nextId);
+      }
+    };
+
+    const connect = () => {
+      if (cancelled) {
+        return;
+      }
+
+      const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+      const ws = new WebSocket(`${protocol}://${window.location.host}/ws/primes-lab`);
+      wsRef.current = ws;
+
+      ws.addEventListener('open', () => {
+        if (cancelled) {
+          return;
+        }
+        clearReconnect();
+        registerRole();
+      });
+
+      ws.addEventListener('message', (event) => {
+        let messagePayload;
+        try {
+          messagePayload = JSON.parse(event.data);
+        } catch {
+          return;
+        }
+
+        if (messagePayload?.type === 'primes_state') {
+          handleServerState(messagePayload);
+        }
+      });
+
+      ws.addEventListener('close', () => {
+        if (!cancelled) {
+          scheduleReconnect();
+        }
+      });
+    };
+
+    connect();
+
+    return () => {
+      cancelled = true;
+      clearReconnect();
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+      wsRef.current = null;
+    };
+  }, [isTeacher]);
+
+  const visibleStudents = isTeacher
+    ? students
+    : students.filter((student) => student.id === effectiveStudentId);
 
   return (
     <div className={isTeacher ? 'primes-app is-teacher' : 'primes-app is-student'}>
@@ -211,6 +395,9 @@ const App = ({ role = 'teacher' }) => {
               setStudentNameInput(studentName);
               setEditingName(false);
             }}
+            color={viewerColor}
+            showColorPicker={!isTeacher}
+            onColorChange={saveStudentColor}
             connectedLabel={isTeacher ? 'Σε σύνδεση' : 'Συνδεδεμένος'}
             disconnectedLabel="Εκτός σύνδεσης"
             namePrefix="όνομα χρήστη"
@@ -238,8 +425,9 @@ const App = ({ role = 'teacher' }) => {
             currentPrime={currentPrime}
             primeNumbers={PRIME_NUMBERS}
             correctOwnerByNumber={correctOwnerByNumber}
+            studentColorById={studentColorById}
             wrongSelectionsByNumber={wrongSelectionsByNumber}
-            activeStudentId={activeStudentId}
+            activeStudentId={effectiveStudentId}
             onToggleNumber={handleToggleNumber}
             mode={isTeacher ? 'teacher' : 'student'}
             readonly={isTeacher}
@@ -255,7 +443,7 @@ const App = ({ role = 'teacher' }) => {
                 onSelectPrime={handleSelectPrime}
                 students={students}
                 activeStudentId={activeStudentId}
-                onSelectActiveStudent={setActiveStudentId}
+                onSelectActiveStudent={handleSelectActiveStudent}
               />
 
               <SelectionSummaryAccordion
@@ -275,6 +463,7 @@ const App = ({ role = 'teacher' }) => {
                 currentPrime={currentPrime}
                 claimedNumbers={claimedNumbers}
                 wrongSelectionsByNumber={wrongSelectionsByNumber}
+                studentColorById={studentColorById}
               />
 
               <div className="primes-note primes-compact-note">
