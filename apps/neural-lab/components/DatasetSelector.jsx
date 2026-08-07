@@ -1,5 +1,5 @@
 import React from 'react';
-import { Accordion } from '../../shared/components/Accordion';
+import { Accordion } from '../../shared-components/Accordion';
 export const DatasetSelector = ({
   datasets,
   currentDataset,

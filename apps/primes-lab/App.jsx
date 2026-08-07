@@ -10,7 +10,7 @@ import {
   readIdentityName,
   writeIdentityColor,
   writeIdentityName
-} from '../shared-components/components';
+} from '../shared-components';
 import { INITIAL_PRIME, NUMBER_RANGE, PRIME_NUMBERS, SIEVE_STEPS } from './data/primes';
 import './App.css';
 

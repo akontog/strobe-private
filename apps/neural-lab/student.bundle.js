@@ -21513,7 +21513,7 @@ var TeacherCard = ({ children, title }) => /* @__PURE__ */ import_react2.default
 // apps/neural-lab/components/DatasetSelector.jsx
 var import_react4 = __toESM(require_react());
 
-// apps/shared/components/Accordion.jsx
+// apps/shared-components/Accordion.jsx
 var import_react3 = __toESM(require_react());
 var Accordion = ({ title, children }) => {
   const [isOpen, setIsOpen] = (0, import_react3.useState)(false);
@@ -21832,7 +21832,7 @@ var VerticalProducts = ({
 // apps/neural-lab/components/StudentTable.jsx
 var import_react8 = __toESM(require_react());
 
-// apps/shared/components/StudentTable.jsx
+// apps/shared-components/StudentTable.jsx
 var import_react7 = __toESM(require_react());
 var defaultGetRowKey = (participant, index) => participant.id || participant.sessionId || participant.username || participant.name || index;
 var defaultGetDisplayName = (participant, fallbackName) => participant.username || participant.name || participant.displayName || fallbackName;
@@ -22103,13 +22103,13 @@ var StudentQrAccordion = () => /* @__PURE__ */ import_react11.default.createElem
   }
 )));
 
-// apps/shared-components/components/BlueNumberBox.jsx
+// apps/shared-components/BlueNumberBox.jsx
 var import_react12 = __toESM(require_react());
 
-// apps/shared-components/components/Toolbar.jsx
+// apps/shared-components/Toolbar.jsx
 var import_react13 = __toESM(require_react());
 
-// apps/shared-components/components/ConnectionNameControl.jsx
+// apps/shared-components/ConnectionNameControl.jsx
 var import_react14 = __toESM(require_react());
 var ConnectionNameControl = ({
   connected = true,
@@ -22160,7 +22160,7 @@ var ConnectionNameControl = ({
 };
 var ConnectionNameControl_default = ConnectionNameControl;
 
-// apps/shared-components/components/identityStorage.js
+// apps/shared-components/identityStorage.js
 var IDENTITY_NAME_KEY = "strobeStudentConnectName";
 var IDENTITY_COLOR_KEY = "strobeStudentColor";
 var IDENTITY_COLORS = ["#22c55e", "#f97316", "#6366f1", "#e11d48", "#14b8a6", "#f59e0b", "#0ea5e9", "#8b5cf6"];

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Accordion } from '../../shared/components/Accordion';
+import { Accordion } from '../../shared-components/Accordion';
 
 // Υπολογίζει output = w1*i1 + w2*i2, λαμβάνοντας υπόψη μόνο τα ενεργά inputs
 // (ένα ανενεργό input δεν συνεισφέρει στο άθροισμα).

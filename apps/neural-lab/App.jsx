@@ -6,7 +6,7 @@ import { StudentTable } from './components/StudentTable';
 import { ExamplesClassifier } from './components/ExamplesClassifier';
 import { ActivitiesMenu, getNeuralActivityTitle } from './components/ActivitiesMenu';
 import { StudentQrAccordion } from './components/StudentQrAccordion';
-import { Accordion } from '../shared/components/Accordion';
+import { Accordion } from '../shared-components/Accordion';
 import {
   ConnectionNameControl,
   randomIdentityColor,
@@ -14,9 +14,9 @@ import {
   readIdentityName,
   writeIdentityColor,
   writeIdentityName
-} from '../shared-components/components';
+} from '../shared-components';
 import DATASETS from './data/datasets';
-//import { StudentTable } from '../shared/components/StudentTable';
+//import { StudentTable } from '../shared-components/StudentTable';
 import './App.css';
 
 const DEFAULT_THRESHOLD_RULE = { op: '>=', boundary: 5 };

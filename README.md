@@ -106,6 +106,7 @@ SmarT classROoms for emBodied participatory lEarning | Strobe
 
 
 ## 📂 `apps/` – Εφαρμογές / Δραστηριότητες
+
 Κάθε υποφάκελος περιέχει μία αυτόνομη web app.
 
 ### Υποφάκελοι (εφαρμογές)
@@ -230,8 +231,8 @@ npm install --save-dev webpack webpack-cli
 Προσθέστε κοινά components από το `apps/shared-components/`:
 
 ```javascript
-import { BlueNumberBox, RedNumberBox, InputBoxStyle, ProductResult } from '../shared-components/components/BlueNumberBox';
-import { ToolButton, Toolbar } from '../shared-components/components/Toolbar';
+import { BlueNumberBox, RedNumberBox, InputBoxStyle, ProductResult } from '../shared-components/BlueNumberBox';
+import { ToolButton, Toolbar } from '../shared-components/Toolbar';
 
 // Χρησιμοποίηση στο component
 export const MyComponent = () => (
@@ -299,7 +300,7 @@ taskkill /PID <PID> /F
 
 ## Myria server
 
-### Αρχεία/Φακέλοι που πρέπει να μεταφερθούν
+### Αρχεία/Φάκελοι που πρέπει να μεταφερθούν
 
 Μεταφορά των ακόλουθων αρχείων και φακέλων στον `/var/www/html/dmlt/node`:
 

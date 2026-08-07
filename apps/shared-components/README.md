@@ -7,9 +7,11 @@
 ```
 apps/
   shared-components/
-    components/
-      BlueNumberBox.jsx    - Αριθμητικά κουτάκια με διάφορα χρώματα
-      Toolbar.jsx          - Εργαλειοθήκη με κουμπιά
+    BlueNumberBox.jsx      - Αριθμητικά κουτάκια με διάφορα χρώματα
+    Toolbar.jsx            - Εργαλειοθήκη με κουμπιά
+    Accordion.jsx          - Reusable accordion panel
+    StudentTable.jsx       - Reusable student table
+    index.js               - Κεντρικά exports
 ```
 
 ## Χρήση
@@ -17,15 +19,15 @@ apps/
 Για να χρησιμοποιήσετε τα shared components σε μια εφαρμογή:
 
 ```javascript
-import { BlueNumberBox, RedNumberBox, InputBoxStyle, ProductResult } from '../shared-components/components/BlueNumberBox';
-import { ToolButton, Toolbar } from '../shared-components/components/Toolbar';
+import { BlueNumberBox, RedNumberBox, InputBoxStyle, ProductResult } from '../shared-components/BlueNumberBox';
+import { ToolButton, Toolbar } from '../shared-components/Toolbar';
 ```
 
 ## Παράδειγμα
 
 ```jsx
 import React from 'react';
-import { BlueNumberBox, RedNumberBox } from '../shared-components/components/BlueNumberBox';
+import { BlueNumberBox, RedNumberBox } from '../shared-components/BlueNumberBox';
 
 const MyComponent = () => {
   return (

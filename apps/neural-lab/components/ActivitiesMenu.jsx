@@ -1,5 +1,5 @@
 import React from 'react';
-import { Accordion } from '../../shared/components/Accordion';
+import { Accordion } from '../../shared-components/Accordion';
 
 const ACTIVITY_OPTIONS = [
   { value: '1', label: '1. Βρίσκω την είσοδο' },

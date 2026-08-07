@@ -87,7 +87,7 @@ body {
 Εισάγετε components από `../shared-components/`:
 
 ```javascript
-import { BlueNumberBox, RedNumberBox } from '../shared-components/components/BlueNumberBox';
+import { BlueNumberBox, RedNumberBox } from '../shared-components/BlueNumberBox';
 ```
 
 ## 5. Bundling (για production)
@@ -140,7 +140,7 @@ const App = () => {
 ### BlueNumberBox.jsx
 
 ```javascript
-import { BlueNumberBox, RedNumberBox, InputBoxStyle, ProductResult } from '../shared-components/components/BlueNumberBox';
+import { BlueNumberBox, RedNumberBox, InputBoxStyle, ProductResult } from '../shared-components/BlueNumberBox';
 
 // BlueNumberBox - μπλε αριθμό
 <BlueNumberBox value={4} />
@@ -160,7 +160,7 @@ import { BlueNumberBox, RedNumberBox, InputBoxStyle, ProductResult } from '../sh
 ### Toolbar.jsx
 
 ```javascript
-import { ToolButton, Toolbar } from '../shared-components/components/Toolbar';
+import { ToolButton, Toolbar } from '../shared-components/Toolbar';
 
 // ToolButton - κουμπί εργαλειοθήκης
 <ToolButton 
@@ -179,24 +179,13 @@ import { ToolButton, Toolbar } from '../shared-components/components/Toolbar';
 
 Αν δημιουργήσετε νέα κοινά components που μπορούν να χρησιμοποιηθούν σε πολλαπλές εφαρμογές:
 
-1. Προσθέστε το στο `apps/shared-components/components/`
+1. Προσθέστε το στο `apps/shared-components/`
 2. Εξάγετε (export) τα components
 3. Ενημερώστε το `apps/shared-components/README.md`
 
 ```javascript
-// apps/shared-components/components/MySharedComponent.jsx
+// apps/shared-components/MySharedComponent.jsx
 export const MySharedComponent = ({ prop1, prop2 }) => {
   return <div>{prop1}</div>;
 };
 ```
-
-## Tips
-
-- ✅ Χρησιμοποιήστε React hooks (useState, useEffect) για state management
-- ✅ Δημιουργήστε μικρά, επαναχρησιμοποιήσιμα components
-- ✅ Χρησιμοποιήστε CSS modules ή CSS-in-JS για styling
-- ✅ Αποφύγετε inline styles σε παραγωγή (production)
-- ✅ Δοκιμάστε τα components με React DevTools
-
-
-- [Shared Components](./apps/shared-components/README.md)

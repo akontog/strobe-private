@@ -21639,13 +21639,13 @@ var TeacherPanel = ({
 };
 var TeacherPanel_default = TeacherPanel;
 
-// apps/shared-components/components/BlueNumberBox.jsx
+// apps/shared-components/BlueNumberBox.jsx
 var import_react6 = __toESM(require_react());
 
-// apps/shared-components/components/Toolbar.jsx
+// apps/shared-components/Toolbar.jsx
 var import_react7 = __toESM(require_react());
 
-// apps/shared-components/components/ConnectionNameControl.jsx
+// apps/shared-components/ConnectionNameControl.jsx
 var import_react8 = __toESM(require_react());
 var ConnectionNameControl = ({
   connected = true,
@@ -21696,7 +21696,7 @@ var ConnectionNameControl = ({
 };
 var ConnectionNameControl_default = ConnectionNameControl;
 
-// apps/shared-components/components/identityStorage.js
+// apps/shared-components/identityStorage.js
 var IDENTITY_NAME_KEY = "strobeStudentConnectName";
 var IDENTITY_COLOR_KEY = "strobeStudentColor";
 var IDENTITY_COLORS = ["#22c55e", "#f97316", "#6366f1", "#e11d48", "#14b8a6", "#f59e0b", "#0ea5e9", "#8b5cf6"];
