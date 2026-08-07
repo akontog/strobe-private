@@ -1,8 +1,6 @@
-SmarT classROoms for emBodied participatory lEarning
-Strobe Multi-App Classroom
-Ενοποιημένο no-login περιβάλλον για classroom activities με real-time συνεργασία.
+SmarT classROoms for emBodied participatory lEarning | Strobe
 
-# Τεχνολογίες:
+# Τεχνολογίες
 
 ## frontend
 
@@ -33,7 +31,7 @@ Strobe Multi-App Classroom
 
 - redis;;; (να τσεκάρω)
 
-## αρχεία
+## αποθήκευση δεδομένων
 
 - json
 
@@ -48,13 +46,20 @@ Strobe Multi-App Classroom
 ## Buffon Needle
 
 ## Fourier Lab
+
 - [readme](reports/fourier-lab/README-fourier-lab.md)
 
 ## Neural Lab
+
 - [readme](reports/neural-lab/README-neural-lab)
 
+## Primes Lab
+
+- [readme](reports/primes-lab/README-primes-lab)
+- 
 
 # Αρχιτεκτονική
+
 - Ένα κεντρικό Node server στο project root.
 - Όλες οι εφαρμογές μέσα στο apps (ξεχωριστός φάκελος ανά app).
 - Shared assets στο assets.
@@ -63,8 +68,6 @@ Strobe Multi-App Classroom
 - Session/data storage στο server με in-memory + file persistence (data/users.json).
 
 # Δομή φακέλων
-
-## 📁 Ρίζα φακέλου `strobe-private/`
 
 - **`server.js`**  
   – Κύριος διακομιστής Node.js (Express ή native http).  
@@ -132,9 +135,12 @@ Strobe Multi-App Classroom
 - **`presentation-toc.js`**  
   – Δημιουργεί αυτόματα τον πίνακα περιεχομένων (TOC) της παρουσίασης.
 
-## 📂 `public/` – HTML σελίδες (served από τον Node)
+## 📂 `public/` – HTML σελίδες
 
-- **`index.html`** – Αρχική σελίδα (ίσως επιλογή μεταξύ launcher, client, user).  
+### index.html
+
+Αρχική σελίδα
+http://localhost:3000/   
 - **`launcher.html`** – Εκκινητής εφαρμογών (πλέγμα με όλα τα apps από το registry.js).  
 - **`client.html`** – Προβολή μαθητή / συμμετέχοντα (σύνδεση στο WebSocket, αποστολή απαντήσεων).  
 - **`user.html`** – Σελίδα διαχείρισης χρήστη (login, προφίλ, στατιστικά).
