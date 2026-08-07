@@ -254,14 +254,14 @@
       return `${url.pathname}${url.search}`;
     }
 
-    function openAppConnected(app) {
+    function openAppConnected(app, launchPath = app.launchPath) {
       if (!state.studentName) {
         setStatus('Δώσε πρώτα όνομα σύνδεσης.', true);
         nameInput.focus();
         return;
       }
 
-      const target = appendParams(app.launchPath, {
+      const target = appendParams(launchPath, {
         name: state.studentName,
         autoconnect: '1'
       });
@@ -289,6 +289,26 @@
       };
 
       const cardItems = apps.map((app) => {
+        if (app.slug === 'geometry-live') {
+          const mousePath = '/apps/geometry-live/mouse.html';
+          const cameraPath = '/apps/geometry-live/camera.html';
+
+          return {
+            id: app.slug,
+            slug: app.slug,
+            tone: toneBySlug[app.slug],
+            title: app.title,
+            eyebrow: app.slug,
+            description: `${app.description} Επίλεξε είσοδο mouse ή camera.`,
+            actions: [
+              { kind: 'button', label: 'Mouse με σύνδεση', action: 'open-geometry-mouse-connected' },
+              { kind: 'button', label: 'Camera με σύνδεση', action: 'open-geometry-camera-connected' },
+              { kind: 'link', label: 'Mouse direct', href: mousePath, variant: 'secondary' },
+              { kind: 'link', label: 'Camera direct', href: cameraPath, variant: 'secondary' }
+            ]
+          };
+        }
+
         const directLink = appendParams(app.launchPath, {
           mode: app.launchPath.includes('mode=') ? undefined : 'client'
         });
@@ -308,9 +328,23 @@
       });
 
       window.PostitCards.renderAppCards(appGrid, cardItems, (item, action) => {
-        if (!item || !action || action.action !== 'open-connected') return;
+        if (!item || !action || !action.action) return;
         const app = apps.find((a) => a.slug === item.slug);
-        if (app) openAppConnected(app);
+        if (!app) return;
+
+        if (action.action === 'open-connected') {
+          openAppConnected(app);
+          return;
+        }
+
+        if (action.action === 'open-geometry-mouse-connected') {
+          openAppConnected(app, '/apps/geometry-live/mouse.html');
+          return;
+        }
+
+        if (action.action === 'open-geometry-camera-connected') {
+          openAppConnected(app, '/apps/geometry-live/camera.html');
+        }
       });
     }
 

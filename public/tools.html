@@ -115,24 +115,92 @@
       font-size: 0.88rem;
       opacity: 0.95;
     }
+
+    .geometry-builder {
+      margin-top: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 12px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.14);
+      display: grid;
+      gap: 10px;
+    }
+
+    .geometry-builder h3 {
+      margin: 0;
+      font-size: 1rem;
+      color: #fef3c7;
+    }
+
+    .geometry-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px;
+      align-items: end;
+    }
+
+    .geometry-controls label {
+      font-size: 0.84rem;
+      font-weight: 700;
+      display: grid;
+      gap: 4px;
+    }
+
+    .geometry-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .geometry-actions button {
+      border: 0;
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-weight: 700;
+      cursor: pointer;
+      background: rgba(15, 23, 42, 0.7);
+      color: #f8fafc;
+    }
+
+    .geometry-actions button.secondary {
+      background: rgba(148, 163, 184, 0.45);
+      color: #f8fafc;
+    }
+
+    .geometry-canvas {
+      width: 100%;
+      max-width: 760px;
+      height: auto;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-radius: 10px;
+      background: #ffffff;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    .geometry-hint {
+      font-size: 0.82rem;
+      color: #e2e8f0;
+      opacity: 0.95;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header" style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;">
       <h1><img src="icons/strobelogo.svg" style="height:50px;" alt="Strobe Logo"> | Tools</h1>
-      <p class="tools-note">Πίνακας εργαλείων και Activity Builder, όλα ως Post-it.</p>
+      <p class="tools-note">Εργαλεία: Activity Builder, Camera Speed Test, Linear Seperation.</p>
       <a class="back-link" href="/">← Επιστροφή στην αρχική</a>
     </div>
 
     <section class="board-section">
       <h2>Tool Actions</h2>
       <div id="toolCardsRoot"></div>
-      <div class="tools-shortcuts">Keyboard shortcuts: `1` Geometry, `2` Camera, `3` Linear Separation, `4` Activity Builder, `0` Back.</div>
+      <div class="tools-shortcuts">Keyboard shortcuts: `1` Activity Builder, `2` Camera Speed Test, `3` Linear Seperation, `0` Back.</div>
     </section>
 
     <section class="board-section" id="activity-builder">
-      <h2>Activity Builder</h2>
+      <h2>Teacher Lesson Designer</h2>
       <div id="builderCardsRoot"></div>
     </section>
   </div>
@@ -145,10 +213,9 @@
       const { useEffect, useMemo, useState } = React;
 
       const TOOL_CARD_ITEMS = [
-        { id: 'geometry-direct', href: '/user.html', icon: '📐', tone: 'green', title: 'Geometry Direct', description: 'Άμεσο άνοιγμα geometry app με manual σύνδεση για test και συνεργασία.', features: ['/user.html'] },
-        { id: 'camera-speed-test', href: '/camera-speed-test', icon: '🎥', tone: 'blue', title: 'Camera Speed Test', description: 'Δοκιμή αποστολής/επιστροφής καρέ και server-side tracking.', features: ['/camera-speed-test'] },
-        { id: 'linear-separation', href: '/tools/linear-seperation', icon: '🧠', tone: 'orange', title: 'Linear Seperation', description: 'React εργαλείο για γραμμικό διαχωρισμό από JSON datasets και upload αρχείων.', features: ['/tools/linear-seperation'] },
-        { id: 'open-builder', href: '#activity-builder', icon: '🗂️', tone: 'magenta', title: 'Activity Builder', description: 'Δημιουργία και διαχείριση activity JSON για όλα τα teacher apps.', features: ['Save', 'Load', 'Preview'] }
+        { id: 'activity-builder', href: '/tools/activity-builder', icon: '🗂️', tone: 'magenta', title: 'Activity Builder', description: 'Δημιουργία και διαχείριση activity JSON για teacher apps.', features: ['/tools/activity-builder'] },
+        { id: 'camera-speed-test', href: '/tools/camera-speed-test', icon: '🎥', tone: 'blue', title: 'Camera Speed Test', description: 'Δοκιμή αποστολής/επιστροφής καρέ και server-side tracking.', features: ['/tools/camera-speed-test'] },
+        { id: 'linear-separation', href: '/tools/linear-seperation', icon: '🧠', tone: 'orange', title: 'Linear Seperation', description: 'React εργαλείο για γραμμικό διαχωρισμό από JSON datasets και upload αρχείων.', features: ['/tools/linear-seperation'] }
       ];
 
       function BuilderList({ items, onSelect }) {
@@ -184,6 +251,17 @@
         const [items, setItems] = useState([]);
         const [preview, setPreview] = useState('Select an activity to preview JSON.');
 
+        const [geometryDraft, setGeometryDraft] = useState([]);
+        const [geoTool, setGeoTool] = useState('point');
+        const [geoColor, setGeoColor] = useState('#0f172a');
+        const [geoWidth, setGeoWidth] = useState(2);
+        const [firstPoint, setFirstPoint] = useState(null);
+        const [hoverPoint, setHoverPoint] = useState(null);
+
+        const geometryCanvasRef = React.useRef(null);
+        const CANVAS_WIDTH = 760;
+        const CANVAS_HEIGHT = 420;
+
         const preferredApp = useMemo(() => {
           const params = new URLSearchParams(window.location.search);
           return (params.get('app') || '').trim();
@@ -200,6 +278,202 @@
           const payload = await response.json();
           if (!response.ok) throw new Error(payload.error || 'Request failed');
           return payload;
+        }
+
+        function clamp01(value) {
+          const numeric = Number(value);
+          if (!Number.isFinite(numeric)) return 0;
+          return Math.max(0, Math.min(1, numeric));
+        }
+
+        function normalizeShape(shape) {
+          if (!shape || typeof shape !== 'object') return null;
+          const normalized = {
+            ...shape,
+            color: typeof shape.color === 'string' && shape.color ? shape.color : '#0f172a',
+            width: Number.isFinite(Number(shape.width || shape.lineWidth)) ? Number(shape.width || shape.lineWidth) : 2
+          };
+
+          if (shape.type === 'point') {
+            if (!Number.isFinite(Number(shape.x)) || !Number.isFinite(Number(shape.y))) return null;
+            normalized.x = clamp01(shape.x);
+            normalized.y = clamp01(shape.y);
+            return normalized;
+          }
+
+          if (shape.type === 'line' || shape.type === 'ray') {
+            if (![shape.x1, shape.y1, shape.x2, shape.y2].every((v) => Number.isFinite(Number(v)))) return null;
+            normalized.x1 = clamp01(shape.x1);
+            normalized.y1 = clamp01(shape.y1);
+            normalized.x2 = clamp01(shape.x2);
+            normalized.y2 = clamp01(shape.y2);
+            return normalized;
+          }
+
+          if (shape.type === 'rectangle') {
+            if (![shape.x, shape.y, shape.width, shape.height].every((v) => Number.isFinite(Number(v)))) return null;
+            normalized.x = clamp01(shape.x);
+            normalized.y = clamp01(shape.y);
+            normalized.width = Math.max(0.001, clamp01(shape.width));
+            normalized.height = Math.max(0.001, clamp01(shape.height));
+            return normalized;
+          }
+
+          if (shape.type === 'circle') {
+            const cx = Number.isFinite(Number(shape.x)) ? shape.x : shape.cx;
+            const cy = Number.isFinite(Number(shape.y)) ? shape.y : shape.cy;
+            if (![cx, cy, shape.radius].every((v) => Number.isFinite(Number(v)))) return null;
+            normalized.x = clamp01(cx);
+            normalized.y = clamp01(cy);
+            normalized.radius = Math.max(0.001, clamp01(shape.radius));
+            return normalized;
+          }
+
+          return null;
+        }
+
+        function extractGeometry(config) {
+          const source = config && typeof config === 'object' ? config : {};
+          const geometry = Array.isArray(source.geometry) ? source.geometry : [];
+          return geometry.map(normalizeShape).filter(Boolean);
+        }
+
+        function readCanvasPoint(event) {
+          const canvas = geometryCanvasRef.current;
+          if (!canvas) return null;
+          const rect = canvas.getBoundingClientRect();
+          return {
+            x: clamp01((event.clientX - rect.left) / rect.width),
+            y: clamp01((event.clientY - rect.top) / rect.height)
+          };
+        }
+
+        function buildShape(start, end) {
+          if (!start || !end) return null;
+          const base = {
+            color: geoColor,
+            width: Math.max(1, Math.min(12, Number(geoWidth) || 2))
+          };
+
+          if (geoTool === 'point') {
+            return { ...base, type: 'point', x: start.x, y: start.y };
+          }
+
+          if (geoTool === 'line' || geoTool === 'ray') {
+            return {
+              ...base,
+              type: geoTool,
+              x1: start.x,
+              y1: start.y,
+              x2: end.x,
+              y2: end.y
+            };
+          }
+
+          if (geoTool === 'rectangle') {
+            return {
+              ...base,
+              type: 'rectangle',
+              x: Math.min(start.x, end.x),
+              y: Math.min(start.y, end.y),
+              width: Math.max(0.001, Math.abs(end.x - start.x)),
+              height: Math.max(0.001, Math.abs(end.y - start.y))
+            };
+          }
+
+          if (geoTool === 'circle') {
+            return {
+              ...base,
+              type: 'circle',
+              x: start.x,
+              y: start.y,
+              radius: Math.min(1, Math.max(0.001, Math.hypot(end.x - start.x, end.y - start.y)))
+            };
+          }
+
+          return null;
+        }
+
+        function handleCanvasClick(event) {
+          if (selectedApp !== 'geometry-live') return;
+          const point = readCanvasPoint(event);
+          if (!point) return;
+
+          if (geoTool === 'point') {
+            const shape = buildShape(point, point);
+            if (!shape) return;
+            setGeometryDraft((prev) => [...prev, shape]);
+            setStatusError(false);
+            setStatus(`Shape added. Total: ${geometryDraft.length + 1}`);
+            return;
+          }
+
+          if (!firstPoint) {
+            setFirstPoint(point);
+            setStatusError(false);
+            setStatus('Start point captured. Click a second point.');
+            return;
+          }
+
+          const shape = buildShape(firstPoint, point);
+          if (!shape) return;
+          setGeometryDraft((prev) => [...prev, shape]);
+          setFirstPoint(null);
+          setHoverPoint(null);
+          setStatusError(false);
+          setStatus(`Shape added. Total: ${geometryDraft.length + 1}`);
+        }
+
+        function handleCanvasMouseMove(event) {
+          if (!firstPoint) return;
+          const point = readCanvasPoint(event);
+          if (!point) return;
+          setHoverPoint(point);
+        }
+
+        function applyCanvasToJson() {
+          let config = {};
+          try {
+            config = configText.trim() ? JSON.parse(configText) : {};
+          } catch (_error) {
+            setStatusError(true);
+            setStatus('Config JSON is not valid. Fix it before applying canvas.');
+            return;
+          }
+
+          config.geometry = geometryDraft;
+          setConfigText(JSON.stringify(config, null, 2));
+          setStatusError(false);
+          setStatus(`Applied ${geometryDraft.length} shapes to config.geometry.`);
+        }
+
+        function loadCanvasFromJson() {
+          try {
+            const config = configText.trim() ? JSON.parse(configText) : {};
+            const loaded = extractGeometry(config);
+            setGeometryDraft(loaded);
+            setFirstPoint(null);
+            setHoverPoint(null);
+            setStatusError(false);
+            setStatus(`Loaded ${loaded.length} shapes from config.geometry.`);
+          } catch (_error) {
+            setStatusError(true);
+            setStatus('Config JSON is not valid.');
+          }
+        }
+
+        function clearCanvasDraft() {
+          setGeometryDraft([]);
+          setFirstPoint(null);
+          setHoverPoint(null);
+          setStatusError(false);
+          setStatus('Canvas draft cleared.');
+        }
+
+        function undoCanvasShape() {
+          setGeometryDraft((prev) => prev.slice(0, -1));
+          setFirstPoint(null);
+          setHoverPoint(null);
         }
 
         async function loadActivities(appSlug) {
@@ -221,6 +495,18 @@
           try {
             const item = await api(`/teacher/activities/${selectedApp}/${filename}`);
             setPreview(JSON.stringify(item, null, 2));
+            setActivityName(item && item.name ? String(item.name) : '');
+            setNotes(item && typeof item.notes === 'string' ? item.notes : '');
+
+            const incomingConfig = item && item.config && typeof item.config === 'object' ? item.config : {};
+            setConfigText(JSON.stringify(incomingConfig, null, 2));
+
+            if (selectedApp === 'geometry-live') {
+              const loaded = extractGeometry(incomingConfig);
+              setGeometryDraft(loaded);
+              setFirstPoint(null);
+              setHoverPoint(null);
+            }
           } catch (error) {
             setStatusError(true);
             setStatus(error.message);
@@ -243,6 +529,11 @@
               setStatus('Config JSON is not valid.');
               return;
             }
+          }
+
+          if (selectedApp === 'geometry-live') {
+            config.geometry = geometryDraft;
+            setConfigText(JSON.stringify(config, null, 2));
           }
 
           setStatusError(false);
@@ -292,7 +583,101 @@
         useEffect(() => {
           if (!selectedApp) return;
           loadActivities(selectedApp);
+          if (selectedApp !== 'geometry-live') {
+            setFirstPoint(null);
+            setHoverPoint(null);
+          }
         }, [selectedApp]);
+
+        useEffect(() => {
+          const canvas = geometryCanvasRef.current;
+          if (!canvas) return;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) return;
+
+          const toX = (v) => clamp01(v) * CANVAS_WIDTH;
+          const toY = (v) => clamp01(v) * CANVAS_HEIGHT;
+          const toR = (v) => clamp01(v) * Math.min(CANVAS_WIDTH, CANVAS_HEIGHT);
+
+          function drawShape(shape, dashed) {
+            ctx.save();
+            ctx.strokeStyle = shape.color || '#0f172a';
+            ctx.fillStyle = shape.color || '#0f172a';
+            ctx.lineWidth = Number(shape.width) || 2;
+            if (dashed) ctx.setLineDash([6, 6]);
+
+            if (shape.type === 'point') {
+              ctx.beginPath();
+              ctx.arc(toX(shape.x), toY(shape.y), 5, 0, Math.PI * 2);
+              ctx.fill();
+            } else if (shape.type === 'line') {
+              ctx.beginPath();
+              ctx.moveTo(toX(shape.x1), toY(shape.y1));
+              ctx.lineTo(toX(shape.x2), toY(shape.y2));
+              ctx.stroke();
+            } else if (shape.type === 'ray') {
+              const x1 = toX(shape.x1);
+              const y1 = toY(shape.y1);
+              const x2 = toX(shape.x2);
+              const y2 = toY(shape.y2);
+              const dx = x2 - x1;
+              const dy = y2 - y1;
+              const len = Math.hypot(dx, dy);
+              if (len > 0.001) {
+                const ext = Math.max(CANVAS_WIDTH, CANVAS_HEIGHT) * 2;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x1 + (dx / len) * ext, y1 + (dy / len) * ext);
+                ctx.stroke();
+              }
+            } else if (shape.type === 'rectangle') {
+              ctx.beginPath();
+              ctx.rect(toX(shape.x), toY(shape.y), toX(shape.width), toY(shape.height));
+              ctx.stroke();
+            } else if (shape.type === 'circle') {
+              ctx.beginPath();
+              ctx.arc(toX(shape.x), toY(shape.y), toR(shape.radius), 0, Math.PI * 2);
+              ctx.stroke();
+            }
+
+            ctx.restore();
+          }
+
+          ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+          ctx.strokeStyle = '#e2e8f0';
+          ctx.lineWidth = 1;
+          for (let x = 0; x <= CANVAS_WIDTH; x += 38) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, CANVAS_HEIGHT);
+            ctx.stroke();
+          }
+          for (let y = 0; y <= CANVAS_HEIGHT; y += 38) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(CANVAS_WIDTH, y);
+            ctx.stroke();
+          }
+
+          geometryDraft.forEach((shape) => drawShape(shape, false));
+
+          if (firstPoint && hoverPoint && geoTool !== 'point') {
+            const previewShape = buildShape(firstPoint, hoverPoint);
+            if (previewShape) drawShape(previewShape, true);
+          }
+
+          if (firstPoint && geoTool !== 'point') {
+            ctx.save();
+            ctx.fillStyle = '#dc2626';
+            ctx.beginPath();
+            ctx.arc(toX(firstPoint.x), toY(firstPoint.y), 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+        }, [geometryDraft, firstPoint, hoverPoint, geoTool, geoColor, geoWidth]);
 
         return h(Components.AppNote, {
           item: {
@@ -345,16 +730,65 @@
               })
             )
           ),
+          selectedApp === 'geometry-live' ? h('div', { className: 'geometry-builder' },
+            h('h3', null, 'Geometry Canvas Builder'),
+            h('div', { className: 'geometry-controls' },
+              h('label', null,
+                'Tool',
+                h('select', {
+                  value: geoTool,
+                  onChange: (event) => {
+                    setGeoTool(event.target.value);
+                    setFirstPoint(null);
+                    setHoverPoint(null);
+                  }
+                },
+                  h('option', { value: 'point' }, 'Point'),
+                  h('option', { value: 'line' }, 'Line'),
+                  h('option', { value: 'ray' }, 'Ray'),
+                  h('option', { value: 'rectangle' }, 'Rectangle'),
+                  h('option', { value: 'circle' }, 'Circle')
+                )
+              ),
+              h('label', null,
+                'Color',
+                h('input', {
+                  type: 'color',
+                  value: geoColor,
+                  onChange: (event) => setGeoColor(event.target.value)
+                })
+              ),
+              h('label', null,
+                'Line width',
+                h('input', {
+                  type: 'number',
+                  min: 1,
+                  max: 12,
+                  step: 1,
+                  value: geoWidth,
+                  onChange: (event) => setGeoWidth(event.target.value)
+                })
+              )
+            ),
+            h('canvas', {
+              ref: geometryCanvasRef,
+              width: CANVAS_WIDTH,
+              height: CANVAS_HEIGHT,
+              className: 'geometry-canvas',
+              onClick: handleCanvasClick,
+              onMouseMove: handleCanvasMouseMove
+            }),
+            h('div', { className: 'geometry-actions' },
+              h('button', { type: 'button', onClick: undoCanvasShape }, 'Undo'),
+              h('button', { type: 'button', onClick: clearCanvasDraft }, 'Clear'),
+              h('button', { type: 'button', className: 'secondary', onClick: applyCanvasToJson }, 'Apply Canvas to JSON'),
+              h('button', { type: 'button', className: 'secondary', onClick: loadCanvasFromJson }, 'Load Canvas from JSON')
+            ),
+            h('div', { className: 'geometry-hint' }, 'Point: ένα click. Line/Ray/Rectangle/Circle: δύο clicks (start/end). Το save περνάει τα shapes στο config.geometry.')
+          ) : null,
           h('div', { className: 'builder-status', style: { color: statusError ? '#fee2e2' : '#fef3c7' } }, status),
           h(BuilderList, { items, onSelect: loadActivity }),
           h('pre', { className: 'builder-preview' }, preview)
-        );
-      }
-
-      function ToolsBoardApp() {
-        return h(React.Fragment, null,
-          h(Components.CardsGrid, { className: 'roles postit-grid', items: TOOL_CARD_ITEMS, type: 'role', cardClickable: true }),
-          h(ActivityBuilderNote)
         );
       }
 
@@ -364,15 +798,15 @@
       if (toolRoot) {
         renderReactNode(toolRoot, h(Components.CardsGrid, { className: 'roles postit-grid', items: TOOL_CARD_ITEMS, type: 'role', cardClickable: true }));
       }
+
       if (builderRoot) {
         renderReactNode(builderRoot, h(ActivityBuilderNote));
       }
 
       document.addEventListener('keydown', (event) => {
-        if (event.key === '1') window.location.href = '/user.html';
-        if (event.key === '2') window.location.href = '/camera-speed-test';
+        if (event.key === '1') window.location.href = '/tools/activity-builder';
+        if (event.key === '2') window.location.href = '/tools/camera-speed-test';
         if (event.key === '3') window.location.href = '/tools/linear-seperation';
-        if (event.key === '4') window.location.hash = 'activity-builder';
         if (event.key === '0') window.location.href = '/';
       });
 

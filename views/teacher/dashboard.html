@@ -274,7 +274,7 @@
     <section class="grid">
       <article class="panel">
         <h2>Available Apps</h2>
-        <div class="muted">Το Activity Builder μεταφέρθηκε στο Tools ως ξεχωριστό post-it.</div>
+        <div class="muted">Άνοιγμα Teacher view, Classroom screen και Teacher Lesson Designer.</div>
         <div id="appCards" class="apps"></div>
       </article>
     </section>
@@ -427,15 +427,11 @@
       };
 
       const cardItems = state.apps.map((app) => {
-        const showNeuralLinks = app.slug === 'neural-lab';
-        const actions = showNeuralLinks
-          ? [
-            { kind: 'link', label: 'Open Teacher View', href: app.teacherLaunchPath || app.launchPath },
-            { kind: 'link', label: 'Open Screen View', href: app.screenLaunchPath || app.launchPath, variant: 'secondary' }
-          ]
-          : [
-            { kind: 'link', label: 'Open Teacher View', href: app.launchPath }
-          ];
+        const classroomScreenPath = app.screenLaunchPath || app.clientLaunchPath || app.launchPath;
+        const actions = [
+          { kind: 'link', label: 'Open Teacher View', href: app.teacherLaunchPath || app.launchPath },
+          { kind: 'link', label: 'Open Classroom Screen', href: classroomScreenPath, variant: 'secondary' }
+        ];
 
         actions.push({ kind: 'link', label: 'Manage Activities', variant: 'secondary', href: `/tools?builder=1&app=${encodeURIComponent(app.slug)}#activity-builder` });
 

@@ -7,8 +7,8 @@ const APPS = [
     description: 'Existing shared canvas with real-time points and shapes.',
     roles: ['teacher', 'client'],
     kind: 'legacy',
-    teacherEntry: '/client.html',
-    clientEntry: '/user.html'
+    teacherEntry: '/apps/geometry-live/teacher.html',
+    clientEntry: '/apps/geometry-live/mouse.html'
   },
   {
     slug: 'buffon-needle',

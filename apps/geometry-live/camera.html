@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Strobe User - Κίνηση Σημείου</title>
-  <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <link rel="stylesheet" type="text/css" href="/css/styles.css">
+  <script src="../assets/js/classroom-api.js"></script>
   <script src="/js/realtime-socket.js"></script>
   <style>
     .user-container {
@@ -225,8 +226,8 @@
       <p>Κουνήστε το σημείο σας πάνω στη δραστηριότητα!</p>
       
       <div class="role-selector">
-        <button class="role-btn active" id="mouseRoleBtn">🖱️ Ποντίκι/Αφή</button>
-        <button class="role-btn" id="cameraRoleBtn">📹 Κάμερα</button>
+        <button class="role-btn" id="mouseRoleBtn">🖱️ Ποντίκι/Αφή</button>
+        <button class="role-btn active" id="cameraRoleBtn">📹 Κάμερα</button>
       </div>
 
       <div class="user-settings">
@@ -282,7 +283,7 @@
     const AUTO_CONNECT_QUERY = (urlParams.get('autoconnect') || '').toLowerCase();
     const SHOULD_AUTOCONNECT = ['1', 'true', 'yes'].includes(AUTO_CONNECT_QUERY);
 
-    let currentRole = 'mouse'; // 'mouse' or 'camera'
+    let currentRole = 'camera'; // 'mouse' or 'camera'
     let myPosition = { x: 0.5, y: 0.5 }; // Normalized 0-1
     let allUsers = [];
     let currentActivity = null;
@@ -1015,6 +1016,7 @@
     // Initial load
     loadUserSettings();
     updateConnectionButtons();
+    setRole(currentRole);
 
     if (SHOULD_AUTOCONNECT && userName) {
       connectSocket();

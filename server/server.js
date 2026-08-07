@@ -349,11 +349,11 @@ app.get('/student', (req, res) => {
 });
 
 app.get('/client.html', (req, res) => {
-  res.sendFile(path.join(publicDir, 'client.html'));
+  return res.redirect('/apps/geometry-live/teacher.html');
 });
 
 app.get('/user.html', (req, res) => {
-  res.sendFile(path.join(publicDir, 'user.html'));
+  return res.redirect('/apps/geometry-live/mouse.html');
 });
 
 app.get('/camera-speed-test', (req, res) => {
@@ -361,7 +361,19 @@ app.get('/camera-speed-test', (req, res) => {
     return res.status(404).json({ error: 'Camera features are disabled on this server.' });
   }
 
-  res.sendFile(path.join(publicDir, 'camera-speed-test.html'));
+  return res.sendFile(path.join(__dirname, '..', 'tools', 'camera-speed-test', 'index.html'));
+});
+
+app.get(['/tools/camera-speed-test', '/tools/camera-speed-test/'], (req, res) => {
+  if (!CAMERA_FEATURES_ENABLED) {
+    return res.status(404).json({ error: 'Camera features are disabled on this server.' });
+  }
+
+  return res.sendFile(path.join(__dirname, '..', 'tools', 'camera-speed-test', 'index.html'));
+});
+
+app.get(['/tools/activity-builder', '/tools/activity-builder/'], (req, res) => {
+  return res.sendFile(path.join(__dirname, '..', 'tools', 'activity-builder', 'index.html'));
 });
 
 app.get('/tools', (req, res) => {
@@ -378,7 +390,7 @@ app.get(['/tools/linear-seperation', '/tools/linear-seperation/'], (req, res) =>
 });
 
 app.get('/launcher.html', (req, res) => {
-  res.sendFile(path.join(publicDir, 'launcher.html'));
+  return res.redirect('/apps-launcher');
 });
 
 app.get('/apps-launcher', (req, res) => {
@@ -392,6 +404,9 @@ app.use('/js', express.static(path.join(publicDir, 'js')));
 app.use('/public', express.static(publicDir));
 
 app.use('/tools/linear-seperation', express.static(path.join(__dirname, '..', 'tools', 'linear-seperation', 'dist')));
+app.use('/tools/camera-speed-test', express.static(path.join(__dirname, '..', 'tools', 'camera-speed-test')));
+app.use('/tools/activity-builder', express.static(path.join(__dirname, '..', 'tools', 'activity-builder')));
+app.use('/tools/activity-biolder', express.static(path.join(__dirname, '..', 'tools', 'activity-builder')));
 
 // Unified assets (new structure)
 app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
