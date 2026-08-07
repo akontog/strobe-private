@@ -1,14 +1,14 @@
 import React from 'react';
 import { Link, Navigate, Route, Routes } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import BuffonStudentView from './apps/buffon-needle/StudentView';
-import BuffonTeacherView from './apps/buffon-needle/TeacherView';
-import NeuralStudentView from './apps/neural-lab/StudentView';
-import NeuralTeacherView from './apps/neural-lab/TeacherView';
-import FourierStudentView from './apps/fourier-lab/StudentView';
-import FourierTeacherView from './apps/fourier-lab/TeacherView';
-import GeometryStudentView from './apps/geometry-live/StudentView';
-import GeometryTeacherView from './apps/geometry-live/TeacherView';
+import BuffonStudentView from './labs/buffon-needle/StudentView';
+import BuffonTeacherView from './labs/buffon-needle/TeacherView';
+import NeuralStudentView from './labs/neural-lab/StudentView';
+import NeuralTeacherView from './labs/neural-lab/TeacherView';
+import FourierStudentView from './labs/fourier-lab/StudentView';
+import FourierTeacherView from './labs/fourier-lab/TeacherView';
+import GeometryStudentView from './labs/geometry-live/StudentView';
+import GeometryTeacherView from './labs/geometry-live/TeacherView';
 import LanguageSwitcher from './shared/components/LanguageSwitcher';
 
 function Home() {

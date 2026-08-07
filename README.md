@@ -69,9 +69,6 @@ SmarT classROoms for emBodied participatory lEarning | Strobe
 
 # Δομή φακέλων
 
-- **`server.js`**  
-  – Κύριος διακομιστής Node.js (Express ή native http).  
-  – Ξεκινά το WebSocket server, σερβίρει στατικές σελίδες, διαχειρίζεται routes.
 
 - **`package.json`**  
   – Λίστα dependencies (π.χ. express, ws, socket.io) και scripts εκκίνησης.
@@ -80,9 +77,33 @@ SmarT classROoms for emBodied participatory lEarning | Strobe
   – Python server για λήψη ροής από κάμερα (πιθανώς HTTP ή WebSocket).  
   – Επικοινωνεί με το `camera_tracking.py`.
 
-- **`camera_tracking.py`**  
+- **`camera_tracking.py`**
+   
   – Ανίχνευση κίνησης / προσώπων / ματιών (OpenCV).  
   – Στέλνει δεδομένα (π.χ. συντεταγμένες) στο Node server ή απευθείας στο frontend.
+
+## 📂 `server/`
+
+- **`server.js`**  
+  – Κύριος διακομιστής Node.js (Express ή native http).  
+  – Ξεκινά το WebSocket server, σερβίρει στατικές σελίδες, διαχειρίζεται routes.
+
+## 📂 `client/`
+
+κώδικας διεπαφής χρήστη
+
+### 📂 `dist/`
+
+Δημιουργείται αυτόματα στο build. Περιέχει minified αρχεία (HTML, CSS, JS)
+
+### 📂 `public/`
+
+Στατικά αρχεία (π.χ. strobelogo.svg) που αντιγράφονται αυτούσια στο build
+
+### 📂 `src/`
+
+Ο κώδικας
+
 
 ## 📂 `apps/` – Εφαρμογές / Δραστηριότητες
 Κάθε υποφάκελος περιέχει μία αυτόνομη web app.
