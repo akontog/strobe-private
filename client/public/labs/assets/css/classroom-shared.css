@@ -1,0 +1,240 @@
+.classroom-shared-toggle {
+  position: fixed;
+  top: 14px;
+  left: 62px;
+  z-index: 1300;
+  border: 1px solid rgba(125, 211, 252, 0.35);
+  background: rgba(8, 14, 27, 0.94);
+  color: #e2e8f0;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 0.84rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.classroom-shared-toggle:hover {
+  background: rgba(15, 23, 42, 0.96);
+}
+
+.classroom-shared-badge {
+  min-width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(56, 189, 248, 0.22);
+  color: #e0f2fe;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0 6px;
+}
+
+.classroom-shared-dock {
+  position: fixed;
+  top: 56px;
+  left: 14px;
+  width: min(340px, calc(100vw - 28px));
+  max-height: calc(100vh - 72px);
+  z-index: 1250;
+  border: 1px solid rgba(125, 211, 252, 0.28);
+  background: rgba(5, 11, 21, 0.97);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.42);
+  display: none;
+}
+
+.classroom-shared-dock.open {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+.classroom-shared-head {
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid rgba(125, 211, 252, 0.15);
+  display: grid;
+  gap: 6px;
+}
+
+.classroom-shared-title {
+  margin: 0;
+  color: #e2e8f0;
+  font-size: 0.93rem;
+}
+
+.classroom-shared-sub {
+  margin: 0;
+  color: #93c5fd;
+  font-size: 0.76rem;
+}
+
+.classroom-shared-status {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #a5b4fc;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.classroom-shared-status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: #ef4444;
+}
+
+.classroom-shared-status.connected .classroom-shared-status-dot {
+  background: #22c55e;
+}
+
+.classroom-shared-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(125, 211, 252, 0.12);
+}
+
+.classroom-shared-tab {
+  border: 1px solid rgba(125, 211, 252, 0.25);
+  background: rgba(15, 23, 42, 0.8);
+  color: #bfdbfe;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.classroom-shared-tab.active {
+  background: rgba(56, 189, 248, 0.2);
+  color: #e0f2fe;
+}
+
+.classroom-shared-body {
+  min-height: 0;
+  overflow: auto;
+  padding: 10px 12px 12px;
+}
+
+.classroom-shared-pane {
+  display: none;
+}
+
+.classroom-shared-pane.active {
+  display: block;
+}
+
+.classroom-shared-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.classroom-shared-user {
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.7);
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.classroom-shared-user-name {
+  color: #e2e8f0;
+  font-size: 0.86rem;
+}
+
+.classroom-shared-user-role {
+  color: #93c5fd;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.classroom-shared-empty {
+  border: 1px dashed rgba(125, 211, 252, 0.22);
+  border-radius: 10px;
+  padding: 14px;
+  color: #94a3b8;
+  font-size: 0.84rem;
+  text-align: center;
+}
+
+.classroom-shared-chat-feed {
+  border: 1px solid rgba(125, 211, 252, 0.18);
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.6);
+  min-height: 120px;
+  max-height: 240px;
+  overflow: auto;
+  padding: 8px;
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.classroom-shared-chat-item {
+  border: 1px solid rgba(125, 211, 252, 0.12);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.7);
+  padding: 6px 8px;
+}
+
+.classroom-shared-chat-meta {
+  color: #93c5fd;
+  font-size: 0.72rem;
+}
+
+.classroom-shared-chat-text {
+  color: #e2e8f0;
+  font-size: 0.82rem;
+  margin-top: 2px;
+}
+
+.classroom-shared-chat-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.classroom-shared-chat-input {
+  border: 1px solid rgba(125, 211, 252, 0.25);
+  border-radius: 8px;
+  background: rgba(2, 6, 23, 0.8);
+  color: #e2e8f0;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 0.82rem;
+}
+
+.classroom-shared-chat-send {
+  border: 1px solid rgba(125, 211, 252, 0.3);
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.2);
+  color: #e0f2fe;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+@media (max-width: 760px) {
+  .classroom-shared-toggle {
+    top: 10px;
+    left: 58px;
+  }
+
+  .classroom-shared-dock {
+    top: 50px;
+  }
+}

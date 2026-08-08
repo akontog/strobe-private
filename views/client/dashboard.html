@@ -290,8 +290,8 @@
 
       const cardItems = apps.map((app) => {
         if (app.slug === 'geometry-live') {
-          const mousePath = '/apps/geometry-live/mouse.html';
-          const cameraPath = '/apps/geometry-live/camera.html';
+          const mousePath = '/labs/geometry-live/mouse.html';
+          const cameraPath = '/labs/geometry-live/camera.html';
 
           return {
             id: app.slug,
@@ -338,12 +338,12 @@
         }
 
         if (action.action === 'open-geometry-mouse-connected') {
-          openAppConnected(app, '/apps/geometry-live/mouse.html');
+          openAppConnected(app, '/labs/geometry-live/mouse.html');
           return;
         }
 
         if (action.action === 'open-geometry-camera-connected') {
-          openAppConnected(app, '/apps/geometry-live/camera.html');
+          openAppConnected(app, '/labs/geometry-live/camera.html');
         }
       });
     }

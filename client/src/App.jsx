@@ -19,14 +19,14 @@ function Home() {
       <h1>{t('neural.homeTitle')}</h1>
       <p>{t('neural.homeSubtitle')}</p>
       <div className="home-links">
-        <Link to="/apps/buffon-needle/teacher">{t('neural.openBuffonTeacher')}</Link>
-        <Link to="/apps/buffon-needle/student">{t('neural.openBuffonStudent')}</Link>
-        <Link to="/apps/neural-lab/teacher">{t('neural.openTeacher')}</Link>
-        <Link to="/apps/neural-lab/student">{t('neural.openStudent')}</Link>
-        <Link to="/apps/fourier-lab/teacher">{t('neural.openFourierTeacher')}</Link>
-        <Link to="/apps/fourier-lab/student">{t('neural.openFourierStudent')}</Link>
-        <Link to="/apps/geometry-live/teacher">{t('neural.openGeometryTeacher')}</Link>
-        <Link to="/apps/geometry-live/student">{t('neural.openGeometryStudent')}</Link>
+        <Link to="/labs/buffon-needle/teacher">{t('neural.openBuffonTeacher')}</Link>
+        <Link to="/labs/buffon-needle/student">{t('neural.openBuffonStudent')}</Link>
+        <Link to="/labs/neural-lab/teacher">{t('neural.openTeacher')}</Link>
+        <Link to="/labs/neural-lab/student">{t('neural.openStudent')}</Link>
+        <Link to="/labs/fourier-lab/teacher">{t('neural.openFourierTeacher')}</Link>
+        <Link to="/labs/fourier-lab/student">{t('neural.openFourierStudent')}</Link>
+        <Link to="/labs/geometry-live/teacher">{t('neural.openGeometryTeacher')}</Link>
+        <Link to="/labs/geometry-live/student">{t('neural.openGeometryStudent')}</Link>
       </div>
     </div>
   );
@@ -44,14 +44,14 @@ function App() {
       <div className="client-content">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/apps/buffon-needle/student" element={<BuffonStudentView />} />
-          <Route path="/apps/buffon-needle/teacher" element={<BuffonTeacherView />} />
-          <Route path="/apps/neural-lab/student" element={<NeuralStudentView />} />
-          <Route path="/apps/neural-lab/teacher" element={<NeuralTeacherView />} />
-          <Route path="/apps/fourier-lab/student" element={<FourierStudentView />} />
-          <Route path="/apps/fourier-lab/teacher" element={<FourierTeacherView />} />
-          <Route path="/apps/geometry-live/student" element={<GeometryStudentView />} />
-          <Route path="/apps/geometry-live/teacher" element={<GeometryTeacherView />} />
+          <Route path="/labs/buffon-needle/student" element={<BuffonStudentView />} />
+          <Route path="/labs/buffon-needle/teacher" element={<BuffonTeacherView />} />
+          <Route path="/labs/neural-lab/student" element={<NeuralStudentView />} />
+          <Route path="/labs/neural-lab/teacher" element={<NeuralTeacherView />} />
+          <Route path="/labs/fourier-lab/student" element={<FourierStudentView />} />
+          <Route path="/labs/fourier-lab/teacher" element={<FourierTeacherView />} />
+          <Route path="/labs/geometry-live/student" element={<GeometryStudentView />} />
+          <Route path="/labs/geometry-live/teacher" element={<GeometryTeacherView />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

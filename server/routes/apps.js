@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { getAppBySlug, getLaunchPath } = require('../../apps/registry');
+const { getAppBySlug, getLaunchPath } = require('../apps/registry');
 
 function createAppsRouter() {
   const router = express.Router();
@@ -36,7 +36,7 @@ function createAppsRouter() {
     if (!requestedFile) {
       const entry = mode === 'teacher' ? app.teacherEntry : app.clientEntry;
       const query = app.teacherEntry === app.clientEntry ? `?mode=${mode}` : '';
-      return res.redirect(`/apps/${app.slug}/${entry}${query}`);
+      return res.redirect(`/labs/${app.slug}/${entry}${query}`);
     }
 
     const staticMiddleware = express.static(app.staticDir, {

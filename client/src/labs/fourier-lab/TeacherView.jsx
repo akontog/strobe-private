@@ -7,7 +7,7 @@ export default function FourierTeacherView() {
   return (
     <iframe
       title={t('teacherTitle')}
-      src="/apps/fourier-lab/index.html?mode=teacher"
+      src="/labs/fourier-lab/index.html?mode=teacher"
       style={{ width: '100%', minHeight: '100vh', border: 'none' }}
     />
   );

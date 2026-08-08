@@ -349,11 +349,11 @@ app.get('/student', (req, res) => {
 });
 
 app.get('/client.html', (req, res) => {
-  return res.redirect('/apps/geometry-live/teacher.html');
+  return res.redirect('/labs/geometry-live/teacher.html');
 });
 
 app.get('/user.html', (req, res) => {
-  return res.redirect('/apps/geometry-live/mouse.html');
+  return res.redirect('/labs/geometry-live/mouse.html');
 });
 
 app.get('/camera-speed-test', (req, res) => {
@@ -411,11 +411,7 @@ app.use('/tools/activity-biolder', express.static(path.join(__dirname, '..', 'to
 // Unified assets (new structure)
 app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
 
-// Apps folders
-app.use('/apps', express.static(path.join(__dirname, '..', 'apps')));
-
-// Legacy apps/assets path (keep for backward compatibility)
-app.use('/apps/assets', express.static(path.join(__dirname, '..', 'apps', 'assets')));
+app.use('/labs/assets', express.static(path.join(__dirname, '..', 'client', 'public', 'labs', 'assets')));
 
 app.use('/teacher', teacherRouter);
 app.use(appDataRouter);
@@ -590,7 +586,7 @@ app.use('/admin', createAdminRouter({
   clearCommunicationLog,
   getCommunicationCatalog
 }));
-app.use('/apps', createAppsRouter());
+app.use('/labs', createAppsRouter());
 
 app.use((err, req, res, next) => {
   if (!err) {

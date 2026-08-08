@@ -7,7 +7,7 @@ export default function GeometryTeacherView() {
   return (
     <iframe
       title={t('title')}
-      src="/apps/geometry-live/teacher.html"
+      src="/labs/geometry-live/teacher.html"
       style={{ width: '100%', minHeight: '100vh', border: 'none' }}
     />
   );

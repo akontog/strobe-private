@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 
-const { listAppsForRole, toPublicApp } = require('../../apps/registry');
+const { listAppsForRole, toPublicApp } = require('../apps/registry');
 
 const router = express.Router();
 const dashboardViewPath = path.join(__dirname, '..', '..', 'views', 'client', 'dashboard.html');

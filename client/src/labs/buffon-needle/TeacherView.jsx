@@ -4,7 +4,7 @@ export default function TeacherView() {
   return (
     <iframe
       title="Buffon Teacher"
-      src="/apps/buffon-needle/teacher.html"
+      src="/labs/buffon-needle/teacher.html"
       style={{ width: '100%', minHeight: '100vh', border: 'none' }}
     />
   );

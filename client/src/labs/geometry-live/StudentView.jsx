@@ -7,7 +7,7 @@ export default function GeometryStudentView() {
   return (
     <iframe
       title={t('title')}
-      src="/apps/geometry-live/mouse.html"
+      src="/labs/geometry-live/mouse.html"
       style={{ width: '100%', minHeight: '100vh', border: 'none' }}
     />
   );
