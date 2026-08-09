@@ -1,0 +1,15 @@
+{
+  "labId": "neural-lab",
+  "slug": "neural-lab",
+  "name": "Neural Lab",
+  "entry": {
+    "teacher": "teacher.html",
+    "student": "student.html"
+  },
+  "build": {
+    "teacherJs": "/dist/labs/neural-lab/teacher.bundle.js",
+    "teacherCss": "/dist/labs/neural-lab/teacher.bundle.css",
+    "studentJs": "/dist/labs/neural-lab/student.bundle.js",
+    "studentCss": "/dist/labs/neural-lab/student.bundle.css"
+  }
+}

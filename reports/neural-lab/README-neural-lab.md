@@ -178,11 +178,10 @@ MathJax:
 
 ## Σύνδεση με Shared Components
 
-Αυτή η εφαρμογή χρησιμοποιεί components από το `../shared-components/`:
+Αυτή η εφαρμογή χρησιμοποιεί shared framework components από το `client/src/framework/components/`:
 
 ```javascript
-// Εάν προσθέσετε κοινά components
-import { BlueNumberBox } from '../shared-components/components/BlueNumberBox';
+import { BlueNumberBox } from '../../client/src/framework/components';
 ```
 
 # Δραστηριότητες

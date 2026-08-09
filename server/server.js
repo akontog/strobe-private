@@ -402,16 +402,15 @@ app.use('/css', express.static(path.join(publicDir, 'css')));
 app.use('/icons', express.static(path.join(publicDir, 'icons')));
 app.use('/js', express.static(path.join(publicDir, 'js')));
 app.use('/public', express.static(publicDir));
+app.use('/dist', express.static(path.join(__dirname, '..', 'client', 'dist')));
 
 app.use('/tools/linear-seperation', express.static(path.join(__dirname, '..', 'tools', 'linear-seperation', 'dist')));
 app.use('/tools/camera-speed-test', express.static(path.join(__dirname, '..', 'tools', 'camera-speed-test')));
 app.use('/tools/activity-builder', express.static(path.join(__dirname, '..', 'tools', 'activity-builder')));
 app.use('/tools/activity-biolder', express.static(path.join(__dirname, '..', 'tools', 'activity-builder')));
 
-// Unified assets (new structure)
-app.use('/assets', express.static(path.join(__dirname, '..', 'assets')));
-
-app.use('/labs/assets', express.static(path.join(__dirname, '..', 'client', 'public', 'labs', 'assets')));
+app.use('/framework/css', express.static(path.join(__dirname, '..', 'client', 'src', 'framework', 'assets', 'css')));
+app.use('/framework/js', express.static(path.join(__dirname, '..', 'client', 'src', 'framework', 'assets', 'js')));
 
 app.use('/teacher', teacherRouter);
 app.use(appDataRouter);

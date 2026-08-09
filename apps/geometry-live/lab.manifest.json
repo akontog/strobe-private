@@ -1,0 +1,14 @@
+{
+  "labId": "geometry-lab",
+  "slug": "geometry-live",
+  "name": "Geometry Lab",
+  "entry": {
+    "teacher": "teacher.html",
+    "student": "mouse.html",
+    "screen": "camera.html"
+  },
+  "build": {
+    "appShellJs": "/dist/labs/geometry-live/geometry-shell.bundle.js",
+    "note": "Uses static runtime files under apps/geometry-live, plus a React-style shell with App.jsx/index.jsx/components/data."
+  }
+}

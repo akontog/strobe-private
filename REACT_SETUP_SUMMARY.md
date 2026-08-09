@@ -1,18 +1,12 @@
-# React Setup Summary (Current)
+# React Setup Summary
 
-## Architecture
-- Client uses Vite (workspace: client)
-- Server uses Node/Express (workspace: server)
-- Labs are served from client/public/labs/*
-- App registry lives in server/apps/registry.js
-
-## Important folders
-- client/src/labs/
-- client/src/shared/
-- client/src/layout/
-- client/public/labs/
-- server/routes/
-- server/apps/
+## Current model
+- Vite client in client/
+- Node server in server/
+- Centralized labs in apps/
+- Shared framework components/assets in client/src/framework/
+- Vision stack in vision/
+- Lab endpoints served under /labs/* via server/routes/apps.js + server/apps/registry.js
 
 ## Commands
 ```powershell
@@ -20,8 +14,14 @@ npm install
 npm start
 npm run dev:client
 npm run build:client
+npm run clean:labs
+npm run build:labs
+npm run build:buffon-needle
+npm run build:geometry-live
+npm run build:neural-lab
+npm run build:primes-lab
 ```
 
-## Notes
-- Root apps/ has been removed to avoid duplicates.
-- Root routes/ has been removed; use only server/routes/.
+## Important note
+client/public/labs/ is not used as a lab source location.
+client/dist/ contains build output only.

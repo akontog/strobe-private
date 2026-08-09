@@ -1,6 +1,6 @@
 // 1. Εισαγωγή βιβλιοθηκών για εκτέλεση Python script
-// path + fs (Πρόσβαση στο σύστημα αρχείων) → Βρίσκουν το αρχείο 
-// camera_server.py και  επιβεβαιώνουν ότι υπάρχει.
+// path + fs (Πρόσβαση στο σύστημα αρχείων) → Βρίσκουν το αρχείο
+// vision/camera_server.py και επιβεβαιώνουν ότι υπάρχει.
 const fs = require('fs');
 const path = require('path');
 // επιτρέπεται να εκτελεστεί το Python script σαν ξεχωριστή διεργασία
@@ -24,7 +24,7 @@ const CAMERA_WORKER_MAX_PENDING = Number.isInteger(parsedCameraWorkerMaxPending)
 const CAMERA_WORKER_RESTART_DELAY_MS = 1200;
 const CAMERA_WORKER_ENABLED = CAMERA_FEATURES_ENABLED
   && String(process.env.CAMERA_WORKER_ENABLED || '1').trim() !== '0';
-const CAMERA_WORKER_SCRIPT = process.env.CAMERA_WORKER_SCRIPT || path.join(__dirname, 'camera_server.py');
+const CAMERA_WORKER_SCRIPT = process.env.CAMERA_WORKER_SCRIPT || path.join(__dirname, '..', '..', 'vision', 'camera_server.py');
 
 // 3. Συναρτήσεις
 function resolveCameraWorkerPython() {
@@ -34,8 +34,8 @@ function resolveCameraWorkerPython() {
   }
 
   const workspaceVenv = process.platform === 'win32'
-    ? path.join(__dirname, '.venv', 'Scripts', 'python.exe')
-    : path.join(__dirname, '.venv', 'bin', 'python');
+    ? path.join(__dirname, '..', '..', '.venv', 'Scripts', 'python.exe')
+    : path.join(__dirname, '..', '..', '.venv', 'bin', 'python');
 
   if (fs.existsSync(workspaceVenv)) {
     return workspaceVenv;
@@ -162,7 +162,7 @@ function startCameraWorker() {
 
   try {
     const worker = spawn(CAMERA_WORKER_PYTHON, [CAMERA_WORKER_SCRIPT], {
-      cwd: __dirname,
+      cwd: path.dirname(CAMERA_WORKER_SCRIPT),
       stdio: ['pipe', 'pipe', 'pipe']
     });
 

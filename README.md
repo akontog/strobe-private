@@ -3,15 +3,21 @@
 Unified classroom platform with:
 - Node.js server (API, dashboards, WebSocket)
 - Vite/React client
-- Labs served from client/public/labs/*
+- Labs served from central apps/*
 
-## New Structure (no root apps)
+## Structure
 - server/ server runtime and routes
 - server/apps/registry.js app registry used by teacher/student launchers
 - client/src/labs/* React StudentView/TeacherView wrappers
-- client/public/labs/* migrated lab runtime (fourier, geometry, neural, buffon, primes, shared assets)
-- client/src/shared/* shared React utilities/components
+- apps/* central lab runtime and sources (fourier, geometry, neural, buffon, primes)
+- client/src/framework/components/* shared framework React components
+- client/src/framework/assets/* shared framework CSS/JS assets served at /framework/*
+- client/src/shared/* shared React utilities/hooks/i18n
 - client/src/layout/* layout area (when present in client code)
+- vision/
+	- camera_server.py
+	- camera_tracking.py
+	- models/yolov8n.pt
 
 ## Requirements
 - Node.js 18+
@@ -24,7 +30,7 @@ npm install
 ```
 
 ## Run
-### 1) Server (production-style local)
+### 1) Server
 ```powershell
 npm start
 ```
@@ -34,7 +40,6 @@ Runs server/server.js on port 3000 by default.
 ```powershell
 npm run dev:client
 ```
-Runs Vite dev server (default port 5173).
 
 ## Build
 ### Build client
@@ -42,6 +47,18 @@ Runs Vite dev server (default port 5173).
 npm run build:client
 ```
 (or npm run build)
+
+### Build lab bundles from central source
+```powershell
+npm run clean:labs
+npm run build:buffon-needle
+npm run build:geometry-live
+npm run build:neural-lab
+npm run build:primes-lab
+npm run build:labs
+```
+
+The folder client/dist contains build output only.
 
 ### Build linear separation tool
 ```powershell
@@ -55,7 +72,7 @@ npm run build:linear
 - /tools tools hub
 - /health health check
 
-## Lab URLs (new)
+## Lab URLs
 - /labs/geometry-live/teacher.html
 - /labs/geometry-live/mouse.html
 - /labs/geometry-live/camera.html
@@ -69,5 +86,7 @@ npm run build:linear
 - /labs/primes-lab/student.html
 
 ## Notes
-- Root apps/ and root routes/ are removed to avoid duplication.
-- App routing metadata now lives only in server/apps/registry.js.
+- Root routes/ is removed; only server/routes/ is used.
+- App routing metadata lives in server/apps/registry.js.
+- Source labs do not keep *.bundle.js or *.bundle.css files.
+- Geometry Lab now also includes a React-style shell structure: App.jsx, index.jsx, components/, data/.

@@ -7,8 +7,8 @@ var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __commonJS = (cb, mod) => function __require() {
   try {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
-  } catch (e) {
-    throw mod = 0, e;
+  } catch (e2) {
+    throw mod = 0, e2;
   }
 };
 var __copyProps = (to, from, except, desc) => {
@@ -82,7 +82,7 @@ var require_react_development = __commonJS({
         try {
           testStringCoercion(value);
           var JSCompiler_inline_result = false;
-        } catch (e) {
+        } catch (e2) {
           JSCompiler_inline_result = true;
         }
         if (JSCompiler_inline_result) {
@@ -243,9 +243,9 @@ var require_react_development = __commonJS({
         return newKey;
       }
       function validateChildKeys(node) {
-        isValidElement(node) ? node._store && (node._store.validated = 1) : "object" === typeof node && null !== node && node.$$typeof === REACT_LAZY_TYPE && ("fulfilled" === node._payload.status ? isValidElement(node._payload.value) && node._payload.value._store && (node._payload.value._store.validated = 1) : node._store && (node._store.validated = 1));
+        isValidElement2(node) ? node._store && (node._store.validated = 1) : "object" === typeof node && null !== node && node.$$typeof === REACT_LAZY_TYPE && ("fulfilled" === node._payload.status ? isValidElement2(node._payload.value) && node._payload.value._store && (node._payload.value._store.validated = 1) : node._store && (node._store.validated = 1));
       }
-      function isValidElement(object) {
+      function isValidElement2(object) {
         return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
       }
       function escape(key) {
@@ -314,13 +314,13 @@ var require_react_development = __commonJS({
           var childKey = "" === nameSoFar ? "." + getElementKey(invokeCallback, 0) : nameSoFar;
           isArrayImpl(callback) ? (escapedPrefix = "", null != childKey && (escapedPrefix = childKey.replace(userProvidedKeyEscapeRegex, "$&/") + "/"), mapIntoArray(callback, array, escapedPrefix, "", function(c) {
             return c;
-          })) : null != callback && (isValidElement(callback) && (null != callback.key && (invokeCallback && invokeCallback.key === callback.key || checkKeyStringCoercion(callback.key)), escapedPrefix = cloneAndReplaceKey(
+          })) : null != callback && (isValidElement2(callback) && (null != callback.key && (invokeCallback && invokeCallback.key === callback.key || checkKeyStringCoercion(callback.key)), escapedPrefix = cloneAndReplaceKey(
             callback,
             escapedPrefix + (null == callback.key || invokeCallback && invokeCallback.key === callback.key ? "" : ("" + callback.key).replace(
               userProvidedKeyEscapeRegex,
               "$&/"
             ) + "/") + childKey
-          ), "" !== nameSoFar && null != invokeCallback && isValidElement(invokeCallback) && null == invokeCallback.key && invokeCallback._store && !invokeCallback._store.validated && (escapedPrefix._store.validated = 2), callback = escapedPrefix), array.push(callback));
+          ), "" !== nameSoFar && null != invokeCallback && isValidElement2(invokeCallback) && null == invokeCallback.key && invokeCallback._store && !invokeCallback._store.validated && (escapedPrefix._store.validated = 2), callback = escapedPrefix), array.push(callback));
           return 1;
         }
         invokeCallback = 0;
@@ -617,7 +617,7 @@ var require_react_development = __commonJS({
           }) || [];
         },
         only: function(children) {
-          if (!isValidElement(children))
+          if (!isValidElement2(children))
             throw Error(
               "React.Children.only expected to receive a single React element child."
             );
@@ -851,7 +851,7 @@ var require_react_development = __commonJS({
         });
         return elementType;
       };
-      exports.isValidElement = isValidElement;
+      exports.isValidElement = isValidElement2;
       exports.lazy = function(ctor) {
         ctor = { _status: -1, _result: ctor };
         var lazyType = {
@@ -1298,7 +1298,7 @@ var require_react_dom_development = __commonJS({
         try {
           testStringCoercion(key);
           var JSCompiler_inline_result = false;
-        } catch (e) {
+        } catch (e2) {
           JSCompiler_inline_result = true;
         }
         JSCompiler_inline_result && (console.error(
@@ -1332,7 +1332,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React11 = require_react(), Internals = {
+      var React14 = require_react(), Internals = {
         d: {
           f: noop,
           r: function() {
@@ -1350,7 +1350,7 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React11.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React14.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
@@ -2276,7 +2276,7 @@ var require_react_dom_client_development = __commonJS({
       function willCoercionThrow(value) {
         try {
           return testStringCoercion(value), false;
-        } catch (e) {
+        } catch (e2) {
           return true;
         }
       }
@@ -2822,7 +2822,7 @@ var require_react_dom_client_development = __commonJS({
         if ("undefined" === typeof doc) return null;
         try {
           return doc.activeElement || doc.body;
-        } catch (e) {
+        } catch (e2) {
           return doc.body;
         }
       }
@@ -2885,7 +2885,7 @@ var require_react_dom_client_development = __commonJS({
         "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React11.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React14.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -18517,14 +18517,14 @@ var require_react_dom_client_development = __commonJS({
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React11 = require_react(), ReactDOM2 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React14 = require_react(), ReactDOM2 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
       /* @__PURE__ */ Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
       /* @__PURE__ */ Symbol.for("react.legacy_hidden");
       /* @__PURE__ */ Symbol.for("react.tracing_marker");
       var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
       /* @__PURE__ */ Symbol.for("react.view_transition");
-      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React11.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React14.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -19341,7 +19341,7 @@ var require_react_dom_client_development = __commonJS({
           });
           window.addEventListener("test", options$jscomp$0, options$jscomp$0);
           window.removeEventListener("test", options$jscomp$0, options$jscomp$0);
-        } catch (e) {
+        } catch (e2) {
           passiveBrowserEventsSupported = false;
         }
       var root2 = null, startText = null, fallbackText = null, EventInterface = {
@@ -21312,7 +21312,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React11.version;
+        var isomorphicReactPackageVersion = React14.version;
         if ("19.2.7" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.7\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21452,12 +21452,34 @@ var require_client = __commonJS({
   }
 });
 
+// node_modules/void-elements/index.js
+var require_void_elements = __commonJS({
+  "node_modules/void-elements/index.js"(exports, module) {
+    module.exports = {
+      "area": true,
+      "base": true,
+      "br": true,
+      "col": true,
+      "embed": true,
+      "hr": true,
+      "img": true,
+      "input": true,
+      "link": true,
+      "meta": true,
+      "param": true,
+      "source": true,
+      "track": true,
+      "wbr": true
+    };
+  }
+});
+
 // apps/primes-lab/student.jsx
-var import_react10 = __toESM(require_react());
+var import_react21 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // apps/primes-lab/App.jsx
-var import_react9 = __toESM(require_react());
+var import_react20 = __toESM(require_react());
 
 // apps/primes-lab/components/NumberGrid.jsx
 var import_react = __toESM(require_react());
@@ -21639,93 +21661,156 @@ var TeacherPanel = ({
 };
 var TeacherPanel_default = TeacherPanel;
 
-// apps/shared-components/BlueNumberBox.jsx
-var import_react6 = __toESM(require_react());
+// client/src/framework/components/Accordion.jsx
+var import_react6 = __toESM(require_react(), 1);
 
-// apps/shared-components/Toolbar.jsx
-var import_react7 = __toESM(require_react());
+// client/src/framework/components/StudentTable.jsx
+var import_react15 = __toESM(require_react(), 1);
 
-// apps/shared-components/ConnectionNameControl.jsx
-var import_react8 = __toESM(require_react());
-var ConnectionNameControl = ({
-  connected = true,
-  name,
+// node_modules/react-i18next/dist/es/Trans.js
+var import_react9 = __toESM(require_react(), 1);
+
+// node_modules/react-i18next/dist/es/TransWithoutContext.js
+var import_react7 = __toESM(require_react(), 1);
+
+// node_modules/html-parse-stringify/dist/html-parse-stringify.module.js
+var import_void_elements = __toESM(require_void_elements());
+
+// node_modules/react-i18next/dist/es/context.js
+var import_react8 = __toESM(require_react(), 1);
+var I18nContext = (0, import_react8.createContext)();
+
+// node_modules/react-i18next/dist/es/useTranslation.js
+var import_react10 = __toESM(require_react(), 1);
+
+// node_modules/react-i18next/dist/es/withTranslation.js
+var import_react11 = __toESM(require_react(), 1);
+
+// node_modules/react-i18next/dist/es/I18nextProvider.js
+var import_react12 = __toESM(require_react(), 1);
+
+// node_modules/react-i18next/dist/es/withSSR.js
+var import_react14 = __toESM(require_react(), 1);
+
+// node_modules/react-i18next/dist/es/useSSR.js
+var import_react13 = __toESM(require_react(), 1);
+
+// client/src/framework/components/BlueNumberBox.jsx
+var import_react16 = __toESM(require_react(), 1);
+
+// client/src/framework/components/Toolbar.jsx
+var import_react17 = __toESM(require_react(), 1);
+
+// client/src/framework/components/ConnectionNameControl.jsx
+var import_react18 = __toESM(require_react(), 1);
+function ConnectionNameControl({
+  connected = false,
+  name = "",
   editing = false,
   value = "",
   onChange,
   onStartEdit,
   onCommit,
   onCancel,
-  color = "#3b82f6",
+  color = "#4ECDC4",
   showColorPicker = false,
   onColorChange,
   infoText = "",
-  connectedLabel = "\u03A3\u03B5 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7",
-  disconnectedLabel = "\u0395\u03BA\u03C4\u03CC\u03C2 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7\u03C2",
-  namePrefix = "\u03CC\u03BD\u03BF\u03BC\u03B1 \u03C7\u03C1\u03AE\u03C3\u03C4\u03B7",
+  connectedLabel = "Connected",
+  disconnectedLabel = "Disconnected",
+  namePrefix = "name",
   showNameLabel = true,
   className = ""
-}) => {
-  return /* @__PURE__ */ import_react8.default.createElement("div", { className: `connection-name-control ${className}`.trim() }, /* @__PURE__ */ import_react8.default.createElement("span", { className: `connection-name-control__dot ${connected ? "online" : "offline"}` }), /* @__PURE__ */ import_react8.default.createElement("strong", { className: "connection-name-control__status" }, connected ? connectedLabel : disconnectedLabel), showNameLabel || showColorPicker ? /* @__PURE__ */ import_react8.default.createElement("div", { className: "connection-name-control__row" }, editing ? /* @__PURE__ */ import_react8.default.createElement(
-    "input",
+}) {
+  const statusLabel = connected ? connectedLabel : disconnectedLabel;
+  return /* @__PURE__ */ import_react18.default.createElement("div", { className }, /* @__PURE__ */ import_react18.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" } }, /* @__PURE__ */ import_react18.default.createElement(
+    "span",
     {
-      autoFocus: true,
-      className: "connection-name-control__input",
-      value,
-      onChange: (event) => onChange?.(event.target.value),
-      onBlur: onCommit,
-      onKeyDown: (event) => {
-        if (event.key === "Enter") {
-          onCommit?.();
-        }
-        if (event.key === "Escape") {
-          onCancel?.();
-        }
+      style: {
+        width: 10,
+        height: 10,
+        borderRadius: "999px",
+        background: connected ? "#22c55e" : "#9ca3af",
+        display: "inline-block"
       }
     }
-  ) : showNameLabel ? /* @__PURE__ */ import_react8.default.createElement("button", { type: "button", className: "connection-name-control__name", onClick: onStartEdit }, namePrefix, ": ", name || "\u2014") : null, showColorPicker ? /* @__PURE__ */ import_react8.default.createElement("label", { className: "connection-name-control__color-wrap", title: "\u0395\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE \u03C7\u03C1\u03CE\u03BC\u03B1\u03C4\u03BF\u03C2" }, /* @__PURE__ */ import_react8.default.createElement(
+  ), /* @__PURE__ */ import_react18.default.createElement("strong", null, statusLabel), showNameLabel && !editing && /* @__PURE__ */ import_react18.default.createElement("span", null, namePrefix, ": ", name || "-")), editing ? /* @__PURE__ */ import_react18.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginTop: 8, flexWrap: "wrap" } }, /* @__PURE__ */ import_react18.default.createElement(
+    "input",
+    {
+      type: "text",
+      value,
+      onChange: (event) => onChange && onChange(event.target.value),
+      onKeyDown: (event) => {
+        if (event.key === "Enter" && onCommit) onCommit();
+        if (event.key === "Escape" && onCancel) onCancel();
+      },
+      style: { padding: "6px 8px", borderRadius: 8, border: "1px solid #cbd5e1" }
+    }
+  ), /* @__PURE__ */ import_react18.default.createElement("button", { type: "button", onClick: onCommit }, "OK"), /* @__PURE__ */ import_react18.default.createElement("button", { type: "button", onClick: onCancel }, "Cancel")) : /* @__PURE__ */ import_react18.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginTop: 8, flexWrap: "wrap" } }, typeof onStartEdit === "function" && /* @__PURE__ */ import_react18.default.createElement("button", { type: "button", onClick: onStartEdit }, "Edit"), showColorPicker && /* @__PURE__ */ import_react18.default.createElement("label", { style: { display: "inline-flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react18.default.createElement("span", null, "Color"), /* @__PURE__ */ import_react18.default.createElement(
     "input",
     {
       type: "color",
-      className: "connection-name-control__color",
       value: color,
-      onChange: (event) => onColorChange?.(event.target.value),
-      "aria-label": "\u0395\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE \u03C7\u03C1\u03CE\u03BC\u03B1\u03C4\u03BF\u03C2"
+      onChange: (event) => onColorChange && onColorChange(event.target.value)
     }
-  )) : null) : null, infoText ? /* @__PURE__ */ import_react8.default.createElement("span", { className: "connection-name-control__info" }, infoText) : null);
-};
-var ConnectionNameControl_default = ConnectionNameControl;
+  ))), infoText ? /* @__PURE__ */ import_react18.default.createElement("div", { style: { marginTop: 6, opacity: 0.8 } }, infoText) : null);
+}
 
-// apps/shared-components/identityStorage.js
-var IDENTITY_NAME_KEY = "strobeStudentConnectName";
-var IDENTITY_COLOR_KEY = "strobeStudentColor";
-var IDENTITY_COLORS = ["#22c55e", "#f97316", "#6366f1", "#e11d48", "#14b8a6", "#f59e0b", "#0ea5e9", "#8b5cf6"];
-var randomIdentityColor = () => IDENTITY_COLORS[Math.floor(Math.random() * IDENTITY_COLORS.length)];
-function readIdentityName(fallback) {
-  try {
-    return localStorage.getItem(IDENTITY_NAME_KEY) || fallback;
-  } catch {
+// client/src/framework/components/studentTableColumnPresets.jsx
+var import_react19 = __toESM(require_react(), 1);
+
+// client/src/framework/components/identityStorage.js
+var NAME_KEY = "strobeStudentConnectName";
+var COLOR_KEY = "strobeStudentColor";
+function safeStorage() {
+  if (typeof window === "undefined" || !window.localStorage) {
+    return null;
+  }
+  return window.localStorage;
+}
+function randomIdentityColor() {
+  const palette = ["#4ECDC4", "#3B82F6", "#A855F7", "#F97316", "#22C55E", "#EF4444", "#14B8A6", "#EAB308"];
+  return palette[Math.floor(Math.random() * palette.length)];
+}
+function readIdentityName(fallback = "") {
+  const storage = safeStorage();
+  if (!storage) {
     return fallback;
   }
+  const value = String(storage.getItem(NAME_KEY) || "").trim();
+  return value || fallback;
 }
-function writeIdentityName(name) {
-  try {
-    localStorage.setItem(IDENTITY_NAME_KEY, name);
-  } catch {
+function writeIdentityName(value) {
+  const storage = safeStorage();
+  if (!storage) {
+    return;
   }
+  const normalized = String(value || "").trim();
+  if (!normalized) {
+    storage.removeItem(NAME_KEY);
+    return;
+  }
+  storage.setItem(NAME_KEY, normalized);
 }
-function readIdentityColor(fallback) {
-  try {
-    return localStorage.getItem(IDENTITY_COLOR_KEY) || fallback;
-  } catch {
+function readIdentityColor(fallback = "#4ECDC4") {
+  const storage = safeStorage();
+  if (!storage) {
     return fallback;
   }
+  const value = String(storage.getItem(COLOR_KEY) || "").trim();
+  return value || fallback;
 }
-function writeIdentityColor(color) {
-  try {
-    localStorage.setItem(IDENTITY_COLOR_KEY, color);
-  } catch {
+function writeIdentityColor(value) {
+  const storage = safeStorage();
+  if (!storage) {
+    return;
   }
+  const normalized = String(value || "").trim();
+  if (!normalized) {
+    storage.removeItem(COLOR_KEY);
+    return;
+  }
+  storage.setItem(COLOR_KEY, normalized);
 }
 
 // apps/primes-lab/data/primes.js
@@ -21778,27 +21863,27 @@ var isPrimeNumber = (number) => {
 };
 var App = ({ role = "teacher" }) => {
   const isTeacher = role === "teacher";
-  const wsRef = (0, import_react9.useRef)(null);
-  const reconnectTimerRef = (0, import_react9.useRef)(null);
-  const [currentPrime, setCurrentPrime] = (0, import_react9.useState)(INITIAL_PRIME);
-  const [studentName, setStudentName] = (0, import_react9.useState)(() => readIdentityName("\u039C\u03B1\u03C1\u03AF\u03B1"));
-  const [studentColor, setStudentColor] = (0, import_react9.useState)(() => readIdentityColor(randomColor()));
-  const [students, setStudents] = (0, import_react9.useState)(() => createInitialStudents(studentName, studentColor));
-  const [activeStudentId, setActiveStudentId] = (0, import_react9.useState)(STUDENT_DEFS[0].id);
-  const [localStudentId, setLocalStudentId] = (0, import_react9.useState)(() => {
+  const wsRef = (0, import_react20.useRef)(null);
+  const reconnectTimerRef = (0, import_react20.useRef)(null);
+  const [currentPrime, setCurrentPrime] = (0, import_react20.useState)(INITIAL_PRIME);
+  const [studentName, setStudentName] = (0, import_react20.useState)(() => readIdentityName("\u039C\u03B1\u03C1\u03AF\u03B1"));
+  const [studentColor, setStudentColor] = (0, import_react20.useState)(() => readIdentityColor(randomColor()));
+  const [students, setStudents] = (0, import_react20.useState)(() => createInitialStudents(studentName, studentColor));
+  const [activeStudentId, setActiveStudentId] = (0, import_react20.useState)(STUDENT_DEFS[0].id);
+  const [localStudentId, setLocalStudentId] = (0, import_react20.useState)(() => {
     if (typeof window === "undefined") {
       return STUDENT_DEFS[0].id;
     }
     return window.localStorage.getItem(PRIMES_STUDENT_ID_KEY) || STUDENT_DEFS[0].id;
   });
-  const [editingName, setEditingName] = (0, import_react9.useState)(false);
-  const [studentNameInput, setStudentNameInput] = (0, import_react9.useState)(studentName);
-  const [message, setMessage] = (0, import_react9.useState)("\u0394\u03B9\u03AC\u03BB\u03B5\u03BE\u03B5 \u03BC\u03B9\u03B1 \u03B2\u03AC\u03C3\u03B7 \u03BA\u03B1\u03B9 \u03BE\u03B5\u03BA\u03AF\u03BD\u03B1 \u03C4\u03BF \u03BA\u03CC\u03C3\u03BA\u03B9\u03BD\u03BF.");
+  const [editingName, setEditingName] = (0, import_react20.useState)(false);
+  const [studentNameInput, setStudentNameInput] = (0, import_react20.useState)(studentName);
+  const [message, setMessage] = (0, import_react20.useState)("\u0394\u03B9\u03AC\u03BB\u03B5\u03BE\u03B5 \u03BC\u03B9\u03B1 \u03B2\u03AC\u03C3\u03B7 \u03BA\u03B1\u03B9 \u03BE\u03B5\u03BA\u03AF\u03BD\u03B1 \u03C4\u03BF \u03BA\u03CC\u03C3\u03BA\u03B9\u03BD\u03BF.");
   const effectiveStudentId = isTeacher ? activeStudentId : localStudentId;
   const activeStudent = students.find((student) => student.id === effectiveStudentId) || students[0];
   const viewerName = isTeacher ? activeStudent?.name || "\u2014" : studentName;
   const viewerColor = isTeacher ? activeStudent?.color || "#22c55e" : studentColor;
-  const correctOwnerByNumber = (0, import_react9.useMemo)(() => {
+  const correctOwnerByNumber = (0, import_react20.useMemo)(() => {
     const ownerMap = {};
     students.forEach((student) => {
       student.selectedCorrect.forEach((number) => {
@@ -21807,7 +21892,7 @@ var App = ({ role = "teacher" }) => {
     });
     return ownerMap;
   }, [students]);
-  const wrongSelectionsByNumber = (0, import_react9.useMemo)(() => {
+  const wrongSelectionsByNumber = (0, import_react20.useMemo)(() => {
     const selectionMap = {};
     students.forEach((student) => {
       student.selectedWrong.forEach((number) => {
@@ -21819,26 +21904,26 @@ var App = ({ role = "teacher" }) => {
     });
     return selectionMap;
   }, [students]);
-  const studentColorById = (0, import_react9.useMemo)(() => {
+  const studentColorById = (0, import_react20.useMemo)(() => {
     const map = {};
     students.forEach((student) => {
       map[student.id] = student.color;
     });
     return map;
   }, [students]);
-  const claimedNumbers = (0, import_react9.useMemo)(
+  const claimedNumbers = (0, import_react20.useMemo)(
     () => new Set(Object.keys(correctOwnerByNumber).map(Number)),
     [correctOwnerByNumber]
   );
-  const currentTargetNumbers = (0, import_react9.useMemo)(
+  const currentTargetNumbers = (0, import_react20.useMemo)(
     () => NUMBER_RANGE.filter((number) => number > currentPrime && number % currentPrime === 0),
     [currentPrime]
   );
-  const remainingTargetNumbers = (0, import_react9.useMemo)(
+  const remainingTargetNumbers = (0, import_react20.useMemo)(
     () => currentTargetNumbers.filter((number) => !claimedNumbers.has(number)),
     [currentTargetNumbers, claimedNumbers]
   );
-  const progress = (0, import_react9.useMemo)(() => {
+  const progress = (0, import_react20.useMemo)(() => {
     const solved = SIEVE_STEPS.filter((step) => step.multiples.every((number) => claimedNumbers.has(number)));
     const remaining = NUMBER_RANGE.filter((number) => !claimedNumbers.has(number));
     const wrongTotal = students.reduce((sum, student) => sum + student.selectedWrong.length, 0);
@@ -21951,7 +22036,7 @@ var App = ({ role = "teacher" }) => {
     });
     setMessage(`${viewerName || "\u039F \u03BC\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2"} \u03C3\u03B7\u03BC\u03B5\u03AF\u03C9\u03C3\u03B5 \u03C4\u03BF ${number} \u03C9\u03C2 \u03BB\u03AC\u03B8\u03BF\u03C2 \u03B5\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE.`);
   };
-  (0, import_react9.useEffect)(() => {
+  (0, import_react20.useEffect)(() => {
     let cancelled = false;
     const clearReconnect = () => {
       if (reconnectTimerRef.current) {
@@ -22047,8 +22132,8 @@ var App = ({ role = "teacher" }) => {
     };
   }, [isTeacher]);
   const visibleStudents = isTeacher ? students : students.filter((student) => student.id === effectiveStudentId);
-  return /* @__PURE__ */ import_react9.default.createElement("div", { className: isTeacher ? "primes-app is-teacher" : "primes-app is-student" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "teacher-card primes-card" }, /* @__PURE__ */ import_react9.default.createElement("header", { className: "hero-title primes-hero" }, /* @__PURE__ */ import_react9.default.createElement("div", null, /* @__PURE__ */ import_react9.default.createElement("p", { className: "primes-kicker" }, "Sieve of Eratosthenes"), /* @__PURE__ */ import_react9.default.createElement("h1", null, "\u039A\u03CC\u03C3\u03BA\u03B9\u03BD\u03BF \u03C4\u03BF\u03C5 \u0395\u03C1\u03B1\u03C4\u03BF\u03C3\u03B8\u03AD\u03BD\u03B7"), /* @__PURE__ */ import_react9.default.createElement("p", { className: "primes-subtitle" }, "\u0391\u03C0\u03CC \u03C4\u03BF 2 \u03AD\u03C9\u03C2 \u03C4\u03BF 100, \u03BF\u03B9 \u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2 \u03B1\u03BD\u03B1\u03BA\u03B1\u03BB\u03CD\u03C0\u03C4\u03BF\u03C5\u03BD \u03C0\u03BF\u03B9\u03BF\u03B9 \u03B1\u03C1\u03B9\u03B8\u03BC\u03BF\u03AF \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C0\u03BF\u03BB\u03BB\u03B1\u03C0\u03BB\u03AC\u03C3\u03B9\u03B1 \u03BA\u03B1\u03B9 \u03C0\u03BF\u03B9\u03BF\u03B9 \u03BC\u03AD\u03BD\u03BF\u03C5\u03BD \u03C9\u03C2 \u03C0\u03C1\u03CE\u03C4\u03BF\u03B9.")), /* @__PURE__ */ import_react9.default.createElement(
-    ConnectionNameControl_default,
+  return /* @__PURE__ */ import_react20.default.createElement("div", { className: isTeacher ? "primes-app is-teacher" : "primes-app is-student" }, /* @__PURE__ */ import_react20.default.createElement("div", { className: "teacher-card primes-card" }, /* @__PURE__ */ import_react20.default.createElement("header", { className: "hero-title primes-hero" }, /* @__PURE__ */ import_react20.default.createElement("div", null, /* @__PURE__ */ import_react20.default.createElement("p", { className: "primes-kicker" }, "Sieve of Eratosthenes"), /* @__PURE__ */ import_react20.default.createElement("h1", null, "\u039A\u03CC\u03C3\u03BA\u03B9\u03BD\u03BF \u03C4\u03BF\u03C5 \u0395\u03C1\u03B1\u03C4\u03BF\u03C3\u03B8\u03AD\u03BD\u03B7"), /* @__PURE__ */ import_react20.default.createElement("p", { className: "primes-subtitle" }, "\u0391\u03C0\u03CC \u03C4\u03BF 2 \u03AD\u03C9\u03C2 \u03C4\u03BF 100, \u03BF\u03B9 \u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2 \u03B1\u03BD\u03B1\u03BA\u03B1\u03BB\u03CD\u03C0\u03C4\u03BF\u03C5\u03BD \u03C0\u03BF\u03B9\u03BF\u03B9 \u03B1\u03C1\u03B9\u03B8\u03BC\u03BF\u03AF \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C0\u03BF\u03BB\u03BB\u03B1\u03C0\u03BB\u03AC\u03C3\u03B9\u03B1 \u03BA\u03B1\u03B9 \u03C0\u03BF\u03B9\u03BF\u03B9 \u03BC\u03AD\u03BD\u03BF\u03C5\u03BD \u03C9\u03C2 \u03C0\u03C1\u03CE\u03C4\u03BF\u03B9.")), /* @__PURE__ */ import_react20.default.createElement(
+    ConnectionNameControl,
     {
       connected: true,
       name: viewerName,
@@ -22070,7 +22155,7 @@ var App = ({ role = "teacher" }) => {
       showNameLabel: !isTeacher,
       className: "primes-identity"
     }
-  )), /* @__PURE__ */ import_react9.default.createElement("section", { className: "common-zone primes-board-zone primes-board-zone--compact" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "primes-board-header" }, /* @__PURE__ */ import_react9.default.createElement("div", null, /* @__PURE__ */ import_react9.default.createElement("p", null, "\u039A\u03B5\u03BD\u03C4\u03C1\u03B9\u03BA\u03CC \u03C0\u03AC\u03BD\u03B5\u03BB"), /* @__PURE__ */ import_react9.default.createElement("h2", null, "\u0391\u03C1\u03B9\u03B8\u03BC\u03BF\u03AF 2 \u03AD\u03C9\u03C2 100")), isTeacher ? /* @__PURE__ */ import_react9.default.createElement("div", { className: "primes-board-header__legend" }, /* @__PURE__ */ import_react9.default.createElement("span", { className: "legend-item" }, /* @__PURE__ */ import_react9.default.createElement("i", { className: "legend-dot legend-dot--eliminated" }), "\u03BA\u03BB\u03B5\u03B9\u03B4\u03C9\u03BC\u03AD\u03BD\u03BF"), /* @__PURE__ */ import_react9.default.createElement("span", { className: "legend-item" }, /* @__PURE__ */ import_react9.default.createElement("i", { className: "legend-dot legend-dot--prime" }), "\u03C0\u03C1\u03CE\u03C4\u03BF\u03C2")) : null), /* @__PURE__ */ import_react9.default.createElement(
+  )), /* @__PURE__ */ import_react20.default.createElement("section", { className: "common-zone primes-board-zone primes-board-zone--compact" }, /* @__PURE__ */ import_react20.default.createElement("div", { className: "primes-board-header" }, /* @__PURE__ */ import_react20.default.createElement("div", null, /* @__PURE__ */ import_react20.default.createElement("p", null, "\u039A\u03B5\u03BD\u03C4\u03C1\u03B9\u03BA\u03CC \u03C0\u03AC\u03BD\u03B5\u03BB"), /* @__PURE__ */ import_react20.default.createElement("h2", null, "\u0391\u03C1\u03B9\u03B8\u03BC\u03BF\u03AF 2 \u03AD\u03C9\u03C2 100")), isTeacher ? /* @__PURE__ */ import_react20.default.createElement("div", { className: "primes-board-header__legend" }, /* @__PURE__ */ import_react20.default.createElement("span", { className: "legend-item" }, /* @__PURE__ */ import_react20.default.createElement("i", { className: "legend-dot legend-dot--eliminated" }), "\u03BA\u03BB\u03B5\u03B9\u03B4\u03C9\u03BC\u03AD\u03BD\u03BF"), /* @__PURE__ */ import_react20.default.createElement("span", { className: "legend-item" }, /* @__PURE__ */ import_react20.default.createElement("i", { className: "legend-dot legend-dot--prime" }), "\u03C0\u03C1\u03CE\u03C4\u03BF\u03C2")) : null), /* @__PURE__ */ import_react20.default.createElement(
     NumberGrid_default,
     {
       numbers: NUMBER_RANGE,
@@ -22084,7 +22169,7 @@ var App = ({ role = "teacher" }) => {
       mode: isTeacher ? "teacher" : "student",
       readonly: isTeacher
     }
-  )), isTeacher ? /* @__PURE__ */ import_react9.default.createElement("section", { className: "primes-lower-grid" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "primes-lower-column" }, /* @__PURE__ */ import_react9.default.createElement(
+  )), isTeacher ? /* @__PURE__ */ import_react20.default.createElement("section", { className: "primes-lower-grid" }, /* @__PURE__ */ import_react20.default.createElement("div", { className: "primes-lower-column" }, /* @__PURE__ */ import_react20.default.createElement(
     TeacherPanel_default,
     {
       currentPrime,
@@ -22094,7 +22179,7 @@ var App = ({ role = "teacher" }) => {
       activeStudentId,
       onSelectActiveStudent: handleSelectActiveStudent
     }
-  ), /* @__PURE__ */ import_react9.default.createElement(
+  ), /* @__PURE__ */ import_react20.default.createElement(
     SelectionSummaryAccordion_default,
     {
       currentPrime,
@@ -22104,7 +22189,7 @@ var App = ({ role = "teacher" }) => {
       targetNumbers: currentTargetNumbers,
       remainingTargetNumbers
     }
-  )), /* @__PURE__ */ import_react9.default.createElement("div", { className: "primes-lower-column" }, /* @__PURE__ */ import_react9.default.createElement(
+  )), /* @__PURE__ */ import_react20.default.createElement("div", { className: "primes-lower-column" }, /* @__PURE__ */ import_react20.default.createElement(
     StudentsTable_default,
     {
       students: visibleStudents,
@@ -22114,13 +22199,13 @@ var App = ({ role = "teacher" }) => {
       wrongSelectionsByNumber,
       studentColorById
     }
-  ), /* @__PURE__ */ import_react9.default.createElement("div", { className: "primes-note primes-compact-note" }, /* @__PURE__ */ import_react9.default.createElement("h2", null, "\u03A4\u03B9 \u03B1\u03C0\u03BF\u03BC\u03AD\u03BD\u03B5\u03B9"), /* @__PURE__ */ import_react9.default.createElement("p", null, "\u0391\u03C0\u03CC \u03C4\u03BF\u03C5\u03C2 \u03B1\u03C1\u03B9\u03B8\u03BC\u03BF\u03CD\u03C2 \u03C0\u03BF\u03C5 \u03B4\u03B5\u03BD \u03AD\u03C7\u03BF\u03C5\u03BD \u03BA\u03BB\u03B5\u03B9\u03B4\u03C9\u03B8\u03B5\u03AF, \u03BC\u03AD\u03BD\u03BF\u03C5\u03BD ", progress.remainingCount, " \u03BA\u03B1\u03B9 \u03B1\u03C0\u03CC \u03B1\u03C5\u03C4\u03BF\u03CD\u03C2 ", progress.primeCount, " \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C0\u03C1\u03CE\u03C4\u03BF\u03B9."), /* @__PURE__ */ import_react9.default.createElement("div", { className: "primes-note__stats primes-note__stats--compact" }, /* @__PURE__ */ import_react9.default.createElement("div", null, /* @__PURE__ */ import_react9.default.createElement("span", null, "\u03A0\u03BF\u03BB\u03BB\u03B1\u03C0\u03BB\u03AC\u03C3\u03B9\u03B1 \u03C0\u03BF\u03C5 \u03C0\u03B5\u03C1\u03B9\u03BC\u03AD\u03BD\u03BF\u03C5\u03BD"), /* @__PURE__ */ import_react9.default.createElement("strong", null, remainingTargetNumbers.length)), /* @__PURE__ */ import_react9.default.createElement("div", null, /* @__PURE__ */ import_react9.default.createElement("span", null, "\u039F\u03BB\u03BF\u03BA\u03BB\u03B7\u03C1\u03C9\u03BC\u03AD\u03BD\u03B1 \u03B2\u03AE\u03BC\u03B1\u03C4\u03B1"), /* @__PURE__ */ import_react9.default.createElement("strong", null, progress.solvedCount)), /* @__PURE__ */ import_react9.default.createElement("div", null, /* @__PURE__ */ import_react9.default.createElement("span", null, "\u03A4\u03C1\u03AD\u03C7\u03C9\u03BD \u03BC\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2"), /* @__PURE__ */ import_react9.default.createElement("strong", null, activeStudent?.name || "\u2014")))))) : null));
+  ), /* @__PURE__ */ import_react20.default.createElement("div", { className: "primes-note primes-compact-note" }, /* @__PURE__ */ import_react20.default.createElement("h2", null, "\u03A4\u03B9 \u03B1\u03C0\u03BF\u03BC\u03AD\u03BD\u03B5\u03B9"), /* @__PURE__ */ import_react20.default.createElement("p", null, "\u0391\u03C0\u03CC \u03C4\u03BF\u03C5\u03C2 \u03B1\u03C1\u03B9\u03B8\u03BC\u03BF\u03CD\u03C2 \u03C0\u03BF\u03C5 \u03B4\u03B5\u03BD \u03AD\u03C7\u03BF\u03C5\u03BD \u03BA\u03BB\u03B5\u03B9\u03B4\u03C9\u03B8\u03B5\u03AF, \u03BC\u03AD\u03BD\u03BF\u03C5\u03BD ", progress.remainingCount, " \u03BA\u03B1\u03B9 \u03B1\u03C0\u03CC \u03B1\u03C5\u03C4\u03BF\u03CD\u03C2 ", progress.primeCount, " \u03B5\u03AF\u03BD\u03B1\u03B9 \u03C0\u03C1\u03CE\u03C4\u03BF\u03B9."), /* @__PURE__ */ import_react20.default.createElement("div", { className: "primes-note__stats primes-note__stats--compact" }, /* @__PURE__ */ import_react20.default.createElement("div", null, /* @__PURE__ */ import_react20.default.createElement("span", null, "\u03A0\u03BF\u03BB\u03BB\u03B1\u03C0\u03BB\u03AC\u03C3\u03B9\u03B1 \u03C0\u03BF\u03C5 \u03C0\u03B5\u03C1\u03B9\u03BC\u03AD\u03BD\u03BF\u03C5\u03BD"), /* @__PURE__ */ import_react20.default.createElement("strong", null, remainingTargetNumbers.length)), /* @__PURE__ */ import_react20.default.createElement("div", null, /* @__PURE__ */ import_react20.default.createElement("span", null, "\u039F\u03BB\u03BF\u03BA\u03BB\u03B7\u03C1\u03C9\u03BC\u03AD\u03BD\u03B1 \u03B2\u03AE\u03BC\u03B1\u03C4\u03B1"), /* @__PURE__ */ import_react20.default.createElement("strong", null, progress.solvedCount)), /* @__PURE__ */ import_react20.default.createElement("div", null, /* @__PURE__ */ import_react20.default.createElement("span", null, "\u03A4\u03C1\u03AD\u03C7\u03C9\u03BD \u03BC\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2"), /* @__PURE__ */ import_react20.default.createElement("strong", null, activeStudent?.name || "\u2014")))))) : null));
 };
 var App_default = App;
 
 // apps/primes-lab/student.jsx
 var root = import_client.default.createRoot(document.getElementById("root"));
-root.render(/* @__PURE__ */ import_react10.default.createElement(App_default, { role: "student" }));
+root.render(/* @__PURE__ */ import_react21.default.createElement(App_default, { role: "student" }));
 /*! Bundled license information:
 
 react/cjs/react.development.js:

@@ -1,47 +1,48 @@
-# React Guide (Vite-first)
+# React Guide
 
 ## Goal
-All frontend app entry points are managed through the Vite client.
+Use Vite for client app development, while lab runtime/source files remain centralized in apps/.
 
-Use these folders:
-- client/src/labs/* for React StudentView/TeacherView wrappers
-- client/src/shared/* for shared React components/hooks
-- client/src/layout/* for shared layout pieces
-- client/public/labs/* for static lab runtime assets/pages
+## Folder conventions
+- client/src/labs/*: React StudentView/TeacherView wrappers
+- client/src/framework/components/*: shared framework React components
+- client/src/framework/assets/*: shared JS/CSS served to lab runtime pages
+- client/src/shared/*: shared hooks/i18n/helpers
+- client/src/layout/*: shared layout components
+- apps/*: central source/runtime per lab (html/js/css/media)
 
-Do not create new app code under root apps/.
+Do not use client/public/labs/ for lab storage.
 
-## Add a new lab wrapper
-1. Create a folder in client/src/labs/<lab-slug>/
-2. Add StudentView.jsx and TeacherView.jsx
-3. Point each to /labs/<lab-slug>/<entry>.html or equivalent runtime page
+## Add/maintain a lab wrapper
+1. Edit or create client/src/labs/<lab-slug>/StudentView.jsx
+2. Edit or create client/src/labs/<lab-slug>/TeacherView.jsx
+3. Point iframe src to /labs/<lab-slug>/<entry>.html (or index.html?mode=...)
 4. Register routes in client/src/App.jsx
 
-Example StudentView:
-```jsx
-import React from 'react';
-
-export default function StudentView() {
-  return (
-    <iframe
-      title="My Lab Student"
-      src="/labs/my-lab/student.html"
-      style={{ width: '100%', minHeight: '100vh', border: 'none' }}
-    />
-  );
-}
-```
-
-## Shared React components
-- Place reusable components in client/src/shared/components/
-- Keep app-specific components inside each lab folder only when needed
-
-## Run and build
+## Build flow
+- Client shell:
 ```powershell
-npm run dev:client
 npm run build:client
 ```
+- Lab bundles into client/dist/labs/:
+```powershell
+npm run clean:labs
+npm run build:buffon-needle
+npm run build:geometry-live
+npm run build:neural-lab
+npm run build:primes-lab
+npm run build:labs
+```
 
-## Launch and registry
-Server-side app metadata lives in server/apps/registry.js.
-Teacher and student launchers consume that registry through server routes.
+Do not commit or keep generated *.bundle.js / *.bundle.css inside apps/.
+
+## Lab structure convention
+Each lab should converge toward a common shape:
+- App.jsx
+- index.jsx
+- components/
+- data/
+- runtime entry html files when needed (teacher.html, student.html, camera.html, mouse.html, index.html)
+
+## Registry
+Use server/apps/registry.js as the single source of truth for app metadata and launch paths.

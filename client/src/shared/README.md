@@ -1,6 +1,6 @@
 Shared React Components
 
-Κοινά React components που μπορούν να χρησιμοποιηθούν από όλες τις εφαρμογές στο `apps/` folder.
+Shared React helpers for the client layer. Reusable framework UI components now live in `client/src/framework/components/`.
 
 # Δομή
 
@@ -27,24 +27,22 @@ Reusable student table
 
 ## Χρήση
 
-Για να χρησιμοποιήσετε τα shared components σε μια εφαρμογή:
+Για framework UI components χρησιμοποιήστε imports από `client/src/framework/components/`.
 
 ```javascript
-import { BlueNumberBox, RedNumberBox, InputBoxStyle, ProductResult } from '../shared-components/BlueNumberBox';
-import { ToolButton, Toolbar } from '../shared-components/Toolbar';
+import { BlueNumberBox, Toolbar } from '../framework/components';
 ```
 
 ## Παράδειγμα
 
 ```jsx
 import React from 'react';
-import { BlueNumberBox, RedNumberBox } from '../shared-components/BlueNumberBox';
+import { BlueNumberBox } from '../framework/components';
 
 const MyComponent = () => {
   return (
     <div>
       <BlueNumberBox value={4} />
-      <RedNumberBox value={2} />
     </div>
   );
 };

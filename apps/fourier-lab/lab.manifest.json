@@ -1,0 +1,12 @@
+{
+  "labId": "fourier-lab",
+  "slug": "fourier-lab",
+  "name": "Fourier Lab",
+  "entry": {
+    "teacher": "index.html?mode=teacher",
+    "student": "index.html?mode=client"
+  },
+  "build": {
+    "note": "Uses static runtime files under apps/fourier-lab and framework assets from /framework/*."
+  }
+}

@@ -1,11 +1,12 @@
 const path = require('path');
 
-const LABS_ROOT = path.join(__dirname, '..', '..', 'client', 'public', 'labs');
+const LABS_ROOT = path.join(__dirname, '..', '..', 'apps');
 
 const APPS = [
   {
     slug: 'geometry-live',
-    title: 'Collaborative Geometry',
+    labId: 'geometry-lab',
+    title: 'Geometry Lab',
     description: 'Existing shared canvas with real-time points and shapes.',
     roles: ['teacher', 'client'],
     kind: 'static',
@@ -16,7 +17,8 @@ const APPS = [
   },
   {
     slug: 'buffon-needle',
-    title: "Buffon's Needle",
+    labId: 'buffon-lab',
+    title: 'Buffon Lab',
     description: 'Multiplayer Buffon experiment with rounds and scoreboards.',
     roles: ['teacher', 'client'],
     kind: 'static',
@@ -26,6 +28,7 @@ const APPS = [
   },
   {
     slug: 'fourier-lab',
+    labId: 'fourier-lab',
     title: 'Fourier Lab',
     description: 'Interactive Fourier series demo ready for custom JS features.',
     roles: ['teacher', 'client'],
@@ -36,6 +39,7 @@ const APPS = [
   },
   {
     slug: 'neural-lab',
+    labId: 'neural-lab',
     title: 'Neural Lab',
     description: 'Collaborative neural-network weights activity with teacher/student live sync.',
     roles: ['teacher', 'student', 'client'],
@@ -46,6 +50,7 @@ const APPS = [
   },
   {
     slug: 'primes-lab',
+    labId: 'primes-lab',
     title: 'Primes Lab',
     description: 'Sieve of Eratosthenes activity with teacher-controlled steps and a shared number grid.',
     roles: ['teacher', 'student', 'client'],
@@ -89,6 +94,7 @@ function getLaunchPath(app, role) {
 
 function toPublicApp(app, role) {
   return {
+    labId: app.labId || app.slug,
     slug: app.slug,
     title: app.title,
     description: app.description,

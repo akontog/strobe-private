@@ -7,8 +7,8 @@ var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __commonJS = (cb, mod) => function __require() {
   try {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
-  } catch (e) {
-    throw mod = 0, e;
+  } catch (e2) {
+    throw mod = 0, e2;
   }
 };
 var __copyProps = (to, from, except, desc) => {
@@ -82,7 +82,7 @@ var require_react_development = __commonJS({
         try {
           testStringCoercion(value);
           var JSCompiler_inline_result = false;
-        } catch (e) {
+        } catch (e2) {
           JSCompiler_inline_result = true;
         }
         if (JSCompiler_inline_result) {
@@ -243,9 +243,9 @@ var require_react_development = __commonJS({
         return newKey;
       }
       function validateChildKeys(node) {
-        isValidElement(node) ? node._store && (node._store.validated = 1) : "object" === typeof node && null !== node && node.$$typeof === REACT_LAZY_TYPE && ("fulfilled" === node._payload.status ? isValidElement(node._payload.value) && node._payload.value._store && (node._payload.value._store.validated = 1) : node._store && (node._store.validated = 1));
+        isValidElement2(node) ? node._store && (node._store.validated = 1) : "object" === typeof node && null !== node && node.$$typeof === REACT_LAZY_TYPE && ("fulfilled" === node._payload.status ? isValidElement2(node._payload.value) && node._payload.value._store && (node._payload.value._store.validated = 1) : node._store && (node._store.validated = 1));
       }
-      function isValidElement(object) {
+      function isValidElement2(object) {
         return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
       }
       function escape(key) {
@@ -314,13 +314,13 @@ var require_react_development = __commonJS({
           var childKey = "" === nameSoFar ? "." + getElementKey(invokeCallback, 0) : nameSoFar;
           isArrayImpl(callback) ? (escapedPrefix = "", null != childKey && (escapedPrefix = childKey.replace(userProvidedKeyEscapeRegex, "$&/") + "/"), mapIntoArray(callback, array, escapedPrefix, "", function(c) {
             return c;
-          })) : null != callback && (isValidElement(callback) && (null != callback.key && (invokeCallback && invokeCallback.key === callback.key || checkKeyStringCoercion(callback.key)), escapedPrefix = cloneAndReplaceKey(
+          })) : null != callback && (isValidElement2(callback) && (null != callback.key && (invokeCallback && invokeCallback.key === callback.key || checkKeyStringCoercion(callback.key)), escapedPrefix = cloneAndReplaceKey(
             callback,
             escapedPrefix + (null == callback.key || invokeCallback && invokeCallback.key === callback.key ? "" : ("" + callback.key).replace(
               userProvidedKeyEscapeRegex,
               "$&/"
             ) + "/") + childKey
-          ), "" !== nameSoFar && null != invokeCallback && isValidElement(invokeCallback) && null == invokeCallback.key && invokeCallback._store && !invokeCallback._store.validated && (escapedPrefix._store.validated = 2), callback = escapedPrefix), array.push(callback));
+          ), "" !== nameSoFar && null != invokeCallback && isValidElement2(invokeCallback) && null == invokeCallback.key && invokeCallback._store && !invokeCallback._store.validated && (escapedPrefix._store.validated = 2), callback = escapedPrefix), array.push(callback));
           return 1;
         }
         invokeCallback = 0;
@@ -617,7 +617,7 @@ var require_react_development = __commonJS({
           }) || [];
         },
         only: function(children) {
-          if (!isValidElement(children))
+          if (!isValidElement2(children))
             throw Error(
               "React.Children.only expected to receive a single React element child."
             );
@@ -851,7 +851,7 @@ var require_react_development = __commonJS({
         });
         return elementType;
       };
-      exports.isValidElement = isValidElement;
+      exports.isValidElement = isValidElement2;
       exports.lazy = function(ctor) {
         ctor = { _status: -1, _result: ctor };
         var lazyType = {
@@ -1298,7 +1298,7 @@ var require_react_dom_development = __commonJS({
         try {
           testStringCoercion(key);
           var JSCompiler_inline_result = false;
-        } catch (e) {
+        } catch (e2) {
           JSCompiler_inline_result = true;
         }
         JSCompiler_inline_result && (console.error(
@@ -1332,7 +1332,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React17 = require_react(), Internals = {
+      var React18 = require_react(), Internals = {
         d: {
           f: noop,
           r: function() {
@@ -1350,7 +1350,7 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React17.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React18.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
@@ -2276,7 +2276,7 @@ var require_react_dom_client_development = __commonJS({
       function willCoercionThrow(value) {
         try {
           return testStringCoercion(value), false;
-        } catch (e) {
+        } catch (e2) {
           return true;
         }
       }
@@ -2822,7 +2822,7 @@ var require_react_dom_client_development = __commonJS({
         if ("undefined" === typeof doc) return null;
         try {
           return doc.activeElement || doc.body;
-        } catch (e) {
+        } catch (e2) {
           return doc.body;
         }
       }
@@ -2885,7 +2885,7 @@ var require_react_dom_client_development = __commonJS({
         "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React17.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React18.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -18517,14 +18517,14 @@ var require_react_dom_client_development = __commonJS({
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React17 = require_react(), ReactDOM2 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React18 = require_react(), ReactDOM2 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
       /* @__PURE__ */ Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
       /* @__PURE__ */ Symbol.for("react.legacy_hidden");
       /* @__PURE__ */ Symbol.for("react.tracing_marker");
       var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
       /* @__PURE__ */ Symbol.for("react.view_transition");
-      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React17.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React18.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -19341,7 +19341,7 @@ var require_react_dom_client_development = __commonJS({
           });
           window.addEventListener("test", options$jscomp$0, options$jscomp$0);
           window.removeEventListener("test", options$jscomp$0, options$jscomp$0);
-        } catch (e) {
+        } catch (e2) {
           passiveBrowserEventsSupported = false;
         }
       var root2 = null, startText = null, fallbackText = null, EventInterface = {
@@ -21312,7 +21312,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React17.version;
+        var isomorphicReactPackageVersion = React18.version;
         if ("19.2.7" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.7\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21452,12 +21452,34 @@ var require_client = __commonJS({
   }
 });
 
+// node_modules/void-elements/index.js
+var require_void_elements = __commonJS({
+  "node_modules/void-elements/index.js"(exports, module) {
+    module.exports = {
+      "area": true,
+      "base": true,
+      "br": true,
+      "col": true,
+      "embed": true,
+      "hr": true,
+      "img": true,
+      "input": true,
+      "link": true,
+      "meta": true,
+      "param": true,
+      "source": true,
+      "track": true,
+      "wbr": true
+    };
+  }
+});
+
 // apps/neural-lab/student.jsx
-var import_react16 = __toESM(require_react());
+var import_react25 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // apps/neural-lab/App.jsx
-var import_react15 = __toESM(require_react());
+var import_react24 = __toESM(require_react());
 
 // apps/neural-lab/components/TeacherCard.jsx
 var import_react2 = __toESM(require_react());
@@ -21513,8 +21535,8 @@ var TeacherCard = ({ children, title }) => /* @__PURE__ */ import_react2.default
 // apps/neural-lab/components/DatasetSelector.jsx
 var import_react4 = __toESM(require_react());
 
-// apps/shared-components/Accordion.jsx
-var import_react3 = __toESM(require_react());
+// client/src/framework/components/Accordion.jsx
+var import_react3 = __toESM(require_react(), 1);
 var Accordion = ({ title, children }) => {
   const [isOpen, setIsOpen] = (0, import_react3.useState)(false);
   return /* @__PURE__ */ import_react3.default.createElement("div", { className: "accordion" }, /* @__PURE__ */ import_react3.default.createElement(
@@ -21590,14 +21612,14 @@ var DatasetSelector = ({
     "select",
     {
       value: currentDataset,
-      onChange: (e) => onDatasetChange(e.target.value)
+      onChange: (e2) => onDatasetChange(e2.target.value)
     },
     Object.entries(datasets).map(([key, val]) => /* @__PURE__ */ import_react4.default.createElement("option", { key, value: key }, val.emoji, " ", val.label))
   )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react4.default.createElement("label", null, "\u{1F3F7}\uFE0F \u03A0\u03B1\u03C1\u03AC\u03B4\u03B5\u03B9\u03B3\u03BC\u03B1"), /* @__PURE__ */ import_react4.default.createElement(
     "select",
     {
       value: currentExample,
-      onChange: (e) => onExampleChange(parseInt(e.target.value, 10))
+      onChange: (e2) => onExampleChange(parseInt(e2.target.value, 10))
     },
     datasets[currentDataset].examples.map((ex, idx) => /* @__PURE__ */ import_react4.default.createElement("option", { key: idx, value: idx }, ex.icon, " ", ex.name))
   )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react4.default.createElement("label", null, "\u{1F39B}\uFE0F \u0395\u03BD\u03B5\u03C1\u03B3\u03AC Inputs"), /* @__PURE__ */ import_react4.default.createElement("div", { className: "inputs-toggle-group" }, /* @__PURE__ */ import_react4.default.createElement("label", { className: "input-toggle-item" }, /* @__PURE__ */ import_react4.default.createElement(
@@ -21605,11 +21627,11 @@ var DatasetSelector = ({
     {
       type: "checkbox",
       checked: Boolean(activeInputSelection.i1),
-      onChange: (e) => {
+      onChange: (e2) => {
         if (typeof onSelectedInputsChange === "function") {
           onSelectedInputsChange({
             ...activeInputSelection,
-            i1: e.target.checked
+            i1: e2.target.checked
           });
         }
       }
@@ -21619,11 +21641,11 @@ var DatasetSelector = ({
     {
       type: "checkbox",
       checked: Boolean(activeInputSelection.i2),
-      onChange: (e) => {
+      onChange: (e2) => {
         if (typeof onSelectedInputsChange === "function") {
           onSelectedInputsChange({
             ...activeInputSelection,
-            i2: e.target.checked
+            i2: e2.target.checked
           });
         }
       }
@@ -21632,7 +21654,7 @@ var DatasetSelector = ({
     "select",
     {
       value: currentLinearDemoIndex !== void 0 ? currentLinearDemoIndex : "",
-      onChange: (e) => onLinearDemoChange(e.target.value !== "" ? parseInt(e.target.value, 10) : void 0),
+      onChange: (e2) => onLinearDemoChange(e2.target.value !== "" ? parseInt(e2.target.value, 10) : void 0),
       disabled: isLinearDemoDisabled
     },
     /* @__PURE__ */ import_react4.default.createElement("option", { value: "" }, "-- \u0395\u03C0\u03B9\u03BB\u03AD\u03BE\u03C4\u03B5 --"),
@@ -21755,9 +21777,9 @@ var VerticalProducts = ({
           className: "student-answer-input",
           type: "text",
           value: studentAnswer,
-          onChange: (e) => {
+          onChange: (e2) => {
             if (typeof onStudentAnswerChange === "function") {
-              onStudentAnswerChange(e.target.value);
+              onStudentAnswerChange(e2.target.value);
             }
           }
         }
@@ -21830,10 +21852,264 @@ var VerticalProducts = ({
 };
 
 // apps/neural-lab/components/StudentTable.jsx
-var import_react8 = __toESM(require_react());
+var import_react16 = __toESM(require_react());
 
-// apps/shared-components/StudentTable.jsx
-var import_react7 = __toESM(require_react());
+// client/src/framework/components/StudentTable.jsx
+var import_react15 = __toESM(require_react(), 1);
+
+// node_modules/react-i18next/dist/es/Trans.js
+var import_react9 = __toESM(require_react(), 1);
+
+// node_modules/react-i18next/dist/es/TransWithoutContext.js
+var import_react7 = __toESM(require_react(), 1);
+
+// node_modules/html-parse-stringify/dist/html-parse-stringify.module.js
+var import_void_elements = __toESM(require_void_elements());
+
+// node_modules/react-i18next/dist/es/utils.js
+var warn = (i18n, code, msg, rest) => {
+  const args = [msg, {
+    code,
+    ...rest || {}
+  }];
+  if (i18n?.services?.logger?.forward) {
+    return i18n.services.logger.forward(args, "warn", "react-i18next::", true);
+  }
+  if (isString(args[0])) args[0] = `react-i18next:: ${args[0]}`;
+  if (i18n?.services?.logger?.warn) {
+    i18n.services.logger.warn(...args);
+  } else if (console?.warn) {
+    console.warn(...args);
+  }
+};
+var alreadyWarned = {};
+var warnOnce = (i18n, code, msg, rest) => {
+  if (isString(msg) && alreadyWarned[msg]) return;
+  if (isString(msg)) alreadyWarned[msg] = /* @__PURE__ */ new Date();
+  warn(i18n, code, msg, rest);
+};
+var loadedClb = (i18n, cb) => () => {
+  if (i18n.isInitialized) {
+    cb();
+  } else {
+    const initialized = () => {
+      setTimeout(() => {
+        i18n.off("initialized", initialized);
+      }, 0);
+      cb();
+    };
+    i18n.on("initialized", initialized);
+  }
+};
+var loadNamespaces = (i18n, ns, cb) => {
+  i18n.loadNamespaces(ns, loadedClb(i18n, cb));
+};
+var loadLanguages = (i18n, lng, ns, cb) => {
+  if (isString(ns)) ns = [ns];
+  if (i18n.options.preload && i18n.options.preload.indexOf(lng) > -1) return loadNamespaces(i18n, ns, cb);
+  ns.forEach((n) => {
+    if (i18n.options.ns.indexOf(n) < 0) i18n.options.ns.push(n);
+  });
+  i18n.loadLanguages(lng, loadedClb(i18n, cb));
+};
+var hasLoadedNamespace = (ns, i18n, options = {}) => {
+  if (!i18n.languages || !i18n.languages.length) {
+    warnOnce(i18n, "NO_LANGUAGES", "i18n.languages were undefined or empty", {
+      languages: i18n.languages
+    });
+    return true;
+  }
+  return i18n.hasLoadedNamespace(ns, {
+    lng: options.lng,
+    precheck: (i18nInstance2, loadNotPending) => {
+      if (options.bindI18n && options.bindI18n.indexOf("languageChanging") > -1 && i18nInstance2.services.backendConnector.backend && i18nInstance2.isLanguageChangingTo && !loadNotPending(i18nInstance2.isLanguageChangingTo, ns)) return false;
+    }
+  });
+};
+var isString = (obj) => typeof obj === "string";
+var isObject = (obj) => typeof obj === "object" && obj !== null;
+
+// node_modules/react-i18next/dist/es/unescape.js
+var matchHtmlEntity = /&(?:amp|#38|lt|#60|gt|#62|apos|#39|quot|#34|nbsp|#160|copy|#169|reg|#174|hellip|#8230|#x2F|#47);/g;
+var htmlEntities = {
+  "&amp;": "&",
+  "&#38;": "&",
+  "&lt;": "<",
+  "&#60;": "<",
+  "&gt;": ">",
+  "&#62;": ">",
+  "&apos;": "'",
+  "&#39;": "'",
+  "&quot;": '"',
+  "&#34;": '"',
+  "&nbsp;": " ",
+  "&#160;": " ",
+  "&copy;": "\xA9",
+  "&#169;": "\xA9",
+  "&reg;": "\xAE",
+  "&#174;": "\xAE",
+  "&hellip;": "\u2026",
+  "&#8230;": "\u2026",
+  "&#x2F;": "/",
+  "&#47;": "/"
+};
+var unescapeHtmlEntity = (m) => htmlEntities[m];
+var unescape = (text) => text.replace(matchHtmlEntity, unescapeHtmlEntity);
+
+// node_modules/react-i18next/dist/es/defaults.js
+var defaultOptions = {
+  bindI18n: "languageChanged",
+  bindI18nStore: "",
+  transEmptyNodeValue: "",
+  transSupportBasicHtmlNodes: true,
+  transWrapTextNodes: "",
+  transKeepBasicHtmlNodesFor: ["br", "strong", "i", "p"],
+  useSuspense: true,
+  unescape
+};
+var getDefaults = () => defaultOptions;
+
+// node_modules/react-i18next/dist/es/i18nInstance.js
+var i18nInstance;
+var getI18n = () => i18nInstance;
+
+// node_modules/react-i18next/dist/es/context.js
+var import_react8 = __toESM(require_react(), 1);
+var I18nContext = (0, import_react8.createContext)();
+var ReportNamespaces = class {
+  constructor() {
+    this.usedNamespaces = {};
+  }
+  addUsedNamespaces(namespaces) {
+    namespaces.forEach((ns) => {
+      if (!this.usedNamespaces[ns]) this.usedNamespaces[ns] = true;
+    });
+  }
+  getUsedNamespaces() {
+    return Object.keys(this.usedNamespaces);
+  }
+};
+
+// node_modules/react-i18next/dist/es/useTranslation.js
+var import_react10 = __toESM(require_react(), 1);
+var usePrevious = (value, ignore) => {
+  const ref = (0, import_react10.useRef)();
+  (0, import_react10.useEffect)(() => {
+    ref.current = ignore ? ref.current : value;
+  }, [value, ignore]);
+  return ref.current;
+};
+var alwaysNewT = (i18n, language, namespace, keyPrefix) => i18n.getFixedT(language, namespace, keyPrefix);
+var useMemoizedT = (i18n, language, namespace, keyPrefix) => (0, import_react10.useCallback)(alwaysNewT(i18n, language, namespace, keyPrefix), [i18n, language, namespace, keyPrefix]);
+var useTranslation = (ns, props = {}) => {
+  const {
+    i18n: i18nFromProps
+  } = props;
+  const {
+    i18n: i18nFromContext,
+    defaultNS: defaultNSFromContext
+  } = (0, import_react10.useContext)(I18nContext) || {};
+  const i18n = i18nFromProps || i18nFromContext || getI18n();
+  if (i18n && !i18n.reportNamespaces) i18n.reportNamespaces = new ReportNamespaces();
+  if (!i18n) {
+    warnOnce(i18n, "NO_I18NEXT_INSTANCE", "useTranslation: You will need to pass in an i18next instance by using initReactI18next");
+    const notReadyT = (k, optsOrDefaultValue) => {
+      if (isString(optsOrDefaultValue)) return optsOrDefaultValue;
+      if (isObject(optsOrDefaultValue) && isString(optsOrDefaultValue.defaultValue)) return optsOrDefaultValue.defaultValue;
+      return Array.isArray(k) ? k[k.length - 1] : k;
+    };
+    const retNotReady = [notReadyT, {}, false];
+    retNotReady.t = notReadyT;
+    retNotReady.i18n = {};
+    retNotReady.ready = false;
+    return retNotReady;
+  }
+  if (i18n.options.react?.wait) warnOnce(i18n, "DEPRECATED_OPTION", "useTranslation: It seems you are still using the old wait option, you may migrate to the new useSuspense behaviour.");
+  const i18nOptions = {
+    ...getDefaults(),
+    ...i18n.options.react,
+    ...props
+  };
+  const {
+    useSuspense,
+    keyPrefix
+  } = i18nOptions;
+  let namespaces = ns || defaultNSFromContext || i18n.options?.defaultNS;
+  namespaces = isString(namespaces) ? [namespaces] : namespaces || ["translation"];
+  i18n.reportNamespaces.addUsedNamespaces?.(namespaces);
+  const ready = (i18n.isInitialized || i18n.initializedStoreOnce) && namespaces.every((n) => hasLoadedNamespace(n, i18n, i18nOptions));
+  const memoGetT = useMemoizedT(i18n, props.lng || null, i18nOptions.nsMode === "fallback" ? namespaces : namespaces[0], keyPrefix);
+  const getT = () => memoGetT;
+  const getNewT = () => alwaysNewT(i18n, props.lng || null, i18nOptions.nsMode === "fallback" ? namespaces : namespaces[0], keyPrefix);
+  const [t, setT] = (0, import_react10.useState)(getT);
+  let joinedNS = namespaces.join();
+  if (props.lng) joinedNS = `${props.lng}${joinedNS}`;
+  const previousJoinedNS = usePrevious(joinedNS);
+  const isMounted = (0, import_react10.useRef)(true);
+  (0, import_react10.useEffect)(() => {
+    const {
+      bindI18n,
+      bindI18nStore
+    } = i18nOptions;
+    isMounted.current = true;
+    if (!ready && !useSuspense) {
+      if (props.lng) {
+        loadLanguages(i18n, props.lng, namespaces, () => {
+          if (isMounted.current) setT(getNewT);
+        });
+      } else {
+        loadNamespaces(i18n, namespaces, () => {
+          if (isMounted.current) setT(getNewT);
+        });
+      }
+    }
+    if (ready && previousJoinedNS && previousJoinedNS !== joinedNS && isMounted.current) {
+      setT(getNewT);
+    }
+    const boundReset = () => {
+      if (isMounted.current) setT(getNewT);
+    };
+    if (bindI18n) i18n?.on(bindI18n, boundReset);
+    if (bindI18nStore) i18n?.store.on(bindI18nStore, boundReset);
+    return () => {
+      isMounted.current = false;
+      if (i18n && bindI18n) bindI18n?.split(" ").forEach((e2) => i18n.off(e2, boundReset));
+      if (bindI18nStore && i18n) bindI18nStore.split(" ").forEach((e2) => i18n.store.off(e2, boundReset));
+    };
+  }, [i18n, joinedNS]);
+  (0, import_react10.useEffect)(() => {
+    if (isMounted.current && ready) {
+      setT(getT);
+    }
+  }, [i18n, keyPrefix, ready]);
+  const ret = [t, i18n, ready];
+  ret.t = t;
+  ret.i18n = i18n;
+  ret.ready = ready;
+  if (ready) return ret;
+  if (!ready && !useSuspense) return ret;
+  throw new Promise((resolve) => {
+    if (props.lng) {
+      loadLanguages(i18n, props.lng, namespaces, () => resolve());
+    } else {
+      loadNamespaces(i18n, namespaces, () => resolve());
+    }
+  });
+};
+
+// node_modules/react-i18next/dist/es/withTranslation.js
+var import_react11 = __toESM(require_react(), 1);
+
+// node_modules/react-i18next/dist/es/I18nextProvider.js
+var import_react12 = __toESM(require_react(), 1);
+
+// node_modules/react-i18next/dist/es/withSSR.js
+var import_react14 = __toESM(require_react(), 1);
+
+// node_modules/react-i18next/dist/es/useSSR.js
+var import_react13 = __toESM(require_react(), 1);
+
+// client/src/framework/components/StudentTable.jsx
 var defaultGetRowKey = (participant, index) => participant.id || participant.sessionId || participant.username || participant.name || index;
 var defaultGetDisplayName = (participant, fallbackName) => participant.username || participant.name || participant.displayName || fallbackName;
 var defaultGetIsConnected = (participant) => participant && typeof participant.isConnected === "boolean" ? participant.isConnected : participant && typeof participant.connected === "boolean" ? participant.connected : true;
@@ -21844,16 +22120,20 @@ var StudentTable = ({
   emptyMessage = "\u0394\u03B5\u03BD \u03C5\u03C0\u03AC\u03C1\u03C7\u03BF\u03C5\u03BD \u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9 \u03C7\u03C1\u03AE\u03C3\u03C4\u03B5\u03C2.",
   nameFallback = "\u03A7\u03C1\u03AE\u03C3\u03C4\u03B7\u03C2",
   getRowKey = defaultGetRowKey,
-  getDisplayName = defaultGetDisplayName,
+  getDisplayName: getDisplayName2 = defaultGetDisplayName,
   getIsConnected = defaultGetIsConnected
 }) => {
+  const { t } = useTranslation(["common", "neural"]);
   const rows = Array.isArray(participants) ? participants : [];
   const extraColumns = Array.isArray(columns) ? columns : [];
   const totalColumns = 2 + extraColumns.length;
-  return /* @__PURE__ */ import_react7.default.createElement(Accordion, { title }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "data-section" }, /* @__PURE__ */ import_react7.default.createElement("table", { className: "data-table" }, /* @__PURE__ */ import_react7.default.createElement("thead", null, /* @__PURE__ */ import_react7.default.createElement("tr", null, /* @__PURE__ */ import_react7.default.createElement("th", null, "\u039A\u03B1\u03C4\u03AC\u03C3\u03C4\u03B1\u03C3\u03B7"), /* @__PURE__ */ import_react7.default.createElement("th", null, "\u038C\u03BD\u03BF\u03BC\u03B1 \u03C7\u03C1\u03AE\u03C3\u03C4\u03B7"), extraColumns.map((column, index) => /* @__PURE__ */ import_react7.default.createElement("th", { key: column.key || column.label || index }, column.label)))), /* @__PURE__ */ import_react7.default.createElement("tbody", null, rows.length === 0 && /* @__PURE__ */ import_react7.default.createElement("tr", null, /* @__PURE__ */ import_react7.default.createElement("td", { colSpan: totalColumns, style: { textAlign: "center", opacity: 0.7 } }, emptyMessage)), rows.map((participant, index) => {
+  const resolvedTitle = title || `\u{1F4CB} ${t("neural.connectedStudents")}`;
+  const resolvedEmptyMessage = emptyMessage || t("common.notAvailable");
+  const resolvedFallback = nameFallback || t("common.student");
+  return /* @__PURE__ */ import_react15.default.createElement(Accordion, { title: resolvedTitle }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "data-section" }, /* @__PURE__ */ import_react15.default.createElement("table", { className: "data-table" }, /* @__PURE__ */ import_react15.default.createElement("thead", null, /* @__PURE__ */ import_react15.default.createElement("tr", null, /* @__PURE__ */ import_react15.default.createElement("th", null, t("common.status")), /* @__PURE__ */ import_react15.default.createElement("th", null, t("common.username")), extraColumns.map((column, index) => /* @__PURE__ */ import_react15.default.createElement("th", { key: column.key || column.label || index }, column.label)))), /* @__PURE__ */ import_react15.default.createElement("tbody", null, rows.length === 0 && /* @__PURE__ */ import_react15.default.createElement("tr", null, /* @__PURE__ */ import_react15.default.createElement("td", { colSpan: totalColumns, style: { textAlign: "center", opacity: 0.7 } }, resolvedEmptyMessage)), rows.map((participant, index) => {
     const isConnected = getIsConnected(participant, index);
-    const displayName = getDisplayName(participant, nameFallback, index);
-    return /* @__PURE__ */ import_react7.default.createElement("tr", { key: getRowKey(participant, index) }, /* @__PURE__ */ import_react7.default.createElement("td", null, /* @__PURE__ */ import_react7.default.createElement(
+    const displayName = getDisplayName2(participant, resolvedFallback, index);
+    return /* @__PURE__ */ import_react15.default.createElement("tr", { key: getRowKey(participant, index) }, /* @__PURE__ */ import_react15.default.createElement("td", null, /* @__PURE__ */ import_react15.default.createElement(
       "span",
       {
         className: "green-dot",
@@ -21863,7 +22143,7 @@ var StudentTable = ({
           opacity: isConnected ? 1 : 0.85
         }
       }
-    ), " ", isConnected ? "\u03A3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03C2" : "\u0391\u03C0\u03BF\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03C2"), /* @__PURE__ */ import_react7.default.createElement("td", null, displayName), extraColumns.map((column, columnIndex) => /* @__PURE__ */ import_react7.default.createElement(
+    ), " ", isConnected ? t("common.connected") : t("common.disconnected")), /* @__PURE__ */ import_react15.default.createElement("td", null, displayName), extraColumns.map((column, columnIndex) => /* @__PURE__ */ import_react15.default.createElement(
       "td",
       {
         key: column.key || column.label || columnIndex,
@@ -21894,7 +22174,7 @@ var StudentTable2 = ({
       {
         key: "i1",
         label: `i\u2081 (${features.i1.label})`,
-        render: (student) => /* @__PURE__ */ import_react8.default.createElement(import_react8.default.Fragment, null, student?.inputs?.i1 ?? i1, " ", /* @__PURE__ */ import_react8.default.createElement("span", { className: "icon-in-table" }, features.i1.icon))
+        render: (student) => /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, student?.inputs?.i1 ?? i1, " ", /* @__PURE__ */ import_react16.default.createElement("span", { className: "icon-in-table" }, features.i1.icon))
       },
       {
         key: "w1",
@@ -21910,7 +22190,7 @@ var StudentTable2 = ({
       {
         key: "i2",
         label: `i\u2082 (${features.i2.label})`,
-        render: (student) => /* @__PURE__ */ import_react8.default.createElement(import_react8.default.Fragment, null, student?.inputs?.i2 ?? i2, " ", /* @__PURE__ */ import_react8.default.createElement("span", { className: "icon-in-table" }, features.i2.icon, " "))
+        render: (student) => /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, student?.inputs?.i2 ?? i2, " ", /* @__PURE__ */ import_react16.default.createElement("span", { className: "icon-in-table" }, features.i2.icon, " "))
       },
       {
         key: "w2",
@@ -21942,10 +22222,10 @@ var StudentTable2 = ({
     render: (student) => {
       const resultValue = student.total ?? student.result ?? "-";
       const showThreshold = activity === "4";
-      return /* @__PURE__ */ import_react8.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "0.3rem" } }, /* @__PURE__ */ import_react8.default.createElement("span", null, resultValue), showThreshold && typeof student.aboveThreshold === "boolean" && /* @__PURE__ */ import_react8.default.createElement("span", { style: { marginLeft: "0.45rem", fontWeight: 700, color: student.aboveThreshold ? "#059669" : "#dc2626" } }, student.aboveThreshold ? `${threshold.op} ${threshold.boundary}` : `\u03CC\u03C7\u03B9 ${threshold.op} ${threshold.boundary}`));
+      return /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "0.3rem" } }, /* @__PURE__ */ import_react16.default.createElement("span", null, resultValue), showThreshold && typeof student.aboveThreshold === "boolean" && /* @__PURE__ */ import_react16.default.createElement("span", { style: { marginLeft: "0.45rem", fontWeight: 700, color: student.aboveThreshold ? "#059669" : "#dc2626" } }, student.aboveThreshold ? `${threshold.op} ${threshold.boundary}` : `\u03CC\u03C7\u03B9 ${threshold.op} ${threshold.boundary}`));
     }
   });
-  return /* @__PURE__ */ import_react8.default.createElement(
+  return /* @__PURE__ */ import_react16.default.createElement(
     StudentTable,
     {
       title: "\u{1F4CB} \u03A0\u03AF\u03BD\u03B1\u03BA\u03B1\u03C2 \u03BC\u03B1\u03B8\u03B7\u03C4\u03CE\u03BD",
@@ -21961,7 +22241,7 @@ var StudentTable2 = ({
 };
 
 // apps/neural-lab/components/ExamplesClassifier.jsx
-var import_react9 = __toESM(require_react());
+var import_react17 = __toESM(require_react());
 function computeOutput({ i1, i2 }, { w1, w2 }, activeInputs) {
   const term1 = activeInputs.i1 ? w1 * i1 : 0;
   const term2 = activeInputs.i2 ? w2 * i2 : 0;
@@ -22018,7 +22298,7 @@ var ExamplesClassifier = ({
   const demo = datasetData?.linear_demos?.[currentLinearDemoIndex];
   const threshold = resolveThreshold(demo?.threshold, activeInputs);
   const showResultDetails = activityId === "4";
-  const classifiedExamples = (0, import_react9.useMemo)(() => {
+  const classifiedExamples = (0, import_react17.useMemo)(() => {
     if (!datasetData?.examples) return [];
     return datasetData.examples.map((ex) => {
       const output = computeOutput({ i1: ex.i1, i2: ex.i2 }, safeWeights, activeInputs);
@@ -22033,7 +22313,7 @@ var ExamplesClassifier = ({
     safeWeights.w1,
     safeWeights.w2
   ]);
-  const confusionMatrix = (0, import_react9.useMemo)(() => {
+  const confusionMatrix = (0, import_react17.useMemo)(() => {
     if (!showResultDetails || !demo || !threshold) {
       return null;
     }
@@ -22056,17 +22336,17 @@ var ExamplesClassifier = ({
   if (!datasetData) {
     return null;
   }
-  return /* @__PURE__ */ import_react9.default.createElement(Accordion, { title: "\u{1F50E} \u03A4\u03B1\u03BE\u03B9\u03BD\u03CC\u03BC\u03B7\u03C3\u03B7 \u03A0\u03B1\u03C1\u03B1\u03B4\u03B5\u03B9\u03B3\u03BC\u03AC\u03C4\u03C9\u03BD" }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "data-section" }, /* @__PURE__ */ import_react9.default.createElement("table", { className: "data-table" }, /* @__PURE__ */ import_react9.default.createElement("thead", null, /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("th", null, "\u03A0\u03B1\u03C1\u03AC\u03B4\u03B5\u03B9\u03B3\u03BC\u03B1"), activeInputs.i1 && /* @__PURE__ */ import_react9.default.createElement("th", null, features?.i1?.icon, " ", features?.i1?.label), activeInputs.i2 && /* @__PURE__ */ import_react9.default.createElement("th", null, features?.i2?.icon, " ", features?.i2?.label), /* @__PURE__ */ import_react9.default.createElement("th", null, "w1\xB7i1 + w2\xB7i2"), showResultDetails && /* @__PURE__ */ import_react9.default.createElement("th", null, "\u0391\u03C0\u03BF\u03C4\u03AD\u03BB\u03B5\u03C3\u03BC\u03B1"))), /* @__PURE__ */ import_react9.default.createElement("tbody", null, classifiedExamples.map((ex, idx) => /* @__PURE__ */ import_react9.default.createElement("tr", { key: idx }, /* @__PURE__ */ import_react9.default.createElement("td", null, /* @__PURE__ */ import_react9.default.createElement("span", { className: "icon-in-table" }, ex.icon), " ", ex.name), activeInputs.i1 && /* @__PURE__ */ import_react9.default.createElement("td", { className: "weight-value" }, ex.i1), activeInputs.i2 && /* @__PURE__ */ import_react9.default.createElement("td", { className: "weight-value" }, ex.i2), /* @__PURE__ */ import_react9.default.createElement("td", { className: "weight-value" }, ex.output.toFixed(2)), showResultDetails && /* @__PURE__ */ import_react9.default.createElement("td", { className: threshold ? ex.result ? "result-positive" : "result-negative" : "" }, threshold ? ex.result ? "\u2705 \u0398\u03B5\u03C4\u03B9\u03BA\u03CC" : "\u274C \u0391\u03C1\u03BD\u03B7\u03C4\u03B9\u03BA\u03CC" : ""))))), /* @__PURE__ */ import_react9.default.createElement("div", { className: "data-section", style: { marginTop: "0.8rem" } }, /* @__PURE__ */ import_react9.default.createElement("table", { className: "data-table" }, /* @__PURE__ */ import_react9.default.createElement("thead", null, /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("th", { colSpan: "3", style: {
+  return /* @__PURE__ */ import_react17.default.createElement(Accordion, { title: "\u{1F50E} \u03A4\u03B1\u03BE\u03B9\u03BD\u03CC\u03BC\u03B7\u03C3\u03B7 \u03A0\u03B1\u03C1\u03B1\u03B4\u03B5\u03B9\u03B3\u03BC\u03AC\u03C4\u03C9\u03BD" }, /* @__PURE__ */ import_react17.default.createElement("div", { className: "data-section" }, /* @__PURE__ */ import_react17.default.createElement("table", { className: "data-table" }, /* @__PURE__ */ import_react17.default.createElement("thead", null, /* @__PURE__ */ import_react17.default.createElement("tr", null, /* @__PURE__ */ import_react17.default.createElement("th", null, "\u03A0\u03B1\u03C1\u03AC\u03B4\u03B5\u03B9\u03B3\u03BC\u03B1"), activeInputs.i1 && /* @__PURE__ */ import_react17.default.createElement("th", null, features?.i1?.icon, " ", features?.i1?.label), activeInputs.i2 && /* @__PURE__ */ import_react17.default.createElement("th", null, features?.i2?.icon, " ", features?.i2?.label), /* @__PURE__ */ import_react17.default.createElement("th", null, "w1\xB7i1 + w2\xB7i2"), showResultDetails && /* @__PURE__ */ import_react17.default.createElement("th", null, "\u0391\u03C0\u03BF\u03C4\u03AD\u03BB\u03B5\u03C3\u03BC\u03B1"))), /* @__PURE__ */ import_react17.default.createElement("tbody", null, classifiedExamples.map((ex, idx) => /* @__PURE__ */ import_react17.default.createElement("tr", { key: idx }, /* @__PURE__ */ import_react17.default.createElement("td", null, /* @__PURE__ */ import_react17.default.createElement("span", { className: "icon-in-table" }, ex.icon), " ", ex.name), activeInputs.i1 && /* @__PURE__ */ import_react17.default.createElement("td", { className: "weight-value" }, ex.i1), activeInputs.i2 && /* @__PURE__ */ import_react17.default.createElement("td", { className: "weight-value" }, ex.i2), /* @__PURE__ */ import_react17.default.createElement("td", { className: "weight-value" }, ex.output.toFixed(2)), showResultDetails && /* @__PURE__ */ import_react17.default.createElement("td", { className: threshold ? ex.result ? "result-positive" : "result-negative" : "" }, threshold ? ex.result ? "\u2705 \u0398\u03B5\u03C4\u03B9\u03BA\u03CC" : "\u274C \u0391\u03C1\u03BD\u03B7\u03C4\u03B9\u03BA\u03CC" : ""))))), /* @__PURE__ */ import_react17.default.createElement("div", { className: "data-section", style: { marginTop: "0.8rem" } }, /* @__PURE__ */ import_react17.default.createElement("table", { className: "data-table" }, /* @__PURE__ */ import_react17.default.createElement("thead", null, /* @__PURE__ */ import_react17.default.createElement("tr", null, /* @__PURE__ */ import_react17.default.createElement("th", { colSpan: "3", style: {
     textAlign: "center",
     fontSize: "1.2rem",
     fontWeight: "bold",
     padding: "10px 0",
     borderBottom: "2px solid #e2e8f0"
-  } }, "Confusion Matrix")), /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("th", { rowSpan: "2" }, "\u03A0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03AE \u03BA\u03BB\u03AC\u03C3\u03B7"), /* @__PURE__ */ import_react9.default.createElement("th", { colSpan: "2" }, "\u03A0\u03C1\u03CC\u03B2\u03BB\u03B5\u03C8\u03B7")), /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("th", null, "\u0398\u03B5\u03C4\u03B9\u03BA\u03CC"), /* @__PURE__ */ import_react9.default.createElement("th", null, "\u0391\u03C1\u03BD\u03B7\u03C4\u03B9\u03BA\u03CC"))), /* @__PURE__ */ import_react9.default.createElement("tbody", null, /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("td", null, "\u0398\u03B5\u03C4\u03B9\u03BA\u03AE"), /* @__PURE__ */ import_react9.default.createElement("td", { className: "result-positive" }, "TP: ", metricValue("tp")), /* @__PURE__ */ import_react9.default.createElement("td", { className: "result-negative" }, "FN: ", metricValue("fn"))), /* @__PURE__ */ import_react9.default.createElement("tr", null, /* @__PURE__ */ import_react9.default.createElement("td", null, "\u0391\u03C1\u03BD\u03B7\u03C4\u03B9\u03BA\u03AE"), /* @__PURE__ */ import_react9.default.createElement("td", { className: "result-negative" }, "FP: ", metricValue("fp")), /* @__PURE__ */ import_react9.default.createElement("td", { className: "result-positive" }, "TN: ", metricValue("tn")))))), /* @__PURE__ */ import_react9.default.createElement("div", { className: "student-inline-note", style: { marginTop: "0.6rem" } }, "\u03A4\u03C1\u03AD\u03C7\u03BF\u03BD\u03C4\u03B1 \u03B2\u03AC\u03C1\u03B7: w1 = ", safeWeights.w1, ", w2 = ", safeWeights.w2, showResultDetails && threshold && ` | threshold: ${threshold.op} ${threshold.boundary}`)));
+  } }, "Confusion Matrix")), /* @__PURE__ */ import_react17.default.createElement("tr", null, /* @__PURE__ */ import_react17.default.createElement("th", { rowSpan: "2" }, "\u03A0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03AE \u03BA\u03BB\u03AC\u03C3\u03B7"), /* @__PURE__ */ import_react17.default.createElement("th", { colSpan: "2" }, "\u03A0\u03C1\u03CC\u03B2\u03BB\u03B5\u03C8\u03B7")), /* @__PURE__ */ import_react17.default.createElement("tr", null, /* @__PURE__ */ import_react17.default.createElement("th", null, "\u0398\u03B5\u03C4\u03B9\u03BA\u03CC"), /* @__PURE__ */ import_react17.default.createElement("th", null, "\u0391\u03C1\u03BD\u03B7\u03C4\u03B9\u03BA\u03CC"))), /* @__PURE__ */ import_react17.default.createElement("tbody", null, /* @__PURE__ */ import_react17.default.createElement("tr", null, /* @__PURE__ */ import_react17.default.createElement("td", null, "\u0398\u03B5\u03C4\u03B9\u03BA\u03AE"), /* @__PURE__ */ import_react17.default.createElement("td", { className: "result-positive" }, "TP: ", metricValue("tp")), /* @__PURE__ */ import_react17.default.createElement("td", { className: "result-negative" }, "FN: ", metricValue("fn"))), /* @__PURE__ */ import_react17.default.createElement("tr", null, /* @__PURE__ */ import_react17.default.createElement("td", null, "\u0391\u03C1\u03BD\u03B7\u03C4\u03B9\u03BA\u03AE"), /* @__PURE__ */ import_react17.default.createElement("td", { className: "result-negative" }, "FP: ", metricValue("fp")), /* @__PURE__ */ import_react17.default.createElement("td", { className: "result-positive" }, "TN: ", metricValue("tn")))))), /* @__PURE__ */ import_react17.default.createElement("div", { className: "student-inline-note", style: { marginTop: "0.6rem" } }, "\u03A4\u03C1\u03AD\u03C7\u03BF\u03BD\u03C4\u03B1 \u03B2\u03AC\u03C1\u03B7: w1 = ", safeWeights.w1, ", w2 = ", safeWeights.w2, showResultDetails && threshold && ` | threshold: ${threshold.op} ${threshold.boundary}`)));
 };
 
 // apps/neural-lab/components/ActivitiesMenu.jsx
-var import_react10 = __toESM(require_react());
+var import_react18 = __toESM(require_react());
 var ACTIVITY_OPTIONS = [
   { value: "1", label: "1. \u0392\u03C1\u03AF\u03C3\u03BA\u03C9 \u03C4\u03B7\u03BD \u03B5\u03AF\u03C3\u03BF\u03B4\u03BF" },
   { value: "2", label: "2. \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03AF\u03B6\u03C9 \u03C4\u03B7\u03BD \u03AD\u03BE\u03BF\u03B4\u03BF" },
@@ -22078,7 +22358,7 @@ var getNeuralActivityTitle = (activityId, fallback = ACTIVITY_OPTIONS[0].label) 
   const match = ACTIVITY_OPTIONS.find((option) => option.value === normalizedId);
   return match ? match.label : fallback;
 };
-var ActivitiesMenu = ({ value = "1", onChange }) => /* @__PURE__ */ import_react10.default.createElement(Accordion, { title: "\u{1F52C} \u0394\u03C1\u03B1\u03C3\u03C4\u03B7\u03C1\u03B9\u03CC\u03C4\u03B7\u03C4\u03B5\u03C2" }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "data-section activities-menu" }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react10.default.createElement("label", null, "\u0395\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE \u03B4\u03C1\u03B1\u03C3\u03C4\u03B7\u03C1\u03B9\u03CC\u03C4\u03B7\u03C4\u03B1\u03C2"), /* @__PURE__ */ import_react10.default.createElement(
+var ActivitiesMenu = ({ value = "1", onChange }) => /* @__PURE__ */ import_react18.default.createElement(Accordion, { title: "\u{1F52C} \u0394\u03C1\u03B1\u03C3\u03C4\u03B7\u03C1\u03B9\u03CC\u03C4\u03B7\u03C4\u03B5\u03C2" }, /* @__PURE__ */ import_react18.default.createElement("div", { className: "data-section activities-menu" }, /* @__PURE__ */ import_react18.default.createElement("div", { className: "select-group" }, /* @__PURE__ */ import_react18.default.createElement("label", null, "\u0395\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE \u03B4\u03C1\u03B1\u03C3\u03C4\u03B7\u03C1\u03B9\u03CC\u03C4\u03B7\u03C4\u03B1\u03C2"), /* @__PURE__ */ import_react18.default.createElement(
   "select",
   {
     value,
@@ -22088,13 +22368,13 @@ var ActivitiesMenu = ({ value = "1", onChange }) => /* @__PURE__ */ import_react
       }
     }
   },
-  ACTIVITY_OPTIONS.map((option) => /* @__PURE__ */ import_react10.default.createElement("option", { key: option.value, value: option.value }, option.label))
+  ACTIVITY_OPTIONS.map((option) => /* @__PURE__ */ import_react18.default.createElement("option", { key: option.value, value: option.value }, option.label))
 ))));
 
 // apps/neural-lab/components/StudentQrAccordion.jsx
-var import_react11 = __toESM(require_react());
+var import_react19 = __toESM(require_react());
 var STUDENT_QR_SRC = "/labs/neural-lab/media/neural_lab_student_qrcode.png";
-var StudentQrAccordion = () => /* @__PURE__ */ import_react11.default.createElement(Accordion, { title: "\u{1F4F1} \u03A3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7 \u03BC\u03B1\u03B8\u03B7\u03C4\u03CE\u03BD" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "data-section student-qr-section" }, /* @__PURE__ */ import_react11.default.createElement(
+var StudentQrAccordion = () => /* @__PURE__ */ import_react19.default.createElement(Accordion, { title: "\u{1F4F1} \u03A3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7 \u03BC\u03B1\u03B8\u03B7\u03C4\u03CE\u03BD" }, /* @__PURE__ */ import_react19.default.createElement("div", { className: "data-section student-qr-section" }, /* @__PURE__ */ import_react19.default.createElement(
   "img",
   {
     className: "student-qr-image",
@@ -22103,93 +22383,122 @@ var StudentQrAccordion = () => /* @__PURE__ */ import_react11.default.createElem
   }
 )));
 
-// apps/shared-components/BlueNumberBox.jsx
-var import_react12 = __toESM(require_react());
+// client/src/framework/components/BlueNumberBox.jsx
+var import_react20 = __toESM(require_react(), 1);
 
-// apps/shared-components/Toolbar.jsx
-var import_react13 = __toESM(require_react());
+// client/src/framework/components/Toolbar.jsx
+var import_react21 = __toESM(require_react(), 1);
 
-// apps/shared-components/ConnectionNameControl.jsx
-var import_react14 = __toESM(require_react());
-var ConnectionNameControl = ({
-  connected = true,
-  name,
+// client/src/framework/components/ConnectionNameControl.jsx
+var import_react22 = __toESM(require_react(), 1);
+function ConnectionNameControl({
+  connected = false,
+  name = "",
   editing = false,
   value = "",
   onChange,
   onStartEdit,
   onCommit,
   onCancel,
-  color = "#3b82f6",
+  color = "#4ECDC4",
   showColorPicker = false,
   onColorChange,
   infoText = "",
-  connectedLabel = "\u03A3\u03B5 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7",
-  disconnectedLabel = "\u0395\u03BA\u03C4\u03CC\u03C2 \u03C3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7\u03C2",
-  namePrefix = "\u03CC\u03BD\u03BF\u03BC\u03B1 \u03C7\u03C1\u03AE\u03C3\u03C4\u03B7",
+  connectedLabel = "Connected",
+  disconnectedLabel = "Disconnected",
+  namePrefix = "name",
   showNameLabel = true,
   className = ""
-}) => {
-  return /* @__PURE__ */ import_react14.default.createElement("div", { className: `connection-name-control ${className}`.trim() }, /* @__PURE__ */ import_react14.default.createElement("span", { className: `connection-name-control__dot ${connected ? "online" : "offline"}` }), /* @__PURE__ */ import_react14.default.createElement("strong", { className: "connection-name-control__status" }, connected ? connectedLabel : disconnectedLabel), showNameLabel || showColorPicker ? /* @__PURE__ */ import_react14.default.createElement("div", { className: "connection-name-control__row" }, editing ? /* @__PURE__ */ import_react14.default.createElement(
-    "input",
+}) {
+  const statusLabel = connected ? connectedLabel : disconnectedLabel;
+  return /* @__PURE__ */ import_react22.default.createElement("div", { className }, /* @__PURE__ */ import_react22.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" } }, /* @__PURE__ */ import_react22.default.createElement(
+    "span",
     {
-      autoFocus: true,
-      className: "connection-name-control__input",
-      value,
-      onChange: (event) => onChange?.(event.target.value),
-      onBlur: onCommit,
-      onKeyDown: (event) => {
-        if (event.key === "Enter") {
-          onCommit?.();
-        }
-        if (event.key === "Escape") {
-          onCancel?.();
-        }
+      style: {
+        width: 10,
+        height: 10,
+        borderRadius: "999px",
+        background: connected ? "#22c55e" : "#9ca3af",
+        display: "inline-block"
       }
     }
-  ) : showNameLabel ? /* @__PURE__ */ import_react14.default.createElement("button", { type: "button", className: "connection-name-control__name", onClick: onStartEdit }, namePrefix, ": ", name || "\u2014") : null, showColorPicker ? /* @__PURE__ */ import_react14.default.createElement("label", { className: "connection-name-control__color-wrap", title: "\u0395\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE \u03C7\u03C1\u03CE\u03BC\u03B1\u03C4\u03BF\u03C2" }, /* @__PURE__ */ import_react14.default.createElement(
+  ), /* @__PURE__ */ import_react22.default.createElement("strong", null, statusLabel), showNameLabel && !editing && /* @__PURE__ */ import_react22.default.createElement("span", null, namePrefix, ": ", name || "-")), editing ? /* @__PURE__ */ import_react22.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginTop: 8, flexWrap: "wrap" } }, /* @__PURE__ */ import_react22.default.createElement(
+    "input",
+    {
+      type: "text",
+      value,
+      onChange: (event) => onChange && onChange(event.target.value),
+      onKeyDown: (event) => {
+        if (event.key === "Enter" && onCommit) onCommit();
+        if (event.key === "Escape" && onCancel) onCancel();
+      },
+      style: { padding: "6px 8px", borderRadius: 8, border: "1px solid #cbd5e1" }
+    }
+  ), /* @__PURE__ */ import_react22.default.createElement("button", { type: "button", onClick: onCommit }, "OK"), /* @__PURE__ */ import_react22.default.createElement("button", { type: "button", onClick: onCancel }, "Cancel")) : /* @__PURE__ */ import_react22.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginTop: 8, flexWrap: "wrap" } }, typeof onStartEdit === "function" && /* @__PURE__ */ import_react22.default.createElement("button", { type: "button", onClick: onStartEdit }, "Edit"), showColorPicker && /* @__PURE__ */ import_react22.default.createElement("label", { style: { display: "inline-flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ import_react22.default.createElement("span", null, "Color"), /* @__PURE__ */ import_react22.default.createElement(
     "input",
     {
       type: "color",
-      className: "connection-name-control__color",
       value: color,
-      onChange: (event) => onColorChange?.(event.target.value),
-      "aria-label": "\u0395\u03C0\u03B9\u03BB\u03BF\u03B3\u03AE \u03C7\u03C1\u03CE\u03BC\u03B1\u03C4\u03BF\u03C2"
+      onChange: (event) => onColorChange && onColorChange(event.target.value)
     }
-  )) : null) : null, infoText ? /* @__PURE__ */ import_react14.default.createElement("span", { className: "connection-name-control__info" }, infoText) : null);
-};
-var ConnectionNameControl_default = ConnectionNameControl;
+  ))), infoText ? /* @__PURE__ */ import_react22.default.createElement("div", { style: { marginTop: 6, opacity: 0.8 } }, infoText) : null);
+}
 
-// apps/shared-components/identityStorage.js
-var IDENTITY_NAME_KEY = "strobeStudentConnectName";
-var IDENTITY_COLOR_KEY = "strobeStudentColor";
-var IDENTITY_COLORS = ["#22c55e", "#f97316", "#6366f1", "#e11d48", "#14b8a6", "#f59e0b", "#0ea5e9", "#8b5cf6"];
-var randomIdentityColor = () => IDENTITY_COLORS[Math.floor(Math.random() * IDENTITY_COLORS.length)];
-function readIdentityName(fallback) {
-  try {
-    return localStorage.getItem(IDENTITY_NAME_KEY) || fallback;
-  } catch {
+// client/src/framework/components/studentTableColumnPresets.jsx
+var import_react23 = __toESM(require_react(), 1);
+
+// client/src/framework/components/identityStorage.js
+var NAME_KEY = "strobeStudentConnectName";
+var COLOR_KEY = "strobeStudentColor";
+function safeStorage() {
+  if (typeof window === "undefined" || !window.localStorage) {
+    return null;
+  }
+  return window.localStorage;
+}
+function randomIdentityColor() {
+  const palette = ["#4ECDC4", "#3B82F6", "#A855F7", "#F97316", "#22C55E", "#EF4444", "#14B8A6", "#EAB308"];
+  return palette[Math.floor(Math.random() * palette.length)];
+}
+function readIdentityName(fallback = "") {
+  const storage = safeStorage();
+  if (!storage) {
     return fallback;
   }
+  const value = String(storage.getItem(NAME_KEY) || "").trim();
+  return value || fallback;
 }
-function writeIdentityName(name) {
-  try {
-    localStorage.setItem(IDENTITY_NAME_KEY, name);
-  } catch {
+function writeIdentityName(value) {
+  const storage = safeStorage();
+  if (!storage) {
+    return;
   }
+  const normalized = String(value || "").trim();
+  if (!normalized) {
+    storage.removeItem(NAME_KEY);
+    return;
+  }
+  storage.setItem(NAME_KEY, normalized);
 }
-function readIdentityColor(fallback) {
-  try {
-    return localStorage.getItem(IDENTITY_COLOR_KEY) || fallback;
-  } catch {
+function readIdentityColor(fallback = "#4ECDC4") {
+  const storage = safeStorage();
+  if (!storage) {
     return fallback;
   }
+  const value = String(storage.getItem(COLOR_KEY) || "").trim();
+  return value || fallback;
 }
-function writeIdentityColor(color) {
-  try {
-    localStorage.setItem(IDENTITY_COLOR_KEY, color);
-  } catch {
+function writeIdentityColor(value) {
+  const storage = safeStorage();
+  if (!storage) {
+    return;
   }
+  const normalized = String(value || "").trim();
+  if (!normalized) {
+    storage.removeItem(COLOR_KEY);
+    return;
+  }
+  storage.setItem(COLOR_KEY, normalized);
 }
 
 // apps/neural-lab/data/datasets.js
@@ -22492,45 +22801,45 @@ var resolveSeparableBySelectedInputs = (separable, selectedInputs) => {
   return null;
 };
 var App = ({ role = "teacher" }) => {
-  const wsRef = (0, import_react15.useRef)(null);
-  const reconnectTimerRef = (0, import_react15.useRef)(null);
-  const hasRegisteredRef = (0, import_react15.useRef)(false);
-  const suppressNextStudentStateSendRef = (0, import_react15.useRef)(false);
-  const lastSentStudentStateRef = (0, import_react15.useRef)("");
-  const prevTeacherActivityRef = (0, import_react15.useRef)("1");
-  const [currentDataset, setCurrentDataset] = (0, import_react15.useState)("vehicles");
-  const [currentExample, setCurrentExample] = (0, import_react15.useState)(0);
-  const [currentLinearDemoIndex, setCurrentLinearDemoIndex] = (0, import_react15.useState)(void 0);
-  const [lessonLinearDemoIndex, setLessonLinearDemoIndex] = (0, import_react15.useState)(void 0);
-  const [selectedActivity, setSelectedActivity] = (0, import_react15.useState)("1");
-  const [lessonActivity, setLessonActivity] = (0, import_react15.useState)("1");
-  const [teacherInputs, setTeacherInputs] = (0, import_react15.useState)({ i1: 4, i2: 1 });
-  const [studentInputs, setStudentInputs] = (0, import_react15.useState)({ i1: "", i2: "" });
-  const [teacherProducts, setTeacherProducts] = (0, import_react15.useState)({ p1: "", p2: "" });
-  const [studentProducts, setStudentProducts] = (0, import_react15.useState)({ p1: "", p2: "" });
-  const [teacherTotal, setTeacherTotal] = (0, import_react15.useState)("");
-  const [studentTotal, setStudentTotal] = (0, import_react15.useState)("");
-  const [dynamicW1, setDynamicW1] = (0, import_react15.useState)(2);
-  const [dynamicW2, setDynamicW2] = (0, import_react15.useState)(3);
-  const [isSocketConnected, setIsSocketConnected] = (0, import_react15.useState)(false);
-  const [participants, setParticipants] = (0, import_react15.useState)([]);
-  const [roster, setRoster] = (0, import_react15.useState)([]);
-  const [lessonInputs, setLessonInputs] = (0, import_react15.useState)({ i1: 4, i2: 1 });
-  const [lessonProducts, setLessonProducts] = (0, import_react15.useState)({ p1: "", p2: "" });
-  const [lessonTotal, setLessonTotal] = (0, import_react15.useState)("");
-  const [lessonWeights, setLessonWeights] = (0, import_react15.useState)({ w1: 2, w2: 3 });
-  const [lessonThreshold, setLessonThreshold] = (0, import_react15.useState)(DEFAULT_THRESHOLD_RULE);
-  const [selectedInputs, setSelectedInputs] = (0, import_react15.useState)(DEFAULT_SELECTED_INPUTS);
-  const [lessonSelectedInputs, setLessonSelectedInputs] = (0, import_react15.useState)(DEFAULT_SELECTED_INPUTS);
-  const [lessonDataset, setLessonDataset] = (0, import_react15.useState)("vehicles");
-  const [lessonExampleIndex, setLessonExampleIndex] = (0, import_react15.useState)(0);
-  const [lessonIcon, setLessonIcon] = (0, import_react15.useState)("\u{1F697}");
-  const [lessonName, setLessonName] = (0, import_react15.useState)("\u0391\u03C5\u03C4\u03BF\u03BA\u03AF\u03BD\u03B7\u03C4\u03BF");
-  const [lessonActivityTitle, setLessonActivityTitle] = (0, import_react15.useState)(getNeuralActivityTitle("1"));
-  const [studentName, setStudentName] = (0, import_react15.useState)(() => {
+  const wsRef = (0, import_react24.useRef)(null);
+  const reconnectTimerRef = (0, import_react24.useRef)(null);
+  const hasRegisteredRef = (0, import_react24.useRef)(false);
+  const suppressNextStudentStateSendRef = (0, import_react24.useRef)(false);
+  const lastSentStudentStateRef = (0, import_react24.useRef)("");
+  const prevTeacherActivityRef = (0, import_react24.useRef)("1");
+  const [currentDataset, setCurrentDataset] = (0, import_react24.useState)("vehicles");
+  const [currentExample, setCurrentExample] = (0, import_react24.useState)(0);
+  const [currentLinearDemoIndex, setCurrentLinearDemoIndex] = (0, import_react24.useState)(void 0);
+  const [lessonLinearDemoIndex, setLessonLinearDemoIndex] = (0, import_react24.useState)(void 0);
+  const [selectedActivity, setSelectedActivity] = (0, import_react24.useState)("1");
+  const [lessonActivity, setLessonActivity] = (0, import_react24.useState)("1");
+  const [teacherInputs, setTeacherInputs] = (0, import_react24.useState)({ i1: 4, i2: 1 });
+  const [studentInputs, setStudentInputs] = (0, import_react24.useState)({ i1: "", i2: "" });
+  const [teacherProducts, setTeacherProducts] = (0, import_react24.useState)({ p1: "", p2: "" });
+  const [studentProducts, setStudentProducts] = (0, import_react24.useState)({ p1: "", p2: "" });
+  const [teacherTotal, setTeacherTotal] = (0, import_react24.useState)("");
+  const [studentTotal, setStudentTotal] = (0, import_react24.useState)("");
+  const [dynamicW1, setDynamicW1] = (0, import_react24.useState)(2);
+  const [dynamicW2, setDynamicW2] = (0, import_react24.useState)(3);
+  const [isSocketConnected, setIsSocketConnected] = (0, import_react24.useState)(false);
+  const [participants, setParticipants] = (0, import_react24.useState)([]);
+  const [roster, setRoster] = (0, import_react24.useState)([]);
+  const [lessonInputs, setLessonInputs] = (0, import_react24.useState)({ i1: 4, i2: 1 });
+  const [lessonProducts, setLessonProducts] = (0, import_react24.useState)({ p1: "", p2: "" });
+  const [lessonTotal, setLessonTotal] = (0, import_react24.useState)("");
+  const [lessonWeights, setLessonWeights] = (0, import_react24.useState)({ w1: 2, w2: 3 });
+  const [lessonThreshold, setLessonThreshold] = (0, import_react24.useState)(DEFAULT_THRESHOLD_RULE);
+  const [selectedInputs, setSelectedInputs] = (0, import_react24.useState)(DEFAULT_SELECTED_INPUTS);
+  const [lessonSelectedInputs, setLessonSelectedInputs] = (0, import_react24.useState)(DEFAULT_SELECTED_INPUTS);
+  const [lessonDataset, setLessonDataset] = (0, import_react24.useState)("vehicles");
+  const [lessonExampleIndex, setLessonExampleIndex] = (0, import_react24.useState)(0);
+  const [lessonIcon, setLessonIcon] = (0, import_react24.useState)("\u{1F697}");
+  const [lessonName, setLessonName] = (0, import_react24.useState)("\u0391\u03C5\u03C4\u03BF\u03BA\u03AF\u03BD\u03B7\u03C4\u03BF");
+  const [lessonActivityTitle, setLessonActivityTitle] = (0, import_react24.useState)(getNeuralActivityTitle("1"));
+  const [studentName, setStudentName] = (0, import_react24.useState)(() => {
     return readIdentityName(`Student-${Math.floor(Math.random() * 900 + 100)}`);
   });
-  const [studentColor, setStudentColor] = (0, import_react15.useState)(() => {
+  const [studentColor, setStudentColor] = (0, import_react24.useState)(() => {
     return readIdentityColor(randomIdentityColor());
   });
   const saveStudentName = () => {
@@ -22558,8 +22867,8 @@ var App = ({ role = "teacher" }) => {
       color: newColor
     });
   };
-  const [editingName, setEditingName] = (0, import_react15.useState)(false);
-  const [studentNameInput, setStudentNameInput] = (0, import_react15.useState)(studentName);
+  const [editingName, setEditingName] = (0, import_react24.useState)(false);
+  const [studentNameInput, setStudentNameInput] = (0, import_react24.useState)(studentName);
   const currentExampleData = datasets_default[currentDataset].examples[currentExample];
   const currentDatasetLinearDemos = datasets_default[currentDataset]?.linear_demos || [];
   const teacherThresholdFromDemo = resolveThresholdBySelectedInputs(
@@ -22670,7 +22979,7 @@ var App = ({ role = "teacher" }) => {
       lesson: lessonPatch
     });
   };
-  (0, import_react15.useEffect)(() => {
+  (0, import_react24.useEffect)(() => {
     let cancelled = false;
     const clearReconnect = () => {
       if (reconnectTimerRef.current) {
@@ -22827,7 +23136,7 @@ var App = ({ role = "teacher" }) => {
       }
     };
   }, [isScreen, isStudent, studentName, studentColor]);
-  (0, import_react15.useEffect)(() => {
+  (0, import_react24.useEffect)(() => {
     if (!isStudent || !isSocketConnected) return;
     if (suppressNextStudentStateSendRef.current) {
       suppressNextStudentStateSendRef.current = false;
@@ -22849,7 +23158,7 @@ var App = ({ role = "teacher" }) => {
     lastSentStudentStateRef.current = serialized;
     sendSocketMessage(payload);
   }, [dynamicW1, dynamicW2, studentInputs.i1, studentInputs.i2, studentProducts.p1, studentProducts.p2, studentTotal, isSocketConnected, isStudent]);
-  (0, import_react15.useEffect)(() => {
+  (0, import_react24.useEffect)(() => {
     if (!isTeacher || !isSocketConnected) return;
     const lessonInputsPayload = {
       i1: currentExampleData.i1,
@@ -22891,7 +23200,7 @@ var App = ({ role = "teacher" }) => {
     selectedInputs.i1,
     selectedInputs.i2
   ]);
-  (0, import_react15.useEffect)(() => {
+  (0, import_react24.useEffect)(() => {
     if (!isTeacher) {
       return;
     }
@@ -22932,7 +23241,7 @@ var App = ({ role = "teacher" }) => {
     }
     prevTeacherActivityRef.current = selectedActivity;
   }, [isTeacher, selectedActivity, currentExampleData.i1, currentExampleData.i2]);
-  (0, import_react15.useEffect)(() => {
+  (0, import_react24.useEffect)(() => {
     if (!isStudent) {
       return;
     }
@@ -22946,8 +23255,8 @@ var App = ({ role = "teacher" }) => {
     }
   }, [isStudent, lessonActivity, lessonExampleIndex]);
   const sortedParticipants = [...participants].sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
-  return /* @__PURE__ */ import_react15.default.createElement(TeacherCard, { title: heroTitle }, /* @__PURE__ */ import_react15.default.createElement(
-    ConnectionNameControl_default,
+  return /* @__PURE__ */ import_react24.default.createElement(TeacherCard, { title: heroTitle }, /* @__PURE__ */ import_react24.default.createElement(
+    ConnectionNameControl,
     {
       connected: isSocketConnected,
       name: isStudent ? studentName : `\u03C3\u03C5\u03BD\u03B4\u03B5\u03B4\u03B5\u03BC\u03AD\u03BD\u03BF\u03B9: ${roster.length}`,
@@ -22970,7 +23279,7 @@ var App = ({ role = "teacher" }) => {
       showNameLabel: isStudent,
       className: "connection-status"
     }
-  ), isScreen && /* @__PURE__ */ import_react15.default.createElement(import_react15.default.Fragment, null, /* @__PURE__ */ import_react15.default.createElement("div", { className: "screen-top-bar" }, /* @__PURE__ */ import_react15.default.createElement("strong", null, "\u03A0\u03C1\u03BF\u03B2\u03BF\u03BB\u03AE \u03C4\u03AC\u03BE\u03B7\u03C2"), /* @__PURE__ */ import_react15.default.createElement("span", null, datasets_default[safeDisplayDataset].emoji, " ", datasets_default[safeDisplayDataset].label), /* @__PURE__ */ import_react15.default.createElement("span", null, displayIcon, " ", displayName), /* @__PURE__ */ import_react15.default.createElement("span", null, "i1=", i1, ", i2=", i2), /* @__PURE__ */ import_react15.default.createElement("span", null, "w1=", currentW1, ", w2=", currentW2), /* @__PURE__ */ import_react15.default.createElement("span", null, "o=", total)), /* @__PURE__ */ import_react15.default.createElement("div", { className: "operation-tree", "aria-label": "\u0394\u03AD\u03BD\u03C4\u03C1\u03BF \u03C0\u03C1\u03AC\u03BE\u03B5\u03C9\u03BD" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "tree-level" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "tree-node tree-root" }, "o = ", total)), /* @__PURE__ */ import_react15.default.createElement("div", { className: "tree-connect" }), /* @__PURE__ */ import_react15.default.createElement("div", { className: "tree-level tree-two" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "tree-node" }, "w1 \xD7 i1 = ", prod1), /* @__PURE__ */ import_react15.default.createElement("div", { className: "tree-node" }, "w2 \xD7 i2 = ", prod2)))), /* @__PURE__ */ import_react15.default.createElement("div", { className: "common-zone" }, /* @__PURE__ */ import_react15.default.createElement(
+  ), isScreen && /* @__PURE__ */ import_react24.default.createElement(import_react24.default.Fragment, null, /* @__PURE__ */ import_react24.default.createElement("div", { className: "screen-top-bar" }, /* @__PURE__ */ import_react24.default.createElement("strong", null, "\u03A0\u03C1\u03BF\u03B2\u03BF\u03BB\u03AE \u03C4\u03AC\u03BE\u03B7\u03C2"), /* @__PURE__ */ import_react24.default.createElement("span", null, datasets_default[safeDisplayDataset].emoji, " ", datasets_default[safeDisplayDataset].label), /* @__PURE__ */ import_react24.default.createElement("span", null, displayIcon, " ", displayName), /* @__PURE__ */ import_react24.default.createElement("span", null, "i1=", i1, ", i2=", i2), /* @__PURE__ */ import_react24.default.createElement("span", null, "w1=", currentW1, ", w2=", currentW2), /* @__PURE__ */ import_react24.default.createElement("span", null, "o=", total)), /* @__PURE__ */ import_react24.default.createElement("div", { className: "operation-tree", "aria-label": "\u0394\u03AD\u03BD\u03C4\u03C1\u03BF \u03C0\u03C1\u03AC\u03BE\u03B5\u03C9\u03BD" }, /* @__PURE__ */ import_react24.default.createElement("div", { className: "tree-level" }, /* @__PURE__ */ import_react24.default.createElement("div", { className: "tree-node tree-root" }, "o = ", total)), /* @__PURE__ */ import_react24.default.createElement("div", { className: "tree-connect" }), /* @__PURE__ */ import_react24.default.createElement("div", { className: "tree-level tree-two" }, /* @__PURE__ */ import_react24.default.createElement("div", { className: "tree-node" }, "w1 \xD7 i1 = ", prod1), /* @__PURE__ */ import_react24.default.createElement("div", { className: "tree-node" }, "w2 \xD7 i2 = ", prod2)))), /* @__PURE__ */ import_react24.default.createElement("div", { className: "common-zone" }, /* @__PURE__ */ import_react24.default.createElement(
     VerticalProducts,
     {
       icon: displayIcon,
@@ -23022,7 +23331,7 @@ var App = ({ role = "teacher" }) => {
       thresholdValue: demoFooterText,
       showThresholdUnderIcon
     }
-  )), (isTeacher || isScreen || isStudent) && /* @__PURE__ */ import_react15.default.createElement("div", { className: "live-table-wrap" }, /* @__PURE__ */ import_react15.default.createElement(
+  )), (isTeacher || isScreen || isStudent) && /* @__PURE__ */ import_react24.default.createElement("div", { className: "live-table-wrap" }, /* @__PURE__ */ import_react24.default.createElement(
     ExamplesClassifier,
     {
       datasets: datasets_default,
@@ -23033,7 +23342,7 @@ var App = ({ role = "teacher" }) => {
       features: datasets_default[safeDisplayDataset].features,
       weights: { w1: currentW1, w2: currentW2 }
     }
-  )), (isTeacher || isScreen) && /* @__PURE__ */ import_react15.default.createElement("div", { className: "live-table-wrap" }, /* @__PURE__ */ import_react15.default.createElement(
+  )), (isTeacher || isScreen) && /* @__PURE__ */ import_react24.default.createElement("div", { className: "live-table-wrap" }, /* @__PURE__ */ import_react24.default.createElement(
     StudentTable2,
     {
       i1: lessonInputs.i1,
@@ -23044,7 +23353,7 @@ var App = ({ role = "teacher" }) => {
       participants: sortedParticipants,
       activity: lessonActivity
     }
-  )), isTeacher && /* @__PURE__ */ import_react15.default.createElement(import_react15.default.Fragment, null, /* @__PURE__ */ import_react15.default.createElement(ActivitiesMenu, { value: selectedActivity, onChange: setSelectedActivity }), /* @__PURE__ */ import_react15.default.createElement(
+  )), isTeacher && /* @__PURE__ */ import_react24.default.createElement(import_react24.default.Fragment, null, /* @__PURE__ */ import_react24.default.createElement(ActivitiesMenu, { value: selectedActivity, onChange: setSelectedActivity }), /* @__PURE__ */ import_react24.default.createElement(
     DatasetSelector,
     {
       datasets: datasets_default,
@@ -23084,14 +23393,14 @@ var App = ({ role = "teacher" }) => {
       isLinearDemoDisabled: ["1", "2", "3"].includes(selectedActivity),
       demoIconWhenDisabled: "?"
     }
-  ), /* @__PURE__ */ import_react15.default.createElement(StudentQrAccordion, null)));
+  ), /* @__PURE__ */ import_react24.default.createElement(StudentQrAccordion, null)));
 };
 var App_default = App;
 
 // apps/neural-lab/student.jsx
 var root = import_client.default.createRoot(document.getElementById("root"));
 root.render(
-  /* @__PURE__ */ import_react16.default.createElement(App_default, { role: "student" })
+  /* @__PURE__ */ import_react25.default.createElement(App_default, { role: "student" })
 );
 /*! Bundled license information:
 
