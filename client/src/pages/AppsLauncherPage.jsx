@@ -63,7 +63,7 @@ export default function AppsLauncherPage() {
             <img className="page-hero__logo" src="/icons/strobelogo.svg" alt="Strobe Logo" />
             <h1>Apps Launcher</h1>
           </div>
-          <p className="page-hero__lead">React replacement για το παλιό static apps launcher, με teacher και student actions ανά lab.</p>
+          
         </header>
 
         {loading ? <p className="page-feedback">Loading apps...</p> : null}
