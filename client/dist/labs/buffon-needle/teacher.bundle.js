@@ -1332,7 +1332,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React3 = require_react(), Internals = {
+      var React4 = require_react(), Internals = {
         d: {
           f: noop,
           r: function() {
@@ -1350,7 +1350,7 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React3.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React4.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
@@ -2885,7 +2885,7 @@ var require_react_dom_client_development = __commonJS({
         "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React3.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React4.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -18517,14 +18517,14 @@ var require_react_dom_client_development = __commonJS({
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React3 = require_react(), ReactDOM2 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React4 = require_react(), ReactDOM2 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
       /* @__PURE__ */ Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
       /* @__PURE__ */ Symbol.for("react.legacy_hidden");
       /* @__PURE__ */ Symbol.for("react.tracing_marker");
       var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
       /* @__PURE__ */ Symbol.for("react.view_transition");
-      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React3.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React4.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -21312,7 +21312,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React3.version;
+        var isomorphicReactPackageVersion = React4.version;
         if ("19.2.7" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.7\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21453,13 +21453,16 @@ var require_client = __commonJS({
 });
 
 // apps/buffon-needle/teacher.jsx
-var import_react2 = __toESM(require_react());
+var import_react3 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
-// apps/buffon-needle/BuffonApp.jsx
-var import_react = __toESM(require_react());
+// client/src/labs/buffon-needle/TeacherView.jsx
+var import_react2 = __toESM(require_react(), 1);
 
-// apps/buffon-needle/student-template.js
+// client/src/labs/buffon-needle/BuffonApp.jsx
+var import_react = __toESM(require_react(), 1);
+
+// client/src/labs/buffon-needle/student-template.js
 var studentTemplate = String.raw`<div style="text-align:center">
   <h1>Προσέγγιση του π</h1>
   <div class="subtitle">Η βελόνα του Buffon</div>
@@ -21611,7 +21614,7 @@ var studentTemplate = String.raw`<div style="text-align:center">
   </div>
 </div>`;
 
-// apps/buffon-needle/teacher-template.js
+// client/src/labs/buffon-needle/teacher-template.js
 var teacherTemplate = String.raw`<div style="text-align:center">
   <h1>Η βελόνα του Buffon</h1>
   <div class="subtitle"></div>
@@ -21715,7 +21718,7 @@ var teacherTemplate = String.raw`<div style="text-align:center">
   </div>
 </div>`;
 
-// apps/buffon-needle/student-logic.js
+// client/src/labs/buffon-needle/student-logic.js
 function mountBuffonStudent(rootElement) {
   const Y_MIN = 1.5, Y_MAX = 5;
   const simCv = document.getElementById("sim");
@@ -22253,7 +22256,7 @@ function mountBuffonStudent(rootElement) {
   };
 }
 
-// apps/buffon-needle/teacher-logic.js
+// client/src/labs/buffon-needle/teacher-logic.js
 function mountBuffonTeacher(rootElement) {
   let classroomApi = null;
   let students = [];
@@ -22842,7 +22845,7 @@ function mountBuffonTeacher(rootElement) {
   };
 }
 
-// apps/buffon-needle/BuffonApp.jsx
+// client/src/labs/buffon-needle/BuffonApp.jsx
 function BuffonApp({ role = "teacher" }) {
   const rootRef = (0, import_react.useRef)(null);
   (0, import_react.useEffect)(() => {
@@ -22867,10 +22870,15 @@ function BuffonApp({ role = "teacher" }) {
 }
 var BuffonApp_default = BuffonApp;
 
+// client/src/labs/buffon-needle/TeacherView.jsx
+function TeacherView() {
+  return /* @__PURE__ */ import_react2.default.createElement(BuffonApp_default, { role: "teacher" });
+}
+
 // apps/buffon-needle/teacher.jsx
 var root = import_client.default.createRoot(document.getElementById("root"));
 root.render(
-  /* @__PURE__ */ import_react2.default.createElement(BuffonApp_default, { role: "teacher" })
+  /* @__PURE__ */ import_react3.default.createElement(TeacherView, null)
 );
 /*! Bundled license information:
 

@@ -1332,7 +1332,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React14 = require_react(), Internals = {
+      var React15 = require_react(), Internals = {
         d: {
           f: noop,
           r: function() {
@@ -1350,7 +1350,7 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React14.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React15.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
@@ -2885,7 +2885,7 @@ var require_react_dom_client_development = __commonJS({
         "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React14.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React15.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -18517,14 +18517,14 @@ var require_react_dom_client_development = __commonJS({
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React14 = require_react(), ReactDOM2 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React15 = require_react(), ReactDOM2 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
       /* @__PURE__ */ Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
       /* @__PURE__ */ Symbol.for("react.legacy_hidden");
       /* @__PURE__ */ Symbol.for("react.tracing_marker");
       var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
       /* @__PURE__ */ Symbol.for("react.view_transition");
-      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React14.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React15.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -21312,7 +21312,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React14.version;
+        var isomorphicReactPackageVersion = React15.version;
         if ("19.2.7" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.7\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21475,14 +21475,17 @@ var require_void_elements = __commonJS({
 });
 
 // apps/primes-lab/teacher.jsx
-var import_react21 = __toESM(require_react());
+var import_react22 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
-// apps/primes-lab/App.jsx
-var import_react20 = __toESM(require_react());
+// client/src/labs/primes-lab/TeacherView.jsx
+var import_react21 = __toESM(require_react(), 1);
 
-// apps/primes-lab/components/NumberGrid.jsx
-var import_react = __toESM(require_react());
+// client/src/labs/primes-lab/App.jsx
+var import_react20 = __toESM(require_react(), 1);
+
+// client/src/labs/primes-lab/components/NumberGrid.jsx
+var import_react = __toESM(require_react(), 1);
 var NumberGrid = ({
   numbers,
   currentPrime,
@@ -21583,17 +21586,17 @@ var NumberGrid = ({
 };
 var NumberGrid_default = NumberGrid;
 
-// apps/primes-lab/components/SelectionSummaryAccordion.jsx
-var import_react3 = __toESM(require_react());
+// client/src/labs/primes-lab/components/SelectionSummaryAccordion.jsx
+var import_react3 = __toESM(require_react(), 1);
 
-// apps/primes-lab/components/Accordion.jsx
-var import_react2 = __toESM(require_react());
+// client/src/labs/primes-lab/components/Accordion.jsx
+var import_react2 = __toESM(require_react(), 1);
 var Accordion = ({ title, subtitle, defaultOpen = false, children }) => {
   return /* @__PURE__ */ import_react2.default.createElement("details", { className: "prime-accordion", open: defaultOpen }, /* @__PURE__ */ import_react2.default.createElement("summary", null, /* @__PURE__ */ import_react2.default.createElement("span", { className: "prime-accordion__title" }, title), subtitle ? /* @__PURE__ */ import_react2.default.createElement("span", { className: "prime-accordion__subtitle" }, subtitle) : null), /* @__PURE__ */ import_react2.default.createElement("div", { className: "prime-accordion__body" }, children));
 };
 var Accordion_default = Accordion;
 
-// apps/primes-lab/components/SelectionSummaryAccordion.jsx
+// client/src/labs/primes-lab/components/SelectionSummaryAccordion.jsx
 var SelectionSummaryAccordion = ({
   currentPrime,
   students,
@@ -21615,8 +21618,8 @@ var SelectionSummaryAccordion = ({
 };
 var SelectionSummaryAccordion_default = SelectionSummaryAccordion;
 
-// apps/primes-lab/components/StudentsTable.jsx
-var import_react4 = __toESM(require_react());
+// client/src/labs/primes-lab/components/StudentsTable.jsx
+var import_react4 = __toESM(require_react(), 1);
 var formatNumbers = (numbers) => numbers.length ? numbers.join(", ") : "\u2014";
 var StudentsTable = ({ students, activeStudentId, currentPrime, claimedNumbers, wrongSelectionsByNumber, studentColorById }) => {
   return /* @__PURE__ */ import_react4.default.createElement("section", { className: "students-table-card" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "students-table-card__header" }, /* @__PURE__ */ import_react4.default.createElement("div", null, /* @__PURE__ */ import_react4.default.createElement("p", null, "\u03A0\u03AF\u03BD\u03B1\u03BA\u03B1\u03C2 \u03BC\u03B1\u03B8\u03B7\u03C4\u03CE\u03BD"), /* @__PURE__ */ import_react4.default.createElement("h2", null, "\u03A4\u03B9 \u03AD\u03C7\u03BF\u03C5\u03BD \u03B5\u03C0\u03B9\u03BB\u03AD\u03BE\u03B5\u03B9 \u03BF\u03B9 \u03BC\u03B1\u03B8\u03B7\u03C4\u03AD\u03C2")), /* @__PURE__ */ import_react4.default.createElement("div", { className: "students-table-card__meta" }, /* @__PURE__ */ import_react4.default.createElement("span", null, "\u0392\u03AC\u03C3\u03B7"), /* @__PURE__ */ import_react4.default.createElement("strong", null, currentPrime))), /* @__PURE__ */ import_react4.default.createElement("div", { className: "students-table-wrap" }, /* @__PURE__ */ import_react4.default.createElement("table", { className: "students-table" }, /* @__PURE__ */ import_react4.default.createElement("thead", null, /* @__PURE__ */ import_react4.default.createElement("tr", null, /* @__PURE__ */ import_react4.default.createElement("th", null, "\u039C\u03B1\u03B8\u03B7\u03C4\u03AE\u03C2"), /* @__PURE__ */ import_react4.default.createElement("th", null, "\u03A7\u03C1\u03CE\u03BC\u03B1"), /* @__PURE__ */ import_react4.default.createElement("th", null, "\u03A3\u03C9\u03C3\u03C4\u03AC \u03BA\u03BB\u03B5\u03B9\u03B4\u03C9\u03BC\u03AD\u03BD\u03B1"), /* @__PURE__ */ import_react4.default.createElement("th", null, "\u039B\u03AC\u03B8\u03BF\u03C2 \u03B5\u03C0\u03B9\u03BB\u03BF\u03B3\u03AD\u03C2"), /* @__PURE__ */ import_react4.default.createElement("th", null, "\u039A\u03B1\u03C4\u03AC\u03C3\u03C4\u03B1\u03C3\u03B7"))), /* @__PURE__ */ import_react4.default.createElement("tbody", null, students.map((student) => {
@@ -21628,8 +21631,8 @@ var StudentsTable = ({ students, activeStudentId, currentPrime, claimedNumbers, 
 };
 var StudentsTable_default = StudentsTable;
 
-// apps/primes-lab/components/TeacherPanel.jsx
-var import_react5 = __toESM(require_react());
+// client/src/labs/primes-lab/components/TeacherPanel.jsx
+var import_react5 = __toESM(require_react(), 1);
 var TeacherPanel = ({
   currentPrime,
   primeNumbers,
@@ -21813,7 +21816,7 @@ function writeIdentityColor(value) {
   storage.setItem(COLOR_KEY, normalized);
 }
 
-// apps/primes-lab/data/primes.js
+// client/src/labs/primes-lab/data/primes.js
 var NUMBER_RANGE = Array.from({ length: 99 }, (_, index) => index + 2);
 var PRIME_NUMBERS = NUMBER_RANGE.filter((number) => {
   if (number < 2) {
@@ -21834,7 +21837,7 @@ var SIEVE_STEPS = PRIME_NUMBERS.map((prime) => ({
 }));
 var INITIAL_PRIME = 2;
 
-// apps/primes-lab/App.jsx
+// client/src/labs/primes-lab/App.jsx
 var STUDENT_DEFS = [
   { id: "student-1", name: "\u039C\u03B1\u03C1\u03AF\u03B1" },
   { id: "student-2", name: "\u0393\u03B9\u03AC\u03BD\u03BD\u03B7\u03C2" },
@@ -22203,9 +22206,14 @@ var App = ({ role = "teacher" }) => {
 };
 var App_default = App;
 
+// client/src/labs/primes-lab/TeacherView.jsx
+function TeacherView() {
+  return /* @__PURE__ */ import_react21.default.createElement(App_default, { role: "teacher" });
+}
+
 // apps/primes-lab/teacher.jsx
 var root = import_client.default.createRoot(document.getElementById("root"));
-root.render(/* @__PURE__ */ import_react21.default.createElement(App_default, { role: "teacher" }));
+root.render(/* @__PURE__ */ import_react22.default.createElement(TeacherView, null));
 /*! Bundled license information:
 
 react/cjs/react.development.js:

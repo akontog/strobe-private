@@ -40,6 +40,27 @@ body {
   letter-spacing: 0.02em;
 }
 
+.client-topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.client-nav-link {
+  text-decoration: none;
+  color: #10233f;
+  font-weight: 600;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+}
+
+.client-nav-link:hover {
+  background: rgba(29, 78, 216, 0.08);
+  border-color: rgba(29, 78, 216, 0.22);
+}
+
 .client-content {
   padding: 20px;
 }

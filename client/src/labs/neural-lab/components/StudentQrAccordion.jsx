@@ -1,5 +1,5 @@
 import React from 'react';
-import { Accordion } from '../../../client/src/framework/components/Accordion';
+import { Accordion } from '../../../framework/components/Accordion';
 
 const STUDENT_QR_SRC = '/labs/neural-lab/media/neural_lab_student_qrcode.png';
 

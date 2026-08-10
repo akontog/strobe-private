@@ -1,11 +1,9 @@
 import React from 'react';
+import BuffonApp from './BuffonApp';
+import './teacher-styles.css';
 
-export default function TeacherView() {
-  return (
-    <iframe
-      title="Buffon Teacher"
-      src="/labs/buffon-needle/teacher.html"
-      className="embedded-lab-frame"
-    />
-  );
+export function TeacherView() {
+  return <BuffonApp role="teacher" />;
 }
+
+export default TeacherView;

@@ -1,11 +1,9 @@
 import React from 'react';
+import BuffonApp from './BuffonApp';
+import './student-styles.css';
 
-export default function StudentView() {
-  return (
-    <iframe
-      title="Buffon Student"
-      src="/labs/buffon-needle/student.html"
-      className="embedded-lab-frame"
-    />
-  );
+export function StudentView() {
+  return <BuffonApp role="student" />;
 }
+
+export default StudentView;

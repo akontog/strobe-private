@@ -1,10 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import BuffonApp from './BuffonApp';
-import './teacher-styles.css';
+import { TeacherView } from '../../client/src/labs/buffon-needle/TeacherView';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-  <BuffonApp role="teacher" />
+  <TeacherView />
 );

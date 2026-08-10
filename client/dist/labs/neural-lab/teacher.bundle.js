@@ -1332,7 +1332,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React18 = require_react(), Internals = {
+      var React19 = require_react(), Internals = {
         d: {
           f: noop,
           r: function() {
@@ -1350,7 +1350,7 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React18.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), ReactSharedInternals = React19.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
@@ -2885,7 +2885,7 @@ var require_react_dom_client_development = __commonJS({
         "number" === type && getActiveElement(node.ownerDocument) === node || node.defaultValue === "" + value || (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React18.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React19.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -18517,14 +18517,14 @@ var require_react_dom_client_development = __commonJS({
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React18 = require_react(), ReactDOM2 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React19 = require_react(), ReactDOM2 = require_react_dom(), assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
       /* @__PURE__ */ Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity");
       /* @__PURE__ */ Symbol.for("react.legacy_hidden");
       /* @__PURE__ */ Symbol.for("react.tracing_marker");
       var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel");
       /* @__PURE__ */ Symbol.for("react.view_transition");
-      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React18.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React19.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM2.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -21312,7 +21312,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React18.version;
+        var isomorphicReactPackageVersion = React19.version;
         if ("19.2.7" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.2.7\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -21475,17 +21475,20 @@ var require_void_elements = __commonJS({
 });
 
 // apps/neural-lab/teacher.jsx
-var import_react25 = __toESM(require_react());
+var import_react26 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
-// apps/neural-lab/App.jsx
-var import_react24 = __toESM(require_react());
+// client/src/labs/neural-lab/TeacherView.jsx
+var import_react25 = __toESM(require_react(), 1);
 
-// apps/neural-lab/components/TeacherCard.jsx
-var import_react2 = __toESM(require_react());
+// client/src/labs/neural-lab/App.jsx
+var import_react24 = __toESM(require_react(), 1);
 
-// apps/neural-lab/components/MathFormula.jsx
-var import_react = __toESM(require_react());
+// client/src/labs/neural-lab/components/TeacherCard.jsx
+var import_react2 = __toESM(require_react(), 1);
+
+// client/src/labs/neural-lab/components/MathFormula.jsx
+var import_react = __toESM(require_react(), 1);
 var MathFormula = ({ formula }) => {
   const containerRef = (0, import_react.useRef)(null);
   (0, import_react.useEffect)(() => {
@@ -21529,11 +21532,11 @@ var MathFormula = ({ formula }) => {
 };
 var MathFormula_default = MathFormula;
 
-// apps/neural-lab/components/TeacherCard.jsx
+// client/src/labs/neural-lab/components/TeacherCard.jsx
 var TeacherCard = ({ children, title }) => /* @__PURE__ */ import_react2.default.createElement("div", { className: "teacher-card" }, title && /* @__PURE__ */ import_react2.default.createElement("div", { className: "hero-title" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "main-equation" }, /* @__PURE__ */ import_react2.default.createElement(MathFormula_default, { formula: title }))), children);
 
-// apps/neural-lab/components/DatasetSelector.jsx
-var import_react4 = __toESM(require_react());
+// client/src/labs/neural-lab/components/DatasetSelector.jsx
+var import_react4 = __toESM(require_react(), 1);
 
 // client/src/framework/components/Accordion.jsx
 var import_react3 = __toESM(require_react(), 1);
@@ -21550,7 +21553,7 @@ var Accordion = ({ title, children }) => {
   ), /* @__PURE__ */ import_react3.default.createElement("div", { className: `accordion-content ${isOpen ? "open" : ""}` }, children));
 };
 
-// apps/neural-lab/components/DatasetSelector.jsx
+// client/src/labs/neural-lab/components/DatasetSelector.jsx
 var DatasetSelector = ({
   datasets,
   currentDataset,
@@ -21667,11 +21670,11 @@ var DatasetSelector = ({
   ))));
 };
 
-// apps/neural-lab/components/VerticalProducts.jsx
-var import_react6 = __toESM(require_react());
+// client/src/labs/neural-lab/components/VerticalProducts.jsx
+var import_react6 = __toESM(require_react(), 1);
 
-// apps/neural-lab/components/ProductRow.jsx
-var import_react5 = __toESM(require_react());
+// client/src/labs/neural-lab/components/ProductRow.jsx
+var import_react5 = __toESM(require_react(), 1);
 var ProductRow = ({
   icon,
   label,
@@ -21724,7 +21727,7 @@ var ProductRow = ({
   return /* @__PURE__ */ import_react5.default.createElement("div", { className: "product-row" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "product-left" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "feature-label" }, /* @__PURE__ */ import_react5.default.createElement("span", { className: "icon-small" }, icon), /* @__PURE__ */ import_react5.default.createElement("span", { className: "feature-text" }, label)), /* @__PURE__ */ import_react5.default.createElement("div", { className: "math-group" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "math-input-slot" }, renderInputBox(input1, inputEditable, onInputChange, "blue-number-box")), /* @__PURE__ */ import_react5.default.createElement("div", { className: "multiply-symbol" }, "\xD7"), /* @__PURE__ */ import_react5.default.createElement("div", { className: "math-weight-slot" }, renderInputBox(weight, weightEditable, onWeightChange, "red-number-box")), /* @__PURE__ */ import_react5.default.createElement("div", { className: "equal-symbol" }, "="), /* @__PURE__ */ import_react5.default.createElement("div", { className: "product-output" }, renderProductControl()))));
 };
 
-// apps/neural-lab/components/VerticalProducts.jsx
+// client/src/labs/neural-lab/components/VerticalProducts.jsx
 var VerticalProducts = ({
   icon = "\u{1F697}",
   features,
@@ -21851,8 +21854,8 @@ var VerticalProducts = ({
   ), showTotal && /* @__PURE__ */ import_react6.default.createElement("div", { className: "product-row total-product-row" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "product-left total-row-ghost", "aria-hidden": "true" }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "icon-small total-row-ghost-item" }, "+"), /* @__PURE__ */ import_react6.default.createElement("span", { className: "feature-text total-row-ghost-item" }, "placeholder"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "math-group total-row-ghost-item" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "blue-number-box" }, "0"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "multiply-symbol" }, "\xD7"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "red-number-box" }, "0"))), /* @__PURE__ */ import_react6.default.createElement("div", { className: "total-line total-row-output" }, renderTotalControl()))), /* @__PURE__ */ import_react6.default.createElement("div", { className: `demo-icon ${hasDemoIcon ? "has-icon" : "no-frame"}`, title: demoLabel || "\u0391\u03BD\u03C4\u03B9\u03BA\u03B5\u03AF\u03BC\u03B5\u03BD\u03BF-\u03C3\u03C4\u03CC\u03C7\u03BF\u03C2" }, /* @__PURE__ */ import_react6.default.createElement("span", null, demoIcon || ""), showThresholdUnderIcon && /* @__PURE__ */ import_react6.default.createElement("div", { className: "demo-icon-threshold" }, thresholdValue)));
 };
 
-// apps/neural-lab/components/StudentTable.jsx
-var import_react16 = __toESM(require_react());
+// client/src/labs/neural-lab/components/StudentTable.jsx
+var import_react16 = __toESM(require_react(), 1);
 
 // client/src/framework/components/StudentTable.jsx
 var import_react15 = __toESM(require_react(), 1);
@@ -22155,7 +22158,7 @@ var StudentTable = ({
   })))));
 };
 
-// apps/neural-lab/components/StudentTable.jsx
+// client/src/labs/neural-lab/components/StudentTable.jsx
 var StudentTable2 = ({
   i1,
   i2,
@@ -22240,8 +22243,8 @@ var StudentTable2 = ({
   );
 };
 
-// apps/neural-lab/components/ExamplesClassifier.jsx
-var import_react17 = __toESM(require_react());
+// client/src/labs/neural-lab/components/ExamplesClassifier.jsx
+var import_react17 = __toESM(require_react(), 1);
 function computeOutput({ i1, i2 }, { w1, w2 }, activeInputs) {
   const term1 = activeInputs.i1 ? w1 * i1 : 0;
   const term2 = activeInputs.i2 ? w2 * i2 : 0;
@@ -22345,8 +22348,8 @@ var ExamplesClassifier = ({
   } }, "Confusion Matrix")), /* @__PURE__ */ import_react17.default.createElement("tr", null, /* @__PURE__ */ import_react17.default.createElement("th", { rowSpan: "2" }, "\u03A0\u03C1\u03B1\u03B3\u03BC\u03B1\u03C4\u03B9\u03BA\u03AE \u03BA\u03BB\u03AC\u03C3\u03B7"), /* @__PURE__ */ import_react17.default.createElement("th", { colSpan: "2" }, "\u03A0\u03C1\u03CC\u03B2\u03BB\u03B5\u03C8\u03B7")), /* @__PURE__ */ import_react17.default.createElement("tr", null, /* @__PURE__ */ import_react17.default.createElement("th", null, "\u0398\u03B5\u03C4\u03B9\u03BA\u03CC"), /* @__PURE__ */ import_react17.default.createElement("th", null, "\u0391\u03C1\u03BD\u03B7\u03C4\u03B9\u03BA\u03CC"))), /* @__PURE__ */ import_react17.default.createElement("tbody", null, /* @__PURE__ */ import_react17.default.createElement("tr", null, /* @__PURE__ */ import_react17.default.createElement("td", null, "\u0398\u03B5\u03C4\u03B9\u03BA\u03AE"), /* @__PURE__ */ import_react17.default.createElement("td", { className: "result-positive" }, "TP: ", metricValue("tp")), /* @__PURE__ */ import_react17.default.createElement("td", { className: "result-negative" }, "FN: ", metricValue("fn"))), /* @__PURE__ */ import_react17.default.createElement("tr", null, /* @__PURE__ */ import_react17.default.createElement("td", null, "\u0391\u03C1\u03BD\u03B7\u03C4\u03B9\u03BA\u03AE"), /* @__PURE__ */ import_react17.default.createElement("td", { className: "result-negative" }, "FP: ", metricValue("fp")), /* @__PURE__ */ import_react17.default.createElement("td", { className: "result-positive" }, "TN: ", metricValue("tn")))))), /* @__PURE__ */ import_react17.default.createElement("div", { className: "student-inline-note", style: { marginTop: "0.6rem" } }, "\u03A4\u03C1\u03AD\u03C7\u03BF\u03BD\u03C4\u03B1 \u03B2\u03AC\u03C1\u03B7: w1 = ", safeWeights.w1, ", w2 = ", safeWeights.w2, showResultDetails && threshold && ` | threshold: ${threshold.op} ${threshold.boundary}`)));
 };
 
-// apps/neural-lab/components/ActivitiesMenu.jsx
-var import_react18 = __toESM(require_react());
+// client/src/labs/neural-lab/components/ActivitiesMenu.jsx
+var import_react18 = __toESM(require_react(), 1);
 var ACTIVITY_OPTIONS = [
   { value: "1", label: "1. \u0392\u03C1\u03AF\u03C3\u03BA\u03C9 \u03C4\u03B7\u03BD \u03B5\u03AF\u03C3\u03BF\u03B4\u03BF" },
   { value: "2", label: "2. \u03A5\u03C0\u03BF\u03BB\u03BF\u03B3\u03AF\u03B6\u03C9 \u03C4\u03B7\u03BD \u03AD\u03BE\u03BF\u03B4\u03BF" },
@@ -22371,8 +22374,8 @@ var ActivitiesMenu = ({ value = "1", onChange }) => /* @__PURE__ */ import_react
   ACTIVITY_OPTIONS.map((option) => /* @__PURE__ */ import_react18.default.createElement("option", { key: option.value, value: option.value }, option.label))
 ))));
 
-// apps/neural-lab/components/StudentQrAccordion.jsx
-var import_react19 = __toESM(require_react());
+// client/src/labs/neural-lab/components/StudentQrAccordion.jsx
+var import_react19 = __toESM(require_react(), 1);
 var STUDENT_QR_SRC = "/labs/neural-lab/media/neural_lab_student_qrcode.png";
 var StudentQrAccordion = () => /* @__PURE__ */ import_react19.default.createElement(Accordion, { title: "\u{1F4F1} \u03A3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7 \u03BC\u03B1\u03B8\u03B7\u03C4\u03CE\u03BD" }, /* @__PURE__ */ import_react19.default.createElement("div", { className: "data-section student-qr-section" }, /* @__PURE__ */ import_react19.default.createElement(
   "img",
@@ -22501,7 +22504,7 @@ function writeIdentityColor(value) {
   storage.setItem(COLOR_KEY, normalized);
 }
 
-// apps/neural-lab/data/datasets.js
+// client/src/labs/neural-lab/data/datasets.js
 var DATASETS = {
   vehicles: {
     label: "\u039C\u03AD\u03C3\u03B1 \u03BC\u03B5\u03C4\u03B1\u03C6\u03BF\u03C1\u03AC\u03C2",
@@ -22729,7 +22732,7 @@ var DATASETS = {
 };
 var datasets_default = DATASETS;
 
-// apps/neural-lab/App.jsx
+// client/src/labs/neural-lab/App.jsx
 var DEFAULT_THRESHOLD_RULE = { op: ">=", boundary: 5 };
 var DEFAULT_SELECTED_INPUTS = { i1: true, i2: false };
 var THRESHOLD_OPS = /* @__PURE__ */ new Set([">", "<", ">=", "<="]);
@@ -23397,10 +23400,15 @@ var App = ({ role = "teacher" }) => {
 };
 var App_default = App;
 
+// client/src/labs/neural-lab/TeacherView.jsx
+function TeacherView() {
+  return /* @__PURE__ */ import_react25.default.createElement(App_default, { role: "teacher" });
+}
+
 // apps/neural-lab/teacher.jsx
 var root = import_client.default.createRoot(document.getElementById("root"));
 root.render(
-  /* @__PURE__ */ import_react25.default.createElement(App_default, { role: "teacher" })
+  /* @__PURE__ */ import_react26.default.createElement(TeacherView, null)
 );
 /*! Bundled license information:
 

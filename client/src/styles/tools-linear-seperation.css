@@ -1,0 +1,45 @@
+.linear-tool-page .tool-card {
+  margin-bottom: 12px;
+}
+
+.linear-tool-page textarea {
+  width: 100%;
+  resize: vertical;
+  border: 1px solid #c7d2e0;
+  border-radius: 8px;
+  padding: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+}
+
+.linear-rule {
+  display: inline-block;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+}
+
+.linear-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.linear-table th,
+.linear-table td {
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  padding: 8px;
+}
+
+.linear-ok {
+  color: #166534;
+  font-weight: 700;
+}
+
+.linear-bad {
+  color: #b91c1c;
+  font-weight: 700;
+}

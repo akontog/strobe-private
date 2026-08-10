@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function ToolsPage() {
   const [tools, setTools] = useState([]);
@@ -97,7 +98,7 @@ export default function ToolsPage() {
                     <li>{tool.available ? 'Ready to open' : 'Build or enable required feature first'}</li>
                   </ul>
                   <div className="btn-row dashboard-action-row">
-                    <a className="dashboard-action-link" href={tool.path}>Open tool</a>
+                    <Link className="dashboard-action-link" to={tool.path}>Open tool</Link>
                   </div>
                 </article>
               );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StudentTable as SharedStudentTable } from '../../../client/src/framework/components/StudentTable';
+import { StudentTable as SharedStudentTable } from '../../../framework/components/StudentTable';
 
 export const StudentTable = ({ 
     i1, 

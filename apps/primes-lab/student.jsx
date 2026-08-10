@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import { StudentView } from '../../client/src/labs/primes-lab/StudentView';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-root.render(<App role="student" />);
+root.render(<StudentView />);

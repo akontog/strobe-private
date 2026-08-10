@@ -28,8 +28,7 @@
     "build:buffon-needle:student": "esbuild apps/buffon-needle/student.jsx --bundle --format=esm --outfile=client/dist/labs/buffon-needle/student.bundle.js --loader:.jsx=jsx --loader:.css=css",
     "build:geometry-live": "esbuild apps/geometry-live/index.jsx --bundle --format=esm --outfile=client/dist/labs/geometry-live/geometry-shell.bundle.js --loader:.jsx=jsx",
     "build:labs": "npm run clean:labs && npm run build:buffon-needle && npm run build:neural-lab && npm run build:primes-lab && npm run build:geometry-live && npm run prune:labs",
-    "build:all": "npm run build:client && npm run build:labs",
-    "build:linear": "npm run build --prefix tools/linear-seperation"
+    "build:all": "npm run build:client && npm run build:labs"
   },
   "dependencies": {
     "express": "^5.2.1",

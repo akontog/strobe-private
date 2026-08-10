@@ -32,21 +32,21 @@ function inferFeatureKeys(dataset) {
   return Object.keys(block).filter((key) => Number.isFinite(Number(block[key])));
 }
 
-function cartesianIntegerVectors(dim, R) {
+function cartesianIntegerVectors(dim, radius) {
   const out = [];
   const current = new Array(dim).fill(0);
 
   const dfs = (i) => {
     if (i === dim) {
       const maxAbs = Math.max(...current.map((x) => Math.abs(x)));
-      if (maxAbs === R) {
+      if (maxAbs === radius) {
         out.push([...current]);
       }
       return;
     }
 
-    for (let v = -R; v <= R; v += 1) {
-      current[i] = v;
+    for (let value = -radius; value <= radius; value += 1) {
+      current[i] = value;
       dfs(i + 1);
     }
   };
@@ -55,15 +55,22 @@ function cartesianIntegerVectors(dim, R) {
   return out;
 }
 
+function dot(a, b) {
+  let sum = 0;
+  for (let i = 0; i < a.length; i += 1) {
+    sum += a[i] * b[i];
+  }
+  return sum;
+}
+
 function findIntegerSeparator(positive, negative, maxRadius = 12) {
   if (positive.length === 0 || negative.length === 0) {
     return { separable: false, reason: 'Χρειάζεται τουλάχιστον ένα θετικό και ένα αρνητικό δείγμα.' };
   }
 
   const dim = positive[0].x.length;
-
-  for (let R = 1; R <= maxRadius; R += 1) {
-    const vectors = cartesianIntegerVectors(dim, R);
+  for (let radius = 1; radius <= maxRadius; radius += 1) {
+    const vectors = cartesianIntegerVectors(dim, radius);
 
     for (const w of vectors) {
       const posVals = positive.map((p) => dot(w, p.x));
@@ -76,7 +83,7 @@ function findIntegerSeparator(positive, negative, maxRadius = 12) {
           separable: true,
           w,
           theta: (minPos + maxNeg) / 2,
-          radius: R,
+          radius,
           margin: minPos - maxNeg
         };
       }
@@ -89,14 +96,6 @@ function findIntegerSeparator(positive, negative, maxRadius = 12) {
   };
 }
 
-function dot(a, b) {
-  let sum = 0;
-  for (let i = 0; i < a.length; i += 1) {
-    sum += a[i] * b[i];
-  }
-  return sum;
-}
-
 function formatRule(weights, featureKeys, theta) {
   const terms = weights
     .map((w, i) => `${w >= 0 && i > 0 ? '+ ' : ''}${w}·${featureKeys[i]}`)
@@ -104,7 +103,7 @@ function formatRule(weights, featureKeys, theta) {
   return `${terms} > ${theta.toFixed(3)}`;
 }
 
-export default function App() {
+export default function LinearSeperation() {
   const [jsonText, setJsonText] = useState(DEFAULT_JSON);
   const [parsed, setParsed] = useState(() => {
     try {
@@ -114,7 +113,6 @@ export default function App() {
     }
   });
   const [parseError, setParseError] = useState('');
-
   const datasetKeys = useMemo(() => (parsed ? Object.keys(parsed) : []), [parsed]);
   const [datasetKey, setDatasetKey] = useState('');
   const [targetName, setTargetName] = useState('');
@@ -137,7 +135,7 @@ export default function App() {
 
     const rows = examples.map((ex) => ({
       name: ex.name,
-      x: featureKeys.map((k) => Number(ex[k]))
+      x: featureKeys.map((key) => Number(ex[key]))
     }));
 
     const positive = rows.filter((r) => r.name === effectiveTarget);
@@ -148,12 +146,12 @@ export default function App() {
       return { ...sep, rows: [], featureKeys, target: effectiveTarget };
     }
 
-    const classified = rows.map((r) => {
-      const value = dot(sep.w, r.x);
+    const classified = rows.map((row) => {
+      const value = dot(sep.w, row.x);
       const predictedPositive = value > sep.theta;
-      const actualPositive = r.name === effectiveTarget;
+      const actualPositive = row.name === effectiveTarget;
       return {
-        ...r,
+        ...row,
         value,
         predictedPositive,
         actualPositive,
@@ -167,7 +165,7 @@ export default function App() {
       featureKeys,
       target: effectiveTarget
     };
-  }, [activeDataset, featureKeys, examples, effectiveTarget]);
+  }, [activeDataset, examples, featureKeys, effectiveTarget]);
 
   const applyJson = () => {
     try {
@@ -185,14 +183,16 @@ export default function App() {
       } else {
         setTargetName('');
       }
-    } catch (err) {
-      setParseError(String(err.message || err));
+    } catch (error) {
+      setParseError(String(error.message || error));
     }
   };
 
   const onFileUpload = async (event) => {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     const text = await file.text();
     setJsonText(text);
@@ -206,31 +206,33 @@ export default function App() {
   };
 
   return (
-    <main className="app">
-      <h1>Linear Separation Tool</h1>
-      <p className="subtitle">Δώσε JSON τύπου datasets.js και βρες υπερεπίπεδο για target-vs-rest.</p>
+    <section className="tool-page linear-tool-page">
+      <header className="tool-page-header">
+        <h1>Linear Separation Tool</h1>
+        <p>Δώσε JSON τύπου datasets.js και βρες υπερεπίπεδο για target-vs-rest.</p>
+      </header>
 
-      <section className="panel">
+      <article className="tool-card">
         <h2>Εισαγωγή Dataset JSON</h2>
         <textarea
           value={jsonText}
-          onChange={(e) => setJsonText(e.target.value)}
+          onChange={(event) => setJsonText(event.target.value)}
           placeholder="Κάνε επικόλληση το JSON εδώ"
           rows={14}
         />
-        <div className="row">
+        <div className="tool-actions">
           <input type="file" accept="application/json,.json" onChange={onFileUpload} />
-          <button onClick={applyJson}>Φόρτωση JSON</button>
+          <button type="button" onClick={applyJson}>Φόρτωση JSON</button>
         </div>
-        {parseError ? <p className="error">Σφάλμα JSON: {parseError}</p> : null}
-      </section>
+        {parseError ? <p className="tool-error">Σφάλμα JSON: {parseError}</p> : null}
+      </article>
 
-      <section className="panel">
+      <article className="tool-card">
         <h2>Ρυθμίσεις</h2>
-        <div className="grid2">
+        <div className="tool-grid tool-grid--two">
           <label>
             Dataset
-            <select value={datasetKey} onChange={(e) => onDatasetChange(e.target.value)}>
+            <select value={datasetKey} onChange={(event) => onDatasetChange(event.target.value)}>
               {datasetKeys.map((key) => (
                 <option key={key} value={key}>{key}</option>
               ))}
@@ -238,22 +240,22 @@ export default function App() {
           </label>
           <label>
             Κατηγορία-στόχος
-            <select value={effectiveTarget} onChange={(e) => setTargetName(e.target.value)}>
-              {examples.map((ex) => (
-                <option key={ex.name} value={ex.name}>{ex.name}</option>
+            <select value={effectiveTarget} onChange={(event) => setTargetName(event.target.value)}>
+              {examples.map((example) => (
+                <option key={example.name} value={example.name}>{example.name}</option>
               ))}
             </select>
           </label>
         </div>
-      </section>
+      </article>
 
-      <section className="panel">
+      <article className="tool-card">
         <h2>Αποτέλεσμα</h2>
         {!result ? <p>Δεν υπάρχουν αρκετά στοιχεία ακόμα.</p> : null}
 
         {result && !result.separable ? (
           <div>
-            <p className="error">Δεν βρέθηκε διαχωριστής.</p>
+            <p className="tool-error">Δεν βρέθηκε διαχωριστής.</p>
             <p>{result.reason}</p>
           </div>
         ) : null}
@@ -261,13 +263,13 @@ export default function App() {
         {result && result.separable ? (
           <>
             <p><strong>Βρέθηκε διαχωριστής.</strong> Μικρότερο max|w|: {result.radius}, margin: {result.margin.toFixed(3)}</p>
-            <code className="rule">{formatRule(result.w, result.featureKeys, result.theta)}</code>
+            <code className="linear-rule">{formatRule(result.w, result.featureKeys, result.theta)}</code>
 
-            <table>
+            <table className="linear-table">
               <thead>
                 <tr>
                   <th>Στοιχείο</th>
-                  {result.featureKeys.map((k) => <th key={k}>{k}</th>)}
+                  {result.featureKeys.map((key) => <th key={key}>{key}</th>)}
                   <th>w·x</th>
                   <th>Πρόβλεψη</th>
                   <th>Label</th>
@@ -278,18 +280,18 @@ export default function App() {
                 {result.rows.map((row) => (
                   <tr key={row.name}>
                     <td>{row.name}</td>
-                    {row.x.map((v, idx) => <td key={`${row.name}-${idx}`}>{v}</td>)}
+                    {row.x.map((value, idx) => <td key={`${row.name}-${idx}`}>{value}</td>)}
                     <td>{row.value.toFixed(3)}</td>
                     <td>{row.predictedPositive ? 'θετικό' : 'αρνητικό'}</td>
                     <td>{row.actualPositive ? 'στόχος' : 'λοιπά'}</td>
-                    <td className={row.correct ? 'ok' : 'bad'}>{row.correct ? '✓' : '✗'}</td>
+                    <td className={row.correct ? 'linear-ok' : 'linear-bad'}>{row.correct ? '✓' : '✗'}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </>
         ) : null}
-      </section>
-    </main>
+      </article>
+    </section>
   );
 }

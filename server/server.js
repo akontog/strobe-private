@@ -340,11 +340,6 @@ app.use('/js', express.static(path.join(publicDir, 'js')));
 app.use('/public', express.static(publicDir));
 app.use('/dist', express.static(clientDistDir));
 
-app.use('/tools/linear-seperation', express.static(path.join(__dirname, '..', 'tools', 'linear-seperation', 'dist')));
-app.use('/tools/camera-speed-test', express.static(path.join(__dirname, '..', 'tools', 'camera-speed-test')));
-app.use('/tools/activity-builder', express.static(path.join(__dirname, '..', 'tools', 'activity-builder')));
-app.use('/tools/activity-biolder', express.static(path.join(__dirname, '..', 'tools', 'activity-builder')));
-
 app.use('/framework/css', express.static(path.join(__dirname, '..', 'client', 'src', 'framework', 'assets', 'css')));
 app.use('/framework/js', express.static(path.join(__dirname, '..', 'client', 'src', 'framework', 'assets', 'js')));
 
@@ -617,8 +612,6 @@ app.get('/api/activity/current', (req, res) => {
 });
 
 app.get('/api/tools', (req, res) => {
-  const linearSeperationIndex = path.join(__dirname, '..', 'tools', 'linear-seperation', 'dist', 'index.html');
-
   res.json([
     {
       id: 'activity-builder',
@@ -632,14 +625,14 @@ app.get('/api/tools', (req, res) => {
       title: 'Camera Speed Test',
       description: 'Benchmark the camera detection pipeline and annotated frame roundtrip.',
       path: '/tools/camera-speed-test/',
-      available: CAMERA_FEATURES_ENABLED
+      available: true
     },
     {
       id: 'linear-seperation',
       title: 'Linear Seperation',
       description: 'Interactive linear separation playground built from the tools workspace.',
       path: '/tools/linear-seperation/',
-      available: fs.existsSync(linearSeperationIndex)
+      available: true
     }
   ]);
 });
