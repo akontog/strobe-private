@@ -22,7 +22,7 @@ Unified classroom platform with:
 ## Requirements
 - Node.js 18+
 - npm
-- Python 3.11+ (optional, needed for camera features)
+- Python 3.11+ (camera features)
 
 ## Install
 ```powershell
