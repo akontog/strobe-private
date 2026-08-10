@@ -1,11 +1,9 @@
 const express = require('express');
-const path = require('path');
 
 const { listActiveSessions, getSessionStats } = require('../services/sessionTracker');
 
 function createAdminRouter(options = {}) {
   const router = express.Router();
-  const dashboardViewPath = path.join(__dirname, '..', '..', 'views', 'admin', 'dashboard.html');
   const getRealtimeStats = typeof options.getRealtimeStats === 'function'
     ? options.getRealtimeStats
     : () => ({ connectedSockets: 0, activeUserPoints: 0 });
@@ -21,10 +19,6 @@ function createAdminRouter(options = {}) {
   const getCommunicationCatalog = typeof options.getCommunicationCatalog === 'function'
     ? options.getCommunicationCatalog
     : () => [];
-
-  router.get('/', (req, res) => {
-    res.sendFile(dashboardViewPath);
-  });
 
   router.get('/sessions', (req, res) => {
     const authSessions = listActiveSessions();

@@ -1,5 +1,5 @@
 Folder PATH listing for volume OS
-Volume serial number is 000000FA 4EE2:6C3B
+Volume serial number is 0000005B 4EE2:6C3B
 C:.
 |   .gitignore
 |   package-lock.json
@@ -33572,125 +33572,35 @@ C:.
 |   |   |   strobelogo.svg
 |   |   |   
 |   |   +---assets
-|   |   |       index-7smkFSOI.js
-|   |   |       index-BlItK166.css
-|   |   |       index-C7IGQpho.css
+|   |   |       index-BJq9ouVo.js
+|   |   |       index-BrLD-K9d.js
 |   |   |       index-CDdEWQUR.js
 |   |   |       index-Ce_drgBc.css
-|   |   |       index-CfbmvGb7.js
-|   |   |       index-Dr6U_4Sg.js
-|   |   |       index-DzauB59n.js
-|   |   |       index-IoL6ZTj3.js
+|   |   |       index-CNU0pgDf.css
+|   |   |       index-DhzN6GPK.js
 |   |   |       
 |   |   \---labs
-|   |       +---assets
-|   |       |   +---css
-|   |       |   |       classroom-shared.css
-|   |       |   |       presentation-shell.css
-|   |       |   |       
-|   |       |   \---js
-|   |       |           classroom-api.js
-|   |       |           classroom-shared.js
-|   |       |           presentation-config.js
-|   |       |           presentation-shell.js
-|   |       |           presentation-toc.js
-|   |       |           
 |   |       +---buffon-needle
-|   |       |       BuffonApp.jsx
-|   |       |       student-logic.js
-|   |       |       student-styles.css
-|   |       |       student-template.js
 |   |       |       student.bundle.css
 |   |       |       student.bundle.js
-|   |       |       student.jsx
-|   |       |       teacher-logic.js
-|   |       |       teacher-styles.css
-|   |       |       teacher-template.js
 |   |       |       teacher.bundle.css
 |   |       |       teacher.bundle.js
-|   |       |       teacher.html
-|   |       |       teacher.jsx
 |   |       |       
-|   |       +---fourier-lab
-|   |       |   |   classroom-sync.js
-|   |       |   |   compile.log
-|   |       |   |   index.html
-|   |       |   |   normalmap.js
-|   |       |   |   
-|   |       |   +---media
-|   |       |   |       clips.mp4
-|   |       |   |       fourier_and_the_sea.png
-|   |       |   |       QRCode.png
-|   |       |   |       
-|   |       |   \---vendor
-|   |       |           three.min.js
-|   |       |           
 |   |       +---geometry-live
-|   |       |   |   camera.html
-|   |       |   |   geometry-shell.bundle.js
-|   |       |   |   mouse.html
-|   |       |   |   teacher.html
-|   |       |   |   
-|   |       |   +---assets
-|   |       |   \---js
-|   |       |           presentation-shell.js
-|   |       |           presentation-sidebar-manager.js
-|   |       |           realtime-socket.js
-|   |       |           
+|   |       |       geometry-shell.bundle.js
+|   |       |       
 |   |       +---neural-lab
-|   |       |   |   App.css
-|   |       |   |   App.jsx
-|   |       |   |   index.jsx
-|   |       |   |   student.bundle.css
-|   |       |   |   student.bundle.js
-|   |       |   |   student.html
-|   |       |   |   student.jsx
-|   |       |   |   teacher.bundle.css
-|   |       |   |   teacher.bundle.js
-|   |       |   |   teacher.html
-|   |       |   |   teacher.jsx
-|   |       |   |   
-|   |       |   +---components
-|   |       |   |       ActivitiesMenu.jsx
-|   |       |   |       DatasetSelector.jsx
-|   |       |   |       ExamplesClassifier.jsx
-|   |       |   |       index.js
-|   |       |   |       MathFormula.jsx
-|   |       |   |       ProductRow.jsx
-|   |       |   |       StudentQrAccordion.jsx
-|   |       |   |       StudentTable.jsx
-|   |       |   |       TeacherCard.jsx
-|   |       |   |       VerticalProducts.jsx
-|   |       |   |       
-|   |       |   +---data
-|   |       |   |       datasets.js
-|   |       |   |       
-|   |       |   \---media
-|   |       |           neural_lab_student_qrcode.png
-|   |       |           
+|   |       |       student.bundle.css
+|   |       |       student.bundle.js
+|   |       |       teacher.bundle.css
+|   |       |       teacher.bundle.js
+|   |       |       
 |   |       \---primes-lab
-|   |           |   App.css
-|   |           |   App.jsx
-|   |           |   index.jsx
-|   |           |   student.bundle.css
-|   |           |   student.bundle.js
-|   |           |   student.html
-|   |           |   student.jsx
-|   |           |   teacher.bundle.css
-|   |           |   teacher.bundle.js
-|   |           |   teacher.html
-|   |           |   teacher.jsx
-|   |           |   
-|   |           +---components
-|   |           |       Accordion.jsx
-|   |           |       NumberGrid.jsx
-|   |           |       SelectionSummaryAccordion.jsx
-|   |           |       StudentsTable.jsx
-|   |           |       TeacherPanel.jsx
-|   |           |       
-|   |           \---data
-|   |                   primes.js
-|   |                   
+|   |               student.bundle.css
+|   |               student.bundle.js
+|   |               teacher.bundle.css
+|   |               teacher.bundle.js
+|   |               
 |   +---node_modules
 |   |   +---.vite
 |   |   |   \---deps
@@ -33778,6 +33688,12 @@ C:.
 |       |       api.js
 |       |       socket.js
 |       |       
+|       +---pages
+|       |       LabPage.jsx
+|       |       StudentPage.jsx
+|       |       TeacherPage.jsx
+|       |       ToolsPage.jsx
+|       |       
 |       +---shared
 |       |   |   README.md
 |       |   |   
@@ -33814,6 +33730,7 @@ C:.
 |       |                   neural.json
 |       |                   
 |       \---styles
+|               dashboard-pages.css
 |               globals.css
 |               postit-cards.css
 |               
@@ -37927,125 +37844,35 @@ C:.
 |   |   |   |   strobelogo.svg
 |   |   |   |   
 |   |   |   +---assets
-|   |   |   |       index-7smkFSOI.js
-|   |   |   |       index-BlItK166.css
-|   |   |   |       index-C7IGQpho.css
+|   |   |   |       index-BJq9ouVo.js
+|   |   |   |       index-BrLD-K9d.js
 |   |   |   |       index-CDdEWQUR.js
 |   |   |   |       index-Ce_drgBc.css
-|   |   |   |       index-CfbmvGb7.js
-|   |   |   |       index-Dr6U_4Sg.js
-|   |   |   |       index-DzauB59n.js
-|   |   |   |       index-IoL6ZTj3.js
+|   |   |   |       index-CNU0pgDf.css
+|   |   |   |       index-DhzN6GPK.js
 |   |   |   |       
 |   |   |   \---labs
-|   |   |       +---assets
-|   |   |       |   +---css
-|   |   |       |   |       classroom-shared.css
-|   |   |       |   |       presentation-shell.css
-|   |   |       |   |       
-|   |   |       |   \---js
-|   |   |       |           classroom-api.js
-|   |   |       |           classroom-shared.js
-|   |   |       |           presentation-config.js
-|   |   |       |           presentation-shell.js
-|   |   |       |           presentation-toc.js
-|   |   |       |           
 |   |   |       +---buffon-needle
-|   |   |       |       BuffonApp.jsx
-|   |   |       |       student-logic.js
-|   |   |       |       student-styles.css
-|   |   |       |       student-template.js
 |   |   |       |       student.bundle.css
 |   |   |       |       student.bundle.js
-|   |   |       |       student.jsx
-|   |   |       |       teacher-logic.js
-|   |   |       |       teacher-styles.css
-|   |   |       |       teacher-template.js
 |   |   |       |       teacher.bundle.css
 |   |   |       |       teacher.bundle.js
-|   |   |       |       teacher.html
-|   |   |       |       teacher.jsx
 |   |   |       |       
-|   |   |       +---fourier-lab
-|   |   |       |   |   classroom-sync.js
-|   |   |       |   |   compile.log
-|   |   |       |   |   index.html
-|   |   |       |   |   normalmap.js
-|   |   |       |   |   
-|   |   |       |   +---media
-|   |   |       |   |       clips.mp4
-|   |   |       |   |       fourier_and_the_sea.png
-|   |   |       |   |       QRCode.png
-|   |   |       |   |       
-|   |   |       |   \---vendor
-|   |   |       |           three.min.js
-|   |   |       |           
 |   |   |       +---geometry-live
-|   |   |       |   |   camera.html
-|   |   |       |   |   geometry-shell.bundle.js
-|   |   |       |   |   mouse.html
-|   |   |       |   |   teacher.html
-|   |   |       |   |   
-|   |   |       |   +---assets
-|   |   |       |   \---js
-|   |   |       |           presentation-shell.js
-|   |   |       |           presentation-sidebar-manager.js
-|   |   |       |           realtime-socket.js
-|   |   |       |           
+|   |   |       |       geometry-shell.bundle.js
+|   |   |       |       
 |   |   |       +---neural-lab
-|   |   |       |   |   App.css
-|   |   |       |   |   App.jsx
-|   |   |       |   |   index.jsx
-|   |   |       |   |   student.bundle.css
-|   |   |       |   |   student.bundle.js
-|   |   |       |   |   student.html
-|   |   |       |   |   student.jsx
-|   |   |       |   |   teacher.bundle.css
-|   |   |       |   |   teacher.bundle.js
-|   |   |       |   |   teacher.html
-|   |   |       |   |   teacher.jsx
-|   |   |       |   |   
-|   |   |       |   +---components
-|   |   |       |   |       ActivitiesMenu.jsx
-|   |   |       |   |       DatasetSelector.jsx
-|   |   |       |   |       ExamplesClassifier.jsx
-|   |   |       |   |       index.js
-|   |   |       |   |       MathFormula.jsx
-|   |   |       |   |       ProductRow.jsx
-|   |   |       |   |       StudentQrAccordion.jsx
-|   |   |       |   |       StudentTable.jsx
-|   |   |       |   |       TeacherCard.jsx
-|   |   |       |   |       VerticalProducts.jsx
-|   |   |       |   |       
-|   |   |       |   +---data
-|   |   |       |   |       datasets.js
-|   |   |       |   |       
-|   |   |       |   \---media
-|   |   |       |           neural_lab_student_qrcode.png
-|   |   |       |           
+|   |   |       |       student.bundle.css
+|   |   |       |       student.bundle.js
+|   |   |       |       teacher.bundle.css
+|   |   |       |       teacher.bundle.js
+|   |   |       |       
 |   |   |       \---primes-lab
-|   |   |           |   App.css
-|   |   |           |   App.jsx
-|   |   |           |   index.jsx
-|   |   |           |   student.bundle.css
-|   |   |           |   student.bundle.js
-|   |   |           |   student.html
-|   |   |           |   student.jsx
-|   |   |           |   teacher.bundle.css
-|   |   |           |   teacher.bundle.js
-|   |   |           |   teacher.html
-|   |   |           |   teacher.jsx
-|   |   |           |   
-|   |   |           +---components
-|   |   |           |       Accordion.jsx
-|   |   |           |       NumberGrid.jsx
-|   |   |           |       SelectionSummaryAccordion.jsx
-|   |   |           |       StudentsTable.jsx
-|   |   |           |       TeacherPanel.jsx
-|   |   |           |       
-|   |   |           \---data
-|   |   |                   primes.js
-|   |   |                   
+|   |   |               student.bundle.css
+|   |   |               student.bundle.js
+|   |   |               teacher.bundle.css
+|   |   |               teacher.bundle.js
+|   |   |               
 |   |   +---node_modules
 |   |   |   +---.vite
 |   |   |   |   \---deps
@@ -38133,6 +37960,12 @@ C:.
 |   |       |       api.js
 |   |       |       socket.js
 |   |       |       
+|   |       +---pages
+|   |       |       LabPage.jsx
+|   |       |       StudentPage.jsx
+|   |       |       TeacherPage.jsx
+|   |       |       ToolsPage.jsx
+|   |       |       
 |   |       +---shared
 |   |       |   |   README.md
 |   |       |   |   
@@ -38169,6 +38002,7 @@ C:.
 |   |       |                   neural.json
 |   |       |                   
 |   |       \---styles
+|   |               dashboard-pages.css
 |   |               globals.css
 |   |               postit-cards.css
 |   |               
@@ -38399,6 +38233,7 @@ C:.
 |           
 +---reports
 |   |   brainstorming.md
+|   |   info.md
 |   |   strobe-architecture.drawio
 |   |   strobe.svg
 |   |   
@@ -38923,14 +38758,8 @@ C:.
 |               
 +---views
 |   +---admin
-|   |       dashboard.html
-|   |       
 |   +---client
-|   |       dashboard.html
-|   |       
 |   \---teacher
-|           dashboard.html
-|           
 \---vision
     |   camera_server.py
     |   camera_tracking.py

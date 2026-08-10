@@ -1,11 +1,9 @@
 const express = require('express');
-const path = require('path');
 
 const { getAppBySlug, listAppsForRole, toPublicApp } = require('../apps/registry');
 const { saveActivity, listActivities, getActivity } = require('../services/appActivities');
 
 const router = express.Router();
-const dashboardViewPath = path.join(__dirname, '..', '..', 'views', 'teacher', 'dashboard.html');
 
 function resolveTeacherApp(req, res) {
   const app = getAppBySlug(req.params.slug);
@@ -22,10 +20,6 @@ function resolveTeacherApp(req, res) {
 
   return app;
 }
-
-router.get('/', (req, res) => {
-  res.sendFile(dashboardViewPath);
-});
 
 router.get('/apps', (req, res) => {
   const apps = listAppsForRole('teacher').map((app) => toPublicApp(app, 'teacher'));

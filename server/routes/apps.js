@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { getAppBySlug, getLaunchPath } = require('../apps/registry');
+const { getAppBySlug } = require('../apps/registry');
 
 function createAppsRouter() {
   const router = express.Router();
@@ -9,23 +9,11 @@ function createAppsRouter() {
     return rawMode === 'teacher' ? 'teacher' : 'client';
   }
 
-  router.get('/launch/:slug', (req, res) => {
-    const app = getAppBySlug(req.params.slug);
-
-    if (!app) {
-      return res.status(404).send('App not found');
-    }
-
-    const mode = resolveMode(req.query.mode);
-
-    return res.redirect(getLaunchPath(app, mode));
-  });
-
   router.use('/:slug', (req, res, next) => {
     const app = getAppBySlug(req.params.slug);
 
     if (!app || app.kind !== 'static') {
-      return res.status(404).send('App not found');
+      return res.status(404).json({ error: 'App not found' });
     }
 
     const mode = resolveMode(req.query.mode);
@@ -34,9 +22,7 @@ function createAppsRouter() {
     const requestedFile = requestedPath.replace(/^\/+/, '');
 
     if (!requestedFile) {
-      const entry = mode === 'teacher' ? app.teacherEntry : app.clientEntry;
-      const query = app.teacherEntry === app.clientEntry ? `?mode=${mode}` : '';
-      return res.redirect(`/labs/${app.slug}/${entry}${query}`);
+      return next();
     }
 
     const staticMiddleware = express.static(app.staticDir, {

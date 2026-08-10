@@ -315,6 +315,7 @@ function createRealtimeTransport() {
 const io = createRealtimeTransport();
 
 const publicDir = path.join(__dirname, '..', 'public');
+const clientDistDir = path.join(__dirname, '..', 'client', 'dist');
 const legacyActivitiesDir = path.join(__dirname, '..', 'activities');
 
 if (!fs.existsSync(legacyActivitiesDir)) {
@@ -332,77 +333,12 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.get('/', (req, res) => {
-  return res.sendFile(path.join(publicDir, 'index.html'));
-});
-
-app.get('/portal', (req, res) => {
-  res.sendFile(path.join(publicDir, 'index.html'));
-});
-
-app.get('/index.html', (req, res) => {
-  res.sendFile(path.join(publicDir, 'index.html'));
-});
-
-app.get('/student', (req, res) => {
-  return res.redirect('/client');
-});
-
-app.get('/client.html', (req, res) => {
-  return res.redirect('/labs/geometry-live/teacher.html');
-});
-
-app.get('/user.html', (req, res) => {
-  return res.redirect('/labs/geometry-live/mouse.html');
-});
-
-app.get('/camera-speed-test', (req, res) => {
-  if (!CAMERA_FEATURES_ENABLED) {
-    return res.status(404).json({ error: 'Camera features are disabled on this server.' });
-  }
-
-  return res.sendFile(path.join(__dirname, '..', 'tools', 'camera-speed-test', 'index.html'));
-});
-
-app.get(['/tools/camera-speed-test', '/tools/camera-speed-test/'], (req, res) => {
-  if (!CAMERA_FEATURES_ENABLED) {
-    return res.status(404).json({ error: 'Camera features are disabled on this server.' });
-  }
-
-  return res.sendFile(path.join(__dirname, '..', 'tools', 'camera-speed-test', 'index.html'));
-});
-
-app.get(['/tools/activity-builder', '/tools/activity-builder/'], (req, res) => {
-  return res.sendFile(path.join(__dirname, '..', 'tools', 'activity-builder', 'index.html'));
-});
-
-app.get('/tools', (req, res) => {
-  res.sendFile(path.join(publicDir, 'tools.html'));
-});
-
-app.get(['/tools/linear-seperation', '/tools/linear-seperation/'], (req, res) => {
-  const linearSeperationIndex = path.join(__dirname, '..', 'tools', 'linear-seperation', 'dist', 'index.html');
-  if (!fs.existsSync(linearSeperationIndex)) {
-    return res.status(503).send('Linear separation tool has not been built yet. Run `npm run build:linear`.');
-  }
-
-  return res.sendFile(linearSeperationIndex);
-});
-
-app.get('/launcher.html', (req, res) => {
-  return res.redirect('/apps-launcher');
-});
-
-app.get('/apps-launcher', (req, res) => {
-  res.sendFile(path.join(publicDir, 'apps-launcher.html'));
-});
-
 // path για static assets
 app.use('/css', express.static(path.join(publicDir, 'css')));
 app.use('/icons', express.static(path.join(publicDir, 'icons')));
 app.use('/js', express.static(path.join(publicDir, 'js')));
 app.use('/public', express.static(publicDir));
-app.use('/dist', express.static(path.join(__dirname, '..', 'client', 'dist')));
+app.use('/dist', express.static(clientDistDir));
 
 app.use('/tools/linear-seperation', express.static(path.join(__dirname, '..', 'tools', 'linear-seperation', 'dist')));
 app.use('/tools/camera-speed-test', express.static(path.join(__dirname, '..', 'tools', 'camera-speed-test')));
@@ -678,6 +614,34 @@ app.get('/api/activity/current', (req, res) => {
   }
 
   return res.json({ geometry: [] });
+});
+
+app.get('/api/tools', (req, res) => {
+  const linearSeperationIndex = path.join(__dirname, '..', 'tools', 'linear-seperation', 'dist', 'index.html');
+
+  res.json([
+    {
+      id: 'activity-builder',
+      title: 'Activity Builder',
+      description: 'Build and inspect activity payloads for the classroom apps.',
+      path: '/tools/activity-builder/',
+      available: true
+    },
+    {
+      id: 'camera-speed-test',
+      title: 'Camera Speed Test',
+      description: 'Benchmark the camera detection pipeline and annotated frame roundtrip.',
+      path: '/tools/camera-speed-test/',
+      available: CAMERA_FEATURES_ENABLED
+    },
+    {
+      id: 'linear-seperation',
+      title: 'Linear Seperation',
+      description: 'Interactive linear separation playground built from the tools workspace.',
+      path: '/tools/linear-seperation/',
+      available: fs.existsSync(linearSeperationIndex)
+    }
+  ]);
 });
 
 io.on('connection', (socket) => {
@@ -1001,6 +965,16 @@ httpServer.on('upgrade', (request, socket, head) => {
 
 
   socket.destroy();
+});
+
+app.use(express.static(clientDistDir));
+
+app.get('/api/{*path}', (req, res) => {
+  res.status(404).json({ error: 'API route not found' });
+});
+
+app.get('/{*path}', (req, res) => {
+  res.sendFile(path.join(clientDistDir, 'index.html'));
 });
 
 // Εκκίνηση του HTTP server και εκτύπωση πληροφοριών σύνδεσης

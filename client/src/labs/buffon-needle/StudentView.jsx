@@ -5,7 +5,7 @@ export default function StudentView() {
     <iframe
       title="Buffon Student"
       src="/labs/buffon-needle/student.html"
-      style={{ width: '100%', minHeight: '100vh', border: 'none' }}
+      className="embedded-lab-frame"
     />
   );
 }
