@@ -37,24 +37,6 @@
 
 - npm 
 
-# Εφαρμογές
-
-## Geometry Live
-
-## Buffon Needle
-
-## Fourier Lab
-
-- [readme](reports/fourier-lab/README-fourier-lab.md)
-
-## Neural Lab
-
-- [readme](reports/neural-lab/README-neural-lab)
-
-## Primes Lab
-
-- [readme](reports/primes-lab/README-primes-lab)
-- 
 
 # Αρχιτεκτονική
 

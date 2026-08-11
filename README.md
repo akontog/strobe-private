@@ -85,8 +85,20 @@ npm run build:linear
 - /labs/primes-lab/teacher.html
 - /labs/primes-lab/student.html
 
-## Notes
-- Root routes/ is removed; only server/routes/ is used.
-- App routing metadata lives in server/apps/registry.js.
-- Source labs do not keep *.bundle.js or *.bundle.css files.
-- Geometry Lab now also includes a React-style shell structure: App.jsx, index.jsx, components/, data/.
+# Εφαρμογές
+
+## Geometry Live
+
+## Buffon Needle
+
+## Fourier Lab
+
+- [readme](/!!!docs/reports/fourier-lab/README-fourier-lab.md)
+
+## Neural Lab
+
+- [readme](/!!!docs/reports/neural-lab/README-neural-lab)
+
+## Primes Lab
+
+- [readme](/!!!docs/reports/primes-lab/README-primes-lab)
