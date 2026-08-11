@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { studentTemplate } from './student-template';
-import { teacherTemplate } from './teacher-template';
+import { studentTemplate } from '../data/student-template';
+import { teacherTemplate } from '../data/teacher-template';
 import { mountBuffonStudent } from './student-logic';
 import { mountBuffonTeacher } from './teacher-logic';
 

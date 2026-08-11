@@ -6,7 +6,7 @@ import { StudentTable } from './components/StudentTable';
 import { ExamplesClassifier } from './components/ExamplesClassifier';
 import { ActivitiesMenu, getNeuralActivityTitle } from './components/ActivitiesMenu';
 import { StudentQrAccordion } from './components/StudentQrAccordion';
-import { Accordion } from '../../framework/components/Accordion';
+import { Accordion } from '../../shared/components';
 import {
   ConnectionNameControl,
   randomIdentityColor,
@@ -14,7 +14,7 @@ import {
   readIdentityName,
   writeIdentityColor,
   writeIdentityName
-} from '../../framework/components';
+} from '../../shared/components';
 import DATASETS from './data/datasets';
 //import { StudentTable } from '../shared-components/StudentTable';
 import './App.css';

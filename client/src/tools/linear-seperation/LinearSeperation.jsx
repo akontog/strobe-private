@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import './LinearSeperation.css';
 
 const DEFAULT_JSON = `{
   "vehicles": {

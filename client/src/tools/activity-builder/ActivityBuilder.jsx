@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import './ActivityBuilder.css';
 
 const DEFAULT_CONFIG_TEXT = '{\n  "roundTimeSec": 60,\n  "targetError": 0.005\n}';
 

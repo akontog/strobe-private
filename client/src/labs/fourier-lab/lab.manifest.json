@@ -7,6 +7,6 @@
     "student": "index.html?mode=client"
   },
   "build": {
-    "note": "Uses static runtime files under apps/fourier-lab and framework assets from /framework/*."
+    "note": "Uses static runtime files under client/src/labs/fourier-lab and framework assets from /framework/*."
   }
 }

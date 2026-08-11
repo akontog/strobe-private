@@ -9,6 +9,6 @@
   },
   "build": {
     "appShellJs": "/dist/labs/geometry-live/geometry-shell.bundle.js",
-    "note": "Uses static runtime files under apps/geometry-live, plus a React-style shell with App.jsx/index.jsx/components/data."
+    "note": "Uses static runtime files under client/src/labs/geometry-live, plus a React-style shell with App.jsx/index.jsx/components/data."
   }
 }

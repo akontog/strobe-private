@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { StudentView } from '../../client/src/labs/neural-lab/StudentView';
+import { TeacherView } from './TeacherView';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-  <StudentView />
+  <TeacherView />
 );

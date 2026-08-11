@@ -1,6 +1,6 @@
 const path = require('path');
 
-const LABS_ROOT = path.join(__dirname, '..', '..', 'apps');
+const LABS_ROOT = path.join(__dirname, '..', '..', 'client', 'src', 'labs');
 
 const APPS = [
   {

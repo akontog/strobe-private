@@ -21452,17 +21452,17 @@ var require_client = __commonJS({
   }
 });
 
-// apps/buffon-needle/teacher.jsx
-var import_react3 = __toESM(require_react());
-var import_client = __toESM(require_client());
+// client/src/labs/buffon-needle/teacher.jsx
+var import_react3 = __toESM(require_react(), 1);
+var import_client = __toESM(require_client(), 1);
 
 // client/src/labs/buffon-needle/TeacherView.jsx
 var import_react2 = __toESM(require_react(), 1);
 
-// client/src/labs/buffon-needle/BuffonApp.jsx
+// client/src/labs/buffon-needle/components/BuffonApp.jsx
 var import_react = __toESM(require_react(), 1);
 
-// client/src/labs/buffon-needle/student-template.js
+// client/src/labs/buffon-needle/data/student-template.js
 var studentTemplate = String.raw`<div style="text-align:center">
   <h1>Προσέγγιση του π</h1>
   <div class="subtitle">Η βελόνα του Buffon</div>
@@ -21614,7 +21614,7 @@ var studentTemplate = String.raw`<div style="text-align:center">
   </div>
 </div>`;
 
-// client/src/labs/buffon-needle/teacher-template.js
+// client/src/labs/buffon-needle/data/teacher-template.js
 var teacherTemplate = String.raw`<div style="text-align:center">
   <h1>Η βελόνα του Buffon</h1>
   <div class="subtitle"></div>
@@ -21718,7 +21718,7 @@ var teacherTemplate = String.raw`<div style="text-align:center">
   </div>
 </div>`;
 
-// client/src/labs/buffon-needle/student-logic.js
+// client/src/labs/buffon-needle/components/student-logic.js
 function mountBuffonStudent(rootElement) {
   const Y_MIN = 1.5, Y_MAX = 5;
   const simCv = document.getElementById("sim");
@@ -22256,7 +22256,7 @@ function mountBuffonStudent(rootElement) {
   };
 }
 
-// client/src/labs/buffon-needle/teacher-logic.js
+// client/src/labs/buffon-needle/components/teacher-logic.js
 function mountBuffonTeacher(rootElement) {
   let classroomApi = null;
   let students = [];
@@ -22845,7 +22845,7 @@ function mountBuffonTeacher(rootElement) {
   };
 }
 
-// client/src/labs/buffon-needle/BuffonApp.jsx
+// client/src/labs/buffon-needle/components/BuffonApp.jsx
 function BuffonApp({ role = "teacher" }) {
   const rootRef = (0, import_react.useRef)(null);
   (0, import_react.useEffect)(() => {
@@ -22875,7 +22875,7 @@ function TeacherView() {
   return /* @__PURE__ */ import_react2.default.createElement(BuffonApp_default, { role: "teacher" });
 }
 
-// apps/buffon-needle/teacher.jsx
+// client/src/labs/buffon-needle/teacher.jsx
 var root = import_client.default.createRoot(document.getElementById("root"));
 root.render(
   /* @__PURE__ */ import_react3.default.createElement(TeacherView, null)

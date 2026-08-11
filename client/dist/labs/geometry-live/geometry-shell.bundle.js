@@ -21452,15 +21452,15 @@ var require_client = __commonJS({
   }
 });
 
-// apps/geometry-live/index.jsx
-var import_react3 = __toESM(require_react());
-var import_client = __toESM(require_client());
+// client/src/labs/geometry-live/index.jsx
+var import_react3 = __toESM(require_react(), 1);
+var import_client = __toESM(require_client(), 1);
 
-// apps/geometry-live/App.jsx
-var import_react2 = __toESM(require_react());
+// client/src/labs/geometry-live/App.jsx
+var import_react2 = __toESM(require_react(), 1);
 
-// apps/geometry-live/components/GeometryLabShell.jsx
-var import_react = __toESM(require_react());
+// client/src/labs/geometry-live/components/GeometryLabShell.jsx
+var import_react = __toESM(require_react(), 1);
 function GeometryLabShell({ mode, config }) {
   (0, import_react.useEffect)(() => {
     if (typeof window === "undefined") {
@@ -21474,7 +21474,7 @@ function GeometryLabShell({ mode, config }) {
   return null;
 }
 
-// apps/geometry-live/data/modes.js
+// client/src/labs/geometry-live/data/modes.js
 var GEOMETRY_LAB_MODES = {
   teacher: {
     labId: "geometry-lab",
@@ -21493,14 +21493,14 @@ var GEOMETRY_LAB_MODES = {
   }
 };
 
-// apps/geometry-live/App.jsx
+// client/src/labs/geometry-live/App.jsx
 function App({ mode = "teacher" }) {
   const safeMode = GEOMETRY_LAB_MODES[mode] ? mode : "teacher";
   const config = GEOMETRY_LAB_MODES[safeMode];
   return /* @__PURE__ */ import_react2.default.createElement(GeometryLabShell, { mode: safeMode, config });
 }
 
-// apps/geometry-live/index.jsx
+// client/src/labs/geometry-live/index.jsx
 var rootNode = typeof document !== "undefined" ? document.getElementById("geometryLabRoot") : null;
 if (rootNode) {
   const mode = String(rootNode.dataset.mode || "teacher").trim() || "teacher";

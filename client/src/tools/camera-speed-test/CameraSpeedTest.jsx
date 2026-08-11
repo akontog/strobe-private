@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import './CameraSpeedTest.css';
 
 function pushBounded(list, value, max = 40) {
   if (!Number.isFinite(value)) {

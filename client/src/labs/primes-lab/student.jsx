@@ -1,9 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { StudentView } from '../../client/src/labs/buffon-needle/StudentView';
+import { StudentView } from './StudentView';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-root.render(
-  <StudentView />
-);
+root.render(<StudentView />);

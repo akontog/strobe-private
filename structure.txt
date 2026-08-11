@@ -1,15 +1,14 @@
 Folder PATH listing for volume OS
-Volume serial number is 00000098 4EE2:6C3B
+Volume serial number is 00000085 4EE2:6C3B
 C:.
 |   .gitignore
 |   package-lock.json
 |   package.json
-|   REACT_GUIDE.md
-|   REACT_SETUP_SUMMARY.md
 |   README.md
+|   README_REACT.md
 |   structure.txt
 |   
-+---!!! docs
++---!!!docs
 |   +---material
 |   |   +---neural-lab
 |   |   |   |   mathjax τύπος.html
@@ -21,54 +20,16 @@ C:.
 |   |   |   |       fruits.js
 |   |   |   |       
 |   |   |   +---icons
-|   |   |   |   +---animals
-|   |   |   |   |       animals_dataset.csv
-|   |   |   |   |       animal_01.png
-|   |   |   |   |       animal_02.png
-|   |   |   |   |       animal_03.png
-|   |   |   |   |       animal_04.png
-|   |   |   |   |       animal_05.png
-|   |   |   |   |       animal_06.png
-|   |   |   |   |       animal_07.png
-|   |   |   |   |       animal_08.png
-|   |   |   |   |       animal_09.png
-|   |   |   |   |       animal_10.png
-|   |   |   |   |       animal_11.png
-|   |   |   |   |       animal_12.png
-|   |   |   |   |       animal_13.png
-|   |   |   |   |       animal_14.png
-|   |   |   |   |       animal_15.png
-|   |   |   |   |       animal_16.png
-|   |   |   |   |       animal_17.png
-|   |   |   |   |       animal_18.png
-|   |   |   |   |       animal_19.png
-|   |   |   |   |       animal_20.png
-|   |   |   |   |       animal_21.png
-|   |   |   |   |       animal_22.png
-|   |   |   |   |       animal_23.png
-|   |   |   |   |       animal_24.png
-|   |   |   |   |       
-|   |   |   |   \---fruits
-|   |   |   |           fruits_dataset.csv
-|   |   |   |           fruit_01_apple.svg
-|   |   |   |           fruit_02_banana.svg
-|   |   |   |           fruit_03_strawberry.svg
-|   |   |   |           fruit_04_watermelon.svg
-|   |   |   |           fruit_05_orange.svg
-|   |   |   |           fruit_06_grapes.svg
-|   |   |   |           fruit_07_pineapple.svg
-|   |   |   |           fruit_08_cherry.svg
-|   |   |   |           fruit_09_lemon.svg
-|   |   |   |           fruit_10_peach.svg
-|   |   |   |           preview.html
-|   |   |   |           
+|   |   |   |       animals.zip
+|   |   |   |       fruits.zip
+|   |   |   |       
 |   |   |   \---papers
 |   |   |           Learning to Think Like A Neuron in Middle School.pdf
 |   |   |           Neural Networks in Middle School.pdf
 |   |   |           
 |   |   \---primes-lab
 |   |           A Game-Based Activity Related to Prime Numbers (2020).pdf
-|   |           Computational Thinking Education (chpater 9 - Primes - App Inventor).pdf
+|   |           Computational Thinking Education (chapter 9 - Primes - App Inventor).pdf
 |   |           
 |   \---reports
 |       |   brainstorming.md
@@ -77,36 +38,10 @@ C:.
 |       |   strobe.svg
 |       |   
 |       +---fourier-lab
-|       |       current_test_output.log
-|       |       current_test_output.tex
-|       |       debug_bib.tex
-|       |       greek-template.aux
-|       |       greek-template.log
-|       |       greek-template.out
-|       |       greek-template.pdf
-|       |       greek-template.synctex.gz
-|       |       greek-template.tex
-|       |       kontogianis.pdf
+|       |       fourier-lab.zip
 |       |       links.md
 |       |       README-fourier-lab.md
-|       |       references.bib
-|       |       report-debug.log
-|       |       report-debug.tex
 |       |       report.md
-|       |       report.pdf
-|       |       report.tex
-|       |       report_debug.tex
-|       |       report_debug2.tex
-|       |       report_debug3.tex
-|       |       test_direct.aux
-|       |       test_direct.log
-|       |       test_direct.out
-|       |       test_direct.pdf
-|       |       test_direct.tex
-|       |       test_output.tex
-|       |       test_plot.md
-|       |       test_plot.pdf
-|       |       xelatex_output.log
 |       |       
 |       +---geometry-lab
 |       |       references.bib
@@ -33572,69 +33507,6 @@ C:.
 |                   ttx.1
 |                   
 +---activities
-+---apps
-|   +---buffon-needle
-|   |       lab.manifest.json
-|   |       student.html
-|   |       student.jsx
-|   |       teacher.html
-|   |       teacher.jsx
-|   |       
-|   +---fourier-lab
-|   |   |   classroom-sync.js
-|   |   |   compile.log
-|   |   |   index.html
-|   |   |   lab.manifest.json
-|   |   |   normalmap.js
-|   |   |   
-|   |   +---media
-|   |   |       clips.mp4
-|   |   |       fourier_and_the_sea.png
-|   |   |       QRCode.png
-|   |   |       
-|   |   \---vendor
-|   |           three.min.js
-|   |           
-|   +---geometry-live
-|   |   |   App.jsx
-|   |   |   camera.html
-|   |   |   index.jsx
-|   |   |   lab.manifest.json
-|   |   |   mouse.html
-|   |   |   teacher.html
-|   |   |   
-|   |   +---assets
-|   |   +---components
-|   |   |       GeometryLabShell.jsx
-|   |   |       index.js
-|   |   |       
-|   |   +---data
-|   |   |       modes.js
-|   |   |       
-|   |   \---js
-|   |           presentation-shell.js
-|   |           presentation-sidebar-manager.js
-|   |           realtime-socket.js
-|   |           
-|   +---neural-lab
-|   |   |   index.jsx
-|   |   |   lab.manifest.json
-|   |   |   student.html
-|   |   |   student.jsx
-|   |   |   teacher.html
-|   |   |   teacher.jsx
-|   |   |   
-|   |   \---media
-|   |           neural_lab_student_qrcode.png
-|   |           
-|   \---primes-lab
-|           index.jsx
-|           lab.manifest.json
-|           student.html
-|           student.jsx
-|           teacher.html
-|           teacher.jsx
-|           
 +---client
 |   |   index.html
 |   |   package.json
@@ -33645,6 +33517,7 @@ C:.
 |   |   |   strobelogo.svg
 |   |   |   
 |   |   +---assets
+|   |   |       index-306m16xn.css
 |   |   |       index-3U0uCIbm.js
 |   |   |       index-BaEBvPUE.js
 |   |   |       index-BJq9ouVo.js
@@ -33654,6 +33527,7 @@ C:.
 |   |   |       index-Ce_drgBc.css
 |   |   |       index-CNU0pgDf.css
 |   |   |       index-CQLoM0GG.css
+|   |   |       index-CY3b6BVw.js
 |   |   |       index-DhzN6GPK.js
 |   |   |       index-Duk8Ykwt.css
 |   |   |       
@@ -33718,52 +33592,89 @@ C:.
 |       |   main.jsx
 |       |   
 |       +---framework
-|       |   +---assets
-|       |   |   +---css
-|       |   |   |       classroom-shared.css
-|       |   |   |       presentation-shell.css
-|       |   |   |       
-|       |   |   \---js
-|       |   |           classroom-api.js
-|       |   |           classroom-shared.js
-|       |   |           presentation-config.js
-|       |   |           presentation-shell.js
-|       |   |           presentation-toc.js
-|       |   |           
-|       |   \---components
-|       |           Accordion.jsx
-|       |           BlueNumberBox.jsx
-|       |           ConnectionNameControl.jsx
-|       |           identityStorage.js
-|       |           index.js
-|       |           StudentTable.jsx
-|       |           studentTableColumnPresets.jsx
-|       |           Toolbar.jsx
-|       |           
+|       |   \---assets
+|       |       +---css
+|       |       |       classroom-shared.css
+|       |       |       presentation-shell.css
+|       |       |       
+|       |       \---js
+|       |               classroom-api.js
+|       |               classroom-shared.js
+|       |               presentation-config.js
+|       |               presentation-shell.js
+|       |               presentation-toc.js
+|       |               
 |       +---labs
 |       |   +---buffon-needle
-|       |   |       BuffonApp.jsx
-|       |   |       student-logic.js
-|       |   |       student-styles.css
-|       |   |       student-template.js
-|       |   |       StudentView.jsx
-|       |   |       teacher-logic.js
-|       |   |       teacher-styles.css
-|       |   |       teacher-template.js
-|       |   |       TeacherView.jsx
-|       |   |       
+|       |   |   |   lab.manifest.json
+|       |   |   |   student-styles.css
+|       |   |   |   student.html
+|       |   |   |   student.jsx
+|       |   |   |   StudentView.jsx
+|       |   |   |   teacher-styles.css
+|       |   |   |   teacher.html
+|       |   |   |   teacher.jsx
+|       |   |   |   TeacherView.jsx
+|       |   |   |   
+|       |   |   +---components
+|       |   |   |       BuffonApp.jsx
+|       |   |   |       student-logic.js
+|       |   |   |       teacher-logic.js
+|       |   |   |       
+|       |   |   \---data
+|       |   |           student-template.js
+|       |   |           teacher-template.js
+|       |   |           
 |       |   +---fourier-lab
-|       |   |       StudentView.jsx
-|       |   |       TeacherView.jsx
-|       |   |       
+|       |   |   |   classroom-sync.js
+|       |   |   |   compile.log
+|       |   |   |   index.html
+|       |   |   |   lab.manifest.json
+|       |   |   |   normalmap.js
+|       |   |   |   StudentView.jsx
+|       |   |   |   TeacherView.jsx
+|       |   |   |   
+|       |   |   +---media
+|       |   |   |       clips.mp4
+|       |   |   |       fourier_and_the_sea.png
+|       |   |   |       QRCode.png
+|       |   |   |       
+|       |   |   \---vendor
+|       |   |           three.min.js
+|       |   |           
 |       |   +---geometry-live
-|       |   |       StudentView.jsx
-|       |   |       TeacherView.jsx
-|       |   |       
+|       |   |   |   App.jsx
+|       |   |   |   camera.html
+|       |   |   |   index.jsx
+|       |   |   |   lab.manifest.json
+|       |   |   |   mouse.html
+|       |   |   |   StudentView.jsx
+|       |   |   |   teacher.html
+|       |   |   |   TeacherView.jsx
+|       |   |   |   
+|       |   |   +---assets
+|       |   |   +---components
+|       |   |   |       GeometryLabShell.jsx
+|       |   |   |       index.js
+|       |   |   |       
+|       |   |   +---data
+|       |   |   |       modes.js
+|       |   |   |       
+|       |   |   \---js
+|       |   |           presentation-shell.js
+|       |   |           presentation-sidebar-manager.js
+|       |   |           realtime-socket.js
+|       |   |           
 |       |   +---neural-lab
 |       |   |   |   App.css
 |       |   |   |   App.jsx
+|       |   |   |   index.jsx
+|       |   |   |   lab.manifest.json
+|       |   |   |   student.html
+|       |   |   |   student.jsx
 |       |   |   |   StudentView.jsx
+|       |   |   |   teacher.html
+|       |   |   |   teacher.jsx
 |       |   |   |   TeacherView.jsx
 |       |   |   |   
 |       |   |   +---components
@@ -33778,13 +33689,22 @@ C:.
 |       |   |   |       TeacherCard.jsx
 |       |   |   |       VerticalProducts.jsx
 |       |   |   |       
-|       |   |   \---data
-|       |   |           datasets.js
+|       |   |   +---data
+|       |   |   |       datasets.js
+|       |   |   |       
+|       |   |   \---media
+|       |   |           neural_lab_student_qrcode.png
 |       |   |           
 |       |   \---primes-lab
 |       |       |   App.css
 |       |       |   App.jsx
+|       |       |   index.jsx
+|       |       |   lab.manifest.json
+|       |       |   student.html
+|       |       |   student.jsx
 |       |       |   StudentView.jsx
+|       |       |   teacher.html
+|       |       |   teacher.jsx
 |       |       |   TeacherView.jsx
 |       |       |   
 |       |       +---components
@@ -33819,6 +33739,9 @@ C:.
 |       |   +---components
 |       |   |       Accordion.jsx
 |       |   |       BlueNumberBox.jsx
+|       |   |       ConnectionNameControl.jsx
+|       |   |       identityStorage.js
+|       |   |       index.js
 |       |   |       LanguageSwitcher.jsx
 |       |   |       StudentTable.jsx
 |       |   |       studentTableColumnPresets.jsx
@@ -33852,27 +33775,23 @@ C:.
 |       |       dashboard-pages.css
 |       |       globals.css
 |       |       postit-cards.css
-|       |       tools-activity-builder.css
-|       |       tools-camera-speed-test.css
-|       |       tools-linear-seperation.css
 |       |       
 |       \---tools
 |           +---activity-builder
+|           |       ActivityBuilder.css
 |           |       ActivityBuilder.jsx
 |           |       
 |           +---camera-speed-test
+|           |       CameraSpeedTest.css
 |           |       CameraSpeedTest.jsx
 |           |       
 |           \---linear-seperation
+|                   LinearSeperation.css
 |                   LinearSeperation.jsx
 |                   
 +---data
 |       users-DESKTOP-R0988N4.json
 |       users.json
-|       
-+---middleware
-|       checkRole.js
-|       sessionMiddleware.js
 |       
 +---node_modules
 |   |   .package-lock.json
@@ -37916,6 +37835,7 @@ C:.
 |   |   |   |   strobelogo.svg
 |   |   |   |   
 |   |   |   +---assets
+|   |   |   |       index-306m16xn.css
 |   |   |   |       index-3U0uCIbm.js
 |   |   |   |       index-BaEBvPUE.js
 |   |   |   |       index-BJq9ouVo.js
@@ -37925,6 +37845,7 @@ C:.
 |   |   |   |       index-Ce_drgBc.css
 |   |   |   |       index-CNU0pgDf.css
 |   |   |   |       index-CQLoM0GG.css
+|   |   |   |       index-CY3b6BVw.js
 |   |   |   |       index-DhzN6GPK.js
 |   |   |   |       index-Duk8Ykwt.css
 |   |   |   |       
@@ -37989,52 +37910,89 @@ C:.
 |   |       |   main.jsx
 |   |       |   
 |   |       +---framework
-|   |       |   +---assets
-|   |       |   |   +---css
-|   |       |   |   |       classroom-shared.css
-|   |       |   |   |       presentation-shell.css
-|   |       |   |   |       
-|   |       |   |   \---js
-|   |       |   |           classroom-api.js
-|   |       |   |           classroom-shared.js
-|   |       |   |           presentation-config.js
-|   |       |   |           presentation-shell.js
-|   |       |   |           presentation-toc.js
-|   |       |   |           
-|   |       |   \---components
-|   |       |           Accordion.jsx
-|   |       |           BlueNumberBox.jsx
-|   |       |           ConnectionNameControl.jsx
-|   |       |           identityStorage.js
-|   |       |           index.js
-|   |       |           StudentTable.jsx
-|   |       |           studentTableColumnPresets.jsx
-|   |       |           Toolbar.jsx
-|   |       |           
+|   |       |   \---assets
+|   |       |       +---css
+|   |       |       |       classroom-shared.css
+|   |       |       |       presentation-shell.css
+|   |       |       |       
+|   |       |       \---js
+|   |       |               classroom-api.js
+|   |       |               classroom-shared.js
+|   |       |               presentation-config.js
+|   |       |               presentation-shell.js
+|   |       |               presentation-toc.js
+|   |       |               
 |   |       +---labs
 |   |       |   +---buffon-needle
-|   |       |   |       BuffonApp.jsx
-|   |       |   |       student-logic.js
-|   |       |   |       student-styles.css
-|   |       |   |       student-template.js
-|   |       |   |       StudentView.jsx
-|   |       |   |       teacher-logic.js
-|   |       |   |       teacher-styles.css
-|   |       |   |       teacher-template.js
-|   |       |   |       TeacherView.jsx
-|   |       |   |       
+|   |       |   |   |   lab.manifest.json
+|   |       |   |   |   student-styles.css
+|   |       |   |   |   student.html
+|   |       |   |   |   student.jsx
+|   |       |   |   |   StudentView.jsx
+|   |       |   |   |   teacher-styles.css
+|   |       |   |   |   teacher.html
+|   |       |   |   |   teacher.jsx
+|   |       |   |   |   TeacherView.jsx
+|   |       |   |   |   
+|   |       |   |   +---components
+|   |       |   |   |       BuffonApp.jsx
+|   |       |   |   |       student-logic.js
+|   |       |   |   |       teacher-logic.js
+|   |       |   |   |       
+|   |       |   |   \---data
+|   |       |   |           student-template.js
+|   |       |   |           teacher-template.js
+|   |       |   |           
 |   |       |   +---fourier-lab
-|   |       |   |       StudentView.jsx
-|   |       |   |       TeacherView.jsx
-|   |       |   |       
+|   |       |   |   |   classroom-sync.js
+|   |       |   |   |   compile.log
+|   |       |   |   |   index.html
+|   |       |   |   |   lab.manifest.json
+|   |       |   |   |   normalmap.js
+|   |       |   |   |   StudentView.jsx
+|   |       |   |   |   TeacherView.jsx
+|   |       |   |   |   
+|   |       |   |   +---media
+|   |       |   |   |       clips.mp4
+|   |       |   |   |       fourier_and_the_sea.png
+|   |       |   |   |       QRCode.png
+|   |       |   |   |       
+|   |       |   |   \---vendor
+|   |       |   |           three.min.js
+|   |       |   |           
 |   |       |   +---geometry-live
-|   |       |   |       StudentView.jsx
-|   |       |   |       TeacherView.jsx
-|   |       |   |       
+|   |       |   |   |   App.jsx
+|   |       |   |   |   camera.html
+|   |       |   |   |   index.jsx
+|   |       |   |   |   lab.manifest.json
+|   |       |   |   |   mouse.html
+|   |       |   |   |   StudentView.jsx
+|   |       |   |   |   teacher.html
+|   |       |   |   |   TeacherView.jsx
+|   |       |   |   |   
+|   |       |   |   +---assets
+|   |       |   |   +---components
+|   |       |   |   |       GeometryLabShell.jsx
+|   |       |   |   |       index.js
+|   |       |   |   |       
+|   |       |   |   +---data
+|   |       |   |   |       modes.js
+|   |       |   |   |       
+|   |       |   |   \---js
+|   |       |   |           presentation-shell.js
+|   |       |   |           presentation-sidebar-manager.js
+|   |       |   |           realtime-socket.js
+|   |       |   |           
 |   |       |   +---neural-lab
 |   |       |   |   |   App.css
 |   |       |   |   |   App.jsx
+|   |       |   |   |   index.jsx
+|   |       |   |   |   lab.manifest.json
+|   |       |   |   |   student.html
+|   |       |   |   |   student.jsx
 |   |       |   |   |   StudentView.jsx
+|   |       |   |   |   teacher.html
+|   |       |   |   |   teacher.jsx
 |   |       |   |   |   TeacherView.jsx
 |   |       |   |   |   
 |   |       |   |   +---components
@@ -38049,13 +38007,22 @@ C:.
 |   |       |   |   |       TeacherCard.jsx
 |   |       |   |   |       VerticalProducts.jsx
 |   |       |   |   |       
-|   |       |   |   \---data
-|   |       |   |           datasets.js
+|   |       |   |   +---data
+|   |       |   |   |       datasets.js
+|   |       |   |   |       
+|   |       |   |   \---media
+|   |       |   |           neural_lab_student_qrcode.png
 |   |       |   |           
 |   |       |   \---primes-lab
 |   |       |       |   App.css
 |   |       |       |   App.jsx
+|   |       |       |   index.jsx
+|   |       |       |   lab.manifest.json
+|   |       |       |   student.html
+|   |       |       |   student.jsx
 |   |       |       |   StudentView.jsx
+|   |       |       |   teacher.html
+|   |       |       |   teacher.jsx
 |   |       |       |   TeacherView.jsx
 |   |       |       |   
 |   |       |       +---components
@@ -38090,6 +38057,9 @@ C:.
 |   |       |   +---components
 |   |       |   |       Accordion.jsx
 |   |       |   |       BlueNumberBox.jsx
+|   |       |   |       ConnectionNameControl.jsx
+|   |       |   |       identityStorage.js
+|   |       |   |       index.js
 |   |       |   |       LanguageSwitcher.jsx
 |   |       |   |       StudentTable.jsx
 |   |       |   |       studentTableColumnPresets.jsx
@@ -38123,18 +38093,18 @@ C:.
 |   |       |       dashboard-pages.css
 |   |       |       globals.css
 |   |       |       postit-cards.css
-|   |       |       tools-activity-builder.css
-|   |       |       tools-camera-speed-test.css
-|   |       |       tools-linear-seperation.css
 |   |       |       
 |   |       \---tools
 |   |           +---activity-builder
+|   |           |       ActivityBuilder.css
 |   |           |       ActivityBuilder.jsx
 |   |           |       
 |   |           +---camera-speed-test
+|   |           |       CameraSpeedTest.css
 |   |           |       CameraSpeedTest.jsx
 |   |           |       
 |   |           \---linear-seperation
+|   |                   LinearSeperation.css
 |   |                   LinearSeperation.jsx
 |   |                   
 |   +---strobe-server

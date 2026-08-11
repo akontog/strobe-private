@@ -3,16 +3,14 @@
 Unified classroom platform with:
 - Node.js server (API, dashboards, WebSocket)
 - Vite/React client
-- Labs served from central apps/*
+- Labs served from client/src/labs/*
 
 ## Structure
 - server/ server runtime and routes
 - server/apps/registry.js app registry used by teacher/student launchers
-- client/src/labs/* React StudentView/TeacherView wrappers
-- apps/* central lab runtime and sources (fourier, geometry, neural, buffon, primes)
-- client/src/framework/components/* shared framework React components
+- client/src/labs/* lab runtime and React views (fourier, geometry, neural, buffon, primes)
 - client/src/framework/assets/* shared framework CSS/JS assets served at /framework/*
-- client/src/shared/* shared React utilities/hooks/i18n
+- client/src/shared/* shared React components/hooks/i18n
 - client/src/layout/* layout area (when present in client code)
 - vision/
 	- camera_server.py
@@ -48,7 +46,7 @@ npm run build:client
 ```
 (or npm run build)
 
-### Build lab bundles from central source
+### Build lab bundles
 ```powershell
 npm run clean:labs
 npm run build:buffon-needle

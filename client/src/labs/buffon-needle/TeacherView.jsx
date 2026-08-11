@@ -1,5 +1,5 @@
 import React from 'react';
-import BuffonApp from './BuffonApp';
+import BuffonApp from './components/BuffonApp';
 import './teacher-styles.css';
 
 export function TeacherView() {
