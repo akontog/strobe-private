@@ -5,11 +5,5 @@
   "entry": {
     "teacher": "teacher.html",
     "student": "student.html"
-  },
-  "build": {
-    "teacherJs": "/dist/labs/buffon-needle/teacher.bundle.js",
-    "teacherCss": "/dist/labs/buffon-needle/teacher.bundle.css",
-    "studentJs": "/dist/labs/buffon-needle/student.bundle.js",
-    "studentCss": "/dist/labs/buffon-needle/student.bundle.css"
   }
 }

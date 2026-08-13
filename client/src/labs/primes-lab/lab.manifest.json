@@ -2,14 +2,8 @@
   "labId": "primes-lab",
   "slug": "primes-lab",
   "name": "Primes Lab",
-  "entry": {
-    "teacher": "teacher.html",
-    "student": "student.html"
-  },
-  "build": {
-    "teacherJs": "/dist/labs/primes-lab/teacher.bundle.js",
-    "teacherCss": "/dist/labs/primes-lab/teacher.bundle.css",
-    "studentJs": "/dist/labs/primes-lab/student.bundle.js",
-    "studentCss": "/dist/labs/primes-lab/student.bundle.css"
-  }
+  "roles": [
+    "student",
+    "teacher"
+  ]
 }

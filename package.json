@@ -20,15 +20,11 @@
     "build:neural-lab": "npm run build:neural-lab:teacher && npm run build:neural-lab:student",
     "build:neural-lab:teacher": "esbuild client/src/labs/neural-lab/teacher.jsx --bundle --format=esm --outfile=client/dist/labs/neural-lab/teacher.bundle.js --loader:.jsx=jsx --loader:.css=css",
     "build:neural-lab:student": "esbuild client/src/labs/neural-lab/student.jsx --bundle --format=esm --outfile=client/dist/labs/neural-lab/student.bundle.js --loader:.jsx=jsx --loader:.css=css",
-    "build:primes-lab": "npm run build:primes-lab:teacher && npm run build:primes-lab:student",
-    "build:primes-lab:teacher": "esbuild client/src/labs/primes-lab/teacher.jsx --bundle --format=esm --outfile=client/dist/labs/primes-lab/teacher.bundle.js --loader:.jsx=jsx --loader:.css=css",
-    "build:primes-lab:student": "esbuild client/src/labs/primes-lab/student.jsx --bundle --format=esm --outfile=client/dist/labs/primes-lab/student.bundle.js --loader:.jsx=jsx --loader:.css=css",
     "build:buffon-needle": "npm run build:buffon-needle:teacher && npm run build:buffon-needle:student",
     "build:buffon-needle:teacher": "esbuild client/src/labs/buffon-needle/teacher.jsx --bundle --format=esm --outfile=client/dist/labs/buffon-needle/teacher.bundle.js --loader:.jsx=jsx --loader:.css=css",
     "build:buffon-needle:student": "esbuild client/src/labs/buffon-needle/student.jsx --bundle --format=esm --outfile=client/dist/labs/buffon-needle/student.bundle.js --loader:.jsx=jsx --loader:.css=css",
     "build:geometry-live": "esbuild client/src/labs/geometry-live/index.jsx --bundle --format=esm --outfile=client/dist/labs/geometry-live/geometry-shell.bundle.js --loader:.jsx=jsx",
-    "build:labs": "npm run clean:labs && npm run build:buffon-needle && npm run build:neural-lab && npm run build:primes-lab && npm run build:geometry-live && npm run prune:labs",
-    "build:all": "npm run build:client && npm run build:labs"
+    "build:all": "npm run build:client"
   },
   "dependencies": {
     "express": "^5.2.1",

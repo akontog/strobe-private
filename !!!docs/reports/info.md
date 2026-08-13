@@ -32,6 +32,7 @@
 ## αποθήκευση δεδομένων
 
 - json
+- mongoDB;
 
 ## package manager
 
@@ -84,6 +85,8 @@
   – Ξεκινά το WebSocket server, σερβίρει στατικές σελίδες, διαχειρίζεται routes.
 
 ## 📂 `client/`
+
+- main.jsx: entry point του React application
 
 κώδικας διεπαφής χρήστη
 
