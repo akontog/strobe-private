@@ -1,9 +1,9 @@
 import React from 'react';
-import BuffonApp from './components/BuffonApp';
+import App from './App';
 import './teacher-styles.css';
 
 export function TeacherView() {
-  return <BuffonApp role="teacher" />;
+  return <App role="teacher" />;
 }
 
 export default TeacherView;

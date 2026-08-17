@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import { studentTemplate } from '../data/student-template';
-import { teacherTemplate } from '../data/teacher-template';
-import { mountBuffonStudent } from './student-logic';
-import { mountBuffonTeacher } from './teacher-logic';
+import { studentTemplate } from './data/student-template';
+import { teacherTemplate } from './data/teacher-template';
+import { mountBuffonStudent } from './components/student-logic';
+import { mountBuffonTeacher } from './components/teacher-logic';
 
-function BuffonApp({ role = 'teacher' }) {
+function App({ role = 'teacher' }) {
   const rootRef = useRef(null);
 
   useEffect(() => {
@@ -34,4 +34,4 @@ function BuffonApp({ role = 'teacher' }) {
   return <div ref={rootRef} />;
 }
 
-export default BuffonApp;
+export default App;
