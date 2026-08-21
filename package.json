@@ -28,8 +28,10 @@
   },
   "dependencies": {
     "express": "^5.2.1",
+    "i18next": "^26.4.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-i18next": "^17.0.12",
     "ws": "^8.18.3"
   },
   "devDependencies": {
