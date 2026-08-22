@@ -104,7 +104,7 @@ function formatRule(weights, featureKeys, theta) {
   return `${terms} > ${theta.toFixed(3)}`;
 }
 
-export default function LinearSeperation() {
+export default function LinearSeparation() {
   const [jsonText, setJsonText] = useState(DEFAULT_JSON);
   const [parsed, setParsed] = useState(() => {
     try {

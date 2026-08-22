@@ -16,7 +16,6 @@
     "build:client": "npm run build --workspace client",
     "build": "npm run build --workspace client",
     "clean:labs": "node -e \"require('fs').rmSync('client/dist/labs',{ recursive: true, force: true })\"",
-    "prune:labs": "node scripts/prune-labs-dist.js",
     "build:neural-lab": "npm run build:neural-lab:teacher && npm run build:neural-lab:student",
     "build:neural-lab:teacher": "esbuild client/src/labs/neural-lab/teacher.jsx --bundle --format=esm --outfile=client/dist/labs/neural-lab/teacher.bundle.js --loader:.jsx=jsx --loader:.css=css",
     "build:neural-lab:student": "esbuild client/src/labs/neural-lab/student.jsx --bundle --format=esm --outfile=client/dist/labs/neural-lab/student.bundle.js --loader:.jsx=jsx --loader:.css=css",
