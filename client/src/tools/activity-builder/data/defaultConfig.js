@@ -1,0 +1,1 @@
+export const DEFAULT_CONFIG_TEXT = '{\n  "roundTimeSec": 60,\n  "targetError": 0.005\n}';
