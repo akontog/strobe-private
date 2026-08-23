@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-export const Accordion = ({ title, children }) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const Accordion = ({ title, icon = null, open = false, children }) => {
+  const [isOpen, setIsOpen] = useState(open);
 
   return (
     <div className="accordion">
@@ -9,7 +9,7 @@ export const Accordion = ({ title, children }) => {
         className="accordion-btn"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span>{title}</span>
+        <span>{icon + title}</span>
         <span className="accordion-icon">{isOpen ? '▲' : '▼'}</span>
       </button>
       <div className={`accordion-content ${isOpen ? 'open' : ''}`}>

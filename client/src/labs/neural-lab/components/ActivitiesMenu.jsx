@@ -15,7 +15,11 @@ export const getNeuralActivityTitle = (activityId, fallback = ACTIVITY_OPTIONS[0
 };
 
 export const ActivitiesMenu = ({ value = '1', onChange }) => (
-  <Accordion title="🔬 Δραστηριότητες">
+  <Accordion 
+    title="Δραστηριότητες"
+    icon= "🔬"
+    open={false}
+  >
     <div className="data-section activities-menu">
       <div className="select-group">
         <label>Επιλογή δραστηριότητας</label>

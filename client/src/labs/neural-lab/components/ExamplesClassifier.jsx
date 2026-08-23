@@ -111,7 +111,11 @@ export const ExamplesClassifier = ({
   }
 
   return (
-    <Accordion title="🔎 Ταξινόμηση Παραδειγμάτων">
+    <Accordion 
+      title="Ταξινόμηση Παραδειγμάτων"
+      icon= " 🔎 "
+      open={true} 
+    >
       <div className="data-section">
         <table className="data-table">
           <thead>

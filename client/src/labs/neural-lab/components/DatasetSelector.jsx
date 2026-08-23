@@ -76,7 +76,11 @@ export const DatasetSelector = ({
   };
   
   return (
-    <Accordion title="🗄️ Δεδομένα">
+    <Accordion 
+      title="Δεδομένα" 
+      icon= "🗄️"
+      open={false}  
+    >
     <div className="control-bar">
       <div className="select-group">
         <label>📊 Σύνολο δεδομένων</label>

@@ -116,7 +116,11 @@ export default function LinearSeparation() {
         <h1>Linear Separation Tool</h1>
         <p>Δώσε JSON τύπου datasets.js και βρες υπερεπίπεδο για target-vs-rest.</p>
       </header>
-      <Accordion title="Εισαγωγή Dataset JSON">
+      <Accordion 
+        title="Εισαγωγή Dataset JSON"
+        icon= "📥"
+        open={false}
+      >
         <InputPanel
           jsonText={jsonText}
           onJsonTextChange={setJsonText}
@@ -126,7 +130,11 @@ export default function LinearSeparation() {
         />
       </Accordion>
       
-      <Accordion title="Ρυθμίσεις">
+      <Accordion 
+        title="Ρυθμίσεις"
+        icon= "⚙️"
+        open={false}  
+      >
         <SettingsPanel
           datasetKeys={datasetKeys}
           datasetKey={datasetKey}
@@ -136,12 +144,15 @@ export default function LinearSeparation() {
           onTargetChange={setTargetName}
         />
       </Accordion>
-
-    <article className="tool-card">
-        <h2>Αποτέλεσμα</h2>
+    <Accordion
+      title="Αποτέλεσμα"
+      icon= "📊"
+      open={false}
+    >
+      <article className="tool-card">
         <ResultsPanel result={result} />
       </article>
-
+    </Accordion>
     </section>
   );
 }

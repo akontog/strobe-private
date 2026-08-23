@@ -29,7 +29,11 @@ export const StudentTable = ({
   const resolvedFallback = nameFallback || t('common.student');
 
   return (
-    <Accordion title={resolvedTitle}>
+    <Accordion 
+      title={resolvedTitle}
+      icon= "🗄️"
+      open={false}  
+    >
       <div className="data-section">
         <table className="data-table">
           <thead>
