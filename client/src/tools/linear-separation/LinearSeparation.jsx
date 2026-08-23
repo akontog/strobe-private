@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { findIntegerSeparator, dot } from './logic/linearSeparator';
 import { inferFeatureKeys, formatRule } from './logic/datasetUtils';
+import { InputPanel, SettingsPanel, ResultsPanel } from './components';
+
 import { DEFAULT_JSON } from './data/defaultDataset';
 import './LinearSeparation.css';
-
-
 
 
 export default function LinearSeparation() {
@@ -115,87 +115,29 @@ export default function LinearSeparation() {
         <h1>Linear Separation Tool</h1>
         <p>Δώσε JSON τύπου datasets.js και βρες υπερεπίπεδο για target-vs-rest.</p>
       </header>
+      
+      <InputPanel
+        jsonText={jsonText}
+        onJsonTextChange={setJsonText}
+        onFileUpload={onFileUpload}
+        onApply={applyJson}
+        parseError={parseError}
+      />
 
-      <article className="tool-card">
-        <h2>Εισαγωγή Dataset JSON</h2>
-        <textarea
-          value={jsonText}
-          onChange={(event) => setJsonText(event.target.value)}
-          placeholder="Κάνε επικόλληση το JSON εδώ"
-          rows={14}
-        />
-        <div className="tool-actions">
-          <input type="file" accept="application/json,.json" onChange={onFileUpload} />
-          <button type="button" onClick={applyJson}>Φόρτωση JSON</button>
-        </div>
-        {parseError ? <p className="tool-error">Σφάλμα JSON: {parseError}</p> : null}
-      </article>
+      <SettingsPanel
+        datasetKeys={datasetKeys}
+        datasetKey={datasetKey}
+        onDatasetChange={onDatasetChange}
+        examples={examples}
+        effectiveTarget={effectiveTarget}
+        onTargetChange={setTargetName}
+      />
 
-      <article className="tool-card">
-        <h2>Ρυθμίσεις</h2>
-        <div className="tool-grid tool-grid--two">
-          <label>
-            Dataset
-            <select value={datasetKey} onChange={(event) => onDatasetChange(event.target.value)}>
-              {datasetKeys.map((key) => (
-                <option key={key} value={key}>{key}</option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Κατηγορία-στόχος
-            <select value={effectiveTarget} onChange={(event) => setTargetName(event.target.value)}>
-              {examples.map((example) => (
-                <option key={example.name} value={example.name}>{example.name}</option>
-              ))}
-            </select>
-          </label>
-        </div>
-      </article>
-
-      <article className="tool-card">
+    <article className="tool-card">
         <h2>Αποτέλεσμα</h2>
-        {!result ? <p>Δεν υπάρχουν αρκετά στοιχεία ακόμα.</p> : null}
-
-        {result && !result.separable ? (
-          <div>
-            <p className="tool-error">Δεν βρέθηκε διαχωριστής.</p>
-            <p>{result.reason}</p>
-          </div>
-        ) : null}
-
-        {result && result.separable ? (
-          <>
-            <p><strong>Βρέθηκε διαχωριστής.</strong> Μικρότερο max|w|: {result.radius}, margin: {result.margin.toFixed(3)}</p>
-            <code className="linear-rule">{formatRule(result.w, result.featureKeys, result.theta)}</code>
-
-            <table className="linear-table">
-              <thead>
-                <tr>
-                  <th>Στοιχείο</th>
-                  {result.featureKeys.map((key) => <th key={key}>{key}</th>)}
-                  <th>w·x</th>
-                  <th>Πρόβλεψη</th>
-                  <th>Label</th>
-                  <th>OK</th>
-                </tr>
-              </thead>
-              <tbody>
-                {result.rows.map((row) => (
-                  <tr key={row.name}>
-                    <td>{row.name}</td>
-                    {row.x.map((value, idx) => <td key={`${row.name}-${idx}`}>{value}</td>)}
-                    <td>{row.value.toFixed(3)}</td>
-                    <td>{row.predictedPositive ? 'θετικό' : 'αρνητικό'}</td>
-                    <td>{row.actualPositive ? 'στόχος' : 'λοιπά'}</td>
-                    <td className={row.correct ? 'linear-ok' : 'linear-bad'}>{row.correct ? '✓' : '✗'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
-        ) : null}
+        <ResultsPanel result={result} />
       </article>
+
     </section>
   );
 }
