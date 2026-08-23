@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { findIntegerSeparator, dot } from './logic/linearSeparator';
 import { inferFeatureKeys, formatRule } from './logic/datasetUtils';
+import { Accordion } from '../../shared/components';
 import { InputPanel, SettingsPanel, ResultsPanel } from './components';
 
 import { DEFAULT_JSON } from './data/defaultDataset';
@@ -115,23 +116,26 @@ export default function LinearSeparation() {
         <h1>Linear Separation Tool</h1>
         <p>Δώσε JSON τύπου datasets.js και βρες υπερεπίπεδο για target-vs-rest.</p>
       </header>
+      <Accordion title="Εισαγωγή Dataset JSON">
+        <InputPanel
+          jsonText={jsonText}
+          onJsonTextChange={setJsonText}
+          onFileUpload={onFileUpload}
+          onApply={applyJson}
+          parseError={parseError}
+        />
+      </Accordion>
       
-      <InputPanel
-        jsonText={jsonText}
-        onJsonTextChange={setJsonText}
-        onFileUpload={onFileUpload}
-        onApply={applyJson}
-        parseError={parseError}
-      />
-
-      <SettingsPanel
-        datasetKeys={datasetKeys}
-        datasetKey={datasetKey}
-        onDatasetChange={onDatasetChange}
-        examples={examples}
-        effectiveTarget={effectiveTarget}
-        onTargetChange={setTargetName}
-      />
+      <Accordion title="Ρυθμίσεις">
+        <SettingsPanel
+          datasetKeys={datasetKeys}
+          datasetKey={datasetKey}
+          onDatasetChange={onDatasetChange}
+          examples={examples}
+          effectiveTarget={effectiveTarget}
+          onTargetChange={setTargetName}
+        />
+      </Accordion>
 
     <article className="tool-card">
         <h2>Αποτέλεσμα</h2>

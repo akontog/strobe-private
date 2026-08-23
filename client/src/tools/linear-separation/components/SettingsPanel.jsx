@@ -10,7 +10,6 @@ export default function DatasetSettingsPanel({
 }) {
   return (
     <article className="tool-card">
-      <h2>Ρυθμίσεις</h2>
       <div className="tool-grid tool-grid--two">
         <label>
           Dataset

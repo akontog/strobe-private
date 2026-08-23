@@ -11,10 +11,6 @@
     - BrowserRouter
 - client/src/App.jsx: Root component
 
-- client/src/labs/<νέος φάκελος>/*: Πηγαίος κώδικας/runtime ανά εργαστήριο
-    - html/js/css/media
-    - StudentView.jsx
-    - TeacherView.jsx
   
 - client/src/shared/*: Κοινά components/hooks/i18n/helpers
   - components/*: Κοινά επαναχρησιμοποιήσιμα React components
@@ -25,7 +21,13 @@
 
 - client/src/layout/*: Κοινά components διάταξης
 
-- client/src/tools - Βοηθητικά εργαλεία
+
+- client/src/labs/<νέος φάκελος>/*: Εργαστήρια (κώδικας)
+    - html/js/css/media
+    - StudentView.jsx
+    - TeacherView.jsx
+    - 
+- client/src/tools - Βοηθητικά εργαλεία (κώδικας)
   - components/*: 
   - data/*: Στατικά δεδομένα ή προεπιλεγμένα datasets που φορτώνει το εργαλείο κατά την εκκίνηση.
   - logic/*: Συναρτήσεις (χωρίς React) που υλοποιούν την λογική του εργαλείου.
