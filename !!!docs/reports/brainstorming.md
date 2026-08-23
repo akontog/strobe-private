@@ -117,6 +117,7 @@
 ### μη γραμμικότητα
 
 - Activation Functions
+- [How AI Models Think: The Key Role of Activation Functions with Code Examples](https://www.freecodecamp.org/news/activation-functions-in-neural-networks/)
 
 ### αυτοματοποίηση
 

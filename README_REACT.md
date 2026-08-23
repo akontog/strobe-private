@@ -15,6 +15,7 @@
     - html/js/css/media
     - StudentView.jsx
     - TeacherView.jsx
+  
 - client/src/shared/*: Κοινά components/hooks/i18n/helpers
   - components/*: Κοινά επαναχρησιμοποιήσιμα React components
   - hooks/*: 
@@ -24,6 +25,12 @@
 
 - client/src/layout/*: Κοινά components διάταξης
 
+- client/src/tools - Βοηθητικά εργαλεία
+  - components/*: 
+  - data/*: Στατικά δεδομένα ή προεπιλεγμένα datasets που φορτώνει το εργαλείο κατά την εκκίνηση.
+  - logic/*: Συναρτήσεις (χωρίς React) που υλοποιούν την λογική του εργαλείου.
+  - <όνομα εργαλείου>.jsx: Root component του εργαλείου.
+  - <όνομα εργαλείου>.css: Στυλ αποκλειστικά για το συγκεκριμένο εργαλείο.
 
 ## server (backend)
 
