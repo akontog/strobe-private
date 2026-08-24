@@ -1,0 +1,414 @@
+Folder PATH listing for volume OS
+Volume serial number is 00000016 4EE2:6C3B
+C:.
+|   index.html
+|   package.json
+|   structure.txt
+|   vite.config.js
+|   
++---dist
+|   |   index.html
+|   |   strobelogo.svg
+|   |   
+|   \---assets
+|           index--8M_DQuy.js
+|           index-306m16xn.css
+|           index-aGyk7zwr.js
+|           index-AuiFVksF.js
+|           index-AvdzisO9.js
+|           index-B5CfgEkf.js
+|           index-Bbi4PRRl.js
+|           index-Bmkn4ZA_.js
+|           index-Bvxq88Dc.js
+|           index-BXdJ1glb.js
+|           index-BXMESQGU.js
+|           index-By25SHmd.js
+|           index-ByZawkM4.js
+|           index-ByZsjPRG.css
+|           index-BzM5Wc70.js
+|           index-C-XSuIcl.js
+|           index-CcgHyiAi.js
+|           index-CgvpPAsd.js
+|           index-CkK_2MZ9.js
+|           index-CS4tjd8l.js
+|           index-CUXosQNL.js
+|           index-Cv0cG6F8.js
+|           index-CwBxOGFX.js
+|           index-CY3b6BVw.js
+|           index-DFhgi_tR.js
+|           index-DhwSDb_K.js
+|           index-DoZAY1kw.js
+|           index-DqQDGUfH.js
+|           index-DrWfBMux.js
+|           index-DuvdC0kR.js
+|           index-DxVJTExp.js
+|           index-DYm20uMV.js
+|           index-fBfb4wK2.js
+|           index-Pe0TwVeG.js
+|           index-rR7MBIs6.js
+|           index-vzne6Nit.js
+|           index-zdXPOuMk.js
+|           
++---node_modules
+|   +---.vite
+|   |   \---deps
+|   |           chunk-MLZ2HMDO.js
+|   |           chunk-MLZ2HMDO.js.map
+|   |           chunk-SUOMZXXK.js
+|   |           chunk-SUOMZXXK.js.map
+|   |           chunk-YLJ4XMA6.js
+|   |           chunk-YLJ4XMA6.js.map
+|   |           i18next-browser-languagedetector.js
+|   |           i18next-browser-languagedetector.js.map
+|   |           i18next.js
+|   |           i18next.js.map
+|   |           package.json
+|   |           react-dom.js
+|   |           react-dom.js.map
+|   |           react-dom_client.js
+|   |           react-dom_client.js.map
+|   |           react-i18next.js
+|   |           react-i18next.js.map
+|   |           react-router-dom.js
+|   |           react-router-dom.js.map
+|   |           react.js
+|   |           react.js.map
+|   |           react_jsx-dev-runtime.js
+|   |           react_jsx-dev-runtime.js.map
+|   |           react_jsx-runtime.js
+|   |           react_jsx-runtime.js.map
+|   |           _metadata.json
+|   |           
+|   +---.vite-temp
+|   +---i18next
+|   |   |   .nvmrc
+|   |   |   i18next.js
+|   |   |   i18next.min.js
+|   |   |   index.d.mts
+|   |   |   index.d.ts
+|   |   |   index.js
+|   |   |   LICENSE
+|   |   |   package.json
+|   |   |   README.md
+|   |   |   
+|   |   +---dist
+|   |   |   +---cjs
+|   |   |   |       i18next.js
+|   |   |   |       
+|   |   |   +---esm
+|   |   |   |       i18next.bundled.js
+|   |   |   |       i18next.js
+|   |   |   |       package.json
+|   |   |   |       
+|   |   |   \---umd
+|   |   |           i18next.js
+|   |   |           i18next.min.js
+|   |   |           
+|   |   \---typescript
+|   |           helpers.d.ts
+|   |           options.d.ts
+|   |           t.d.ts
+|   |           
+|   \---react-i18next
+|       |   .eslintrc.json
+|       |   .prettierignore
+|       |   CHANGELOG.md
+|       |   helpers.d.ts
+|       |   icu.macro.d.mts
+|       |   icu.macro.d.ts
+|       |   icu.macro.js
+|       |   index.d.mts
+|       |   index.d.ts
+|       |   initReactI18next.d.mts
+|       |   initReactI18next.d.ts
+|       |   LICENSE
+|       |   lint-staged.config.mjs
+|       |   package.json
+|       |   react-i18next.js
+|       |   react-i18next.min.js
+|       |   README.md
+|       |   TransWithoutContext.d.mts
+|       |   TransWithoutContext.d.ts
+|       |   vitest.workspace.typescript.mts
+|       |   
+|       +---.husky
+|       |       pre-commit
+|       |       
+|       +---dist
+|       |   +---amd
+|       |   |       react-i18next.js
+|       |   |       react-i18next.min.js
+|       |   |       
+|       |   +---commonjs
+|       |   |       context.js
+|       |   |       defaults.js
+|       |   |       I18nextProvider.js
+|       |   |       i18nInstance.js
+|       |   |       index.js
+|       |   |       initReactI18next.js
+|       |   |       Trans.js
+|       |   |       Translation.js
+|       |   |       TransWithoutContext.js
+|       |   |       unescape.js
+|       |   |       useSSR.js
+|       |   |       useTranslation.js
+|       |   |       utils.js
+|       |   |       withSSR.js
+|       |   |       withTranslation.js
+|       |   |       
+|       |   +---es
+|       |   |       context.js
+|       |   |       defaults.js
+|       |   |       I18nextProvider.js
+|       |   |       i18nInstance.js
+|       |   |       index.js
+|       |   |       initReactI18next.js
+|       |   |       package.json
+|       |   |       Trans.js
+|       |   |       Translation.js
+|       |   |       TransWithoutContext.js
+|       |   |       unescape.js
+|       |   |       useSSR.js
+|       |   |       useTranslation.js
+|       |   |       utils.js
+|       |   |       withSSR.js
+|       |   |       withTranslation.js
+|       |   |       
+|       |   \---umd
+|       |           react-i18next.js
+|       |           react-i18next.min.js
+|       |           
+|       \---src
+|               context.js
+|               defaults.js
+|               I18nextProvider.js
+|               i18nInstance.js
+|               index.js
+|               initReactI18next.js
+|               Trans.js
+|               Translation.js
+|               TransWithoutContext.js
+|               unescape.js
+|               useSSR.js
+|               useTranslation.js
+|               utils.js
+|               withSSR.js
+|               withTranslation.js
+|               
++---public
+|       strobelogo.svg
+|       
+\---src
+    |   App.jsx
+    |   main.jsx
+    |   
+    +---framework
+    |   \---assets
+    |       +---css
+    |       |       classroom-shared.css
+    |       |       presentation-shell.css
+    |       |       
+    |       \---js
+    |               classroom-api.js
+    |               classroom-shared.js
+    |               presentation-config.js
+    |               presentation-shell.js
+    |               presentation-toc.js
+    |               
+    +---labs
+    |   +---buffon-needle
+    |   |   |   App.css
+    |   |   |   App.jsx
+    |   |   |   lab.manifest.json
+    |   |   |   StudentView.jsx
+    |   |   |   TeacherView.jsx
+    |   |   |   
+    |   |   +---components
+    |   |   |       student-logic.js
+    |   |   |       teacher-logic.js
+    |   |   |       
+    |   |   \---data
+    |   |           student-template.js
+    |   |           teacher-template.js
+    |   |           
+    |   +---fourier-lab
+    |   |   |   classroom-sync.js
+    |   |   |   compile.log
+    |   |   |   index.html
+    |   |   |   lab.manifest.json
+    |   |   |   normalmap.js
+    |   |   |   StudentView.jsx
+    |   |   |   TeacherView.jsx
+    |   |   |   
+    |   |   +---media
+    |   |   |       clips.mp4
+    |   |   |       fourier_and_the_sea.png
+    |   |   |       QRCode.png
+    |   |   |       
+    |   |   \---vendor
+    |   |           three.min.js
+    |   |           
+    |   +---geometry-live
+    |   |   |   App.jsx
+    |   |   |   camera.html
+    |   |   |   index.jsx
+    |   |   |   lab.manifest.json
+    |   |   |   mouse.html
+    |   |   |   StudentView.jsx
+    |   |   |   teacher.html
+    |   |   |   TeacherView.jsx
+    |   |   |   
+    |   |   +---assets
+    |   |   +---components
+    |   |   |       GeometryLabShell.jsx
+    |   |   |       index.js
+    |   |   |       
+    |   |   +---data
+    |   |   |       modes.js
+    |   |   |       
+    |   |   \---js
+    |   |           presentation-shell.js
+    |   |           presentation-sidebar-manager.js
+    |   |           realtime-socket.js
+    |   |           
+    |   +---neural-lab
+    |   |   |   App.css
+    |   |   |   App.jsx
+    |   |   |   lab.manifest.json
+    |   |   |   StudentView.jsx
+    |   |   |   TeacherView.jsx
+    |   |   |   
+    |   |   +---components
+    |   |   |       ActivitiesMenu.jsx
+    |   |   |       DatasetSelector.jsx
+    |   |   |       ExamplesClassifier.jsx
+    |   |   |       index.js
+    |   |   |       MathFormula.jsx
+    |   |   |       ProductRow.jsx
+    |   |   |       StudentQrAccordion.jsx
+    |   |   |       StudentTable.jsx
+    |   |   |       TeacherCard.jsx
+    |   |   |       VerticalProducts.jsx
+    |   |   |       
+    |   |   +---data
+    |   |   |       datasets.js
+    |   |   |       
+    |   |   \---media
+    |   |           neural_lab_student_qrcode.png
+    |   |           
+    |   \---primes-lab
+    |       |   App.css
+    |       |   App.jsx
+    |       |   lab.manifest.json
+    |       |   StudentView.jsx
+    |       |   TeacherView.jsx
+    |       |   
+    |       +---components
+    |       |       Accordion.jsx
+    |       |       NumberGrid.jsx
+    |       |       SelectionSummaryAccordion.jsx
+    |       |       StudentsTable.jsx
+    |       |       TeacherPanel.jsx
+    |       |       
+    |       \---data
+    |               primes.js
+    |               
+    +---layout
+    |       PresentationShell.jsx
+    |       PresentationSidebar.jsx
+    |       PresentationToc.jsx
+    |       
+    +---lib
+    |       api.js
+    |       socket.js
+    |       
+    +---pages
+    |       AppsLauncherPage.jsx
+    |       HomePage.jsx
+    |       LabPage.jsx
+    |       StudentPage.jsx
+    |       TeacherPage.jsx
+    |       ToolsPage.jsx
+    |       
+    +---shared
+    |   |   README.md
+    |   |   
+    |   +---components
+    |   |       Accordion.jsx
+    |   |       BlueNumberBox.jsx
+    |   |       ConnectionNameControl.jsx
+    |   |       identityStorage.js
+    |   |       index.js
+    |   |       LanguageSwitcher.jsx
+    |   |       StudentTable.jsx
+    |   |       studentTableColumnPresets.jsx
+    |   |       Toolbar.jsx
+    |   |       
+    |   +---hooks
+    |   |       usePresentationSync.js
+    |   |       useRealtimeSocket.js
+    |   |       
+    |   \---i18n
+    |       |   index.js
+    |       |   
+    |       \---locales
+    |           +---el
+    |           |       buffon.json
+    |           |       common.json
+    |           |       fourier.json
+    |           |       geometry.json
+    |           |       menu.json
+    |           |       neural.json
+    |           |       
+    |           \---en
+    |                   buffon.json
+    |                   common.json
+    |                   fourier.json
+    |                   geometry.json
+    |                   menu.json
+    |                   neural.json
+    |                   
+    +---styles
+    |       dashboard-pages.css
+    |       globals.css
+    |       postit-cards.css
+    |       
+    \---tools
+        +---activity-builder
+        |   |   ActivityBuilder.css
+        |   |   ActivityBuilder.jsx
+        |   |   
+        |   +---components
+        |   |       EditorPanel.jsx
+        |   |       index.js
+        |   |       LibraryPanel.jsx
+        |   |       
+        |   +---data
+        |   |       defaultConfig.js
+        |   |       
+        |   \---logic
+        |           activityApi.js
+        |           jsonUtils.js
+        |           
+        +---camera-speed-test
+        |       CameraSpeedTest.css
+        |       CameraSpeedTest.jsx
+        |       
+        \---linear-separation
+            |   LinearSeparation.css
+            |   LinearSeparation.jsx
+            |   
+            +---components
+            |       ClassificationTable.jsx
+            |       index.js
+            |       InputPanel.jsx
+            |       ResultsPanel.jsx
+            |       SettingsPanel.jsx
+            |       
+            +---data
+            |       defaultDataset.js
+            |       
+            \---logic
+                    datasetUtils.js
+                    linearSeparator.js
+                    

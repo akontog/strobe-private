@@ -3,6 +3,7 @@ import { studentTemplate } from './data/student-template';
 import { teacherTemplate } from './data/teacher-template';
 import { mountBuffonStudent } from './components/student-logic';
 import { mountBuffonTeacher } from './components/teacher-logic';
+import './App.css';
 
 function App({ role = 'teacher' }) {
   const rootRef = useRef(null);
@@ -31,7 +32,7 @@ function App({ role = 'teacher' }) {
     };
   }, [role]);
 
-  return <div ref={rootRef} />;
+  return <div ref={rootRef} className={`buffon-root ${role}`} />;
 }
 
 export default App;
