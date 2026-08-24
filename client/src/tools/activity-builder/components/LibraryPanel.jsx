@@ -3,7 +3,6 @@ import React from 'react';
 export default function LibraryPanel({ selectedAppTitle, activities, onOpenActivity, preview }) {
   return (
     <article className="tool-card">
-      <h2>Library</h2>
       <p className="tool-subtitle">Current app: {selectedAppTitle}</p>
 
       <div className="activity-list">

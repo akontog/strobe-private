@@ -17,7 +17,6 @@ export default function EditorPanel({
 }) {
   return (
     <article className="tool-card">
-      <h2>Editor</h2>
       <label>
         App
         <select value={selectedApp} onChange={(event) => onSelectedAppChange(event.target.value)}>

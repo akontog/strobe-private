@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import './ActivityBuilder.css';
 import { EditorPanel, LibraryPanel } from './components';
+import { Accordion } from '../../shared/components';
 import { fetchApps, fetchActivities, fetchActivity, saveActivityRequest } from './logic/activityApi';
 import { toJsonString } from './logic/jsonUtils';
 import { DEFAULT_CONFIG_TEXT } from './data/defaultConfig';
@@ -119,32 +120,42 @@ export default function ActivityBuilder() {
     <section className="tool-page activity-builder-page">
       <header className="tool-page-header">
         <h1>Activity Builder</h1>
-        <p>Create, save, and inspect teacher activities from the SPA.</p>
       </header>
 
       <div className="tool-grid tool-grid--two">
-        <EditorPanel
-          apps={apps}
-          selectedApp={selectedApp}
-          onSelectedAppChange={setSelectedApp}
-          activityName={activityName}
-          onActivityNameChange={setActivityName}
-          notes={notes}
-          onNotesChange={setNotes}
-          configText={configText}
-          onConfigTextChange={setConfigText}
-          onSave={saveActivity}
-          saving={saving}
-          status={status}
-          error={error}
-        />
-
-        <LibraryPanel
-          selectedAppTitle={selectedAppTitle}
-          activities={activities}
-          onOpenActivity={openActivity}
-          preview={preview}
-        />
+        <Accordion
+          title="Activity Editor"
+          icon= "📝"
+          open={true}
+        >
+          <EditorPanel
+            apps={apps}
+            selectedApp={selectedApp}
+            onSelectedAppChange={setSelectedApp}
+            activityName={activityName}
+            onActivityNameChange={setActivityName}
+            notes={notes}
+            onNotesChange={setNotes}
+            configText={configText}
+            onConfigTextChange={setConfigText}
+            onSave={saveActivity}
+            saving={saving}
+            status={status}
+            error={error}
+          />
+        </Accordion>
+        <Accordion
+          title="Activity Library"
+          icon= "📚"
+          open={false}
+        >
+          <LibraryPanel
+            selectedAppTitle={selectedAppTitle}
+            activities={activities}
+            onOpenActivity={openActivity}
+            preview={preview}
+          />
+          </Accordion>
       </div>
     </section>
   );
