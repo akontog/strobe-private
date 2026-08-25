@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { studentTemplate } from './data/student-template';
 import { teacherTemplate } from './data/teacher-template';
-import { mountBuffonStudent } from './components/student-logic';
-import { mountBuffonTeacher } from './components/teacher-logic';
+import { mountBuffonStudent } from './logic/student-logic';
+import { mountBuffonTeacher } from './logic/teacher-logic';
 import './App.css';
 
 function App({ role = 'teacher' }) {

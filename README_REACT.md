@@ -17,18 +17,22 @@
   - hooks/*: 
   - i18n/*:
   - helpers/*:
+
 - client/src/framework/assets/*: Κοινά JS/CSS που εξυπηρετούνται στις σελίδες runtime των εργαστηρίων
 
 - client/src/layout/*: Κοινά components διάταξης
 
-
 - client/src/labs/<νέος φάκελος>/*: Εργαστήρια (κώδικας)
-    - html/js/css/media
-    - StudentView.jsx
-    - TeacherView.jsx
-    - 
+  - components/*: React components ΠΟυ αφορούν μόνο το εργαστήριο
+  - data/*: Στατικά δεδομένα ή προεπιλεγμένα datasets που φορτώνει το εργαστήριο κατά την εκκίνηση.
+  - logic/*: Συναρτήσεις (χωρίς React) που υλοποιούν την λογική του εργαστηρίου.
+  - StudentView.jsx
+  - TeacherView.jsx
+  - App.jsx
+  - App.css
+
 - client/src/tools - Βοηθητικά εργαλεία (κώδικας)
-  - components/*: 
+  - components/*: React components ΠΟυ αφορούν μόνο το εργαλείο
   - data/*: Στατικά δεδομένα ή προεπιλεγμένα datasets που φορτώνει το εργαλείο κατά την εκκίνηση.
   - logic/*: Συναρτήσεις (χωρίς React) που υλοποιούν την λογική του εργαλείου.
   - <όνομα εργαλείου>.jsx: Root component του εργαλείου.
