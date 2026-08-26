@@ -1,5 +1,5 @@
 Folder PATH listing for volume OS
-Volume serial number is 00000076 4EE2:6C3B
+Volume serial number is 000000AF 4EE2:6C3B
 C:.
 |   .gitignore
 |   package-lock.json
@@ -7,6 +7,7 @@ C:.
 |   README.md
 |   README_REACT.md
 |   structure.txt
+|   test.js
 |   
 +---!!!docs
 |   +---material
@@ -33511,6 +33512,7 @@ C:.
 +---client
 |   |   index.html
 |   |   package.json
+|   |   structure.txt
 |   |   vite.config.js
 |   |   
 |   +---dist
@@ -33522,16 +33524,41 @@ C:.
 |   |           index-306m16xn.css
 |   |           index-aGyk7zwr.js
 |   |           index-AuiFVksF.js
+|   |           index-AvdzisO9.js
+|   |           index-B5CfgEkf.js
+|   |           index-Bbi4PRRl.js
+|   |           index-Bmkn4ZA_.js
+|   |           index-Bvxq88Dc.js
+|   |           index-BXdJ1glb.js
 |   |           index-BXMESQGU.js
+|   |           index-By25SHmd.js
+|   |           index-Byp7RIig.js
+|   |           index-ByZawkM4.js
+|   |           index-ByZsjPRG.css
 |   |           index-BzM5Wc70.js
+|   |           index-C-XSuIcl.js
+|   |           index-CcgHyiAi.js
+|   |           index-CgvpPAsd.js
+|   |           index-CkK_2MZ9.js
 |   |           index-CS4tjd8l.js
 |   |           index-CUXosQNL.js
+|   |           index-Cv0cG6F8.js
+|   |           index-CwBxOGFX.js
 |   |           index-CY3b6BVw.js
 |   |           index-DFhgi_tR.js
+|   |           index-DhwSDb_K.js
+|   |           index-DoZAY1kw.js
 |   |           index-DqQDGUfH.js
+|   |           index-DRahp91G.css
+|   |           index-DrWfBMux.js
 |   |           index-DuvdC0kR.js
 |   |           index-DxVJTExp.js
+|   |           index-DYm20uMV.js
+|   |           index-fBfb4wK2.js
+|   |           index-Pe0TwVeG.js
+|   |           index-rR7MBIs6.js
 |   |           index-vzne6Nit.js
+|   |           index-zdXPOuMk.js
 |   |           
 |   +---node_modules
 |   |   +---.vite
@@ -33701,20 +33728,19 @@ C:.
 |       |               
 |       +---labs
 |       |   +---buffon-needle
+|       |   |   |   App.css
 |       |   |   |   App.jsx
 |       |   |   |   lab.manifest.json
-|       |   |   |   student-styles.css
 |       |   |   |   StudentView.jsx
-|       |   |   |   teacher-styles.css
 |       |   |   |   TeacherView.jsx
 |       |   |   |   
-|       |   |   +---components
-|       |   |   |       student-logic.js
-|       |   |   |       teacher-logic.js
+|       |   |   +---data
+|       |   |   |       student-template.js
+|       |   |   |       teacher-template.js
 |       |   |   |       
-|       |   |   \---data
-|       |   |           student-template.js
-|       |   |           teacher-template.js
+|       |   |   \---logic
+|       |   |           student-logic.js
+|       |   |           teacher-logic.js
 |       |   |           
 |       |   +---fourier-lab
 |       |   |   |   classroom-sync.js
@@ -33860,9 +33886,21 @@ C:.
 |       |       
 |       \---tools
 |           +---activity-builder
-|           |       ActivityBuilder.css
-|           |       ActivityBuilder.jsx
-|           |       
+|           |   |   ActivityBuilder.css
+|           |   |   ActivityBuilder.jsx
+|           |   |   
+|           |   +---components
+|           |   |       EditorPanel.jsx
+|           |   |       index.js
+|           |   |       LibraryPanel.jsx
+|           |   |       
+|           |   +---data
+|           |   |       defaultConfig.js
+|           |   |       
+|           |   \---logic
+|           |           activityApi.js
+|           |           jsonUtils.js
+|           |           
 |           +---camera-speed-test
 |           |       CameraSpeedTest.css
 |           |       CameraSpeedTest.jsx
@@ -33872,6 +33910,12 @@ C:.
 |               |   LinearSeparation.jsx
 |               |   
 |               +---components
+|               |       ClassificationTable.jsx
+|               |       index.js
+|               |       InputPanel.jsx
+|               |       ResultsPanel.jsx
+|               |       SettingsPanel.jsx
+|               |       
 |               +---data
 |               |       defaultDataset.js
 |               |       
@@ -37971,6 +38015,7 @@ C:.
 |   +---strobe-client
 |   |   |   index.html
 |   |   |   package.json
+|   |   |   structure.txt
 |   |   |   vite.config.js
 |   |   |   
 |   |   +---dist
@@ -37982,16 +38027,41 @@ C:.
 |   |   |           index-306m16xn.css
 |   |   |           index-aGyk7zwr.js
 |   |   |           index-AuiFVksF.js
+|   |   |           index-AvdzisO9.js
+|   |   |           index-B5CfgEkf.js
+|   |   |           index-Bbi4PRRl.js
+|   |   |           index-Bmkn4ZA_.js
+|   |   |           index-Bvxq88Dc.js
+|   |   |           index-BXdJ1glb.js
 |   |   |           index-BXMESQGU.js
+|   |   |           index-By25SHmd.js
+|   |   |           index-Byp7RIig.js
+|   |   |           index-ByZawkM4.js
+|   |   |           index-ByZsjPRG.css
 |   |   |           index-BzM5Wc70.js
+|   |   |           index-C-XSuIcl.js
+|   |   |           index-CcgHyiAi.js
+|   |   |           index-CgvpPAsd.js
+|   |   |           index-CkK_2MZ9.js
 |   |   |           index-CS4tjd8l.js
 |   |   |           index-CUXosQNL.js
+|   |   |           index-Cv0cG6F8.js
+|   |   |           index-CwBxOGFX.js
 |   |   |           index-CY3b6BVw.js
 |   |   |           index-DFhgi_tR.js
+|   |   |           index-DhwSDb_K.js
+|   |   |           index-DoZAY1kw.js
 |   |   |           index-DqQDGUfH.js
+|   |   |           index-DRahp91G.css
+|   |   |           index-DrWfBMux.js
 |   |   |           index-DuvdC0kR.js
 |   |   |           index-DxVJTExp.js
+|   |   |           index-DYm20uMV.js
+|   |   |           index-fBfb4wK2.js
+|   |   |           index-Pe0TwVeG.js
+|   |   |           index-rR7MBIs6.js
 |   |   |           index-vzne6Nit.js
+|   |   |           index-zdXPOuMk.js
 |   |   |           
 |   |   +---node_modules
 |   |   |   +---.vite
@@ -38161,20 +38231,19 @@ C:.
 |   |       |               
 |   |       +---labs
 |   |       |   +---buffon-needle
+|   |       |   |   |   App.css
 |   |       |   |   |   App.jsx
 |   |       |   |   |   lab.manifest.json
-|   |       |   |   |   student-styles.css
 |   |       |   |   |   StudentView.jsx
-|   |       |   |   |   teacher-styles.css
 |   |       |   |   |   TeacherView.jsx
 |   |       |   |   |   
-|   |       |   |   +---components
-|   |       |   |   |       student-logic.js
-|   |       |   |   |       teacher-logic.js
+|   |       |   |   +---data
+|   |       |   |   |       student-template.js
+|   |       |   |   |       teacher-template.js
 |   |       |   |   |       
-|   |       |   |   \---data
-|   |       |   |           student-template.js
-|   |       |   |           teacher-template.js
+|   |       |   |   \---logic
+|   |       |   |           student-logic.js
+|   |       |   |           teacher-logic.js
 |   |       |   |           
 |   |       |   +---fourier-lab
 |   |       |   |   |   classroom-sync.js
@@ -38320,9 +38389,21 @@ C:.
 |   |       |       
 |   |       \---tools
 |   |           +---activity-builder
-|   |           |       ActivityBuilder.css
-|   |           |       ActivityBuilder.jsx
-|   |           |       
+|   |           |   |   ActivityBuilder.css
+|   |           |   |   ActivityBuilder.jsx
+|   |           |   |   
+|   |           |   +---components
+|   |           |   |       EditorPanel.jsx
+|   |           |   |       index.js
+|   |           |   |       LibraryPanel.jsx
+|   |           |   |       
+|   |           |   +---data
+|   |           |   |       defaultConfig.js
+|   |           |   |       
+|   |           |   \---logic
+|   |           |           activityApi.js
+|   |           |           jsonUtils.js
+|   |           |           
 |   |           +---camera-speed-test
 |   |           |       CameraSpeedTest.css
 |   |           |       CameraSpeedTest.jsx
@@ -38332,6 +38413,12 @@ C:.
 |   |               |   LinearSeparation.jsx
 |   |               |   
 |   |               +---components
+|   |               |       ClassificationTable.jsx
+|   |               |       index.js
+|   |               |       InputPanel.jsx
+|   |               |       ResultsPanel.jsx
+|   |               |       SettingsPanel.jsx
+|   |               |       
 |   |               +---data
 |   |               |       defaultDataset.js
 |   |               |       
@@ -38344,6 +38431,7 @@ C:.
 |   |   |   server.js
 |   |   |   
 |   |   +---activities
+|   |   |   +---buffon-needle
 |   |   |   +---geometry-live
 |   |   |   \---neural-lab
 |   |   +---apps
@@ -38593,6 +38681,7 @@ C:.
 |   |   server.js
 |   |   
 |   +---activities
+|   |   +---buffon-needle
 |   |   +---geometry-live
 |   |   \---neural-lab
 |   +---apps
