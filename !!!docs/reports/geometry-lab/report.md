@@ -51,7 +51,7 @@ The environment proposed in this study follows a different design philosophy. In
 
 ## 4. STROBE: A new environment for Embodied Learning in Mathematics
 
-The environment presented in this chapter has been designed to support collaborative embodied learning activities in geometry through the real-time tracking of students' positions within the physical classroom. The primary objective is not merely to provide a novel interaction technology, but to establish a research platform for designing, implementing, and evaluating embodied learning activities that promote conceptual understanding through physical participation and collaboration.
+The environment presented in this chapter has been designed to support collaborative embodied learning activities in geometry through the real-time tracking of students' positions within the physical classroom. The primary objective is not merely to provide a novel interaction technology, but to establish a research platform for designing, implementing, and evaluating embodied learning activities that **promote conceptual understanding** through physical participation and collaboration.
 
 Geometry provides an especially suitable context for this approach. Although students are generally able to recognize common geometric figures, numerous studies have shown that they often experience difficulties in understanding their properties and the relationships among geometric objects (Sarama & Clements, 2019). Embodied learning offers an alternative perspective by allowing abstract geometric concepts to emerge through learners' bodily actions rather than through symbolic manipulation alone.
 
@@ -109,7 +109,7 @@ The complete tracking pipeline operates continuously in real time. For every inc
 
 The software has been developed as an open-source, reusable framework rather than as a single-purpose educational application. This design enables developers and researchers to implement different embodied learning scenarios while reusing the same tracking infrastructure. Although the present work focuses on geometry education, the framework is intended to support a much broader range of educational applications involving collaborative embodied interaction.
 
-The software developed for this work is publicly available as open-source software through the Strobe project on GitHub. The framework has been designed to facilitate future extensions, including support for additional interaction techniques, alternative tracking algorithms, and new educational activities, while preserving a common software architecture for embodied learning applications.
+The software developed for this work is publicly available as open-source software through the STROBE project on GitHub. The framework has been designed to facilitate future extensions, including support for additional interaction techniques, alternative tracking algorithms, and new educational activities, while preserving a common software architecture for embodied learning applications.
 
 ## 7. Pilot Evaluation
 
