@@ -85,11 +85,11 @@ The environment provides a common visual representation of the activity through 
 
 ### 5.4 Teacher-Orchestrated Geometric Constraints
 
-The teacher can define geometric objects and construction constraints that shape the collaborative activity. Examples include symmetry axes, line segments, circles, predefined vertices, or other geometric structures that students must collectively manipulate through their movements. Rather than controlling the activity directly, the teacher orchestrates the learning process by designing the mathematical situation within which students interact.
+The teacher can define geometric objects and construction constraints that shape the collaborative activity. Examples include symmetry axes, line segments, circles, predefined vertices, or other geometric structures that students must collectively manipulate through their movements. Rather than controlling the activity directly, the teacher orchestrates the learning process by designing the mathematical **situation** within which students interact.
 
 ### 5.5 Low-Cost and Easily Deployable Infrastructure
 
-A central design objective of the proposed environment is accessibility. The system requires only equipment that is already available in most schools—a conventional camera, a computer, and a projector or large display. Consequently, embodied learning activities can be implemented without specialized hardware such as depth sensors, wearable devices, or immersive virtual reality systems.
+A central design objective of the proposed environment is **accessibility**. The system requires only equipment that is already available in most schools—a conventional camera, a computer, and a projector or large display. Consequently, embodied learning activities can be implemented without specialized hardware such as depth sensors, wearable devices, or immersive virtual reality systems.
 
 ### 5.6 Reusability Beyond Geometry
 
