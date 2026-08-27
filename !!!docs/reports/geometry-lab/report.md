@@ -143,6 +143,15 @@ Two students first established the endpoints of a line segment by remaining stat
 **Activity 4 – Constructing a Right Triangle**
 
 The three students collaboratively formed a right triangle starting from arbitrary positions within the interaction space. The youngest participant was assigned the role of the vertex containing the right angle. As in the previous activity, students exchanged roles across successive trials.
+::: {#fig:geometry-environment}
+
+![Visual representation of the collaborative learning environment for Geometry](images/image1.png)
+
+![Screenshot of the implementation of Activity 3](images/image2.png)
+
+Visual representation of the collaborative learning environment for Geometry (left) and screenshot of the implementation of Activity 3 (right).
+
+:::
 
 ### 7.2 Experimental Setting and Data Collection
 
