@@ -49,7 +49,7 @@ Overall, the evaluation of these embodied learning environments suggests that me
 
 The environment proposed in this study follows a different design philosophy. Instead of relying on specialized sensing technologies, it uses a single conventional camera together with state-of-the-art deep-learning-based computer vision techniques to detect, identify, and track multiple students in real time. This substantially reduces equipment requirements while preserving the core affordances necessary to support collaborative embodied learning activities. Consequently, the proposed environment offers a practical and cost-effective solution that can be deployed in ordinary school classrooms without requiring specialized infrastructure.
 
-## 4. Proposed Environment for Embodied Learning in Mathematics
+## 4. STROBE: A new environment for Embodied Learning in Mathematics
 
 The environment presented in this chapter has been designed to support collaborative embodied learning activities in geometry through the real-time tracking of students' positions within the physical classroom. The primary objective is not merely to provide a novel interaction technology, but to establish a research platform for designing, implementing, and evaluating embodied learning activities that promote conceptual understanding through physical participation and collaboration.
 
