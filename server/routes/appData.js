@@ -1,5 +1,5 @@
 const express = require('express');
-const { getInstance: getUserManager } = require('../services/UserManager');
+const sessionManager = require('../services/sessionManager');
 const { getAppData, saveAppData } = require('../middleware/sessionMiddleware');
 
 const router = express.Router();
@@ -72,8 +72,7 @@ router.post('/api/app-data', (req, res) => {
  * Ανάκτηση τρέχουσας session πληροφορίας
  */
 router.get('/api/session', (req, res) => {
-  const userManager = getUserManager();
-  const session = userManager.getSession(req.sessionId);
+  const session = sessionManager.get(req.sessionId);
 
   if (!session) {
     return res.status(404).json({
@@ -84,11 +83,10 @@ router.get('/api/session', (req, res) => {
   res.json({
     sessionId: req.sessionId,
     userId: session.userId,
-    createdAt: session.createdAt,
-    lastActivity: session.lastActivity,
-    role: session.metadata.role,
-    activeApps: Object.keys(session.apps)
-      .filter(app => session.apps[app].active)
+    createdAt: new Date(session.connectedAt).toISOString(),
+    lastActivity: new Date(session.lastSeenAt).toISOString(),
+    role: session.role,
+    activeApps: [...session.activeApps]
   });
 });
 
@@ -98,8 +96,7 @@ router.get('/api/session', (req, res) => {
  * ⚠️ Απαιτεί ενδεχόμενη ταυτοποίηση (admin-only)
  */
 router.get('/api/admin/stats', (req, res) => {
-  const userManager = getUserManager();
-  const stats = userManager.getStatistics();
+  const stats = sessionManager.getStatistics();
 
   res.json({
     timestamp: new Date().toISOString(),
@@ -116,17 +113,16 @@ router.get('/api/admin/stats', (req, res) => {
  * Διαγραφή session
  */
 router.delete('/api/session/:sessionId', (req, res) => {
-  const userManager = getUserManager();
   const { sessionId } = req.params;
 
   // Security: Allow only own session deletion (unless admin)
-  if (req.sessionId !== sessionId && req.session?.metadata?.role !== 'admin') {
+  if (req.sessionId !== sessionId && req.session?.role !== 'admin') {
     return res.status(403).json({
       error: 'Forbidden: Cannot delete other user sessions'
     });
   }
 
-  const deleted = userManager.deleteSession(sessionId);
+  const deleted = sessionManager.remove(sessionId);
 
   res.json({
     deleted,
@@ -139,8 +135,7 @@ router.delete('/api/session/:sessionId', (req, res) => {
  * Διαγραφή τρέχουσας session (logout)
  */
 router.post('/api/logout', (req, res) => {
-  const userManager = getUserManager();
-  const deleted = userManager.deleteSession(req.sessionId);
+  const deleted = sessionManager.remove(req.sessionId);
 
   res.json({
     logged_out: deleted,

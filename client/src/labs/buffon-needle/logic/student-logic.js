@@ -20,10 +20,32 @@ let roundTargetError = null;
 let roundEndAt = 0;
 let roundBannerTimer = null;
 const CONNECT_NAME_KEY = 'strobeStudentConnectName';
+const DEFAULT_TEAM_PREFIX = 'Ομάδα';
 const pageQuery = new URLSearchParams(window.location.search);
 const PREFILL_TEAM = (pageQuery.get('team') || pageQuery.get('name') || '').trim();
 const AUTO_CONNECT_FLAG = (pageQuery.get('autoconnect') || '').toLowerCase();
 const SHOULD_AUTOCONNECT = ['1', 'true', 'yes'].includes(AUTO_CONNECT_FLAG);
+
+function buildFallbackTeamName() {
+  return `${DEFAULT_TEAM_PREFIX}-${Math.floor(Math.random() * 900 + 100)}`;
+}
+
+function ensureRegisteredTeamName() {
+  const input = document.getElementById('team-input');
+  const current = (input && typeof input.value === 'string' ? input.value : teamName).trim();
+  if (current) {
+    teamName = current;
+    if (input) input.value = current;
+    localStorage.setItem(CONNECT_NAME_KEY, current);
+    return current;
+  }
+
+  const fallback = buildFallbackTeamName();
+  teamName = fallback;
+  if (input) input.value = fallback;
+  localStorage.setItem(CONNECT_NAME_KEY, fallback);
+  return fallback;
+}
 
 // ── WebSocket ─────────────────────────────────────
 function connectWS() {
@@ -43,13 +65,12 @@ function connectWS() {
     reconnectDelayMs: 2000,
     onOpen() {
       socketConnected = true;
-      if (teamName) {
-        sendPayload({ type: 'register_student', team: teamName });
-        teamRegistered = true;
-        roundControlEnabled = true;
-        setRoundBanner('Συνδεθήκατε. Περιμένετε την έναρξη.', 'waiting');
-        sendUpdate();
-      }
+      const ensuredTeamName = ensureRegisteredTeamName();
+      sendPayload({ type: 'register_student', team: ensuredTeamName });
+      teamRegistered = true;
+      roundControlEnabled = true;
+      setRoundBanner('Συνδεθήκατε. Περιμένετε την έναρξη.', 'waiting');
+      sendUpdate();
       updateConnDot();
     },
     onMessage(type, msg) {
@@ -504,6 +525,9 @@ function initStudentApp() {
   });
 
   setRoundBanner('Ελεύθερος πειραματισμός. Συνδεθείτε ως ομάδα για αγώνα!', 'waiting');
+  if (!teamInput.value.trim()) {
+    teamInput.value = buildFallbackTeamName();
+  }
   connectWS();
 
   if (SHOULD_AUTOCONNECT && teamInput.value.trim()) {

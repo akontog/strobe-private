@@ -12,6 +12,7 @@ export const teacherTemplate = String.raw`<div style="text-align:center">
     <div class="join-box">
       <div class="join-copy">
         <div class="join-help">Σαρώστε το QR για να ανοίξετε την εφαρμογή.</div>
+        <div class="join-help"><a href="/labs/buffon-needle/student" target="_blank" rel="noopener noreferrer">Άνοιγμα student σε νέα καρτέλα</a></div>
       </div>
       <img class="join-qr" src="qrcode.png" alt="QR code για student.html">
     </div>

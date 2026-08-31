@@ -1,6 +1,5 @@
 const express = require('express');
-
-const { listActiveSessions, getSessionStats } = require('../services/sessionTracker');
+const sessionManager = require('../services/sessionManager');
 
 function createAdminRouter(options = {}) {
   const router = express.Router();
@@ -21,7 +20,7 @@ function createAdminRouter(options = {}) {
     : () => [];
 
   router.get('/sessions', (req, res) => {
-    const authSessions = listActiveSessions();
+    const authSessions = sessionManager.getParticipants();
     const realtimeParticipants = getRealtimeParticipants();
     const sessions = [...authSessions, ...realtimeParticipants];
 
@@ -39,7 +38,7 @@ function createAdminRouter(options = {}) {
         total: sessions.length,
         byRole
       },
-      authSessionStats: getSessionStats(),
+      authSessionStats: sessionManager.getStatistics(),
       realtimeStats: getRealtimeStats()
     });
   });

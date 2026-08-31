@@ -134,6 +134,9 @@
 ## Ιδέες
 
 - [μάθημα με self driving car από freeCodeCamp](https://www.youtube.com/watch?v=VgzHT9quo5c)
+- [απλή επεξήγηση νευρωνικών](https://www.freecodecamp.org/news/neural-networks-explained-simply-in-python/)
+- [How Neural Networks Work – Explained Using the Straight Line Equation y = ax + b](https://www.freecodecamp.org/news/neural-networks-explained-using-y-ax-b/)
+
 # Ταξινομήσεις
 
 Ποντίκι, κάμερα (με αριθμούς κολλημένους)

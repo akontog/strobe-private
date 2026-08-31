@@ -1,4 +1,4 @@
-const { getInstance: getUserManager } = require('../services/UserManager');
+const sessionManager = require('../services/sessionManager');
 
 /**
  * Session Middleware - Manages user sessions for Strobe apps
@@ -12,8 +12,6 @@ const { getInstance: getUserManager } = require('../services/UserManager');
  * - req.session (current session object)
  */
 function sessionMiddleware() {
-    const userManager = getUserManager();
-
     return (req, res, next) => {
         // Ψάχνουμε για sessionId σε:
         // 1. Query parameter (?sessionId=xxx)
@@ -28,7 +26,7 @@ function sessionMiddleware() {
 
         // Αν έχουμε sessionId, το ανακτούμε
         if (sessionId) {
-            session = userManager.getSession(sessionId);
+            session = sessionManager.get(sessionId);
         }
 
         // Αν δεν υπάρχει ή είναι άκυρο, δημιουργούμε νέο
@@ -38,9 +36,9 @@ function sessionMiddleware() {
                 ipAddress: req.ip || req.connection.remoteAddress || 'unknown'
             };
 
-            const newSession = userManager.createSession(null, deviceInfo);
-            sessionId = newSession.sessionId;
-            session = userManager.getSession(sessionId);
+            const created = sessionManager.createWithGeneratedId(null, deviceInfo);
+            sessionId = created.sessionId;
+            session = sessionManager.get(sessionId);
         }
 
         // Προσθέτουμε τη session στο request object
@@ -70,14 +68,13 @@ function sessionMiddleware() {
  * const sessionInfo = getWebSocketSessionInfo(request);
  */
 function getWebSocketSessionInfo(request) {
-    const userManager = getUserManager();
     const urlParams = new URL(request.url, `http://${request.headers.host}`).searchParams;
     
     const sessionId = urlParams.get('sessionId');
     const userId = urlParams.get('userId');
 
     if (sessionId) {
-        const session = userManager.getSession(sessionId);
+        const session = sessionManager.get(sessionId);
         if (session) {
             return {
                 sessionId,
@@ -88,11 +85,11 @@ function getWebSocketSessionInfo(request) {
     }
 
     // Create new session if not found
-    const newSession = userManager.createSession(userId);
+    const newSession = sessionManager.createWithGeneratedId(userId);
     return {
         sessionId: newSession.sessionId,
         userId: newSession.userId,
-        session: userManager.getSession(newSession.sessionId)
+        session: sessionManager.get(newSession.sessionId)
     };
 }
 
@@ -104,24 +101,21 @@ function getWebSocketSessionInfo(request) {
  * saveAppData(req.sessionId, 'fourier-lab', { currentSlide: 5, score: 100 });
  */
 function saveAppData(sessionId, appName, appData) {
-    const userManager = getUserManager();
-    return userManager.updateAppData(sessionId, appName, appData);
+    return sessionManager.saveAppData(sessionId, appName, appData);
 }
 
 /**
  * Get App Data - Retrieves app-specific state
  */
 function getAppData(sessionId, appName) {
-    const userManager = getUserManager();
-    return userManager.getAppData(sessionId, appName);
+    return sessionManager.getAppData(sessionId, appName);
 }
 
 /**
  * Admin Statistics - Get server-wide stats
  */
 function getSessionStats() {
-    const userManager = getUserManager();
-    return userManager.getStatistics();
+    return sessionManager.getStatistics();
 }
 
 module.exports = {

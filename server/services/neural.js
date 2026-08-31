@@ -7,7 +7,6 @@ module.exports = function initNeural({
   getUpgradeClientInfo,
   touchCanvasNodeConnection,
   canvasNodeConnectionMeta,
-  httpServer,
   sessionManager
 }) {
   console.log('[neural-lab] ⚙️ Initializing Neural service...');
@@ -763,16 +762,14 @@ module.exports = function initNeural({
     });
   });
 
-  // Register upgrade handler for this WebSocket path
-  httpServer.on('upgrade', (request, socket, head) => {
-    if (request.url && request.url.startsWith('/ws/neural-lab')) {
+  console.log('[neural-lab] ✅ Neural service initialized, listening on /ws/neural-lab');
+  return {
+    canvasNodeWss,
+    handleUpgrade: (request, socket, head) => {
       console.log(`[neural-lab] ⬆️ Upgrade request for /ws/neural-lab from ${request.socket.remoteAddress}`);
       canvasNodeWss.handleUpgrade(request, socket, head, (ws) => {
         canvasNodeWss.emit('connection', ws, request);
       });
     }
-  });
-
-  console.log('[neural-lab] ✅ Neural service initialized, listening on /ws/neural-lab');
-  return { canvasNodeWss };
+  };
 };

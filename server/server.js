@@ -3,8 +3,6 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
-const { spawn } = require('child_process');
-const readline = require('readline');
 // WebSocket για real-time
 const { WebSocketServer } = require('ws');
 
@@ -14,6 +12,7 @@ const clientRouter = require('./routes/client');
 const createAdminRouter = require('./routes/admin');
 const createAppsRouter = require('./routes/apps');
 const appDataRouter = require('./routes/appData');
+const createActivitiesRouter = require('./routes/activities');
 // helpers
 const { 
   sanitizeString, 
@@ -41,6 +40,7 @@ const initBuffon = require('./services/buffon');
 const initGeometry = require('./services/geometry');
 const initNeural = require('./services/neural');
 const initPrimes = require('./services/primes');
+const wsRegistry = require('./services/websocketRegistry');
 
 // 4. Δημιουργία εφαρμογής Express και HTTP server
 const app = express();
@@ -313,14 +313,14 @@ function createRealtimeTransport() {
 }
 
 const io = createRealtimeTransport();
+const { router: activitiesRouter, getCurrentActivity, setCurrentActivity } = createActivitiesRouter({ io });
+
+app.use(activitiesRouter);
 
 const publicDir = path.join(__dirname, '..', 'public');
 const clientDistDir = path.join(__dirname, '..', 'client', 'dist');
-const legacyActivitiesDir = path.join(__dirname, '..', 'activities');
 
-if (!fs.existsSync(legacyActivitiesDir)) {
-  fs.mkdirSync(legacyActivitiesDir, { recursive: true });
-}
+
 
 app.use(express.json({ limit: '8mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -348,9 +348,7 @@ app.use(appDataRouter);
 app.use('/student', clientRouter);
 app.use('/client', clientRouter);
 
-// Store active users and their positions for geometry app
-const buffonConnectionMeta = new WeakMap();
-const canvasNodeConnectionMeta = new WeakMap();
+
 const parsedCommLogLimit = Number.parseInt(process.env.ADMIN_COMM_LOG_LIMIT || '1200', 10);
 const COMM_LOG_LIMIT = Number.isInteger(parsedCommLogLimit) && parsedCommLogLimit >= 200
   ? Math.min(parsedCommLogLimit, 10000)
@@ -441,6 +439,9 @@ const {
   requestCameraDetection
 });
 
+const buffonConnectionMeta = new Map();
+const canvasNodeConnectionMeta = new Map();
+
 const fourierService = initFourier({
   io,
   recordCommunication,
@@ -498,14 +499,14 @@ function getRealtimeParticipants() {
 }
 
 function getRealtimeStats() {
-  const sessionStats = sessionManager.getStats();
+  const sessionStats = sessionManager.getStatistics();
   return {
     connectedSockets: io.engine.clientsCount,
     activeUserPoints: buildUserList().length,
     fourierParticipants: fourierParticipants.size,
     activeSessions: sessionStats.activeSessions,
-    sessionsByRole: sessionStats.byRole,
-    sessionsByApp: sessionStats.byApp
+    sessionsByRole: sessionStats.sessionsByRole,
+    sessionsByApp: sessionStats.sessionsByApp
   };
 }
 
@@ -532,84 +533,7 @@ app.use((err, req, res, next) => {
   return res.status(status).json({ error: status === 500 ? 'Internal server error' : 'Request failed' });
 });
 
-// Store current legacy geometry activity
-let currentActivity = null;
 
-app.post('/api/activity/save', (req, res) => {
-  const name = String((req.body && req.body.name) || 'activity').trim();
-  const geometry = Array.isArray(req.body && req.body.geometry) ? req.body.geometry : [];
-  const safeName = name.replace(/[^a-z0-9]/gi, '_') || 'activity';
-  const filename = `${Date.now()}_${safeName}.json`;
-  const filepath = path.join(legacyActivitiesDir, filename);
-
-  const activity = {
-    name,
-    geometry,
-    createdAt: new Date().toISOString()
-  };
-
-  fs.writeFileSync(filepath, JSON.stringify(activity, null, 2), 'utf8');
-  currentActivity = activity;
-
-  io.emit('activity-loaded', activity);
-
-  res.json({ success: true, filename });
-});
-
-app.get('/api/activity/load/:filename', (req, res) => {
-  const safeFilename = sanitizeLegacyFilename(req.params.filename);
-
-  if (!safeFilename) {
-    return res.status(400).json({ error: 'Invalid filename' });
-  }
-
-  const filepath = path.join(legacyActivitiesDir, safeFilename);
-
-  if (!fs.existsSync(filepath)) {
-    return res.status(404).json({ error: 'Activity not found' });
-  }
-
-  const activity = JSON.parse(fs.readFileSync(filepath, 'utf8'));
-  currentActivity = activity;
-
-  return res.json(activity);
-});
-
-app.get('/api/activity/list', (req, res) => {
-  const files = fs
-    .readdirSync(legacyActivitiesDir)
-    .filter((file) => file.endsWith('.json'))
-    .map((file) => {
-      const filePath = path.join(legacyActivitiesDir, file);
-
-      try {
-        const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-
-        return {
-          filename: file,
-          name: parsed.name || file,
-          createdAt: parsed.createdAt || null
-        };
-      } catch (error) {
-        return {
-          filename: file,
-          name: file,
-          createdAt: null
-        };
-      }
-    })
-    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
-
-  res.json(files);
-});
-
-app.get('/api/activity/current', (req, res) => {
-  if (currentActivity) {
-    return res.json(currentActivity);
-  }
-
-  return res.json({ geometry: [] });
-});
 
 app.get('/api/tools', (req, res) => {
   res.json([
@@ -636,7 +560,13 @@ app.get('/api/tools', (req, res) => {
     }
   ]);
 });
-
+function asyncHandler(fn) {
+  return function (...args) {
+    Promise.resolve(fn.apply(this, args)).catch((err) => {
+      console.error('[socket] unhandled async error:', err?.message || err);
+    });
+  };
+}
 io.on('connection', (socket) => {
   console.log('[geometry] socket connected:', socket.id);
   recordCommunication({
@@ -665,7 +595,8 @@ io.on('connection', (socket) => {
     source: 'realtime'
   });
 
-  if (currentActivity) {
+  const currentActivityOnConnect = getCurrentActivity();
+  if (currentActivityOnConnect) {
     recordCommunication({
       app: 'geometry',
       direction: 'out',
@@ -673,10 +604,10 @@ io.on('connection', (socket) => {
       from: 'server',
       to: socket.id,
       payload: {
-        shapeCount: Array.isArray(currentActivity.geometry) ? currentActivity.geometry.length : 0
+        shapeCount: Array.isArray(currentActivityOnConnect.geometry) ? currentActivityOnConnect.geometry.length : 0
       }
     });
-    socket.emit('activity-loaded', currentActivity);
+    socket.emit('activity-loaded', currentActivityOnConnect);
   }
 
   socket.emit('users-update', buildUserList());
@@ -863,18 +794,20 @@ io.on('connection', (socket) => {
       }
     });
 
-    if (!currentActivity) {
-      currentActivity = {
+    let currentActivityForUpdate = getCurrentActivity();
+    if (!currentActivityForUpdate) {
+      currentActivityForUpdate = {
         name: 'Live Activity',
         geometry: [],
         createdAt: new Date().toISOString()
       };
     }
 
-    currentActivity = {
-      ...currentActivity,
+    currentActivityForUpdate = {
+      ...currentActivityForUpdate,
       geometry
     };
+    setCurrentActivity(currentActivityForUpdate);
 
     recordCommunication({
       app: 'geometry',
@@ -883,10 +816,10 @@ io.on('connection', (socket) => {
       from: 'server',
       to: 'broadcast-except-sender',
       payload: {
-        shapeCount: Array.isArray(currentActivity.geometry) ? currentActivity.geometry.length : 0
+        shapeCount: Array.isArray(currentActivityForUpdate.geometry) ? currentActivityForUpdate.geometry.length : 0
       }
     });
-    socket.broadcast.emit('activity-loaded', currentActivity);
+    socket.broadcast.emit('activity-loaded', currentActivityForUpdate);
   });
 
   socket.on('disconnect', () => {
@@ -908,12 +841,11 @@ io.on('connection', (socket) => {
 
 
 
-initNeural({
+const { handleUpgrade: neuralUpgrade } = initNeural({
   recordCommunication,
   getUpgradeClientInfo,
   touchCanvasNodeConnection,
   canvasNodeConnectionMeta,
-  httpServer,
   sessionManager
 });
 const { buffonWss } = initBuffon({
@@ -930,34 +862,27 @@ const { primesWss } = initPrimes({
   sessionManager
 });
 
-// Καταχώρηση upgrade event για χειρισμό WebSocket connections
+wsRegistry.register(REALTIME_WS_PATH, (request, socket, head) => {
+  io.handleUpgrade(request, socket, head);
+});
+
+wsRegistry.register('/ws/neural-lab', neuralUpgrade);
+
+wsRegistry.register('/ws/buffon', (request, socket, head) => {
+  buffonWss.handleUpgrade(request, socket, head, (ws) => {
+    buffonWss.emit('connection', ws, request);
+  });
+});
+
+wsRegistry.register('/ws/primes-lab', (request, socket, head) => {
+  primesWss.handleUpgrade(request, socket, head, (ws) => {
+    primesWss.emit('connection', ws, request);
+  });
+});
+
+// Μοναδικό upgrade event για όλο το σύστημα WebSocket
 httpServer.on('upgrade', (request, socket, head) => {
-  if (request.url && request.url.startsWith(REALTIME_WS_PATH)) {
-    io.handleUpgrade(request, socket, head);
-    return;
-  }
-
-  // neural-lab upgrades are handled inside services/neural.js
-  if (request.url && request.url.startsWith('/ws/neural-lab')) {
-    return;
-  }
-
-  if (request.url && request.url.startsWith('/ws/buffon')) {
-    buffonWss.handleUpgrade(request, socket, head, (ws) => {
-      buffonWss.emit('connection', ws, request);
-    });
-    return;
-  }
-
-  if (request.url && request.url.startsWith('/ws/primes-lab')) {
-    primesWss.handleUpgrade(request, socket, head, (ws) => {
-      primesWss.emit('connection', ws, request);
-    });
-    return;
-  }
-
-
-  socket.destroy();
+  wsRegistry.handleUpgrade(request, socket, head);
 });
 
 app.use(express.static(clientDistDir));
