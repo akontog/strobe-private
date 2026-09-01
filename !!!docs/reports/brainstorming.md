@@ -17,6 +17,52 @@
 
 # geometry-live
 
+## Προβλήματα:
+
+- Positional jitter: φυσικό πρόβλημα όταν tracking bounding boxes από YOLO
+
+- Re-identification μετά από occlusion: τεχνικό ζήτημα που βελτιώθηκε post-pilot
+
+- Έλλειψη άμεσου οπτικού feedback: οι μαθητές βασίζονταν στον facilitator
+
+- Scaffolding: οι οδηγίες δεν επαρκούσαν για πολύπλοκες συνεργατικές δραστηριότητες
+
+- Novelty effect: η θετική αντίδραση μπορεί να οφείλεται στην καινοτομία
+
+- Ποικιλία δραστηριοτήτων. 
+
+  Πιλοτική δοκιμή:
+  - Ατομική πλοήγηση σε σταθερά σημεία
+  - Ζευγάρι με σαφή γεωμετρική σχέση (συμμετρία)
+  - Τριμελής συνεργασία με σταθερή απόσταση (ισόπλευρο)
+  - Τριμελής συνεργασία με γωνιακή σχέση (ορθογώνιο — το πιο απαιτητικό)
+- tracking: Πραγματική τάξη; Δοκιμή
+
+Συγκριτικά δεδομένα με:
+- Παρααδοσιακή διδασκαλία;
+- Διαφορετικού τύπου χειρισμός (ποντίκι;;)
+
+
+- CameraClient: ένας client <-> πολλά σημεία
+			Video capture - Multi-person tracking re-identification
+			Ερώτημα; θα στέλνει video feed στον server; που θα γίνεται το tracking;
+- PoseClient:  πολλοί client <-> ένα σημείο/client
+			mediapose;
+- MouseClient: πολλοί clients <-> ένα σημείο/client
+			mouse events
+- TeacherClient: ένας client  
+	- activity designer (σχεδιασμός δραστηριοτήτων)
+	- json
+	- (real time) statistics
+	- αποθήκευση; json; στον server ή στον client;
+
+	JavaScript WebSocket API, socket.io
+	Mouse event listeners
+
+## Backend
+	δέχεται σημεία, τα στέλνει σε όλους
+		node.js
+
 # neural-lab
 
 ## Αλλαγές (TODO)

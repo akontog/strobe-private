@@ -4,17 +4,19 @@
 
 - html
 - css
-- js
-- ts 
+- js ή ts 
 - react
 
 ## backend
 
 1 ή 2 server;; (Ξεκίνημα με 1 και βλέπουμε)
+
+### Application Server
 - node.js
   - Στήσιμο σε myria
   - cloudflared tunnel
-- FastAPI 
+
+### vision server
 
 ## CV
 
@@ -22,10 +24,14 @@
 
 ## επικοινωνία
 
+### server <-> clients
 - websockets (ταχύτητα, ευελιξία π.χ. message format - json)
 - WebRTC (video feed) STUN / TURN;;;
 
-## κατάσταση;;;
+### node server <-> python server
+FastApi
+
+## κατάσταση
 
 - redis;;; (να τσεκάρω)
 
