@@ -1,7 +1,5 @@
 # Υλοποίηση
 
-## json
-
 ## rest
 
 - [wiki](https://en.wikipedia.org/wiki/REST)
@@ -18,18 +16,6 @@
 ### json-server (αν θέλω να λειτουργεί ως server τοπικά)
 
 - [github](https://github.com/typicode/json-server)
-
-## React
-
-**Routing**: Προσθέστε React Router για πολλαπλές σελίδες
-**State Management**: Χρησιμοποιήστε React hooks (useState, useEffect) 
-**Imports**: Χρησιμοποιήστε `index.js` files για barrel exports  
-- ✅ Χρησιμοποιήστε React hooks (useState, useEffect) για state management
-
-- [React Tutorial](https://www.geeksforgeeks.org/reactjs/react/)
-- [The React Handbook for Beginners – JSX, Hooks, and Rendering Explained](https://www.freecodecamp.org/news/react-handbook-for-beginners-learn-jsx-hooks-rendering/)
-- [React Reference Overview](https://react.dev/reference/react)
-- [Ωραία άρθρα με διάφορα θέματα](https://egghead.io/q/react)
 
 
 ## Vision

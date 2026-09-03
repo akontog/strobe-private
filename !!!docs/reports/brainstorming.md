@@ -17,6 +17,13 @@
 
 # geometry-live
 
+## να τσεκάρω
+
+### Geogebra API:
+      
+- https://geogebra.github.io/docs/reference/en/GeoGebra_Apps_API/
+- https://geogebra.github.io/integration/example-api-sync.html
+
 ## Προβλήματα:
 
 - Positional jitter: φυσικό πρόβλημα όταν tracking bounding boxes από YOLO

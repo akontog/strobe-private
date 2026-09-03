@@ -89,6 +89,9 @@ FastApi
 - **`server.js`**  
   – Κύριος διακομιστής Node.js (Express ή native http).  
   – Ξεκινά το WebSocket server, σερβίρει στατικές σελίδες, διαχειρίζεται routes.
+**Routing**: Προσθέστε React Router για πολλαπλές σελίδες
+**State Management**: Χρησιμοποιήστε React hooks (useState, useEffect) 
+**Imports**: Χρησιμοποιήστε `index.js` files για barrel exports
 
 ## 📂 `client/`
 
