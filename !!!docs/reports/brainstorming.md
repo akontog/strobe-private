@@ -27,6 +27,9 @@
 
 τρίγωνα, κριτήρια ισότητας
 συμμετρία (σημείο και άξονα)
+Γεωμετρικός τόπος (π.χ. ισαπέχουσα από 2 σημεια κίνηση)
+Ένας μαθητής κρατά σταθερή απόσταση από δύο σημειωμένα σημεία στο πάτωμα καθώς κινείται η κάμερα καταγράφει το ίχνος του και προκύπτει (πειραματικά, με το σώμα) η μεσοκάθετος.
+
 ## να τσεκάρω
 
 ### Geogebra API:
@@ -262,7 +265,10 @@ OpenCV.js
 
 # Εργαλεία
 
-- https://classroom.amplify.com/
-- https://www.geogebra.org/classroom
-- https://nearpod.com/
-- [προσομοιώσεις - για ιδέες](https://phet.colorado.edu/)
+- [Brilliant](https://brilliant.org/) – διαδραστικά μαθήματα STEM
+- [Amplify Classroom](https://classroom.amplify.com/) – πλατφόρμα ψηφιακών μαθημάτων
+- [GeoGebra Classroom](https://www.geogebra.org/classroom) – διαδραστικά μαθηματικά και γεωμετρία
+- [Nearpod](https://nearpod.com/) – διαδραστικές παρουσιάσεις και μαθήματα
+- [προσομοιώσεις - για ιδέες](https://phet.colorado.edu/) – προσομοιώσεις φυσικών επιστημών και μαθηματικών
+- [Mathigon](https://mathigon.org/) – διαδραστικά μαθηματικά με οπτικές προσεγγίσεις
+- [Graspable Math Activities](https://activities.graspablemath.com/) – διαδραστικές δραστηριότητες άλγεβρας
