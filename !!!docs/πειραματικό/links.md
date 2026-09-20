@@ -1,0 +1,3 @@
+- [Προγράμματα Σπουδών (Νέα)](https://www.iep.edu.gr/nea-programmata-spoudon/)
+- [Πολλαπλό βιβλίο - Μελίσπη](https://ebooksdl.cti.gr/)
+- [Σχολικό βιβλίο](https://ebooks.edu.gr/ebooks/v/html/8547/2212/Mathimatika_G-Gymnasiou_html-empl/)
