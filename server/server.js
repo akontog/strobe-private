@@ -1,24 +1,28 @@
-// 1. Εισαγωγή βιβλιοθηκών
+/**** 1. Εισαγωγή βιβλιοθηκών ****/
+// Για δημιουργία web εφαρμογής
 const express = require('express');
+// Πρόσβαση στο σύστημα αρχείων
 const fs = require('fs');
+// διαχείριση διαδρομών αρχείων
 const path = require('path');
+// HTTP server για την εξυπηρέτηση αιτημάτων
 const http = require('http');
-// WebSocket για real-time
+// WebSocket για real-time επικοινωνία
 const { WebSocketServer } = require('ws');
 
-// 2. Εισαγωγή routers (δρομολογητές)
+/**** 2. Εισαγωγή routers (δρομολογητές) ****/
 const teacherRouter = require('./routes/teacher');
 const clientRouter = require('./routes/client');
 const createAdminRouter = require('./routes/admin');
 const createAppsRouter = require('./routes/apps');
 const appDataRouter = require('./routes/appData');
 const createActivitiesRouter = require('./routes/activities');
-// helpers
+
+/**** 3. Εισαγωγή βοηθητικών συναρτήσεων ****/
 const { 
   sanitizeString, 
   parseRealtimeMessage 
 } = require('./utils/helpers');
-// 3. utilities
 const {
   CAMERA_FEATURES_ENABLED,
   CAMERA_WORKER_ENABLED,
@@ -33,8 +37,10 @@ const {
   getSocketClientInfo,
   getUpgradeClientInfo
 } = require('./utils/socketHelpers');
+
+
+/**** 4. Εισαγωγή υπηρεσιών ****/
 const sessionManager = require('./services/sessionManager');
-// Εισαγωγή υπηρεσιών
 const initFourier = require('./services/fourier');
 const initBuffon = require('./services/buffon');
 const initGeometry = require('./services/geometry');
@@ -42,18 +48,23 @@ const initNeural = require('./services/neural');
 const initPrimes = require('./services/primes');
 const wsRegistry = require('./services/websocketRegistry');
 
-// 4. Δημιουργία εφαρμογής Express και HTTP server
+/**** 5. Δημιουργία εφαρμογής Express και HTTP server ****/
 const app = express();
 const httpServer = http.createServer(app);
 
-// 5. Ρυθμίσεις host/port
+/**** 6. Ρυθμίσεις host/port ****/
 const HOST = process.env.HOST || '0.0.0.0';
 const parsedPort = Number.parseInt(process.env.PORT || '3000', 10);
 const PORT = Number.isInteger(parsedPort) && parsedPort > 0 && parsedPort < 65536
   ? parsedPort
   : 3000;
 
-  // Διαδρομή για τα WebSockets
+/**** 6. Διαδρομές  ****/
+// για static αρχεία
+const publicDir = path.join(__dirname, '..', 'public');
+const clientDistDir = path.join(__dirname, '..', 'client', 'dist');
+
+// για τα WebSockets
 const REALTIME_WS_PATH = '/ws/realtime';
 
 
@@ -317,9 +328,6 @@ const { router: activitiesRouter, getCurrentActivity, setCurrentActivity } = cre
 
 app.use(activitiesRouter);
 
-const publicDir = path.join(__dirname, '..', 'public');
-const clientDistDir = path.join(__dirname, '..', 'client', 'dist');
-
 
 
 app.use(express.json({ limit: '8mb' }));
@@ -333,7 +341,7 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-// path για static assets
+/**** Σερβίρει Static αρχεία ****/
 app.use('/css', express.static(path.join(publicDir, 'css')));
 app.use('/icons', express.static(path.join(publicDir, 'icons')));
 app.use('/js', express.static(path.join(publicDir, 'js')));

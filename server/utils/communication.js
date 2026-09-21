@@ -1,3 +1,4 @@
+// Συνάρτηση για τον καθαρισμό και την ασφαλή καταγραφή δεδομένων επικοινωνίας
 function sanitizeCommString(value, maxLen = 200) {
   const raw = String(value || '');
 
@@ -15,7 +16,7 @@ function sanitizeCommString(value, maxLen = 200) {
 
   return `${raw.slice(0, maxLen)}...`;
 }
-
+// Καθαρισμός και ασφαλή αναπαράσταση επικοινωνίας
 function sanitizeCommPayload(value, depth = 0) {
   if (value === null || typeof value === 'undefined') {
     return null;
@@ -68,7 +69,7 @@ function sanitizeCommPayload(value, depth = 0) {
 
   return sanitizeCommString(value, 220);
 }
-
+// Δημιουργία και διαχείριση αρχείου καταγραφής επικοινωνίας
 function createCommunicationLog({ limit = 1200, catalog = [] } = {}) {
   const communicationLog = [];
   let communicationSeq = 0;
@@ -137,7 +138,7 @@ function createCommunicationLog({ limit = 1200, catalog = [] } = {}) {
     sanitizeCommPayload
   };
 }
-
+// Εξαγωγή των συναρτήσεων για χρήση σε άλλα μέρη της εφαρμογής
 module.exports = {
   createCommunicationLog,
   sanitizeCommString,

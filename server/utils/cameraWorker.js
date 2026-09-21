@@ -9,19 +9,24 @@ const { spawn } = require('child_process');
 const readline = require('readline');
 
 // 2. Ρυθμίσεις
-// Global camera toggle: 
-// false για να απενεργοποιηθεί πλήρως η λειτουργία της κάμερας, 
-// true για να ενεργοποιηθεί
-const CAMERA_FEATURES_ENABLED = false;
+
+// Global camera toggle: false για απενεργοποίηση κάμερας, true για ενεργοποίηση
+const CAMERA_FEATURES_ENABLED = true;
+// Χρονικό όριο για την εκτέλεση αιτημάτων προς τον camera worker (σε milliseconds)
 const parsedCameraWorkerTimeoutMs = Number.parseInt(process.env.CAMERA_WORKER_TIMEOUT_MS || '1200', 10);
+// Ελάχιστο και μέγιστο χρονικό όριο για την εκτέλεση αιτημάτων προς τον camera worker
 const CAMERA_WORKER_TIMEOUT_MS = Number.isInteger(parsedCameraWorkerTimeoutMs)
   ? Math.max(150, Math.min(parsedCameraWorkerTimeoutMs, 10000))
   : 1200;
+// Μέγιστος αριθμός εκκρεμών αιτημάτων προς τον camera worker
 const parsedCameraWorkerMaxPending = Number.parseInt(process.env.CAMERA_WORKER_MAX_PENDING || '24', 10);
+// Ελάχιστο και μέγιστο αριθμό εκκρεμών αιτημάτων προς τον camera worker
 const CAMERA_WORKER_MAX_PENDING = Number.isInteger(parsedCameraWorkerMaxPending)
   ? Math.max(1, Math.min(parsedCameraWorkerMaxPending, 120))
   : 24;
+// Χρονικό διάστημα αναμονής πριν την επανεκκίνηση του camera worker σε περίπτωση αποτυχίας
 const CAMERA_WORKER_RESTART_DELAY_MS = 1200;
+// Ενεργοποίηση του camera worker βάσει των global ρυθμίσεων και του περιβάλλοντος
 const CAMERA_WORKER_ENABLED = CAMERA_FEATURES_ENABLED
   && String(process.env.CAMERA_WORKER_ENABLED || '1').trim() !== '0';
 const CAMERA_WORKER_SCRIPT = process.env.CAMERA_WORKER_SCRIPT || path.join(__dirname, '..', '..', 'vision', 'camera_server.py');
