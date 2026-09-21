@@ -1,0 +1,45 @@
+Folder PATH listing for volume OS
+Volume serial number is 4EE2-6C3B
+C:.
+|   package.json
+|   server.js
+|   structure.txt
+|   
++---activities
+|   +---buffon-needle
+|   +---geometry-live
+|   \---neural-lab
++---apps
+|       registry.js
+|       
++---data
+|       users.json
+|       
++---middleware
+|       checkRole.js
+|       sessionMiddleware.js
+|       
++---routes
+|       activities.js
+|       admin.js
+|       appData.js
+|       apps.js
+|       client.js
+|       teacher.js
+|       
++---services
+|       appActivities.js
+|       buffon.js
+|       fourier.js
+|       geometry.js
+|       neural.js
+|       primes.js
+|       sessionManager.js
+|       websocketRegistry.js
+|       
+\---utils
+        cameraWorker.js
+        communication.js
+        helpers.js
+        socketHelpers.js
+        

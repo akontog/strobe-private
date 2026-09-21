@@ -8,6 +8,8 @@ Unified classroom platform with:
 ## Structure
 - server/ server runtime and routes
 - server/apps/registry.js app registry used by teacher/student launchers
+- server/utils/
+  - COMM_EVENT_CATALOG: catalog with all events
 - client/src/labs/* lab runtime and React views (fourier, geometry, neural, buffon, primes)
 - client/src/framework/assets/* shared framework CSS/JS assets served at /framework/*
 - client/src/shared/* shared React components/hooks/i18n
