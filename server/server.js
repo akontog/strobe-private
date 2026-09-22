@@ -43,7 +43,9 @@ const {
   getSocketClientInfo,
   getUpgradeClientInfo
 } = require('./utils/socketHelpers');
-
+const {
+    registerStaticFiles
+} = require('./startup/registerStaticFiles');
 
 /**** 4. Εισαγωγή υπηρεσιών ****/
 const sessionManager = require('./services/sessionManager');
