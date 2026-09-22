@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-09-22T13:33:31.838Z",
+  "savedAt": "2026-09-22T18:40:12.641Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -167,12 +167,13 @@
       "userId": "user_1790083940709_a49we5z",
       "ip": "127.0.0.1",
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
-      "username": "Teacher",
+      "username": "Primes teacher",
       "role": "teacher",
-      "source": "neural-lab",
+      "source": "primes-lab",
       "activeApps": [
         "neural",
-        "neural-lab"
+        "primes",
+        "primes-lab"
       ],
       "appData": {
         "neural": {
@@ -183,7 +184,7 @@
             "w2": 1
           },
           "active": true,
-          "lastUpdated": "2026-09-22T13:33:31.833Z",
+          "lastUpdated": "2026-09-22T17:39:41.090Z",
           "lesson": {
             "dataset": "vehicles",
             "exampleIndex": 0,
@@ -214,10 +215,17 @@
             },
             "useQuestionMarks": false
           }
+        },
+        "primes": {
+          "studentId": "student-1",
+          "name": "τρε",
+          "color": "#0d35fd",
+          "active": true,
+          "lastUpdated": "2026-09-22T18:40:11.343Z"
         }
       },
       "connectedAt": 1790083940709,
-      "lastSeenAt": 1790084011837,
+      "lastSeenAt": 1790102412641,
       "isActive": true
     }
   ]

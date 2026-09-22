@@ -2,7 +2,7 @@
 const { WebSocketServer } = require('ws');
 const { sanitizeString } = require('../utils/helpers'); // Εισαγωγή του helper
 
-module.exports = function initNeural({
+function initNeural({
   recordCommunication,
   getUpgradeClientInfo,
   getWebSocketSessionInfo,
@@ -788,3 +788,5 @@ module.exports = function initNeural({
     }
   };
 };
+
+module.exports = initNeural;
