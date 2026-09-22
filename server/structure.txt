@@ -12,6 +12,9 @@ C:.
 +---apps
 |       registry.js
 |       
++---config
+|       serverConfig.js
+|       
 +---data
 |       users.json
 |       
@@ -37,9 +40,14 @@ C:.
 |       sessionManager.js
 |       websocketRegistry.js
 |       
++---startup
+|       registerStaticFiles.js
+|       
 \---utils
         cameraWorker.js
+        commEventCatalog.js
         communication.js
         helpers.js
+        realtimeTransport.js
         socketHelpers.js
         

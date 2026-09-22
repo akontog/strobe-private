@@ -84,15 +84,11 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-/**** Σερβίρει Static αρχεία ****/
-app.use('/css', express.static(path.join(publicDir, 'css')));
-app.use('/icons', express.static(path.join(publicDir, 'icons')));
-app.use('/js', express.static(path.join(publicDir, 'js')));
-app.use('/public', express.static(publicDir));
-app.use('/dist', express.static(clientDistDir));
+registerStaticFiles(app, {
+    publicDir,
+    clientDistDir
+});
 
-app.use('/framework/css', express.static(path.join(__dirname, '..', 'client', 'src', 'framework', 'assets', 'css')));
-app.use('/framework/js', express.static(path.join(__dirname, '..', 'client', 'src', 'framework', 'assets', 'js')));
 
 app.use('/teacher', teacherRouter);
 app.use(appDataRouter);
@@ -209,19 +205,6 @@ app.use('/admin', createAdminRouter({
 }));
 app.use('/labs', createAppsRouter());
 
-app.use((err, req, res, next) => {
-  if (!err) {
-    return next();
-  }
-
-  if (err.code === 'ENOENT') {
-    return res.status(404).json({ error: 'Resource not found' });
-  }
-
-  const status = Number.isInteger(err.status) ? err.status : 500;
-  console.error('[http] request error:', err && err.message ? err.message : err);
-  return res.status(status).json({ error: status === 500 ? 'Internal server error' : 'Request failed' });
-});
 
 
 
@@ -584,6 +567,22 @@ app.get('/api/{*path}', (req, res) => {
 app.get('/{*path}', (req, res) => {
   res.sendFile(path.join(clientDistDir, 'index.html'));
 });
+
+// Middleware για διαχείριση σφαλμάτων HTTP αιτήσεων
+app.use((err, req, res, next) => {
+  if (!err) {
+    return next();
+  }
+
+  if (err.code === 'ENOENT') {
+    return res.status(404).json({ error: 'Resource not found' });
+  }
+
+  const status = Number.isInteger(err.status) ? err.status : 500;
+  console.error('[http] request error:', err && err.message ? err.message : err);
+  return res.status(status).json({ error: status === 500 ? 'Internal server error' : 'Request failed' });
+});
+
 
 // Εκκίνηση του HTTP server και εκτύπωση πληροφοριών σύνδεσης
 httpServer.listen(PORT, HOST, () => {
