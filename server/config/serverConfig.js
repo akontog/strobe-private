@@ -15,9 +15,15 @@ const PORT =
         : 3000;
 
 // Διαδρομές για static αρχεία
-const publicDir = path.join(__dirname, '..', 'public');
+const publicDir = path.join(
+    __dirname,
+    '..',
+    '..',
+    'public'
+);
 const clientDistDir = path.join(
     __dirname,
+    '..',
     '..',
     'client',
     'dist'
