@@ -18,7 +18,14 @@ const createAppsRouter = require('./routes/apps');
 const appDataRouter = require('./routes/appData');
 const createActivitiesRouter = require('./routes/activities');
 
-/**** 3. Εισαγωγή βοηθητικών συναρτήσεων ****/
+/**** 3. Εισαγωγή βοηθητικών συναρτήσεων, μεταβλητών και ρυθμίσεων ****/
+const {
+    HOST,
+    PORT,
+    publicDir,
+    clientDistDir,
+    REALTIME_WS_PATH
+} = require('./config/serverConfig');
 const { createRealtimeTransport } = require('./utils/realtimeTransport');
 const {sanitizeString} = require('./utils/helpers');
 const {
@@ -51,20 +58,8 @@ const wsRegistry = require('./services/websocketRegistry');
 const app = express();
 const httpServer = http.createServer(app);
 
-/**** 6. Ρυθμίσεις host/port ****/
-const HOST = process.env.HOST || '0.0.0.0';
-const parsedPort = Number.parseInt(process.env.PORT || '3000', 10);
-const PORT = Number.isInteger(parsedPort) && parsedPort > 0 && parsedPort < 65536
-  ? parsedPort
-  : 3000;
 
-/**** 6. Διαδρομές  ****/
-// για static αρχεία
-const publicDir = path.join(__dirname, '..', 'public');
-const clientDistDir = path.join(__dirname, '..', 'client', 'dist');
 
-// για τα WebSockets
-const REALTIME_WS_PATH = '/ws/realtime';
 
 
 

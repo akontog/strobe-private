@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-09-22T06:43:51.053Z",
+  "savedAt": "2026-09-22T07:29:11.080Z",
   "sessions": [
     {
       "id": "5c498274-9697-43b7-8403-b5acc39ed728",
@@ -395601,6 +395601,87 @@
       "appData": {},
       "connectedAt": 1790059431051,
       "lastSeenAt": 1790059431051,
+      "isActive": true
+    },
+    {
+      "id": "neural-muccsaib-1",
+      "userId": "user_neural",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "xsa",
+      "role": "client",
+      "source": "neural-lab",
+      "activeApps": [
+        "neural-lab",
+        "neural"
+      ],
+      "appData": {
+        "neural": {
+          "role": "client",
+          "color": "#0d35fd",
+          "weights": {
+            "w1": 1,
+            "w2": 1
+          },
+          "active": true,
+          "lastUpdated": "2026-09-22T07:29:09.829Z"
+        }
+      },
+      "connectedAt": 1790062149683,
+      "lastSeenAt": 1790062149954,
+      "isActive": true
+    },
+    {
+      "id": "neural-muccsavr-2",
+      "userId": "user_neural",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "Teacher",
+      "role": "teacher",
+      "source": "neural-lab",
+      "activeApps": [
+        "neural-lab",
+        "neural"
+      ],
+      "appData": {
+        "neural": {
+          "role": "teacher",
+          "lesson": {
+            "dataset": "vehicles",
+            "exampleIndex": 0,
+            "exampleName": "Ποδήλατο",
+            "icon": "🚲",
+            "inputs": {
+              "i1": 2,
+              "i2": 0
+            },
+            "products": {
+              "p1": "",
+              "p2": ""
+            },
+            "total": "",
+            "weights": {
+              "w1": 2,
+              "w2": 3
+            },
+            "activityId": "1",
+            "activityTitle": "1. Βρίσκω την είσοδο",
+            "threshold": {
+              "op": ">=",
+              "boundary": 5
+            },
+            "selectedInputs": {
+              "i1": true,
+              "i2": false
+            },
+            "useQuestionMarks": false
+          },
+          "active": true,
+          "lastUpdated": "2026-09-22T07:29:10.696Z"
+        }
+      },
+      "connectedAt": 1790062150168,
+      "lastSeenAt": 1790062151079,
       "isActive": true
     }
   ]
