@@ -12,6 +12,7 @@ function normalizeColor(value, fallback = '#3b82f6') {
 function initPrimes({
   recordCommunication,
   getUpgradeClientInfo,
+  getWebSocketSessionInfo,
   sessionManager
 }) {
   const primesWss = new WebSocketServer({ noServer: true });
@@ -37,6 +38,20 @@ function initPrimes({
       ws.__primesSessionId = nextId;
     }
     return nextId;
+  }
+
+  function resolveSessionId(request, ws) {
+    if (typeof getWebSocketSessionInfo === 'function') {
+      const sessionInfo = getWebSocketSessionInfo(request);
+      const candidate = sessionInfo && sessionInfo.sessionId ? String(sessionInfo.sessionId).trim() : '';
+      if (candidate) {
+        if (ws) {
+          ws.__primesSessionId = candidate;
+        }
+        return candidate;
+      }
+    }
+    return ensureSessionId(ws);
   }
 
   function nextStudentId() {
@@ -113,7 +128,7 @@ function initPrimes({
     const connectionInfo = typeof getUpgradeClientInfo === 'function'
       ? getUpgradeClientInfo(request)
       : { ip: 'unknown', userAgent: 'unknown' };
-    const sessionId = ensureSessionId(ws);
+    const sessionId = resolveSessionId(request, ws);
 
     if (sessionManager && typeof sessionManager.create === 'function') {
       sessionManager.create(sessionId, {
@@ -293,8 +308,8 @@ function initPrimes({
         reason: 'socket-closed'
       });
 
-      if (sessionManager && typeof sessionManager.remove === 'function') {
-        sessionManager.remove(sessionId);
+      if (sessionManager && typeof sessionManager.leaveApp === 'function') {
+        sessionManager.leaveApp(sessionId, 'primes-lab');
       }
     });
   });

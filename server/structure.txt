@@ -47,7 +47,9 @@ C:.
         cameraWorker.js
         commEventCatalog.js
         communication.js
+        cookies.js
         helpers.js
         realtimeTransport.js
         socketHelpers.js
+        wsHeartbeat.js
         

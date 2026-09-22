@@ -11,6 +11,7 @@ function initBuffon(deps) {
   const {
     recordCommunication,
     getUpgradeClientInfo,
+    getWebSocketSessionInfo,
     touchBuffonConnection,
     buffonConnectionMeta, // WeakMap
     httpServer,
@@ -33,6 +34,20 @@ function ensureBuffonSessionId(ws) {
     ws.__buffonSessionId = nextId;
   }
   return nextId;
+}
+
+function resolveBuffonSessionId(request, ws) {
+  if (typeof getWebSocketSessionInfo === 'function') {
+    const sessionInfo = getWebSocketSessionInfo(request);
+    const candidate = sessionInfo && sessionInfo.sessionId ? String(sessionInfo.sessionId).trim() : '';
+    if (candidate) {
+      if (ws) {
+        ws.__buffonSessionId = candidate;
+      }
+      return candidate;
+    }
+  }
+  return ensureBuffonSessionId(ws);
 }
 
 function buffonBroadcastTeachers(data) {
@@ -104,7 +119,7 @@ function sendBuffonRoster(target) {
 
 buffonWss.on('connection', (ws, request) => {
   const connectionInfo = getUpgradeClientInfo(request);
-  const sessionId = ensureBuffonSessionId(ws);
+  const sessionId = resolveBuffonSessionId(request, ws);
 
   if (sessionManager && typeof sessionManager.create === 'function') {
     sessionManager.create(sessionId, {
@@ -385,8 +400,8 @@ buffonWss.on('connection', (ws, request) => {
     buffonStudents.delete(ws);
     buffonTeachers.delete(ws);
     buffonConnectionMeta.delete(ws);
-    if (sessionManager && typeof sessionManager.remove === 'function') {
-      sessionManager.remove(sessionId);
+    if (sessionManager && typeof sessionManager.leaveApp === 'function') {
+      sessionManager.leaveApp(sessionId, 'buffon');
     }
     sendBuffonRoster();
   });

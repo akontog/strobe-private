@@ -1,34 +1,224 @@
-[
-  [
-    "e2e5f1a3-457e-4cb2-9f02-eec292f70b2e",
+{
+  "schemaVersion": 2,
+  "savedAt": "2026-09-22T13:33:31.838Z",
+  "sessions": [
     {
-      "sessionId": "e2e5f1a3-457e-4cb2-9f02-eec292f70b2e",
-      "userId": "user_1783679846444_ekk1tiqry",
-      "createdAt": "2026-07-10T10:37:26.444Z",
-      "lastActivity": "2026-07-10T10:37:26.461Z",
-      "apps": {
-        "geometry-live": {
-          "active": false,
-          "data": {}
-        },
-        "fourier-lab": {
-          "active": false,
-          "data": {},
-          "currentSlide": 0
-        },
-        "buffon-needle": {
-          "active": false,
-          "data": {},
-          "score": 0
-        },
-        "neural-lab": {
-          "active": false,
-          "data": {}
+      "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
+      "userId": "user_1790083877982_ffr9i2w",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "ppp",
+      "role": "client",
+      "source": "neural-lab",
+      "activeApps": [
+        "neural-lab",
+        "neural"
+      ],
+      "appData": {
+        "neural": {
+          "role": "client",
+          "color": "#0d35fd",
+          "weights": {
+            "w1": 1,
+            "w2": 1
+          },
+          "active": true,
+          "lastUpdated": "2026-09-22T13:31:18.036Z"
         }
       },
-      "metadata": {
-        "role": "student"
-      }
+      "connectedAt": 1790083877983,
+      "lastSeenAt": 1790083878042,
+      "isActive": true
+    },
+    {
+      "id": "9e841670-f412-4272-ba1c-d4cd7f4d3989",
+      "userId": "user_1790083878073_cs7iesc",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "Teacher",
+      "role": "teacher",
+      "source": "neural-lab",
+      "activeApps": [
+        "neural-lab",
+        "neural"
+      ],
+      "appData": {
+        "neural": {
+          "role": "teacher",
+          "lesson": {
+            "dataset": "vehicles",
+            "exampleIndex": 0,
+            "exampleName": "Ποδήλατο",
+            "icon": "🚲",
+            "inputs": {
+              "i1": 2,
+              "i2": 0
+            },
+            "products": {
+              "p1": "",
+              "p2": ""
+            },
+            "total": "",
+            "weights": {
+              "w1": 2,
+              "w2": 3
+            },
+            "activityId": "1",
+            "activityTitle": "1. Βρίσκω την είσοδο",
+            "threshold": {
+              "op": ">=",
+              "boundary": 5
+            },
+            "selectedInputs": {
+              "i1": true,
+              "i2": false
+            },
+            "useQuestionMarks": false
+          },
+          "active": true,
+          "lastUpdated": "2026-09-22T13:31:18.156Z"
+        }
+      },
+      "connectedAt": 1790083878073,
+      "lastSeenAt": 1790083878163,
+      "isActive": true
+    },
+    {
+      "id": "eadd5fea-5575-4667-b6d2-a6aadf3fd377",
+      "userId": "user_1790083909796_iph9mdn",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "Teacher",
+      "role": "teacher",
+      "source": "neural-lab",
+      "activeApps": [
+        "neural"
+      ],
+      "appData": {
+        "neural": {
+          "role": "teacher",
+          "lesson": {
+            "dataset": "vehicles",
+            "exampleIndex": 0,
+            "exampleName": "Ποδήλατο",
+            "icon": "🚲",
+            "inputs": {
+              "i1": 2,
+              "i2": 0
+            },
+            "products": {
+              "p1": "",
+              "p2": ""
+            },
+            "total": "",
+            "weights": {
+              "w1": 2,
+              "w2": 3
+            },
+            "activityId": "1",
+            "activityTitle": "1. Βρίσκω την είσοδο",
+            "threshold": {
+              "op": ">=",
+              "boundary": 5
+            },
+            "selectedInputs": {
+              "i1": true,
+              "i2": false
+            },
+            "useQuestionMarks": false
+          },
+          "active": true,
+          "lastUpdated": "2026-09-22T13:31:49.876Z"
+        }
+      },
+      "connectedAt": 1790083909797,
+      "lastSeenAt": 1790083944239,
+      "isActive": true
+    },
+    {
+      "id": "4ea12d05-1df3-4703-b951-1b7b33a237d4",
+      "userId": "user_1790083909911_y5hkx9m",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "ppp",
+      "role": "client",
+      "source": "neural-lab",
+      "activeApps": [
+        "neural"
+      ],
+      "appData": {
+        "neural": {
+          "role": "client",
+          "color": "#0d35fd",
+          "weights": {
+            "w1": 1,
+            "w2": 1
+          },
+          "active": true,
+          "lastUpdated": "2026-09-22T13:31:49.966Z"
+        }
+      },
+      "connectedAt": 1790083909911,
+      "lastSeenAt": 1790083940734,
+      "isActive": true
+    },
+    {
+      "id": "acc16562-f042-4637-af0f-cb952982dfc0",
+      "userId": "user_1790083940709_a49we5z",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "Teacher",
+      "role": "teacher",
+      "source": "neural-lab",
+      "activeApps": [
+        "neural",
+        "neural-lab"
+      ],
+      "appData": {
+        "neural": {
+          "role": "teacher",
+          "color": "#0d35fd",
+          "weights": {
+            "w1": 1,
+            "w2": 1
+          },
+          "active": true,
+          "lastUpdated": "2026-09-22T13:33:31.833Z",
+          "lesson": {
+            "dataset": "vehicles",
+            "exampleIndex": 0,
+            "exampleName": "Ποδήλατο",
+            "icon": "🚲",
+            "inputs": {
+              "i1": 2,
+              "i2": 0
+            },
+            "products": {
+              "p1": "",
+              "p2": ""
+            },
+            "total": "",
+            "weights": {
+              "w1": 2,
+              "w2": 3
+            },
+            "activityId": "1",
+            "activityTitle": "1. Βρίσκω την είσοδο",
+            "threshold": {
+              "op": ">=",
+              "boundary": 5
+            },
+            "selectedInputs": {
+              "i1": true,
+              "i2": false
+            },
+            "useQuestionMarks": false
+          }
+        }
+      },
+      "connectedAt": 1790083940709,
+      "lastSeenAt": 1790084011837,
+      "isActive": true
     }
   ]
-]
+}

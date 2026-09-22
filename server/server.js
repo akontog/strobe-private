@@ -46,7 +46,7 @@ const {
 const {
     registerStaticFiles
 } = require('./startup/registerStaticFiles');
-const { sessionMiddleware } = require('./middleware/sessionMiddleware');
+const { sessionMiddleware, getWebSocketSessionInfo } = require('./middleware/sessionMiddleware');
 /**** 4. Εισαγωγή υπηρεσιών ****/
 const sessionManager = require('./services/sessionManager');
 const initFourier = require('./services/fourier');
@@ -237,6 +237,7 @@ io.on('connection', (socket) => {
 const { handleUpgrade: neuralUpgrade } = initNeural({
   recordCommunication,
   getUpgradeClientInfo,
+  getWebSocketSessionInfo,
   touchCanvasNodeConnection,
   canvasNodeConnectionMeta,
   sessionManager
@@ -244,6 +245,7 @@ const { handleUpgrade: neuralUpgrade } = initNeural({
 const { buffonWss } = initBuffon({
   recordCommunication,
   getUpgradeClientInfo,
+  getWebSocketSessionInfo,
   touchBuffonConnection,
   buffonConnectionMeta,
   httpServer,
@@ -252,6 +254,7 @@ const { buffonWss } = initBuffon({
 const { primesWss } = initPrimes({
   recordCommunication,
   getUpgradeClientInfo,
+  getWebSocketSessionInfo,
   sessionManager
 });
 

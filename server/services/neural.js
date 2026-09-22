@@ -5,6 +5,7 @@ const { sanitizeString } = require('../utils/helpers'); // Εισαγωγή το
 module.exports = function initNeural({
   recordCommunication,
   getUpgradeClientInfo,
+  getWebSocketSessionInfo,
   touchCanvasNodeConnection,
   canvasNodeConnectionMeta,
   sessionManager
@@ -58,6 +59,20 @@ module.exports = function initNeural({
       ws.__canvasSessionId = nextId;
     }
     return nextId;
+  }
+
+  function resolveCanvasSessionId(request, ws) {
+    if (typeof getWebSocketSessionInfo === 'function') {
+      const sessionInfo = getWebSocketSessionInfo(request);
+      const candidate = sessionInfo && sessionInfo.sessionId ? String(sessionInfo.sessionId).trim() : '';
+      if (candidate) {
+        if (ws) {
+          ws.__canvasSessionId = candidate;
+        }
+        return candidate;
+      }
+    }
+    return ensureCanvasSessionId(ws);
   }
   // εκτεταμένο μοντέλο για δραστηριότητες 1α, 2α, 3α (εποπτικό μέσο)
   const canvasNodeModel = {
@@ -340,7 +355,7 @@ module.exports = function initNeural({
   // χειριστής WebSocket σύνδεσης
   canvasNodeWss.on('connection', (ws, request) => {
     const connectionInfo = getUpgradeClientInfo(request);
-    const sessionId = ensureCanvasSessionId(ws);
+    const sessionId = resolveCanvasSessionId(request, ws);
     console.log(`[neural-lab] 🔌 New WebSocket connection from ${connectionInfo.ip} (${connectionInfo.userAgent || 'unknown UA'})`);
 
     if (sessionManager && typeof sessionManager.create === 'function') {
@@ -755,8 +770,8 @@ module.exports = function initNeural({
       canvasNodeTeachers.delete(ws);
       canvasNodeStudents.delete(ws);
       canvasNodeConnectionMeta.delete(ws);
-      if (sessionManager && typeof sessionManager.remove === 'function') {
-        sessionManager.remove(sessionId);
+      if (sessionManager && typeof sessionManager.leaveApp === 'function') {
+        sessionManager.leaveApp(sessionId, 'neural-lab');
       }
       canvasNodeBroadcastState();
     });
