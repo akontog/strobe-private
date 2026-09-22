@@ -2,12 +2,24 @@ const { sanitizeString} = require('../utils/helpers');
 
 let io = null;
 let recordCommunication = () => {};
-let geometryConnectionMeta = new Map();
 let getSocketClientInfo = () => ({ ip: 'unknown', userAgent: 'unknown' });
-let touchGeometryConnection = () => {};
-let emitUsersUpdate = () => {};
-let activeUsers = new Map();
 let sessionManager = null;
+
+// Δική του "μνήμη" συνδέσεων (IP, user-agent, lastSeenAt) — ΔΕΝ μοιράζεται πια
+// το geometryConnectionMeta. Ίδιο μοτίβο με το fourierParticipants παρακάτω.
+const fourierConnectionMeta = new Map();
+
+// Ενημερώνει "τελευταία φορά που ακούστηκε" για ΥΠΑΡΧΟΥΣΑ σύνδεση.
+// Δεν δημιουργεί νέα εγγραφή αν δεν υπάρχει ήδη — αυτό το κάνει το ensureFourierSocketMeta.
+function touchFourierConnection(socketId) {
+  const current = fourierConnectionMeta.get(socketId);
+
+  if (!current) {
+    return;
+  }
+
+  fourierConnectionMeta.set(socketId, { ...current, lastSeenAt: Date.now() });
+}
 
 const FOURIER_ROOM = 'fourier:classroom';
 const fourierParticipants = new Map();
@@ -442,7 +454,7 @@ function buildFourierFftDuelPayload(viewerSocketId = '', viewerRole = 'client') 
 }
 
 function ensureFourierSocketMeta(socket) {
-  const existing = geometryConnectionMeta.get(socket.id);
+  const existing = fourierConnectionMeta.get(socket.id);
 
   if (existing) {
     return existing;
@@ -454,7 +466,7 @@ function ensureFourierSocketMeta(socket) {
     ...getSocketClientInfo(socket)
   };
 
-  geometryConnectionMeta.set(socket.id, socketMeta);
+  fourierConnectionMeta.set(socket.id, socketMeta);
   return socketMeta;
 }
 
@@ -1040,7 +1052,7 @@ function emitFourierWaveSumState(targetSocket = null) {
 
 function registerSocketHandlers(socket) {
   socket.on('fourier:join', (data) => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     recordCommunication({
       app: 'fourier',
       direction: 'in',
@@ -1122,7 +1134,7 @@ function registerSocketHandlers(socket) {
   });
 
   socket.on('fourier:request-state', () => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     recordCommunication({
       app: 'fourier',
       direction: 'in',
@@ -1166,7 +1178,7 @@ function registerSocketHandlers(socket) {
   });
 
   socket.on('fourier:set-slide', (payload) => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     recordCommunication({
       app: 'fourier',
       direction: 'in',
@@ -1213,7 +1225,7 @@ function registerSocketHandlers(socket) {
   });
 
   socket.on('fourier:interaction', (payload) => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     recordCommunication({
       app: 'fourier',
       direction: 'in',
@@ -1293,7 +1305,7 @@ function registerSocketHandlers(socket) {
   });
 
   socket.on('fourier:sound-control', (payload) => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     recordCommunication({
       app: 'fourier',
       direction: 'in',
@@ -1375,7 +1387,7 @@ function registerSocketHandlers(socket) {
   });
 
   socket.on('fourier:heat-control', (payload) => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     recordCommunication({
       app: 'fourier',
       direction: 'in',
@@ -1452,7 +1464,7 @@ function registerSocketHandlers(socket) {
   });
 
   socket.on('fourier:heat-time-control', (payload) => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     recordCommunication({
       app: 'fourier',
       direction: 'in',
@@ -1476,7 +1488,7 @@ function registerSocketHandlers(socket) {
   });
 
   socket.on('fourier:fft-duel-start', (payload) => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     recordCommunication({
       app: 'fourier',
       direction: 'in',
@@ -1497,7 +1509,7 @@ function registerSocketHandlers(socket) {
   });
 
   socket.on('fourier:fft-duel-probe', (payload) => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     recordCommunication({
       app: 'fourier',
       direction: 'in',
@@ -1533,7 +1545,7 @@ function registerSocketHandlers(socket) {
   });
 
   socket.on('fourier:fft-duel-submit', (payload) => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     recordCommunication({
       app: 'fourier',
       direction: 'in',
@@ -1582,7 +1594,7 @@ function registerSocketHandlers(socket) {
   });
 
   socket.on('fourier:fft-duel-reveal', (payload) => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     recordCommunication({
       app: 'fourier',
       direction: 'in',
@@ -1607,7 +1619,7 @@ function registerSocketHandlers(socket) {
   });
 
   socket.on('fourier:ocean-random-pack', (payload) => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     recordCommunication({
       app: 'fourier',
       direction: 'in',
@@ -1642,7 +1654,7 @@ function registerSocketHandlers(socket) {
   });
 
   socket.on('fourier:ocean-random-clear', () => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     recordCommunication({
       app: 'fourier',
       direction: 'in',
@@ -1664,7 +1676,7 @@ function registerSocketHandlers(socket) {
   });
 
   socket.on('fourier:wave-sum-update', (payload) => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     recordCommunication({
       app: 'fourier',
       direction: 'in',
@@ -1693,7 +1705,7 @@ function registerSocketHandlers(socket) {
   });
 
   socket.on('fourier:taylor-guess-live', (payload) => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     let participant = fourierParticipants.get(socket.id);
     let createdFromTaylorLive = false;
     let startedByLive = false;
@@ -1736,7 +1748,7 @@ function registerSocketHandlers(socket) {
   });
 
   socket.on('fourier:taylor-guess-submit', (payload) => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     let participant = fourierParticipants.get(socket.id);
 
     if (!participant) {
@@ -1788,7 +1800,7 @@ function registerSocketHandlers(socket) {
   });
 
   socket.on('fourier:taylor-guess-reveal', () => {
-    touchGeometryConnection(socket.id);
+    touchFourierConnection(socket.id);
     const participant = fourierParticipants.get(socket.id);
     if (!participant || participant.role !== 'teacher') return;
     ensureFourierTaylorGuessRoundRunning();
@@ -1845,7 +1857,7 @@ function handleSocketDisconnect(socketId) {
     emitFourierTaylorGuessState();
   }
 
-  emitUsersUpdate();
+  fourierConnectionMeta.delete(socketId);
 
   if (removedParticipant && sessionManager && typeof sessionManager.remove === 'function') {
     sessionManager.remove(socketId);
@@ -1856,13 +1868,9 @@ function handleSocketDisconnect(socketId) {
 function initFourier(deps = {}) {
   io = deps.io;
   recordCommunication = typeof deps.recordCommunication === 'function' ? deps.recordCommunication : () => {};
-  geometryConnectionMeta = deps.geometryConnectionMeta;
   getSocketClientInfo = typeof deps.getSocketClientInfo === 'function'
     ? deps.getSocketClientInfo
     : () => ({ ip: 'unknown', userAgent: 'unknown' });
-  touchGeometryConnection = typeof deps.touchGeometryConnection === 'function' ? deps.touchGeometryConnection : () => {};
-  emitUsersUpdate = typeof deps.emitUsersUpdate === 'function' ? deps.emitUsersUpdate : () => {};
-  activeUsers = deps.activeUsers;
   sessionManager = deps.sessionManager || null;
 
   return {

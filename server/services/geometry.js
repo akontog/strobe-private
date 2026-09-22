@@ -308,6 +308,7 @@ function initGeometry({
       activeUsers.delete(socket.id);
       geometryConnectionMeta.delete(socket.id);
       sessionManager.remove(socket.id);
+      emitUsersUpdate(); // ενημέρωση όλων ότι αυτός ο χρήστης έφυγε (πριν το έκανε έμμεσα το fourier)
 
       if (handleFourierDisconnect) {
         handleFourierDisconnect(socket.id);

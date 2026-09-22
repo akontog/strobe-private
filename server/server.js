@@ -128,11 +128,7 @@ const canvasNodeConnectionMeta = new Map();
 const fourierService = initFourier({
   io,
   recordCommunication,
-  geometryConnectionMeta,
   getSocketClientInfo,
-  touchGeometryConnection,
-  emitUsersUpdate,
-  activeUsers,
   sessionManager
 });
 const { fourierParticipants, registerSocketHandlers: registerFourierSocketHandlers, handleSocketDisconnect } = fourierService;
