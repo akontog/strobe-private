@@ -100,7 +100,7 @@ function initGeometry({
   // δηλώνει στο sessionManager ότι ο χρήστης είναι στο geometry.
   function markGeometryActivity(socket) {
     touchGeometryConnection(socket.id);
-    sessionManager.joinApp(socket.id, 'geometry');
+    sessionManager.joinApp(socket.sessionId, 'geometry');
   }
 
   // Καλείται μία φορά για κάθε νέα σύνδεση στο κύριο κανάλι (/ws/realtime).
@@ -128,13 +128,7 @@ function initGeometry({
       ...socketInfo
     });
 
-    sessionManager.create(socket.id, {
-      ip: socketInfo.ip,
-      userAgent: socketInfo.userAgent,
-      username: `user_${String(socket.id).slice(0, 6)}`,
-      role: 'client',
-      source: 'realtime'
-    });
+
 
     const currentActivityOnConnect = getCurrentActivity();
     if (currentActivityOnConnect) {
@@ -152,8 +146,8 @@ function initGeometry({
 
     socket.on('user-position', (data) => {
       markGeometryActivity(socket);
-      sessionManager.update(socket.id, {
-        username: sanitizeString(data && data.name, 60) || `user_${String(socket.id).slice(0, 6)}`,
+      sessionManager.update(socket.sessionId, {
+        username: sanitizeString(data && data.name, 60) || `user_${String(socket.sessionId).slice(0, 6)}`,
         role: sanitizeString(data && data.role, 20) || 'client'
       }, {
         geometry: {
@@ -172,7 +166,7 @@ function initGeometry({
       const existing = activeUsers.get(socket.id) || {};
       const userInfo = {
         ...existing,
-        id: socket.id,
+        id: socket.sessionId,
         name: data && data.name ? data.name : existing.name,
         color: data && data.color ? data.color : existing.color,
         shape: data && data.shape ? data.shape : existing.shape,
@@ -206,7 +200,7 @@ function initGeometry({
 
         activeUsers.set(socket.id, {
           ...existing,
-          id: socket.id,
+          id: socket.sessionId,
           role: 'camera',
           name: data.name || existing.name,
           color: data.color || existing.color,
@@ -307,7 +301,7 @@ function initGeometry({
 
       activeUsers.delete(socket.id);
       geometryConnectionMeta.delete(socket.id);
-      sessionManager.remove(socket.id);
+      sessionManager.leaveApp(socket.sessionId, 'geometry');
       emitUsersUpdate(); // ενημέρωση όλων ότι αυτός ο χρήστης έφυγε (πριν το έκανε έμμεσα το fourier)
 
       if (handleFourierDisconnect) {

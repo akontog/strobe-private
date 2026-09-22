@@ -1,78 +1,98 @@
-  // WebSocket για real-time επικοινωνία
-  const { WebSocketServer } = require('ws');
+// =============================================================
+//  utils/realtimeTransport.js
+//
+//  Μια μίνι εκδοχή του Socket.IO χτισμένη πάνω στη βιβλιοθήκη 'ws'.
+//  Έχει το ίδιο API (io.on('connection'), socket.on/emit/join/leave,
+//  io.to(room).emit, socket.broadcast.emit), ώστε ο υπόλοιπος κώδικας
+//  (geometry, fourier, activities) να γράφεται σαν να υπήρχε Socket.IO.
+//
+//  Πρωτόκολλο: κάθε μήνυμα είναι JSON της μορφής { event, data }.
+// =============================================================
+const { WebSocketServer } = require('ws');
+const { parseRealtimeMessage } = require('./helpers');
+const { attachHeartbeat } = require('./wsHeartbeat');
+const { getWebSocketSessionInfo } = require('../middleware/sessionMiddleware');
 
-  const { parseRealtimeMessage } = require('./helpers');
+const WS_OPEN = 1; // ws.readyState === OPEN
 
-  // Δημιουργεί transport για real-time επικοινωνία
+// Καθαρίζει ονόματα event/room: string, χωρίς κενά στις άκρες
+const cleanName = (value) => String(value || '').trim();
+// Ασφαλές μήνυμα σφάλματος για logs
+const errorText = (error) => (error && error.message ? error.message : error);
+
 function createRealtimeTransport() {
-  // Δημιουργία WebSocketServer με noServer: 
-  // true για να χρησιμοποιηθεί με το υπάρχον HTTP server
+  // noServer: true → ο WebSocketServer ΔΕΝ ανοίγει δική του θύρα.
+  // Τα upgrade requests του κοινού httpServer του τα περνάμε χειροκίνητα.
   const wss = new WebSocketServer({ noServer: true });
-  // Map με όλους τους ενεργούς sockets
-  const sockets = new Map();
-  // Map με όλα τα rooms και τα μέλη τους
-  const rooms = new Map();
-  // Array με όλους τους χειριστές σύνδεσης
-  const connectionHandlers = [];
-  let socketSeq = 0;
-  // Έλεγχος αν το WebSocket είναι έτοιμο για αποστολή μηνυμάτων
-  function wsReady(ws) {
-    return Boolean(ws) && ws.readyState === 1;
-  }
-  // Αποστολή μηνύματος σε WebSocket
+  // Κλείνει αυτόματα συνδέσεις που δεν απαντούν σε ping (νεκροί clients)
+  attachHeartbeat(wss);
+
+  const sockets = new Map();          // socketId -> socket wrapper
+  const rooms = new Map();            // όνομα room -> Set από socketIds
+  const connectionHandlers = [];      // callbacks του io.on('connection')
+  let socketSeq = 0;                  // μετρητής για μοναδικά ids ("ws-1", "ws-2", ...)
+
+  // ---------- Βοηθητικά για αποστολή ----------
+
+  // Στέλνει { event, data } σε ένα ws, μόνο αν είναι ανοιχτό
   function wsSend(ws, event, data) {
-    if (!wsReady(ws)) {
+    if (!ws || ws.readyState !== WS_OPEN) {
       return;
     }
 
     try {
       ws.send(JSON.stringify({ event, data }));
     } catch (error) {
-      console.error(`[realtime] wsSend error for ${event}:`, error && error.message ? error.message : error);
+      console.error(`[realtime] wsSend error for ${event}:`, errorText(error));
     }
   }
 
-  function removeFromRooms(socketId) {
-    rooms.forEach((members) => {
-      members.delete(socketId);
-    });
-  }
+  // ---------- Διαχείριση rooms ----------
 
   function addToRoom(socketId, room) {
-    const safeRoom = String(room || '').trim();
-    if (!safeRoom) {
+    const name = cleanName(room);
+    if (!name) {
       return;
     }
 
-    if (!rooms.has(safeRoom)) {
-      rooms.set(safeRoom, new Set());
+    if (!rooms.has(name)) {
+      rooms.set(name, new Set());
     }
-
-    rooms.get(safeRoom).add(socketId);
+    rooms.get(name).add(socketId);
   }
 
   function removeFromRoom(socketId, room) {
-    const safeRoom = String(room || '').trim();
-    if (!safeRoom) {
-      return;
-    }
-
-    const members = rooms.get(safeRoom);
+    const name = cleanName(room);
+    const members = rooms.get(name);
     if (!members) {
       return;
     }
 
     members.delete(socketId);
     if (!members.size) {
-      rooms.delete(safeRoom);
+      rooms.delete(name); // δεν αφήνουμε άδεια rooms
     }
   }
 
+  function removeFromAllRooms(socketId) {
+    rooms.forEach((members) => members.delete(socketId));
+  }
+
+  // ---------- Wrapper ανά σύνδεση ----------
+
+  // Τυλίγει ένα "γυμνό" ws σε αντικείμενο τύπου Socket.IO socket
   function createSocketWrapper(request, ws) {
     const socketId = `ws-${++socketSeq}`;
-    const listeners = new Map();
+    const listeners = new Map(); // event -> [handlers]
     let closed = false;
 
+    const remoteAddress = request && request.socket ? request.socket.remoteAddress : 'unknown';
+
+    // Σταθερή ταυτότητα (ίδια με αυτή που βλέπει ο browser στο HTTP), ΑΝΕΞΑΡΤΗΤΗ
+    // από το socketId που αλλάζει σε κάθε σύνδεση/reconnect.
+    const { sessionId, userId } = getWebSocketSessionInfo(request);
+
+    // Καλεί όλους τους handlers ενός event· ένα λάθος σε έναν δεν σταματά τους άλλους
     function trigger(event, ...args) {
       const handlers = listeners.get(event);
       if (!handlers || !handlers.length) {
@@ -83,96 +103,100 @@ function createRealtimeTransport() {
         try {
           handler(...args);
         } catch (error) {
-          console.error(`[realtime] handler error for ${event}:`, error && error.message ? error.message : error);
+          console.error(`[realtime] handler error for ${event}:`, errorText(error));
         }
       });
     }
 
     const socket = {
       id: socketId,
+      sessionId,   // σταθερό ανά άνθρωπο/browser — αυτό ΔΕΝ αλλάζει σε reconnect
+      userId,      // ίδιο με το req.userId στο HTTP
       ws,
       connected: true,
       active: true,
       handshake: {
         headers: request && request.headers ? request.headers : {},
-        address: request && request.socket ? request.socket.remoteAddress : 'unknown'
+        address: remoteAddress
       },
       conn: {
-        remoteAddress: request && request.socket ? request.socket.remoteAddress : 'unknown',
+        remoteAddress,
         transport: { name: 'websocket' }
       },
+
+      // Εγγραφή σε event που στέλνει ο client
       on(event, handler) {
-        if (typeof handler !== 'function') {
+        const name = cleanName(event);
+        if (typeof handler !== 'function' || !name) {
           return socket;
         }
 
-        const safeEvent = String(event || '').trim();
-        if (!safeEvent) {
-          return socket;
-        }
-
-        const existing = listeners.get(safeEvent) || [];
+        const existing = listeners.get(name) || [];
         existing.push(handler);
-        listeners.set(safeEvent, existing);
+        listeners.set(name, existing);
         return socket;
       },
-      emit(event, data) {
-        const safeEvent = String(event || '').trim();
-        if (!safeEvent) {
-          return socket;
-        }
 
-        wsSend(ws, safeEvent, data);
+      // Αποστολή event ΠΡΟΣ αυτόν τον client
+      emit(event, data) {
+        const name = cleanName(event);
+        if (name) {
+          wsSend(ws, name, data);
+        }
         return socket;
       },
+
       join(room) {
         addToRoom(socketId, room);
         return socket;
       },
+
       leave(room) {
         removeFromRoom(socketId, room);
         return socket;
       },
+
+      // Κλείσιμο από τον server (το cleanup γίνεται στο ws 'close' παρακάτω)
       disconnect(code = 1000, reason = 'client-disconnect') {
         socket.active = false;
         socket.connected = false;
         try {
           ws.close(code, reason);
         } catch (error) {
-          console.error(`[realtime] ws.close error for ${socketId}:`, error && error.message ? error.message : error);
+          console.error(`[realtime] ws.close error for ${socketId}:`, errorText(error));
         }
       },
+
+      // Αποστολή σε ΟΛΟΥΣ εκτός από αυτόν
       broadcast: {
         emit(event, data) {
-          const safeEvent = String(event || '').trim();
-          if (!safeEvent) {
+          const name = cleanName(event);
+          if (!name) {
             return;
           }
 
-          sockets.forEach((otherSocket, otherId) => {
-            if (otherId === socketId) {
-              return;
+          sockets.forEach((other, otherId) => {
+            if (otherId !== socketId) {
+              other.emit(name, data);
             }
-
-            otherSocket.emit(safeEvent, data);
           });
         }
       }
     };
 
+    // Εισερχόμενο μήνυμα → parse → κλήση των handlers του event
     ws.on('message', (raw) => {
       const message = parseRealtimeMessage(raw);
-      if (!message) {
-        return;
+      if (message) {
+        trigger(message.event, message.data);
       }
-
-      trigger(message.event, message.data);
     });
 
     ws.on('error', (error) => {
       trigger('error', error);
     });
 
+    // Κλείσιμο σύνδεσης → καθαρισμός και ειδοποίηση των handlers
     ws.on('close', () => {
       if (closed) {
         return;
@@ -181,66 +205,67 @@ function createRealtimeTransport() {
       closed = true;
       socket.connected = false;
       socket.active = false;
-      removeFromRooms(socketId);
+      removeFromAllRooms(socketId);
       sockets.delete(socketId);
       trigger('disconnect');
     });
 
     sockets.set(socketId, socket);
+    // Πρώτο μήνυμα προς τον client: του λέμε το id του
     wsSend(ws, '__meta', { id: socketId });
     return socket;
   }
 
+  // ---------- Το "io" αντικείμενο που εκτίθεται προς τα έξω ----------
+
   const ioTransport = {
+    // Μόνο για compatibility με io.engine.clientsCount του Socket.IO
     engine: {
       get clientsCount() {
         return sockets.size;
       }
     },
+
+    // Υποστηρίζεται μόνο το 'connection'
     on(event, handler) {
       if (event === 'connection' && typeof handler === 'function') {
         connectionHandlers.push(handler);
       }
       return ioTransport;
     },
+
+    // Αποστολή σε ΟΛΟΥΣ τους συνδεδεμένους
     emit(event, data) {
-      const safeEvent = String(event || '').trim();
-      if (!safeEvent) {
-        return ioTransport;
+      const name = cleanName(event);
+      if (name) {
+        sockets.forEach((socket) => socket.emit(name, data));
       }
-
-      sockets.forEach((socket) => {
-        socket.emit(safeEvent, data);
-      });
-
       return ioTransport;
     },
+
+    // Αποστολή σε όλα τα μέλη ενός room: io.to('room').emit(...)
     to(room) {
-      const safeRoom = String(room || '').trim();
+      const roomName = cleanName(room);
 
       return {
         emit(event, data) {
-          const safeEvent = String(event || '').trim();
-          if (!safeRoom || !safeEvent) {
-            return;
-          }
-
-          const members = rooms.get(safeRoom);
-          if (!members || !members.size) {
+          const name = cleanName(event);
+          const members = rooms.get(roomName);
+          if (!roomName || !name || !members || !members.size) {
             return;
           }
 
           members.forEach((socketId) => {
             const socket = sockets.get(socketId);
-            if (!socket) {
-              return;
+            if (socket) {
+              socket.emit(name, data);
             }
-
-            socket.emit(safeEvent, data);
           });
         }
       };
     },
+
+    // Καλείται από το wsRegistry όταν ένα upgrade request αφορά αυτό το path
     handleUpgrade(request, socket, head) {
       wss.handleUpgrade(request, socket, head, (ws) => {
         const wrapped = createSocketWrapper(request, ws);
@@ -248,7 +273,7 @@ function createRealtimeTransport() {
           try {
             handler(wrapped);
           } catch (error) {
-            console.error('[realtime] connection handler error:', error && error.message ? error.message : error);
+            console.error('[realtime] connection handler error:', errorText(error));
           }
         });
       });
@@ -258,6 +283,4 @@ function createRealtimeTransport() {
   return ioTransport;
 }
 
-module.exports = {
-  createRealtimeTransport
-};
+module.exports = { createRealtimeTransport };

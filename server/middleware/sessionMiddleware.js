@@ -1,127 +1,123 @@
 const sessionManager = require('../services/sessionManager');
+const { getCookie } = require('../utils/cookies');
+
+const SESSION_COOKIE_NAME = 'sessionId';
+const SESSION_COOKIE_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24 ώρες
+
+/**
+ * Βρίσκει ή δημιουργεί ένα session από ΟΠΟΙΟΔΗΠΟΤΕ request (HTTP ή WebSocket
+ * upgrade), διαβάζοντας το ίδιο cookie "sessionId" και στις δύο περιπτώσεις.
+ * Αυτό είναι το σημείο που ενοποιεί την ταυτότητα σε όλο το σύστημα: ό,τι
+ * χρησιμοποιεί κάθε εφαρμογή (geometry, fourier, buffon, neural...) περνά
+ * από εδώ αντί να φτιάχνει δικό του session με socket.id.
+ *
+ * ΔΕΝ βασίζεται στο req.cookies (χρειάζεται cookie-parser και δεν υπάρχει
+ * καν σε raw WebSocket upgrade requests) — διαβάζει απευθείας το header.
+ */
+function resolveSession(headers, fallbackInfo = {}) {
+  const existingId = getCookie(headers, SESSION_COOKIE_NAME);
+  let session = existingId ? sessionManager.get(existingId) : null;
+  let sessionId = existingId;
+  let isNew = false;
+
+  if (!session) {
+    const deviceInfo = {
+      userAgent: (headers && headers['user-agent']) || fallbackInfo.userAgent || 'unknown',
+      ipAddress: fallbackInfo.ipAddress || 'unknown'
+    };
+
+    const created = sessionManager.createWithGeneratedId(null, deviceInfo);
+    sessionId = created.sessionId;
+    session = sessionManager.get(sessionId);
+    isNew = true;
+  }
+
+  return { sessionId, userId: session.userId, session, isNew };
+}
 
 /**
  * Session Middleware - Manages user sessions for Strobe apps
- * 
+ *
  * Χρησιμοποίηση:
  * app.use(sessionMiddleware());
- * 
+ *
  * Αυτό θα δημιουργήσει:
- * - req.sessionId (UUID)
+ * - req.sessionId (σταθερό, ίδιο σε κάθε αίτημα από τον ίδιο browser)
  * - req.userId (user identifier)
  * - req.session (current session object)
  */
 function sessionMiddleware() {
-    return (req, res, next) => {
-        // Ψάχνουμε για sessionId σε:
-        // 1. Query parameter (?sessionId=xxx)
-        // 2. Cookie (express-session συμβατό)
-        // 3. Header (x-session-id)
-        const sessionIdFromQuery = req.query?.sessionId;
-        const sessionIdFromCookie = req.cookies?.sessionId;
-        const sessionIdFromHeader = req.headers?.['x-session-id'];
+  return (req, res, next) => {
+    const { sessionId, session, isNew } = resolveSession(req.headers, {
+      ipAddress: req.ip || (req.connection && req.connection.remoteAddress) || 'unknown'
+    });
 
-        let sessionId = sessionIdFromQuery || sessionIdFromCookie || sessionIdFromHeader;
-        let session = null;
+    req.sessionId = sessionId;
+    req.userId = session.userId;
+    req.session = session;
 
-        // Αν έχουμε sessionId, το ανακτούμε
-        if (sessionId) {
-            session = sessionManager.get(sessionId);
-        }
+    // Ξαναβάζουμε το cookie σε κάθε αίτημα, ώστε να ανανεώνεται η λήξη του
+    // (rolling expiry) — ο browser κρατά τον ίδιο χρήστη ζωντανό όσο τον επισκέπτεται.
+    res.cookie(SESSION_COOKIE_NAME, sessionId, {
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: SESSION_COOKIE_MAX_AGE_MS
+    });
 
-        // Αν δεν υπάρχει ή είναι άκυρο, δημιουργούμε νέο
-        if (!session) {
-            const deviceInfo = {
-                userAgent: req.headers?.['user-agent'] || 'unknown',
-                ipAddress: req.ip || req.connection.remoteAddress || 'unknown'
-            };
+    res.set('X-Session-ID', sessionId);
+    res.set('X-User-ID', session.userId);
 
-            const created = sessionManager.createWithGeneratedId(null, deviceInfo);
-            sessionId = created.sessionId;
-            session = sessionManager.get(sessionId);
-        }
+    if (!isNew) {
+      sessionManager.touch(sessionId);
+    }
 
-        // Προσθέτουμε τη session στο request object
-        req.sessionId = sessionId;
-        req.userId = session.userId;
-        req.session = session;
-
-        // Set cookie για client-side access (optional)
-        res.cookie('sessionId', sessionId, {
-            httpOnly: true,
-            sameSite: 'lax',
-            maxAge: 24 * 60 * 60 * 1000 // 24 hours
-        });
-
-        // Προσθέτουμε το session στο response headers για debugging
-        res.set('X-Session-ID', sessionId);
-        res.set('X-User-ID', session.userId);
-
-        next();
-    };
+    next();
+  };
 }
 
 /**
- * WebSocket Session Handler - Για WebSocket connections
- * 
+ * WebSocket Session Handler - Για WebSocket upgrade requests.
+ * Διαβάζει το ΙΔΙΟ cookie "sessionId" που έβαλε το sessionMiddleware στη σελίδα,
+ * άρα ο ίδιος browser/άνθρωπος παίρνει το ίδιο session είτε μιλά HTTP είτε WS.
+ *
  * Χρησιμοποίηση:
- * const sessionInfo = getWebSocketSessionInfo(request);
+ * const { sessionId, userId, session } = getWebSocketSessionInfo(request);
  */
 function getWebSocketSessionInfo(request) {
-    const urlParams = new URL(request.url, `http://${request.headers.host}`).searchParams;
-    
-    const sessionId = urlParams.get('sessionId');
-    const userId = urlParams.get('userId');
-
-    if (sessionId) {
-        const session = sessionManager.get(sessionId);
-        if (session) {
-            return {
-                sessionId,
-                userId: session.userId,
-                session
-            };
-        }
-    }
-
-    // Create new session if not found
-    const newSession = sessionManager.createWithGeneratedId(userId);
-    return {
-        sessionId: newSession.sessionId,
-        userId: newSession.userId,
-        session: sessionManager.get(newSession.sessionId)
-    };
+  return resolveSession(request && request.headers, {
+    ipAddress: request && request.socket ? request.socket.remoteAddress : 'unknown'
+  });
 }
 
 /**
  * App Data Middleware - Saves app-specific state for current user
- * 
+ *
  * Χρησιμοποίηση:
  * // In a route or WebSocket handler:
  * saveAppData(req.sessionId, 'fourier-lab', { currentSlide: 5, score: 100 });
  */
 function saveAppData(sessionId, appName, appData) {
-    return sessionManager.saveAppData(sessionId, appName, appData);
+  return sessionManager.saveAppData(sessionId, appName, appData);
 }
 
 /**
  * Get App Data - Retrieves app-specific state
  */
 function getAppData(sessionId, appName) {
-    return sessionManager.getAppData(sessionId, appName);
+  return sessionManager.getAppData(sessionId, appName);
 }
 
 /**
  * Admin Statistics - Get server-wide stats
  */
 function getSessionStats() {
-    return sessionManager.getStatistics();
+  return sessionManager.getStatistics();
 }
 
 module.exports = {
-    sessionMiddleware,
-    getWebSocketSessionInfo,
-    saveAppData,
-    getAppData,
-    getSessionStats
+  sessionMiddleware,
+  getWebSocketSessionInfo,
+  saveAppData,
+  getAppData,
+  getSessionStats
 };
