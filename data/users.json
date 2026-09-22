@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-09-22T07:55:16.633Z",
+  "savedAt": "2026-09-22T08:13:33.198Z",
   "sessions": [
     {
       "id": "5c498274-9697-43b7-8403-b5acc39ed728",
@@ -396902,6 +396902,297 @@
       "appData": {},
       "connectedAt": 1790063716633,
       "lastSeenAt": 1790063716633,
+      "isActive": true
+    },
+    {
+      "id": "fadf9aee-4f23-4e0c-8307-d163051a6422",
+      "userId": "user_1790064039502_bkb3w7i",
+      "ip": "185.218.86.25",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      "username": "user-fadf9a",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790064039502,
+      "lastSeenAt": 1790064039502,
+      "isActive": true
+    },
+    {
+      "id": "82c7fc29-2644-4929-ada9-968acb25df73",
+      "userId": "user_1790064039743_qpv4dwh",
+      "ip": "185.218.86.25",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      "username": "user-82c7fc",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790064039743,
+      "lastSeenAt": 1790064039743,
+      "isActive": true
+    },
+    {
+      "id": "d2159af0-c0bf-4ced-a219-de51c1211078",
+      "userId": "user_1790064168001_h1ruvzm",
+      "ip": "184.72.203.238",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+      "username": "user-d2159a",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790064168001,
+      "lastSeenAt": 1790064168001,
+      "isActive": true
+    },
+    {
+      "id": "neural-mucea7m8-1",
+      "userId": "user_neural",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "xsa",
+      "role": "client",
+      "source": "neural-lab",
+      "activeApps": [
+        "neural-lab",
+        "neural"
+      ],
+      "appData": {
+        "neural": {
+          "role": "client",
+          "color": "#0d35fd",
+          "weights": {
+            "w1": 1,
+            "w2": 1
+          },
+          "active": true,
+          "lastUpdated": "2026-09-22T08:11:05.433Z"
+        }
+      },
+      "connectedAt": 1790064665361,
+      "lastSeenAt": 1790064665509,
+      "isActive": true
+    },
+    {
+      "id": "neural-mucea8ky-2",
+      "userId": "user_neural",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "Teacher",
+      "role": "teacher",
+      "source": "neural-lab",
+      "activeApps": [
+        "neural-lab",
+        "neural"
+      ],
+      "appData": {
+        "neural": {
+          "role": "teacher",
+          "lesson": {
+            "dataset": "vehicles",
+            "exampleIndex": 0,
+            "exampleName": "Ποδήλατο",
+            "icon": "🚲",
+            "inputs": {
+              "i1": 2,
+              "i2": 0
+            },
+            "products": {
+              "p1": "",
+              "p2": ""
+            },
+            "total": "",
+            "weights": {
+              "w1": 2,
+              "w2": 3
+            },
+            "activityId": "1",
+            "activityTitle": "1. Βρίσκω την είσοδο",
+            "threshold": {
+              "op": ">=",
+              "boundary": 5
+            },
+            "selectedInputs": {
+              "i1": true,
+              "i2": false
+            },
+            "useQuestionMarks": false
+          },
+          "active": true,
+          "lastUpdated": "2026-09-22T08:11:06.958Z"
+        }
+      },
+      "connectedAt": 1790064666610,
+      "lastSeenAt": 1790064667024,
+      "isActive": true
+    },
+    {
+      "id": "d9e1323d-14c0-4a3d-bfc7-bd70fc18013a",
+      "userId": "user_1790064728271_fsi8lrt",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "user-d9e132",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790064728271,
+      "lastSeenAt": 1790064728271,
+      "isActive": true
+    },
+    {
+      "id": "35a8192e-268d-4968-a07f-68756e45af18",
+      "userId": "user_1790064728393_ui6tflb",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "user-35a819",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790064728393,
+      "lastSeenAt": 1790064728393,
+      "isActive": true
+    },
+    {
+      "id": "3c1670a3-b56c-4b7a-9ae9-6c25c6e6f93c",
+      "userId": "user_1790064728512_h29fujq",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "user-3c1670",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790064728512,
+      "lastSeenAt": 1790064728512,
+      "isActive": true
+    },
+    {
+      "id": "0bdbfcb7-2b2c-4d02-bbf5-c7cccbd98fd4",
+      "userId": "user_1790064728680_fe2yoeh",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "user-0bdbfc",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790064728680,
+      "lastSeenAt": 1790064728680,
+      "isActive": true
+    },
+    {
+      "id": "eb52d69a-c7ba-4d0f-8713-705a4570fc2d",
+      "userId": "user_1790064728803_qsqfwvh",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "user-eb52d6",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790064728803,
+      "lastSeenAt": 1790064728803,
+      "isActive": true
+    },
+    {
+      "id": "84818ff3-2da6-46b4-8e90-97c7f68a0f59",
+      "userId": "user_1790064730406_o82j12a",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "user-84818f",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790064730406,
+      "lastSeenAt": 1790064730406,
+      "isActive": true
+    },
+    {
+      "id": "93e2602c-3f19-4774-90ac-d33c29b4ef6a",
+      "userId": "user_1790064730501_229os7g",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "user-93e260",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790064730501,
+      "lastSeenAt": 1790064730501,
+      "isActive": true
+    },
+    {
+      "id": "9c4dc81c-cd44-43d3-b32a-de02978356ed",
+      "userId": "user_1790064731935_ucl75r0",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "user-9c4dc8",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790064731935,
+      "lastSeenAt": 1790064731935,
+      "isActive": true
+    },
+    {
+      "id": "63834d6f-6c84-4439-b38c-8f4ac4398483",
+      "userId": "user_1790064737741_p6arn9n",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "user-63834d",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790064737741,
+      "lastSeenAt": 1790064737741,
+      "isActive": true
+    },
+    {
+      "id": "deb83f26-8756-42c6-8944-8f8015af941b",
+      "userId": "user_1790064812994_y029kb0",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "user-deb83f",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790064812994,
+      "lastSeenAt": 1790064812994,
+      "isActive": true
+    },
+    {
+      "id": "07bc44b8-545a-4403-a89b-f384e7eb93da",
+      "userId": "user_1790064813093_wes8umq",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "user-07bc44",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790064813093,
+      "lastSeenAt": 1790064813093,
+      "isActive": true
+    },
+    {
+      "id": "1a3b3867-6734-4d15-8c1f-aa6f5f877fb7",
+      "userId": "user_1790064813198_homxh1l",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "username": "user-1a3b38",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790064813198,
+      "lastSeenAt": 1790064813198,
       "isActive": true
     }
   ]

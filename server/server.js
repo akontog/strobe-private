@@ -46,7 +46,7 @@ const {
 const {
     registerStaticFiles
 } = require('./startup/registerStaticFiles');
-
+const { sessionMiddleware } = require('./middleware/sessionMiddleware');
 /**** 4. Εισαγωγή υπηρεσιών ****/
 const sessionManager = require('./services/sessionManager');
 const initFourier = require('./services/fourier');
@@ -60,23 +60,14 @@ const wsRegistry = require('./services/websocketRegistry');
 const app = express();
 const httpServer = http.createServer(app);
 
-
-
-
-
-
-
 const io = createRealtimeTransport();
 const { router: activitiesRouter, getCurrentActivity, setCurrentActivity } = createActivitiesRouter({ io });
 
 app.use(activitiesRouter);
 
-
-
 app.use(express.json({ limit: '8mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-const { sessionMiddleware } = require('./middleware/sessionMiddleware');
 app.use(sessionMiddleware());
 
 // Session management middleware
@@ -89,12 +80,10 @@ registerStaticFiles(app, {
     clientDistDir
 });
 
-
 app.use('/teacher', teacherRouter);
 app.use(appDataRouter);
 app.use('/student', clientRouter);
 app.use('/client', clientRouter);
-
 
 const parsedCommLogLimit = Number.parseInt(process.env.ADMIN_COMM_LOG_LIMIT || '1200', 10);
 const COMM_LOG_LIMIT = Number.isInteger(parsedCommLogLimit) && parsedCommLogLimit >= 200
@@ -332,7 +321,7 @@ io.on('connection', (socket) => {
   });
 
   if (CAMERA_FEATURES_ENABLED) {
-    socket.on('camera-frame', async (data) => {
+    socket.on('camera-frame', asyncHandler(async (data) => {
       if (!data || !data.image) {
         return;
       }
@@ -388,9 +377,9 @@ io.on('connection', (socket) => {
         tracking
       });
       emitUsersUpdate();
-    });
+    }));
 
-    socket.on('camera-speed-frame', async (data) => {
+    socket.on('camera-speed-frame', asyncHandler(async (data) => {
       if (!data || !data.image) {
         return;
       }
@@ -450,7 +439,7 @@ io.on('connection', (socket) => {
         serverElapsedMs: serverSentAt - serverReceivedAt,
         clientSentAt: typeof data.clientSentAt === 'number' ? data.clientSentAt : null
       });
-    });
+    }));
   }
 
   socket.on('activity-update', (geometry) => {
