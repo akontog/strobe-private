@@ -107,11 +107,19 @@ const {
   buildUserList,
   emitUsersUpdate,
   detectPointsFromPython,
-  detectCameraFrameFromPython
+  detectCameraFrameFromPython,
+  registerSocketHandlers: registerGeometrySocketHandlers
 } = initGeometry({
   io,
   recordCommunication,
-  requestCameraDetection
+  requestCameraDetection,
+  sessionManager,
+  getSocketClientInfo,
+  sanitizeString,
+  CAMERA_FEATURES_ENABLED,
+  asyncHandler,
+  getCurrentActivity,
+  setCurrentActivity
 });
 
 const buffonConnectionMeta = new Map();
@@ -224,278 +232,11 @@ app.get('/api/tools', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-  console.log('[geometry] socket connected:', socket.id);
-  recordCommunication({
-    app: 'socket',
-    direction: 'in',
-    event: 'socket:connect',
-    from: socket.id,
-    to: 'server',
-    payload: {
-      transport: socket && socket.conn ? socket.conn.transport.name : 'unknown'
-    }
-  });
-
-  geometryConnectionMeta.set(socket.id, {
-    connectedAt: Date.now(),
-    lastSeenAt: Date.now(),
-    ...getSocketClientInfo(socket)
-  });
-
-  const socketInfo = getSocketClientInfo(socket);
-  sessionManager.create(socket.id, {
-    ip: socketInfo.ip,
-    userAgent: socketInfo.userAgent,
-    username: `user_${String(socket.id).slice(0, 6)}`,
-    role: 'client',
-    source: 'realtime'
-  });
-
-  const currentActivityOnConnect = getCurrentActivity();
-  if (currentActivityOnConnect) {
-    recordCommunication({
-      app: 'geometry',
-      direction: 'out',
-      event: 'activity-loaded',
-      from: 'server',
-      to: socket.id,
-      payload: {
-        shapeCount: Array.isArray(currentActivityOnConnect.geometry) ? currentActivityOnConnect.geometry.length : 0
-      }
-    });
-    socket.emit('activity-loaded', currentActivityOnConnect);
-  }
-
-  socket.emit('users-update', buildUserList());
-
-  registerFourierSocketHandlers(socket);
-
-  socket.on('user-position', (data) => {
-    touchGeometryConnection(socket.id);
-    sessionManager.joinApp(socket.id, 'geometry');
-    sessionManager.update(socket.id, {
-      username: sanitizeString(data && data.name, 60) || `user_${String(socket.id).slice(0, 6)}`,
-      role: sanitizeString(data && data.role, 20) || 'client'
-    }, {
-      geometry: {
-        x: Number(data && data.x),
-        y: Number(data && data.y),
-        color: sanitizeString(data && data.color, 20) || undefined
-      }
-    });
-    recordCommunication({
-      app: 'geometry',
-      direction: 'in',
-      event: 'user-position',
-      from: socket.id,
-      to: 'server',
-      payload: {
-        role: data && data.role,
-        x: data && data.x,
-        y: data && data.y,
-        name: data && data.name
-      }
-    });
-
-    const existing = activeUsers.get(socket.id) || {};
-
-    const userInfo = {
-      ...existing,
-      id: socket.id,
-      name: data && data.name ? data.name : existing.name,
-      color: data && data.color ? data.color : existing.color,
-      shape: data && data.shape ? data.shape : existing.shape,
-      role: data && data.role ? data.role : existing.role,
-      x: data && typeof data.x === 'number' ? data.x : existing.x,
-      y: data && typeof data.y === 'number' ? data.y : existing.y
-    };
-
-    activeUsers.set(socket.id, userInfo);
-    emitUsersUpdate();
-  });
-
-  if (CAMERA_FEATURES_ENABLED) {
-    socket.on('camera-frame', asyncHandler(async (data) => {
-      if (!data || !data.image) {
-        return;
-      }
-
-      touchGeometryConnection(socket.id);
-      sessionManager.joinApp(socket.id, 'geometry');
-      recordCommunication({
-        app: 'geometry',
-        direction: 'in',
-        event: 'camera-frame',
-        from: socket.id,
-        to: 'server',
-        payload: {
-          name: data && data.name,
-          hasImage: Boolean(data && data.image),
-          imageLength: data && data.image ? String(data.image).length : 0
-        }
-      });
-
-      const detection = await detectPointsFromPython(data.image);
-      const points = Array.isArray(detection.points) ? detection.points : [];
-      const boxes = Array.isArray(detection.boxes) ? detection.boxes : [];
-      const tracking = typeof detection.tracking === 'string' ? detection.tracking : 'unknown';
-      const existing = activeUsers.get(socket.id) || {};
-
-      activeUsers.set(socket.id, {
-        ...existing,
-        id: socket.id,
-        role: 'camera',
-        name: data.name || existing.name,
-        color: data.color || existing.color,
-        shape: data.shape || existing.shape,
-        points,
-        boxes,
-        cameraTracking: tracking
-      });
-
-      recordCommunication({
-        app: 'geometry',
-        direction: 'out',
-        event: 'camera-points',
-        from: 'server',
-        to: socket.id,
-        payload: {
-          count: Array.isArray(points) ? points.length : 0,
-          boxes: Array.isArray(boxes) ? boxes.length : 0,
-          tracking
-        }
-      });
-      socket.emit('camera-points', {
-        points,
-        boxes,
-        tracking
-      });
-      emitUsersUpdate();
-    }));
-
-    socket.on('camera-speed-frame', asyncHandler(async (data) => {
-      if (!data || !data.image) {
-        return;
-      }
-
-      touchGeometryConnection(socket.id);
-      sessionManager.joinApp(socket.id, 'geometry');
-      const requestId = typeof data.requestId === 'number' || typeof data.requestId === 'string'
-        ? data.requestId
-        : null;
-      const serverReceivedAt = Date.now();
-
-      recordCommunication({
-        app: 'geometry',
-        direction: 'in',
-        event: 'camera-speed-frame',
-        from: socket.id,
-        to: 'server',
-        payload: {
-          requestId,
-          hasImage: Boolean(data && data.image),
-          imageLength: data && data.image ? String(data.image).length : 0
-        }
-      });
-
-      const detection = await detectCameraFrameFromPython(data.image, {
-        includeAnnotatedImage: true
-      });
-      const points = Array.isArray(detection.points) ? detection.points : [];
-      const boxes = Array.isArray(detection.boxes) ? detection.boxes : [];
-      const tracking = typeof detection.tracking === 'string' ? detection.tracking : 'unknown';
-      const annotatedImage = typeof detection.annotatedImage === 'string' ? detection.annotatedImage : null;
-      const serverSentAt = Date.now();
-
-      recordCommunication({
-        app: 'geometry',
-        direction: 'out',
-        event: 'camera-speed-result',
-        from: 'server',
-        to: socket.id,
-        payload: {
-          requestId,
-          boxes: boxes.length,
-          points: points.length,
-          tracking,
-          serverElapsedMs: serverSentAt - serverReceivedAt
-        }
-      });
-
-      socket.emit('camera-speed-result', {
-        requestId,
-        points,
-        boxes,
-        tracking,
-        annotatedImage,
-        serverReceivedAt,
-        serverSentAt,
-        serverElapsedMs: serverSentAt - serverReceivedAt,
-        clientSentAt: typeof data.clientSentAt === 'number' ? data.clientSentAt : null
-      });
-    }));
-  }
-
-  socket.on('activity-update', (geometry) => {
-    touchGeometryConnection(socket.id);
-    sessionManager.joinApp(socket.id, 'geometry');
-    recordCommunication({
-      app: 'geometry',
-      direction: 'in',
-      event: 'activity-update',
-      from: socket.id,
-      to: 'server',
-      payload: {
-        shapeCount: Array.isArray(geometry) ? geometry.length : 0
-      }
-    });
-
-    let currentActivityForUpdate = getCurrentActivity();
-    if (!currentActivityForUpdate) {
-      currentActivityForUpdate = {
-        name: 'Live Activity',
-        geometry: [],
-        createdAt: new Date().toISOString()
-      };
-    }
-
-    currentActivityForUpdate = {
-      ...currentActivityForUpdate,
-      geometry
-    };
-    setCurrentActivity(currentActivityForUpdate);
-
-    recordCommunication({
-      app: 'geometry',
-      direction: 'out',
-      event: 'activity-loaded',
-      from: 'server',
-      to: 'broadcast-except-sender',
-      payload: {
-        shapeCount: Array.isArray(currentActivityForUpdate.geometry) ? currentActivityForUpdate.geometry.length : 0
-      }
-    });
-    socket.broadcast.emit('activity-loaded', currentActivityForUpdate);
-  });
-
-  socket.on('disconnect', () => {
-    console.log('[geometry] socket disconnected:', socket.id);
-    recordCommunication({
-      app: 'socket',
-      direction: 'in',
-      event: 'socket:disconnect',
-      from: socket.id,
-      to: 'server'
-    });
-    activeUsers.delete(socket.id);
-    geometryConnectionMeta.delete(socket.id);
-    sessionManager.remove(socket.id);
-
-    handleSocketDisconnect(socket.id);
+  registerGeometrySocketHandlers(socket, {
+    registerFourierSocketHandlers,
+    handleFourierDisconnect: handleSocketDisconnect
   });
 });
-
-
 
 const { handleUpgrade: neuralUpgrade } = initNeural({
   recordCommunication,
