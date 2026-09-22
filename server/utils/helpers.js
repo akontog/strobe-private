@@ -38,9 +38,18 @@ function parseRealtimeMessage(raw) {
     return null;
   }
 }
-
+// Τυλίγει async handler ώστε ένα σφάλμα στο await να καταγράφεται
+// αντί να προκαλεί unhandled rejection.
+function asyncHandler(fn) {
+  return function (...args) {
+    Promise.resolve(fn.apply(this, args)).catch((err) => {
+      console.error('[socket] unhandled async error:', err?.message || err);
+    });
+  };
+}
 module.exports = {
   sanitizeString,
   sanitizeLegacyFilename,
-  parseRealtimeMessage
+  parseRealtimeMessage,
+  asyncHandler
 };

@@ -27,7 +27,7 @@ const {
     REALTIME_WS_PATH
 } = require('./config/serverConfig');
 const { createRealtimeTransport } = require('./utils/realtimeTransport');
-const {sanitizeString} = require('./utils/helpers');
+const {sanitizeString, asyncHandler } = require('./utils/helpers');
 const {
   CAMERA_FEATURES_ENABLED,
   CAMERA_WORKER_ENABLED,
@@ -222,13 +222,7 @@ app.get('/api/tools', (req, res) => {
     }
   ]);
 });
-function asyncHandler(fn) {
-  return function (...args) {
-    Promise.resolve(fn.apply(this, args)).catch((err) => {
-      console.error('[socket] unhandled async error:', err?.message || err);
-    });
-  };
-}
+
 io.on('connection', (socket) => {
   console.log('[geometry] socket connected:', socket.id);
   recordCommunication({
