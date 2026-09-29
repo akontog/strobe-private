@@ -54,6 +54,7 @@ const initBuffon = require('./services/buffon');
 const initGeometry = require('./services/geometry');
 const initNeural = require('./services/neural');
 const initPrimes = require('./services/primes');
+const initPolynomial = require('./services/polynomial');
 const wsRegistry = require('./services/websocketRegistry');
 
 /**** 5. Δημιουργία εφαρμογής Express και HTTP server ****/
@@ -257,6 +258,12 @@ const { primesWss } = initPrimes({
   getWebSocketSessionInfo,
   sessionManager
 });
+const { polynomialWss } = initPolynomial({
+  recordCommunication,
+  getUpgradeClientInfo,
+  getWebSocketSessionInfo,
+  sessionManager
+});
 
 wsRegistry.register(REALTIME_WS_PATH, (request, socket, head) => {
   io.handleUpgrade(request, socket, head);
@@ -273,6 +280,12 @@ wsRegistry.register('/ws/buffon', (request, socket, head) => {
 wsRegistry.register('/ws/primes-lab', (request, socket, head) => {
   primesWss.handleUpgrade(request, socket, head, (ws) => {
     primesWss.emit('connection', ws, request);
+  });
+});
+
+wsRegistry.register('/ws/polynomial-lab', (request, socket, head) => {
+  polynomialWss.handleUpgrade(request, socket, head, (ws) => {
+    polynomialWss.emit('connection', ws, request);
   });
 });
 

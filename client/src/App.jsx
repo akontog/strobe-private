@@ -11,6 +11,8 @@ import GeometryStudentView from './labs/geometry-live/StudentView';
 import GeometryTeacherView from './labs/geometry-live/TeacherView';
 import PrimesStudentView from './labs/primes-lab/StudentView';
 import PrimesTeacherView from './labs/primes-lab/TeacherView';
+import PolynomialStudentView from './labs/polynomial-lab/StudentView';
+import PolynomialTeacherView from './labs/polynomial-lab/TeacherView';
 import AppsLauncherPage from './pages/AppsLauncherPage';
 import HomePage from './pages/HomePage';
 import LabPage from './pages/LabPage';
@@ -56,6 +58,8 @@ function App() {
           <Route path="/labs/neural-lab/teacher" element={<NeuralTeacherView />} />
           <Route path="/labs/primes-lab/student" element={<PrimesStudentView />} />
           <Route path="/labs/primes-lab/teacher" element={<PrimesTeacherView />} />
+          <Route path="/labs/polynomial-lab/student" element={<PolynomialStudentView />} />
+          <Route path="/labs/polynomial-lab/teacher" element={<PolynomialTeacherView />} />
           <Route path="/labs/fourier-lab/student" element={<FourierStudentView />} />
           <Route path="/labs/fourier-lab/teacher" element={<FourierTeacherView />} />
           <Route path="/labs/geometry-live/student" element={<GeometryStudentView />} />

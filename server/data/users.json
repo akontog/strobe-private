@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-09-29T08:12:54.770Z",
+  "savedAt": "2026-09-29T17:48:37.761Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -238,6 +238,7 @@
       "source": "neural-lab",
       "activeApps": [
         "neural",
+        "polynomial",
         "neural-lab"
       ],
       "appData": {
@@ -274,16 +275,23 @@
             "useQuestionMarks": false
           },
           "active": true,
-          "lastUpdated": "2026-09-29T08:10:49.643Z",
+          "lastUpdated": "2026-09-29T17:48:37.759Z",
           "color": "#0d35fd",
           "weights": {
             "w1": 1,
             "w2": 1
           }
+        },
+        "polynomial": {
+          "id": "student-6",
+          "name": "www",
+          "color": "#0d35fd",
+          "active": true,
+          "lastUpdated": "2026-09-29T17:09:17.400Z"
         }
       },
       "connectedAt": 1790668716991,
-      "lastSeenAt": 1790669449646,
+      "lastSeenAt": 1790704117761,
       "isActive": true
     },
     {
@@ -298,6 +306,114 @@
       "appData": {},
       "connectedAt": 1790669574769,
       "lastSeenAt": 1790669574769,
+      "isActive": true
+    },
+    {
+      "id": "79724858-2525-4571-b994-d4afc0fe2274",
+      "userId": "user_1790670344600_6frzq5b",
+      "ip": "35.95.102.19",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36",
+      "username": "user-797248",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790670344600,
+      "lastSeenAt": 1790670344600,
+      "isActive": true
+    },
+    {
+      "id": "9b959097-74bb-4cbf-b7d1-b939428ca473",
+      "userId": "user_1790670366747_r30tsnt",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; el-GR) WindowsPowerShell/5.1.26100.9444",
+      "username": "user-9b9590",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790670366755,
+      "lastSeenAt": 1790670366755,
+      "isActive": true
+    },
+    {
+      "id": "6c770c15-4e21-4243-b37b-c7e9bc293103",
+      "userId": "user_1790670474274_3gi2nx2",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; el-GR) WindowsPowerShell/5.1.26100.9444",
+      "username": "user-6c770c",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790670474274,
+      "lastSeenAt": 1790670474274,
+      "isActive": true
+    },
+    {
+      "id": "22a445e4-e3fb-4759-ba0a-9e20c7d5f547",
+      "userId": "user_1790670491946_cbz8503",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; el-GR) WindowsPowerShell/5.1.26100.9444",
+      "username": "user-22a445",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790670491946,
+      "lastSeenAt": 1790670491946,
+      "isActive": true
+    },
+    {
+      "id": "6f342846-7a89-47d1-9245-23633769f384",
+      "userId": "user_1790671716829_v3ex0mg",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:156.0) Gecko/20100101 Firefox/156.0",
+      "username": "Teacher",
+      "role": "teacher",
+      "source": "neural-lab",
+      "activeApps": [
+        "neural"
+      ],
+      "appData": {
+        "neural": {
+          "role": "teacher",
+          "lesson": {
+            "dataset": "vehicles",
+            "exampleIndex": 0,
+            "exampleName": "Ποδήλατο",
+            "icon": "🚲",
+            "inputs": {
+              "i1": 2,
+              "i2": 0
+            },
+            "products": {
+              "p1": "",
+              "p2": ""
+            },
+            "total": "",
+            "weights": {
+              "w1": 2,
+              "w2": 3
+            },
+            "activityId": "1",
+            "activityTitle": "1. Βρίσκω την είσοδο",
+            "threshold": {
+              "op": ">=",
+              "boundary": 5
+            },
+            "selectedInputs": {
+              "i1": true,
+              "i2": false
+            },
+            "useQuestionMarks": false
+          },
+          "active": true,
+          "lastUpdated": "2026-09-29T09:26:45.616Z"
+        }
+      },
+      "connectedAt": 1790671716829,
+      "lastSeenAt": 1790674013508,
       "isActive": true
     }
   ]

@@ -1,4 +1,6 @@
 ﻿export { Accordion } from './Accordion';
+export { ActivitiesMenu } from './ActivitiesMenu';
+export { default as HeroTitle } from './HeroTitle';
 export { StudentTable } from './StudentTable';
 export { StudentQrAccordion } from './StudentQrAccordion';
 export { default as BlueNumberBox } from './BlueNumberBox';

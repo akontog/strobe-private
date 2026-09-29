@@ -6,6 +6,7 @@ import App from './App';
 import './styles/globals.css';
 import './styles/postit-cards.css';
 import './styles/dashboard-pages.css';
+import './framework/assets/css/classroom-shared.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

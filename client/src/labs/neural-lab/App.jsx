@@ -2,13 +2,13 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { TeacherCard } from './components/TeacherCard';
 import { DatasetSelector } from './components/DatasetSelector';
 import { VerticalProducts } from './components/VerticalProducts';
-import { StudentTable } from './components/StudentTable';
 import { ExamplesClassifier } from './components/ExamplesClassifier';
-import { ActivitiesMenu, getNeuralActivityTitle } from './components/ActivitiesMenu';
-import { StudentQrAccordion } from '../../shared/components';
-import { Accordion } from '../../shared/components';
 import {
+  Accordion,
+  ActivitiesMenu,
   ConnectionNameControl,
+  StudentQrAccordion,
+  StudentTable,
   randomIdentityColor,
   readIdentityColor,
   readIdentityName,
@@ -169,6 +169,17 @@ const App = ({ role = 'teacher' }) => {
   const [lessonExampleIndex, setLessonExampleIndex] = useState(0);
   const [lessonIcon, setLessonIcon] = useState('🚗');
   const [lessonName, setLessonName] = useState('Αυτοκίνητο');
+  const NEURAL_ACTIVITY_OPTIONS = [
+    { value: '1', label: '1. Βρίσκω την είσοδο' },
+    { value: '2', label: '2. Υπολογίζω την έξοδο' },
+    { value: '3', label: '3. Προσαρμόζω τα βάρη' },
+    { value: '4', label: '4. Συγκρίνω' }
+  ];
+  const getNeuralActivityTitle = (activityId, fallback = NEURAL_ACTIVITY_OPTIONS[0].label) => {
+    const normalizedId = String(activityId ?? '').trim();
+    const match = NEURAL_ACTIVITY_OPTIONS.find((option) => option.value === normalizedId);
+    return match ? match.label : fallback;
+  };
   const [lessonActivityTitle, setLessonActivityTitle] = useState(getNeuralActivityTitle('1'));
   
 
@@ -739,16 +750,16 @@ const saveStudentColor = (newColor) => {
         name={isStudent ? studentName : `συνδεδεμένοι: ${roster.length}`}
         editing={isStudent && editingName}
         value={studentNameInput}
-        onChange={setStudentNameInput}
-        onStartEdit={() => isStudent && setEditingName(true)}
-        onCommit={saveStudentName}
-        onCancel={() => {
+        onChange={isStudent ? setStudentNameInput : undefined}
+        onStartEdit={isStudent ? () => setEditingName(true) : undefined}
+        onCommit={isStudent ? saveStudentName : undefined}
+        onCancel={isStudent ? () => {
           setStudentNameInput(studentName);
           setEditingName(false);
-        }}
+        } : undefined}
         color={studentColor}
         showColorPicker={isStudent}
-        onColorChange={saveStudentColor}
+        onColorChange={isStudent ? saveStudentColor : undefined}
         infoText={!isStudent ? `συνδεδεμένοι: ${roster.length}` : ''}
         connectedLabel="Σε σύνδεση"
         disconnectedLabel="Εκτός σύνδεσης"
@@ -864,7 +875,14 @@ const saveStudentColor = (newColor) => {
       {isTeacher && (
         <>
 
-          <ActivitiesMenu value={selectedActivity} onChange={setSelectedActivity} />
+          <ActivitiesMenu
+            title="Δραστηριότητες"
+            icon="🔬"
+            label="Επιλογή δραστηριότητας"
+            options={NEURAL_ACTIVITY_OPTIONS}
+            value={selectedActivity}
+            onChange={setSelectedActivity}
+          />
 
           <DatasetSelector
             datasets={DATASETS}

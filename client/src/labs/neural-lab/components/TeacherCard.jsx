@@ -1,14 +1,13 @@
 import React from 'react';
 import MathFormula from './MathFormula';
+import { HeroTitle } from '../../../shared/components';
 
 export const TeacherCard = ({ children, title }) => (
   <div className="teacher-card">
     {title && (
-      <div className="hero-title">
-        <div className="main-equation">
-          <MathFormula formula={title} />
-        </div>
-      </div>
+      <HeroTitle>
+        <MathFormula formula={title} />
+      </HeroTitle>
     )}
     {children}
   </div>

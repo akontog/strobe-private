@@ -166,15 +166,6 @@ input {
   padding: 0.2rem 0.55rem;
 }
 
-.common-zone {
-  background: #ffffff;
-  border-radius: 1.7rem;
-  padding: 1rem;
-  margin-bottom: 0.85rem;
-  border: 3px solid #3b82f6;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-}
-
 .primes-board-zone {
   max-width: 980px;
   margin-left: auto;

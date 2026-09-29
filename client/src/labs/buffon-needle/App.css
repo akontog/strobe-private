@@ -57,24 +57,24 @@ body,
 	width: 100%;
 	max-width: var(--panel-max);
 	background: #ffffff;
-	border: 2px solid #dce3ec;
+	border: 1px solid #cbd5e1;
 	border-radius: 2rem;
-	overflow: hidden;
-	box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
 .buffon-root .chart-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 0.75rem 1.1rem;
+	padding: 0.5rem 1rem;
 	cursor: pointer;
 	user-select: none;
-	background: #f1f5f9;
+	background: #eef2ff;
+	border-radius: 2rem;
 }
 
 .buffon-root .chart-header:hover {
-	background: #e8eef6;
+	background: #e0e7ff;
 }
 
 .buffon-root .chart-header .c-lbl {
@@ -88,7 +88,7 @@ body,
 .buffon-root .chart-toggle {
 	font-size: 0.9rem;
 	color: #475569;
-	transition: transform 0.25s ease;
+	transition: transform 0.3s ease;
 	display: inline-block;
 }
 
@@ -97,12 +97,17 @@ body,
 }
 
 .buffon-root .chart-body {
-	display: none;
-	padding: 0 10px 10px;
+	max-height: 0;
+	overflow: hidden;
+	transition: max-height 0.3s ease-out;
 }
 
 .buffon-root .chart-body.open {
-	display: block;
+	max-height: 70vh;
+	overflow-y: auto;
+	overflow-x: hidden;
+	transition: max-height 0.4s ease-in;
+	padding: 0 10px 10px;
 }
 
 /* Student view */

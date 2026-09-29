@@ -59,6 +59,17 @@ const APP_DEFINITIONS = [
     staticDir: path.join(LABS_ROOT, 'primes-lab'),
     teacherEntry: 'teacher.html',
     clientEntry: 'student.html'
+  },
+  {
+    slug: 'polynomial-lab',
+    labId: 'polynomial-lab',
+    title: 'Polynomial Lab',
+    description: 'Collaborative polynomial practice with common-zone interactions, student tracking, and teacher-led activities.',
+    roles: ['teacher', 'student', 'client'],
+    kind: 'static',
+    staticDir: path.join(LABS_ROOT, 'polynomial-lab'),
+    teacherEntry: 'teacher.html',
+    clientEntry: 'student.html'
   }
 ];
 
