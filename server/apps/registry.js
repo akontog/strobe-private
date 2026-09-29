@@ -1,8 +1,9 @@
+const fs = require('fs');
 const path = require('path');
 
 const LABS_ROOT = path.join(__dirname, '..', '..', 'client', 'src', 'labs');
 
-const APPS = [
+const APP_DEFINITIONS = [
   {
     slug: 'geometry-live',
     labId: 'geometry-lab',
@@ -61,8 +62,69 @@ const APPS = [
   }
 ];
 
+function readLabManifest(app) {
+  if (!app || !app.staticDir) {
+    return {};
+  }
+
+  const manifestPath = path.join(app.staticDir, 'lab.manifest.json');
+
+  if (!fs.existsSync(manifestPath)) {
+    return {};
+  }
+
+  try {
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    return manifest && typeof manifest === 'object' ? manifest : {};
+  } catch (error) {
+    return {};
+  }
+}
+
+function normalizeApp(app) {
+  const manifest = readLabManifest(app) || {};
+  const entry = manifest.entry && typeof manifest.entry === 'object' ? manifest.entry : {};
+
+  const nextApp = {
+    ...app,
+    ...(manifest.labId ? { labId: manifest.labId } : {}),
+    ...(manifest.slug ? { slug: manifest.slug } : {}),
+    ...(manifest.name ? { title: manifest.name } : {}),
+    ...(manifest.roles ? { roles: manifest.roles } : {})
+  };
+
+  return {
+    ...nextApp,
+    teacherEntry: entry.teacher || nextApp.teacherEntry || null,
+    clientEntry: entry.student || entry.client || nextApp.clientEntry || nextApp.studentEntry || null,
+    studentEntry: entry.student || nextApp.studentEntry || nextApp.clientEntry || null,
+    screenEntry: entry.screen || nextApp.screenEntry || null
+  };
+}
+
+const APPS = APP_DEFINITIONS.map(normalizeApp);
+
 function getAppBySlug(slug) {
   return APPS.find((app) => app.slug === slug) || null;
+}
+
+function appMatchesRole(app, role) {
+  const normalizedRole = String(role || '').toLowerCase();
+  const roles = Array.isArray(app.roles) ? app.roles : [];
+
+  if (normalizedRole === 'admin') {
+    return true;
+  }
+
+  if (normalizedRole === 'student' || normalizedRole === 'client') {
+    return roles.includes(normalizedRole) || roles.includes('student') || roles.includes('client');
+  }
+
+  if (normalizedRole === 'screen') {
+    return roles.includes('screen') || roles.includes('client');
+  }
+
+  return roles.includes(normalizedRole);
 }
 
 function listAppsForRole(role) {
@@ -70,7 +132,7 @@ function listAppsForRole(role) {
     return [...APPS];
   }
 
-  return APPS.filter((app) => app.roles.includes(role));
+  return APPS.filter((app) => appMatchesRole(app, role));
 }
 
 function getLaunchPath(app, role) {
@@ -78,18 +140,30 @@ function getLaunchPath(app, role) {
     return '/';
   }
 
-  const mode = role === 'teacher' || role === 'admin' ? 'teacher' : 'client';
-  if (role === 'screen' && app.screenEntry) {
+  const normalizedRole = String(role || '').toLowerCase();
+  const mode = normalizedRole === 'teacher' || normalizedRole === 'admin' ? 'teacher' : 'client';
+
+  if (normalizedRole === 'screen' && app.screenEntry) {
     return `/labs/${app.slug}/${app.screenEntry}`;
   }
 
-  const entry = mode === 'teacher' ? app.teacherEntry : app.clientEntry;
+  const entry = normalizedRole === 'teacher' ? app.teacherEntry : app.clientEntry || app.studentEntry || app.teacherEntry;
 
-  if (app.teacherEntry === app.clientEntry) {
-    return `/labs/${app.slug}/${entry}?mode=${mode}`;
+  if (!entry) {
+    return `/labs/${app.slug}/`;
   }
 
-  return `/labs/${app.slug}/${entry}`;
+  const entryPath = `/labs/${app.slug}/${entry}`;
+
+  if (entry.includes('?')) {
+    return entryPath;
+  }
+
+  if (app.teacherEntry === app.clientEntry) {
+    return `${entryPath}?mode=${mode}`;
+  }
+
+  return entryPath;
 }
 
 function toPublicApp(app, role) {

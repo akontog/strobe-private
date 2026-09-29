@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-09-22T18:40:12.641Z",
+  "savedAt": "2026-09-29T08:12:54.770Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -226,6 +226,78 @@
       },
       "connectedAt": 1790083940709,
       "lastSeenAt": 1790102412641,
+      "isActive": true
+    },
+    {
+      "id": "cc28d5d5-56d1-4cde-86cf-92ee344b20e9",
+      "userId": "user_1790668716991_u9q141n",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "username": "Teacher",
+      "role": "teacher",
+      "source": "neural-lab",
+      "activeApps": [
+        "neural",
+        "neural-lab"
+      ],
+      "appData": {
+        "neural": {
+          "role": "teacher",
+          "lesson": {
+            "dataset": "vehicles",
+            "exampleIndex": 0,
+            "exampleName": "Ποδήλατο",
+            "icon": "🚲",
+            "inputs": {
+              "i1": 2,
+              "i2": 0
+            },
+            "products": {
+              "p1": "",
+              "p2": ""
+            },
+            "total": "",
+            "weights": {
+              "w1": 2,
+              "w2": 3
+            },
+            "activityId": "1",
+            "activityTitle": "1. Βρίσκω την είσοδο",
+            "threshold": {
+              "op": ">=",
+              "boundary": 5
+            },
+            "selectedInputs": {
+              "i1": true,
+              "i2": false
+            },
+            "useQuestionMarks": false
+          },
+          "active": true,
+          "lastUpdated": "2026-09-29T08:10:49.643Z",
+          "color": "#0d35fd",
+          "weights": {
+            "w1": 1,
+            "w2": 1
+          }
+        }
+      },
+      "connectedAt": 1790668716991,
+      "lastSeenAt": 1790669449646,
+      "isActive": true
+    },
+    {
+      "id": "077961ae-1e77-4995-9745-bf8b9e4fc205",
+      "userId": "user_1790669574769_20nakl8",
+      "ip": "54.234.183.96",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+      "username": "user-077961",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790669574769,
+      "lastSeenAt": 1790669574769,
       "isActive": true
     }
   ]

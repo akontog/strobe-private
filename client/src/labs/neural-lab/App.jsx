@@ -5,7 +5,7 @@ import { VerticalProducts } from './components/VerticalProducts';
 import { StudentTable } from './components/StudentTable';
 import { ExamplesClassifier } from './components/ExamplesClassifier';
 import { ActivitiesMenu, getNeuralActivityTitle } from './components/ActivitiesMenu';
-import { StudentQrAccordion } from './components/StudentQrAccordion';
+import { StudentQrAccordion } from '../../shared/components';
 import { Accordion } from '../../shared/components';
 import {
   ConnectionNameControl,
@@ -906,7 +906,10 @@ const saveStudentColor = (newColor) => {
             demoIconWhenDisabled="?"
           />
 
-          <StudentQrAccordion />
+          <StudentQrAccordion
+            qrSrc="/labs/neural-lab/media/neural_lab_student_qrcode.png"
+            alt="QR code για το Neural Lab student link"
+          />
           
         </>
       )}
