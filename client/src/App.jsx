@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, Navigate, Route, Routes } from 'react-router-dom';
+import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import BuffonStudentView from './labs/buffon-needle/StudentView';
 import BuffonTeacherView from './labs/buffon-needle/TeacherView';
@@ -21,10 +21,18 @@ import TeacherPage from './pages/TeacherPage';
 import ToolsPage from './pages/ToolsPage';
 import ActivityBuilder from './tools/activity-builder/ActivityBuilder';
 import CameraSpeedTest from './tools/camera-speed-test/CameraSpeedTest';
+import GeoGebraCollabTool from './tools/geogebra-collab/GeoGebraCollabTool';
+import GeoGebraCollabTestTool from './tools/geogebra-collab-test/GeoGebraCollabTestTool';
+import GeogebraMonitorTool from './tools/geogebra-monitor/GeogebraMonitorTool';
 import LinearSeparation from './tools/linear-separation/LinearSeparation';
+import StudentIdentityControl from './shared/components/StudentIdentityControl';
 import LanguageSwitcher from './shared/components/LanguageSwitcher';
 
 function App() {
+  const location = useLocation();
+  const pathname = String(location?.pathname || '').toLowerCase();
+  const isTeacherContext = pathname === '/teacher' || pathname.endsWith('/teacher') || pathname.startsWith('/teacher/');
+
   // const { t } = useTranslation(['common', 'menu']);
 
   return (
@@ -37,9 +45,14 @@ function App() {
           <Link className="client-nav-link" to="/tools">Tools</Link>
           <Link className="client-nav-link" to="/tools/activity-builder">Activity Builder</Link>
           <Link className="client-nav-link" to="/tools/camera-speed-test">Camera Speed Test</Link>
+          <Link className="client-nav-link" to="/tools/geogebra-collab">GeoGebra Collab</Link>
+          <Link className="client-nav-link" to="/tools/geogebra-monitor">GeoGebra Monitor</Link>
           <Link className="client-nav-link" to="/tools/linear-separation">Linear Separation</Link>
         </nav>
-        <LanguageSwitcher />
+        <div className="client-topbar-controls">
+          <StudentIdentityControl roleLabel={isTeacherContext ? 'Teacher' : 'Student'} />
+          <LanguageSwitcher />
+        </div>
       </header>
       <div className="client-content">
         <Routes>
@@ -50,6 +63,9 @@ function App() {
           <Route path="/tools" element={<ToolsPage />} />
           <Route path="/tools/activity-builder" element={<ActivityBuilder />} />
           <Route path="/tools/camera-speed-test" element={<CameraSpeedTest />} />
+          <Route path="/tools/geogebra-collab" element={<GeoGebraCollabTool />} />
+          <Route path="/tools/geogebra-collab-test" element={<GeoGebraCollabTestTool />} />
+          <Route path="/tools/geogebra-monitor" element={<GeogebraMonitorTool />} />
           <Route path="/tools/linear-seperation" element={<LinearSeparation />} />
           <Route path="/apps-launcher" element={<AppsLauncherPage />} />
           <Route path="/labs/buffon-needle/student" element={<BuffonStudentView />} />

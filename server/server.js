@@ -55,7 +55,9 @@ const initGeometry = require('./services/geometry');
 const initNeural = require('./services/neural');
 const initPrimes = require('./services/primes');
 const initPolynomial = require('./services/polynomial');
+const initGeogebraCollab = require('./services/geogebraCollab');
 const wsRegistry = require('./services/websocketRegistry');
+const { runGeogebraCollabProtocolRunner } = require('./tools/geogebraCollabProtocolRunner');
 
 /**** 5. Δημιουργία εφαρμογής Express και HTTP server ****/
 const app = express();
@@ -133,6 +135,12 @@ const fourierService = initFourier({
   sessionManager
 });
 const { fourierParticipants, registerSocketHandlers: registerFourierSocketHandlers, handleSocketDisconnect } = fourierService;
+
+const geogebraCollabService = initGeogebraCollab({
+  io,
+  recordCommunication,
+  sessionManager
+});
 
 function touchBuffonConnection(ws, patch = {}) {
   const current = buffonConnectionMeta.get(ws) || {
@@ -224,15 +232,43 @@ app.get('/api/tools', (req, res) => {
       description: 'Interactive linear separation playground built from the tools workspace.',
       path: '/tools/linear-seperation/',
       available: true
+    },
+    {
+      id: 'geogebra-collab',
+      title: 'GeoGebra Collaborative Component',
+      description: 'Shared GeoGebra board with server-authoritative permissions and realtime sync.',
+      path: '/tools/geogebra-collab/',
+      available: true
+    },
+    {
+      id: 'geogebra-collab-test',
+      title: 'GeoGebra Protocol Test Runner',
+      description: 'Runs integration tests with fake realtime clients over the geogebra collaboration protocol.',
+      path: '/tools/geogebra-collab-test/',
+      available: true
+    },
+    {
+      id: 'geogebra-monitor',
+      title: 'GeoGebra Central Monitor',
+      description: 'Teacher-facing dashboard for all collaborative GeoGebra rooms and live student moves.',
+      path: '/tools/geogebra-monitor/',
+      available: true
     }
   ]);
 });
+
+app.post('/api/tools/geogebra-collab-test/run', asyncHandler(async (req, res) => {
+  const result = await runGeogebraCollabProtocolRunner({ verbose: false });
+  res.status(result.ok ? 200 : 500).json(result);
+}));
 
 io.on('connection', (socket) => {
   registerGeometrySocketHandlers(socket, {
     registerFourierSocketHandlers,
     handleFourierDisconnect: handleSocketDisconnect
   });
+
+  geogebraCollabService.registerSocketHandlers(socket);
 });
 
 const { handleUpgrade: neuralUpgrade } = initNeural({

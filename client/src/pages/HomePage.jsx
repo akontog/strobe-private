@@ -40,7 +40,7 @@ export default function HomePage() {
       title: "Tools",
       description:
         "Εργαλεία για μάθημα και δοκιμές όπως activity builder και diagnostics.",
-      features: ["Activity Builder", "Camera Speed Test", "Linear Seperation"],
+      features: ["Activity Builder", "Camera Speed Test", "GeoGebra Collab", "Linear Seperation"],
     },
   ];
 

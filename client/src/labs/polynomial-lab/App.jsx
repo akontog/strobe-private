@@ -2,13 +2,13 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Accordion,
   ActivitiesMenu,
-  ConnectionNameControl,
   GroupingDragDrop,
   HeroTitle,
   MathFormula,
   StudentQrAccordion,
   StudentTable,
   randomIdentityColor,
+  readIdentitySnapshot,
   readIdentityColor,
   readIdentityName,
   writeIdentityColor,
@@ -717,9 +717,27 @@ export default function App({ role = 'teacher' }) {
   const [roster, setRoster] = useState([]);
   const [studentName, setStudentName] = useState(() => readIdentityName(`Student-${Math.floor(Math.random() * 900 + 100)}`));
   const [studentColor, setStudentColor] = useState(() => readIdentityColor(randomIdentityColor()));
-  const [editingName, setEditingName] = useState(false);
-  const [studentNameInput, setStudentNameInput] = useState(studentName);
   const [lastSentAnswers, setLastSentAnswers] = useState('');
+
+  useEffect(() => {
+    function syncIdentity() {
+      const next = readIdentitySnapshot({
+        nameFallback: `Student-${Math.floor(Math.random() * 900 + 100)}`,
+        colorFallback: randomIdentityColor()
+      });
+      setStudentName(next.name);
+      setStudentColor(next.color);
+    }
+
+    syncIdentity();
+    window.addEventListener('strobe:identity-change', syncIdentity);
+    window.addEventListener('storage', syncIdentity);
+
+    return () => {
+      window.removeEventListener('strobe:identity-change', syncIdentity);
+      window.removeEventListener('storage', syncIdentity);
+    };
+  }, []);
 
   const activeActivity = useMemo(
     () => ACTIVITY_LIBRARY.find((item) => item.id === selectedActivityId) || ACTIVITY_LIBRARY[0],
@@ -1010,26 +1028,6 @@ export default function App({ role = 'teacher' }) {
     }
   };
 
-  const saveStudentName = () => {
-    const nextName = studentNameInput.trim();
-    if (!nextName || nextName === studentName) {
-      setStudentNameInput(studentName);
-      setEditingName(false);
-      return;
-    }
-
-    writeIdentityName(nextName);
-    setStudentName(nextName);
-    setEditingName(false);
-    sendSocketMessage({ type: 'register_student', name: nextName, color: studentColor });
-  };
-
-  const saveStudentColor = (nextColor) => {
-    setStudentColor(nextColor);
-    writeIdentityColor(nextColor);
-    sendSocketMessage({ type: 'register_student', name: studentName, color: nextColor });
-  };
-
   useEffect(() => {
     let cancelled = false;
 
@@ -1049,7 +1047,7 @@ export default function App({ role = 'teacher' }) {
       if (isStudent) {
         sendSocketMessage({ type: 'register_student', name: studentName, color: studentColor });
       } else {
-        sendSocketMessage({ type: 'register_teacher', name: 'Teacher' });
+        sendSocketMessage({ type: 'register_teacher', name: studentName || 'Teacher' });
       }
       sendSocketMessage({ type: 'request_state' });
       hasRegisteredRef.current = true;
@@ -1150,6 +1148,19 @@ export default function App({ role = 'teacher' }) {
   }, [isStudent]);
 
   useEffect(() => {
+    if (!isSocketConnected) {
+      return;
+    }
+
+    if (isStudent) {
+      sendSocketMessage({ type: 'register_student', name: studentName, color: studentColor });
+      return;
+    }
+
+    sendSocketMessage({ type: 'register_teacher', name: studentName || 'Teacher' });
+  }, [isSocketConnected, isStudent, studentColor, studentName]);
+
+  useEffect(() => {
     if (!isStudent || !isSocketConnected) {
       return;
     }
@@ -1213,29 +1224,6 @@ export default function App({ role = 'teacher' }) {
           {activeActivity.title}
         </HeroTitle>
       </header>
-
-      <ConnectionNameControl
-        connected={isSocketConnected}
-        name={isStudent ? studentName : ''}
-        editing={isStudent && editingName}
-        value={studentNameInput}
-        onChange={isStudent ? setStudentNameInput : undefined}
-        onStartEdit={isStudent ? () => setEditingName(true) : undefined}
-        onCommit={isStudent ? saveStudentName : undefined}
-        onCancel={isStudent ? () => {
-          setStudentNameInput(studentName);
-          setEditingName(false);
-        } : undefined}
-        color={studentColor}
-        showColorPicker={isStudent}
-        onColorChange={isStudent ? saveStudentColor : undefined}
-        infoText={isTeacher ? `συνδεδεμένοι: ${roster.length}` : ''}
-        connectedLabel="Σε σύνδεση"
-        disconnectedLabel="Εκτός σύνδεσης"
-        namePrefix="όνομα"
-        showNameLabel={isStudent}
-        className="poly-connection-status"
-      />
 
       <section className="common-zone lab-zone poly-common-zone">
         <div className="lab-workspace poly-neural-zone">

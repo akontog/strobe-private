@@ -55,6 +55,17 @@ export default function StudentPage() {
     'primes-lab': '🧮'
   };
 
+  const extraStudentTools = [
+    {
+      id: 'geogebra-collab',
+      title: 'GeoGebra Collaborative Component',
+      description: 'Κοινός GeoGebra πίνακας για student συμμετοχή με server-side δικαιώματα.',
+      path: '/tools/geogebra-collab',
+      tone: 'green',
+      icon: '📐'
+    }
+  ];
+
   return (
     <section className="dashboard-page">
       <div className="dashboard-shell">
@@ -90,6 +101,25 @@ export default function StudentPage() {
                 </ul>
                 <div className="btn-row dashboard-action-row">
                   <Link className="dashboard-action-link" to={`/labs/${app.slug}/student`}>Open student view</Link>
+                </div>
+              </article>
+            ))}
+
+            {extraStudentTools.map((tool) => (
+              <article key={tool.id} className={`strobe-note strobe-note--${tool.tone}`}>
+                <div className="app-head">
+                  <div>
+                    <div className="muted">tool</div>
+                    <h2 className="app-title">{tool.icon} {tool.title}</h2>
+                  </div>
+                </div>
+                <p className="app-desc">{tool.description}</p>
+                <ul className="role-features">
+                  <li>student-accessible</li>
+                  <li>{tool.path}</li>
+                </ul>
+                <div className="btn-row dashboard-action-row">
+                  <Link className="dashboard-action-link" to={tool.path}>Open tool</Link>
                 </div>
               </article>
             ))}

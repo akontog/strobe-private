@@ -1,0 +1,18 @@
+.geo-monitor-tool {
+  display: grid;
+  gap: 1rem;
+}
+
+.geo-monitor-tool__header {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.geo-monitor-tool__header h1 {
+  margin: 0;
+}
+
+.geo-monitor-tool__header p {
+  margin: 0;
+  color: #334155;
+}

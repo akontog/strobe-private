@@ -33,6 +33,14 @@ body {
   border-bottom: 1px solid rgba(16, 35, 63, 0.08);
 }
 
+.client-topbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .client-home-link {
   text-decoration: none;
   color: #1d4ed8;
@@ -74,14 +82,16 @@ body {
 .language-switcher-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   border: 1px solid rgba(29, 78, 216, 0.25);
   border-radius: 999px;
   background: white;
   color: #10233f;
-  padding: 8px 12px;
+  padding: 8px 10px;
   font: inherit;
   cursor: pointer;
+  min-width: 64px;
+  justify-content: center;
 }
 
 .language-switcher-btn.active {
@@ -113,4 +123,16 @@ body {
   color: white;
   text-decoration: none;
   font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .client-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .client-topbar-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
 }

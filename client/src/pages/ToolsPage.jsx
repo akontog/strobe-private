@@ -50,6 +50,21 @@ export default function ToolsPage() {
       tone: 'blue',
       helper: 'Roundtrip frame benchmark for the detection pipeline.'
     },
+    'geogebra-collab': {
+      icon: '📐',
+      tone: 'green',
+      helper: 'Collaborative GeoGebra board with role-aware object locks.'
+    },
+    'geogebra-collab-test': {
+      icon: '🧪',
+      tone: 'orange',
+      helper: 'Protocol-level integration tests with fake websocket clients.'
+    },
+    'geogebra-monitor': {
+      icon: '📊',
+      tone: 'indigo',
+      helper: 'Central dashboard for all connected collaborative GeoGebra rooms.'
+    },
     'linear-seperation': {
       icon: '🧠',
       tone: 'orange',

@@ -55,6 +55,17 @@ export default function TeacherPage() {
     'primes-lab': '🔢'
   };
 
+  const extraTeacherTools = [
+    {
+      id: 'geogebra-monitor',
+      title: 'GeoGebra Central Monitor',
+      description: 'Παρακολούθηση όλων των collaborative GeoGebra rooms και των κινήσεων των students σε πραγματικό χρόνο.',
+      path: '/tools/geogebra-monitor',
+      tone: 'indigo',
+      icon: '📊'
+    }
+  ];
+
   return (
     <section className="dashboard-page">
       <div className="dashboard-shell">
@@ -90,6 +101,25 @@ export default function TeacherPage() {
                 </ul>
                 <div className="btn-row dashboard-action-row">
                   <Link className="dashboard-action-link" to={`/labs/${app.slug}/teacher`}>Open teacher view</Link>
+                </div>
+              </article>
+            ))}
+
+            {extraTeacherTools.map((tool) => (
+              <article key={tool.id} className={`strobe-note strobe-note--${tool.tone}`}>
+                <div className="app-head">
+                  <div>
+                    <div className="muted">tool</div>
+                    <h2 className="app-title">{tool.icon} {tool.title}</h2>
+                  </div>
+                </div>
+                <p className="app-desc">{tool.description}</p>
+                <ul className="role-features">
+                  <li>teacher-accessible</li>
+                  <li>{tool.path}</li>
+                </ul>
+                <div className="btn-row dashboard-action-row">
+                  <Link className="dashboard-action-link" to={tool.path}>Open monitor</Link>
                 </div>
               </article>
             ))}

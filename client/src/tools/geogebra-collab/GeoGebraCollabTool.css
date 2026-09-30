@@ -1,0 +1,45 @@
+.geo-tool-page {
+  display: grid;
+  gap: 1rem;
+}
+
+.geo-tool-page__header {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.geo-tool-page__header h1 {
+  margin: 0;
+}
+
+.geo-tool-page__helper {
+  margin: 0;
+  color: #334155;
+}
+
+.geo-tool-page__room {
+  display: grid;
+  grid-template-columns: minmax(220px, 420px) auto;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.geo-tool-page__room input,
+.geo-tool-page__room button {
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #ccd1de;
+  font-size: 0.92rem;
+}
+
+.geo-tool-page__room button {
+  background: #0a5bd8;
+  color: #fff;
+  cursor: pointer;
+}
+
+@media (max-width: 760px) {
+  .geo-tool-page__room {
+    grid-template-columns: 1fr;
+  }
+}

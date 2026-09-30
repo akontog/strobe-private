@@ -9,5 +9,8 @@ export { default as Toolbar } from './Toolbar';
 export { default as ConnectionNameControl } from './ConnectionNameControl';
 export { default as LanguageSwitcher } from './LanguageSwitcher';
 export { default as GroupingDragDrop } from './GroupingDragDrop';
+export { default as CollaborativeGeoGebra } from './CollaborativeGeoGebra';
+export { default as GeogebraMonitor } from './GeogebraMonitor';
+export { default as StudentIdentityControl } from './StudentIdentityControl';
 export * from './studentTableColumnPresets';
 export * from './identityStorage';

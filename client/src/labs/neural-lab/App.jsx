@@ -6,10 +6,10 @@ import { ExamplesClassifier } from './components/ExamplesClassifier';
 import {
   Accordion,
   ActivitiesMenu,
-  ConnectionNameControl,
   StudentQrAccordion,
   StudentTable,
   randomIdentityColor,
+  readIdentitySnapshot,
   readIdentityColor,
   readIdentityName,
   writeIdentityColor,
@@ -191,39 +191,26 @@ const App = ({ role = 'teacher' }) => {
 const [studentColor, setStudentColor] = useState(() => {
   return readIdentityColor(randomIdentityColor());
 });
-const saveStudentName = () => {
-  const newName = studentNameInput.trim();
+  useEffect(() => {
+    function syncIdentity() {
+      const next = readIdentitySnapshot({
+        nameFallback: `Student-${Math.floor(Math.random() * 900 + 100)}`,
+        colorFallback: randomIdentityColor()
+      });
+      setStudentName(next.name);
+      setStudentColor(next.color);
+    }
 
-  if (!newName || newName === studentName) {
-    setStudentNameInput(studentName);
-    setEditingName(false);
-    return;
-  }
+    syncIdentity();
+    window.addEventListener('strobe:identity-change', syncIdentity);
+    window.addEventListener('storage', syncIdentity);
 
-  writeIdentityName(newName);
+    return () => {
+      window.removeEventListener('strobe:identity-change', syncIdentity);
+      window.removeEventListener('storage', syncIdentity);
+    };
+  }, []);
 
-  sendSocketMessage({
-    type: 'register_student',
-    name: newName,
-    color: studentColor
-  });
-
-  // αν το studentName είναι state:
-  setStudentName(newName);
-  setEditingName(false);
-};
-const saveStudentColor = (newColor) => {
-  setStudentColor(newColor);
-  writeIdentityColor(newColor);
-
-  sendSocketMessage({
-    type: 'register_student',
-    name: studentName,
-    color: newColor
-  });
-};
-  // Αναφορά για να ελέγχει αν ο μαθητής επεξεργάζεται το όνομά του.
-  const [editingName, setEditingName] = useState(false);
   // Αναφορά για να αποθηκεύει την είσοδο του ονόματος του μαθητή.
   const [studentNameInput, setStudentNameInput] = useState(studentName);
   
@@ -425,7 +412,7 @@ const saveStudentColor = (newColor) => {
       } else if (isScreen) {
         sendSocketMessage({ type: 'register_teacher', name: 'Screen' });
       } else {
-        sendSocketMessage({ type: 'register_teacher', name: 'Teacher' });
+        sendSocketMessage({ type: 'register_teacher', name: studentName || 'Teacher' });
       }
 
       sendSocketMessage({ type: 'request_state' });
@@ -597,7 +584,19 @@ const saveStudentColor = (newColor) => {
         ws.close();
       }
     };
-  }, [isScreen, isStudent, studentName, studentColor]);
+  }, [isScreen, isStudent]);
+
+  useEffect(() => {
+    if (!isSocketConnected) return;
+
+    if (isStudent) {
+      sendSocketMessage({ type: 'register_student', name: studentName, color: studentColor });
+    } else if (isScreen) {
+      sendSocketMessage({ type: 'register_teacher', name: 'Screen' });
+    } else {
+      sendSocketMessage({ type: 'register_teacher', name: studentName || 'Teacher' });
+    }
+  }, [isScreen, isSocketConnected, isStudent, studentColor, studentName]);
 
   useEffect(() => {
     if (!isStudent || !isSocketConnected) return;
@@ -745,29 +744,6 @@ const saveStudentColor = (newColor) => {
 
   return (
     <TeacherCard title={heroTitle}>
-      <ConnectionNameControl
-        connected={isSocketConnected}
-        name={isStudent ? studentName : `συνδεδεμένοι: ${roster.length}`}
-        editing={isStudent && editingName}
-        value={studentNameInput}
-        onChange={isStudent ? setStudentNameInput : undefined}
-        onStartEdit={isStudent ? () => setEditingName(true) : undefined}
-        onCommit={isStudent ? saveStudentName : undefined}
-        onCancel={isStudent ? () => {
-          setStudentNameInput(studentName);
-          setEditingName(false);
-        } : undefined}
-        color={studentColor}
-        showColorPicker={isStudent}
-        onColorChange={isStudent ? saveStudentColor : undefined}
-        infoText={!isStudent ? `συνδεδεμένοι: ${roster.length}` : ''}
-        connectedLabel="Σε σύνδεση"
-        disconnectedLabel="Εκτός σύνδεσης"
-        namePrefix="όνομα"
-        showNameLabel={isStudent}
-        className="connection-status"
-      />
-
       {isScreen && (
         <>
           <div className="screen-top-bar">

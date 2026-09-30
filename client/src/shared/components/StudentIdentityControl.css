@@ -1,0 +1,92 @@
+.student-identity-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(16, 35, 63, 0.12);
+  box-shadow: 0 8px 18px rgba(16, 35, 63, 0.06);
+}
+
+.student-identity-control__badge {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 0 1px rgba(16, 35, 63, 0.16);
+  flex: 0 0 auto;
+}
+
+.student-identity-control__fields {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.student-identity-control__input {
+  min-width: 138px;
+  border: 1px solid rgba(16, 35, 63, 0.16);
+  border-radius: 999px;
+  padding: 0.35rem 0.62rem;
+  background: #fff;
+  color: #10233f;
+  font: inherit;
+  font-size: 0.86rem;
+}
+
+.student-identity-control__input:focus {
+  outline: 2px solid rgba(29, 78, 216, 0.22);
+  outline-offset: 2px;
+}
+
+.student-identity-control__name {
+  border: 0;
+  background: transparent;
+  padding: 0.1rem 0.1rem;
+  margin: 0;
+  min-width: 138px;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #10233f;
+  text-align: left;
+  cursor: text;
+}
+
+.student-identity-control__name:hover,
+.student-identity-control__name:focus-visible {
+  text-decoration: underline;
+  outline: none;
+}
+
+.student-identity-control__color {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid rgba(16, 35, 63, 0.16);
+  border-radius: 999px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.student-identity-control__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+@media (max-width: 980px) {
+  .student-identity-control {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .student-identity-control__input {
+    min-width: 0;
+    flex: 1 1 150px;
+  }
+}

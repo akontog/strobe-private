@@ -23,7 +23,8 @@
     "build:buffon-needle:teacher": "esbuild client/src/labs/buffon-needle/teacher.jsx --bundle --format=esm --outfile=client/dist/labs/buffon-needle/teacher.bundle.js --loader:.jsx=jsx --loader:.css=css",
     "build:buffon-needle:student": "esbuild client/src/labs/buffon-needle/student.jsx --bundle --format=esm --outfile=client/dist/labs/buffon-needle/student.bundle.js --loader:.jsx=jsx --loader:.css=css",
     "build:geometry-live": "esbuild client/src/labs/geometry-live/index.jsx --bundle --format=esm --outfile=client/dist/labs/geometry-live/geometry-shell.bundle.js --loader:.jsx=jsx",
-    "build:all": "npm run build:client"
+    "build:all": "npm run build:client",
+    "test:geogebra-collab": "npm run test:geogebra-collab --workspace server"
   },
   "dependencies": {
     "express": "^5.2.1",

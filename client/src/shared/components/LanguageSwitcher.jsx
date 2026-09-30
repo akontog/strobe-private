@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../i18n';
 
 const OPTIONS = [
-  { code: 'el', icon: '🇬🇷', labelKey: 'common.greek' },
-  { code: 'en', icon: '🇬🇧', labelKey: 'common.english' }
+  { code: 'el', icon: '🇬🇷', label: 'GR' },
+  { code: 'en', icon: '🇬🇧', label: 'GB' }
 ];
 
 export default function LanguageSwitcher() {
@@ -18,9 +18,11 @@ export default function LanguageSwitcher() {
           type="button"
           className={`language-switcher-btn ${i18n.language === option.code ? 'active' : ''}`}
           onClick={() => i18n.changeLanguage(option.code)}
+          title={option.label}
+          aria-label={option.label}
         >
           <span>{option.icon}</span>
-          <span>{t(option.labelKey)}</span>
+          <span>{option.label}</span>
         </button>
       ))}
     </div>

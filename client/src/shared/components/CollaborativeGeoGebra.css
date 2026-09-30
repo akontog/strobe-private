@@ -1,0 +1,87 @@
+.gg-collab {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.gg-collab__status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.gg-collab__chip {
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  border: 1px solid #d5d8e2;
+  background: #fff;
+}
+
+.gg-collab__chip.is-online {
+  border-color: #1a8f4e;
+  color: #1a8f4e;
+  font-weight: 600;
+}
+
+.gg-collab__error {
+  color: #ba1b1b;
+  font-size: 0.86rem;
+}
+
+.gg-collab__board {
+  min-height: 480px;
+  border-radius: 14px;
+  border: 1px solid #d5d8e2;
+  background: linear-gradient(180deg, #fefefe, #f6f8fb);
+  overflow: hidden;
+}
+
+.gg-collab__controls {
+  display: grid;
+  grid-template-columns: minmax(140px, 220px) minmax(180px, 1fr) auto auto;
+  gap: 0.55rem;
+  align-items: center;
+}
+
+.gg-collab__controls input,
+.gg-collab__controls select,
+.gg-collab__controls button {
+  padding: 0.48rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #ccd1de;
+  font-size: 0.9rem;
+}
+
+.gg-collab__controls button {
+  cursor: pointer;
+  background: #0a5bd8;
+  border-color: #0a5bd8;
+  color: #fff;
+}
+
+.gg-collab__controls button.secondary {
+  background: #fff;
+  color: #23324b;
+}
+
+.gg-collab__legend {
+  margin: 0;
+  padding-left: 1rem;
+  color: #334155;
+  font-size: 0.88rem;
+}
+
+.gg-collab__legend li {
+  margin: 0.2rem 0;
+}
+
+@media (max-width: 900px) {
+  .gg-collab__controls {
+    grid-template-columns: 1fr;
+  }
+
+  .gg-collab__board {
+    min-height: 380px;
+  }
+}

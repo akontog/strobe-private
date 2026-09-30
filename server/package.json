@@ -4,6 +4,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "test:geogebra-collab": "node tools/run-geogebra-collab-tests.js"
   }
 }
