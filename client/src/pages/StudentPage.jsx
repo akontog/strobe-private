@@ -44,7 +44,8 @@ export default function StudentPage() {
     'buffon-needle': 'orange',
     'fourier-lab': 'blue',
     'neural-lab': 'magenta',
-    'primes-lab': 'green'
+    'primes-lab': 'green',
+    'linear-systems-lab': 'indigo'
   };
 
   const iconBySlug = {
@@ -52,10 +53,19 @@ export default function StudentPage() {
     'buffon-needle': '🎯',
     'fourier-lab': '🎵',
     'neural-lab': '⚡',
-    'primes-lab': '🧮'
+    'primes-lab': '🧮',
+    'linear-systems-lab': '📘'
   };
 
   const extraStudentTools = [
+    {
+      id: 'linear-systems-lab-link',
+      title: 'Linear Systems Lab',
+      description: 'Γραφική και αλγεβρική επίλυση γραμμικών συστημάτων με κοινή ροή teacher-student.',
+      path: '/labs/linear-systems-lab/student',
+      tone: 'indigo',
+      icon: '📘'
+    },
     {
       id: 'geogebra-collab',
       title: 'GeoGebra Collaborative Component',

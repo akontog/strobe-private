@@ -19,7 +19,8 @@ export const StudentTable = ({
   nameFallback = 'Χρήστης',
   getRowKey = defaultGetRowKey,
   getDisplayName = defaultGetDisplayName,
-  getIsConnected = defaultGetIsConnected
+  getIsConnected = defaultGetIsConnected,
+  getRowStyle
 }) => {
   const { t } = useTranslation(['common', 'neural']);
   const rows = Array.isArray(participants) ? participants : [];
@@ -81,7 +82,7 @@ export const StudentTable = ({
               const displayName = getDisplayName(participant, resolvedFallback, index);
 
               return (
-                <tr key={getRowKey(participant, index)}>
+                <tr key={getRowKey(participant, index)} style={typeof getRowStyle === 'function' ? getRowStyle(participant, index) : undefined}>
                   <td style={{ whiteSpace: 'nowrap' }}>
                     <span
                       className="green-dot"

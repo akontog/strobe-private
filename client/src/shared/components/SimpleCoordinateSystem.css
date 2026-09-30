@@ -1,0 +1,71 @@
+.simple-coord {
+  border: 2px solid #cbd5e1;
+  border-radius: 1rem;
+  padding: 0.75rem;
+  background: linear-gradient(180deg, #f8fbff 0%, #f1f5f9 100%);
+}
+
+.simple-coord__header h3 {
+  margin: 0 0 0.45rem;
+  font-size: 0.92rem;
+  color: #0f172a;
+}
+
+.simple-coord__svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0.65rem;
+  overflow: hidden;
+}
+
+.simple-coord__bg {
+  fill: #ffffff;
+}
+
+.simple-coord__grid {
+  stroke: #e2e8f0;
+  stroke-width: 1;
+}
+
+.simple-coord__axis {
+  stroke: #334155;
+  stroke-width: 1.4;
+}
+
+.simple-coord__tick {
+  fill: #64748b;
+  font-size: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.simple-coord__axis-label {
+  fill: #0f172a;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+}
+
+.simple-coord__legend {
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.simple-coord__legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #334155;
+  font-size: 0.82rem;
+}
+
+.simple-coord__swatch {
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 0.2rem;
+  border: 1px solid rgba(15, 23, 42, 0.18);
+}

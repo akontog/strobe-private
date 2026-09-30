@@ -13,6 +13,8 @@ import PrimesStudentView from './labs/primes-lab/StudentView';
 import PrimesTeacherView from './labs/primes-lab/TeacherView';
 import PolynomialStudentView from './labs/polynomial-lab/StudentView';
 import PolynomialTeacherView from './labs/polynomial-lab/TeacherView';
+import LinearSystemsStudentView from './labs/linear-systems-lab/StudentView';
+import LinearSystemsTeacherView from './labs/linear-systems-lab/TeacherView';
 import AppsLauncherPage from './pages/AppsLauncherPage';
 import HomePage from './pages/HomePage';
 import LabPage from './pages/LabPage';
@@ -76,6 +78,8 @@ function App() {
           <Route path="/labs/primes-lab/teacher" element={<PrimesTeacherView />} />
           <Route path="/labs/polynomial-lab/student" element={<PolynomialStudentView />} />
           <Route path="/labs/polynomial-lab/teacher" element={<PolynomialTeacherView />} />
+          <Route path="/labs/linear-systems-lab/student" element={<LinearSystemsStudentView />} />
+          <Route path="/labs/linear-systems-lab/teacher" element={<LinearSystemsTeacherView />} />
           <Route path="/labs/fourier-lab/student" element={<FourierStudentView />} />
           <Route path="/labs/fourier-lab/teacher" element={<FourierTeacherView />} />
           <Route path="/labs/geometry-live/student" element={<GeometryStudentView />} />

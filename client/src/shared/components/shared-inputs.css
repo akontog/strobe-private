@@ -1,0 +1,75 @@
+.shared-input-box {
+  margin: 0;
+}
+
+.poly-team-field {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.85rem;
+  padding: 0.65rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.poly-team-field span {
+  font-size: 0.78rem;
+  color: #475569;
+  font-weight: 700;
+}
+
+.poly-team-field input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.65rem;
+  padding: 0.45rem 0.6rem;
+  font: inherit;
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.shared-input-box__label {
+  display: inline-block;
+}
+
+.shared-input-box__input {
+  width: 100%;
+}
+
+.shared-input-row {
+  display: grid;
+  grid-template-columns: auto minmax(110px, 1fr) auto minmax(110px, 1fr) auto minmax(110px, 1fr);
+  gap: 0.45rem;
+  align-items: end;
+}
+
+.shared-input-row + .shared-input-row {
+  margin-top: 0.7rem;
+}
+
+.shared-input-row__label {
+  font-weight: 800;
+  color: #2563eb;
+  padding-bottom: 0.6rem;
+}
+
+.shared-input-row__token {
+  color: #334155;
+  font-weight: 700;
+  padding-bottom: 0.6rem;
+  white-space: nowrap;
+}
+
+.shared-input-row__field {
+  margin: 0;
+}
+
+@media (max-width: 980px) {
+  .shared-input-row {
+    grid-template-columns: 1fr;
+  }
+
+  .shared-input-row__label,
+  .shared-input-row__token {
+    padding-bottom: 0;
+  }
+}

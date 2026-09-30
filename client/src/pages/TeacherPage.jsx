@@ -44,7 +44,8 @@ export default function TeacherPage() {
     'buffon-needle': 'red',
     'fourier-lab': 'blue',
     'neural-lab': 'magenta',
-    'primes-lab': 'amber'
+    'primes-lab': 'amber',
+    'linear-systems-lab': 'green'
   };
 
   const iconBySlug = {
@@ -52,7 +53,8 @@ export default function TeacherPage() {
     'buffon-needle': '📌',
     'fourier-lab': '🌊',
     'neural-lab': '🧠',
-    'primes-lab': '🔢'
+    'primes-lab': '🔢',
+    'linear-systems-lab': '📉'
   };
 
   const extraTeacherTools = [

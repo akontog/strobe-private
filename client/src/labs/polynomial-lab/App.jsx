@@ -6,6 +6,9 @@ import {
   GroupingDragDrop,
   HeroTitle,
   MathFormula,
+  SharedCommonZoneLayout,
+  SharedInputBox,
+  SharedInputRow,
   StudentQrAccordion,
   StudentTable,
   randomIdentityColor,
@@ -245,7 +248,7 @@ const ALGEBRA_DATASETS = {
       {
         id: 'sum-1',
         expression: '2x^2y + 3x^2y',
-        answerTemplate: '□x^□y^□',
+        answerTemplate: 'x^{}y^{}',
         resultMode: 'monomial',
         parts: [
           { coefficient: '', degreeX: '', degreeY: '' }
@@ -258,7 +261,7 @@ const ALGEBRA_DATASETS = {
       {
         id: 'sum-2',
         expression: '4xy^3 - 2xy^3',
-        answerTemplate: '□x^□y^□',
+        answerTemplate: 'x^{}y^{}',
         resultMode: 'monomial',
         parts: [
           { coefficient: '', degreeX: '', degreeY: '' }
@@ -271,7 +274,7 @@ const ALGEBRA_DATASETS = {
       {
         id: 'sum-3',
         expression: '7x^3y^2 + 3x^3y^2 - x^3y^2',
-        answerTemplate: '□x^□y^□',
+        answerTemplate: 'x^{}y^{}',
         resultMode: 'monomial',
         parts: [
           { coefficient: '', degreeX: '', degreeY: '' }
@@ -289,7 +292,7 @@ const ALGEBRA_DATASETS = {
       {
         id: 'mul-1',
         expression: '3x^2y · 5x^3y^2',
-        answerTemplate: '□x^□y^□',
+        answerTemplate: 'x^{}y^{}',
         resultMode: 'monomial',
         parts: [
           { coefficient: '', degreeX: '', degreeY: '' }
@@ -302,7 +305,7 @@ const ALGEBRA_DATASETS = {
       {
         id: 'mul-2',
         expression: '-2x^3y · 4xy',
-        answerTemplate: '□x^□y^□',
+        answerTemplate: 'x^{}y^{}',
         resultMode: 'monomial',
         parts: [
           { coefficient: '', degreeX: '', degreeY: '' }
@@ -315,7 +318,7 @@ const ALGEBRA_DATASETS = {
       {
         id: 'mul-3',
         expression: '6x^2y^3 · 3x^4y',
-        answerTemplate: '□x^□y^□',
+        answerTemplate: 'x^{}y^{}',
         resultMode: 'monomial',
         parts: [
           { coefficient: '', degreeX: '', degreeY: '' }
@@ -380,7 +383,7 @@ const ALGEBRA_DATASETS = {
       {
         id: 'reduce-1',
         expression: '3x^2y + 5x^2y - 2x^2y',
-        answerTemplate: '□x^□y^□',
+        answerTemplate: 'x^{}y^{}',
         resultMode: 'monomial',
         parts: [
           { coefficient: '', degreeX: '', degreeY: '' }
@@ -393,7 +396,7 @@ const ALGEBRA_DATASETS = {
       {
         id: 'reduce-2',
         expression: '4xy^3 + 2xy^3 - 3xy^3',
-        answerTemplate: '□x^□y^□',
+        answerTemplate: 'x^{}y^{}',
         resultMode: 'monomial',
         parts: [
           { coefficient: '', degreeX: '', degreeY: '' }
@@ -406,7 +409,7 @@ const ALGEBRA_DATASETS = {
       {
         id: 'reduce-3',
         expression: '7x^3y^2 - 2x^3y^2 + 4x^3y^2',
-        answerTemplate: '□x^□y^□',
+        answerTemplate: 'x^{}y^{}',
         resultMode: 'monomial',
         parts: [
           { coefficient: '', degreeX: '', degreeY: '' }
@@ -461,7 +464,7 @@ const ALGEBRA_DATASETS = {
       {
         id: 'poly-op-1',
         expression: '(3x^2y + 5xy^2) + (2x^2y - 3xy^2)',
-        answerTemplate: '□x^□y^□ + □x^□y^□',
+        answerTemplate: 'x^{}y^{} + x^{}y^{}',
         resultMode: 'polynomial',
         parts: [
           { coefficient: '', degreeX: '', degreeY: '' },
@@ -478,7 +481,7 @@ const ALGEBRA_DATASETS = {
       {
         id: 'poly-op-2',
         expression: '(7x^3 - 2x^2y) + (4x^3 + 5x^2y)',
-        answerTemplate: '□x^□y^□ + □x^□y^□',
+        answerTemplate: 'x^{}y^{} + x^{}y^{}',
         resultMode: 'polynomial',
         parts: [
           { coefficient: '', degreeX: '', degreeY: '' },
@@ -495,7 +498,7 @@ const ALGEBRA_DATASETS = {
       {
         id: 'poly-op-3',
         expression: '(6x^2y^2 - 3xy + 2x) - (2x^2y^2 - xy + x)',
-        answerTemplate: '□x^□y^□ + □x^□y^□ + □x^□y^□',
+        answerTemplate: 'x^{}y^{} + x^{}y^{} + x^{}y^{}',
         resultMode: 'polynomial',
         parts: [
           { coefficient: '', degreeX: '', degreeY: '' },
@@ -519,7 +522,7 @@ const ALGEBRA_DATASETS = {
       {
         id: 'poly-mul-1',
         expression: '(2x + 3y)(x + y)',
-        answerTemplate: '□x^□y^□ + □x^□y^□ + □x^□y^□',
+        answerTemplate: 'x^{}y^{} + x^{}y^{} + x^{}y^{}',
         resultMode: 'polynomial',
         parts: [
           { coefficient: '', degreeX: '', degreeY: '' },
@@ -538,7 +541,7 @@ const ALGEBRA_DATASETS = {
       {
         id: 'poly-mul-2',
         expression: '(x + 2y)(3x - y)',
-        answerTemplate: '□x^□y^□ + □x^□y^□ + □x^□y^□',
+        answerTemplate: 'x^{}y^{} + x^{}y^{} + x^{}y^{}',
         resultMode: 'polynomial',
         parts: [
           { coefficient: '', degreeX: '', degreeY: '' },
@@ -557,7 +560,7 @@ const ALGEBRA_DATASETS = {
       {
         id: 'poly-mul-3',
         expression: '(2x - y)(x + 4y)',
-        answerTemplate: '□x^□y^□ + □x^□y^□ + □x^□y^□',
+        answerTemplate: 'x^{}y^{} + x^{}y^{} + x^{}y^{}',
         resultMode: 'polynomial',
         parts: [
           { coefficient: '', degreeX: '', degreeY: '' },
@@ -831,9 +834,9 @@ export default function App({ role = 'teacher' }) {
       ? partsOverride
       : [{ coefficient: '', degreeX: '', degreeY: '' }];
     const rendered = slots.map((slot) => {
-      const coefficient = slot.coefficient || '□';
-      const degreeX = slot.degreeX || '□';
-      const degreeY = slot.degreeY || '□';
+      const coefficient = slot.coefficient || '';
+      const degreeX = slot.degreeX || '';
+      const degreeY = slot.degreeY || '';
       return `${coefficient}x^${degreeX}y^${degreeY}`;
     });
 
@@ -841,9 +844,9 @@ export default function App({ role = 'teacher' }) {
   };
 
   const getMonomialAnswerPreview = (parts) => {
-    const coefficient = parts?.[0]?.coefficient || '□';
-    const degreeX = parts?.[0]?.degreeX || '□';
-    const degreeY = parts?.[0]?.degreeY || '□';
+    const coefficient = parts?.[0]?.coefficient || '';
+    const degreeX = parts?.[0]?.degreeX || '';
+    const degreeY = parts?.[0]?.degreeY || '';
     return `${coefficient}x^${degreeX}y^${degreeY}`;
   };
 
@@ -862,7 +865,7 @@ export default function App({ role = 'teacher' }) {
   const leftExpressionText = activeExpression.expression;
   const resultInputValues = activeExpressionParts[0] || { coefficient: '', degreeX: '', degreeY: '' };
   const degreeOnlyInputValues = activeExpressionParts[0] || { degreeX: '', degreeY: '', totalDegree: '' };
-  const degreeOnlyPreviewText = `\\deg_x = ${degreeOnlyInputValues.degreeX || '□'}, \\deg_y = ${degreeOnlyInputValues.degreeY || '□'}, \\deg_{xy} = ${degreeOnlyInputValues.totalDegree || '□'}`;
+  const degreeOnlyPreviewText = `\\deg_x = ${degreeOnlyInputValues.degreeX || ''}, \\deg_y = ${degreeOnlyInputValues.degreeY || ''}, \\deg_{xy} = ${degreeOnlyInputValues.totalDegree || ''}`;
   const groupedPolynomialExpression = useMemo(() => {
     if (selectedActivityId !== '2.4') {
       return null;
@@ -968,7 +971,7 @@ export default function App({ role = 'teacher' }) {
         }
         return `${accumulator} ${term.coefficientSum < 0 ? '-' : '+'} ${term.value}`;
       }, '')
-      : '□';
+      : '';
 
     const isComplete = resultOrder.length > 0 && termStrings.length === resultOrder.length;
     return { formula, isComplete };
@@ -1276,12 +1279,15 @@ export default function App({ role = 'teacher' }) {
       </header>
 
       <section className="common-zone lab-zone poly-common-zone">
-        <div className={`lab-workspace poly-neural-zone ${isGeogebraAreaActivity ? 'poly-neural-zone--geogebra' : ''}`.trim()}>
+        <SharedCommonZoneLayout
+          className={isGeogebraAreaActivity ? 'poly-neural-zone--geogebra' : ''}
+          isGroupingMode={isGroupingActivity}
+        >
           {!isGeogebraAreaActivity ? (
             <div className="lab-card lab-card--highlight poly-expression-card" aria-label="μονώνυμο ή πολυώνυμο">
               <p className="lab-mini-label poly-mini-label">Έκφραση</p>
               {isGroupingActivity ? (
-                <div className="lab-math-box poly-expression-math poly-expression-math--empty"></div>
+                null
               ) : groupedPolynomialExpression ? (
                 <div className="poly-stacked-expression">
                   <div className="poly-stacked-expression-row">
@@ -1342,7 +1348,7 @@ export default function App({ role = 'teacher' }) {
                     <div className="lab-preview poly-preview-panel">
                       <p className="lab-mini-label poly-mini-label">Αυτόματο αποτέλεσμα</p>
                       <div className="lab-math-box lab-math-box--compact poly-expression-math poly-expression-math--small">
-                        <MathFormula formula={`\\(${polynomialGroupingResult?.formula || '□'}\\)`} />
+                        <MathFormula formula={`\\(${polynomialGroupingResult?.formula || ''}\\)`} />
                       </div>
                       {!polynomialGroupingResult?.isComplete && (
                         <p className="poly-grouping-hint">Ολοκλήρωσε σωστά όλες τις ομάδες για τελικό αποτέλεσμα.</p>
@@ -1377,33 +1383,28 @@ export default function App({ role = 'teacher' }) {
                   <div className="poly-team-grid poly-team-grid--full">
                     <div className="poly-term-block poly-term-block--result">
                       <div className="poly-term-inputs poly-term-inputs--result">
-                        <label className="lab-field poly-team-field">
-                          <span>Βαθμός ως προς x</span>
-                          <input
-                            type="text"
-                            value={degreeOnlyInputValues.degreeX}
-                            onChange={(event) => updateExpressionPart(0, 'degreeX', event.target.value)}
-                            placeholder="π.χ. 4"
-                          />
-                        </label>
-                        <label className="lab-field poly-team-field">
-                          <span>Βαθμός ως προς y</span>
-                          <input
-                            type="text"
-                            value={degreeOnlyInputValues.degreeY}
-                            onChange={(event) => updateExpressionPart(0, 'degreeY', event.target.value)}
-                            placeholder="π.χ. 2"
-                          />
-                        </label>
-                        <label className="lab-field poly-team-field">
-                          <span>Συνολικός βαθμός</span>
-                          <input
-                            type="text"
-                            value={degreeOnlyInputValues.totalDegree}
-                            onChange={(event) => updateExpressionPart(0, 'totalDegree', event.target.value)}
-                            placeholder="π.χ. 6"
-                          />
-                        </label>
+                        <SharedInputRow
+                          rowLabel="1."
+                          hideLabels
+                          defaultPlaceholder=""
+                          boxes={[
+                            {
+                              label: 'Βαθμός ως προς x',
+                              value: degreeOnlyInputValues.degreeX,
+                              onChange: (event) => updateExpressionPart(0, 'degreeX', event.target.value)
+                            },
+                            {
+                              label: 'Βαθμός ως προς y',
+                              value: degreeOnlyInputValues.degreeY,
+                              onChange: (event) => updateExpressionPart(0, 'degreeY', event.target.value)
+                            },
+                            {
+                              label: 'Συνολικός βαθμός',
+                              value: degreeOnlyInputValues.totalDegree,
+                              onChange: (event) => updateExpressionPart(0, 'totalDegree', event.target.value)
+                            }
+                          ]}
+                        />
                       </div>
                     </div>
                   </div>
@@ -1412,33 +1413,29 @@ export default function App({ role = 'teacher' }) {
                     {activeExpressionParts.map((part, index) => (
                       <div key={`${selectedExpressionId}-term-${index}`} className="poly-term-block poly-term-block--result">
                         <div className="poly-term-inputs poly-term-inputs--result">
-                          <label className="lab-field poly-team-field">
-                            <span>συντελεστής</span>
-                            <input
-                              type="text"
-                              value={part.coefficient || ''}
-                              onChange={(event) => updateExpressionPart(index, 'coefficient', event.target.value)}
-                              placeholder="π.χ. 3"
-                            />
-                          </label>
-                          <label className="lab-field poly-team-field">
-                            <span>x^</span>
-                            <input
-                              type="text"
-                              value={part.degreeX || ''}
-                              onChange={(event) => updateExpressionPart(index, 'degreeX', event.target.value)}
-                              placeholder="π.χ. 4"
-                            />
-                          </label>
-                          <label className="lab-field poly-team-field">
-                            <span>y^</span>
-                            <input
-                              type="text"
-                              value={part.degreeY || ''}
-                              onChange={(event) => updateExpressionPart(index, 'degreeY', event.target.value)}
-                              placeholder="π.χ. 2"
-                            />
-                          </label>
+                          <SharedInputRow
+                            rowLabel={`${index + 1}.`}
+                            tokens={['x^', 'y^', '']}
+                            hideLabels
+                            defaultPlaceholder=""
+                            boxes={[
+                              {
+                                label: 'συντελεστής',
+                                value: part.coefficient || '',
+                                onChange: (event) => updateExpressionPart(index, 'coefficient', event.target.value)
+                              },
+                              {
+                                label: 'x^',
+                                value: part.degreeX || '',
+                                onChange: (event) => updateExpressionPart(index, 'degreeX', event.target.value)
+                              },
+                              {
+                                label: 'y^',
+                                value: part.degreeY || '',
+                                onChange: (event) => updateExpressionPart(index, 'degreeY', event.target.value)
+                              }
+                            ]}
+                          />
                         </div>
                       </div>
                     ))}
@@ -1447,33 +1444,29 @@ export default function App({ role = 'teacher' }) {
                   <div className="poly-team-grid poly-team-grid--full">
                     <div className="poly-term-block poly-term-block--result">
                       <div className="poly-term-inputs poly-term-inputs--result">
-                        <label className="lab-field poly-team-field">
-                          <span>συντελεστής</span>
-                          <input
-                            type="text"
-                            value={resultInputValues.coefficient}
-                            onChange={(event) => updateExpressionPart(0, 'coefficient', event.target.value)}
-                            placeholder="π.χ. 3"
-                          />
-                        </label>
-                        <label className="lab-field poly-team-field">
-                          <span>x^</span>
-                          <input
-                            type="text"
-                            value={resultInputValues.degreeX}
-                            onChange={(event) => updateExpressionPart(0, 'degreeX', event.target.value)}
-                            placeholder="π.χ. 4"
-                          />
-                        </label>
-                        <label className="lab-field poly-team-field">
-                          <span>y^</span>
-                          <input
-                            type="text"
-                            value={resultInputValues.degreeY}
-                            onChange={(event) => updateExpressionPart(0, 'degreeY', event.target.value)}
-                            placeholder="π.χ. 2"
-                          />
-                        </label>
+                        <SharedInputRow
+                          rowLabel="1."
+                          tokens={['x^', 'y^', '']}
+                          hideLabels
+                          defaultPlaceholder=""
+                          boxes={[
+                            {
+                              label: 'συντελεστής',
+                              value: resultInputValues.coefficient,
+                              onChange: (event) => updateExpressionPart(0, 'coefficient', event.target.value)
+                            },
+                            {
+                              label: 'x^',
+                              value: resultInputValues.degreeX,
+                              onChange: (event) => updateExpressionPart(0, 'degreeX', event.target.value)
+                            },
+                            {
+                              label: 'y^',
+                              value: resultInputValues.degreeY,
+                              onChange: (event) => updateExpressionPart(0, 'degreeY', event.target.value)
+                            }
+                          ]}
+                        />
                       </div>
                     </div>
                   </div>
@@ -1488,46 +1481,34 @@ export default function App({ role = 'teacher' }) {
               </div>
             ) : (
               <div className="lab-input-grid poly-team-grid">
-                <label className="lab-field poly-team-field">
-                  <span>Συντελεστής</span>
-                  <input
-                    type="text"
-                    value={teamAnswers.coefficient}
-                    onChange={(event) => setTeamField('coefficient', event.target.value)}
-                    placeholder="π.χ. 3"
-                  />
-                </label>
-                <label className="lab-field poly-team-field">
-                  <span>Βαθμός ως προς x</span>
-                  <input
-                    type="text"
-                    value={teamAnswers.degreeX}
-                    onChange={(event) => setTeamField('degreeX', event.target.value)}
-                    placeholder="π.χ. 4"
-                  />
-                </label>
-                <label className="lab-field poly-team-field">
-                  <span>Βαθμός ως προς y</span>
-                  <input
-                    type="text"
-                    value={teamAnswers.degreeY}
-                    onChange={(event) => setTeamField('degreeY', event.target.value)}
-                    placeholder="π.χ. 2"
-                  />
-                </label>
-                <label className="lab-field poly-team-field">
-                  <span>Συνολικός βαθμός</span>
-                  <input
-                    type="text"
-                    value={teamAnswers.totalDegree}
-                    onChange={(event) => setTeamField('totalDegree', event.target.value)}
-                    placeholder="π.χ. 6"
-                  />
-                </label>
+                <SharedInputBox
+                  label="Συντελεστής"
+                  value={teamAnswers.coefficient}
+                  onChange={(event) => setTeamField('coefficient', event.target.value)}
+                  placeholder=""
+                />
+                <SharedInputBox
+                  label="Βαθμός ως προς x"
+                  value={teamAnswers.degreeX}
+                  onChange={(event) => setTeamField('degreeX', event.target.value)}
+                  placeholder=""
+                />
+                <SharedInputBox
+                  label="Βαθμός ως προς y"
+                  value={teamAnswers.degreeY}
+                  onChange={(event) => setTeamField('degreeY', event.target.value)}
+                  placeholder=""
+                />
+                <SharedInputBox
+                  label="Συνολικός βαθμός"
+                  value={teamAnswers.totalDegree}
+                  onChange={(event) => setTeamField('totalDegree', event.target.value)}
+                  placeholder=""
+                />
               </div>
             )}
           </div>
-        </div>
+        </SharedCommonZoneLayout>
       </section>
 
       {isTeacher && (

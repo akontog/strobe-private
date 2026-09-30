@@ -55,6 +55,7 @@ const initGeometry = require('./services/geometry');
 const initNeural = require('./services/neural');
 const initPrimes = require('./services/primes');
 const initPolynomial = require('./services/polynomial');
+const initLinearSystems = require('./services/linearSystems');
 const initGeogebraCollab = require('./services/geogebraCollab');
 const { createGeogebraLessonStore } = require('./utils/geogebraLessonStore');
 const wsRegistry = require('./services/websocketRegistry');
@@ -304,6 +305,12 @@ const { polynomialWss } = initPolynomial({
   getWebSocketSessionInfo,
   sessionManager
 });
+const { linearSystemsWss } = initLinearSystems({
+  recordCommunication,
+  getUpgradeClientInfo,
+  getWebSocketSessionInfo,
+  sessionManager
+});
 
 wsRegistry.register(REALTIME_WS_PATH, (request, socket, head) => {
   io.handleUpgrade(request, socket, head);
@@ -326,6 +333,12 @@ wsRegistry.register('/ws/primes-lab', (request, socket, head) => {
 wsRegistry.register('/ws/polynomial-lab', (request, socket, head) => {
   polynomialWss.handleUpgrade(request, socket, head, (ws) => {
     polynomialWss.emit('connection', ws, request);
+  });
+});
+
+wsRegistry.register('/ws/linear-systems-lab', (request, socket, head) => {
+  linearSystemsWss.handleUpgrade(request, socket, head, (ws) => {
+    linearSystemsWss.emit('connection', ws, request);
   });
 });
 

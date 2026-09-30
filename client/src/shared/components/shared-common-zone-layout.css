@@ -1,0 +1,20 @@
+.shared-common-zone-layout--grouping {
+  justify-content: center;
+}
+
+.shared-common-zone-layout--grouping .poly-expression-card,
+.shared-common-zone-layout--grouping .linear-expression-card,
+.shared-common-zone-layout--grouping .linear-graph-card {
+  display: none;
+}
+
+.shared-common-zone-layout--grouping .poly-team-card,
+.shared-common-zone-layout--grouping .linear-team-card {
+  flex: 1 1 100%;
+  max-width: 100%;
+  width: 100%;
+}
+
+.shared-common-zone-layout--grouping .poly-team-card--geogebra {
+  width: 100%;
+}

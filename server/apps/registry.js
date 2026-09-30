@@ -70,6 +70,17 @@ const APP_DEFINITIONS = [
     staticDir: path.join(LABS_ROOT, 'polynomial-lab'),
     teacherEntry: 'teacher.html',
     clientEntry: 'student.html'
+  },
+  {
+    slug: 'linear-systems-lab',
+    labId: 'linear-systems-lab',
+    title: 'Linear Systems Lab',
+    description: 'Graphical and algebraic solving of linear systems with shared GeoGebra scenes and teacher/student flow.',
+    roles: ['teacher', 'student', 'client'],
+    kind: 'static',
+    staticDir: path.join(LABS_ROOT, 'linear-systems-lab'),
+    teacherEntry: 'teacher.html',
+    clientEntry: 'student.html'
   }
 ];
 
