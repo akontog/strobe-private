@@ -248,6 +248,7 @@ async function runGeogebraCollabProtocolRunner({ verbose = false } = {}) {
       const studentPerms = await waitForEventAfter(student, 'geogebra:permissions', studentPermStart);
       const studentLocked = new Set(studentPerms.locked || []);
       assert(studentLocked.has('A'), 'student should have A locked');
+      assert(ownerPerms.info && ownerPerms.info.A && ownerPerms.info.A.owner === 'alice', 'creator ownership should be recorded for A');
     });
 
     await test('unauthorized update rejected with rollback', async () => {
@@ -303,6 +304,45 @@ async function runGeogebraCollabProtocolRunner({ verbose = false } = {}) {
       assert((studentPermsAfterRevoke.locked || []).includes('A'), 'student should be locked after revoke');
     });
 
+    await test('grant by displayName allows student edit', async () => {
+      emit(student, 'geogebra:identity', {
+        displayName: 'Bobby'
+      });
+      await delay(25);
+
+      const grantStart = student.events.length;
+      emit(owner, 'geogebra:grant', {
+        roomId,
+        name: 'A',
+        userId: 'Bobby'
+      });
+
+      const studentPerms = await waitForEventAfter(student, 'geogebra:permissions', grantStart);
+      assert(!(studentPerms.locked || []).includes('A'), 'student should edit A after displayName grant');
+
+      const ownerUpdateStart = owner.events.length;
+      emit(student, 'geogebra:update', {
+        roomId,
+        name: 'A',
+        cmd: 'A=(5,5)',
+        xml: '<element label="A" x="5" y="5" />'
+      });
+
+      const upsertForOwner = await waitForEventAfter(owner, 'geogebra:upsert', ownerUpdateStart);
+      assert(String(upsertForOwner.cmd || '').includes('5,5'), 'displayName granted update did not apply');
+
+      const revokeStart = student.events.length;
+      emit(owner, 'geogebra:grant', {
+        roomId,
+        name: 'A',
+        userId: 'Bobby',
+        revoke: true
+      });
+
+      const studentPermsAfterRevoke = await waitForEventAfter(student, 'geogebra:permissions', revokeStart);
+      assert((studentPermsAfterRevoke.locked || []).includes('A'), 'student should be locked after displayName revoke');
+    });
+
     await test('teacher can update locked object as elevated role', async () => {
       const ownerStart = owner.events.length;
       emit(teacher, 'geogebra:update', {
@@ -314,6 +354,22 @@ async function runGeogebraCollabProtocolRunner({ verbose = false } = {}) {
 
       const ownerUpdate = await waitForEventAfter(owner, 'geogebra:upsert', ownerStart);
       assert(String(ownerUpdate.cmd || '').includes('7,7'), 'teacher update was not accepted');
+    });
+
+    await test('point coordinate updates persist even with stale command string', async () => {
+      const start = owner.events.length;
+      emit(owner, 'geogebra:update', {
+        roomId,
+        name: 'A',
+        cmd: 'A=(0,0)',
+        xml: '',
+        x: 9,
+        y: 4
+      });
+
+      const upsertForOwner = await waitForEventAfter(owner, 'geogebra:upsert', start);
+      assert(upsertForOwner.name === 'A', 'point update did not broadcast');
+      assert(upsertForOwner.x === 9 && upsertForOwner.y === 4, 'point coordinates were not persisted');
     });
 
     await test('rename and remove keep permission model consistent', async () => {
@@ -363,6 +419,18 @@ async function runGeogebraCollabProtocolRunner({ verbose = false } = {}) {
 
       const latePerms = await waitForEventAfter(lateJoiner, 'geogebra:permissions', joinStart);
       assert((latePerms.locked || []).includes('B'), 'late join should receive locked objects');
+    });
+
+    await test('teacher can clear stored room objects', async () => {
+      const clearStart = owner.events.length;
+      emit(teacher, 'geogebra:clear', { roomId });
+
+      const removeForOwner = await waitForEventAfter(owner, 'geogebra:remove', clearStart);
+      assert(removeForOwner.name === 'B', 'teacher clear did not remove B');
+
+      const clearPayload = await waitForEventAfter(student, 'geogebra:clear', clearStart);
+      assert(Array.isArray(clearPayload.cleared), 'clear payload missing cleared objects');
+      assert(clearPayload.cleared.includes('B') || clearPayload.cleared.includes('A'), 'clear payload should include removed objects');
     });
 
     await delay(40);

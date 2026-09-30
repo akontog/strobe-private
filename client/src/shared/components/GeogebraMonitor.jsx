@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import CollaborativeGeoGebra from './CollaborativeGeoGebra';
 import './GeogebraMonitor.css';
 
 function loadRealtimeSocket() {
@@ -60,6 +61,8 @@ export default function GeogebraMonitor({ roomFilter = '', className = '' }) {
   const [socketReady, setSocketReady] = useState(false);
   const [snapshot, setSnapshot] = useState({ rooms: [], feed: [] });
   const [errorText, setErrorText] = useState('');
+  const [selectedRoomId, setSelectedRoomId] = useState('');
+  const [grantInputs, setGrantInputs] = useState({});
 
   useEffect(() => {
     let cancelled = false;
@@ -73,6 +76,7 @@ export default function GeogebraMonitor({ roomFilter = '', className = '' }) {
         }
 
         socket = window.createRealtimeSocket({ path: '/ws/realtime' });
+        window.__geogebraMonitorSocket = socket;
 
         socket.on('connect', () => {
           setSocketReady(true);
@@ -134,6 +138,68 @@ export default function GeogebraMonitor({ roomFilter = '', className = '' }) {
     return snapshot.rooms.filter((room) => String(room.id || '').toLowerCase().includes(filter));
   }, [snapshot.rooms, roomFilter]);
 
+  const selectedRoom = useMemo(() => {
+    if (!visibleRooms.length) {
+      return null;
+    }
+
+    return visibleRooms.find((room) => room.id === selectedRoomId) || visibleRooms[0];
+  }, [selectedRoomId, visibleRooms]);
+
+  const roomsToRender = useMemo(() => {
+    return selectedRoom ? [selectedRoom] : [];
+  }, [selectedRoom]);
+
+  useEffect(() => {
+    if (!visibleRooms.length) {
+      setSelectedRoomId('');
+      return;
+    }
+
+    if (!selectedRoomId || !visibleRooms.some((room) => room.id === selectedRoomId)) {
+      setSelectedRoomId(visibleRooms[0].id);
+    }
+  }, [selectedRoomId, visibleRooms]);
+
+  function emitGrant(roomId, objectName, userId) {
+    if (!roomId || !objectName || !String(userId || '').trim()) {
+      return;
+    }
+
+    const socket = window.__geogebraMonitorSocket;
+    if (!socket || !socket.connected) {
+      return;
+    }
+
+    socket.emit('geogebra:grant', {
+      roomId,
+      name: objectName,
+      userId: String(userId).trim()
+    });
+  }
+
+  function emitClear(roomId, objectName) {
+    if (!socketReady || !roomId || !window.createRealtimeSocket) {
+      return;
+    }
+
+    const socket = window.__geogebraMonitorSocket;
+    if (!socket || !socket.connected) {
+      return;
+    }
+
+    socket.emit('geogebra:clear', { roomId, name: objectName || null });
+  }
+
+  function emitClearFeed() {
+    const socket = window.__geogebraMonitorSocket;
+    if (!socket || !socket.connected) {
+      return;
+    }
+
+    socket.emit('geogebra:monitor:clear-feed', {});
+  }
+
   return (
     <section className={`gg-monitor ${className}`.trim()}>
       <div className="gg-monitor__stats">
@@ -153,29 +219,128 @@ export default function GeogebraMonitor({ roomFilter = '', className = '' }) {
 
       {errorText ? <p className="page-feedback page-feedback--error">{errorText}</p> : null}
 
+      <div className="gg-monitor__toolbar">
+        <label className="gg-monitor__field">
+          <span>Room</span>
+          <select
+            className="gg-monitor__select"
+            value={selectedRoomId}
+            onChange={(event) => setSelectedRoomId(event.target.value)}
+            disabled={!visibleRooms.length}
+          >
+            {visibleRooms.length ? visibleRooms.map((room) => (
+              <option key={room.id} value={room.id}>{room.id}</option>
+            )) : <option value="">No rooms</option>}
+          </select>
+        </label>
+        <button type="button" className="gg-monitor__clearButton" onClick={emitClearFeed}>
+          Clear messages
+        </button>
+      </div>
+
+      {selectedRoom ? (
+        <div className="gg-monitor__preview">
+          <div className="gg-monitor__previewHeader">
+            <h3>Board preview</h3>
+            <span className="gg-monitor__meta">{selectedRoom.id}</span>
+          </div>
+          <CollaborativeGeoGebra
+            roomId={selectedRoom.id}
+            className="gg-monitor__board"
+            showLegend={false}
+            showToolBar
+            showAlgebraView={false}
+            showAlgebraInput={false}
+            showMenuBar={false}
+            showResetIcon={false}
+            showZoomButtons={false}
+            showFullscreenButton={false}
+            showSuggestionButtons={false}
+          />
+        </div>
+      ) : null}
+
       <div className="gg-monitor__layout">
         <div className="gg-monitor__roomList">
-          {visibleRooms.length ? visibleRooms.map((room) => (
-            <article key={room.id} className="gg-monitor__room">
-              <div className="gg-monitor__roomHeader">
-                <h2 className="gg-monitor__roomTitle">Room {room.id}</h2>
-                <span className="gg-monitor__meta">{room.members} members</span>
-              </div>
-              <div className="gg-monitor__meta">{room.objectCount} objects</div>
-              {room.objects && room.objects.length ? (
-                <ul className="gg-monitor__objectList">
-                  {room.objects.map((object) => (
-                    <li key={`${room.id}:${object.name}`}>
-                      {object.name} by {object.owner || 'unknown'}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <div className="gg-monitor__empty">No objects yet in this room.</div>
-              )}
-            </article>
-          )) : (
-            <div className="gg-monitor__empty">No collaborative rooms connected right now.</div>
+          {roomsToRender.length ? roomsToRender.map((room) => {
+            const selected = room.id === selectedRoomId;
+            return (
+              <article key={room.id} className="gg-monitor__room">
+                <div className="gg-monitor__roomHeader">
+                  <h2 className="gg-monitor__roomTitle">Room {room.id}</h2>
+                  <span className="gg-monitor__meta">{room.members} members</span>
+                </div>
+                <div className="gg-monitor__meta">{room.objectCount} objects</div>
+                <button type="button" className="gg-monitor__clearButton" onClick={() => emitClear(room.id)}>
+                  Clear room
+                </button>
+                {room.objects && room.objects.length ? (
+                  <ul className="gg-monitor__objectList">
+                    {room.objects.map((object) => {
+                      const grantKey = `${room.id}:${object.name}`;
+                      const grantTarget = grantInputs[grantKey] || '';
+                      const memberOptions = Array.isArray(room.memberList) ? room.memberList : [];
+                      const grantOptions = memberOptions.length > 0
+                        ? memberOptions.map((member) => String(member.displayName || member.userId || member.socketId || ''))
+                        : [];
+                      const uniqueGrantOptions = [...new Set(grantOptions.filter(Boolean))];
+
+                      return (
+                        <li key={grantKey}>
+                          <div className="gg-monitor__objectRow">
+                            <span>{object.name} by {object.owner || 'unknown'}</span>
+                            <button type="button" className="gg-monitor__clearButton gg-monitor__clearButton--small" onClick={() => emitClear(room.id, object.name)}>
+                              Remove
+                            </button>
+                          </div>
+                          {selected ? (
+                            <div className="gg-monitor__grantRow">
+                              {uniqueGrantOptions.length ? (
+                                <select
+                                  className="gg-monitor__select gg-monitor__select--small"
+                                  value={grantTarget}
+                                  onChange={(event) => setGrantInputs((current) => ({
+                                    ...current,
+                                    [grantKey]: event.target.value
+                                  }))}
+                                >
+                                  <option value="">Select user</option>
+                                  {uniqueGrantOptions.map((userId) => (
+                                    <option key={`${room.id}:${object.name}:${userId}`} value={userId}>{userId}</option>
+                                  ))}
+                                </select>
+                              ) : (
+                                <input
+                                  className="gg-monitor__input"
+                                  type="text"
+                                  placeholder="grant to userId"
+                                  value={grantTarget}
+                                  onChange={(event) => setGrantInputs((current) => ({
+                                    ...current,
+                                    [grantKey]: event.target.value
+                                  }))}
+                                />
+                              )}
+                              <button
+                                type="button"
+                                className="gg-monitor__clearButton gg-monitor__clearButton--small"
+                                onClick={() => emitGrant(room.id, object.name, grantTarget)}
+                              >
+                                Grant
+                              </button>
+                            </div>
+                          ) : null}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : (
+                  <div className="gg-monitor__empty">No objects yet in this room.</div>
+                )}
+              </article>
+            );
+          }) : (
+            <div className="gg-monitor__empty">Select a room to inspect.</div>
           )}
         </div>
 

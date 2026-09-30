@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-09-30T14:37:53.256Z",
+  "savedAt": "2026-09-30T15:26:23.891Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -291,7 +291,7 @@
         }
       },
       "connectedAt": 1790668716991,
-      "lastSeenAt": 1790779066683,
+      "lastSeenAt": 1790781934348,
       "isActive": true
     },
     {
@@ -472,15 +472,15 @@
       ],
       "appData": {
         "polynomial": {
-          "id": "student-2",
+          "id": "student-3",
           "name": "asdfg",
           "color": "#22c55e",
           "active": true,
-          "lastUpdated": "2026-09-30T14:37:53.253Z"
+          "lastUpdated": "2026-09-30T14:39:02.246Z"
         }
       },
       "connectedAt": 1790774890668,
-      "lastSeenAt": 1790779073256,
+      "lastSeenAt": 1790781927148,
       "isActive": true
     },
     {
@@ -495,6 +495,48 @@
       "appData": {},
       "connectedAt": 1790778879417,
       "lastSeenAt": 1790778879417,
+      "isActive": true
+    },
+    {
+      "id": "test_1790780759481_oougrdsf",
+      "userId": "charlie",
+      "ip": "127.0.0.1",
+      "userAgent": "geogebra-collab-test-runner",
+      "username": "charlie",
+      "role": "student",
+      "source": "protocol-test",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1790780759481,
+      "lastSeenAt": 1790780759481,
+      "isActive": true
+    },
+    {
+      "id": "a4f1f784-c140-488d-a8a1-49c6c2466a0d",
+      "userId": "user_1790781966231_r8tvogj",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 OPR/135.0.0.0",
+      "username": "zyx",
+      "role": "client",
+      "source": "neural-lab",
+      "activeApps": [
+        "neural-lab",
+        "neural"
+      ],
+      "appData": {
+        "neural": {
+          "role": "client",
+          "color": "#3b82f6",
+          "weights": {
+            "w1": 1,
+            "w2": 1
+          },
+          "active": true,
+          "lastUpdated": "2026-09-30T15:26:23.881Z"
+        }
+      },
+      "connectedAt": 1790781966232,
+      "lastSeenAt": 1790781983891,
       "isActive": true
     }
   ]

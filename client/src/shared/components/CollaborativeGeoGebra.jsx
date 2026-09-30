@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { readIdentitySnapshot } from './identityStorage';
 import './CollaborativeGeoGebra.css';
 
@@ -91,10 +91,50 @@ function getObjectNumericValue(api, name) {
   return Number.isFinite(raw) ? raw : null;
 }
 
+function getObjectCoords(api, name) {
+  if (!api || !name) {
+    return { x: null, y: null };
+  }
+
+  if (typeof api.getXcoord !== 'function' || typeof api.getYcoord !== 'function') {
+    return { x: null, y: null };
+  }
+
+  let x = null;
+  let y = null;
+  try {
+    x = api.getXcoord(name);
+    y = api.getYcoord(name);
+  } catch {
+    return { x: null, y: null };
+  }
+
+  return {
+    x: Number.isFinite(x) ? x : null,
+    y: Number.isFinite(y) ? y : null
+  };
+}
+
+function objectExists(api, name) {
+  if (!api || !name) {
+    return false;
+  }
+
+  if (typeof api.exists === 'function') {
+    return Boolean(api.exists(name));
+  }
+
+  if (typeof api.getAllObjectNames === 'function') {
+    const names = api.getAllObjectNames();
+    return Array.isArray(names) && names.includes(name);
+  }
+
+  return false;
+}
+
 export default function CollaborativeGeoGebra({
   roomId = 'geogebra-default',
   className = '',
-  showPermissionControls = true,
   showLegend = true,
   showToolBar = true,
   showAlgebraView = true,
@@ -120,30 +160,7 @@ export default function CollaborativeGeoGebra({
     nameFallback: 'Student',
     colorFallback: '#4ECDC4'
   }));
-  const [permissionsInfo, setPermissionsInfo] = useState({});
   const [lockedNames, setLockedNames] = useState([]);
-  const [selectedObject, setSelectedObject] = useState('');
-  const [targetUserId, setTargetUserId] = useState('');
-
-  const allObjectNames = useMemo(() => Object.keys(permissionsInfo).sort(), [permissionsInfo]);
-
-  const knownUsers = useMemo(() => {
-    const values = new Set();
-    Object.values(permissionsInfo).forEach((entry) => {
-      if (entry && entry.owner) {
-        values.add(entry.owner);
-      }
-      if (entry && Array.isArray(entry.editors)) {
-        entry.editors.forEach((item) => values.add(item));
-      }
-    });
-
-    if (studentIdentity.name) {
-      values.add(studentIdentity.name);
-    }
-
-    return [...values].sort();
-  }, [permissionsInfo, studentIdentity.name]);
 
   useEffect(() => {
     function handleIdentityChange() {
@@ -220,16 +237,28 @@ export default function CollaborativeGeoGebra({
     const xml = typeof payload.xml === 'string' ? payload.xml : '';
     const cmd = typeof payload.cmd === 'string' ? payload.cmd : '';
     const value = typeof payload.value === 'number' && Number.isFinite(payload.value) ? payload.value : null;
+    const x = typeof payload.x === 'number' && Number.isFinite(payload.x) ? payload.x : null;
+    const y = typeof payload.y === 'number' && Number.isFinite(payload.y) ? payload.y : null;
+    const hasCoords = x !== null && y !== null;
 
     withRemoteApply(() => {
-      if (xml && typeof api.evalXML === 'function') {
-        api.evalXML(xml);
-      } else if (cmd && typeof api.evalCommand === 'function') {
-        api.evalCommand(cmd);
+      const exists = objectExists(api, payload.name);
+
+      // For moved points, prefer direct coord updates to avoid stale cmd/xml resets to center.
+      if (!(hasCoords && exists)) {
+        if (xml && typeof api.evalXML === 'function') {
+          api.evalXML(xml);
+        } else if (cmd && typeof api.evalCommand === 'function') {
+          api.evalCommand(cmd);
+        }
       }
 
       if (value !== null && typeof api.setValue === 'function') {
         api.setValue(payload.name, value);
+      }
+
+      if (hasCoords && typeof api.setCoords === 'function') {
+        api.setCoords(payload.name, x, y);
       }
     });
   }
@@ -286,7 +315,8 @@ export default function CollaborativeGeoGebra({
         name: key,
         cmd: getObjectCmd(api, key),
         xml: getObjectXml(api, key),
-        value: getObjectNumericValue(api, key)
+        value: getObjectNumericValue(api, key),
+        ...getObjectCoords(api, key)
       });
     }, 70);
 
@@ -312,7 +342,8 @@ export default function CollaborativeGeoGebra({
           name,
           cmd: getObjectCmd(api, name),
           xml: getObjectXml(api, name),
-          value: getObjectNumericValue(api, name)
+          value: getObjectNumericValue(api, name),
+          ...getObjectCoords(api, name)
         });
       });
     }
@@ -466,7 +497,6 @@ export default function CollaborativeGeoGebra({
           const info = payload && payload.info && typeof payload.info === 'object' ? payload.info : {};
 
           setLockedNames(locked);
-          setPermissionsInfo(info);
           applyLocks(locked);
 
           if (typeof onPermissionsChange === 'function') {
@@ -507,28 +537,6 @@ export default function CollaborativeGeoGebra({
     showSuggestionButtons
   ]);
 
-  useEffect(() => {
-    if (!selectedObject && allObjectNames.length > 0) {
-      setSelectedObject(allObjectNames[0]);
-    }
-  }, [selectedObject, allObjectNames]);
-
-  function submitGrant(revoke) {
-    const name = String(selectedObject || '').trim();
-    const userId = String(targetUserId || '').trim();
-
-    if (!name || !userId) {
-      setErrorText('Choose object and user id before grant/revoke.');
-      return;
-    }
-
-    emit('geogebra:grant', {
-      name,
-      userId,
-      revoke
-    });
-  }
-
   return (
     <section className={`gg-collab ${className}`.trim()}>
       <div className="gg-collab__status">
@@ -541,36 +549,6 @@ export default function CollaborativeGeoGebra({
       </div>
 
       {errorText ? <p className="gg-collab__error">{errorText}</p> : null}
-
-      {showPermissionControls ? (
-        <>
-          <div className="gg-collab__controls">
-            <select value={selectedObject} onChange={(event) => setSelectedObject(event.target.value)}>
-              {allObjectNames.length === 0 ? <option value="">No objects</option> : null}
-              {allObjectNames.map((name) => (
-                <option key={name} value={name}>{name}</option>
-              ))}
-            </select>
-
-            <input
-              type="text"
-              value={targetUserId}
-              onChange={(event) => setTargetUserId(event.target.value)}
-              list="gg-collab-known-users"
-              placeholder="Target user id"
-            />
-
-            <button type="button" onClick={() => submitGrant(false)}>Grant</button>
-            <button type="button" className="secondary" onClick={() => submitGrant(true)}>Revoke</button>
-          </div>
-
-          <datalist id="gg-collab-known-users">
-            {knownUsers.map((userId) => (
-              <option key={userId} value={userId} />
-            ))}
-          </datalist>
-        </>
-      ) : null}
 
       <div ref={boardRef} className="gg-collab__board" />
 

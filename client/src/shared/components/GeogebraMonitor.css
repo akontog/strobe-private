@@ -37,6 +37,63 @@
   color: #111827;
 }
 
+.gg-monitor__toolbar {
+  display: flex;
+  justify-content: flex-start;
+  align-items: end;
+  gap: 0.65rem;
+}
+
+.gg-monitor__preview {
+  border: 1px solid #d6dbe6;
+  background: #fff;
+  border-radius: 12px;
+  padding: 0.8rem;
+}
+
+.gg-monitor__previewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 0.65rem;
+}
+
+.gg-monitor__previewHeader h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.gg-monitor__board {
+  display: block;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.gg-monitor__field {
+  display: grid;
+  gap: 0.35rem;
+  min-width: min(320px, 100%);
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.gg-monitor__select,
+.gg-monitor__input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 0.55rem 0.7rem;
+  background: #fff;
+  color: #0f172a;
+}
+
+.gg-monitor__select--small {
+  min-width: 150px;
+  flex: 1;
+}
+
 .gg-monitor__layout {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
@@ -81,6 +138,32 @@
 
 .gg-monitor__objectList li {
   margin: 0.2rem 0;
+}
+
+.gg-monitor__objectRow,
+.gg-monitor__grantRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.gg-monitor__grantRow {
+  margin-top: 0.35rem;
+}
+
+.gg-monitor__clearButton {
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #0f172a;
+  border-radius: 8px;
+  padding: 0.38rem 0.7rem;
+  cursor: pointer;
+}
+
+.gg-monitor__clearButton--small {
+  padding: 0.24rem 0.5rem;
+  font-size: 0.75rem;
 }
 
 .gg-monitor__feedItem[data-action='add'] {
