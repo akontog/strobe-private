@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Accordion,
   ActivitiesMenu,
+  CollaborativeGeoGebra,
   GroupingDragDrop,
   HeroTitle,
   MathFormula,
@@ -80,6 +81,13 @@ const ACTIVITY_LIBRARY = [
     title: '2.5 Πράξεις με πολυώνυμα (πολλαπλασιασμός)',
     objective: 'Πολλαπλασιασμός πολυωνύμων και αναγνώριση όρων του αποτελέσματος.',
     tasks: ['Πολλαπλασιασμός δύο όρων', 'Πολλαπλασιασμός τριών όρων']
+  },
+  {
+    id: '2.6',
+    code: '2.6',
+    title: '2.6 Πολλαπλασιασμός με εμβαδά ορθογωνίου',
+    objective: 'Οπτικοποίηση του (2x+4)(x+5) με ορθογώνιο και επιμέρους εμβαδά.',
+    tasks: ['Μετακίνηση σημείου x', 'Παρατήρηση 4 υπο-εμβαδών', 'Σύνδεση με ανάπτυγμα πολυωνύμου']
   }
 ];
 
@@ -92,7 +100,8 @@ const ACTIVITY_DATASET_KEYS = {
   '2.2': 'likeTermReduction',
   '2.3': 'polynomialLikeTermGrouping',
   '2.4': 'polynomialOperations',
-  '2.5': 'polynomialMultiplications'
+  '2.5': 'polynomialMultiplications',
+  '2.6': 'polynomialAreaModel'
 };
 
 const buildGroupingCorrectAnswers = (items = []) => items.reduce((answers, item) => {
@@ -565,6 +574,29 @@ const ALGEBRA_DATASETS = {
         scoreIncorrect: SCORE_INCORRECT
       }
     ]
+  },
+  polynomialAreaModel: {
+    label: 'Εμβαδικό μοντέλο πολυωνύμου',
+    items: [
+      {
+        id: 'poly-area-1',
+        expression: '(x + 4)(x + 5)',
+        geogebraRoomId: 'polynomial-lab-2-6-area-x',
+        resultMode: 'geogebraArea',
+        correctAnswers: {},
+        scoreCorrect: SCORE_CORRECT,
+        scoreIncorrect: SCORE_INCORRECT
+      },
+      {
+        id: 'poly-area-2',
+        expression: '(2x + 4)(x + 5)',
+        geogebraRoomId: 'polynomial-lab-2-6-area-2x',
+        resultMode: 'geogebraArea',
+        correctAnswers: {},
+        scoreCorrect: SCORE_CORRECT,
+        scoreIncorrect: SCORE_INCORRECT
+      }
+    ]
   }
 };
 
@@ -718,6 +750,7 @@ export default function App({ role = 'teacher' }) {
   const [studentName, setStudentName] = useState(() => readIdentityName(`Student-${Math.floor(Math.random() * 900 + 100)}`));
   const [studentColor, setStudentColor] = useState(() => readIdentityColor(randomIdentityColor()));
   const [lastSentAnswers, setLastSentAnswers] = useState('');
+  const [lessonGeogebraRoomId, setLessonGeogebraRoomId] = useState('');
 
   useEffect(() => {
     function syncIdentity() {
@@ -816,11 +849,16 @@ export default function App({ role = 'teacher' }) {
 
   const isMonomialGroupingActivity = selectedActivityId === '1.2';
   const isPolynomialGroupingActivity = selectedActivityId === '2.3';
+  const isGeogebraAreaActivity = selectedActivityId === '2.6';
   const isGroupingActivity = isMonomialGroupingActivity || isPolynomialGroupingActivity;
   const isDegreeOnlyActivity = selectedActivityId === '2.1';
   const isMonomialResultActivity = ['1.3', '1.4', '2.2'].includes(selectedActivityId);
   const isPolynomialResultActivity = ['2.4', '2.5'].includes(selectedActivityId);
   const isTemplateActivity = isMonomialResultActivity || isPolynomialResultActivity || isDegreeOnlyActivity;
+  const expressionGeogebraRoomId = String(activeExpression?.geogebraRoomId || '').trim();
+  const geogebraRoomId = isGeogebraAreaActivity
+    ? String(lessonGeogebraRoomId || expressionGeogebraRoomId || 'polynomial-lab-2-6-area-2x').trim()
+    : '';
   const leftExpressionText = activeExpression.expression;
   const resultInputValues = activeExpressionParts[0] || { coefficient: '', degreeX: '', degreeY: '' };
   const degreeOnlyInputValues = activeExpressionParts[0] || { degreeX: '', degreeY: '', totalDegree: '' };
@@ -991,7 +1029,8 @@ export default function App({ role = 'teacher' }) {
       lesson: {
         activityId: nextId,
         datasetKey: ACTIVITY_DATASET_KEYS[nextId] || 'monomials',
-        expressionId: nextExpression
+        expressionId: nextExpression,
+        geogebraRoomId: String(nextDataset.items[0]?.geogebraRoomId || '').trim()
       }
     });
   };
@@ -1005,7 +1044,11 @@ export default function App({ role = 'teacher' }) {
       lesson: {
         activityId: selectedActivityId,
         datasetKey: ACTIVITY_DATASET_KEYS[selectedActivityId] || 'monomials',
-        expressionId: nextExpressionId
+        expressionId: nextExpressionId,
+        geogebraRoomId: String(
+          (activeItems.find((item) => item.id === nextExpressionId)?.geogebraRoomId)
+          || ''
+        ).trim()
       }
     });
   };
@@ -1087,6 +1130,7 @@ export default function App({ role = 'teacher' }) {
           const nextActivity = String(message.lesson.activityId || '').trim();
           const nextDatasetKey = String(message.lesson.datasetKey || '').trim();
           const nextExpressionId = String(message.lesson.expressionId || '').trim();
+          const nextGeogebraRoomId = String(message.lesson.geogebraRoomId || '').trim();
 
           if (nextActivity && ACTIVITY_LIBRARY.some((activity) => activity.id === nextActivity)) {
             setSelectedActivityId(nextActivity);
@@ -1104,6 +1148,8 @@ export default function App({ role = 'teacher' }) {
           if (nextExpressionId && !(nextDatasetKey && ALGEBRA_DATASETS[nextDatasetKey])) {
             setSelectedExpressionId(nextExpressionId);
           }
+
+          setLessonGeogebraRoomId(nextGeogebraRoomId);
         }
 
         if (Array.isArray(message.participants)) {
@@ -1162,6 +1208,10 @@ export default function App({ role = 'teacher' }) {
 
   useEffect(() => {
     if (!isStudent || !isSocketConnected) {
+      return;
+    }
+
+    if (selectedActivityId === '2.6') {
       return;
     }
 
@@ -1226,34 +1276,36 @@ export default function App({ role = 'teacher' }) {
       </header>
 
       <section className="common-zone lab-zone poly-common-zone">
-        <div className="lab-workspace poly-neural-zone">
-          <div className="lab-card lab-card--highlight poly-expression-card" aria-label="μονώνυμο ή πολυώνυμο">
-            <p className="lab-mini-label poly-mini-label">Έκφραση</p>
-            {isGroupingActivity ? (
-              <div className="lab-math-box poly-expression-math poly-expression-math--empty"></div>
-            ) : groupedPolynomialExpression ? (
-              <div className="poly-stacked-expression">
-                <div className="poly-stacked-expression-row">
-                  <MathFormula formula={`\\(${groupedPolynomialExpression.left}\\)`} />
+        <div className={`lab-workspace poly-neural-zone ${isGeogebraAreaActivity ? 'poly-neural-zone--geogebra' : ''}`.trim()}>
+          {!isGeogebraAreaActivity ? (
+            <div className="lab-card lab-card--highlight poly-expression-card" aria-label="μονώνυμο ή πολυώνυμο">
+              <p className="lab-mini-label poly-mini-label">Έκφραση</p>
+              {isGroupingActivity ? (
+                <div className="lab-math-box poly-expression-math poly-expression-math--empty"></div>
+              ) : groupedPolynomialExpression ? (
+                <div className="poly-stacked-expression">
+                  <div className="poly-stacked-expression-row">
+                    <MathFormula formula={`\\(${groupedPolynomialExpression.left}\\)`} />
+                  </div>
+                  <div className="poly-stacked-expression-operator" aria-label="operator between polynomial terms">
+                    {groupedPolynomialExpression.operator}
+                  </div>
+                  <div className="poly-stacked-expression-row">
+                    <MathFormula formula={`\\(${groupedPolynomialExpression.right}\\)`} />
+                  </div>
                 </div>
-                <div className="poly-stacked-expression-operator" aria-label="operator between polynomial terms">
-                  {groupedPolynomialExpression.operator}
+              ) : (
+                <div className="lab-math-box poly-expression-math">
+                  <MathFormula formula={`\\(${leftExpressionText}\\)`} />
                 </div>
-                <div className="poly-stacked-expression-row">
-                  <MathFormula formula={`\\(${groupedPolynomialExpression.right}\\)`} />
-                </div>
-              </div>
-            ) : (
-              <div className="lab-math-box poly-expression-math">
-                <MathFormula formula={`\\(${leftExpressionText}\\)`} />
-              </div>
-            )}
-            {selectedActivityId === '1.1' && (
-              <p className="poly-hero-text">{activeActivity.objective}</p>
-            )}
-          </div>
+              )}
+              {selectedActivityId === '1.1' && (
+                <p className="poly-hero-text">{activeActivity.objective}</p>
+              )}
+            </div>
+          ) : null}
 
-          <div className="lab-card lab-card--panel poly-team-card">
+          <div className={`lab-card lab-card--panel poly-team-card ${isGeogebraAreaActivity ? 'poly-team-card--geogebra' : ''}`.trim()}>
             {isGroupingActivity ? (
               <div className="poly-grouping-panel">
                 <p className="poly-hero-text">
@@ -1298,6 +1350,26 @@ export default function App({ role = 'teacher' }) {
                     </div>
                   </>
                 )}
+              </div>
+            ) : isGeogebraAreaActivity ? (
+              <div className="poly-geogebra-area-panel">
+                <p className="poly-hero-text">
+                  Μετακίνησε μόνο το <strong>slider x</strong> και παρατήρησε πώς αλλάζουν τα 4 επιμέρους εμβαδά.
+                </p>
+                <CollaborativeGeoGebra
+                  roomId={geogebraRoomId}
+                  className="poly-geogebra-board"
+                  showPermissionControls={isTeacher}
+                  showLegend={isTeacher}
+                  showToolBar={false}
+                  showAlgebraView={false}
+                  showAlgebraInput={false}
+                  showMenuBar={false}
+                  showResetIcon={false}
+                  showZoomButtons={false}
+                  showFullscreenButton={false}
+                  showSuggestionButtons={false}
+                />
               </div>
             ) : isTemplateActivity ? (
               <div className="poly-template-answer-panel">

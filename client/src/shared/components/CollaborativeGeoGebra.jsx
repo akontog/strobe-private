@@ -82,9 +82,28 @@ function getObjectCmd(api, name) {
   return '';
 }
 
+function getObjectNumericValue(api, name) {
+  if (!api || !name || typeof api.getValue !== 'function') {
+    return null;
+  }
+
+  const raw = api.getValue(name);
+  return Number.isFinite(raw) ? raw : null;
+}
+
 export default function CollaborativeGeoGebra({
   roomId = 'geogebra-default',
   className = '',
+  showPermissionControls = true,
+  showLegend = true,
+  showToolBar = true,
+  showAlgebraView = true,
+  showAlgebraInput = true,
+  showMenuBar = false,
+  showResetIcon = false,
+  showZoomButtons = false,
+  showFullscreenButton = false,
+  showSuggestionButtons = false,
   onConnectionChange,
   onObjectsChange,
   onPermissionsChange
@@ -200,15 +219,17 @@ export default function CollaborativeGeoGebra({
 
     const xml = typeof payload.xml === 'string' ? payload.xml : '';
     const cmd = typeof payload.cmd === 'string' ? payload.cmd : '';
+    const value = typeof payload.value === 'number' && Number.isFinite(payload.value) ? payload.value : null;
 
     withRemoteApply(() => {
-      if (cmd && typeof api.evalCommand === 'function') {
-        api.evalCommand(cmd);
-        return;
-      }
-
       if (xml && typeof api.evalXML === 'function') {
         api.evalXML(xml);
+      } else if (cmd && typeof api.evalCommand === 'function') {
+        api.evalCommand(cmd);
+      }
+
+      if (value !== null && typeof api.setValue === 'function') {
+        api.setValue(payload.name, value);
       }
     });
   }
@@ -264,7 +285,8 @@ export default function CollaborativeGeoGebra({
       emit('geogebra:update', {
         name: key,
         cmd: getObjectCmd(api, key),
-        xml: getObjectXml(api, key)
+        xml: getObjectXml(api, key),
+        value: getObjectNumericValue(api, key)
       });
     }, 70);
 
@@ -289,13 +311,23 @@ export default function CollaborativeGeoGebra({
         emit('geogebra:add', {
           name,
           cmd: getObjectCmd(api, name),
-          xml: getObjectXml(api, name)
+          xml: getObjectXml(api, name),
+          value: getObjectNumericValue(api, name)
         });
       });
     }
 
     if (typeof api.registerUpdateListener === 'function') {
       api.registerUpdateListener((name) => {
+        if (applyingRemoteRef.current) {
+          return;
+        }
+        queueUpdate(name);
+      });
+    }
+
+    if (typeof api.registerObjectUpdateListener === 'function') {
+      api.registerObjectUpdateListener((name) => {
         if (applyingRemoteRef.current) {
           return;
         }
@@ -341,9 +373,14 @@ export default function CollaborativeGeoGebra({
           appName: 'geometry',
           width: 1000,
           height: 560,
-          showToolBar: true,
-          showAlgebraInput: true,
-          showMenuBar: false,
+          showToolBar,
+          showAlgebraView,
+          showAlgebraInput,
+          showMenuBar,
+          showResetIcon,
+          showZoomButtons,
+          showFullscreenButton,
+          showSuggestionButtons,
           enableShiftDragZoom: true,
           appletOnLoad(api) {
             ggbApiRef.current = api;
@@ -455,7 +492,20 @@ export default function CollaborativeGeoGebra({
       updateTimersRef.current.forEach((timer) => clearTimeout(timer));
       updateTimersRef.current.clear();
     };
-  }, [roomId, onConnectionChange, onObjectsChange, onPermissionsChange]);
+  }, [
+    roomId,
+    onConnectionChange,
+    onObjectsChange,
+    onPermissionsChange,
+    showToolBar,
+    showAlgebraView,
+    showAlgebraInput,
+    showMenuBar,
+    showResetIcon,
+    showZoomButtons,
+    showFullscreenButton,
+    showSuggestionButtons
+  ]);
 
   useEffect(() => {
     if (!selectedObject && allObjectNames.length > 0) {
@@ -492,39 +542,45 @@ export default function CollaborativeGeoGebra({
 
       {errorText ? <p className="gg-collab__error">{errorText}</p> : null}
 
-      <div className="gg-collab__controls">
-        <select value={selectedObject} onChange={(event) => setSelectedObject(event.target.value)}>
-          {allObjectNames.length === 0 ? <option value="">No objects</option> : null}
-          {allObjectNames.map((name) => (
-            <option key={name} value={name}>{name}</option>
-          ))}
-        </select>
+      {showPermissionControls ? (
+        <>
+          <div className="gg-collab__controls">
+            <select value={selectedObject} onChange={(event) => setSelectedObject(event.target.value)}>
+              {allObjectNames.length === 0 ? <option value="">No objects</option> : null}
+              {allObjectNames.map((name) => (
+                <option key={name} value={name}>{name}</option>
+              ))}
+            </select>
 
-        <input
-          type="text"
-          value={targetUserId}
-          onChange={(event) => setTargetUserId(event.target.value)}
-          list="gg-collab-known-users"
-          placeholder="Target user id"
-        />
+            <input
+              type="text"
+              value={targetUserId}
+              onChange={(event) => setTargetUserId(event.target.value)}
+              list="gg-collab-known-users"
+              placeholder="Target user id"
+            />
 
-        <button type="button" onClick={() => submitGrant(false)}>Grant</button>
-        <button type="button" className="secondary" onClick={() => submitGrant(true)}>Revoke</button>
-      </div>
+            <button type="button" onClick={() => submitGrant(false)}>Grant</button>
+            <button type="button" className="secondary" onClick={() => submitGrant(true)}>Revoke</button>
+          </div>
 
-      <datalist id="gg-collab-known-users">
-        {knownUsers.map((userId) => (
-          <option key={userId} value={userId} />
-        ))}
-      </datalist>
+          <datalist id="gg-collab-known-users">
+            {knownUsers.map((userId) => (
+              <option key={userId} value={userId} />
+            ))}
+          </datalist>
+        </>
+      ) : null}
 
       <div ref={boardRef} className="gg-collab__board" />
 
-      <ul className="gg-collab__legend">
-        <li>Only independent objects are synced from local edits.</li>
-        <li>Permissions are server-authoritative; unauthorized edits are rolled back.</li>
-        <li>Grant/Revoke targets are identified by realtime user id.</li>
-      </ul>
+      {showLegend ? (
+        <ul className="gg-collab__legend">
+          <li>Only independent objects are synced from local edits.</li>
+          <li>Permissions are server-authoritative; unauthorized edits are rolled back.</li>
+          <li>Grant/Revoke targets are identified by realtime user id.</li>
+        </ul>
+      ) : null}
     </section>
   );
 }

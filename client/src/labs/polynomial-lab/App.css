@@ -123,6 +123,10 @@
   border: 2px solid #cbd5e1;
 }
 
+.poly-neural-zone--geogebra {
+  justify-content: center;
+}
+
 .poly-expression-card {
   background: #eef2ff;
   border-radius: 1.4rem;
@@ -190,6 +194,12 @@
   padding: 0.95rem;
 }
 
+.poly-team-card--geogebra {
+  width: min(1120px, 100%);
+  flex: 0 1 auto;
+  margin: 0 auto;
+}
+
 .poly-template-answer-panel {
   display: grid;
   gap: 1rem;
@@ -238,6 +248,19 @@
   display: grid;
   gap: 0.45rem;
   margin-top: 0.2rem;
+}
+
+.poly-geogebra-area-panel {
+  display: grid;
+  gap: 0.85rem;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.poly-geogebra-board .gg-collab__board {
+  min-height: 520px;
+  border-radius: 1rem;
+  overflow: hidden;
 }
 
 .poly-team-grid {

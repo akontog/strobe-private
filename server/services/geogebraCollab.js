@@ -3,7 +3,7 @@ const { sanitizeString } = require('../utils/helpers');
 const ROOM_EVENT = 'geogebra:join';
 const ELEVATED_ROLES = new Set(['teacher', 'admin']);
 
-function initGeogebraCollab({ io, recordCommunication, sessionManager }) {
+function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraLessonStore }) {
   const rooms = new Map();
   const socketRoom = new Map();
   const monitorSockets = new Set();
@@ -44,6 +44,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager }) {
       objects.push({
         name,
         cmd: value.cmd || '',
+        value: Number.isFinite(value.value) ? value.value : null,
         owner: perm ? perm.owner : null,
         editors: perm ? [...perm.editors] : []
       });
@@ -129,6 +130,65 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager }) {
     return rooms.get(key);
   }
 
+  function bootstrapRoomFromLesson(room) {
+    if (
+      !room
+      || room.members.size > 0
+      || !geogebraLessonStore
+      || typeof geogebraLessonStore.getByRoomId !== 'function'
+    ) {
+      return false;
+    }
+
+    const lesson = geogebraLessonStore.getByRoomId(room.id);
+    if (!lesson || !lesson.state || typeof lesson.state !== 'object') {
+      return false;
+    }
+
+    room.state.clear();
+    room.perms.clear();
+
+    Object.entries(lesson.state).forEach(([name, value]) => {
+      const objectName = cleanObjectName(name);
+      if (!objectName || !value || typeof value !== 'object') {
+        return;
+      }
+
+      const cmd = sanitizeString(value.cmd, 3000) || '';
+      const xml = typeof value.xml === 'string' ? value.xml : '';
+      room.state.set(objectName, { cmd, xml });
+    });
+
+    Object.keys(lesson.state).forEach((name) => {
+      const objectName = cleanObjectName(name);
+      if (!objectName) {
+        return;
+      }
+
+      const rawPerm = lesson.perms && lesson.perms[objectName];
+      const owner = sanitizeString(rawPerm && rawPerm.owner, 120)
+        || sanitizeString(lesson.createdBy, 120)
+        || 'system';
+      const editors = new Set(
+        Array.isArray(rawPerm && rawPerm.editors)
+          ? rawPerm.editors
+            .map((entry) => sanitizeString(entry, 120))
+            .filter(Boolean)
+          : []
+      );
+
+      room.perms.set(objectName, { owner, editors });
+    });
+
+    publishStateChange(room, 'lesson-bootstrap', {
+      lessonId: lesson.id,
+      by: lesson.createdBy || 'system',
+      objectCount: room.state.size
+    });
+
+    return true;
+  }
+
   function getUserFromSocket(socket) {
     const session = sessionManager.get(socket.sessionId);
     const role = String((session && session.role) || 'student').trim().toLowerCase() || 'student';
@@ -160,6 +220,10 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager }) {
     }
 
     if (perm.owner === user.displayName || perm.owner === user.id) {
+      return true;
+    }
+
+    if (perm.editors.has('*')) {
       return true;
     }
 
@@ -211,6 +275,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager }) {
         name,
         cmd: objectValue.cmd || '',
         xml: objectValue.xml || '',
+        value: Number.isFinite(objectValue.value) ? objectValue.value : null,
         owner: perm ? perm.owner : null,
         editors: perm ? [...perm.editors] : []
       });
@@ -328,12 +393,14 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager }) {
 
     const cmd = sanitizeString(data && data.cmd, 3000);
     const xml = typeof (data && data.xml) === 'string' ? data.xml : '';
+    const value = Number.isFinite(Number(data && data.value)) ? Number(data.value) : null;
 
     const ownerId = user.displayName || user.id;
 
     room.state.set(name, {
       cmd,
-      xml
+      xml,
+      value
     });
 
     room.perms.set(name, {
@@ -341,7 +408,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager }) {
       editors: new Set()
     });
 
-    emitToRoom(room, 'geogebra:upsert', { name, cmd, xml });
+    emitToRoom(room, 'geogebra:upsert', { name, cmd, xml, value });
     broadcastPermissions(room);
     publishStateChange(room, 'add', {
       object: name,
@@ -369,13 +436,17 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager }) {
     const previous = room.state.get(name);
     const xml = typeof (data && data.xml) === 'string' ? data.xml : previous.xml || '';
     const cmd = sanitizeString(data && data.cmd, 3000) || previous.cmd || '';
+    const value = Number.isFinite(Number(data && data.value))
+      ? Number(data.value)
+      : (Number.isFinite(previous.value) ? previous.value : null);
 
     room.state.set(name, {
       cmd,
-      xml
+      xml,
+      value
     });
 
-    emitToRoom(room, 'geogebra:upsert', { name, cmd, xml });
+    emitToRoom(room, 'geogebra:upsert', { name, cmd, xml, value });
     publishStateChange(room, 'update', {
       object: name,
       by: user.displayName || user.id,
@@ -488,6 +559,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager }) {
     socket.join(roomId);
 
     const room = getRoom(roomId);
+    bootstrapRoomFromLesson(room);
     room.members.add(socket);
 
     const user = getUserFromSocket(socket);

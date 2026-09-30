@@ -56,6 +56,7 @@ const initNeural = require('./services/neural');
 const initPrimes = require('./services/primes');
 const initPolynomial = require('./services/polynomial');
 const initGeogebraCollab = require('./services/geogebraCollab');
+const { createGeogebraLessonStore } = require('./utils/geogebraLessonStore');
 const wsRegistry = require('./services/websocketRegistry');
 const { runGeogebraCollabProtocolRunner } = require('./tools/geogebraCollabProtocolRunner');
 
@@ -136,10 +137,13 @@ const fourierService = initFourier({
 });
 const { fourierParticipants, registerSocketHandlers: registerFourierSocketHandlers, handleSocketDisconnect } = fourierService;
 
+const geogebraLessonStore = createGeogebraLessonStore();
+
 const geogebraCollabService = initGeogebraCollab({
   io,
   recordCommunication,
-  sessionManager
+  sessionManager,
+  geogebraLessonStore
 });
 
 function touchBuffonConnection(ws, patch = {}) {

@@ -21,7 +21,8 @@ function initPolynomial({
   const lessonState = {
     activityId: '1.1',
     datasetKey: 'monomials',
-    expressionId: 'm-1'
+    expressionId: 'm-1',
+    geogebraRoomId: ''
   };
 
   function record(event, direction, from, to, payload) {
@@ -210,6 +211,7 @@ function initPolynomial({
         const activityId = sanitizeString(next.activityId, 64);
         const datasetKey = sanitizeString(next.datasetKey, 32);
         const expressionId = sanitizeString(next.expressionId, 64);
+        const geogebraRoomId = sanitizeString(next.geogebraRoomId, 80);
 
         if (activityId) {
           lessonState.activityId = activityId;
@@ -219,6 +221,9 @@ function initPolynomial({
         }
         if (expressionId) {
           lessonState.expressionId = expressionId;
+        }
+        if (Object.prototype.hasOwnProperty.call(next, 'geogebraRoomId')) {
+          lessonState.geogebraRoomId = geogebraRoomId || '';
         }
 
         emitState();
