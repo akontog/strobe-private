@@ -12,6 +12,11 @@ const normalizeAnswerValue = (value) => {
 export function getAnswerFieldDefinitions(expressionItem = {}) {
   const resultMode = expressionItem?.resultMode;
 
+  if (resultMode === 'grouping') {
+    const answers = expressionItem?.correctAnswers;
+    return answers && typeof answers === 'object' ? Object.keys(answers) : [];
+  }
+
   if (resultMode === 'degreeOnly') {
     return ['degreeX', 'degreeY', 'totalDegree'];
   }
@@ -86,6 +91,19 @@ export function computeStudentScore(student = {}, expressionItem = {}, overrides
   const incorrectScore = overrides.scoreIncorrect ?? expressionItem.scoreIncorrect ?? SCORE_INCORRECT;
   const expectedAnswers = flattenCorrectAnswers(expressionItem);
   const studentAnswers = buildStudentAnswerMap(student?.answers || {});
+
+  if (expressionItem?.resultMode === 'grouping') {
+    const fields = Object.keys(expectedAnswers);
+    if (fields.length === 0) {
+      return 0;
+    }
+
+    return fields.reduce((total, fieldName) => {
+      const expectedValue = normalizeAnswerValue(expectedAnswers[fieldName]);
+      const actualValue = normalizeAnswerValue(studentAnswers[fieldName]);
+      return total + (actualValue === expectedValue ? correctScore : incorrectScore);
+    }, 0);
+  }
 
   if (Array.isArray(expressionItem.correctAnswers)) {
     return expressionItem.correctAnswers.reduce((total, answer, index) => {

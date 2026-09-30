@@ -8,5 +8,6 @@ export { default as BlueNumberBox } from './BlueNumberBox';
 export { default as Toolbar } from './Toolbar';
 export { default as ConnectionNameControl } from './ConnectionNameControl';
 export { default as LanguageSwitcher } from './LanguageSwitcher';
+export { default as GroupingDragDrop } from './GroupingDragDrop';
 export * from './studentTableColumnPresets';
 export * from './identityStorage';

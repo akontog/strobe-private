@@ -11,7 +11,7 @@ const readline = require('readline');
 // 2. Ρυθμίσεις
 
 // Global camera toggle: false για απενεργοποίηση κάμερας, true για ενεργοποίηση
-const CAMERA_FEATURES_ENABLED = true;
+const CAMERA_FEATURES_ENABLED = false;
 // Χρονικό όριο για την εκτέλεση αιτημάτων προς τον camera worker (σε milliseconds)
 const parsedCameraWorkerTimeoutMs = Number.parseInt(process.env.CAMERA_WORKER_TIMEOUT_MS || '1200', 10);
 // Ελάχιστο και μέγιστο χρονικό όριο για την εκτέλεση αιτημάτων προς τον camera worker

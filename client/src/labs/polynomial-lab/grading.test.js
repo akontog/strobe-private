@@ -51,3 +51,34 @@ test('polynomial answers award per-term scores', () => {
 
   assert.equal(score, 0.5);
 });
+
+test('grouping answers award per-item scores', () => {
+  const expression = {
+    id: 'grouping-1',
+    resultMode: 'grouping',
+    correctAnswers: {
+      'item-a1': 'g1',
+      'item-a2': 'g1',
+      'item-b1': 'g2'
+    },
+    scoreCorrect: 1,
+    scoreIncorrect: -0.5
+  };
+
+  const score = computeStudentScore(
+    {
+      answers: {
+        'item-a1': 'g1',
+        'item-a2': 'g2',
+        'item-b1': 'g2'
+      }
+    },
+    expression
+  );
+
+  assert.equal(score, 1.5);
+  assert.deepEqual(
+    getAnswerFieldDefinitions(expression),
+    ['item-a1', 'item-a2', 'item-b1']
+  );
+});

@@ -3,6 +3,7 @@ import {
   Accordion,
   ActivitiesMenu,
   ConnectionNameControl,
+  GroupingDragDrop,
   HeroTitle,
   MathFormula,
   StudentQrAccordion,
@@ -27,14 +28,21 @@ const ACTIVITY_LIBRARY = [
   {
     id: '1.2',
     code: '1.2',
-    title: '1.2 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)',
-    objective: 'Πρόσθεση και αφαίρεση όμοιων μονωνύμων.',
-    tasks: ['Κοινός όρος', 'Συνδυασμός όρων', 'Αφαίρεση μονωνύμων']
+    title: '1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)',
+    objective: 'Ομαδοποίηση μονωνύμων με ίδιο μεταβλητό μέρος.',
+    tasks: ['Αναγνώριση όμοιων μονωνύμων', 'Ταξινόμηση με drag and drop']
   },
   {
     id: '1.3',
     code: '1.3',
-    title: '1.3 Πράξεις με μονώνυμα (πολλαπλασιασμός)',
+    title: '1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)',
+    objective: 'Πρόσθεση και αφαίρεση όμοιων μονωνύμων.',
+    tasks: ['Κοινός όρος', 'Συνδυασμός όρων', 'Αφαίρεση μονωνύμων']
+  },
+  {
+    id: '1.4',
+    code: '1.4',
+    title: '1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)',
     objective: 'Πολλαπλασιασμός μονωνύμων με συντελεστές και εκθέτες.',
     tasks: ['Πολλαπλασιασμός δύο μονωνύμων', 'Πολλαπλασιασμός τριών μονωνύμων']
   },
@@ -55,14 +63,21 @@ const ACTIVITY_LIBRARY = [
   {
     id: '2.3',
     code: '2.3',
-    title: '2.3 Πράξεις με πολυώνυμα (πρόσθεση-αφαίρεση)',
-    objective: 'Πρόσθεση και αφαίρεση πολυωνύμων με αναγωγή όμοιων όρων.',
-    tasks: ['Άθροισμα', 'Διαφορά', 'Μικτό αποτέλεσμα']
+    title: '2.3 Ομαδοποίηση όμοιων όρων δύο πολυωνύμων',
+    objective: 'Ομαδοποίηση όρων από δύο πολυώνυμα και αυτόματη πρόσθεση ανά ομάδα ομοίων όρων.',
+    tasks: ['Ταξινόμηση όρων', 'Έλεγχος ομοιότητας', 'Αυτόματο αποτέλεσμα']
   },
   {
     id: '2.4',
     code: '2.4',
-    title: '2.4 Πράξεις με πολυώνυμα (πολλαπλασιασμός)',
+    title: '2.4 Πράξεις με πολυώνυμα (πρόσθεση-αφαίρεση)',
+    objective: 'Πρόσθεση και αφαίρεση πολυωνύμων με αναγωγή όμοιων όρων.',
+    tasks: ['Άθροισμα', 'Διαφορά', 'Μικτό αποτέλεσμα']
+  },
+  {
+    id: '2.5',
+    code: '2.5',
+    title: '2.5 Πράξεις με πολυώνυμα (πολλαπλασιασμός)',
     objective: 'Πολλαπλασιασμός πολυωνύμων και αναγνώριση όρων του αποτελέσματος.',
     tasks: ['Πολλαπλασιασμός δύο όρων', 'Πολλαπλασιασμός τριών όρων']
   }
@@ -70,12 +85,50 @@ const ACTIVITY_LIBRARY = [
 
 const ACTIVITY_DATASET_KEYS = {
   '1.1': 'monomials',
-  '1.2': 'monomialOperations',
-  '1.3': 'monomialMultiplications',
+  '1.2': 'monomialGrouping',
+  '1.3': 'monomialOperations',
+  '1.4': 'monomialMultiplications',
   '2.1': 'polynomialBasics',
   '2.2': 'likeTermReduction',
-  '2.3': 'polynomialOperations',
-  '2.4': 'polynomialMultiplications'
+  '2.3': 'polynomialLikeTermGrouping',
+  '2.4': 'polynomialOperations',
+  '2.5': 'polynomialMultiplications'
+};
+
+const buildGroupingCorrectAnswers = (items = []) => items.reduce((answers, item) => {
+  answers[`item-${item.id}`] = item.correctGroupId;
+  return answers;
+}, {});
+
+const formatMonomialFromParts = (coefficient, degreeX, degreeY) => {
+  if (!Number.isFinite(coefficient) || coefficient === 0) {
+    return '0';
+  }
+
+  const absCoefficient = Math.abs(coefficient);
+  const includeCoefficient = absCoefficient !== 1 || (degreeX === 0 && degreeY === 0);
+  const xPart = degreeX > 0 ? `x${degreeX > 1 ? `^${degreeX}` : ''}` : '';
+  const yPart = degreeY > 0 ? `y${degreeY > 1 ? `^${degreeY}` : ''}` : '';
+  const variablePart = `${xPart}${yPart}`;
+  const coefficientPart = includeCoefficient ? String(absCoefficient) : '';
+
+  return `${coefficientPart}${variablePart}` || String(absCoefficient);
+};
+
+const getGroupingValidationState = (expressionItem, placements) => {
+  const expressionItems = Array.isArray(expressionItem?.items) ? expressionItem.items : [];
+
+  return expressionItems.reduce((state, item) => {
+    const placedGroupId = placements?.[item.id] || null;
+    if (!placedGroupId) {
+      return state;
+    }
+
+    if (placedGroupId !== item.correctGroupId) {
+      state.invalidItemIds.push(item.id);
+    }
+    return state;
+  }, { invalidItemIds: [] });
 };
 
 const ALGEBRA_DATASETS = {
@@ -112,6 +165,66 @@ const ALGEBRA_DATASETS = {
         degreeY: 1,
         totalDegree: 4,
         correctAnswers: { coefficient: 7, degreeX: 3, degreeY: 1, totalDegree: 4 },
+        scoreCorrect: SCORE_CORRECT,
+        scoreIncorrect: SCORE_INCORRECT
+      }
+    ]
+  },
+  monomialGrouping: {
+    label: 'Ομαδοποίηση μονωνύμων',
+    items: [
+      {
+        id: 'grouping-1',
+        expression: 'Ομαδοποίηση όμοιων μονωνύμων (Α)',
+        resultMode: 'grouping',
+        groups: [
+          { id: 'g1', title: 'Ομάδα 1', hint: '3x^2y' },
+          { id: 'g2', title: 'Ομάδα 2', hint: '5xy^2' },
+          { id: 'g3', title: 'Ομάδα 3', hint: '7x^3y' }
+        ],
+        items: [
+          { id: 'a1', label: '-2x^2y', correctGroupId: 'g1' },
+          { id: 'a2', label: '8x^2y', correctGroupId: 'g1' },
+          { id: 'b1', label: '4xy^2', correctGroupId: 'g2' },
+          { id: 'b2', label: '3xy^2', correctGroupId: 'g2' },
+          { id: 'c1', label: '6x^3y', correctGroupId: 'g3' },
+          { id: 'c2', label: '-5x^3y', correctGroupId: 'g3' }
+        ],
+        correctAnswers: buildGroupingCorrectAnswers([
+          { id: 'a1', correctGroupId: 'g1' },
+          { id: 'a2', correctGroupId: 'g1' },
+          { id: 'b1', correctGroupId: 'g2' },
+          { id: 'b2', correctGroupId: 'g2' },
+          { id: 'c1', correctGroupId: 'g3' },
+          { id: 'c2', correctGroupId: 'g3' }
+        ]),
+        scoreCorrect: SCORE_CORRECT,
+        scoreIncorrect: SCORE_INCORRECT
+      },
+      {
+        id: 'grouping-2',
+        expression: 'Ομαδοποίηση όμοιων μονωνύμων (Β)',
+        resultMode: 'grouping',
+        groups: [
+          { id: 'g1', title: 'Ομάδα 1', hint: '-2x^3y^2' },
+          { id: 'g2', title: 'Ομάδα 2', hint: '4xy' }
+        ],
+        items: [
+          { id: 'd1', label: '6x^3y^2', correctGroupId: 'g1' },
+          { id: 'd2', label: '-9x^3y^2', correctGroupId: 'g1' },
+          { id: 'e1', label: '7xy', correctGroupId: 'g2' },
+          { id: 'e2', label: '-3xy', correctGroupId: 'g2' },
+          { id: 'd3', label: 'x^3y^2', correctGroupId: 'g1' },
+          { id: 'e3', label: '12xy', correctGroupId: 'g2' }
+        ],
+        correctAnswers: buildGroupingCorrectAnswers([
+          { id: 'd1', correctGroupId: 'g1' },
+          { id: 'd2', correctGroupId: 'g1' },
+          { id: 'e1', correctGroupId: 'g2' },
+          { id: 'e2', correctGroupId: 'g2' },
+          { id: 'd3', correctGroupId: 'g1' },
+          { id: 'e3', correctGroupId: 'g2' }
+        ]),
         scoreCorrect: SCORE_CORRECT,
         scoreIncorrect: SCORE_INCORRECT
       }
@@ -296,6 +409,43 @@ const ALGEBRA_DATASETS = {
       }
     ]
   },
+  polynomialLikeTermGrouping: {
+    label: 'Ομαδοποίηση όμοιων όρων (δύο πολυώνυμα)',
+    items: [
+      {
+        id: 'poly-group-1',
+        expression: '(3x^2 + 5xy - 2y^2) + (4x^2 - 3xy + y^2)',
+        resultMode: 'grouping',
+        leftPolynomial: '3x^2 + 5xy - 2y^2',
+        rightPolynomial: '4x^2 - 3xy + y^2',
+        operator: '+',
+        groups: [
+          { id: 'g-x2', title: 'Όμοιοι όροι x^2', hint: 'x^2', degreeX: 2, degreeY: 0 },
+          { id: 'g-xy', title: 'Όμοιοι όροι xy', hint: 'xy', degreeX: 1, degreeY: 1 },
+          { id: 'g-y2', title: 'Όμοιοι όροι y^2', hint: 'y^2', degreeX: 0, degreeY: 2 }
+        ],
+        items: [
+          { id: 'l1', label: '3x^2', coefficient: 3, degreeX: 2, degreeY: 0, source: 'L', correctGroupId: 'g-x2' },
+          { id: 'l2', label: '5xy', coefficient: 5, degreeX: 1, degreeY: 1, source: 'L', correctGroupId: 'g-xy' },
+          { id: 'l3', label: '-2y^2', coefficient: -2, degreeX: 0, degreeY: 2, source: 'L', correctGroupId: 'g-y2' },
+          { id: 'r1', label: '4x^2', coefficient: 4, degreeX: 2, degreeY: 0, source: 'R', correctGroupId: 'g-x2' },
+          { id: 'r2', label: '-3xy', coefficient: -3, degreeX: 1, degreeY: 1, source: 'R', correctGroupId: 'g-xy' },
+          { id: 'r3', label: 'y^2', coefficient: 1, degreeX: 0, degreeY: 2, source: 'R', correctGroupId: 'g-y2' }
+        ],
+        resultOrder: ['g-x2', 'g-xy', 'g-y2'],
+        correctAnswers: buildGroupingCorrectAnswers([
+          { id: 'l1', correctGroupId: 'g-x2' },
+          { id: 'l2', correctGroupId: 'g-xy' },
+          { id: 'l3', correctGroupId: 'g-y2' },
+          { id: 'r1', correctGroupId: 'g-x2' },
+          { id: 'r2', correctGroupId: 'g-xy' },
+          { id: 'r3', correctGroupId: 'g-y2' }
+        ]),
+        scoreCorrect: SCORE_CORRECT,
+        scoreIncorrect: SCORE_INCORRECT
+      }
+    ]
+  },
   polynomialOperations: {
     label: 'Πράξεις με πολυώνυμα',
     items: [
@@ -425,7 +575,27 @@ const POLYNOMIAL_ACTIVITY_OPTIONS = ACTIVITY_LIBRARY.map((activity) => ({
 
 const DEFAULT_ACTIVITY_ID = ACTIVITY_LIBRARY[0].id;
 
-const getCurrentStudentAnswerPayload = (selectedExpressionId, activeExpression, expressionDrafts, teamAnswers, isDegreeOnlyActivity, isMonomialResultActivity, isPolynomialResultActivity) => {
+const getCurrentStudentAnswerPayload = (
+  selectedExpressionId,
+  activeExpression,
+  expressionDrafts,
+  groupingPlacementsByExpression,
+  teamAnswers,
+  isGroupingActivity,
+  isDegreeOnlyActivity,
+  isMonomialResultActivity,
+  isPolynomialResultActivity
+) => {
+  if (isGroupingActivity) {
+    const placements = groupingPlacementsByExpression[selectedExpressionId] || {};
+    const groupingItems = Array.isArray(activeExpression?.items) ? activeExpression.items : [];
+
+    return groupingItems.reduce((answers, item) => {
+      answers[`item-${item.id}`] = placements[item.id] || '';
+      return answers;
+    }, {});
+  }
+
   const currentParts = expressionDrafts[selectedExpressionId] || activeExpression?.parts || [];
 
   if (isDegreeOnlyActivity) {
@@ -478,11 +648,16 @@ const getStudentScoreForExpression = (student, fallbackExpression) => {
 
 const getAnswerColumnsForExpression = (expressionItem) => {
   const fields = getAnswerFieldDefinitions(expressionItem);
+  const groupingLabelByField = new Map(
+    (expressionItem?.items || []).map((item) => [`item-${item.id}`, item.label])
+  );
 
   return fields.map((fieldName) => {
     const partMatch = fieldName.match(/^part-(\d+)-(coefficient|degreeX|degreeY)$/);
     const label = partMatch
       ? partMatch[2] === 'coefficient' ? 'συντελεστής' : partMatch[2] === 'degreeX' ? 'x' : 'y'
+      : groupingLabelByField.has(fieldName)
+        ? groupingLabelByField.get(fieldName)
       : fieldName === 'coefficient'
         ? 'Συντελεστής'
         : fieldName === 'degreeX'
@@ -565,6 +740,20 @@ export default function App({ role = 'teacher' }) {
     });
     return initialDrafts;
   });
+  const [groupingPlacementsByExpression, setGroupingPlacementsByExpression] = useState(() => {
+    const initialPlacements = {};
+    Object.values(ALGEBRA_DATASETS).forEach((dataset) => {
+      dataset.items.forEach((item) => {
+        if (item.resultMode === 'grouping' && Array.isArray(item.items)) {
+          initialPlacements[item.id] = item.items.reduce((placements, groupingItem) => {
+            placements[groupingItem.id] = null;
+            return placements;
+          }, {});
+        }
+      });
+    });
+    return initialPlacements;
+  });
 
   const expressionById = useMemo(() => {
     const map = {};
@@ -580,6 +769,7 @@ export default function App({ role = 'teacher' }) {
     [activeItems, selectedExpressionId]
   );
   const activeExpressionParts = expressionDrafts[selectedExpressionId] || activeExpression?.parts || [];
+  const activeGroupingPlacements = groupingPlacementsByExpression[selectedExpressionId] || {};
 
   const getExpressionPreview = (expressionItem, partsOverride = expressionItem?.parts) => {
     if (!expressionItem) {
@@ -606,16 +796,19 @@ export default function App({ role = 'teacher' }) {
     return `${coefficient}x^${degreeX}y^${degreeY}`;
   };
 
+  const isMonomialGroupingActivity = selectedActivityId === '1.2';
+  const isPolynomialGroupingActivity = selectedActivityId === '2.3';
+  const isGroupingActivity = isMonomialGroupingActivity || isPolynomialGroupingActivity;
   const isDegreeOnlyActivity = selectedActivityId === '2.1';
-  const isMonomialResultActivity = ['1.2', '1.3', '2.2'].includes(selectedActivityId);
-  const isPolynomialResultActivity = ['2.3', '2.4'].includes(selectedActivityId);
+  const isMonomialResultActivity = ['1.3', '1.4', '2.2'].includes(selectedActivityId);
+  const isPolynomialResultActivity = ['2.4', '2.5'].includes(selectedActivityId);
   const isTemplateActivity = isMonomialResultActivity || isPolynomialResultActivity || isDegreeOnlyActivity;
   const leftExpressionText = activeExpression.expression;
   const resultInputValues = activeExpressionParts[0] || { coefficient: '', degreeX: '', degreeY: '' };
   const degreeOnlyInputValues = activeExpressionParts[0] || { degreeX: '', degreeY: '', totalDegree: '' };
   const degreeOnlyPreviewText = `\\deg_x = ${degreeOnlyInputValues.degreeX || '□'}, \\deg_y = ${degreeOnlyInputValues.degreeY || '□'}, \\deg_{xy} = ${degreeOnlyInputValues.totalDegree || '□'}`;
   const groupedPolynomialExpression = useMemo(() => {
-    if (selectedActivityId !== '2.3') {
+    if (selectedActivityId !== '2.4') {
       return null;
     }
 
@@ -635,6 +828,95 @@ export default function App({ role = 'teacher' }) {
     : isMonomialResultActivity
       ? getMonomialAnswerPreview(activeExpressionParts)
       : getExpressionPreview(activeExpression, activeExpressionParts);
+  const getExpressionOptionLabel = (item) => {
+    if (isMonomialGroupingActivity && Array.isArray(item?.groups) && item.groups.length > 0) {
+      return item.groups.map((group) => group.hint).join(' | ');
+    }
+
+    if (isPolynomialGroupingActivity && item?.leftPolynomial && item?.rightPolynomial) {
+      return `(${item.leftPolynomial}) + (${item.rightPolynomial})`;
+    }
+
+    return item?.expression || item?.id || '';
+  };
+  const groupingItems = useMemo(
+    () => (activeExpression?.items || []).map((item) => ({
+      id: item.id,
+      content: <MathFormula formula={`\\(${item.label}\\)`} />
+    })),
+    [activeExpression]
+  );
+  const groupingGroups = useMemo(
+    () => (activeExpression?.groups || []).map((group) => ({
+      id: group.id,
+      title: group.title,
+      hint: <MathFormula formula={`\\(${group.hint}\\)`} />
+    })),
+    [activeExpression]
+  );
+  const groupingValidationState = useMemo(
+    () => getGroupingValidationState(activeExpression, activeGroupingPlacements),
+    [activeExpression, activeGroupingPlacements]
+  );
+  const invalidGroupingItemIds = groupingValidationState.invalidItemIds;
+  const groupingLockedItemIds = useMemo(() => {
+    if (!isPolynomialGroupingActivity || invalidGroupingItemIds.length === 0) {
+      return [];
+    }
+
+    const invalidSet = new Set(invalidGroupingItemIds);
+    return (activeExpression?.items || [])
+      .map((item) => item.id)
+      .filter((itemId) => !invalidSet.has(itemId));
+  }, [isPolynomialGroupingActivity, invalidGroupingItemIds, activeExpression]);
+  const polynomialGroupingResult = useMemo(() => {
+    if (!isPolynomialGroupingActivity) {
+      return null;
+    }
+
+    const expressionItems = Array.isArray(activeExpression?.items) ? activeExpression.items : [];
+    const groups = Array.isArray(activeExpression?.groups) ? activeExpression.groups : [];
+    const resultOrder = Array.isArray(activeExpression?.resultOrder)
+      ? activeExpression.resultOrder
+      : groups.map((group) => group.id);
+
+    const termStrings = resultOrder.map((groupId) => {
+      const group = groups.find((entry) => entry.id === groupId);
+      if (!group) {
+        return null;
+      }
+
+      const requiredItems = expressionItems.filter((item) => item.correctGroupId === groupId);
+      const hasWrongInGroup = expressionItems.some((item) => {
+        const placement = activeGroupingPlacements[item.id] || null;
+        return placement === groupId && item.correctGroupId !== groupId;
+      });
+      const allRequiredPlaced = requiredItems.every((item) => activeGroupingPlacements[item.id] === groupId);
+
+      if (hasWrongInGroup || !allRequiredPlaced || requiredItems.length === 0) {
+        return null;
+      }
+
+      const coefficientSum = requiredItems.reduce((sum, item) => sum + Number(item.coefficient || 0), 0);
+      return {
+        id: groupId,
+        value: formatMonomialFromParts(coefficientSum, group.degreeX || 0, group.degreeY || 0),
+        coefficientSum
+      };
+    }).filter(Boolean);
+
+    const formula = termStrings.length > 0
+      ? termStrings.reduce((accumulator, term, index) => {
+        if (index === 0) {
+          return term.coefficientSum < 0 ? `-${term.value}` : term.value;
+        }
+        return `${accumulator} ${term.coefficientSum < 0 ? '-' : '+'} ${term.value}`;
+      }, '')
+      : '□';
+
+    const isComplete = resultOrder.length > 0 && termStrings.length === resultOrder.length;
+    return { formula, isComplete };
+  }, [isPolynomialGroupingActivity, activeExpression, activeGroupingPlacements]);
 
   const updateExpressionPart = (index, field, value) => {
     setExpressionDrafts((prevDrafts) => {
@@ -645,6 +927,25 @@ export default function App({ role = 'teacher' }) {
         [selectedExpressionId]: nextParts
       };
     });
+  };
+
+  const setGroupingPlacements = (nextPlacements) => {
+    if (isPolynomialGroupingActivity && invalidGroupingItemIds.length > 0) {
+      const changedItemIds = Object.keys(nextPlacements).filter(
+        (itemId) => (activeGroupingPlacements?.[itemId] || null) !== (nextPlacements?.[itemId] || null)
+      );
+
+      const invalidSet = new Set(invalidGroupingItemIds);
+      const touchesNonInvalidItem = changedItemIds.some((itemId) => !invalidSet.has(itemId));
+      if (touchesNonInvalidItem) {
+        return;
+      }
+    }
+
+    setGroupingPlacementsByExpression((prev) => ({
+      ...prev,
+      [selectedExpressionId]: nextPlacements
+    }));
   };
 
   const sortedParticipants = useMemo(
@@ -860,7 +1161,9 @@ export default function App({ role = 'teacher' }) {
         selectedExpressionId,
         activeExpression,
         expressionDrafts,
+        groupingPlacementsByExpression,
         teamAnswers,
+        isGroupingActivity,
         isDegreeOnlyActivity,
         isMonomialResultActivity,
         isPolynomialResultActivity
@@ -881,7 +1184,9 @@ export default function App({ role = 'teacher' }) {
     teamAnswers,
     lastSentAnswers,
     expressionDrafts,
+    groupingPlacementsByExpression,
     activeExpression,
+    isGroupingActivity,
     isDegreeOnlyActivity,
     isMonomialResultActivity,
     isPolynomialResultActivity
@@ -936,7 +1241,9 @@ export default function App({ role = 'teacher' }) {
         <div className="lab-workspace poly-neural-zone">
           <div className="lab-card lab-card--highlight poly-expression-card" aria-label="μονώνυμο ή πολυώνυμο">
             <p className="lab-mini-label poly-mini-label">Έκφραση</p>
-            {groupedPolynomialExpression ? (
+            {isGroupingActivity ? (
+              <div className="lab-math-box poly-expression-math poly-expression-math--empty"></div>
+            ) : groupedPolynomialExpression ? (
               <div className="poly-stacked-expression">
                 <div className="poly-stacked-expression-row">
                   <MathFormula formula={`\\(${groupedPolynomialExpression.left}\\)`} />
@@ -959,7 +1266,52 @@ export default function App({ role = 'teacher' }) {
           </div>
 
           <div className="lab-card lab-card--panel poly-team-card">
-            {isTemplateActivity ? (
+            {isGroupingActivity ? (
+              <div className="poly-grouping-panel">
+                <p className="poly-hero-text">
+                  {isPolynomialGroupingActivity
+                    ? 'Ομαδοποίησε τους όρους από τα δύο πολυώνυμα. Αν ένας όρος μπει λάθος, γίνεται κόκκινος και πρέπει να αφαιρεθεί πρώτα.'
+                    : 'Σύρε κάθε μονώνυμο στην ομάδα με το ίδιο μεταβλητό μέρος.'}
+                </p>
+                {isPolynomialGroupingActivity && (
+                  <div className="poly-grouping-equation">
+                    <div className="poly-grouping-expression-card">
+                      <MathFormula formula={`\\(${activeExpression.leftPolynomial}\\)`} />
+                    </div>
+                    <div className="poly-grouping-operator">+</div>
+                    <div className="poly-grouping-expression-card">
+                      <MathFormula formula={`\\(${activeExpression.rightPolynomial}\\)`} />
+                    </div>
+                  </div>
+                )}
+                <GroupingDragDrop
+                  items={groupingItems}
+                  groups={groupingGroups}
+                  placements={activeGroupingPlacements}
+                  onChange={setGroupingPlacements}
+                  invalidItemIds={invalidGroupingItemIds}
+                  disabledItemIds={groupingLockedItemIds}
+                  bankLabel="Μονώνυμα προς ομαδοποίηση"
+                  emptyZoneLabel="Άφησε εδώ μονώνυμα"
+                />
+                {isPolynomialGroupingActivity && (
+                  <>
+                    {invalidGroupingItemIds.length > 0 && (
+                      <p className="poly-grouping-warning">Υπάρχει λάθος τοποθέτηση. Αφαίρεσε πρώτα τον κόκκινο όρο.</p>
+                    )}
+                    <div className="lab-preview poly-preview-panel">
+                      <p className="lab-mini-label poly-mini-label">Αυτόματο αποτέλεσμα</p>
+                      <div className="lab-math-box lab-math-box--compact poly-expression-math poly-expression-math--small">
+                        <MathFormula formula={`\\(${polynomialGroupingResult?.formula || '□'}\\)`} />
+                      </div>
+                      {!polynomialGroupingResult?.isComplete && (
+                        <p className="poly-grouping-hint">Ολοκλήρωσε σωστά όλες τις ομάδες για τελικό αποτέλεσμα.</p>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : isTemplateActivity ? (
               <div className="poly-template-answer-panel">
                 {isDegreeOnlyActivity ? (
                   <div className="poly-team-grid poly-team-grid--full">
@@ -1140,7 +1492,7 @@ export default function App({ role = 'teacher' }) {
                   onChange={(event) => setExpression(event.target.value)}
                 >
                   {activeItems.map((item) => (
-                    <option key={item.id} value={item.id}>{item.expression}</option>
+                    <option key={item.id} value={item.id}>{getExpressionOptionLabel(item)}</option>
                   ))}
                 </select>
               </div>
