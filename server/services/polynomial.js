@@ -18,6 +18,11 @@ function initPolynomial({
   const studentsBySocket = new Map();
   let studentSeq = 0;
   let sessionSeq = 0;
+  const lessonState = {
+    activityId: '1.1',
+    datasetKey: 'monomials',
+    expressionId: 'm-1'
+  };
 
   function record(event, direction, from, to, payload) {
     if (typeof recordCommunication !== 'function') {
@@ -69,7 +74,14 @@ function initPolynomial({
       username: student.name,
       color: student.color,
       isConnected: true,
-      connected: true
+      connected: true,
+      answers: {
+        coefficient: student.answers?.coefficient || '',
+        degreeX: student.answers?.degreeX || '',
+        degreeY: student.answers?.degreeY || '',
+        totalDegree: student.answers?.totalDegree || ''
+      },
+      expressionId: student.expressionId || lessonState.expressionId
     }));
   }
 
@@ -78,7 +90,8 @@ function initPolynomial({
     const payload = {
       type: 'polynomial_state',
       roster: participants,
-      participants
+      participants,
+      lesson: lessonState
     };
     const serialized = JSON.stringify(payload);
 
@@ -154,8 +167,20 @@ function initPolynomial({
         const fallbackName = `Student ${studentSeq}`;
         const name = sanitizeString(message.name, 40) || current?.name || fallbackName;
         const color = normalizeColor(message.color, current?.color || '#3b82f6');
+        const previousAnswers = current?.answers || {
+          coefficient: '',
+          degreeX: '',
+          degreeY: '',
+          totalDegree: ''
+        };
 
-        studentsBySocket.set(ws, { id, name, color });
+        studentsBySocket.set(ws, {
+          id,
+          name,
+          color,
+          answers: previousAnswers,
+          expressionId: current?.expressionId || lessonState.expressionId
+        });
 
         if (sessionManager && typeof sessionManager.update === 'function') {
           sessionManager.update(sessionId, {
@@ -173,6 +198,50 @@ function initPolynomial({
 
       if (type === 'request_state') {
         emitState(ws);
+        return;
+      }
+
+      if (type === 'teacher_lesson') {
+        if (!teachers.has(ws)) {
+          return;
+        }
+
+        const next = message.lesson && typeof message.lesson === 'object' ? message.lesson : {};
+        const activityId = sanitizeString(next.activityId, 64);
+        const datasetKey = sanitizeString(next.datasetKey, 32);
+        const expressionId = sanitizeString(next.expressionId, 64);
+
+        if (activityId) {
+          lessonState.activityId = activityId;
+        }
+        if (datasetKey) {
+          lessonState.datasetKey = datasetKey;
+        }
+        if (expressionId) {
+          lessonState.expressionId = expressionId;
+        }
+
+        emitState();
+        return;
+      }
+
+      if (type === 'student_answers') {
+        const current = studentsBySocket.get(ws);
+        if (!current) {
+          return;
+        }
+
+        const rawAnswers = message.answers && typeof message.answers === 'object' ? message.answers : {};
+        current.answers = {
+          coefficient: sanitizeString(rawAnswers.coefficient, 24) || '',
+          degreeX: sanitizeString(rawAnswers.degreeX, 24) || '',
+          degreeY: sanitizeString(rawAnswers.degreeY, 24) || '',
+          totalDegree: sanitizeString(rawAnswers.totalDegree, 24) || ''
+        };
+        current.expressionId = sanitizeString(message.expressionId, 64) || current.expressionId || lessonState.expressionId;
+
+        studentsBySocket.set(ws, current);
+        emitState();
       }
     });
 

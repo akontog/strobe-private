@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-09-29T17:48:37.761Z",
+  "savedAt": "2026-09-30T05:43:21.934Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -235,11 +235,11 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
       "username": "Teacher",
       "role": "teacher",
-      "source": "neural-lab",
+      "source": "polynomial-lab",
       "activeApps": [
         "neural",
         "polynomial",
-        "neural-lab"
+        "polynomial-lab"
       ],
       "appData": {
         "neural": {
@@ -283,15 +283,15 @@
           }
         },
         "polynomial": {
-          "id": "student-6",
-          "name": "www",
-          "color": "#0d35fd",
+          "id": "student-4",
+          "name": "βββ",
+          "color": "#fd0ddd",
           "active": true,
-          "lastUpdated": "2026-09-29T17:09:17.400Z"
+          "lastUpdated": "2026-09-30T05:43:21.914Z"
         }
       },
       "connectedAt": 1790668716991,
-      "lastSeenAt": 1790704117761,
+      "lastSeenAt": 1790747001933,
       "isActive": true
     },
     {

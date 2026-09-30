@@ -1,6 +1,7 @@
 ﻿export { Accordion } from './Accordion';
 export { ActivitiesMenu } from './ActivitiesMenu';
 export { default as HeroTitle } from './HeroTitle';
+export { default as MathFormula } from './MathFormula';
 export { StudentTable } from './StudentTable';
 export { StudentQrAccordion } from './StudentQrAccordion';
 export { default as BlueNumberBox } from './BlueNumberBox';

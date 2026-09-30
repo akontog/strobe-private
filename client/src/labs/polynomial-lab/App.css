@@ -112,6 +112,101 @@
   gap: 1rem;
 }
 
+.poly-neural-zone {
+  background: #fcfdff;
+  border-radius: 2rem;
+  padding: 1.2rem;
+  display: flex;
+  align-items: stretch;
+  gap: 1.2rem;
+  justify-content: space-between;
+  border: 2px solid #cbd5e1;
+}
+
+.poly-expression-card {
+  background: #eef2ff;
+  border-radius: 1.4rem;
+  border: 2px solid #94a3b8;
+  min-width: 280px;
+  max-width: 320px;
+  padding: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.poly-expression-math {
+  background: #ffffff;
+  border: 2px solid #dbeafe;
+  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #1e293b;
+}
+
+.poly-team-card {
+  flex: 1;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 1.4rem;
+  padding: 0.95rem;
+}
+
+.poly-team-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+  margin-top: 0.35rem;
+}
+
+.poly-team-field {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.85rem;
+  padding: 0.65rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.poly-team-field span {
+  font-size: 0.78rem;
+  color: #475569;
+  font-weight: 700;
+}
+
+.poly-team-field input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.65rem;
+  padding: 0.45rem 0.6rem;
+  font: inherit;
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.poly-answer-hint {
+  margin-top: 0.8rem;
+  padding: 0.6rem 0.7rem;
+  border-radius: 0.7rem;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 0.83rem;
+  font-weight: 600;
+}
+
+.poly-data-menu {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.poly-select-group {
+  display: grid;
+  gap: 0.45rem;
+}
+
 .poly-hero-card {
   background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
   border: 1px solid rgba(148, 163, 184, 0.4);
@@ -217,6 +312,20 @@
 
 @media (max-width: 900px) {
   .poly-hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .poly-neural-zone {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .poly-expression-card {
+    max-width: none;
+    min-width: 0;
+  }
+
+  .poly-team-grid {
     grid-template-columns: 1fr;
   }
 
