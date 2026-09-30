@@ -147,6 +147,35 @@
   color: #1e293b;
 }
 
+.poly-stacked-expression {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.poly-stacked-expression-row {
+  background: #ffffff;
+  border: 2px solid #dbeafe;
+  border-radius: 0.9rem;
+  padding: 0.6rem 0.8rem;
+  text-align: left;
+  min-height: 3.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.poly-stacked-expression-operator {
+  margin-left: 0.55rem;
+  color: #1d4ed8;
+  font-weight: 800;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.poly-expression-math--small {
+  font-size: 1.15rem;
+  padding: 0.7rem 0.9rem;
+}
+
 .poly-team-card {
   flex: 1;
   background: #ffffff;
@@ -155,11 +184,59 @@
   padding: 0.95rem;
 }
 
+.poly-template-answer-panel {
+  display: grid;
+  gap: 1rem;
+}
+
+.poly-preview-panel {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.2rem;
+}
+
 .poly-team-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.7rem;
   margin-top: 0.35rem;
+}
+
+.poly-team-grid--full {
+  grid-template-columns: 1fr;
+}
+
+.poly-term-block {
+  border: 1px solid #dbeafe;
+  background: #f8fbff;
+  border-radius: 1rem;
+  padding: 0.75rem;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.poly-term-block--result {
+  background: #f8fafc;
+  border-style: dashed;
+}
+
+.poly-term-label {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #2563eb;
+}
+
+.poly-term-inputs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.poly-term-inputs--result {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .poly-team-field {
@@ -326,6 +403,10 @@
   }
 
   .poly-team-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .poly-term-inputs {
     grid-template-columns: 1fr;
   }
 

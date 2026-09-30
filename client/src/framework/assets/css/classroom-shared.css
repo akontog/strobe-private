@@ -251,6 +251,162 @@
   padding: 0.7rem 0.9rem;
 }
 
+.lab-shell {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 0 2rem;
+}
+
+.lab-header {
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.lab-kicker {
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  color: #2563eb;
+  font-weight: 700;
+}
+
+.lab-zone {
+  background: #ffffff;
+  border-radius: 2rem;
+  padding: 1.5rem;
+  margin-bottom: 1.2rem;
+  border: 3px solid #3b82f6;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.lab-workspace {
+  background: #fcfdff;
+  border-radius: 2rem;
+  padding: 1.2rem;
+  display: flex;
+  align-items: stretch;
+  gap: 1.2rem;
+  justify-content: space-between;
+  border: 2px solid #cbd5e1;
+}
+
+.lab-card {
+  background: #ffffff;
+  border-radius: 1.4rem;
+  border: 2px solid #e2e8f0;
+  padding: 0.95rem;
+}
+
+.lab-card--highlight {
+  background: #eef2ff;
+  border: 2px solid #94a3b8;
+}
+
+.lab-card--panel {
+  flex: 1;
+}
+
+.lab-math-box {
+  background: #ffffff;
+  border: 2px solid #dbeafe;
+  border-radius: 1rem;
+  padding: 0.85rem 1rem;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #1e293b;
+}
+
+.lab-math-box--compact {
+  font-size: 1.15rem;
+  padding: 0.7rem 0.9rem;
+}
+
+.lab-mini-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.lab-preview {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.2rem;
+}
+
+.lab-input-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.lab-input-grid--single {
+  grid-template-columns: 1fr;
+}
+
+.lab-field {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.85rem;
+  padding: 0.65rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.lab-field span {
+  font-size: 0.78rem;
+  color: #475569;
+  font-weight: 700;
+}
+
+.lab-field input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.65rem;
+  padding: 0.45rem 0.6rem;
+  font: inherit;
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.lab-data-section {
+  background: #f8fafc;
+  border-radius: 1.2rem;
+  overflow-x: auto;
+  margin-top: 0.5rem;
+}
+
+.lab-select-group {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.lab-inline-field-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+@media (max-width: 900px) {
+  .lab-workspace {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lab-input-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lab-inline-field-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 760px) {
   .classroom-shared-toggle {
     top: 10px;

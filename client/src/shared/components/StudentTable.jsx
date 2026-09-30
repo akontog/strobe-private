@@ -14,6 +14,7 @@ export const StudentTable = ({
   title = '📋 Πίνακας χρηστών',
   participants = [],
   columns = [],
+  headerGroups = [],
   emptyMessage = 'Δεν υπάρχουν συνδεδεμένοι χρήστες.',
   nameFallback = 'Χρήστης',
   getRowKey = defaultGetRowKey,
@@ -23,7 +24,8 @@ export const StudentTable = ({
   const { t } = useTranslation(['common', 'neural']);
   const rows = Array.isArray(participants) ? participants : [];
   const extraColumns = Array.isArray(columns) ? columns : [];
-  const totalColumns = 2 + extraColumns.length;
+  const totalColumns = 1 + extraColumns.length;
+  const groupedSpanTotal = Array.isArray(headerGroups) ? headerGroups.reduce((sum, group) => sum + (group.colSpan || 1), 0) : 0;
   const resolvedTitle = title || `📋 ${t('neural.connectedStudents')}`;
   const resolvedEmptyMessage = emptyMessage || t('common.notAvailable');
   const resolvedFallback = nameFallback || t('common.student');
@@ -37,9 +39,30 @@ export const StudentTable = ({
       <div className="data-section">
         <table className="data-table">
           <thead>
+            {headerGroups.length > 0 && (
+              <tr>
+                <th aria-hidden="true" style={{ border: 'none', background: 'transparent', padding: 0 }}></th>
+                {headerGroups.map((group, index) => (
+                  <th
+                    key={group.key || group.label || index}
+                    colSpan={group.colSpan || 1}
+                    style={group.style}
+                    className={group.className || ''}
+                  >
+                    {group.label}
+                  </th>
+                ))}
+                {Array.from({ length: Math.max(0, extraColumns.length - groupedSpanTotal) }).map((_, index) => (
+                  <th
+                    key={`header-group-gap-${index}`}
+                    aria-hidden="true"
+                    style={{ border: 'none', background: 'transparent', padding: 0 }}
+                  ></th>
+                ))}
+              </tr>
+            )}
             <tr>
-              <th>{t('common.status')}</th>
-              <th>{t('common.username')}</th>
+              <th>Μαθητής</th>
               {extraColumns.map((column, index) => (
                 <th key={column.key || column.label || index}>{column.label}</th>
               ))}
@@ -59,18 +82,18 @@ export const StudentTable = ({
 
               return (
                 <tr key={getRowKey(participant, index)}>
-                  <td>
+                  <td style={{ whiteSpace: 'nowrap' }}>
                     <span
                       className="green-dot"
                       style={{
                         display: 'inline-block',
                         backgroundColor: isConnected ? '#22c55e' : '#9ca3af',
-                        opacity: isConnected ? 1 : 0.85
+                        opacity: isConnected ? 1 : 0.85,
+                        marginRight: '0.5rem'
                       }}
-                    ></span>{' '}
-                    {isConnected ? t('common.connected') : t('common.disconnected')}
+                    ></span>
+                    {displayName}
                   </td>
-                  <td>{displayName}</td>
                   {extraColumns.map((column, columnIndex) => (
                     <td
                       key={column.key || column.label || columnIndex}

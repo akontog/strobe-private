@@ -75,12 +75,15 @@ function initPolynomial({
       color: student.color,
       isConnected: true,
       connected: true,
-      answers: {
-        coefficient: student.answers?.coefficient || '',
-        degreeX: student.answers?.degreeX || '',
-        degreeY: student.answers?.degreeY || '',
-        totalDegree: student.answers?.totalDegree || ''
-      },
+      answers: student.answers && typeof student.answers === 'object'
+        ? Object.entries(student.answers).reduce((memo, [key, value]) => {
+            const safeValue = value === undefined || value === null ? '' : String(value).trim();
+            if (safeValue !== '' || value === 0 || value === false) {
+              memo[key] = safeValue;
+            }
+            return memo;
+          }, {})
+        : {},
       expressionId: student.expressionId || lessonState.expressionId
     }));
   }
@@ -167,12 +170,9 @@ function initPolynomial({
         const fallbackName = `Student ${studentSeq}`;
         const name = sanitizeString(message.name, 40) || current?.name || fallbackName;
         const color = normalizeColor(message.color, current?.color || '#3b82f6');
-        const previousAnswers = current?.answers || {
-          coefficient: '',
-          degreeX: '',
-          degreeY: '',
-          totalDegree: ''
-        };
+        const previousAnswers = current?.answers && typeof current.answers === 'object'
+          ? { ...current.answers }
+          : {};
 
         studentsBySocket.set(ws, {
           id,
@@ -232,12 +232,14 @@ function initPolynomial({
         }
 
         const rawAnswers = message.answers && typeof message.answers === 'object' ? message.answers : {};
-        current.answers = {
-          coefficient: sanitizeString(rawAnswers.coefficient, 24) || '',
-          degreeX: sanitizeString(rawAnswers.degreeX, 24) || '',
-          degreeY: sanitizeString(rawAnswers.degreeY, 24) || '',
-          totalDegree: sanitizeString(rawAnswers.totalDegree, 24) || ''
-        };
+        current.answers = Object.entries(rawAnswers).reduce((memo, [key, value]) => {
+          const nextValue = value === undefined || value === null ? '' : String(value).trim();
+          const safeKey = sanitizeString(key, 48) || key;
+          if (nextValue !== '' || value === 0 || value === false) {
+            memo[safeKey] = sanitizeString(nextValue, 64) || '';
+          }
+          return memo;
+        }, {});
         current.expressionId = sanitizeString(message.expressionId, 64) || current.expressionId || lessonState.expressionId;
 
         studentsBySocket.set(ws, current);
