@@ -81,6 +81,17 @@ const APP_DEFINITIONS = [
     staticDir: path.join(LABS_ROOT, 'linear-systems-lab'),
     teacherEntry: 'teacher.html',
     clientEntry: 'student.html'
+  },
+  {
+    slug: 'identities-lab',
+    labId: 'identities-lab',
+    title: 'Identities Lab',
+    description: 'Algebraic identities with geometric proofs for sum square, difference square, and difference of squares.',
+    roles: ['teacher', 'student', 'client'],
+    kind: 'static',
+    staticDir: path.join(LABS_ROOT, 'identities-lab'),
+    teacherEntry: 'teacher.html',
+    clientEntry: 'student.html'
   }
 ];
 

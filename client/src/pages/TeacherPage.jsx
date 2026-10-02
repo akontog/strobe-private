@@ -45,7 +45,8 @@ export default function TeacherPage() {
     'fourier-lab': 'blue',
     'neural-lab': 'magenta',
     'primes-lab': 'amber',
-    'linear-systems-lab': 'green'
+    'linear-systems-lab': 'green',
+    'identities-lab': 'indigo'
   };
 
   const iconBySlug = {
@@ -54,7 +55,8 @@ export default function TeacherPage() {
     'fourier-lab': '🌊',
     'neural-lab': '🧠',
     'primes-lab': '🔢',
-    'linear-systems-lab': '📉'
+    'linear-systems-lab': '📉',
+    'identities-lab': '🧮'
   };
 
   const extraTeacherTools = [

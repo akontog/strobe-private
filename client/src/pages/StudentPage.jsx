@@ -45,7 +45,8 @@ export default function StudentPage() {
     'fourier-lab': 'blue',
     'neural-lab': 'magenta',
     'primes-lab': 'green',
-    'linear-systems-lab': 'indigo'
+    'linear-systems-lab': 'indigo',
+    'identities-lab': 'amber'
   };
 
   const iconBySlug = {
@@ -54,7 +55,8 @@ export default function StudentPage() {
     'fourier-lab': '🎵',
     'neural-lab': '⚡',
     'primes-lab': '🧮',
-    'linear-systems-lab': '📘'
+    'linear-systems-lab': '📘',
+    'identities-lab': '🧠'
   };
 
   const extraStudentTools = [
@@ -65,6 +67,14 @@ export default function StudentPage() {
       path: '/labs/linear-systems-lab/student',
       tone: 'indigo',
       icon: '📘'
+    },
+    {
+      id: 'identities-lab-link',
+      title: 'Identities Lab',
+      description: 'Αλγεβρική και γεωμετρική κατανόηση βασικών αλγεβρικών ταυτοτήτων.',
+      path: '/labs/identities-lab/student',
+      tone: 'amber',
+      icon: '🧠'
     },
     {
       id: 'geogebra-collab',
