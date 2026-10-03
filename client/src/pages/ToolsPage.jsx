@@ -65,6 +65,11 @@ export default function ToolsPage() {
       tone: 'indigo',
       helper: 'Central dashboard for all connected collaborative GeoGebra rooms.'
     },
+    console: {
+      icon: '⌁',
+      tone: 'indigo',
+      helper: 'Live view of messages exchanged between users and the server.'
+    },
     'linear-seperation': {
       icon: '🧠',
       tone: 'orange',

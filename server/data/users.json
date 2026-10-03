@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-10-02T18:46:50.930Z",
+  "savedAt": "2026-10-03T07:59:34.430Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -559,6 +559,20 @@
       "appData": {},
       "connectedAt": 1790966810930,
       "lastSeenAt": 1790966810930,
+      "isActive": true
+    },
+    {
+      "id": "5a02a2e6-ef09-43ff-801b-f88666e2b79d",
+      "userId": "user_1791014374429_qgft7ri",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "username": "user-5a02a2",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791014374430,
+      "lastSeenAt": 1791014374430,
       "isActive": true
     }
   ]

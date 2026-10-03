@@ -258,6 +258,13 @@ app.get('/api/tools', (req, res) => {
       description: 'Teacher-facing dashboard for all collaborative GeoGebra rooms and live student moves.',
       path: '/tools/geogebra-monitor/',
       available: true
+    },
+    {
+      id: 'console',
+      title: 'Console',
+      description: 'Live console for messages exchanged between users and the server.',
+      path: '/tools/console/',
+      available: true
     }
   ]);
 });

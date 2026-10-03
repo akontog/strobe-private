@@ -22,12 +22,8 @@ function sanitizeCommPayload(value, depth = 0) {
     return null;
   }
 
-  if (depth > 3) {
-    return '[max-depth]';
-  }
-
   if (typeof value === 'number') {
-    return Number.isFinite(value) ? Number(value.toFixed(6)) : null;
+    return Number.isFinite(value) ? value : null;
   }
 
   if (typeof value === 'boolean') {
@@ -35,39 +31,24 @@ function sanitizeCommPayload(value, depth = 0) {
   }
 
   if (typeof value === 'string') {
-    return sanitizeCommString(value, 220);
+    return value;
   }
 
   if (Array.isArray(value)) {
-    const list = value.slice(0, 12).map((item) => sanitizeCommPayload(item, depth + 1));
-
-    if (value.length > 12) {
-      list.push(`[+${value.length - 12} more]`);
-    }
-
-    return list;
+    return value.map((item) => sanitizeCommPayload(item, depth + 1));
   }
 
   if (typeof value === 'object') {
     const result = {};
 
-    Object.keys(value).slice(0, 14).forEach((key) => {
-      if (/image|frame|blob|buffer/i.test(key)) {
-        result[key] = '[binary omitted]';
-        return;
-      }
-
-      result[sanitizeCommString(key, 40)] = sanitizeCommPayload(value[key], depth + 1);
+    Object.keys(value).forEach((key) => {
+      result[key] = sanitizeCommPayload(value[key], depth + 1);
     });
-
-    if (Object.keys(value).length > 14) {
-      result.__moreKeys = Object.keys(value).length - 14;
-    }
 
     return result;
   }
 
-  return sanitizeCommString(value, 220);
+  return value;
 }
 // Δημιουργία και διαχείριση αρχείου καταγραφής επικοινωνίας
 function createCommunicationLog({ limit = 1200, catalog = [] } = {}) {

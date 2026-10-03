@@ -29,6 +29,7 @@ import GeoGebraCollabTool from './tools/geogebra-collab/GeoGebraCollabTool';
 import GeoGebraCollabTestTool from './tools/geogebra-collab-test/GeoGebraCollabTestTool';
 import GeogebraMonitorTool from './tools/geogebra-monitor/GeogebraMonitorTool';
 import LinearSeparation from './tools/linear-separation/LinearSeparation';
+import ConsoleTool from './tools/console/ConsoleTool';
 import StudentIdentityControl from './shared/components/StudentIdentityControl';
 import LanguageSwitcher from './shared/components/LanguageSwitcher';
 
@@ -51,6 +52,7 @@ function App() {
           <Link className="client-nav-link" to="/tools/camera-speed-test">Camera Speed Test</Link>
           <Link className="client-nav-link" to="/tools/geogebra-collab">GeoGebra Collab</Link>
           <Link className="client-nav-link" to="/tools/geogebra-monitor">GeoGebra Monitor</Link>
+          <Link className="client-nav-link" to="/tools/console">Console</Link>
           <Link className="client-nav-link" to="/tools/linear-separation">Linear Separation</Link>
         </nav>
         <div className="client-topbar-controls">
@@ -70,6 +72,7 @@ function App() {
           <Route path="/tools/geogebra-collab" element={<GeoGebraCollabTool />} />
           <Route path="/tools/geogebra-collab-test" element={<GeoGebraCollabTestTool />} />
           <Route path="/tools/geogebra-monitor" element={<GeogebraMonitorTool />} />
+          <Route path="/tools/console" element={<ConsoleTool />} />
           <Route path="/tools/linear-seperation" element={<LinearSeparation />} />
           <Route path="/apps-launcher" element={<AppsLauncherPage />} />
           <Route path="/labs/buffon-needle/student" element={<BuffonStudentView />} />
