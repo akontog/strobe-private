@@ -420,12 +420,90 @@
 
 /* Shared lab layout patterns reused across collaborative labs */
 .common-zone {
+  position: relative;
   background: #ffffff;
   border-radius: 2rem;
   padding: 1.5rem;
   margin-bottom: 1.2rem;
   border: 3px solid #3b82f6;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+
+.common-zone-fullscreen-toggle {
+  position: absolute;
+  z-index: 5;
+  top: 0.65rem;
+  right: 0.75rem;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid #93c5fd;
+  border-radius: 0.65rem;
+  background: #eff6ff;
+  color: #1e3a8a;
+  font: inherit;
+  font-size: 1.35rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.common-zone-fullscreen-toggle:hover {
+  background: #dbeafe;
+}
+
+.common-zone-fullscreen-toggle svg {
+  display: block;
+  width: 1.35rem;
+  height: 1.35rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.common-zone-fullscreen-toggle svg {
+  display: block;
+  width: 1.35rem;
+  height: 1.35rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.common-zone:fullscreen {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  max-width: none;
+  max-height: none;
+  padding: 4rem 2rem 2rem;
+  margin: 0;
+  overflow: auto;
+  border-radius: 0;
+}
+
+.common-zone:fullscreen > :not(.common-zone-fullscreen-toggle) {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+}
+
+.common-zone:fullscreen > .lab-workspace,
+.common-zone:fullscreen > .poly-neural-zone {
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero-title {

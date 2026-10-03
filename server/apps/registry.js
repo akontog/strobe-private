@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const LABS_ROOT = path.join(__dirname, '..', '..', 'client', 'src', 'labs');
-
+// Root directory for all lab static files
 const APP_DEFINITIONS = [
   {
     slug: 'geometry-live',

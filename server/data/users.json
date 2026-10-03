@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-10-03T07:59:34.430Z",
+  "savedAt": "2026-10-03T10:08:46.893Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -552,13 +552,24 @@
       "userId": "user_1790966810930_mt1smne",
       "ip": "127.0.0.1",
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0",
-      "username": "user-b4b21f",
+      "username": "asdfg",
       "role": "student",
-      "source": "http",
-      "activeApps": [],
-      "appData": {},
+      "source": "polynomial-lab",
+      "activeApps": [
+        "polynomial",
+        "polynomial-lab"
+      ],
+      "appData": {
+        "polynomial": {
+          "id": "student-2",
+          "name": "asdfg",
+          "color": "#4ecdc4",
+          "active": true,
+          "lastUpdated": "2026-10-03T09:49:57.687Z"
+        }
+      },
       "connectedAt": 1790966810930,
-      "lastSeenAt": 1790966810930,
+      "lastSeenAt": 1791020997693,
       "isActive": true
     },
     {
@@ -566,13 +577,25 @@
       "userId": "user_1791014374429_qgft7ri",
       "ip": "127.0.0.1",
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
-      "username": "user-5a02a2",
-      "role": "student",
-      "source": "http",
-      "activeApps": [],
-      "appData": {},
+      "username": "xx",
+      "role": "teacher",
+      "source": "polynomial-lab",
+      "activeApps": [
+        "polynomial",
+        "linear-systems-lab",
+        "polynomial-lab"
+      ],
+      "appData": {
+        "polynomial": {
+          "id": "student-1",
+          "name": "xx",
+          "color": "#b2611f",
+          "active": true,
+          "lastUpdated": "2026-10-03T09:21:48.551Z"
+        }
+      },
       "connectedAt": 1791014374430,
-      "lastSeenAt": 1791014374430,
+      "lastSeenAt": 1791022126893,
       "isActive": true
     }
   ]

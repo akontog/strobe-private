@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import CommonZoneFullscreenButton from '../../shared/components/CommonZoneFullscreenButton';
 import NumberGrid from './components/NumberGrid';
 import SelectionSummaryAccordion from './components/SelectionSummaryAccordion';
 import StudentsTable from './components/StudentsTable';
@@ -407,6 +408,7 @@ const App = ({ role = 'teacher' }) => {
         </header>
 
         <section className="common-zone primes-board-zone primes-board-zone--compact">
+          <CommonZoneFullscreenButton />
           <div className="primes-board-header">
             <div>
               <p>Κεντρικό πάνελ</p>

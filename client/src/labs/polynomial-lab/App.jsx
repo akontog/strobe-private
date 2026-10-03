@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  CommonZoneFullscreenButton,
   Accordion,
   ActivitiesMenu,
   CollaborativeGeoGebra,
@@ -1279,6 +1280,7 @@ export default function App({ role = 'teacher' }) {
       </header>
 
       <section className="common-zone lab-zone poly-common-zone">
+        <CommonZoneFullscreenButton />
         <SharedCommonZoneLayout
           className={isGeogebraAreaActivity ? 'poly-neural-zone--geogebra' : ''}
           isGroupingMode={isGroupingActivity}

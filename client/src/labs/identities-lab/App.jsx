@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import CommonZoneFullscreenButton from '../../shared/components/CommonZoneFullscreenButton';
 import {
   Accordion,
   ActivitiesMenu,
@@ -249,6 +250,7 @@ export default function App({ role = 'student' }) {
       </header>
 
       <section className="common-zone lab-zone linear-common-zone">
+        <CommonZoneFullscreenButton />
         <div className="linear-topbar">
           <span className="poly-status-pill">{isTeacher ? 'Teacher mode' : 'Student mode'}</span>
         </div>

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import CommonZoneFullscreenButton from '../../shared/components/CommonZoneFullscreenButton';
 import { TeacherCard } from './components/TeacherCard';
 import { DatasetSelector } from './components/DatasetSelector';
 import { VerticalProducts } from './components/VerticalProducts';
@@ -768,6 +769,7 @@ const [studentColor, setStudentColor] = useState(() => {
       )}
 
       <div className="common-zone">
+        <CommonZoneFullscreenButton />
         <VerticalProducts
           icon={displayIcon}
           demoIcon={demoIcon}
