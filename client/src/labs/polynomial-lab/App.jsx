@@ -12,6 +12,7 @@ import {
   SharedInputRow,
   StudentQrAccordion,
   StudentTable,
+  AlgebraTiles,
   randomIdentityColor,
   readIdentitySnapshot,
   readIdentityColor,
@@ -92,6 +93,13 @@ const ACTIVITY_LIBRARY = [
     title: '2.6 Πολλαπλασιασμός με εμβαδά ορθογωνίου',
     objective: 'Οπτικοποίηση του (2x+4)(x+5) με ορθογώνιο και επιμέρους εμβαδά.',
     tasks: ['Μετακίνηση σημείου x', 'Παρατήρηση 4 υπο-εμβαδών', 'Σύνδεση με ανάπτυγμα πολυωνύμου']
+  },
+  {
+    id: '2.7',
+    code: '2.7',
+    title: '2.7 Πλακίδια άλγεβρας: πολλαπλασιασμός και παραγοντοποίηση',
+    objective: 'Αναπαράσταση πολυωνύμων με θετικά και αρνητικά πλακίδια, μοντέλο εμβαδού και αντίστροφη παραγοντοποίηση.',
+    tasks: ['Σύνθεση πολυωνύμου με πλακίδια', 'Μοντέλο εμβαδού για γινόμενο', 'Παραγοντοποίηση τριωνύμου']
   }
 ];
 
@@ -105,7 +113,8 @@ const ACTIVITY_DATASET_KEYS = {
   '2.3': 'polynomialLikeTermGrouping',
   '2.4': 'polynomialOperations',
   '2.5': 'polynomialMultiplications',
-  '2.6': 'polynomialAreaModel'
+  '2.6': 'polynomialAreaModel',
+  '2.7': 'algebraTiles'
 };
 
 const buildGroupingCorrectAnswers = (items = []) => items.reduce((answers, item) => {
@@ -601,6 +610,27 @@ const ALGEBRA_DATASETS = {
         scoreIncorrect: SCORE_INCORRECT
       }
     ]
+  },
+  algebraTiles: {
+    label: 'Πλακίδια άλγεβρας',
+    items: [
+      {
+        id: 'algebra-tiles-linear',
+        expression: '3x + 2',
+        resultMode: 'algebraTiles',
+        correctAnswers: {},
+        scoreCorrect: SCORE_CORRECT,
+        scoreIncorrect: SCORE_INCORRECT
+      },
+      {
+        id: 'algebra-tiles-quadratic',
+        expression: '2x² − x + 4',
+        resultMode: 'algebraTiles',
+        correctAnswers: {},
+        scoreCorrect: SCORE_CORRECT,
+        scoreIncorrect: SCORE_INCORRECT
+      }
+    ]
   }
 };
 
@@ -755,6 +785,7 @@ export default function App({ role = 'teacher' }) {
   const [studentColor, setStudentColor] = useState(() => readIdentityColor(randomIdentityColor()));
   const [lastSentAnswers, setLastSentAnswers] = useState('');
   const [lessonGeogebraRoomId, setLessonGeogebraRoomId] = useState('');
+  const [algebraTilesByExpression, setAlgebraTilesByExpression] = useState({});
 
   useEffect(() => {
     function syncIdentity() {
@@ -854,6 +885,7 @@ export default function App({ role = 'teacher' }) {
   const isMonomialGroupingActivity = selectedActivityId === '1.2';
   const isPolynomialGroupingActivity = selectedActivityId === '2.3';
   const isGeogebraAreaActivity = selectedActivityId === '2.6';
+  const isAlgebraTilesActivity = selectedActivityId === '2.7';
   const isGroupingActivity = isMonomialGroupingActivity || isPolynomialGroupingActivity;
   const isDegreeOnlyActivity = selectedActivityId === '2.1';
   const isMonomialResultActivity = ['1.3', '1.4', '2.2'].includes(selectedActivityId);
@@ -1061,6 +1093,11 @@ export default function App({ role = 'teacher' }) {
     setTeamAnswers((prev) => ({ ...prev, [field]: value }));
   };
 
+  const updateAlgebraTiles = (tiles) => {
+    setAlgebraTilesByExpression((current) => ({ ...current, [selectedExpressionId]: tiles }));
+    sendSocketMessage({ type: 'algebra_tiles_update', expressionId: selectedExpressionId, tiles });
+  };
+
   const sendSocketMessage = (payload) => {
     const ws = wsRef.current;
     if (!ws || ws.readyState !== WebSocket.OPEN) {
@@ -1162,6 +1199,10 @@ export default function App({ role = 'teacher' }) {
 
         if (Array.isArray(message.roster)) {
           setRoster(message.roster);
+        }
+
+        if (message.algebraTiles && typeof message.algebraTiles === 'object') {
+          setAlgebraTilesByExpression(message.algebraTiles);
         }
       });
 
@@ -1359,6 +1400,14 @@ export default function App({ role = 'teacher' }) {
                   </>
                 )}
               </div>
+            ) : isAlgebraTilesActivity ? (
+              <AlgebraTiles
+                key={selectedExpressionId}
+                initialExample={selectedExpressionId === 'algebra-tiles-quadratic' ? 'quadratic' : 'linear'}
+                canvasMode="multiplication"
+                tiles={algebraTilesByExpression[selectedExpressionId]}
+                onTilesChange={updateAlgebraTiles}
+              />
             ) : isGeogebraAreaActivity ? (
               <div className="poly-geogebra-area-panel">
                 <p className="poly-hero-text">

@@ -17,5 +17,6 @@ export { default as SharedInputBox } from './SharedInputBox';
 export { default as SharedInputRow } from './SharedInputRow';
 export { default as SharedCommonZoneLayout } from './SharedCommonZoneLayout';
 export { default as CommonZoneFullscreenButton } from './CommonZoneFullscreenButton';
+export { default as AlgebraTiles } from './AlgebraTiles';
 export * from './studentTableColumnPresets';
 export * from './identityStorage';

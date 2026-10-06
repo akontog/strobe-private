@@ -1,16 +1,16 @@
-/**** 1. Εισαγωγή βιβλιοθηκών ****/
-// Για δημιουργία web εφαρμογής
+/**** 1. Import libraries ****/
+// Web application framework
 const express = require('express');
-// Πρόσβαση στο σύστημα αρχείων
+// Access to the file system
 //const fs = require('node:fs');
-// διαχείριση διαδρομών αρχείων
+// File path management
 const path = require('node:path');
-// HTTP server για την εξυπηρέτηση αιτημάτων
+// HTTP server for handling requests
 const http = require('node:http');
-// WebSocket για real-time επικοινωνία
+// WebSocket for real-time communication
 //const { WebSocketServer } = require('ws');
 
-/**** 2. Εισαγωγή routers (δρομολογητές) ****/
+/**** 2. Import routers ****/
 const teacherRouter = require('./routes/teacher');
 const clientRouter = require('./routes/client');
 const createAdminRouter = require('./routes/admin');
@@ -18,7 +18,7 @@ const createAppsRouter = require('./routes/apps');
 const appDataRouter = require('./routes/appData');
 const createActivitiesRouter = require('./routes/activities');
 
-/**** 3. Εισαγωγή βοηθητικών συναρτήσεων, μεταβλητών και ρυθμίσεων ****/
+/**** 3. Import helper functions, variables, and settings ****/
 const {
     HOST,
     PORT,
@@ -47,7 +47,8 @@ const {
     registerStaticFiles
 } = require('./startup/registerStaticFiles');
 const { sessionMiddleware, getWebSocketSessionInfo } = require('./middleware/sessionMiddleware');
-/**** 4. Εισαγωγή υπηρεσιών ****/
+
+/**** 4. Import services ****/
 const sessionManager = require('./services/sessionManager');
 const initFourier = require('./services/fourier');
 const initBuffon = require('./services/buffon');
@@ -61,10 +62,11 @@ const { createGeogebraLessonStore } = require('./utils/geogebraLessonStore');
 const wsRegistry = require('./services/websocketRegistry');
 const { runGeogebraCollabProtocolRunner } = require('./tools/geogebraCollabProtocolRunner');
 
-/**** 5. Δημιουργία εφαρμογής Express και HTTP server ****/
+/**** 5. Create Express application and HTTP server ****/
+// Create Express application instance
 const app = express();
+// Create HTTP server using the Express application
 const httpServer = http.createServer(app);
-
 const io = createRealtimeTransport();
 const { router: activitiesRouter, getCurrentActivity, setCurrentActivity } = createActivitiesRouter({ io });
 

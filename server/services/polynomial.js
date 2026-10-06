@@ -24,6 +24,8 @@ function initPolynomial({
     expressionId: 'm-1',
     geogebraRoomId: ''
   };
+  const algebraTilesByExpression = {};
+  const allowedAlgebraTileTypes = new Set(['one', 'x', 'y', 'x2', 'xy', 'y2']);
 
   function record(event, direction, from, to, payload) {
     if (typeof recordCommunication !== 'function') {
@@ -95,7 +97,8 @@ function initPolynomial({
       type: 'polynomial_state',
       roster: participants,
       participants,
-      lesson: lessonState
+      lesson: lessonState,
+      algebraTiles: algebraTilesByExpression
     };
     const serialized = JSON.stringify(payload);
 
@@ -226,6 +229,42 @@ function initPolynomial({
           lessonState.geogebraRoomId = geogebraRoomId || '';
         }
 
+        emitState();
+        return;
+      }
+
+      if (type === 'algebra_tiles_update') {
+        if ((!teachers.has(ws) && !studentsBySocket.has(ws)) || lessonState.activityId !== '2.7') {
+          return;
+        }
+
+        const expressionId = sanitizeString(message.expressionId, 64);
+        if (!expressionId || expressionId !== lessonState.expressionId) {
+          return;
+        }
+
+        const incomingTiles = Array.isArray(message.tiles) ? message.tiles.slice(0, 300) : [];
+        const safeTiles = incomingTiles.reduce((result, tile, index) => {
+          if (!tile || !allowedAlgebraTileTypes.has(tile.type)) return result;
+          const sign = Number(tile.sign);
+          const x = Number(tile.x);
+          const y = Number(tile.y);
+          if ((sign !== 1 && sign !== -1) || !Number.isInteger(x) || !Number.isInteger(y)) return result;
+          result.push({
+            id: sanitizeString(tile.id, 80) || `tile-${index}`,
+            type: tile.type,
+            sign,
+            x: Math.max(0, Math.min(500, x)),
+            y: Math.max(0, Math.min(500, y))
+          });
+          return result;
+        }, []);
+
+        algebraTilesByExpression[expressionId] = safeTiles;
+        record('polynomial-lab:algebra_tiles_state', 'out', 'server', 'polynomial-clients', {
+          expressionId,
+          tileCount: safeTiles.length
+        });
         emitState();
         return;
       }

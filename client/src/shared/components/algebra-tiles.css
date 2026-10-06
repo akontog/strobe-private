@@ -1,0 +1,51 @@
+.algebra-tiles { --algebra-grid-unit: 40px; display: grid; gap: 1.25rem; width: 100%; color: #172033; }
+.algebra-tiles__intro { display: flex; justify-content: space-between; align-items: start; gap: 1rem; flex-wrap: wrap; }
+.algebra-tiles__intro h2, .algebra-tiles__intro p { margin: 0; }
+.algebra-tiles__intro h2 { font-size: clamp(1.35rem, 2vw, 1.8rem); }
+.algebra-tiles__intro p:not(.algebra-tiles__eyebrow) { margin-top: .35rem; color: #526078; }
+.algebra-tiles__eyebrow { margin: 0 0 .3rem; color: #2563eb; font-size: .72rem; font-weight: 800; letter-spacing: .12em; }
+.algebra-tiles__modes, .algebra-tiles__examples { display: flex; flex-wrap: wrap; gap: .5rem; }
+.algebra-tiles__modes button, .algebra-tiles__examples button, .algebra-tiles__palette-item button { border: 1px solid #cbd5e1; border-radius: .55rem; padding: .5rem .7rem; background: #fff; color: #1e293b; font: inherit; cursor: pointer; }
+.algebra-tiles__modes button.is-active { border-color: #2563eb; background: #dbeafe; color: #1e40af; font-weight: 700; }
+.algebra-tiles__examples { align-items: center; padding: .8rem; border-radius: .75rem; background: #f1f5f9; }
+.algebra-tiles__examples > span { margin-right: .25rem; color: #475569; font-weight: 700; }
+.algebra-tiles__palette { display: grid; grid-template-columns: repeat(6, minmax(7rem, 1fr)); gap: .65rem; }
+.algebra-tiles__palette-item { display: flex; min-height: 9rem; flex-direction: column; align-items: center; justify-content: center; gap: .5rem; padding: .6rem; border: 1px solid #dbe3ef; border-radius: .8rem; background: #fff; }
+.algebra-tiles__palette-item > div { display: flex; gap: .3rem; }
+.algebra-tiles__negative-source { border-color: #dc2626; background: #fecaca; color: #7f1d1d; }
+.algebra-tiles__palette-item button { padding: .35rem .45rem; font-size: .78rem; }
+.algebra-tile { display: inline-grid; flex: 0 0 auto; place-items: center; border: 2px solid #2563eb; border-radius: .25rem; background: #bfdbfe; color: #172554; font: 800 1.1rem/1 sans-serif; }
+.algebra-tile--unit { width: var(--algebra-grid-unit); height: var(--algebra-grid-unit); }
+.algebra-tile--x { width: calc(var(--algebra-grid-unit) * 3); height: var(--algebra-grid-unit); }
+.algebra-tile--y { width: var(--algebra-grid-unit); height: calc(var(--algebra-grid-unit) * 3); writing-mode: vertical-rl; }
+.algebra-tile--x2 { width: calc(var(--algebra-grid-unit) * 3); height: calc(var(--algebra-grid-unit) * 3); background: #93c5fd; }
+.algebra-tile--xy { width: calc(var(--algebra-grid-unit) * 3); height: calc(var(--algebra-grid-unit) * 3); background: #ddd6fe; border-color: #7c3aed; color: #3b0764; }
+.algebra-tile--y2 { width: calc(var(--algebra-grid-unit) * 3); height: calc(var(--algebra-grid-unit) * 3); background: #c4b5fd; border-color: #6d28d9; color: #2e1065; }
+.algebra-tile.is-negative { border-color: #dc2626; background: #fecaca; color: #7f1d1d; }
+.algebra-tiles__board { padding: 1rem; border: 2px dashed #cbd5e1; border-radius: .9rem; background: #f8fafc; }
+.algebra-tiles__board-title { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .4rem .6rem; border-radius: .55rem; background: rgba(255,255,255,.92); }
+.algebra-tiles__board-title h3 { margin: 0; font-size: 1rem; }
+.algebra-tiles__board-title output { color: #1d4ed8; font-size: 1.2rem; font-weight: 800; }
+.algebra-tiles__placed { position: relative; min-height: 18rem; margin-top: .75rem; overflow: auto; border-radius: .5rem; background-color: #fff; background-image: linear-gradient(#e8edf4 1px, transparent 1px), linear-gradient(90deg, #e8edf4 1px, transparent 1px); background-size: var(--algebra-grid-unit) var(--algebra-grid-unit); }
+.algebra-tiles__placed--equation::after, .algebra-tiles__placed--multiplication::after, .algebra-tiles__placed--multiplication::before { position: absolute; z-index: 0; content: ''; pointer-events: none; background: rgba(37, 99, 235, .45); }
+.algebra-tiles__placed--equation::after, .algebra-tiles__placed--multiplication::after { top: 0; bottom: 0; left: 50%; width: 2px; }
+.algebra-tiles__placed--multiplication::before { top: 50%; right: 0; left: 0; height: 2px; }
+.algebra-tiles__placed .algebra-tile { position: absolute; z-index: 1; cursor: grab; touch-action: none; }
+.algebra-tiles__placed .algebra-tile:active { cursor: grabbing; }
+.algebra-tiles__empty { position: absolute; z-index: 1; top: .75rem; left: .75rem; padding: .5rem; color: #64748b; }
+.algebra-tiles__model { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 2rem; padding: 1.25rem; border-radius: .9rem; background: #f8fafc; }
+.algebra-tiles__controls { display: grid; gap: .75rem; min-width: min(100%, 16rem); }
+.algebra-tiles__controls h3, .algebra-tiles__controls p { margin: 0; }
+.algebra-tiles__controls label { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+.algebra-tiles__controls input { width: 5rem; padding: .4rem; border: 1px solid #cbd5e1; border-radius: .45rem; font: inherit; }
+.algebra-tiles__controls strong { padding: .65rem; border-radius: .5rem; background: #dbeafe; color: #1e3a8a; font-size: 1.15rem; }
+.algebra-tiles__area { display: grid; grid-template-columns: minmax(5rem, 1fr) minmax(5rem, 1fr); grid-template-rows: minmax(5rem, 1fr) minmax(5rem, 1fr); width: min(100%, 24rem); aspect-ratio: 1.2; border: 2px solid #334155; }
+.algebra-tiles__area-cell { display: grid; place-items: center; border: 1px solid #64748b; font-size: clamp(1.1rem, 3vw, 2rem); font-weight: 800; }
+.algebra-tiles__area-cell--square { background: #93c5fd; }
+.algebra-tiles__area-cell--x { background: #bfdbfe; }
+.algebra-tiles__area-cell--unit { background: #dbeafe; }
+.algebra-tiles__area-cell.is-negative { background: #fecaca; color: #7f1d1d; }
+.algebra-tiles__factor-result { display: grid; gap: .75rem; text-align: center; font-size: clamp(1.25rem, 3vw, 2rem); }
+.algebra-tiles__factor-result strong { color: #166534; }
+@media (max-width: 800px) { .algebra-tiles__palette { grid-template-columns: repeat(3, minmax(6rem, 1fr)); } }
+@media (max-width: 440px) { .algebra-tiles__palette { grid-template-columns: repeat(2, minmax(6rem, 1fr)); } .algebra-tiles__model { gap: 1rem; padding: .75rem; } }

@@ -4,6 +4,8 @@
 // description: Περιγραφή του event (για τον προγραμματιστή)
 
 const COMM_EVENT_CATALOG = Object.freeze([
+  { app: 'polynomial-lab', direction: 'in', event: 'polynomial-lab:algebra_tiles_update', description: 'Participant updates the shared Algebra Tiles canvas.' },
+  { app: 'polynomial-lab', direction: 'out', event: 'polynomial-lab:algebra_tiles_state', description: 'Server relays the validated Algebra Tiles canvas to participants.' },
   { app: 'socket', direction: 'in', event: 'socket:connect', description: 'WebSocket transport connected to server.' },
   { app: 'socket', direction: 'in', event: 'socket:disconnect', description: 'WebSocket transport disconnected from server.' },
 

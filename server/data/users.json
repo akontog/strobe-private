@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-10-03T10:08:46.893Z",
+  "savedAt": "2026-10-06T07:07:46.829Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -582,8 +582,7 @@
       "source": "polynomial-lab",
       "activeApps": [
         "polynomial",
-        "linear-systems-lab",
-        "polynomial-lab"
+        "linear-systems-lab"
       ],
       "appData": {
         "polynomial": {
@@ -595,7 +594,200 @@
         }
       },
       "connectedAt": 1791014374430,
-      "lastSeenAt": 1791022126893,
+      "lastSeenAt": 1791114328398,
+      "isActive": true
+    },
+    {
+      "id": "165a96f7-9e30-43c5-a69e-4a6e2dc67148",
+      "userId": "user_1791112068332_mifsqd4",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0",
+      "username": "asdfg",
+      "role": "student",
+      "source": "polynomial-lab",
+      "activeApps": [
+        "polynomial-lab",
+        "polynomial"
+      ],
+      "appData": {
+        "polynomial": {
+          "id": "student-1",
+          "name": "asdfg",
+          "color": "#4ecdc4",
+          "active": true,
+          "lastUpdated": "2026-10-04T11:44:45.701Z"
+        }
+      },
+      "connectedAt": 1791112068332,
+      "lastSeenAt": 1791114285703,
+      "isActive": true
+    },
+    {
+      "id": "4645b478-8841-4fca-ba29-f3fbecef321d",
+      "userId": "user_1791182714103_76r49js",
+      "ip": "198.235.24.206",
+      "userAgent": "Hello from Palo Alto Networks, find out more about our scans in https://docs-cortex.paloaltonetworks.com/r/1/Cortex-Xpanse/Scanning-activity",
+      "username": "user-4645b4",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791182714103,
+      "lastSeenAt": 1791182714103,
+      "isActive": true
+    },
+    {
+      "id": "f269f5f9-94ed-4804-be08-6bd34abf1d10",
+      "userId": "user_1791183739960_dgejoga",
+      "ip": "66.132.195.52",
+      "userAgent": "unknown",
+      "username": "user-f269f5",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791183739960,
+      "lastSeenAt": 1791183739960,
+      "isActive": true
+    },
+    {
+      "id": "4dc65172-1545-426f-842e-73631c3a0fc3",
+      "userId": "user_1791183746929_9a0gvdp",
+      "ip": "66.132.195.52",
+      "userAgent": "Mozilla/5.0 (compatible; CensysInspect/1.1; +https://about.censys.io/)",
+      "username": "user-4dc651",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791183746929,
+      "lastSeenAt": 1791183746929,
+      "isActive": true
+    },
+    {
+      "id": "395e2c79-b2f1-45dd-b354-2e366b9205b2",
+      "userId": "user_1791183751338_3vkomhh",
+      "ip": "66.132.195.52",
+      "userAgent": "Mozilla/5.0 (compatible; CensysInspect/1.1; +https://about.censys.io/)",
+      "username": "user-395e2c",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791183751338,
+      "lastSeenAt": 1791183751338,
+      "isActive": true
+    },
+    {
+      "id": "64e432d8-abb3-4967-a61f-b1c4b306416f",
+      "userId": "user_1791183759459_rf7srg4",
+      "ip": "147.185.132.165",
+      "userAgent": "Hello from Palo Alto Networks, find out more about our scans in https://docs-cortex.paloaltonetworks.com/r/1/Cortex-Xpanse/Scanning-activity",
+      "username": "user-64e432",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791183759459,
+      "lastSeenAt": 1791183759459,
+      "isActive": true
+    },
+    {
+      "id": "87086b86-9fa5-4608-ab0b-206740d1fe60",
+      "userId": "user_1791183764788_9nbpm7v",
+      "ip": "66.132.195.52",
+      "userAgent": "Mozilla/5.0 (compatible; CensysInspect/1.1; +https://about.censys.io/)",
+      "username": "user-87086b",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791183764788,
+      "lastSeenAt": 1791183764788,
+      "isActive": true
+    },
+    {
+      "id": "0e5eb6ab-851d-418e-8a6c-8c127e2d2a05",
+      "userId": "user_1791183775528_m2cgc7x",
+      "ip": "66.132.195.52",
+      "userAgent": "Mozilla/5.0 (compatible; CensysInspect/1.1; +https://about.censys.io/)",
+      "username": "user-0e5eb6",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791183775528,
+      "lastSeenAt": 1791183775528,
+      "isActive": true
+    },
+    {
+      "id": "8f32712c-6fc2-4fc1-be0b-00b260e5315e",
+      "userId": "user_1791183777385_4atwobz",
+      "ip": "66.132.195.52",
+      "userAgent": "Mozilla/5.0 (compatible; CensysInspect/1.1; +https://about.censys.io/)",
+      "username": "user-8f3271",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791183777385,
+      "lastSeenAt": 1791183777385,
+      "isActive": true
+    },
+    {
+      "id": "d310887e-5066-4647-80a3-3fe99c0b7e05",
+      "userId": "user_1791264419192_9656qeo",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "username": "user-d31088",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791264419194,
+      "lastSeenAt": 1791264431687,
+      "isActive": true
+    },
+    {
+      "id": "03fb3cab-824a-4864-9641-6013d0bf5192",
+      "userId": "user_1791268817782_739smh0",
+      "ip": "216.218.206.69",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Electron/2.0.18 Safari/537.36",
+      "username": "user-03fb3c",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791268817782,
+      "lastSeenAt": 1791268817782,
+      "isActive": true
+    },
+    {
+      "id": "41166fb4-c626-49fd-ad3d-c1e10339338c",
+      "userId": "user_1791268897400_q3uiyli",
+      "ip": "216.218.206.69",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:124.0) Gecko/20100101 Firefox/124.0",
+      "username": "user-41166f",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791268897401,
+      "lastSeenAt": 1791268897401,
+      "isActive": true
+    },
+    {
+      "id": "a54ce1b8-cf46-4f30-aac7-507fedb69a75",
+      "userId": "user_1791270466829_duvot5b",
+      "ip": "147.185.132.13",
+      "userAgent": "Hello from Palo Alto Networks, find out more about our scans in https://docs-cortex.paloaltonetworks.com/r/1/Cortex-Xpanse/Scanning-activity",
+      "username": "user-a54ce1",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791270466829,
+      "lastSeenAt": 1791270466829,
       "isActive": true
     }
   ]
