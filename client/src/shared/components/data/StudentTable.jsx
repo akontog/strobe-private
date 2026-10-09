@@ -1,6 +1,6 @@
-import React from 'react';
+﻿import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Accordion } from './Accordion';
+import { Accordion } from '../layouts/Accordion';
 
 const defaultGetRowKey = (participant, index) => participant.id || participant.sessionId || participant.username || participant.name || index;
 const defaultGetDisplayName = (participant, fallbackName) => participant.username || participant.name || participant.displayName || fallbackName;
@@ -11,12 +11,12 @@ const defaultGetIsConnected = (participant) => participant && typeof participant
     : true;
 
 export const StudentTable = ({
-  title = '📋 Πίνακας χρηστών',
+  title = 'π“‹ Ξ Ξ―Ξ½Ξ±ΞΊΞ±Ο‚ Ο‡ΟΞ·ΟƒΟ„ΟΞ½',
   participants = [],
   columns = [],
   headerGroups = [],
-  emptyMessage = 'Δεν υπάρχουν συνδεδεμένοι χρήστες.',
-  nameFallback = 'Χρήστης',
+  emptyMessage = 'Ξ”ΞµΞ½ Ο…Ο€Ξ¬ΟΟ‡ΞΏΟ…Ξ½ ΟƒΟ…Ξ½Ξ΄ΞµΞ΄ΞµΞΌΞ­Ξ½ΞΏΞΉ Ο‡ΟΞ®ΟƒΟ„ΞµΟ‚.',
+  nameFallback = 'Ξ§ΟΞ®ΟƒΟ„Ξ·Ο‚',
   getRowKey = defaultGetRowKey,
   getDisplayName = defaultGetDisplayName,
   getIsConnected = defaultGetIsConnected,
@@ -27,14 +27,14 @@ export const StudentTable = ({
   const extraColumns = Array.isArray(columns) ? columns : [];
   const totalColumns = 1 + extraColumns.length;
   const groupedSpanTotal = Array.isArray(headerGroups) ? headerGroups.reduce((sum, group) => sum + (group.colSpan || 1), 0) : 0;
-  const resolvedTitle = title || `📋 ${t('neural.connectedStudents')}`;
+  const resolvedTitle = title || `π“‹ ${t('neural.connectedStudents')}`;
   const resolvedEmptyMessage = emptyMessage || t('common.notAvailable');
   const resolvedFallback = nameFallback || t('common.student');
 
   return (
     <Accordion 
       title={resolvedTitle}
-      icon= "🗄️"
+      icon= "π—„οΈ"
       open={false}  
     >
       <div className="data-section">
@@ -63,7 +63,7 @@ export const StudentTable = ({
               </tr>
             )}
             <tr>
-              <th>Μαθητής</th>
+              <th>ΞΞ±ΞΈΞ·Ο„Ξ®Ο‚</th>
               {extraColumns.map((column, index) => (
                 <th key={column.key || column.label || index}>{column.label}</th>
               ))}
@@ -115,3 +115,4 @@ export const StudentTable = ({
     </Accordion>
   );
 };
+

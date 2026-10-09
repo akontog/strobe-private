@@ -1,51 +1,22 @@
-Shared React Components
+﻿# Shared React Components
 
-Shared React helpers for the client layer. Reusable UI components live in client/src/shared/components/.
+Reusable React components and helpers for the client layer live in `client/src/shared/components/`, organized by role.
 
-# Δομή
+## Structure
 
-## index.js
-Κεντρικά exports
+- `display/`: rendered content such as mathematical formulas and titles.
+- `primitives/`: small reusable controls and visual building blocks.
+- `layouts/`: components that arrange other content.
+- `plot/`: graphing and coordinate system components.
+- `activities/`: reusable interactive activity components.
+- `collaboration/`: shared collaborative tools and integrations.
+- `identity/`: identity and connection controls.
+- `data/`: reusable data display components and presets.
 
-## Accordion.jsx
-
-Accordion panel
-
-## BlueNumberBox.jsx
-
-Αριθμητικά κουτάκια με διάφορα χρώματα
-
-## Toolbar.jsx
-
-Εργαλειοθήκη με κουμπιά
-    
-## StudentTable.jsx
-
-Reusable student table
-    
-
-
-## Χρήση
-
-Για shared UI components χρησιμοποιήστε imports από client/src/shared/components/.
+Use the barrel at `client/src/shared/components/` for stable imports:
 
 ```javascript
-import { BlueNumberBox, Toolbar } from '../shared/components';
+import { BlueNumberBox, MathFormula, SharedInputBox } from '../shared/components';
 ```
 
-## Παράδειγμα
-
-```jsx
-import React from 'react';
-import { BlueNumberBox } from '../shared/components';
-
-const MyComponent = () => {
-  return (
-    <div>
-      <BlueNumberBox value={4} />
-    </div>
-  );
-};
-
-export default MyComponent;
-```
+Components can also be imported directly from their category when needed. Compose these building blocks into activities, then combine activities in a lab.

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { readIdentitySnapshot } from './identityStorage';
+﻿import React, { useEffect, useRef, useState } from 'react';
+import { readIdentitySnapshot } from '../identity/identityStorage';
 import './CollaborativeGeoGebra.css';
 
 const GEO_SCRIPT_URL = 'https://www.geogebra.org/apps/deployggb.js';

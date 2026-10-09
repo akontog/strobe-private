@@ -76,6 +76,8 @@
 
 # Collaborative GeoGebra
 
+## Περιγραφή
+
 Συνεργατικό GeoGebra που λειτουργεί real-time.
 
 Μπορεί να διαθέτει:
@@ -90,6 +92,11 @@
 
 Να χρησιμοποιείται κυρίως για **διερεύνηση και οπτική κατανόηση**.
 
+## Links
+- [GeoGebra Apps Embedding](https://geogebra.github.io/docs/reference/en/GeoGebra_Apps_Embedding/)
+- [Embedding Math Apps in your website](https://github.com/geogebra/math-apps-examples)
+- [GeoGebra Apps API](https://geogebra.github.io/docs/reference/en/GeoGebra_Apps_API/)
+- 
 
 # Embodied / Camera
 

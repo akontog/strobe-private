@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 import BuffonStudentView from './labs/buffon-needle/StudentView';
@@ -30,8 +30,8 @@ import GeoGebraCollabTestTool from './tools/geogebra-collab-test/GeoGebraCollabT
 import GeogebraMonitorTool from './tools/geogebra-monitor/GeogebraMonitorTool';
 import LinearSeparation from './tools/linear-separation/LinearSeparation';
 import ConsoleTool from './tools/console/ConsoleTool';
-import StudentIdentityControl from './shared/components/StudentIdentityControl';
-import LanguageSwitcher from './shared/components/LanguageSwitcher';
+import StudentIdentityControl from './shared/components/identity/StudentIdentityControl';
+import LanguageSwitcher from './shared/components/identity/LanguageSwitcher';
 
 function App() {
   const location = useLocation();
@@ -101,3 +101,4 @@ function App() {
 }
 
 export default App;
+

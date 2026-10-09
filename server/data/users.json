@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-10-06T07:07:46.829Z",
+  "savedAt": "2026-10-09T06:34:33.445Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -788,6 +788,106 @@
       "appData": {},
       "connectedAt": 1791270466829,
       "lastSeenAt": 1791270466829,
+      "isActive": true
+    },
+    {
+      "id": "c2798cb3-e0b0-4b63-b045-5cce63cd89a5",
+      "userId": "user_1791354073004_7ql605r",
+      "ip": "34.140.3.155",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      "username": "user-c2798c",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791354073004,
+      "lastSeenAt": 1791354073004,
+      "isActive": true
+    },
+    {
+      "id": "0b20e66e-c792-45fa-b0cd-4fb8bb4c6715",
+      "userId": "user_1791354073184_0zx0kcz",
+      "ip": "34.140.3.155",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      "username": "user-0b20e6",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791354073184,
+      "lastSeenAt": 1791354073184,
+      "isActive": true
+    },
+    {
+      "id": "5606a8c0-349d-4ba4-8ced-8cd4ad11f1bf",
+      "userId": "user_1791355915328_tka42dx",
+      "ip": "18.218.118.203",
+      "userAgent": "visionheight.com/scan Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/126.0.0.0 Safari/537.36",
+      "username": "user-5606a8",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791355915328,
+      "lastSeenAt": 1791355915328,
+      "isActive": true
+    },
+    {
+      "id": "8b14690c-5959-4b66-a205-c3c0c36dd9a7",
+      "userId": "user_1791355922589_z8tz4j3",
+      "ip": "3.129.187.38",
+      "userAgent": "visionheight.com/scan Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/126.0.0.0 Safari/537.36",
+      "username": "user-8b1469",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791355922589,
+      "lastSeenAt": 1791355922589,
+      "isActive": true
+    },
+    {
+      "id": "678f85c4-48be-4db6-b48d-67cd7526d15f",
+      "userId": "user_1791355963648_7p4dasg",
+      "ip": "3.129.187.38",
+      "userAgent": "visionheight.com/scan Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/126.0.0.0 Safari/537.36",
+      "username": "user-678f85",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791355963648,
+      "lastSeenAt": 1791355963648,
+      "isActive": true
+    },
+    {
+      "id": "dcce310d-6004-4745-8ffe-d30e01fd27a5",
+      "userId": "user_1791356022555_u8fn7sv",
+      "ip": "18.218.118.203",
+      "userAgent": "visionheight.com/scan Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/126.0.0.0 Safari/537.36",
+      "username": "user-dcce31",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791356022555,
+      "lastSeenAt": 1791356022555,
+      "isActive": true
+    },
+    {
+      "id": "7f8c124c-d887-4bc5-92fd-20e911eaa7ed",
+      "userId": "user_1791527667945_27pt91q",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "username": "xx",
+      "role": "teacher",
+      "source": "polynomial-lab",
+      "activeApps": [
+        "polynomial-lab"
+      ],
+      "appData": {},
+      "connectedAt": 1791527667945,
+      "lastSeenAt": 1791527673445,
       "isActive": true
     }
   ]

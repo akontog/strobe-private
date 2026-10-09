@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import CommonZoneFullscreenButton from '../../shared/components/CommonZoneFullscreenButton';
+﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import CommonZoneFullscreenButton from '../../shared/components/identity/CommonZoneFullscreenButton';
 import { TeacherCard } from './components/TeacherCard';
 import { DatasetSelector } from './components/DatasetSelector';
 import { VerticalProducts } from './components/VerticalProducts';
@@ -110,42 +110,42 @@ const resolveSeparableBySelectedInputs = (separable, selectedInputs) => {
 
 
 const App = ({ role = 'teacher' }) => {
-  // Σταθερές αναφορές (refs) για την αποθήκευση αντικειμένων που 
-  // δεν προκαλούν επανασχεδιασμό όταν αλλάζουν.
+  // Ξ£Ο„Ξ±ΞΈΞµΟΞ­Ο‚ Ξ±Ξ½Ξ±Ο†ΞΏΟΞ­Ο‚ (refs) Ξ³ΞΉΞ± Ο„Ξ·Ξ½ Ξ±Ο€ΞΏΞΈΞ®ΞΊΞµΟ…ΟƒΞ· Ξ±Ξ½Ο„ΞΉΞΊΞµΞΉΞΌΞ­Ξ½Ο‰Ξ½ Ο€ΞΏΟ… 
+  // Ξ΄ΞµΞ½ Ο€ΟΞΏΞΊΞ±Ξ»ΞΏΟΞ½ ΞµΟ€Ξ±Ξ½Ξ±ΟƒΟ‡ΞµΞ΄ΞΉΞ±ΟƒΞΌΟ ΟΟ„Ξ±Ξ½ Ξ±Ξ»Ξ»Ξ¬Ξ¶ΞΏΟ…Ξ½.
 
-  // Αναφορά στο αντικείμενο WebSocket για την επικοινωνία με τον server.
+  // Ξ‘Ξ½Ξ±Ο†ΞΏΟΞ¬ ΟƒΟ„ΞΏ Ξ±Ξ½Ο„ΞΉΞΊΞµΞ―ΞΌΞµΞ½ΞΏ WebSocket Ξ³ΞΉΞ± Ο„Ξ·Ξ½ ΞµΟ€ΞΉΞΊΞΏΞΉΞ½Ο‰Ξ½Ξ―Ξ± ΞΌΞµ Ο„ΞΏΞ½ server.
   const wsRef = useRef(null);
-  // Αναφορά για τον χρονοδιακόπτη επανασύνδεσης
+  // Ξ‘Ξ½Ξ±Ο†ΞΏΟΞ¬ Ξ³ΞΉΞ± Ο„ΞΏΞ½ Ο‡ΟΞΏΞ½ΞΏΞ΄ΞΉΞ±ΞΊΟΟ€Ο„Ξ· ΞµΟ€Ξ±Ξ½Ξ±ΟƒΟΞ½Ξ΄ΞµΟƒΞ·Ο‚
   const reconnectTimerRef = useRef(null);
-  // Αναφορά για να ελέγχει αν έχει γίνει ήδη η εγγραφή του ρόλου 
-  // (teacher/student/screen) στον server.
+  // Ξ‘Ξ½Ξ±Ο†ΞΏΟΞ¬ Ξ³ΞΉΞ± Ξ½Ξ± ΞµΞ»Ξ­Ξ³Ο‡ΞµΞΉ Ξ±Ξ½ Ξ­Ο‡ΞµΞΉ Ξ³Ξ―Ξ½ΞµΞΉ Ξ®Ξ΄Ξ· Ξ· ΞµΞ³Ξ³ΟΞ±Ο†Ξ® Ο„ΞΏΟ… ΟΟΞ»ΞΏΟ… 
+  // (teacher/student/screen) ΟƒΟ„ΞΏΞ½ server.
   const hasRegisteredRef = useRef(false);
-  // Αναφορά για να καταστείλει την αποστολή κατάστασης του μαθητή στον server, 
-  // όταν η κατάσταση έχει ενημερωθεί από τον server.
+  // Ξ‘Ξ½Ξ±Ο†ΞΏΟΞ¬ Ξ³ΞΉΞ± Ξ½Ξ± ΞΊΞ±Ο„Ξ±ΟƒΟ„ΞµΞ―Ξ»ΞµΞΉ Ο„Ξ·Ξ½ Ξ±Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ·Ο‚ Ο„ΞΏΟ… ΞΌΞ±ΞΈΞ·Ο„Ξ® ΟƒΟ„ΞΏΞ½ server, 
+  // ΟΟ„Ξ±Ξ½ Ξ· ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ· Ξ­Ο‡ΞµΞΉ ΞµΞ½Ξ·ΞΌΞµΟΟ‰ΞΈΞµΞ― Ξ±Ο€Ο Ο„ΞΏΞ½ server.
   const suppressNextStudentStateSendRef = useRef(false);
-  // Αναφορά για να αποθηκεύει την τελευταία κατάσταση του μαθητή που στάλθηκε στον server.
-  // αποφεύγει την αποστολή της ίδιας κατάστασης πολλές φορές.
+  // Ξ‘Ξ½Ξ±Ο†ΞΏΟΞ¬ Ξ³ΞΉΞ± Ξ½Ξ± Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟΞµΞΉ Ο„Ξ·Ξ½ Ο„ΞµΞ»ΞµΟ…Ο„Ξ±Ξ―Ξ± ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ· Ο„ΞΏΟ… ΞΌΞ±ΞΈΞ·Ο„Ξ® Ο€ΞΏΟ… ΟƒΟ„Ξ¬Ξ»ΞΈΞ·ΞΊΞµ ΟƒΟ„ΞΏΞ½ server.
+  // Ξ±Ο€ΞΏΟ†ΞµΟΞ³ΞµΞΉ Ο„Ξ·Ξ½ Ξ±Ο€ΞΏΟƒΟ„ΞΏΞ»Ξ® Ο„Ξ·Ο‚ Ξ―Ξ΄ΞΉΞ±Ο‚ ΞΊΞ±Ο„Ξ¬ΟƒΟ„Ξ±ΟƒΞ·Ο‚ Ο€ΞΏΞ»Ξ»Ξ­Ο‚ Ο†ΞΏΟΞ­Ο‚.
   const lastSentStudentStateRef = useRef('');
   const prevTeacherActivityRef = useRef('1');
 
   // --- State Variables ---
-  // Δεδομένα που αλλάζουν δυναμικά, κατά τη διάρκεια ζωής της εφαρμογής, 
-  // επηρεάζοντας εμφάνιση και συμπεριφορά της εφαρμογής.
+  // Ξ”ΞµΞ΄ΞΏΞΌΞ­Ξ½Ξ± Ο€ΞΏΟ… Ξ±Ξ»Ξ»Ξ¬Ξ¶ΞΏΟ…Ξ½ Ξ΄Ο…Ξ½Ξ±ΞΌΞΉΞΊΞ¬, ΞΊΞ±Ο„Ξ¬ Ο„Ξ· Ξ΄ΞΉΞ¬ΟΞΊΞµΞΉΞ± Ξ¶Ο‰Ξ®Ο‚ Ο„Ξ·Ο‚ ΞµΟ†Ξ±ΟΞΌΞΏΞ³Ξ®Ο‚, 
+  // ΞµΟ€Ξ·ΟΞµΞ¬Ξ¶ΞΏΞ½Ο„Ξ±Ο‚ ΞµΞΌΟ†Ξ¬Ξ½ΞΉΟƒΞ· ΞΊΞ±ΞΉ ΟƒΟ…ΞΌΟ€ΞµΟΞΉΟ†ΞΏΟΞ¬ Ο„Ξ·Ο‚ ΞµΟ†Ξ±ΟΞΌΞΏΞ³Ξ®Ο‚.
   // const [state, setState] = useState(initialValue);
-  // σταθερά [τρέχουσα τιμή, συνάρτηση ενημέρωσης] = useState(αρχική τιμή);
-  // Αλλάζοντας το currentDataset αλλάζει το σύνολο δεδομένων
+  // ΟƒΟ„Ξ±ΞΈΞµΟΞ¬ [Ο„ΟΞ­Ο‡ΞΏΟ…ΟƒΞ± Ο„ΞΉΞΌΞ®, ΟƒΟ…Ξ½Ξ¬ΟΟ„Ξ·ΟƒΞ· ΞµΞ½Ξ·ΞΌΞ­ΟΟ‰ΟƒΞ·Ο‚] = useState(Ξ±ΟΟ‡ΞΉΞΊΞ® Ο„ΞΉΞΌΞ®);
+  // Ξ‘Ξ»Ξ»Ξ¬Ξ¶ΞΏΞ½Ο„Ξ±Ο‚ Ο„ΞΏ currentDataset Ξ±Ξ»Ξ»Ξ¬Ξ¶ΞµΞΉ Ο„ΞΏ ΟƒΟΞ½ΞΏΞ»ΞΏ Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ο‰Ξ½
   const [currentDataset, setCurrentDataset] = useState('vehicles');
-  // Δείκτης του παραδείγματος που εμφανίζεται από το τρέχον σύνολο δεδομένων.
+  // Ξ”ΞµΞ―ΞΊΟ„Ξ·Ο‚ Ο„ΞΏΟ… Ο€Ξ±ΟΞ±Ξ΄ΞµΞ―Ξ³ΞΌΞ±Ο„ΞΏΟ‚ Ο€ΞΏΟ… ΞµΞΌΟ†Ξ±Ξ½Ξ―Ξ¶ΞµΟ„Ξ±ΞΉ Ξ±Ο€Ο Ο„ΞΏ Ο„ΟΞ­Ο‡ΞΏΞ½ ΟƒΟΞ½ΞΏΞ»ΞΏ Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ο‰Ξ½.
   const [currentExample, setCurrentExample] = useState(0);
-  // Δείκτης του γραμμικού demo που εμφανίζεται από το τρέχον σύνολο δεδομένων (για τον δάσκαλο).
+  // Ξ”ΞµΞ―ΞΊΟ„Ξ·Ο‚ Ο„ΞΏΟ… Ξ³ΟΞ±ΞΌΞΌΞΉΞΊΞΏΟ demo Ο€ΞΏΟ… ΞµΞΌΟ†Ξ±Ξ½Ξ―Ξ¶ΞµΟ„Ξ±ΞΉ Ξ±Ο€Ο Ο„ΞΏ Ο„ΟΞ­Ο‡ΞΏΞ½ ΟƒΟΞ½ΞΏΞ»ΞΏ Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ο‰Ξ½ (Ξ³ΞΉΞ± Ο„ΞΏΞ½ Ξ΄Ξ¬ΟƒΞΊΞ±Ξ»ΞΏ).
   const [currentLinearDemoIndex, setCurrentLinearDemoIndex] = useState(undefined);
-  // Δείκτης του γραμμικού demo που εμφανίζεται από το τρέχον σύνολο δεδομένων (για τον μαθητή).
+  // Ξ”ΞµΞ―ΞΊΟ„Ξ·Ο‚ Ο„ΞΏΟ… Ξ³ΟΞ±ΞΌΞΌΞΉΞΊΞΏΟ demo Ο€ΞΏΟ… ΞµΞΌΟ†Ξ±Ξ½Ξ―Ξ¶ΞµΟ„Ξ±ΞΉ Ξ±Ο€Ο Ο„ΞΏ Ο„ΟΞ­Ο‡ΞΏΞ½ ΟƒΟΞ½ΞΏΞ»ΞΏ Ξ΄ΞµΞ΄ΞΏΞΌΞ­Ξ½Ο‰Ξ½ (Ξ³ΞΉΞ± Ο„ΞΏΞ½ ΞΌΞ±ΞΈΞ·Ο„Ξ®).
   const [lessonLinearDemoIndex, setLessonLinearDemoIndex] = useState(undefined);
-  // Η τρέχουσα δραστηριότητα που έχει επιλέξει ο δάσκαλος.
+  // Ξ— Ο„ΟΞ­Ο‡ΞΏΟ…ΟƒΞ± Ξ΄ΟΞ±ΟƒΟ„Ξ·ΟΞΉΟΟ„Ξ·Ο„Ξ± Ο€ΞΏΟ… Ξ­Ο‡ΞµΞΉ ΞµΟ€ΞΉΞ»Ξ­ΞΎΞµΞΉ ΞΏ Ξ΄Ξ¬ΟƒΞΊΞ±Ξ»ΞΏΟ‚.
   const [selectedActivity, setSelectedActivity] = useState('1');
-  // Η δραστηριότητα που έχει οριστεί από τον δάσκαλο και εμφανίζεται στους μαθητές.
+  // Ξ— Ξ΄ΟΞ±ΟƒΟ„Ξ·ΟΞΉΟΟ„Ξ·Ο„Ξ± Ο€ΞΏΟ… Ξ­Ο‡ΞµΞΉ ΞΏΟΞΉΟƒΟ„ΞµΞ― Ξ±Ο€Ο Ο„ΞΏΞ½ Ξ΄Ξ¬ΟƒΞΊΞ±Ξ»ΞΏ ΞΊΞ±ΞΉ ΞµΞΌΟ†Ξ±Ξ½Ξ―Ξ¶ΞµΟ„Ξ±ΞΉ ΟƒΟ„ΞΏΟ…Ο‚ ΞΌΞ±ΞΈΞ·Ο„Ξ­Ο‚.
   const [lessonActivity, setLessonActivity] = useState('1');
-  // Τα υπόλοιπα state variables αφορούν τις εισόδους, τα βάρη, τα προϊόντα και το συνολικό αποτέλεσμα για τον δάσκαλο και τους μαθητές.
+  // Ξ¤Ξ± Ο…Ο€ΟΞ»ΞΏΞΉΟ€Ξ± state variables Ξ±Ο†ΞΏΟΞΏΟΞ½ Ο„ΞΉΟ‚ ΞµΞΉΟƒΟΞ΄ΞΏΟ…Ο‚, Ο„Ξ± Ξ²Ξ¬ΟΞ·, Ο„Ξ± Ο€ΟΞΏΟΟΞ½Ο„Ξ± ΞΊΞ±ΞΉ Ο„ΞΏ ΟƒΟ…Ξ½ΞΏΞ»ΞΉΞΊΟ Ξ±Ο€ΞΏΟ„Ξ­Ξ»ΞµΟƒΞΌΞ± Ξ³ΞΉΞ± Ο„ΞΏΞ½ Ξ΄Ξ¬ΟƒΞΊΞ±Ξ»ΞΏ ΞΊΞ±ΞΉ Ο„ΞΏΟ…Ο‚ ΞΌΞ±ΞΈΞ·Ο„Ξ­Ο‚.
   const [teacherInputs, setTeacherInputs] = useState({ i1: 4, i2: 1 });
   const [studentInputs, setStudentInputs] = useState({ i1: '', i2: '' });
   const [teacherProducts, setTeacherProducts] = useState({ p1: '', p2: '' });
@@ -154,9 +154,9 @@ const App = ({ role = 'teacher' }) => {
   const [studentTotal, setStudentTotal] = useState('');
   const [dynamicW1, setDynamicW1] = useState(2);
   const [dynamicW2, setDynamicW2] = useState(3);
-  // Το isSocketConnected δείχνει αν η σύνδεση WebSocket είναι ενεργή ή όχι.
+  // Ξ¤ΞΏ isSocketConnected Ξ΄ΞµΞ―Ο‡Ξ½ΞµΞΉ Ξ±Ξ½ Ξ· ΟƒΟΞ½Ξ΄ΞµΟƒΞ· WebSocket ΞµΞ―Ξ½Ξ±ΞΉ ΞµΞ½ΞµΟΞ³Ξ® Ξ® ΟΟ‡ΞΉ.
   const [isSocketConnected, setIsSocketConnected] = useState(false);
-  // Ποιοι και πόσοι συνδεδεμένοι μαθητές υπάρχουν αυτή τη στιγμή (χρησιμοποιείται μόνο από τον δάσκαλο).
+  // Ξ ΞΏΞΉΞΏΞΉ ΞΊΞ±ΞΉ Ο€ΟΟƒΞΏΞΉ ΟƒΟ…Ξ½Ξ΄ΞµΞ΄ΞµΞΌΞ­Ξ½ΞΏΞΉ ΞΌΞ±ΞΈΞ·Ο„Ξ­Ο‚ Ο…Ο€Ξ¬ΟΟ‡ΞΏΟ…Ξ½ Ξ±Ο…Ο„Ξ® Ο„Ξ· ΟƒΟ„ΞΉΞ³ΞΌΞ® (Ο‡ΟΞ·ΟƒΞΉΞΌΞΏΟ€ΞΏΞΉΞµΞ―Ο„Ξ±ΞΉ ΞΌΟΞ½ΞΏ Ξ±Ο€Ο Ο„ΞΏΞ½ Ξ΄Ξ¬ΟƒΞΊΞ±Ξ»ΞΏ).
   const [participants, setParticipants] = useState([]);
   const [roster, setRoster] = useState([]);
   const [lessonInputs, setLessonInputs] = useState({ i1: 4, i2: 1 });
@@ -168,13 +168,13 @@ const App = ({ role = 'teacher' }) => {
   const [lessonSelectedInputs, setLessonSelectedInputs] = useState(DEFAULT_SELECTED_INPUTS);
   const [lessonDataset, setLessonDataset] = useState('vehicles');
   const [lessonExampleIndex, setLessonExampleIndex] = useState(0);
-  const [lessonIcon, setLessonIcon] = useState('🚗');
-  const [lessonName, setLessonName] = useState('Αυτοκίνητο');
+  const [lessonIcon, setLessonIcon] = useState('π—');
+  const [lessonName, setLessonName] = useState('Ξ‘Ο…Ο„ΞΏΞΊΞ―Ξ½Ξ·Ο„ΞΏ');
   const NEURAL_ACTIVITY_OPTIONS = [
-    { value: '1', label: '1. Βρίσκω την είσοδο' },
-    { value: '2', label: '2. Υπολογίζω την έξοδο' },
-    { value: '3', label: '3. Προσαρμόζω τα βάρη' },
-    { value: '4', label: '4. Συγκρίνω' }
+    { value: '1', label: '1. Ξ’ΟΞ―ΟƒΞΊΟ‰ Ο„Ξ·Ξ½ ΞµΞ―ΟƒΞΏΞ΄ΞΏ' },
+    { value: '2', label: '2. Ξ¥Ο€ΞΏΞ»ΞΏΞ³Ξ―Ξ¶Ο‰ Ο„Ξ·Ξ½ Ξ­ΞΎΞΏΞ΄ΞΏ' },
+    { value: '3', label: '3. Ξ ΟΞΏΟƒΞ±ΟΞΌΟΞ¶Ο‰ Ο„Ξ± Ξ²Ξ¬ΟΞ·' },
+    { value: '4', label: '4. Ξ£Ο…Ξ³ΞΊΟΞ―Ξ½Ο‰' }
   ];
   const getNeuralActivityTitle = (activityId, fallback = NEURAL_ACTIVITY_OPTIONS[0].label) => {
     const normalizedId = String(activityId ?? '').trim();
@@ -185,7 +185,7 @@ const App = ({ role = 'teacher' }) => {
   
 
 
-// Δημιουργεί ένα τυχαίο όνομα μαθητή αν δεν υπάρχει αποθηκευμένο στο localStorage.
+// Ξ”Ξ·ΞΌΞΉΞΏΟ…ΟΞ³ΞµΞ― Ξ­Ξ½Ξ± Ο„Ο…Ο‡Ξ±Ξ―ΞΏ ΟΞ½ΞΏΞΌΞ± ΞΌΞ±ΞΈΞ·Ο„Ξ® Ξ±Ξ½ Ξ΄ΞµΞ½ Ο…Ο€Ξ¬ΟΟ‡ΞµΞΉ Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟ…ΞΌΞ­Ξ½ΞΏ ΟƒΟ„ΞΏ localStorage.
   const [studentName, setStudentName] = useState(() => {
   return readIdentityName(`Student-${Math.floor(Math.random() * 900 + 100)}`);
 });
@@ -212,7 +212,7 @@ const [studentColor, setStudentColor] = useState(() => {
     };
   }, []);
 
-  // Αναφορά για να αποθηκεύει την είσοδο του ονόματος του μαθητή.
+  // Ξ‘Ξ½Ξ±Ο†ΞΏΟΞ¬ Ξ³ΞΉΞ± Ξ½Ξ± Ξ±Ο€ΞΏΞΈΞ·ΞΊΞµΟΞµΞΉ Ο„Ξ·Ξ½ ΞµΞ―ΟƒΞΏΞ΄ΞΏ Ο„ΞΏΟ… ΞΏΞ½ΟΞΌΞ±Ο„ΞΏΟ‚ Ο„ΞΏΟ… ΞΌΞ±ΞΈΞ·Ο„Ξ®.
   const [studentNameInput, setStudentNameInput] = useState(studentName);
   
   
@@ -244,7 +244,7 @@ const [studentColor, setStudentColor] = useState(() => {
     : null;
 
   let demoIcon = null;
-  let demoLabel = 'Μη επιλεγμένο';
+  let demoLabel = 'ΞΞ· ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏ';
 
   // Activities 1-3 keep right-side icon area empty.
   if (activeActivity === '4' && effectiveLinearDemoIndex !== undefined && DATASETS[safeDisplayDataset]?.linear_demos) {
@@ -255,7 +255,7 @@ const [studentColor, setStudentColor] = useState(() => {
         ex => ex.name === selectedDemo.example
       );
       demoIcon = targetExample ? targetExample.icon : null;
-      demoLabel = selectedDemo.example || 'Μη επιλεγμένο';
+      demoLabel = selectedDemo.example || 'ΞΞ· ΞµΟ€ΞΉΞ»ΞµΞ³ΞΌΞ­Ξ½ΞΏ';
     }
   }
 
@@ -359,12 +359,12 @@ const [studentColor, setStudentColor] = useState(() => {
     effectiveSelectedInputs
   );
   const separableLabel = effectiveSeparable === null
-    ? 'Διαχωρισμός: -'
+    ? 'Ξ”ΞΉΞ±Ο‡Ο‰ΟΞΉΟƒΞΌΟΟ‚: -'
     : effectiveSeparable
-      ? 'Διαχωρισμός: ✅'
-      : 'Διαχωρισμός: ❌';
+      ? 'Ξ”ΞΉΞ±Ο‡Ο‰ΟΞΉΟƒΞΌΟΟ‚: β…'
+      : 'Ξ”ΞΉΞ±Ο‡Ο‰ΟΞΉΟƒΞΌΟΟ‚: β';
   const demoFooterText = activeActivity === '4'
-    ? `Όριο: ${thresholdDisplayText} | ${separableLabel}`
+    ? `ΞΟΞΉΞΏ: ${thresholdDisplayText} | ${separableLabel}`
     : '';
 
   const handleWeightChange = (which, value) => {
@@ -425,14 +425,14 @@ const [studentColor, setStudentColor] = useState(() => {
       const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
       const ws = new WebSocket(`${protocol}://${window.location.host}/ws/neural-lab`);
       wsRef.current = ws;
-      // Όταν ανοίξει η σύνδεση WebSocket
+      // ΞΟ„Ξ±Ξ½ Ξ±Ξ½ΞΏΞ―ΞΎΞµΞΉ Ξ· ΟƒΟΞ½Ξ΄ΞµΟƒΞ· WebSocket
       ws.addEventListener('open', () => {
         if (cancelled) return;
         setIsSocketConnected(true);
         hasRegisteredRef.current = false;
         registerCurrentRole();
       });
-      // Όταν ληφθεί μήνυμα από τον server
+      // ΞΟ„Ξ±Ξ½ Ξ»Ξ·Ο†ΞΈΞµΞ― ΞΌΞ®Ξ½Ο…ΞΌΞ± Ξ±Ο€Ο Ο„ΞΏΞ½ server
       ws.addEventListener('message', (event) => {
         let message;
         try {
@@ -558,7 +558,7 @@ const [studentColor, setStudentColor] = useState(() => {
           }
         }
       });
-      // Όταν κλείσει η σύνδεση WebSocket
+      // ΞΟ„Ξ±Ξ½ ΞΊΞ»ΞµΞ―ΟƒΞµΞΉ Ξ· ΟƒΟΞ½Ξ΄ΞµΟƒΞ· WebSocket
       ws.addEventListener('close', () => {
         if (cancelled) return;
         setIsSocketConnected(false);
@@ -567,7 +567,7 @@ const [studentColor, setStudentColor] = useState(() => {
         reconnectTimerRef.current = setTimeout(connect, 1000);
       });
 
-      // Όταν παρουσιαστεί σφάλμα στη σύνδεση WebSocket
+      // ΞΟ„Ξ±Ξ½ Ο€Ξ±ΟΞΏΟ…ΟƒΞΉΞ±ΟƒΟ„ΞµΞ― ΟƒΟ†Ξ¬Ξ»ΞΌΞ± ΟƒΟ„Ξ· ΟƒΟΞ½Ξ΄ΞµΟƒΞ· WebSocket
       ws.addEventListener('error', () => {
         if (!cancelled) setIsSocketConnected(false);
       });
@@ -748,21 +748,21 @@ const [studentColor, setStudentColor] = useState(() => {
       {isScreen && (
         <>
           <div className="screen-top-bar">
-            <strong>Προβολή τάξης</strong>
+            <strong>Ξ ΟΞΏΞ²ΞΏΞ»Ξ® Ο„Ξ¬ΞΎΞ·Ο‚</strong>
             <span>{DATASETS[safeDisplayDataset].emoji} {DATASETS[safeDisplayDataset].label}</span>
             <span>{displayIcon} {displayName}</span>
             <span>i1={i1}, i2={i2}</span>
             <span>w1={currentW1}, w2={currentW2}</span>
             <span>o={total}</span>
           </div>
-          <div className="operation-tree" aria-label="Δέντρο πράξεων">
+          <div className="operation-tree" aria-label="Ξ”Ξ­Ξ½Ο„ΟΞΏ Ο€ΟΞ¬ΞΎΞµΟ‰Ξ½">
             <div className="tree-level">
               <div className="tree-node tree-root">o = {total}</div>
             </div>
             <div className="tree-connect"></div>
             <div className="tree-level tree-two">
-              <div className="tree-node">w1 × i1 = {prod1}</div>
-              <div className="tree-node">w2 × i2 = {prod2}</div>
+              <div className="tree-node">w1 Γ— i1 = {prod1}</div>
+              <div className="tree-node">w2 Γ— i2 = {prod2}</div>
             </div>
           </div>
         </>
@@ -854,9 +854,9 @@ const [studentColor, setStudentColor] = useState(() => {
         <>
 
           <ActivitiesMenu
-            title="Δραστηριότητες"
-            icon="🔬"
-            label="Επιλογή δραστηριότητας"
+            title="Ξ”ΟΞ±ΟƒΟ„Ξ·ΟΞΉΟΟ„Ξ·Ο„ΞµΟ‚"
+            icon="π”¬"
+            label="Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΟΞ±ΟƒΟ„Ξ·ΟΞΉΟΟ„Ξ·Ο„Ξ±Ο‚"
             options={NEURAL_ACTIVITY_OPTIONS}
             value={selectedActivity}
             onChange={setSelectedActivity}
@@ -904,7 +904,7 @@ const [studentColor, setStudentColor] = useState(() => {
 
           <StudentQrAccordion
             qrSrc="/labs/neural-lab/media/neural_lab_student_qrcode.png"
-            alt="QR code για το Neural Lab student link"
+            alt="QR code Ξ³ΞΉΞ± Ο„ΞΏ Neural Lab student link"
           />
           
         </>
@@ -917,3 +917,4 @@ const [studentColor, setStudentColor] = useState(() => {
 };
 
 export default App;
+
