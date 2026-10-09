@@ -8,7 +8,7 @@ import {
   HeroTitle,
   MathFormula,
   SharedCommonZoneLayout,
-  SharedInputBox,
+  ActivityInputGrid,
   SharedInputRow,
   StudentQrAccordion,
   StudentTable,
@@ -1531,32 +1531,17 @@ export default function App({ role = 'teacher' }) {
                 </div>
               </div>
             ) : (
-              <div className="lab-input-grid poly-team-grid">
-                <SharedInputBox
-                  label="Συντελεστής"
-                  value={teamAnswers.coefficient}
-                  onChange={(event) => setTeamField('coefficient', event.target.value)}
-                  placeholder=""
-                />
-                <SharedInputBox
-                  label="Βαθμός ως προς x"
-                  value={teamAnswers.degreeX}
-                  onChange={(event) => setTeamField('degreeX', event.target.value)}
-                  placeholder=""
-                />
-                <SharedInputBox
-                  label="Βαθμός ως προς y"
-                  value={teamAnswers.degreeY}
-                  onChange={(event) => setTeamField('degreeY', event.target.value)}
-                  placeholder=""
-                />
-                <SharedInputBox
-                  label="Συνολικός βαθμός"
-                  value={teamAnswers.totalDegree}
-                  onChange={(event) => setTeamField('totalDegree', event.target.value)}
-                  placeholder=""
-                />
-              </div>
+              <ActivityInputGrid
+                columns={2}
+                className="lab-input-grid poly-team-grid"
+                labelClassName="shared-input-box__label"
+                fields={[
+                  { id: 'coefficient', className: 'shared-input-box lab-field poly-team-field', inputClassName: 'shared-input-box__input', label: 'Συντελεστής', value: teamAnswers.coefficient, onChange: (value) => setTeamField('coefficient', value) },
+                  { id: 'degree-x', className: 'shared-input-box lab-field poly-team-field', inputClassName: 'shared-input-box__input', label: 'Βαθμός ως προς x', value: teamAnswers.degreeX, onChange: (value) => setTeamField('degreeX', value) },
+                  { id: 'degree-y', className: 'shared-input-box lab-field poly-team-field', inputClassName: 'shared-input-box__input', label: 'Βαθμός ως προς y', value: teamAnswers.degreeY, onChange: (value) => setTeamField('degreeY', value) },
+                  { id: 'total-degree', className: 'shared-input-box lab-field poly-team-field', inputClassName: 'shared-input-box__input', label: 'Συνολικός βαθμός', value: teamAnswers.totalDegree, onChange: (value) => setTeamField('totalDegree', value) }
+                ]}
+              />
             )}
           </div>
         </SharedCommonZoneLayout>

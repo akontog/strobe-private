@@ -9,7 +9,8 @@ export { default as MathFormula } from './display/MathFormula';
 export { StudentTable } from './data/StudentTable';
 export * from './data/studentTableColumnPresets.jsx';
 export { default as BlueNumberBox } from './primitives/BlueNumberBox';
-export { default as AlgebraTiles } from './primitives/AlgebraTiles';
+export { default as AlgebraTiles } from './activities/AlgebraTiles';
+export { default as ActivityInputGrid } from './activities/ActivityInputGrid';
 export { default as SharedInputBox } from './primitives/SharedInputBox';
 export { default as SharedInputRow } from './primitives/SharedInputRow';
 export { default as CollaborativeGeoGebra } from './collaboration/CollaborativeGeoGebra';
@@ -20,4 +21,5 @@ export { default as LanguageSwitcher } from './identity/LanguageSwitcher';
 export { default as StudentIdentityControl } from './identity/StudentIdentityControl';
 export * from './identity/identityStorage';
 export { default as SimpleCoordinateSystem } from './plot/SimpleCoordinateSystem';
+
 

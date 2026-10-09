@@ -1,4 +1,5 @@
-import React from 'react';
+﻿import React from 'react';
+import { ActivityInputGrid } from '../../../shared/components';
 
 export const ProductRow = ({
   icon,
@@ -12,64 +13,51 @@ export const ProductRow = ({
   onInputChange,
   onWeightChange,
   onProductChange
-}) => {
-  const renderInputBox = (value, editable, onChange, className) => {
-    if (!editable) {
-      return <div className={className}>{value ?? '-'}</div>;
-    }
-
-    return (
-      <input
-        className="input-box-style"
-        type="text"
-        value={value === null || value === undefined ? '' : String(value)}
-        onChange={(event) => {
-          if (typeof onChange === 'function') {
-            onChange(event.target.value);
-          }
-        }}
-      />
-    );
-  };
-
-  const renderProductControl = () => {
-    if (productEditable) {
-      return (
-        <input
-          className="input-box-style"
-          type="text"
-          value={product === null || product === undefined ? '' : String(product)}
-          onChange={(event) => {
-            if (typeof onProductChange === 'function') {
-              onProductChange(event.target.value);
-            }
-          }}
-        />
-      );
-    }
-
-    return <div className="product-result">{product ?? '-'}</div>;
-  };
-
-  return (
-    <div className="product-row">
-      <div className="product-left">
-        <div className="feature-label">
-          <span className="icon-small">{icon}</span>
-          <span className="feature-text">{label}</span>
-        </div>
-        <div className="math-group">
-          <div className="math-input-slot">
-            {renderInputBox(input1, inputEditable, onInputChange, 'blue-number-box')}
-          </div>
-          <div className="multiply-symbol">×</div>
-          <div className="math-weight-slot">
-            {renderInputBox(weight, weightEditable, onWeightChange, 'red-number-box')}
-          </div>
-          <div className="equal-symbol">=</div>
-          <div className="product-output">{renderProductControl()}</div>
-        </div>
+}) => (
+  <div className="product-row">
+    <div className="product-left">
+      <div className="feature-label">
+        <span className="icon-small">{icon}</span>
+        <span className="feature-text">{label}</span>
       </div>
+      <ActivityInputGrid
+        customLayout
+        className="math-group"
+        fields={[
+          {
+            id: 'input',
+            className: 'math-input-slot',
+            value: input1,
+            editable: inputEditable,
+            onChange: onInputChange,
+            ariaLabel: `${label} input`,
+            inputClassName: 'input-box-style',
+            displayClassName: 'blue-number-box'
+          },
+          { id: 'multiply', kind: 'token', className: 'multiply-symbol', value: '×' },
+          {
+            id: 'weight',
+            className: 'math-weight-slot',
+            value: weight,
+            editable: weightEditable,
+            onChange: onWeightChange,
+            ariaLabel: `${label} weight`,
+            inputClassName: 'input-box-style',
+            displayClassName: 'red-number-box'
+          },
+          { id: 'equal', kind: 'token', className: 'equal-symbol', value: '=' },
+          {
+            id: 'product',
+            className: 'product-output',
+            value: product,
+            editable: productEditable,
+            onChange: onProductChange,
+            ariaLabel: `${label} product`,
+            inputClassName: 'input-box-style',
+            displayClassName: 'product-result'
+          }
+        ]}
+      />
     </div>
-  );
-};
+  </div>
+);

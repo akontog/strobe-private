@@ -1,0 +1,23 @@
+﻿.activity-input-grid {
+  display: grid;
+  gap: 0.7rem;
+  min-width: 0;
+}
+
+.activity-input-grid__cell {
+  min-width: 0;
+}
+
+.activity-input-grid__input {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.activity-input-grid__output {
+  min-height: 1.5rem;
+}
+
+.activity-input-grid--custom {
+  display: contents;
+}
+

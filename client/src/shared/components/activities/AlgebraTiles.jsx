@@ -1,13 +1,13 @@
-import React, { useMemo, useState } from 'react';
+﻿import React, { useMemo, useState } from 'react';
 import './algebra-tiles.css';
 
 const TILE_TYPES = [
   { id: 'one', label: '1', name: 'Μονάδα', className: 'unit' },
   { id: 'x', label: 'x', name: 'x', className: 'x' },
   { id: 'y', label: 'y', name: 'y', className: 'y' },
-  { id: 'x2', label: 'x²', name: 'x²', className: 'x2' },
+  { id: 'x2', label: 'xΒ²', name: 'xΒ²', className: 'x2' },
   { id: 'xy', label: 'xy', name: 'xy', className: 'xy' },
-  { id: 'y2', label: 'y²', name: 'y²', className: 'y2' }
+  { id: 'y2', label: 'yΒ²', name: 'yΒ²', className: 'y2' }
 ];
 
 const EXAMPLES = {
@@ -31,7 +31,7 @@ function signedTerm(count, term) {
 }
 
 function formatPolynomial(counts, keys) {
-  const terms = keys.map((key) => signedTerm(counts[key] || 0, key === 'one' ? '1' : ({ x2: 'x²', y2: 'y²', xy: 'xy' }[key] || key))).filter(Boolean);
+  const terms = keys.map((key) => signedTerm(counts[key] || 0, key === 'one' ? '1' : ({ x2: 'xΒ²', y2: 'yΒ²', xy: 'xy' }[key] || key))).filter(Boolean);
   if (!terms.length) return '0';
   return terms.map((term, index) => `${index === 0 ? (term.sign === '−' ? '−' : '') : ` ${term.sign} `}${term.value}`).join('');
 }
@@ -178,10 +178,10 @@ export default function AlgebraTiles({ initialExample = 'linear', canvasMode = '
             <h3>Μοντέλο ορθογωνίου</h3>
             <label>Πλευρά A: x + <input type="number" min="0" max="8" value={sideA} onChange={(event) => setSideA(Math.max(0, Math.min(8, Number(event.target.value))))} /></label>
             <label>Πλευρά B: x + <input type="number" min="0" max="8" value={sideB} onChange={(event) => setSideB(Math.max(0, Math.min(8, Number(event.target.value))))} /></label>
-            <strong>(x + {sideA})(x + {sideB}) = x² + {sideA + sideB}x + {sideA * sideB}</strong>
+            <strong>(x + {sideA})(x + {sideB}) = xΒ² + {sideA + sideB}x + {sideA * sideB}</strong>
           </div>
           <div className="algebra-tiles__area" aria-label="Ανάλυση εμβαδού">
-            <div className="algebra-tiles__area-cell algebra-tiles__area-cell--square">x²</div>
+            <div className="algebra-tiles__area-cell algebra-tiles__area-cell--square">xΒ²</div>
             <div className="algebra-tiles__area-cell algebra-tiles__area-cell--x">{sideB}x</div>
             <div className="algebra-tiles__area-cell algebra-tiles__area-cell--x">{sideA}x</div>
             <div className="algebra-tiles__area-cell algebra-tiles__area-cell--unit">{sideA * sideB}</div>
@@ -202,7 +202,7 @@ export default function AlgebraTiles({ initialExample = 'linear', canvasMode = '
               <>
                 <strong>= ({factorText(pair[0])})({factorText(pair[1])})</strong>
                 <div className="algebra-tiles__area" aria-label="Αντίστροφο μοντέλο πλακιδίων">
-                  <div className="algebra-tiles__area-cell algebra-tiles__area-cell--square">x²</div>
+                  <div className="algebra-tiles__area-cell algebra-tiles__area-cell--square">xΒ²</div>
                   <div className={`algebra-tiles__area-cell algebra-tiles__area-cell--x ${pair[1] < 0 ? 'is-negative' : ''}`}>{pair[1]}x</div>
                   <div className={`algebra-tiles__area-cell algebra-tiles__area-cell--x ${pair[0] < 0 ? 'is-negative' : ''}`}>{pair[0]}x</div>
                   <div className={`algebra-tiles__area-cell algebra-tiles__area-cell--unit ${pair[0] * pair[1] < 0 ? 'is-negative' : ''}`}>{pair[0] * pair[1]}</div>
@@ -215,3 +215,4 @@ export default function AlgebraTiles({ initialExample = 'linear', canvasMode = '
     </div>
   );
 }
+

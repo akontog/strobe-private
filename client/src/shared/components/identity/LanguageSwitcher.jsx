@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../i18n';
 
 const OPTIONS = [
-  { code: 'el', icon: 'π‡¬π‡·', label: 'GR' },
-  { code: 'en', icon: 'π‡¬π‡§', label: 'GB' }
+  { code: 'el', icon: '🇬🇷', label: 'GR' },
+  { code: 'en', icon: '🇬🇧', label: 'GB' }
 ];
 
 export default function LanguageSwitcher() {

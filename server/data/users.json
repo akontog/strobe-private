@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-10-09T06:34:33.445Z",
+  "savedAt": "2026-10-09T13:36:07.427Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -879,15 +879,72 @@
       "userId": "user_1791527667945_27pt91q",
       "ip": "127.0.0.1",
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
-      "username": "xx",
+      "username": "dd",
       "role": "teacher",
-      "source": "polynomial-lab",
+      "source": "neural-lab",
       "activeApps": [
-        "polynomial-lab"
+        "polynomial-lab",
+        "neural",
+        "neural-lab"
       ],
-      "appData": {},
+      "appData": {
+        "neural": {
+          "role": "teacher",
+          "color": "#b2611f",
+          "weights": {
+            "w1": 1,
+            "w2": 1
+          },
+          "active": true,
+          "lastUpdated": "2026-10-09T13:36:07.423Z",
+          "lesson": {
+            "dataset": "vehicles",
+            "exampleIndex": 0,
+            "exampleName": "Ποδήλατο",
+            "icon": "🚲",
+            "inputs": {
+              "i1": 2,
+              "i2": 0
+            },
+            "products": {
+              "p1": "",
+              "p2": ""
+            },
+            "total": "",
+            "weights": {
+              "w1": 2,
+              "w2": 3
+            },
+            "activityId": "2",
+            "activityTitle": "2. Υπολογίζω την έξοδο",
+            "threshold": {
+              "op": ">=",
+              "boundary": 5
+            },
+            "selectedInputs": {
+              "i1": true,
+              "i2": true
+            },
+            "useQuestionMarks": false
+          }
+        }
+      },
       "connectedAt": 1791527667945,
-      "lastSeenAt": 1791527673445,
+      "lastSeenAt": 1791552967427,
+      "isActive": true
+    },
+    {
+      "id": "65f53432-e71c-4d42-9fa8-b8de1fc6f3dc",
+      "userId": "user_1791550835233_4lxbbly",
+      "ip": "127.0.0.1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0",
+      "username": "user-65f534",
+      "role": "student",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791550835233,
+      "lastSeenAt": 1791550835233,
       "isActive": true
     }
   ]

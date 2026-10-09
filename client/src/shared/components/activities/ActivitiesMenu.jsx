@@ -2,16 +2,16 @@
 import { Accordion } from '../layouts/Accordion';
 
 const DEFAULT_OPTIONS = [
-  { value: '1', label: '1. Ξ’ΟΞ―ΟƒΞΊΟ‰ Ο„Ξ·Ξ½ ΞµΞ―ΟƒΞΏΞ΄ΞΏ' },
-  { value: '2', label: '2. Ξ¥Ο€ΞΏΞ»ΞΏΞ³Ξ―Ξ¶Ο‰ Ο„Ξ·Ξ½ Ξ­ΞΎΞΏΞ΄ΞΏ' },
-  { value: '3', label: '3. Ξ ΟΞΏΟƒΞ±ΟΞΌΟΞ¶Ο‰ Ο„Ξ± Ξ²Ξ¬ΟΞ·' },
-  { value: '4', label: '4. Ξ£Ο…Ξ³ΞΊΟΞ―Ξ½Ο‰' }
+  { value: '1', label: '1. Βρίσκω την είσοδο' },
+  { value: '2', label: '2. Υπολογίζω την έξοδο' },
+  { value: '3', label: '3. Προσαρμόζω τα βάρη' },
+  { value: '4', label: '4. Συγκρίνω' }
 ];
 
 export const ActivitiesMenu = ({
-  title = 'Ξ”ΟΞ±ΟƒΟ„Ξ·ΟΞΉΟΟ„Ξ·Ο„ΞµΟ‚',
-  icon = 'π”¬',
-  label = 'Ξ•Ο€ΞΉΞ»ΞΏΞ³Ξ® Ξ΄ΟΞ±ΟƒΟ„Ξ·ΟΞΉΟΟ„Ξ·Ο„Ξ±Ο‚',
+  title = 'Δραστηριότητες',
+  icon = '🔬',
+  label = 'Επιλογή δραστηριότητας',
   value = '1',
   options = DEFAULT_OPTIONS,
   onChange,
@@ -38,7 +38,7 @@ export const ActivitiesMenu = ({
               </option>
             ))
           ) : (
-            <option value="">Ξ”ΞµΞ½ Ο…Ο€Ξ¬ΟΟ‡ΞΏΟ…Ξ½ Ξ΄ΞΉΞ±ΞΈΞ­ΟƒΞΉΞΌΞµΟ‚ Ξ΄ΟΞ±ΟƒΟ„Ξ·ΟΞΉΟΟ„Ξ·Ο„ΞµΟ‚</option>
+            <option value="">Δεν υπάρχουν διαθέσιμες δραστηριότητες</option>
           )}
         </select>
       </div>
