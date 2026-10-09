@@ -1,15 +1,15 @@
 {
   "title": "Neural Lab",
   "homeTitle": "Ενιαία React εφαρμογή",
-  "homeSubtitle": "Teacher και student views με κοινή γλώσσα και κοινά components.",
-  "openTeacher": "Teacher",
-  "openStudent": "Student",
-  "openFourierTeacher": "Fourier Teacher",
-  "openFourierStudent": "Fourier Student",
-  "openGeometryTeacher": "Geometry Teacher",
-  "openGeometryStudent": "Geometry Student",
-  "openBuffonTeacher": "Buffon Teacher",
-  "openBuffonStudent": "Buffon Student",
+  "homeSubtitle": "Περιβάλλοντα εκπαιδευτικού και μαθητή με κοινή γλώσσα και κοινά στοιχεία.",
+  "openTeacher": "Εργαστήριο νευρωνικών δικτύων — εκπαιδευτικός",
+  "openStudent": "Εργαστήριο νευρωνικών δικτύων — μαθητής",
+  "openFourierTeacher": "Εργαστήριο Fourier — εκπαιδευτικός",
+  "openFourierStudent": "Εργαστήριο Fourier — μαθητής",
+  "openGeometryTeacher": "Γεωμετρία — εκπαιδευτικός",
+  "openGeometryStudent": "Γεωμετρία — μαθητής",
+  "openBuffonTeacher": "Βελόνα του Buffon — εκπαιδευτικός",
+  "openBuffonStudent": "Βελόνα του Buffon — μαθητής",
   "dashboardTitle": "Neural Lab",
   "activitiesTitle": "Δραστηριότητες",
   "chooseActivity": "Επιλογή δραστηριότητας",
@@ -35,5 +35,6 @@
   "currentWeights": "Τρέχοντα βάρη",
   "selectAll": "Επίλεξε όλα",
   "selectNone": "Καμία επιλογή",
-  "studentConnection": "Σύνδεση μαθητών"
+  "studentConnection": "Σύνδεση μαθητών",
+  "connectedStudents": "Συνδεδεμένοι μαθητές"
 }

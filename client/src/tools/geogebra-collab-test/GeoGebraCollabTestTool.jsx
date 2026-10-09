@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function GeoGebraCollabTestTool() {
+  const { t } = useTranslation('interface');
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState(null);
   const [errorText, setErrorText] = useState('');
@@ -10,8 +12,8 @@ export default function GeoGebraCollabTestTool() {
       return '';
     }
 
-    return `${result.summary.passed}/${result.summary.total} passed`;
-  }, [result]);
+    return t('passedSummary', { passed: result.summary.passed, total: result.summary.total });
+  }, [result, t]);
 
   async function runTests() {
     setRunning(true);
@@ -39,18 +41,18 @@ export default function GeoGebraCollabTestTool() {
     <section className="dashboard-page">
       <div className="dashboard-shell" style={{ display: 'grid', gap: '1rem' }}>
         <header>
-          <h1>GeoGebra Protocol Test Runner</h1>
-          <p>Runs realtime integration checks with fake websocket clients over event/data protocol.</p>
+          <h1>{t('geoGebraProtocolTest')}</h1>
+          <p>{t('geoGebraProtocolDescription')}</p>
         </header>
 
         <div className="btn-row">
           <button type="button" className="dashboard-action-link" disabled={running} onClick={runTests}>
-            {running ? 'Running...' : 'Run protocol tests'}
+            {running ? t('running') : t('runProtocolTests')}
           </button>
         </div>
 
         {errorText ? <p className="page-feedback page-feedback--error">{errorText}</p> : null}
-        {summaryText ? <p className="page-feedback">Summary: {summaryText}</p> : null}
+        {summaryText ? <p className="page-feedback">{t('summary')}: {summaryText}</p> : null}
 
         {result && Array.isArray(result.tests) ? (
           <div className="postit-grid app-grid">

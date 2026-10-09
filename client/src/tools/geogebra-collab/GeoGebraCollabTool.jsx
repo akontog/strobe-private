@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CollaborativeGeoGebra } from '../../shared/components';
 import './GeoGebraCollabTool.css';
 
 export default function GeoGebraCollabTool() {
+  const { t } = useTranslation('interface');
   const [roomInput, setRoomInput] = useState('geogebra-default');
   const [activeRoomId, setActiveRoomId] = useState('geogebra-default');
 
@@ -18,9 +20,9 @@ export default function GeoGebraCollabTool() {
     <section className="dashboard-page">
       <div className="dashboard-shell geo-tool-page">
         <header className="geo-tool-page__header">
-          <h1>GeoGebra Collaborative Component</h1>
+          <h1>{t('geoGebraCollaborative')}</h1>
           <p className="geo-tool-page__helper">
-            Shared board over the existing realtime transport. Server controls permissions and broadcasts object state.
+            {t('geoGebraCollaborativeDescriptionShort')}
           </p>
         </header>
 
@@ -29,9 +31,9 @@ export default function GeoGebraCollabTool() {
             type="text"
             value={roomInput}
             onChange={(event) => setRoomInput(event.target.value)}
-            placeholder="Room id"
+            placeholder={t('roomId')}
           />
-          <button type="button" onClick={applyRoom}>Join room</button>
+          <button type="button" onClick={applyRoom}>{t('joinRoom')}</button>
         </div>
 
         <CollaborativeGeoGebra roomId={activeRoomId} />

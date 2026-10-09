@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const toneBySlug = {
   'geometry-live': 'indigo',
@@ -18,6 +19,7 @@ const iconBySlug = {
 };
 
 export default function AppsLauncherPage() {
+  const { t } = useTranslation('interface');
   const [apps, setApps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -60,13 +62,13 @@ export default function AppsLauncherPage() {
       <div className="dashboard-shell">
         <header className="page-hero">
           <div className="page-hero__logoRow">
-            <img className="page-hero__logo" src="/icons/strobelogo.svg" alt="Strobe Logo" />
-            <h1>Apps Launcher</h1>
+            <img className="page-hero__logo" src="/icons/strobelogo.svg" alt={t('strobeLogo')} />
+            <h1>{t('appsLauncher')}</h1>
           </div>
           
         </header>
 
-        {loading ? <p className="page-feedback">Loading apps...</p> : null}
+        {loading ? <p className="page-feedback">{t('loadingApps')}</p> : null}
         {error ? <p className="page-feedback page-feedback--error">{error}</p> : null}
 
         {!loading && !error ? (
@@ -75,14 +77,14 @@ export default function AppsLauncherPage() {
               <article key={app.slug} className={`strobe-note strobe-note--${toneBySlug[app.slug] || 'indigo'}`}>
                 <div className="app-head">
                   <div>
-                    <div className="muted">launcher</div>
+                    <div className="muted">{t('launcher')}</div>
                     <h2 className="app-title">{iconBySlug[app.slug] || '🧩'} {app.title}</h2>
                   </div>
                 </div>
                 <p className="app-desc">{app.description}</p>
                 <div className="btn-row dashboard-action-row">
-                  <Link className="dashboard-action-link" to={`/labs/${app.slug}/teacher`}>Teacher</Link>
-                  <Link className="dashboard-action-link" to={`/labs/${app.slug}/student`}>Student</Link>
+                  <Link className="dashboard-action-link" to={`/labs/${app.slug}/teacher`}>{t('teacher')}</Link>
+                  <Link className="dashboard-action-link" to={`/labs/${app.slug}/student`}>{t('student')}</Link>
                 </div>
               </article>
             ))}

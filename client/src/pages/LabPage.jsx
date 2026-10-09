@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function LabPage({ role }) {
+  const { t } = useTranslation('interface');
   const { slug } = useParams();
   const [app, setApp] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -52,11 +54,11 @@ export default function LabPage({ role }) {
   }, [role, slug]);
 
   if (loading) {
-    return <p>Loading lab...</p>;
+    return <p>{t('loadingLab')}</p>;
   }
 
   if (error || !app) {
-    return <p>{error || 'Lab not found.'}</p>;
+    return <p>{error || t('labNotFound')}</p>;
   }
 
   const src = role === 'teacher' ? app.teacherLaunchPath : app.clientLaunchPath;

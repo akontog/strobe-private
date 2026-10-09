@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function StudentPage() {
+  const { t } = useTranslation('interface');
   const [apps, setApps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -91,17 +93,17 @@ export default function StudentPage() {
       <div className="dashboard-shell">
         <header className="page-hero">
           <div className="page-hero__logoRow">
-            <img className="page-hero__logo" src="/icons/strobelogo.svg" alt="Strobe Logo" />
-            <h1>Student Launcher</h1>
+            <img className="page-hero__logo" src="/icons/strobelogo.svg" alt={t('strobeLogo')} />
+            <h1>{t('studentLauncher')}</h1>
           </div>
           <p className="page-hero__lead">Επιλογή app και μετάβαση σε student routes που ανήκουν πλέον στο React Router.</p>
           <div className="page-meta-row">
             <span className="page-chip">GET /client/apps</span>
-            <span className="page-chip">SPA navigation</span>
+            <span className="page-chip">{t('spaNavigation')}</span>
           </div>
         </header>
 
-        {loading ? <p className="page-feedback">Loading apps...</p> : null}
+        {loading ? <p className="page-feedback">{t('loadingApps')}</p> : null}
         {error ? <p className="page-feedback page-feedback--error">{error}</p> : null}
 
         {!loading && !error ? (
@@ -110,7 +112,7 @@ export default function StudentPage() {
               <article key={app.slug} className={`strobe-note strobe-note--${toneBySlug[app.slug] || 'orange'}`}>
                 <div className="app-head">
                   <div>
-                    <div className="muted">student</div>
+                    <div className="muted">{t('student')}</div>
                     <h2 className="app-title">{iconBySlug[app.slug] || '🧩'} {app.title}</h2>
                   </div>
                 </div>
@@ -120,7 +122,7 @@ export default function StudentPage() {
                   <li>{app.kind}</li>
                 </ul>
                 <div className="btn-row dashboard-action-row">
-                  <Link className="dashboard-action-link" to={`/labs/${app.slug}/student`}>Open student view</Link>
+                  <Link className="dashboard-action-link" to={`/labs/${app.slug}/student`}>{t('openStudentView')}</Link>
                 </div>
               </article>
             ))}
@@ -129,17 +131,17 @@ export default function StudentPage() {
               <article key={tool.id} className={`strobe-note strobe-note--${tool.tone}`}>
                 <div className="app-head">
                   <div>
-                    <div className="muted">tool</div>
+                    <div className="muted">{t('tool')}</div>
                     <h2 className="app-title">{tool.icon} {tool.title}</h2>
                   </div>
                 </div>
                 <p className="app-desc">{tool.description}</p>
                 <ul className="role-features">
-                  <li>student-accessible</li>
+                  <li>{t('studentAccessible')}</li>
                   <li>{tool.path}</li>
                 </ul>
                 <div className="btn-row dashboard-action-row">
-                  <Link className="dashboard-action-link" to={tool.path}>Open tool</Link>
+                  <Link className="dashboard-action-link" to={tool.path}>{t('openTool')}</Link>
                 </div>
               </article>
             ))}

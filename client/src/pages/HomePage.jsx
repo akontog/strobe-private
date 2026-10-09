@@ -1,47 +1,60 @@
-// import { useTranslation } from 'react-i18next';
-import { Link, Navigate, Route, Routes } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 export default function HomePage() {
-  //const { t } = useTranslation(["common", "menu", "neural"]);
+  const { t: tMenu } = useTranslation('menu');
+  const { t: tNeural } = useTranslation('neural');
   const entryCards = [
     {
-      id: "teacher",
-      to: "/teacher",
-      icon: "👨‍🏫",
-      tone: "indigo",
-      title: "Teacher Dashboard",
-      description:
-        "Εκκίνηση εφαρμογών σε teacher mode και διαχείριση δραστηριοτήτων ανά app.",
+      id: 'teacher',
+      to: '/teacher',
+      icon: '👩‍🏫',
+      tone: 'indigo',
+      title: tMenu('teacherDashboard'),
+      description: tMenu('teacherDescription'),
       features: [
-        "Λίστα εφαρμογών",
-        "Αποθήκευση και φόρτωση activities",
-        "Παρακολούθηση τάξης",
-      ],
+        tMenu('teacherFeatureApps'),
+        tMenu('teacherFeatureActivities'),
+        tMenu('teacherFeatureClass')
+      ]
     },
     {
-      id: "student",
-      to: "/client",
-      icon: "🧑‍🎓",
-      tone: "orange",
-      title: "Student Launcher",
-      description:
-        "Επιλογή app και γρήγορη μετάβαση στο student view μέσα από το SPA shell.",
+      id: 'student',
+      to: '/client',
+      icon: '🧑‍🎓',
+      tone: 'orange',
+      title: tMenu('studentLauncher'),
+      description: tMenu('studentDescription'),
       features: [
-        "Launcher ανά app",
-        "Student routes στο React Router",
-        "Χωρίς server-rendered dashboards",
-      ],
+        tMenu('studentFeatureApps'),
+        tMenu('studentFeatureRoutes'),
+        tMenu('studentFeatureAccess')
+      ]
     },
     {
-      id: "tools",
-      to: "/tools",
-      icon: "🧰",
-      tone: "green",
-      title: "Tools",
-      description:
-        "Εργαλεία για μάθημα και δοκιμές όπως activity builder και diagnostics.",
-      features: ["Activity Builder", "Camera Speed Test", "GeoGebra Collab", "Linear Seperation"],
-    },
+      id: 'tools',
+      to: '/tools',
+      icon: '🧰',
+      tone: 'green',
+      title: tMenu('toolsCard'),
+      description: tMenu('toolsDescription'),
+      features: [
+        tMenu('toolsFeatureBuilder'),
+        tMenu('toolsFeatureCamera'),
+        tMenu('toolsFeatureGeoGebra'),
+        tMenu('toolsFeatureSeparation')
+      ]
+    }
+  ];
+  const quickLinks = [
+    { to: '/labs/buffon-needle/teacher', label: tNeural('openBuffonTeacher') },
+    { to: '/labs/buffon-needle/student', label: tNeural('openBuffonStudent') },
+    { to: '/labs/neural-lab/teacher', label: tNeural('openTeacher') },
+    { to: '/labs/neural-lab/student', label: tNeural('openStudent') },
+    { to: '/labs/fourier-lab/teacher', label: tNeural('openFourierTeacher') },
+    { to: '/labs/fourier-lab/student', label: tNeural('openFourierStudent') },
+    { to: '/labs/geometry-live/teacher', label: tNeural('openGeometryTeacher') },
+    { to: '/labs/geometry-live/student', label: tNeural('openGeometryStudent') }
   ];
 
   return (
@@ -52,17 +65,11 @@ export default function HomePage() {
             <img
               className="page-hero__logo"
               src="/icons/strobelogo.svg"
-              alt="Strobe Logo"
+              alt="Strobe"
             />
-            <h1>
-                {/*t("neural.homeTitle")*/}
-                neural.homeTitle
-            </h1>
+            <h1>{tNeural('homeTitle')}</h1>
           </div>
-          <p className="page-hero__lead">
-                {/*t("neural.homeSubtitle")*/}
-            neural.homeSubtitle
-            </p>
+          <p className="page-hero__lead">{tNeural('homeSubtitle')}</p>
         </header>
 
         <div className="postit-grid role-grid">
@@ -85,33 +92,13 @@ export default function HomePage() {
         </div>
 
         <section className="quick-links-panel">
-          <h2>Quick Lab Links</h2>
+          <h2>{tMenu('quickLabLinks')}</h2>
           <div className="quick-links-grid">
-            <Link to="/labs/buffon-needle/teacher">
-              {/*t("neural.openBuffonTeacher")*/}
-            </Link>
-            <Link to="/labs/buffon-needle/student">
-              {/*t("neural.openBuffonStudent")*/}
-              neural.openBuffonStudent
-            </Link>
-            <Link to="/labs/neural-lab/teacher">
-                {/*t("neural.openTeacher")*/}
-            </Link>
-            <Link to="/labs/neural-lab/student">
-                {/*t("neural.openStudent")*/}
-            </Link>
-            <Link to="/labs/fourier-lab/teacher">
-                {/*t("neural.openFourierTeacher")*/}
-            </Link>
-            <Link to="/labs/fourier-lab/student">
-                {/*t("neural.openFourierStudent")*/}
-            </Link>
-            <Link to="/labs/geometry-live/teacher">
-                {/*t("neural.openGeometryTeacher")*/}
-            </Link>
-            <Link to="/labs/geometry-live/student">
-                {/*t("neural.openGeometryStudent")*/}
-            </Link>
+            {quickLinks.map((link) => (
+              <Link key={link.to} to={link.to}>
+                {link.label}
+              </Link>
+            ))}
           </div>
         </section>
       </div>

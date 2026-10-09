@@ -11,12 +11,12 @@ const defaultGetIsConnected = (participant) => participant && typeof participant
     : true;
 
 export const StudentTable = ({
-  title = '📋 Πίνακας χρηστών',
+  title = '',
   participants = [],
   columns = [],
   headerGroups = [],
-  emptyMessage = 'Δεν υπάρχουν συνδεδεμένοι χρήστες.',
-  nameFallback = 'Χρήστης',
+  emptyMessage = '',
+  nameFallback = '',
   getRowKey = defaultGetRowKey,
   getDisplayName = defaultGetDisplayName,
   getIsConnected = defaultGetIsConnected,
@@ -27,9 +27,9 @@ export const StudentTable = ({
   const extraColumns = Array.isArray(columns) ? columns : [];
   const totalColumns = 1 + extraColumns.length;
   const groupedSpanTotal = Array.isArray(headerGroups) ? headerGroups.reduce((sum, group) => sum + (group.colSpan || 1), 0) : 0;
-  const resolvedTitle = title || `📋 ${t('neural.connectedStudents')}`;
-  const resolvedEmptyMessage = emptyMessage || t('common.notAvailable');
-  const resolvedFallback = nameFallback || t('common.student');
+  const resolvedTitle = title || `📋 ${t('connectedStudents', { ns: 'neural' })}`;
+  const resolvedEmptyMessage = emptyMessage || t('notAvailable');
+  const resolvedFallback = nameFallback || t('student');
 
   return (
     <Accordion 
@@ -63,7 +63,7 @@ export const StudentTable = ({
               </tr>
             )}
             <tr>
-              <th>Μαθητής</th>
+              <th>{t('student')}</th>
               {extraColumns.map((column, index) => (
                 <th key={column.key || column.label || index}>{column.label}</th>
               ))}

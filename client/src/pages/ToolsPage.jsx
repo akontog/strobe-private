@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function ToolsPage() {
+  const { t } = useTranslation('interface');
   const [tools, setTools] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -82,17 +84,17 @@ export default function ToolsPage() {
       <div className="dashboard-shell">
         <header className="page-hero">
           <div className="page-hero__logoRow">
-            <img className="page-hero__logo" src="/icons/strobelogo.svg" alt="Strobe Logo" />
-            <h1>Tools</h1>
+            <img className="page-hero__logo" src="/icons/strobelogo.svg" alt={t('strobeLogo')} />
+            <h1>{t('tools')}</h1>
           </div>
           <p className="page-hero__lead">Εργαλεία για μάθημα και δοκιμές, με δεδομένα από το API endpoint /api/tools.</p>
           <div className="page-meta-row">
             <span className="page-chip">GET /api/tools</span>
-            <span className="page-chip">React page</span>
+            <span className="page-chip">{t('reactPage')}</span>
           </div>
         </header>
 
-        {loading ? <p className="page-feedback">Loading tools...</p> : null}
+        {loading ? <p className="page-feedback">{t('loadingTools')}</p> : null}
         {error ? <p className="page-feedback page-feedback--error">{error}</p> : null}
 
         {!loading && !error ? (
@@ -104,21 +106,21 @@ export default function ToolsPage() {
                 <article key={tool.id} className={`strobe-note strobe-note--${meta.tone}`}>
                   <div className="app-head">
                     <div>
-                      <div className="muted">tool</div>
+                      <div className="muted">{t('tool')}</div>
                       <h2 className="app-title">{meta.icon} {tool.title}</h2>
                     </div>
                     <span className={`availability-pill ${tool.available ? 'is-available' : 'is-unavailable'}`}>
-                      {tool.available ? 'Available' : 'Unavailable'}
+                      {tool.available ? t('available') : t('unavailable')}
                     </span>
                   </div>
                   <p className="app-desc">{tool.description}</p>
                   {meta.helper ? <p className="tool-helper-text">{meta.helper}</p> : null}
                   <ul className="role-features">
                     <li>{tool.path}</li>
-                    <li>{tool.available ? 'Ready to open' : 'Build or enable required feature first'}</li>
+                    <li>{tool.available ? t('readyToOpen') : t('enableFeature')}</li>
                   </ul>
                   <div className="btn-row dashboard-action-row">
-                    <Link className="dashboard-action-link" to={tool.path}>Open tool</Link>
+                    <Link className="dashboard-action-link" to={tool.path}>{t('openTool')}</Link>
                   </div>
                 </article>
               );

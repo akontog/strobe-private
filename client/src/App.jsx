@@ -1,5 +1,6 @@
 ﻿import React from 'react';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import BuffonStudentView from './labs/buffon-needle/StudentView';
 import BuffonTeacherView from './labs/buffon-needle/TeacherView';
@@ -34,29 +35,28 @@ import StudentIdentityControl from './shared/components/identity/StudentIdentity
 import LanguageSwitcher from './shared/components/identity/LanguageSwitcher';
 
 function App() {
+  const { t } = useTranslation(['common', 'menu']);
   const location = useLocation();
   const pathname = String(location?.pathname || '').toLowerCase();
   const isTeacherContext = pathname === '/teacher' || pathname.endsWith('/teacher') || pathname.startsWith('/teacher/');
 
-  // const { t } = useTranslation(['common', 'menu']);
-
   return (
     <div className="client-shell">
       <header className="client-topbar">
-        <nav className="client-topbar-nav" aria-label="Main navigation">
-          <Link className="client-home-link" to="/">{/*t('menu.home')*/}menu.home</Link>
-          <Link className="client-nav-link" to="/teacher">Teacher</Link>
-          <Link className="client-nav-link" to="/client">Student</Link>
-          <Link className="client-nav-link" to="/tools">Tools</Link>
-          <Link className="client-nav-link" to="/tools/activity-builder">Activity Builder</Link>
-          <Link className="client-nav-link" to="/tools/camera-speed-test">Camera Speed Test</Link>
-          <Link className="client-nav-link" to="/tools/geogebra-collab">GeoGebra Collab</Link>
-          <Link className="client-nav-link" to="/tools/geogebra-monitor">GeoGebra Monitor</Link>
-          <Link className="client-nav-link" to="/tools/console">Console</Link>
-          <Link className="client-nav-link" to="/tools/linear-separation">Linear Separation</Link>
+        <nav className="client-topbar-nav" aria-label={t('mainNavigation', { ns: 'menu' })}>
+          <Link className="client-home-link" to="/">{t('home')}</Link>
+          <Link className="client-nav-link" to="/teacher">{t('teacher')}</Link>
+          <Link className="client-nav-link" to="/client">{t('student')}</Link>
+          <Link className="client-nav-link" to="/tools">{t('tools', { ns: 'menu' })}</Link>
+          <Link className="client-nav-link" to="/tools/activity-builder">{t('activityBuilder', { ns: 'menu' })}</Link>
+          <Link className="client-nav-link" to="/tools/camera-speed-test">{t('cameraSpeedTest', { ns: 'menu' })}</Link>
+          <Link className="client-nav-link" to="/tools/geogebra-collab">{t('geoGebraCollab', { ns: 'menu' })}</Link>
+          <Link className="client-nav-link" to="/tools/geogebra-monitor">{t('geoGebraMonitor', { ns: 'menu' })}</Link>
+          <Link className="client-nav-link" to="/tools/console">{t('console', { ns: 'menu' })}</Link>
+          <Link className="client-nav-link" to="/tools/linear-separation">{t('linearSeparation', { ns: 'menu' })}</Link>
         </nav>
         <div className="client-topbar-controls">
-          <StudentIdentityControl roleLabel={isTeacherContext ? 'Teacher' : 'Student'} />
+          <StudentIdentityControl roleLabel={isTeacherContext ? t('teacher') : t('student')} />
           <LanguageSwitcher />
         </div>
       </header>

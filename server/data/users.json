@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-10-09T13:36:07.427Z",
+  "savedAt": "2026-10-09T14:17:47.035Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -896,7 +896,7 @@
             "w2": 1
           },
           "active": true,
-          "lastUpdated": "2026-10-09T13:36:07.423Z",
+          "lastUpdated": "2026-10-09T14:17:47.030Z",
           "lesson": {
             "dataset": "vehicles",
             "exampleIndex": 0,
@@ -915,22 +915,22 @@
               "w1": 2,
               "w2": 3
             },
-            "activityId": "2",
-            "activityTitle": "2. Υπολογίζω την έξοδο",
+            "activityId": "1",
+            "activityTitle": "1. Βρίσκω την είσοδο",
             "threshold": {
               "op": ">=",
               "boundary": 5
             },
             "selectedInputs": {
               "i1": true,
-              "i2": true
+              "i2": false
             },
             "useQuestionMarks": false
           }
         }
       },
       "connectedAt": 1791527667945,
-      "lastSeenAt": 1791552967427,
+      "lastSeenAt": 1791555467035,
       "isActive": true
     },
     {

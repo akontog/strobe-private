@@ -35,5 +35,6 @@
   "currentWeights": "Current weights",
   "selectAll": "Select all",
   "selectNone": "Select none",
-  "studentConnection": "Student connection"
+  "studentConnection": "Student connection",
+  "connectedStudents": "Connected students"
 }
