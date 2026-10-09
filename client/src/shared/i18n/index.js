@@ -6,7 +6,6 @@ import commonEl from '../../locales/el/common.json';
 import menuEl from '../../locales/el/menu.json';
 import geometryEl from '../../locales/el/geometry.json';
 import buffonEl from '../../locales/el/buffon.json';
-import fourierEl from '../../locales/el/fourier.json';
 import neuralEl from '../../locales/el/neural.json';
 import interfaceEl from '../../locales/el/interface.json';
 
@@ -14,7 +13,6 @@ import commonEn from '../../locales/en/common.json';
 import menuEn from '../../locales/en/menu.json';
 import geometryEn from '../../locales/en/geometry.json';
 import buffonEn from '../../locales/en/buffon.json';
-import fourierEn from '../../locales/en/fourier.json';
 import neuralEn from '../../locales/en/neural.json';
 import interfaceEn from '../../locales/en/interface.json';
 
@@ -26,7 +24,6 @@ const resources = {
     menu: menuEl,
     geometry: geometryEl,
     buffon: buffonEl,
-    fourier: fourierEl,
     neural: neuralEl,
     interface: interfaceEl
   },
@@ -35,7 +32,6 @@ const resources = {
     menu: menuEn,
     geometry: geometryEn,
     buffon: buffonEn,
-    fourier: fourierEn,
     neural: neuralEn,
     interface: interfaceEn
   }
@@ -50,7 +46,7 @@ if (!i18n.isInitialized) {
       fallbackLng: 'el',
       supportedLngs: ['el', 'en'],
       defaultNS: 'common',
-      ns: ['common', 'menu', 'geometry', 'buffon', 'fourier', 'neural', 'interface'],
+      ns: ['common', 'menu', 'geometry', 'buffon', 'neural', 'interface'],
       interpolation: {
         escapeValue: false
       },

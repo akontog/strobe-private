@@ -51,8 +51,6 @@ export default function HomePage() {
     { to: '/labs/buffon-needle/student', label: tNeural('openBuffonStudent') },
     { to: '/labs/neural-lab/teacher', label: tNeural('openTeacher') },
     { to: '/labs/neural-lab/student', label: tNeural('openStudent') },
-    { to: '/labs/fourier-lab/teacher', label: tNeural('openFourierTeacher') },
-    { to: '/labs/fourier-lab/student', label: tNeural('openFourierStudent') },
     { to: '/labs/geometry-live/teacher', label: tNeural('openGeometryTeacher') },
     { to: '/labs/geometry-live/student', label: tNeural('openGeometryStudent') }
   ];

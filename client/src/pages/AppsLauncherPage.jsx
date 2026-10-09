@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 const toneBySlug = {
   'geometry-live': 'indigo',
   'buffon-needle': 'red',
-  'fourier-lab': 'blue',
   'neural-lab': 'magenta',
   'primes-lab': 'amber'
 };
@@ -13,7 +12,6 @@ const toneBySlug = {
 const iconBySlug = {
   'geometry-live': '📐',
   'buffon-needle': '📌',
-  'fourier-lab': '🌊',
   'neural-lab': '🧠',
   'primes-lab': '🔢'
 };

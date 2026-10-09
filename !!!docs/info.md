@@ -77,7 +77,6 @@ FastApi
 - **`buffon-needle/`**  
   – Προσομοίωση της βελόνας του Buffon.
 
-- **`fourier-lab/`**  
   – 
 
 - **`neural-lab/`** (React)  
@@ -206,7 +205,6 @@ Unified classroom platform with:
 - server/ server runtime and routes
 - server/apps/registry.js app registry used by teacher/student launchers
 - client/src/labs/* React StudentView/TeacherView wrappers
-- client/public/labs/* migrated lab runtime (fourier, geometry, neural, buffon, primes, shared assets)
 - client/src/shared/* shared React utilities/components
 - client/src/layout/* layout area (when present in client code)
 
@@ -351,7 +349,6 @@ npm run build:client
 
 **Φάκελοι:**
 - `activities/` - activity configurations
-- `apps/` - όλες οι εφαρμογές (geometry-live, buffon-needle, fourier-lab, neural-lab)
 - `assets/` - κοινά assets (CSS, JS)
 - `middleware/` - Express middleware
 - `public/` - static files (index.html, launcher.html, κλπ)
@@ -429,9 +426,6 @@ npm run build:linear
 - Buffon Needle:
     - /apps/buffon-needle/teacher.html
     - /apps/buffon-needle/student.html
-- Fourier Lab:
-    - /apps/fourier-lab/index.html?mode=teacher
-    - /apps/fourier-lab/index.html?mode=student
 - Neural Lab:
     - /apps/neural-lab/teacher.html
     - /apps/neural-lab/student.html
@@ -445,7 +439,6 @@ npm run build:linear
 Ο server αποθηκεύει:
 - sessionId/userId
 - metadata χρήστη
-- app-specific state (geometry-live, fourier-lab, buffon-needle, neural-lab)
 - timestamps activity
 
 

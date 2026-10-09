@@ -104,10 +104,7 @@ function initGeometry({
   }
 
   // Καλείται μία φορά για κάθε νέα σύνδεση στο κύριο κανάλι (/ws/realtime).
-  // fourierHooks: { registerFourierSocketHandlers, handleFourierDisconnect } — περνιούνται
-  // εδώ (αντί να μπουν στο initGeometry) γιατί το geometry αρχικοποιείται ΠΡΙΝ το fourier.
-  function registerSocketHandlers(socket, fourierHooks = {}) {
-    const { registerFourierSocketHandlers, handleFourierDisconnect } = fourierHooks;
+  function registerSocketHandlers(socket) {
 
     console.log('[realtime] socket connected:', socket.id);
     recordCommunication({
@@ -140,9 +137,6 @@ function initGeometry({
 
     socket.emit('users-update', buildUserList());
 
-    if (registerFourierSocketHandlers) {
-      registerFourierSocketHandlers(socket);
-    }
 
     socket.on('user-position', (data) => {
       markGeometryActivity(socket);
@@ -302,11 +296,7 @@ function initGeometry({
       activeUsers.delete(socket.id);
       geometryConnectionMeta.delete(socket.id);
       sessionManager.leaveApp(socket.sessionId, 'geometry');
-      emitUsersUpdate(); // ενημέρωση όλων ότι αυτός ο χρήστης έφυγε (πριν το έκανε έμμεσα το fourier)
-
-      if (handleFourierDisconnect) {
-        handleFourierDisconnect(socket.id);
-      }
+      emitUsersUpdate();
     });
   }
 

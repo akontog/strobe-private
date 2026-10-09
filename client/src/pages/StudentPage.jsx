@@ -44,7 +44,6 @@ export default function StudentPage() {
   const toneBySlug = {
     'geometry-live': 'indigo',
     'buffon-needle': 'orange',
-    'fourier-lab': 'blue',
     'neural-lab': 'magenta',
     'primes-lab': 'green',
     'linear-systems-lab': 'indigo',
@@ -54,7 +53,6 @@ export default function StudentPage() {
   const iconBySlug = {
     'geometry-live': '🖱️',
     'buffon-needle': '🎯',
-    'fourier-lab': '🎵',
     'neural-lab': '⚡',
     'primes-lab': '🧮',
     'linear-systems-lab': '📘',

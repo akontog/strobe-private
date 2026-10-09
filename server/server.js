@@ -50,7 +50,6 @@ const { sessionMiddleware, getWebSocketSessionInfo } = require('./middleware/ses
 
 /**** 4. Import services ****/
 const sessionManager = require('./services/sessionManager');
-const initFourier = require('./services/fourier');
 const initBuffon = require('./services/buffon');
 const initGeometry = require('./services/geometry');
 const initNeural = require('./services/neural');
@@ -132,14 +131,6 @@ const {
 const buffonConnectionMeta = new Map();
 const canvasNodeConnectionMeta = new Map();
 
-const fourierService = initFourier({
-  io,
-  recordCommunication,
-  getSocketClientInfo,
-  sessionManager
-});
-const { fourierParticipants, registerSocketHandlers: registerFourierSocketHandlers, handleSocketDisconnect } = fourierService;
-
 const geogebraLessonStore = createGeogebraLessonStore();
 
 const geogebraCollabService = initGeogebraCollab({
@@ -198,7 +189,6 @@ function getRealtimeStats() {
   return {
     connectedSockets: io.engine.clientsCount,
     activeUserPoints: buildUserList().length,
-    fourierParticipants: fourierParticipants.size,
     activeSessions: sessionStats.activeSessions,
     sessionsByRole: sessionStats.sessionsByRole,
     sessionsByApp: sessionStats.sessionsByApp
@@ -277,10 +267,7 @@ app.post('/api/tools/geogebra-collab-test/run', asyncHandler(async (req, res) =>
 }));
 
 io.on('connection', (socket) => {
-  registerGeometrySocketHandlers(socket, {
-    registerFourierSocketHandlers,
-    handleFourierDisconnect: handleSocketDisconnect
-  });
+  registerGeometrySocketHandlers(socket);
 
   geogebraCollabService.registerSocketHandlers(socket);
 });

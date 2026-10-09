@@ -28,17 +28,6 @@ const APP_DEFINITIONS = [
     clientEntry: 'student.html'
   },
   {
-    slug: 'fourier-lab',
-    labId: 'fourier-lab',
-    title: 'Fourier Lab',
-    description: 'Interactive Fourier series demo ready for custom JS features.',
-    roles: ['teacher', 'client'],
-    kind: 'static',
-    staticDir: path.join(LABS_ROOT, 'fourier-lab'),
-    teacherEntry: 'index.html',
-    clientEntry: 'index.html'
-  },
-  {
     slug: 'neural-lab',
     labId: 'neural-lab',
     title: 'Neural Lab',

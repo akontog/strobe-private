@@ -10,7 +10,6 @@ Unified classroom platform with:
 - server/apps/registry.js app registry used by teacher/student launchers
 - server/utils/
   - COMM_EVENT_CATALOG: catalog with all events
-- client/src/labs/* lab runtime and React views (fourier, geometry, neural, buffon, primes)
 - client/src/framework/assets/* shared framework CSS/JS assets served at /framework/*
 - client/src/shared/* shared React components/hooks/i18n
 - client/src/layout/* layout area (when present in client code)
@@ -76,8 +75,6 @@ npm run build:linear
 - /labs/geometry-live/teacher.html
 - /labs/geometry-live/mouse.html
 - /labs/geometry-live/camera.html
-- /labs/fourier-lab/index.html?mode=teacher
-- /labs/fourier-lab/index.html?mode=client
 - /labs/buffon-needle/teacher.html
 - /labs/buffon-needle/student.html
 - /labs/neural-lab/teacher.html
@@ -90,10 +87,6 @@ npm run build:linear
 ## Geometry Live
 
 ## Buffon Needle
-
-## Fourier Lab
-
-- [readme](/!!!docs/reports/fourier-lab/README-fourier-lab.md)
 
 ## Neural Lab
 

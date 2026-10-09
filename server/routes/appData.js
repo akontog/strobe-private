@@ -5,7 +5,7 @@ const { getAppData, saveAppData } = require('../middleware/sessionMiddleware');
 const router = express.Router();
 
 /**
- * GET /api/app-data?app=fourier-lab
+ * GET /api/app-data?app=neural-lab
  * Ανάκτηση δεδομένων εφαρμογής για τον τρέχοντα χρήστη
  */
 router.get('/api/app-data', (req, res) => {
@@ -35,7 +35,7 @@ router.get('/api/app-data', (req, res) => {
  * 
  * Body:
  * {
- *   "app": "fourier-lab",
+ *   "app": "neural-lab",
  *   "data": { "currentSlide": 5, "score": 100 }
  * }
  */

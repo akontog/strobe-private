@@ -6,8 +6,6 @@ import BuffonStudentView from './labs/buffon-needle/StudentView';
 import BuffonTeacherView from './labs/buffon-needle/TeacherView';
 import NeuralStudentView from './labs/neural-lab/StudentView';
 import NeuralTeacherView from './labs/neural-lab/TeacherView';
-import FourierStudentView from './labs/fourier-lab/StudentView';
-import FourierTeacherView from './labs/fourier-lab/TeacherView';
 import GeometryStudentView from './labs/geometry-live/StudentView';
 import GeometryTeacherView from './labs/geometry-live/TeacherView';
 import PrimesStudentView from './labs/primes-lab/StudentView';
@@ -87,8 +85,6 @@ function App() {
           <Route path="/labs/linear-systems-lab/teacher" element={<LinearSystemsTeacherView />} />
           <Route path="/labs/identities-lab/student" element={<IdentitiesStudentView />} />
           <Route path="/labs/identities-lab/teacher" element={<IdentitiesTeacherView />} />
-          <Route path="/labs/fourier-lab/student" element={<FourierStudentView />} />
-          <Route path="/labs/fourier-lab/teacher" element={<FourierTeacherView />} />
           <Route path="/labs/geometry-live/student" element={<GeometryStudentView />} />
           <Route path="/labs/geometry-live/teacher" element={<GeometryTeacherView />} />
           <Route path="/labs/:slug/teacher" element={<LabPage role="teacher" />} />

@@ -33,7 +33,6 @@ C:.
 +---services
 |       appActivities.js
 |       buffon.js
-|       fourier.js
 |       geometry.js
 |       neural.js
 |       primes.js

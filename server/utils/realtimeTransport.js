@@ -4,7 +4,7 @@
 //  Μια μίνι εκδοχή του Socket.IO χτισμένη πάνω στη βιβλιοθήκη 'ws'.
 //  Έχει το ίδιο API (io.on('connection'), socket.on/emit/join/leave,
 //  io.to(room).emit, socket.broadcast.emit), ώστε ο υπόλοιπος κώδικας
-//  (geometry, fourier, activities) να γράφεται σαν να υπήρχε Socket.IO.
+//  (geometry, activities) να γράφεται σαν να υπήρχε Socket.IO.
 //
 //  Πρωτόκολλο: κάθε μήνυμα είναι JSON της μορφής { event, data }.
 // =============================================================

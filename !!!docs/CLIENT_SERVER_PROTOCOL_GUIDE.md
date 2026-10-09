@@ -27,7 +27,6 @@
 - Μορφή μηνύματος: `{ event, data }`
 - Χρησιμοποιείται από:
   - geometry (users-update, camera-points, activity-loaded)
-  - fourier-lab (`fourier:*` events)
   - geogebra collaboration (`geogebra:*` events)
   - monitor/presentation hooks
 
@@ -296,49 +295,6 @@ Client υλοποίηση:
 
 ---
 
-## 5.7 Fourier Lab (μέσω `/ws/realtime`)
-
-### Core flow events
-Client -> Server:
-- `fourier:join`
-- `fourier:request-state`
-- `fourier:set-slide`
-- `fourier:interaction`
-- `fourier:sound-control`
-- `fourier:heat-control`
-- `fourier:heat-time-control`
-- `fourier:fft-duel-start`
-- `fourier:fft-duel-probe`
-- `fourier:fft-duel-submit`
-- `fourier:fft-duel-reveal`
-- `fourier:ocean-random-pack`
-- `fourier:ocean-random-clear`
-- `fourier:wave-sum-update`
-- (και τα taylor-guess events)
-
-Server -> Client:
-- `fourier:state`
-- `fourier:slide`
-- `fourier:participants`
-- `fourier:summary`
-- `fourier:activity-event`
-- `fourier:sound-state`
-- `fourier:heat-state`
-- `fourier:heat-time-state`
-- `fourier:fft-duel-state`
-- `fourier:ocean-random-state`
-- `fourier:wave-sum-state`
-- (και `fourier:taylor-guess-state`)
-
-### Κώδικας
-- Server:
-  - `server/services/fourier.js`
-- Client:
-  - `client/src/labs/fourier-lab/classroom-sync.js`
-  - `client/src/labs/fourier-lab/index.html`
-
----
-
 ## 5.8 GeoGebra Collaborative + Monitor (μέσω `/ws/realtime`)
 
 ### Client -> Server
@@ -415,7 +371,6 @@ Server -> Client:
 
 ```json
 {
-  "event": "fourier:join",
   "data": {
     "role": "student",
     "name": "Maria"
@@ -513,7 +468,6 @@ Server -> Client:
   - `server/utils/commEventCatalog.js`
   - `server/utils/communication.js`
 - App services:
-  - `server/services/fourier.js`
   - `server/services/geometry.js`
   - `server/services/geogebraCollab.js`
   - `server/services/neural.js`
@@ -525,7 +479,6 @@ Server -> Client:
   - `public/js/realtime-socket.js`
   - `client/src/framework/assets/js/classroom-api.js`
 - App clients:
-  - `client/src/labs/fourier-lab/classroom-sync.js`
   - `client/src/labs/primes-lab/App.jsx`
   - `client/src/labs/polynomial-lab/App.jsx`
   - `client/src/labs/linear-systems-lab/App.jsx`

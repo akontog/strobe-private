@@ -8,7 +8,7 @@ const SESSION_COOKIE_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24 ώρες
  * Βρίσκει ή δημιουργεί ένα session από ΟΠΟΙΟΔΗΠΟΤΕ request (HTTP ή WebSocket
  * upgrade), διαβάζοντας το ίδιο cookie "sessionId" και στις δύο περιπτώσεις.
  * Αυτό είναι το σημείο που ενοποιεί την ταυτότητα σε όλο το σύστημα: ό,τι
- * χρησιμοποιεί κάθε εφαρμογή (geometry, fourier, buffon, neural...) περνά
+ * χρησιμοποιεί κάθε εφαρμογή (geometry, buffon, neural...) περνά
  * από εδώ αντί να φτιάχνει δικό του session με socket.id.
  *
  * ΔΕΝ βασίζεται στο req.cookies (χρειάζεται cookie-parser και δεν υπάρχει
@@ -94,7 +94,7 @@ function getWebSocketSessionInfo(request) {
  *
  * Χρησιμοποίηση:
  * // In a route or WebSocket handler:
- * saveAppData(req.sessionId, 'fourier-lab', { currentSlide: 5, score: 100 });
+ * saveAppData(req.sessionId, 'neural-lab', { currentSlide: 5, score: 100 });
  */
 function saveAppData(sessionId, appName, appData) {
   return sessionManager.saveAppData(sessionId, appName, appData);

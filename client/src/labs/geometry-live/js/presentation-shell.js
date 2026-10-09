@@ -48,8 +48,8 @@
     const menuButtonEl = resolveElement(config.menuButtonEl || config.menuButtonSelector);
     const sidebarEl = resolveElement(config.sidebarEl || config.sidebarSelector);
 
-    const readyEventName = config.readyEventName || "fourier:deck-ready";
-    const slideChangedEventName = config.slideChangedEventName || "fourier:slide-changed";
+    const readyEventName = config.readyEventName || "presentation:deck-ready";
+    const slideChangedEventName = config.slideChangedEventName || "presentation:slide-changed";
     const sidebarMobileBreakpoint = Number.isFinite(config.sidebarMobileBreakpoint)
       ? config.sidebarMobileBreakpoint
       : 900;
@@ -414,7 +414,7 @@
     const prevButtonEl = resolveElement(config.prevButtonEl || config.prevButtonSelector || "#prevSlideBtn");
     const mobileBreakpoint = Number.isFinite(config.mobileBreakpoint) ? config.mobileBreakpoint : 900;
     const shiftVariableName = config.shiftVariableName || "--classroom-content-shift";
-    const toggleEventName = config.toggleEventName || "fourier:classroom-dock-toggle";
+    const toggleEventName = config.toggleEventName || "presentation:classroom-dock-toggle";
 
     let shiftPx = 0;
 
