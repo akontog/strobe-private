@@ -17,6 +17,7 @@ const createAdminRouter = require('./routes/admin');
 const createAppsRouter = require('./routes/apps');
 const appDataRouter = require('./routes/appData');
 const createActivitiesRouter = require('./routes/activities');
+const createAuthRouter = require('./routes/auth');
 
 /**** 3. Import helper functions, variables, and settings ****/
 const {
@@ -75,6 +76,7 @@ app.use(express.json({ limit: '8mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(sessionMiddleware());
+app.use('/api/auth', createAuthRouter());
 
 // Session management middleware
 app.get('/health', (req, res) => {

@@ -11,7 +11,7 @@ function clampName(value) {
   return String(value || '').trim().replace(/\s+/g, ' ').slice(0, 80);
 }
 
-export default function StudentIdentityControl({ className = '', roleLabel = 'Student' }) {
+export default function StudentIdentityControl({ className = '', roleLabel = 'Student', roleControl = null }) {
   const [snapshot, setSnapshot] = useState(() => readIdentitySnapshot({
     nameFallback: roleLabel,
     colorFallback: randomIdentityColor()
@@ -77,13 +77,8 @@ export default function StudentIdentityControl({ className = '', roleLabel = 'St
 
   return (
     <div className={`student-identity-control ${className}`.trim()}>
-      <span
-        className="student-identity-control__badge"
-        aria-hidden="true"
-        style={{ background: snapshot.color || randomIdentityColor() }}
-      />
+      {roleControl}
       <div className="student-identity-control__fields">
-        <span className="student-identity-control__label">{roleLabel}</span>
         {isEditing ? (
           <input
             ref={inputRef}

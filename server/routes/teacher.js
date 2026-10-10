@@ -2,8 +2,10 @@ const express = require('express');
 
 const { getAppBySlug, listAppsForRole, toPublicApp } = require('../apps/registry');
 const { saveActivity, listActivities, getActivity } = require('../services/appActivities');
+const { requireRole } = require('../middleware/checkRole');
 
 const router = express.Router();
+router.use(requireRole(['teacher']));
 
 function resolveTeacherApp(req, res) {
   const app = getAppBySlug(req.params.slug);

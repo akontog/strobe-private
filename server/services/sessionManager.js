@@ -38,6 +38,7 @@ class SessionManager {
       userAgent: String(metadata.userAgent || 'unknown'),
       username,
       role,
+      teacherAccount: String(metadata.teacherAccount || ''),
       source: String(metadata.source || 'realtime'),
       activeApps: new Set(),
       appData: {},
@@ -97,6 +98,10 @@ class SessionManager {
  
       if (typeof patch.role === 'string' && patch.role.trim()) {
         session.role = patch.role.trim();
+      }
+
+      if (typeof patch.teacherAccount === 'string') {
+        session.teacherAccount = patch.teacherAccount.trim();
       }
  
       if (typeof patch.ip === 'string' && patch.ip.trim()) {
@@ -445,6 +450,7 @@ class SessionManager {
       userAgent: String(item.userAgent || 'unknown'),
       username,
       role: String(item.role || 'client'),
+      teacherAccount: String(item.teacherAccount || ''),
       source: String(item.source || 'realtime'),
       activeApps: new Set(Array.isArray(item.activeApps) ? item.activeApps : []),
       appData: item.appData && typeof item.appData === 'object' ? item.appData : {},

@@ -1,0 +1,25 @@
+{
+  "labs": "Labs",
+  "system": "System",
+  "tools": "Tools",
+  "sectionNavigation": "Sections",
+  "items": {
+    "buffon": "Buffon",
+    "identities": "Identities",
+    "neural": "Neural",
+    "polynomial": "Polynomial",
+    "primes": "Primes",
+    "geogebra": "Collaborative GeoGebra",
+    "camera": "Camera Speed Test",
+    "console": "Console",
+    "separation": "Linear Separation",
+    "monitor": "GeoGebra Central Monitor",
+    "builder": "Activity Builder"
+  },
+  "password": "Password",
+  "login": "Log in",
+  "logout": "Log out",
+  "connected": "Connected to server",
+  "disconnected": "Not connected to server",
+  "loginFailed": "Could not sign in. Check the username and password."
+}

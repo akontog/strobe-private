@@ -1,0 +1,25 @@
+{
+  "labs": "Εργαστήρια",
+  "system": "Σύστημα",
+  "tools": "Εργαλεία",
+  "sectionNavigation": "Ενότητες",
+  "items": {
+    "buffon": "Buffon",
+    "identities": "Ταυτότητες",
+    "neural": "Νευρωνικό",
+    "polynomial": "Πολυώνυμα",
+    "primes": "Πρώτοι",
+    "geogebra": "Συνεργατικό GeoGebra",
+    "camera": "Έλεγχος ταχύτητας κάμερας",
+    "console": "Κονσόλα",
+    "separation": "Γραμμικός διαχωρισμός",
+    "monitor": "Κεντρική εποπτεία GeoGebra",
+    "builder": "Δημιουργία δραστηριοτήτων"
+  },
+  "password": "Κωδικός",
+  "login": "Σύνδεση",
+  "logout": "Αποσύνδεση",
+  "connected": "Συνδεδεμένος στον server",
+  "disconnected": "Χωρίς σύνδεση με τον server",
+  "loginFailed": "Η σύνδεση απέτυχε. Ελέγξτε το όνομα χρήστη και τον κωδικό."
+}

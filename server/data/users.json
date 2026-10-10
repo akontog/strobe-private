@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-10-10T06:37:07.428Z",
+  "savedAt": "2026-10-10T11:02:08.568Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -9,6 +9,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
       "username": "ppp",
       "role": "client",
+      "teacherAccount": "",
       "source": "neural-lab",
       "activeApps": [
         "neural-lab",
@@ -37,6 +38,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
       "username": "Teacher",
       "role": "teacher",
+      "teacherAccount": "",
       "source": "neural-lab",
       "activeApps": [
         "neural-lab",
@@ -90,6 +92,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
       "username": "Teacher",
       "role": "teacher",
+      "teacherAccount": "",
       "source": "neural-lab",
       "activeApps": [
         "neural"
@@ -142,6 +145,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
       "username": "ppp",
       "role": "client",
+      "teacherAccount": "",
       "source": "neural-lab",
       "activeApps": [
         "neural"
@@ -169,6 +173,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
       "username": "Primes teacher",
       "role": "teacher",
+      "teacherAccount": "",
       "source": "primes-lab",
       "activeApps": [
         "neural",
@@ -235,6 +240,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
       "username": "xx",
       "role": "teacher",
+      "teacherAccount": "",
       "source": "linear-systems-lab",
       "activeApps": [
         "neural",
@@ -309,6 +315,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
       "username": "user-077961",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -323,6 +330,7 @@
       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36",
       "username": "user-797248",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -337,6 +345,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; el-GR) WindowsPowerShell/5.1.26100.9444",
       "username": "user-9b9590",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -351,6 +360,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; el-GR) WindowsPowerShell/5.1.26100.9444",
       "username": "user-6c770c",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -365,6 +375,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT; Windows NT 10.0; el-GR) WindowsPowerShell/5.1.26100.9444",
       "username": "user-22a445",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -379,6 +390,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:156.0) Gecko/20100101 Firefox/156.0",
       "username": "Teacher",
       "role": "teacher",
+      "teacherAccount": "",
       "source": "neural-lab",
       "activeApps": [
         "neural"
@@ -431,6 +443,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.139.1 Chrome/150.0.7871.250 Electron/43.6.0 Safari/537.36",
       "username": "user-4c2bf7",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -445,6 +458,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
       "username": "user-1a1247",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -459,6 +473,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
       "username": "user-5fd304",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -473,6 +488,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:156.0) Gecko/20100101 Firefox/156.0",
       "username": "asdfg",
       "role": "teacher",
+      "teacherAccount": "",
       "source": "polynomial-lab",
       "activeApps": [
         "polynomial",
@@ -498,6 +514,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
       "username": "user-216ffa",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -512,6 +529,7 @@
       "userAgent": "geogebra-collab-test-runner",
       "username": "charlie",
       "role": "student",
+      "teacherAccount": "",
       "source": "protocol-test",
       "activeApps": [],
       "appData": {},
@@ -526,6 +544,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 OPR/135.0.0.0",
       "username": "zyx",
       "role": "client",
+      "teacherAccount": "",
       "source": "neural-lab",
       "activeApps": [
         "neural",
@@ -554,6 +573,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0",
       "username": "asdfg",
       "role": "student",
+      "teacherAccount": "",
       "source": "polynomial-lab",
       "activeApps": [
         "polynomial",
@@ -579,6 +599,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
       "username": "xx",
       "role": "teacher",
+      "teacherAccount": "",
       "source": "polynomial-lab",
       "activeApps": [
         "polynomial",
@@ -604,6 +625,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0",
       "username": "asdfg",
       "role": "student",
+      "teacherAccount": "",
       "source": "polynomial-lab",
       "activeApps": [
         "polynomial-lab",
@@ -629,6 +651,7 @@
       "userAgent": "Hello from Palo Alto Networks, find out more about our scans in https://docs-cortex.paloaltonetworks.com/r/1/Cortex-Xpanse/Scanning-activity",
       "username": "user-4645b4",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -643,6 +666,7 @@
       "userAgent": "unknown",
       "username": "user-f269f5",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -657,6 +681,7 @@
       "userAgent": "Mozilla/5.0 (compatible; CensysInspect/1.1; +https://about.censys.io/)",
       "username": "user-4dc651",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -671,6 +696,7 @@
       "userAgent": "Mozilla/5.0 (compatible; CensysInspect/1.1; +https://about.censys.io/)",
       "username": "user-395e2c",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -685,6 +711,7 @@
       "userAgent": "Hello from Palo Alto Networks, find out more about our scans in https://docs-cortex.paloaltonetworks.com/r/1/Cortex-Xpanse/Scanning-activity",
       "username": "user-64e432",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -699,6 +726,7 @@
       "userAgent": "Mozilla/5.0 (compatible; CensysInspect/1.1; +https://about.censys.io/)",
       "username": "user-87086b",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -713,6 +741,7 @@
       "userAgent": "Mozilla/5.0 (compatible; CensysInspect/1.1; +https://about.censys.io/)",
       "username": "user-0e5eb6",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -727,6 +756,7 @@
       "userAgent": "Mozilla/5.0 (compatible; CensysInspect/1.1; +https://about.censys.io/)",
       "username": "user-8f3271",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -741,6 +771,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
       "username": "user-d31088",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -755,6 +786,7 @@
       "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Electron/2.0.18 Safari/537.36",
       "username": "user-03fb3c",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -769,6 +801,7 @@
       "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:124.0) Gecko/20100101 Firefox/124.0",
       "username": "user-41166f",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -783,6 +816,7 @@
       "userAgent": "Hello from Palo Alto Networks, find out more about our scans in https://docs-cortex.paloaltonetworks.com/r/1/Cortex-Xpanse/Scanning-activity",
       "username": "user-a54ce1",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -797,6 +831,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
       "username": "user-c2798c",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -811,6 +846,7 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
       "username": "user-0b20e6",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -825,6 +861,7 @@
       "userAgent": "visionheight.com/scan Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/126.0.0.0 Safari/537.36",
       "username": "user-5606a8",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -839,6 +876,7 @@
       "userAgent": "visionheight.com/scan Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/126.0.0.0 Safari/537.36",
       "username": "user-8b1469",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -853,6 +891,7 @@
       "userAgent": "visionheight.com/scan Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/126.0.0.0 Safari/537.36",
       "username": "user-678f85",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -867,6 +906,7 @@
       "userAgent": "visionheight.com/scan Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/126.0.0.0 Safari/537.36",
       "username": "user-dcce31",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -879,13 +919,13 @@
       "userId": "user_1791527667945_27pt91q",
       "ip": "127.0.0.1",
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
-      "username": "Buffon teacher",
+      "username": "antonis",
       "role": "teacher",
-      "source": "buffon",
+      "teacherAccount": "antonis",
+      "source": "teacher-login",
       "activeApps": [
         "polynomial-lab",
-        "neural",
-        "buffon"
+        "neural"
       ],
       "appData": {
         "neural": {
@@ -936,7 +976,7 @@
         }
       },
       "connectedAt": 1791527667945,
-      "lastSeenAt": 1791614227428,
+      "lastSeenAt": 1791629210431,
       "isActive": true
     },
     {
@@ -945,10 +985,12 @@
       "ip": "127.0.0.1",
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0",
       "username": "as3232",
-      "role": "client",
-      "source": "buffon",
+      "role": "teacher",
+      "teacherAccount": "antonis",
+      "source": "polynomial-lab",
       "activeApps": [
-        "buffon"
+        "neural",
+        "polynomial-lab"
       ],
       "appData": {
         "buffon": {
@@ -957,11 +999,21 @@
           "hits": 0,
           "piEst": null,
           "active": true,
-          "lastUpdated": "2026-10-10T06:27:11.688Z"
+          "lastUpdated": "2026-10-10T10:53:25.529Z"
+        },
+        "neural": {
+          "role": "client",
+          "color": "#a855f7",
+          "weights": {
+            "w1": 1,
+            "w2": 1
+          },
+          "active": true,
+          "lastUpdated": "2026-10-10T10:58:33.629Z"
         }
       },
       "connectedAt": 1791550835233,
-      "lastSeenAt": 1791613631690,
+      "lastSeenAt": 1791630128568,
       "isActive": true
     },
     {
@@ -971,6 +1023,7 @@
       "userAgent": "node",
       "username": "user-1712be",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -985,6 +1038,7 @@
       "userAgent": "unknown",
       "username": "Connection smoke test",
       "role": "client",
+      "teacherAccount": "",
       "source": "buffon",
       "activeApps": [],
       "appData": {
@@ -1008,6 +1062,7 @@
       "userAgent": "node",
       "username": "user-edce1f",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -1022,6 +1077,7 @@
       "userAgent": "node",
       "username": "user-299d3d",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
@@ -1036,6 +1092,7 @@
       "userAgent": "unknown",
       "username": "Buffon smoke student",
       "role": "client",
+      "teacherAccount": "",
       "source": "buffon",
       "activeApps": [],
       "appData": {
@@ -1059,6 +1116,7 @@
       "userAgent": "unknown",
       "username": "Buffon teacher",
       "role": "teacher",
+      "teacherAccount": "",
       "source": "buffon",
       "activeApps": [],
       "appData": {
@@ -1080,11 +1138,42 @@
       "userAgent": "node",
       "username": "user-177313",
       "role": "student",
+      "teacherAccount": "",
       "source": "http",
       "activeApps": [],
       "appData": {},
       "connectedAt": 1791612714120,
       "lastSeenAt": 1791612714120,
+      "isActive": true
+    },
+    {
+      "id": "db4b4e92-97cd-4265-9127-5c4b474354d6",
+      "userId": "user_1791623495014_84zy2lm",
+      "ip": "34.140.3.155",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      "username": "user-db4b4e",
+      "role": "student",
+      "teacherAccount": "",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791623495014,
+      "lastSeenAt": 1791623495014,
+      "isActive": true
+    },
+    {
+      "id": "7b78c22b-9ec1-483a-8642-cb6557ea8b9e",
+      "userId": "user_1791623495251_26gttuz",
+      "ip": "34.140.3.155",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+      "username": "user-7b78c2",
+      "role": "student",
+      "teacherAccount": "",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791623495251,
+      "lastSeenAt": 1791623495251,
       "isActive": true
     }
   ]
