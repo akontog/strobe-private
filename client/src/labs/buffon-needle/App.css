@@ -21,7 +21,7 @@ body,
 	padding: 2rem;
 }
 
-.buffon-root {
+.buffon-app {
 	width: 100%;
 	display: flex;
 	flex-direction: column;
@@ -29,156 +29,59 @@ body,
 	gap: 1.2rem;
 }
 
-.buffon-root.teacher {
+.buffon-content {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1.2rem;
+}
+
+.buffon-content.teacher {
 	--panel-max: 760px;
 }
 
-.buffon-root.student {
+.buffon-content.student {
 	--panel-max: 580px;
 }
 
-.buffon-root h1 {
-	font-size: 1.5rem;
-	letter-spacing: 0.04em;
-	color: #0f172a;
-	font-weight: 800;
-}
-
-.buffon-root .subtitle {
-	font-size: 0.78rem;
-	color: #64748b;
-	letter-spacing: 0.08em;
+.buffon-content .connection-status {
+	width: 100%;
+	max-width: 580px;
+	color: #b91c1c;
+	font-size: 0.8rem;
 	font-weight: 700;
 	text-align: center;
-	margin-top: 0.2rem;
 }
 
-.buffon-root .chart-wrap {
-	width: 100%;
-	max-width: var(--panel-max);
-	background: #ffffff;
-	border: 1px solid #cbd5e1;
-	border-radius: 2rem;
-	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+.buffon-content .connection-status.connected {
+	color: #15803d;
 }
 
-.buffon-root .chart-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 0.5rem 1rem;
-	cursor: pointer;
-	user-select: none;
-	background: #eef2ff;
-	border-radius: 2rem;
+.buffon-content .buffon-accordion {
+  width: 100%;
+  max-width: var(--panel-max);
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
 }
 
-.buffon-root .chart-header:hover {
-	background: #e0e7ff;
+.buffon-content .accordion-btn .c-lbl {
+  font-size: 0.75rem;
+  color: #334155;
+  letter-spacing: 0.08em;
+  margin: 0;
+  font-weight: 800;
 }
 
-.buffon-root .chart-header .c-lbl {
-	font-size: 0.75rem;
-	color: #334155;
-	letter-spacing: 0.08em;
-	margin: 0;
-	font-weight: 800;
-}
-
-.buffon-root .chart-toggle {
-	font-size: 0.9rem;
-	color: #475569;
-	transition: transform 0.3s ease;
-	display: inline-block;
-}
-
-.buffon-root .chart-toggle.open {
-	transform: rotate(180deg);
-}
-
-.buffon-root .chart-body {
-	max-height: 0;
-	overflow: hidden;
-	transition: max-height 0.3s ease-out;
-}
-
-.buffon-root .chart-body.open {
-	max-height: 70vh;
-	overflow-y: auto;
-	overflow-x: hidden;
-	transition: max-height 0.4s ease-in;
-	padding: 0 10px 10px;
+.buffon-content .accordion-content.open {
+  padding: 0 10px 10px;
 }
 
 /* Student view */
-.buffon-root.student .team-bar {
-	width: 100%;
-	max-width: 580px;
-	background: #ffffff;
-	border: 2px solid #dce3ec;
-	border-radius: 2rem;
-	padding: 12px 16px;
-	display: flex;
-	gap: 10px;
-	align-items: center;
-	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-}
-
-.buffon-root.student .team-bar label {
-	font-size: 12px;
-	color: #334155;
-	letter-spacing: 1px;
-	font-weight: 700;
-	white-space: nowrap;
-}
-
-.buffon-root.student .team-bar input {
-	flex: 1;
-	background: #f8fafc;
-	border: 2px solid #cbd5e1;
-	border-radius: 2rem;
-	padding: 8px 12px;
-	color: #0f172a;
-	font-family: inherit;
-	font-size: 14px;
-	font-weight: 700;
-	outline: none;
-}
-
-.buffon-root.student .team-bar input:focus {
-	border-color: #3b82f6;
-}
-
-.buffon-root.student .team-bar button {
-	padding: 8px 18px;
-	font-size: 12px;
-	cursor: pointer;
-	border: none;
-	border-radius: 3rem;
-	background: #3b82f6;
-	color: white;
-	font-family: inherit;
-	font-weight: 700;
-}
-
-.buffon-root.student .team-bar button:hover {
-	background: #2563eb;
-}
-
-.buffon-root.student .conn-dot {
-	width: 10px;
-	height: 10px;
-	border-radius: 50%;
-	background: #ef4444;
-	flex-shrink: 0;
-	transition: background 0.3s;
-}
-
-.buffon-root.student .conn-dot.connected {
-	background: #10b981;
-}
-
-.buffon-root.student .round-banner {
+.buffon-content.student .round-banner {
 	width: 100%;
 	max-width: 580px;
 	border-radius: 2rem;
@@ -193,19 +96,19 @@ body,
 	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
 }
 
-.buffon-root.student .round-banner.active {
+.buffon-content.student .round-banner.active {
 	color: #1d4ed8;
 	border-color: #93c5fd;
 	background: #eff6ff;
 }
 
-.buffon-root.student .round-banner.ended {
+.buffon-content.student .round-banner.ended {
 	color: #b45309;
 	border-color: #fcd34d;
 	background: #fffbeb;
 }
 
-.buffon-root.student .canvas-row {
+.buffon-content.student .canvas-row {
 	width: 100%;
 	max-width: 580px;
 	display: flex;
@@ -214,24 +117,24 @@ body,
 	gap: 10px;
 }
 
-.buffon-root.student .canvas-stage {
+.buffon-content.student .canvas-stage {
 	width: 100%;
 	max-width: 480px;
 }
 
-.buffon-root.student canvas {
+.buffon-content.student canvas {
 	display: block;
 	max-width: 100%;
 	height: auto;
 }
 
-.buffon-root.student #sim {
+.buffon-content.student #sim {
 	border-radius: 1rem;
 	border: 2px solid #cbd5e1;
 	background: #f8fbff;
 }
 
-.buffon-root.student .canvas-footer {
+.buffon-content.student .canvas-footer {
 	display: flex;
 	gap: 16px;
 	font-size: 11px;
@@ -240,7 +143,7 @@ body,
 	margin-top: 5px;
 }
 
-.buffon-root.student .vspinner {
+.buffon-content.student .vspinner {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -252,7 +155,7 @@ body,
 	width: 68px;
 }
 
-.buffon-root.student .vspinner .lbl {
+.buffon-content.student .vspinner .lbl {
 	font-size: 10px;
 	color: #334155;
 	letter-spacing: 1px;
@@ -261,14 +164,14 @@ body,
 	line-height: 1.35;
 }
 
-.buffon-root.student .vspinner .val {
+.buffon-content.student .vspinner .val {
 	font-size: 20px;
 	font-weight: 700;
 	text-align: center;
 	min-height: 28px;
 }
 
-.buffon-root.student .vspinner input[type=range] {
+.buffon-content.student .vspinner input[type=range] {
 	writing-mode: vertical-lr;
 	direction: rtl;
 	-webkit-appearance: slider-vertical;
@@ -279,12 +182,12 @@ body,
 	margin: 2px 0;
 }
 
-.buffon-root.student .vspinner .range-labels {
+.buffon-content.student .vspinner .range-labels {
 	font-size: 8px;
 	color: #475569;
 }
 
-.buffon-root.student .spin-btn {
+.buffon-content.student .spin-btn {
 	width: 30px;
 	height: 30px;
 	font-size: 18px;
@@ -297,11 +200,11 @@ body,
 	line-height: 1;
 }
 
-.buffon-root.student .spin-btn:hover {
+.buffon-content.student .spin-btn:hover {
 	background: #e2e8f0;
 }
 
-.buffon-root.student .panel {
+.buffon-content.student .panel {
 	width: 100%;
 	max-width: 580px;
 	background: #ffffff;
@@ -316,7 +219,7 @@ body,
 	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
-.buffon-root.student .step-inline {
+.buffon-content.student .step-inline {
 	display: flex;
 	align-items: flex-end;
 	gap: 8px;
@@ -325,11 +228,11 @@ body,
 	flex: 1 1 auto;
 }
 
-.buffon-root.student .run-controls .btn {
+.buffon-content.student .run-controls .btn {
 	white-space: nowrap;
 }
 
-.buffon-root.student .step-col {
+.buffon-content.student .step-col {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
@@ -337,38 +240,38 @@ body,
 	min-width: 0;
 }
 
-.buffon-root.student .step-col .lbl {
+.buffon-content.student .step-col .lbl {
 	font-size: 10px;
 	color: #334155;
 	font-weight: 700;
 }
 
-.buffon-root.student .step-row {
+.buffon-content.student .step-row {
 	display: flex;
 	align-items: center;
 	gap: 6px;
 }
 
-.buffon-root.student .step-row .spin-btn {
+.buffon-content.student .step-row .spin-btn {
 	width: 24px;
 	height: 24px;
 	font-size: 14px;
 }
 
-.buffon-root.student .step-val {
+.buffon-content.student .step-val {
 	min-width: 40px;
 	text-align: center;
 	font-size: 16px;
 	font-weight: 700;
 }
 
-.buffon-root.student input[type=range].hrange {
+.buffon-content.student input[type=range].hrange {
 	width: 130px;
 	cursor: pointer;
 	accent-color: #3b82f6;
 }
 
-.buffon-root.student .btn {
+.buffon-content.student .btn {
 	padding: 8px 10px;
 	font-size: 12px;
 	cursor: pointer;
@@ -378,25 +281,25 @@ body,
 	font-weight: 700;
 }
 
-.buffon-root.student .btn-primary {
+.buffon-content.student .btn-primary {
 	background: #3b82f6;
 	color: white;
 }
 
-.buffon-root.student .btn-primary:hover {
+.buffon-content.student .btn-primary:hover {
 	background: #2563eb;
 }
 
-.buffon-root.student .btn-danger {
+.buffon-content.student .btn-danger {
 	background: #ef4444;
 	color: #ffffff;
 }
 
-.buffon-root.student .btn-danger:hover {
+.buffon-content.student .btn-danger:hover {
 	background: #dc2626;
 }
 
-.buffon-root.student .run-controls {
+.buffon-content.student .run-controls {
 	width: 100%;
 	display: flex;
 	gap: 4px;
@@ -405,7 +308,7 @@ body,
 	justify-content: flex-start;
 }
 
-.buffon-root.student .auto-switch-wrap {
+.buffon-content.student .auto-switch-wrap {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -415,32 +318,32 @@ body,
 	border-radius: 2rem;
 }
 
-.buffon-root.student .auto-switch-wrap .auto-lbl {
+.buffon-content.student .auto-switch-wrap .auto-lbl {
 	font-size: 11px;
 	color: #334155;
 	letter-spacing: 1px;
 	font-weight: 700;
 }
 
-.buffon-root.student .auto-switch-wrap .auto-rate {
+.buffon-content.student .auto-switch-wrap .auto-rate {
 	font-size: 10px;
 	color: #64748b;
 }
 
-.buffon-root.student .switch {
+.buffon-content.student .switch {
 	position: relative;
 	display: inline-block;
 	width: 36px;
 	height: 20px;
 }
 
-.buffon-root.student .switch input {
+.buffon-content.student .switch input {
 	opacity: 0;
 	width: 0;
 	height: 0;
 }
 
-.buffon-root.student .slider {
+.buffon-content.student .slider {
 	position: absolute;
 	cursor: pointer;
 	top: 0;
@@ -452,7 +355,7 @@ body,
 	border-radius: 999px;
 }
 
-.buffon-root.student .slider::before {
+.buffon-content.student .slider::before {
 	content: '';
 	position: absolute;
 	height: 14px;
@@ -464,15 +367,15 @@ body,
 	transition: 0.2s;
 }
 
-.buffon-root.student .switch input:checked + .slider {
+.buffon-content.student .switch input:checked + .slider {
 	background: #22c55e;
 }
 
-.buffon-root.student .switch input:checked + .slider::before {
+.buffon-content.student .switch input:checked + .slider::before {
 	transform: translateX(16px);
 }
 
-.buffon-root.student .stats-row {
+.buffon-content.student .stats-row {
 	width: 100%;
 	max-width: 580px;
 	background: #ffffff;
@@ -484,7 +387,7 @@ body,
 	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
-.buffon-root.student .stat-box {
+.buffon-content.student .stat-box {
 	background: #f8fafc;
 	border: 1px solid #dce3ec;
 	border-radius: 6px;
@@ -493,7 +396,7 @@ body,
 	flex: 1;
 }
 
-.buffon-root.student .stat-box .s-lbl {
+.buffon-content.student .stat-box .s-lbl {
 	font-size: 10px;
 	color: #334155;
 	letter-spacing: 1px;
@@ -501,14 +404,14 @@ body,
 	font-weight: 700;
 }
 
-.buffon-root.student .stat-box .s-val {
+.buffon-content.student .stat-box .s-val {
 	font-size: 14px;
 	font-weight: 700;
 	word-break: break-all;
 }
 
 /* Teacher view */
-.buffon-root.teacher .round-panel {
+.buffon-content.teacher .round-panel {
 	width: 100%;
 	max-width: 760px;
 	background: #ffffff;
@@ -521,13 +424,13 @@ body,
 	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
-.buffon-root.teacher .round-grid {
+.buffon-content.teacher .round-grid {
 	display: flex;
 	gap: 12px;
 	align-items: stretch;
 }
 
-.buffon-root.teacher .round-control {
+.buffon-content.teacher .round-control {
 	flex: 1;
 	background: #f8fafc;
 	border: 2px solid #cbd5e1;
@@ -538,26 +441,26 @@ body,
 	gap: 6px;
 }
 
-.buffon-root.teacher .round-control .lbl {
+.buffon-content.teacher .round-control .lbl {
 	font-size: 11px;
 	letter-spacing: 1px;
 	color: #334155;
 	font-weight: 800;
 }
 
-.buffon-root.teacher .round-control .val {
+.buffon-content.teacher .round-control .val {
 	font-size: 18px;
 	color: #0f172a;
 	font-weight: 800;
 }
 
-.buffon-root.teacher .round-control input[type=range] {
+.buffon-content.teacher .round-control input[type=range] {
 	width: 100%;
 	accent-color: #3b82f6;
 	cursor: pointer;
 }
 
-.buffon-root.teacher .round-control .scale {
+.buffon-content.teacher .round-control .scale {
 	display: flex;
 	justify-content: space-between;
 	font-size: 11px;
@@ -565,20 +468,20 @@ body,
 	font-weight: 700;
 }
 
-.buffon-root.teacher .target-slider {
+.buffon-content.teacher .target-slider {
 	direction: rtl;
 	accent-color: #f59e0b !important;
 }
 
-.buffon-root.teacher .round-actions {
+.buffon-content.teacher .round-actions {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 }
 
-.buffon-root.teacher .round-start,
-.buffon-root.teacher .round-stop,
-.buffon-root.teacher .round-reset {
+.buffon-content.teacher .round-start,
+.buffon-content.teacher .round-stop,
+.buffon-content.teacher .round-reset {
 	border: none;
 	border-radius: 3rem;
 	padding: 10px 14px;
@@ -589,38 +492,38 @@ body,
 	color: #ffffff;
 }
 
-.buffon-root.teacher .round-start {
+.buffon-content.teacher .round-start {
 	background: #2563eb;
 }
 
-.buffon-root.teacher .round-start:hover {
+.buffon-content.teacher .round-start:hover {
 	background: #1d4ed8;
 }
 
-.buffon-root.teacher .round-stop {
+.buffon-content.teacher .round-stop {
 	background: #d97706;
 }
 
-.buffon-root.teacher .round-stop:hover {
+.buffon-content.teacher .round-stop:hover {
 	background: #b45309;
 }
 
-.buffon-root.teacher .round-reset {
+.buffon-content.teacher .round-reset {
 	background: #ef4444;
 }
 
-.buffon-root.teacher .round-reset:hover {
+.buffon-content.teacher .round-reset:hover {
 	background: #dc2626;
 }
 
-.buffon-root.teacher .round-start:disabled,
-.buffon-root.teacher .round-stop:disabled,
-.buffon-root.teacher .round-reset:disabled {
+.buffon-content.teacher .round-start:disabled,
+.buffon-content.teacher .round-stop:disabled,
+.buffon-content.teacher .round-reset:disabled {
 	opacity: 0.45;
 	cursor: not-allowed;
 }
 
-.buffon-root.teacher .round-meta {
+.buffon-content.teacher .round-meta {
 	margin-left: auto;
 	display: flex;
 	align-items: center;
@@ -630,7 +533,7 @@ body,
 	font-weight: 700;
 }
 
-.buffon-root.teacher .round-timer {
+.buffon-content.teacher .round-timer {
 	font-size: 20px;
 	color: #b45309;
 	font-weight: 800;
@@ -638,7 +541,7 @@ body,
 	text-align: right;
 }
 
-.buffon-root.teacher .round-status {
+.buffon-content.teacher .round-status {
 	border-radius: 1.2rem;
 	border: 2px solid #cbd5e1;
 	background: #f8fafc;
@@ -648,24 +551,24 @@ body,
 	font-weight: 800;
 }
 
-.buffon-root.teacher .round-status.active {
+.buffon-content.teacher .round-status.active {
 	border-color: #93c5fd;
 	color: #1d4ed8;
 	background: #eff6ff;
 }
 
-.buffon-root.teacher .round-status.ended {
+.buffon-content.teacher .round-status.ended {
 	border-color: #fcd34d;
 	color: #b45309;
 	background: #fffbeb;
 }
 
-.buffon-root.teacher .round-result {
+.buffon-content.teacher .round-result {
 	font-size: 13px;
 	color: #0f172a;
 }
 
-.buffon-root.teacher .board {
+.buffon-content.teacher .board {
 	width: 100%;
 	max-width: 760px;
 	background: #ffffff;
@@ -675,7 +578,7 @@ body,
 	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
-.buffon-root.teacher .board-header {
+.buffon-content.teacher .board-header {
 	display: grid;
 	gap: 0;
 	background: #e2e8f0;
@@ -688,7 +591,7 @@ body,
 	text-transform: uppercase;
 }
 
-.buffon-root.teacher .board-row {
+.buffon-content.teacher .board-row {
 	display: grid;
 	padding: 12px 16px;
 	border-bottom: 1px solid #e2e8f0;
@@ -696,98 +599,98 @@ body,
 	gap: 0;
 }
 
-.buffon-root.teacher .live-board-header,
-.buffon-root.teacher .live-board-row {
+.buffon-content.teacher .live-board-header,
+.buffon-content.teacher .live-board-row {
 	grid-template-columns: 2rem 1fr 6.6rem 6.6rem 5.2rem 5.2rem 5.2rem;
 }
 
-.buffon-root.teacher .score-board-header,
-.buffon-root.teacher .score-board-row {
+.buffon-content.teacher .score-board-header,
+.buffon-content.teacher .score-board-row {
 	grid-template-columns: 2rem 1fr 7rem 7rem;
 }
 
-.buffon-root.teacher .board-header span,
-.buffon-root.teacher .board-row span {
+.buffon-content.teacher .board-header span,
+.buffon-content.teacher .board-row span {
 	display: flex;
 	align-items: center;
 }
 
-.buffon-root.teacher .board-body {
+.buffon-content.teacher .board-body {
 	display: flex;
 	flex-direction: column;
 }
 
-.buffon-root.teacher .board-row:last-child {
+.buffon-content.teacher .board-row:last-child {
 	border-bottom: none;
 }
 
-.buffon-root.teacher .board-row:hover {
+.buffon-content.teacher .board-row:hover {
 	background: #f8fafc;
 }
 
-.buffon-root.teacher .live-board-row.pending {
+.buffon-content.teacher .live-board-row.pending {
 	opacity: 0.58;
 }
 
-.buffon-root.teacher .rank {
+.buffon-content.teacher .rank {
 	font-size: 13px;
 	color: #64748b;
 	font-weight: 700;
 }
 
-.buffon-root.teacher .team-name {
+.buffon-content.teacher .team-name {
 	font-size: 14px;
 	font-weight: 700;
 	color: #0f172a;
 }
 
-.buffon-root.teacher .drops-val {
+.buffon-content.teacher .drops-val {
 	font-size: 13px;
 	color: #64748b;
 }
 
-.buffon-root.teacher .hits-val {
+.buffon-content.teacher .hits-val {
 	font-size: 13px;
 	color: #ef4444;
 }
 
-.buffon-root.teacher .miss-val {
+.buffon-content.teacher .miss-val {
 	font-size: 13px;
 	color: #16a34a;
 }
 
-.buffon-root.teacher .round-points-val {
+.buffon-content.teacher .round-points-val {
 	font-size: 13px;
 	color: #7c3aed;
 	font-weight: 700;
 }
 
-.buffon-root.teacher .total-points-val {
+.buffon-content.teacher .total-points-val {
 	font-size: 13px;
 	color: #2563eb;
 	font-weight: 700;
 }
 
-.buffon-root.teacher .pi-val {
+.buffon-content.teacher .pi-val {
 	font-size: 15px;
 	font-weight: 700;
 	color: #10b981;
 }
 
-.buffon-root.teacher .err-val {
+.buffon-content.teacher .err-val {
 	font-size: 13px;
 	color: #d97706;
 }
 
-.buffon-root.teacher .rank-up {
+.buffon-content.teacher .rank-up {
 	animation: riseFlash 0.7s ease;
 }
 
-.buffon-root.teacher .rank-down {
+.buffon-content.teacher .rank-down {
 	animation: dropFlash 0.7s ease;
 }
 
-.buffon-root.teacher .score-board-row.round-winner {
+.buffon-content.teacher .score-board-row.round-winner {
 	background: rgba(245, 158, 11, 0.12);
 	box-shadow: inset 3px 0 0 #f59e0b;
 }
@@ -812,7 +715,7 @@ body,
 	}
 }
 
-.buffon-root.teacher .empty {
+.buffon-content.teacher .empty {
 	color: #475569;
 	font-size: 14px;
 	text-align: center;
@@ -820,7 +723,7 @@ body,
 	font-weight: 800;
 }
 
-.buffon-root.teacher .join-box {
+.buffon-content.teacher .join-box {
 	width: 100%;
 	max-width: 760px;
 	display: flex;
@@ -833,25 +736,25 @@ body,
 	padding: 12px 16px;
 }
 
-.buffon-root.teacher .join-copy {
+.buffon-content.teacher .join-copy {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
 }
 
-.buffon-root.teacher .join-title {
+.buffon-content.teacher .join-title {
 	font-size: 10px;
 	color: #64748b;
 	letter-spacing: 1px;
 }
 
-.buffon-root.teacher .join-help {
+.buffon-content.teacher .join-help {
 	font-size: 13px;
 	color: #1e293b;
 	font-weight: 700;
 }
 
-.buffon-root.teacher .join-qr {
+.buffon-content.teacher .join-qr {
 	width: 140px;
 	height: 140px;
 	object-fit: contain;
@@ -868,39 +771,31 @@ body,
 		padding: 1rem;
 	}
 
-	.buffon-root.student .team-bar,
-	.buffon-root.student .round-banner,
-	.buffon-root.student .canvas-row,
-	.buffon-root.student .panel,
-	.buffon-root.student .step-inline,
-	.buffon-root.student .stats-row,
-	.buffon-root .chart-wrap {
+
+	.buffon-content.student .round-banner,
+	.buffon-content.student .canvas-row,
+	.buffon-content.student .panel,
+	.buffon-content.student .step-inline,
+	.buffon-content.student .stats-row,
+	.buffon-content .chart-wrap {
 		max-width: none;
 	}
 
-	.buffon-root.student .team-bar {
-		flex-wrap: wrap;
-	}
 
-	.buffon-root.student .team-bar label,
-	.buffon-root.student .team-bar button {
-		width: 100%;
-	}
-
-	.buffon-root.student .canvas-row {
+	.buffon-content.student .canvas-row {
 		flex-wrap: nowrap;
 		align-items: center;
 		justify-content: space-between;
 		gap: 4px;
 	}
 
-	.buffon-root.student .canvas-stage {
+	.buffon-content.student .canvas-stage {
 		flex: 1 1 auto;
 		min-width: 0;
 		max-width: none;
 	}
 
-	.buffon-root.student .canvas-row .vspinner {
+	.buffon-content.student .canvas-row .vspinner {
 		flex: 0 0 clamp(56px, 14vw, 74px);
 		width: clamp(56px, 14vw, 74px);
 		min-width: 0;
@@ -908,47 +803,47 @@ body,
 		gap: 3px;
 	}
 
-	.buffon-root.student .canvas-row .vspinner .lbl {
+	.buffon-content.student .canvas-row .vspinner .lbl {
 		font-size: 8px;
 		line-height: 1.15;
 	}
 
-	.buffon-root.student .canvas-row .vspinner .val {
+	.buffon-content.student .canvas-row .vspinner .val {
 		font-size: 14px;
 		min-height: 17px;
 	}
 
-	.buffon-root.student .canvas-row .vspinner .range-labels {
+	.buffon-content.student .canvas-row .vspinner .range-labels {
 		font-size: 7px;
 	}
 
-	.buffon-root.student .canvas-row .vspinner input[type=range] {
+	.buffon-content.student .canvas-row .vspinner input[type=range] {
 		height: clamp(62px, 13vh, 84px);
 	}
 
-	.buffon-root.student .canvas-row .spin-btn {
+	.buffon-content.student .canvas-row .spin-btn {
 		width: 24px;
 		height: 24px;
 		font-size: 14px;
 	}
 
-	.buffon-root.student #sim {
+	.buffon-content.student #sim {
 		width: 100%;
 		height: auto;
 	}
 
-	.buffon-root.student .canvas-footer {
+	.buffon-content.student .canvas-footer {
 		gap: 10px;
 		font-size: 10px;
 		flex-wrap: wrap;
 	}
 
-	.buffon-root.student .panel {
+	.buffon-content.student .panel {
 		padding: 12px;
 		gap: 10px;
 	}
 
-	.buffon-root.student .run-controls {
+	.buffon-content.student .run-controls {
 		width: 100%;
 		flex-direction: row;
 		align-items: center;
@@ -956,63 +851,63 @@ body,
 		flex-wrap: nowrap;
 	}
 
-	.buffon-root.student .run-controls input[type=range].hrange {
+	.buffon-content.student .run-controls input[type=range].hrange {
 		width: clamp(86px, 22vw, 116px);
 		max-width: none;
 	}
 
-	.buffon-root.student .run-controls .btn {
+	.buffon-content.student .run-controls .btn {
 		width: auto;
 		flex: 0 0 auto;
 		padding: 8px 9px;
 		font-size: 11px;
 	}
 
-	.buffon-root.student .auto-switch-wrap {
+	.buffon-content.student .auto-switch-wrap {
 		width: auto;
 		justify-content: center;
 		min-width: 0;
 		padding: 6px 7px;
 	}
 
-	.buffon-root.student .stats-row {
+	.buffon-content.student .stats-row {
 		flex-wrap: wrap;
 		padding: 10px;
 	}
 
-	.buffon-root.student .stat-box {
+	.buffon-content.student .stat-box {
 		flex: 1 1 calc(50% - 8px);
 		min-width: 0;
 	}
 }
 
 @media (max-width: 700px) {
-	.buffon-root.teacher .round-grid {
+	.buffon-content.teacher .round-grid {
 		flex-direction: column;
 	}
 
-	.buffon-root.teacher .round-actions {
+	.buffon-content.teacher .round-actions {
 		flex-wrap: wrap;
 	}
 
-	.buffon-root.teacher .round-start,
-	.buffon-root.teacher .round-stop,
-	.buffon-root.teacher .round-reset {
+	.buffon-content.teacher .round-start,
+	.buffon-content.teacher .round-stop,
+	.buffon-content.teacher .round-reset {
 		width: 100%;
 	}
 
-	.buffon-root.teacher .round-meta {
+	.buffon-content.teacher .round-meta {
 		margin-left: 0;
 		width: 100%;
 		justify-content: space-between;
 	}
 
-	.buffon-root.teacher .join-box {
+	.buffon-content.teacher .join-box {
 		flex-direction: column;
 		align-items: flex-start;
 	}
 
-	.buffon-root.teacher .join-qr {
+	.buffon-content.teacher .join-qr {
 		align-self: center;
 		width: 170px;
 		height: 170px;

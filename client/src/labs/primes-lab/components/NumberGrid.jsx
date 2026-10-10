@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const NumberGrid = ({
   numbers,
@@ -12,6 +13,7 @@ const NumberGrid = ({
   onToggleNumber,
   readonly = false
 }) => {
+  const { t } = useTranslation('primes');
   const primeSet = primeNumbers instanceof Set ? primeNumbers : new Set(primeNumbers);
   const items = [null, ...numbers];
 
@@ -33,7 +35,7 @@ const NumberGrid = ({
   };
 
   return (
-    <div className="prime-grid" role="grid" aria-label="Πίνακας αριθμών από το 2 έως το 100">
+    <div className="prime-grid" role="grid" aria-label={t('grid.ariaLabel')}>
       {items.map((number, index) => {
         if (number === null) {
           return <div key="blank" className="prime-grid__cell prime-grid__cell--blank" aria-hidden="true" />;
@@ -52,7 +54,7 @@ const NumberGrid = ({
         const studentOwnCorrect = mode === 'student' && isLockedByActiveStudent;
         const studentOtherCorrect = mode === 'student' && isLocked && !isLockedByActiveStudent;
         const studentWrong = mode === 'student' && isWrong && !isLocked;
-        const ownerLabel = ownerId ? ownerId.replace('student-', 'Σ') : '';
+        const ownerLabel = ownerId ? ownerId.replace('student-', 'S') : '';
         const ownerColor = ownerId ? (studentColorById?.[ownerId] || '#3b82f6') : '#3b82f6';
 
         let inlineStyle = undefined;
@@ -102,7 +104,7 @@ const NumberGrid = ({
             }}
             aria-pressed={studentOwnCorrect || studentWrong || teacherLocked}
             disabled={(mode === 'student' && isLocked && !isLockedByActiveStudent) || readonly}
-            title={mode === 'teacher' && isLocked ? `${number} έχει κλειδωθεί από ${ownerLabel}` : mode === 'student' && isLocked && !isLockedByActiveStudent ? `${number} έχει ήδη κλειδώσει από άλλον μαθητή` : isTarget ? `${number} είναι πολλαπλάσιο του ${currentPrime}` : `Αριθμός ${number}`}
+            title={mode === 'teacher' && isLocked ? t('grid.lockedBy', { number, owner: ownerLabel }) : mode === 'student' && isLocked && !isLockedByActiveStudent ? t('grid.lockedByOther', { number }) : isTarget ? t('grid.multipleOf', { number, prime: currentPrime }) : t('grid.number', { number })}
           >
             <span className="prime-grid__number">{number}</span>
             {mode === 'teacher' && ownerId ? <span className="prime-grid__owner" style={{ borderColor: ownerColor }}>{ownerLabel}</span> : null}

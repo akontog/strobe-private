@@ -8,6 +8,7 @@ import geometryEl from '../../locales/el/geometry.json';
 import buffonEl from '../../locales/el/buffon.json';
 import neuralEl from '../../locales/el/neural.json';
 import interfaceEl from '../../locales/el/interface.json';
+import primesEl from '../../locales/el/primes.json';
 
 import commonEn from '../../locales/en/common.json';
 import menuEn from '../../locales/en/menu.json';
@@ -15,6 +16,7 @@ import geometryEn from '../../locales/en/geometry.json';
 import buffonEn from '../../locales/en/buffon.json';
 import neuralEn from '../../locales/en/neural.json';
 import interfaceEn from '../../locales/en/interface.json';
+import primesEn from '../../locales/en/primes.json';
 
 export const preferredLanguageStorageKey = 'preferredLanguage';
 
@@ -25,7 +27,8 @@ const resources = {
     geometry: geometryEl,
     buffon: buffonEl,
     neural: neuralEl,
-    interface: interfaceEl
+    interface: interfaceEl,
+    primes: primesEl
   },
   en: {
     common: commonEn,
@@ -33,7 +36,8 @@ const resources = {
     geometry: geometryEn,
     buffon: buffonEn,
     neural: neuralEn,
-    interface: interfaceEn
+    interface: interfaceEn,
+    primes: primesEn
   }
 };
 
@@ -46,7 +50,7 @@ if (!i18n.isInitialized) {
       fallbackLng: 'el',
       supportedLngs: ['el', 'en'],
       defaultNS: 'common',
-      ns: ['common', 'menu', 'geometry', 'buffon', 'neural', 'interface'],
+      ns: ['common', 'menu', 'geometry', 'buffon', 'neural', 'interface', 'primes'],
       interpolation: {
         escapeValue: false
       },

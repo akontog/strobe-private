@@ -1,14 +1,9 @@
-export const teacherTemplate = String.raw`<div style="text-align:center">
-  <h1>Η βελόνα του Buffon</h1>
-  <div class="subtitle"></div>
-</div>
-
-<div class="chart-wrap">
-  <div class="chart-header" onclick="toggleJoinQr()">
+export const teacherTemplate = String.raw`<div class="accordion buffon-accordion chart-wrap" data-accordion-id="teacher-join-qr">
+  <button type="button" class="accordion-btn chart-header" aria-expanded="true">
     <span class="c-lbl">ΣΥΝΔΕΣΗ ΜΑΘΗΤΩΝ</span>
-    <span class="chart-toggle open" id="join-qr-arrow">▼</span>
-  </div>
-  <div class="chart-body open" id="join-qr-body">
+    <span class="accordion-icon" id="join-qr-arrow">−</span>
+  </button>
+  <div class="accordion-content chart-body open" id="join-qr-body">
     <div class="join-box">
       <div class="join-copy">
         <div class="join-help">Σαρώστε το QR για να ανοίξετε την εφαρμογή.</div>
@@ -49,12 +44,12 @@ export const teacherTemplate = String.raw`<div style="text-align:center">
   <div class="round-status round-result" id="round-result">—</div>
 </div>
 
-<div class="chart-wrap">
-  <div class="chart-header" onclick="toggleLiveBoard()">
+<div class="accordion buffon-accordion chart-wrap" data-accordion-id="teacher-live-board">
+  <button type="button" class="accordion-btn chart-header" aria-expanded="true">
     <span class="c-lbl">ΤΡΕΧΟΥΣΑ ΒΑΘΜΟΛΟΓΙΑ (LIVE)</span>
-    <span class="chart-toggle open" id="live-board-arrow">▼</span>
-  </div>
-  <div class="chart-body open" id="live-board-wrap">
+    <span class="accordion-icon" id="live-board-arrow">−</span>
+  </button>
+  <div class="accordion-content chart-body open" id="live-board-wrap">
     <div class="board">
       <div class="board-header live-board-header">
         <span>#</span>
@@ -72,12 +67,12 @@ export const teacherTemplate = String.raw`<div style="text-align:center">
   </div>
 </div>
 
-<div class="chart-wrap">
-  <div class="chart-header" onclick="toggleTotalBoard()">
+<div class="accordion buffon-accordion chart-wrap" data-accordion-id="teacher-total-board">
+  <button type="button" class="accordion-btn chart-header" aria-expanded="true">
     <span class="c-lbl">ΣΥΝΟΛΙΚΗ ΒΑΘΜΟΛΟΓΙΑ</span>
-    <span class="chart-toggle open" id="total-board-arrow">▼</span>
-  </div>
-  <div class="chart-body open" id="total-board-wrap">
+    <span class="accordion-icon" id="total-board-arrow">−</span>
+  </button>
+  <div class="accordion-content chart-body open" id="total-board-wrap">
     <div class="board">
       <div class="board-header score-board-header">
         <span>#</span>
@@ -92,12 +87,12 @@ export const teacherTemplate = String.raw`<div style="text-align:center">
   </div>
 </div>
 
-<div class="chart-wrap">
-  <div class="chart-header" onclick="toggleTeacherChart()">
+<div class="accordion buffon-accordion chart-wrap" data-accordion-id="teacher-chart">
+  <button type="button" class="accordion-btn chart-header" aria-expanded="true">
     <span class="c-lbl">ΣΥΓΚΛΙΣΗ ΟΜΑΔΩΝ ΠΡΟΣ \(\pi\)</span>
-    <span class="chart-toggle open" id="teacher-chart-arrow">▼</span>
-  </div>
-  <div class="chart-body open" id="teacher-chart-body">
+    <span class="accordion-icon" id="teacher-chart-arrow">−</span>
+  </button>
+  <div class="accordion-content chart-body open" id="teacher-chart-body">
     <canvas id="teacher-chart-cv"></canvas>
   </div>
 </div>`;

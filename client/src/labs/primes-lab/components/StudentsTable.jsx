@@ -1,17 +1,19 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const formatNumbers = (numbers) => (numbers.length ? numbers.join(', ') : '—');
 
 const StudentsTable = ({ students, activeStudentId, currentPrime, claimedNumbers, wrongSelectionsByNumber, studentColorById }) => {
+  const { t } = useTranslation('primes');
   return (
     <section className="students-table-card">
       <div className="students-table-card__header">
         <div>
-          <p>Πίνακας μαθητών</p>
-          <h2>Τι έχουν επιλέξει οι μαθητές</h2>
+          <p>{t('table.eyebrow')}</p>
+          <h2>{t('table.title')}</h2>
         </div>
         <div className="students-table-card__meta">
-          <span>Βάση</span>
+          <span>{t('table.base')}</span>
           <strong>{currentPrime}</strong>
         </div>
       </div>
@@ -20,11 +22,11 @@ const StudentsTable = ({ students, activeStudentId, currentPrime, claimedNumbers
         <table className="students-table">
           <thead>
             <tr>
-              <th>Μαθητής</th>
-              <th>Χρώμα</th>
-              <th>Σωστά κλειδωμένα</th>
-              <th>Λάθος επιλογές</th>
-              <th>Κατάσταση</th>
+              <th>{t('table.student')}</th>
+              <th>{t('table.color')}</th>
+              <th>{t('table.correct')}</th>
+              <th>{t('table.wrong')}</th>
+              <th>{t('table.status')}</th>
             </tr>
           </thead>
           <tbody>
@@ -45,7 +47,7 @@ const StudentsTable = ({ students, activeStudentId, currentPrime, claimedNumbers
                   <td>
                     <div className="number-chips number-chips--danger">{formatNumbers(selectedWrong)}</div>
                   </td>
-                  <td>{student.id === activeStudentId ? 'Ενεργός τώρα' : 'Παρακολούθηση'}</td>
+                  <td>{student.id === activeStudentId ? t('table.activeNow') : t('table.viewing')}</td>
                 </tr>
               );
             })}

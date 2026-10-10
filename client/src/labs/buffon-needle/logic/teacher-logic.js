@@ -1,4 +1,9 @@
+import { mountAccordionInteractions } from '../../../shared/components/layouts/accordionDom';
+
 export function mountBuffonTeacher(rootElement) {
+const cleanupAccordions = mountAccordionInteractions(rootElement, (accordionId, isOpen) => {
+  if (accordionId === 'teacher-chart' && isOpen) drawTeacherChart();
+});
 let classroomApi = null;
 let students = [];
 let previousLiveRanks = new Map();
@@ -479,35 +484,6 @@ function esc(text) {
   return String(text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function toggleTeacherChart() {
-  const body = document.getElementById('teacher-chart-body');
-  const arrow = document.getElementById('teacher-chart-arrow');
-  const open = body.classList.toggle('open');
-  arrow.classList.toggle('open', open);
-  if (open) drawTeacherChart();
-}
-
-function toggleJoinQr() {
-  const body = document.getElementById('join-qr-body');
-  const arrow = document.getElementById('join-qr-arrow');
-  const open = body.classList.toggle('open');
-  arrow.classList.toggle('open', open);
-}
-
-function toggleLiveBoard() {
-  const body = document.getElementById('live-board-wrap');
-  const arrow = document.getElementById('live-board-arrow');
-  const open = body.classList.toggle('open');
-  arrow.classList.toggle('open', open);
-}
-
-function toggleTotalBoard() {
-  const body = document.getElementById('total-board-wrap');
-  const arrow = document.getElementById('total-board-arrow');
-  const open = body.classList.toggle('open');
-  arrow.classList.toggle('open', open);
-}
-
 function getSeriesColor(index) {
   const palette = ['#fbbf24', '#94a3b8', '#cd7c3a', '#3b82f6', '#a78bfa', '#f87171', '#34d399', '#f97316', '#38bdf8', '#e879f9'];
   return palette[index % palette.length];
@@ -691,19 +667,16 @@ connectWS();
 window.addEventListener('resize', drawTeacherChart);
 
   const globalFns = {
-    toggleJoinQr,
     startRoundFromTeacher,
     stopRoundManually,
     resetTournamentScores,
-    toggleLiveBoard,
-    toggleTotalBoard,
-    toggleTeacherChart,
     updateRoundControlLabels,
   };
 
   Object.assign(window, globalFns);
 
   return () => {
+    cleanupAccordions();
     stopRoundTimer();
 
     if (classroomApi && typeof classroomApi.stop === 'function') {

@@ -45,6 +45,8 @@
   "geoGebraMonitor": "GeoGebra Central Monitor",
   "console": "Console",
   "consoleIntro": "Live log of messages between users and the server. Refreshes every two seconds.",
+  "consoleFetchFailed": "Failed to retrieve messages ({{status}}).",
+  "consoleUnavailable": "Could not retrieve messages.",
   "realtimeServer": "REALTIME • SERVER",
   "refresh": "Refresh",
   "clearFilters": "Clear filters",
@@ -103,5 +105,32 @@
   "noSeparator": "No separator found.",
   "separator": "A separator was found.",
   "minimumMaxW": "Smallest max|w|",
-  "currentAppLabel": "Current app: {{title}}"
+  "currentAppLabel": "Current app: {{title}}",
+  "apps": {
+    "geometry-live": { "title": "Geometry Lab", "description": "Shared canvas with real-time points and shapes." },
+    "buffon-needle": { "title": "Buffon Lab", "description": "Multiplayer Buffon experiment with rounds and scoreboards." },
+    "neural-lab": { "title": "Neural Lab", "description": "Collaborative neural-network activity with live teacher and student sync." },
+    "primes-lab": { "title": "Primes Lab", "description": "Sieve of Eratosthenes activity with teacher-controlled steps and a shared number grid." },
+    "polynomial-lab": { "title": "Polynomial Lab", "description": "Collaborative polynomial practice with a shared workspace and teacher-led activities." },
+    "linear-systems-lab": { "title": "Linear Systems Lab", "description": "Graphical and algebraic solving of linear systems with shared GeoGebra scenes." },
+    "identities-lab": { "title": "Identities Lab", "description": "Algebraic identities with geometric proofs of fundamental identities." }
+  },
+  "tools": {
+    "activity-builder": { "title": "Activity Builder", "description": "Teacher lesson designer and activity JSON editor." },
+    "camera-speed-test": { "title": "Camera Speed Test", "description": "Frame round-trip benchmark for the detection pipeline." },
+    "linear-seperation": { "title": "Linear Separation Tool", "description": "Interactive dataset-based linear separation tool." },
+    "geogebra-collab": { "title": "GeoGebra Collaborative Component", "description": "Shared GeoGebra board with role-aware permissions." },
+    "geogebra-collab-test": { "title": "GeoGebra Protocol Test Runner", "description": "Protocol integration tests with simulated WebSocket clients." },
+    "geogebra-monitor": { "title": "GeoGebra Central Monitor", "description": "Central dashboard for all connected collaborative GeoGebra rooms." },
+    "console": { "title": "Console", "description": "Live view of messages exchanged between users and the server." }
+  },
+  "toolHelpers": {
+    "activityBuilder": "Teacher lesson designer and activity JSON editor.",
+    "cameraSpeedTest": "Round-trip frame benchmark for the detection pipeline.",
+    "geoGebraCollaborative": "Shared GeoGebra board with role-aware object locks.",
+    "geoGebraProtocolTest": "Protocol-level integration tests with fake WebSocket clients.",
+    "geoGebraMonitor": "Central dashboard for all connected collaborative GeoGebra rooms.",
+    "console": "Live view of messages exchanged between users and the server.",
+    "linearSeparation": "Interactive dataset-based linear separation tool."
+  }
 }

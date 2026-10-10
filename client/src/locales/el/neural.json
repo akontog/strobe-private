@@ -34,5 +34,48 @@
   "selectAll": "Επίλεξε όλα",
   "selectNone": "Καμία επιλογή",
   "studentConnection": "Σύνδεση μαθητών",
-  "connectedStudents": "Συνδεδεμένοι μαθητές"
+  "connectedStudents": "Συνδεδεμένοι μαθητές",
+  "selectPrompt": "-- Επιλέξτε --",
+  "thresholdInfo": " (Όριο: {{op}} {{boundary}})",
+  "notSeparableInfo": " (Μη διαχωρίσιμο)",
+  "positiveStatus": "✅ Θετικό",
+  "negativeStatus": "❌ Αρνητικό",
+  "operationTree": "Δέντρο πράξεων",
+  "classroomView": "Προβολή τάξης",
+  "studentTableTitle": "Πίνακας μαθητών",
+  "noConnectedStudents": "Δεν υπάρχουν συνδεμένοι μαθητές.",
+  "studentName": "Μαθητής",
+  "inputOne": "Είσοδος 1",
+  "inputTwo": "Είσοδος 2",
+  "belowThreshold": "Οχι",
+  "datasetLabels": {
+    "vehicles": "Μέσα μεταφοράς",
+    "digits": "Ψηφία"
+  },
+  "featureLabels": {
+    "vehicles": {
+      "i1": "Τροχοί",
+      "i2": "Μηχανή"
+    },
+    "digits": {
+      "i1": "Κύκλοι",
+      "i2": "Σταυροδρόμια"
+    }
+  },
+  "exampleLabels": {
+    "vehicles": {
+      "0": "Ποδήλατο",
+      "1": "Μοτοσυκλέτα",
+      "2": "Αυτοκίνητο",
+      "3": "Πατίνι"
+    },
+    "digits": {
+      "0": "Μηδέν",
+      "1": "Ένα",
+      "2": "Τέσσερα",
+      "3": "Έξι",
+      "4": "Οκτώ"
+    }
+  },
+  "notSelected": "Μη επιλεγμένο"
 }

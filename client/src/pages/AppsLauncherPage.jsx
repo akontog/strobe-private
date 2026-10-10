@@ -76,10 +76,10 @@ export default function AppsLauncherPage() {
                 <div className="app-head">
                   <div>
                     <div className="muted">{t('launcher')}</div>
-                    <h2 className="app-title">{iconBySlug[app.slug] || '🧩'} {app.title}</h2>
+                    <h2 className="app-title">{iconBySlug[app.slug] || '🧩'} {t(`apps.${app.slug}.title`, { defaultValue: app.title })}</h2>
                   </div>
                 </div>
-                <p className="app-desc">{app.description}</p>
+                <p className="app-desc">{t(`apps.${app.slug}.description`, { defaultValue: app.description })}</p>
                 <div className="btn-row dashboard-action-row">
                   <Link className="dashboard-action-link" to={`/labs/${app.slug}/teacher`}>{t('teacher')}</Link>
                   <Link className="dashboard-action-link" to={`/labs/${app.slug}/student`}>{t('student')}</Link>

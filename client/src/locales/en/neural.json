@@ -34,5 +34,48 @@
   "selectAll": "Select all",
   "selectNone": "Select none",
   "studentConnection": "Student connection",
-  "connectedStudents": "Connected students"
+  "connectedStudents": "Connected students",
+  "selectPrompt": "-- Select --",
+  "thresholdInfo": " (Threshold: {{op}} {{boundary}})",
+  "notSeparableInfo": " (Not separable)",
+  "positiveStatus": "Positive",
+  "negativeStatus": "Negative",
+  "operationTree": "Operation tree",
+  "classroomView": "Classroom view",
+  "studentTableTitle": "Student table",
+  "noConnectedStudents": "No connected students.",
+  "studentName": "Student",
+  "inputOne": "Input 1",
+  "inputTwo": "Input 2",
+  "belowThreshold": "Below",
+  "datasetLabels": {
+    "vehicles": "Vehicles",
+    "digits": "Digits"
+  },
+  "featureLabels": {
+    "vehicles": {
+      "i1": "Wheels",
+      "i2": "Engine"
+    },
+    "digits": {
+      "i1": "Circles",
+      "i2": "Crossings"
+    }
+  },
+  "exampleLabels": {
+    "vehicles": {
+      "0": "Bicycle",
+      "1": "Motorcycle",
+      "2": "Car",
+      "3": "Scooter"
+    },
+    "digits": {
+      "0": "Zero",
+      "1": "One",
+      "2": "Four",
+      "3": "Six",
+      "4": "Eight"
+    }
+  },
+  "notSelected": "Not selected"
 }

@@ -45,37 +45,37 @@ export default function ToolsPage() {
     'activity-builder': {
       icon: '🗂️',
       tone: 'magenta',
-      helper: 'Teacher lesson designer and activity JSON editor.'
+      helper: 'toolHelpers.activityBuilder'
     },
     'camera-speed-test': {
       icon: '🎥',
       tone: 'blue',
-      helper: 'Roundtrip frame benchmark for the detection pipeline.'
+      helper: 'toolHelpers.cameraSpeedTest'
     },
     'geogebra-collab': {
       icon: '📐',
       tone: 'green',
-      helper: 'Collaborative GeoGebra board with role-aware object locks.'
+      helper: 'toolHelpers.geoGebraCollaborative'
     },
     'geogebra-collab-test': {
       icon: '🧪',
       tone: 'orange',
-      helper: 'Protocol-level integration tests with fake websocket clients.'
+      helper: 'toolHelpers.geoGebraProtocolTest'
     },
     'geogebra-monitor': {
       icon: '📊',
       tone: 'indigo',
-      helper: 'Central dashboard for all connected collaborative GeoGebra rooms.'
+      helper: 'toolHelpers.geoGebraMonitor'
     },
     console: {
       icon: '⌁',
       tone: 'indigo',
-      helper: 'Live view of messages exchanged between users and the server.'
+      helper: 'toolHelpers.console'
     },
     'linear-seperation': {
       icon: '🧠',
       tone: 'orange',
-      helper: 'Interactive dataset-based linear separation tool.'
+      helper: 'toolHelpers.linearSeparation'
     }
   }), []);
 
@@ -87,7 +87,7 @@ export default function ToolsPage() {
             <img className="page-hero__logo" src="/icons/strobelogo.svg" alt={t('strobeLogo')} />
             <h1>{t('tools')}</h1>
           </div>
-          <p className="page-hero__lead">Εργαλεία για μάθημα και δοκιμές, με δεδομένα από το API endpoint /api/tools.</p>
+          <p className="page-hero__lead">{t('toolsLead')}</p>
           <div className="page-meta-row">
             <span className="page-chip">GET /api/tools</span>
             <span className="page-chip">{t('reactPage')}</span>
@@ -107,14 +107,14 @@ export default function ToolsPage() {
                   <div className="app-head">
                     <div>
                       <div className="muted">{t('tool')}</div>
-                      <h2 className="app-title">{meta.icon} {tool.title}</h2>
+                      <h2 className="app-title">{meta.icon} {t(`tools.${tool.id}.title`, { defaultValue: tool.title })}</h2>
                     </div>
                     <span className={`availability-pill ${tool.available ? 'is-available' : 'is-unavailable'}`}>
                       {tool.available ? t('available') : t('unavailable')}
                     </span>
                   </div>
-                  <p className="app-desc">{tool.description}</p>
-                  {meta.helper ? <p className="tool-helper-text">{meta.helper}</p> : null}
+                  <p className="app-desc">{t(`tools.${tool.id}.description`, { defaultValue: tool.description })}</p>
+                  {meta.helper ? <p className="tool-helper-text">{t(meta.helper)}</p> : null}
                   <ul className="role-features">
                     <li>{tool.path}</li>
                     <li>{tool.available ? t('readyToOpen') : t('enableFeature')}</li>

@@ -62,8 +62,8 @@ export default function TeacherPage() {
   const extraTeacherTools = [
     {
       id: 'geogebra-monitor',
-      title: 'GeoGebra Central Monitor',
-      description: 'Παρακολούθηση όλων των collaborative GeoGebra rooms και των κινήσεων των students σε πραγματικό χρόνο.',
+      titleKey: 'geoGebraMonitorTitle',
+      descriptionKey: 'geoGebraMonitorDescription',
       path: '/tools/geogebra-monitor',
       tone: 'indigo',
       icon: '📊'
@@ -78,7 +78,7 @@ export default function TeacherPage() {
             <img className="page-hero__logo" src="/icons/strobelogo.svg" alt={t('strobeLogo')} />
             <h1>{t('teacherDashboard')}</h1>
           </div>
-          <p className="page-hero__lead">Εκκίνηση εφαρμογών σε teacher mode και διαχείριση classroom activities μέσω REST API.</p>
+          <p className="page-hero__lead">{t('teacherLead')}</p>
           <div className="page-meta-row">
             <span className="page-chip">GET /teacher/apps</span>
             <span className="page-chip">{t('spaNavigation')}</span>
@@ -95,10 +95,10 @@ export default function TeacherPage() {
                 <div className="app-head">
                   <div>
                     <div className="muted">{t('teacher')}</div>
-                    <h2 className="app-title">{iconBySlug[app.slug] || '🧩'} {app.title}</h2>
+                    <h2 className="app-title">{iconBySlug[app.slug] || '🧩'} {t(`apps.${app.slug}.title`, { defaultValue: app.title })}</h2>
                   </div>
                 </div>
-                <p className="app-desc">{app.description}</p>
+                <p className="app-desc">{t(`apps.${app.slug}.description`, { defaultValue: app.description })}</p>
                 <ul className="role-features">
                   <li>{app.slug}</li>
                   <li>{app.kind}</li>
@@ -114,10 +114,10 @@ export default function TeacherPage() {
                 <div className="app-head">
                   <div>
                     <div className="muted">{t('tool')}</div>
-                    <h2 className="app-title">{tool.icon} {tool.title}</h2>
+                    <h2 className="app-title">{tool.icon} {t(tool.titleKey)}</h2>
                   </div>
                 </div>
-                <p className="app-desc">{tool.description}</p>
+                <p className="app-desc">{t(tool.descriptionKey)}</p>
                 <ul className="role-features">
                   <li>{t('teacherAccessible')}</li>
                   <li>{tool.path}</li>

@@ -1,21 +1,24 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './ConsoleTool.css';
 
 const POLL_INTERVAL = 2000;
 
 function MultiSelectFilter({ label, values, selected, onChange }) {
+  const { t } = useTranslation('interface');
   return (
     <label className="comm-console__filter">
       <span>{label}</span>
       <select multiple value={selected} onChange={(event) => onChange(Array.from(event.target.selectedOptions, (option) => option.value))}>
         {values.map((value) => <option key={value} value={value}>{value}</option>)}
       </select>
-      <small>Ctrl/⌘ + click για πολλαπλές επιλογές</small>
+      <small>{t('multiSelectHint')}</small>
     </label>
   );
 }
 
 export default function ConsoleTool() {
+  const { t, i18n } = useTranslation('interface');
   const [messages, setMessages] = useState([]);
   const [error, setError] = useState('');
   const [users, setUsers] = useState([]);
@@ -25,14 +28,14 @@ export default function ConsoleTool() {
   const refresh = useCallback(async () => {
     try {
       const response = await fetch('/admin/messages?limit=2000');
-      if (!response.ok) throw new Error(`Αποτυχία ανάκτησης (${response.status})`);
+      if (!response.ok) throw new Error(t('consoleFetchFailed', { status: response.status }));
       const result = await response.json();
       setMessages(Array.isArray(result.messages) ? result.messages : []);
       setError('');
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : 'Δεν ήταν δυνατή η ανάκτηση των μηνυμάτων.');
+      setError(requestError instanceof Error ? requestError.message : t('consoleUnavailable'));
     }
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     refresh();
@@ -62,33 +65,33 @@ export default function ConsoleTool() {
     <section className="dashboard-page">
       <div className="dashboard-shell comm-console">
         <header className="comm-console__header">
-          <div><p className="comm-console__eyebrow">REALTIME • SERVER</p><h1>Console</h1>
-            <p>Ζωντανή καταγραφή μηνυμάτων μεταξύ χρηστών και server. Ανανέωση κάθε 2 δευτερόλεπτα.</p>
+          <div><p className="comm-console__eyebrow">{t('realtimeServer')}</p><h1>{t('console')}</h1>
+            <p>{t('consoleIntro')}</p>
           </div>
-          <button type="button" className="comm-console__refresh" onClick={refresh}>Ανανέωση</button>
+          <button type="button" className="comm-console__refresh" onClick={refresh}>{t('refresh')}</button>
         </header>
         <div className="comm-console__filters">
-          <MultiSelectFilter label="Χρήστες" values={filterOptions.users} selected={users} onChange={setUsers} />
-          <MultiSelectFilter label="Εργαστήρια" values={filterOptions.labs} selected={labs} onChange={setLabs} />
-          <MultiSelectFilter label="Τύποι μηνυμάτων" values={filterOptions.types} selected={types} onChange={setTypes} />
-          <button type="button" className="comm-console__clear" onClick={() => { setUsers([]); setLabs([]); setTypes([]); }}>Καθαρισμός φίλτρων</button>
-          <span className="comm-console__count">{visibleMessages.length} μηνύματα</span>
+          <MultiSelectFilter label={t('users')} values={filterOptions.users} selected={users} onChange={setUsers} />
+          <MultiSelectFilter label={t('labs')} values={filterOptions.labs} selected={labs} onChange={setLabs} />
+          <MultiSelectFilter label={t('messageTypes')} values={filterOptions.types} selected={types} onChange={setTypes} />
+          <button type="button" className="comm-console__clear" onClick={() => { setUsers([]); setLabs([]); setTypes([]); }}>{t('clearFilters')}</button>
+          <span className="comm-console__count">{t('messageCount', { count: visibleMessages.length })}</span>
         </div>
         {error ? <p className="comm-console__error">{error}</p> : null}
         <div className="comm-console__table-wrap">
           <table className="comm-console__table">
-            <thead><tr><th>Ώρα</th><th>Εργαστήριο</th><th>Κατεύθυνση</th><th>Από</th><th>Προς</th><th>Μήνυμα</th></tr></thead>
+            <thead><tr><th>{t('time')}</th><th>{t('labs')}</th><th>{t('direction')}</th><th>{t('from')}</th><th>{t('to')}</th><th>{t('message')}</th></tr></thead>
             <tbody>{visibleMessages.map((message) => (
               <tr key={message.id}>
-                <td>{new Date(message.ts).toLocaleTimeString()}</td>
+                <td>{new Date(message.ts).toLocaleTimeString(i18n.resolvedLanguage)}</td>
                 <td><span className="comm-console__lab">{message.app}</span></td>
-                <td><span className={`comm-console__direction comm-console__direction--${message.direction}`}>{message.direction === 'in' ? '→ server' : 'server →'}</span></td>
+                <td><span className={`comm-console__direction comm-console__direction--${message.direction}`}>{message.direction === 'in' ? t('incomingServer') : t('serverOutgoing')}</span></td>
                 <td>{message.from}</td><td>{message.to}</td>
                 <td><details><summary>{message.event}{message.note ? ` · ${message.note}` : ''}</summary><pre>{JSON.stringify(message, null, 2)}</pre></details></td>
               </tr>
             ))}</tbody>
           </table>
-          {!visibleMessages.length ? <p className="comm-console__empty">Δεν υπάρχουν μηνύματα για τα επιλεγμένα φίλτρα.</p> : null}
+          {!visibleMessages.length ? <p className="comm-console__empty">{t('noMessages')}</p> : null}
         </div>
       </div>
     </section>

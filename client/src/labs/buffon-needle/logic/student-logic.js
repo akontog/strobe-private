@@ -1,4 +1,10 @@
+import { mountAccordionInteractions } from '../../../shared/components/layouts/accordionDom';
+import { readIdentityName, writeIdentityName } from '../../../shared/components/identity/identityStorage';
+
 export function mountBuffonStudent(rootElement) {
+const cleanupAccordions = mountAccordionInteractions(rootElement, (accordionId, isOpen) => {
+  if (accordionId === 'student-chart' && isOpen) drawChart();
+});
 const Y_MIN = 1.5, Y_MAX = 5.0;
 const simCv  = document.getElementById('sim');
 const simCtx = simCv.getContext('2d');
@@ -19,32 +25,14 @@ let roundNumber = 0;
 let roundTargetError = null;
 let roundEndAt = 0;
 let roundBannerTimer = null;
-const CONNECT_NAME_KEY = 'strobeStudentConnectName';
-const DEFAULT_TEAM_PREFIX = 'Ομάδα';
 const pageQuery = new URLSearchParams(window.location.search);
 const PREFILL_TEAM = (pageQuery.get('team') || pageQuery.get('name') || '').trim();
-const AUTO_CONNECT_FLAG = (pageQuery.get('autoconnect') || '').toLowerCase();
-const SHOULD_AUTOCONNECT = ['1', 'true', 'yes'].includes(AUTO_CONNECT_FLAG);
-
-function buildFallbackTeamName() {
-  return `${DEFAULT_TEAM_PREFIX}-${Math.floor(Math.random() * 900 + 100)}`;
-}
 
 function ensureRegisteredTeamName() {
-  const input = document.getElementById('team-input');
-  const current = (input && typeof input.value === 'string' ? input.value : teamName).trim();
-  if (current) {
-    teamName = current;
-    if (input) input.value = current;
-    localStorage.setItem(CONNECT_NAME_KEY, current);
-    return current;
-  }
-
-  const fallback = buildFallbackTeamName();
-  teamName = fallback;
-  if (input) input.value = fallback;
-  localStorage.setItem(CONNECT_NAME_KEY, fallback);
-  return fallback;
+  const identityName = readIdentityName('Student');
+  teamName = (PREFILL_TEAM || identityName || 'Student').trim();
+  if (PREFILL_TEAM) writeIdentityName(PREFILL_TEAM);
+  return teamName;
 }
 
 // ── WebSocket ─────────────────────────────────────
@@ -117,27 +105,15 @@ function sendPayload(payload) {
 }
 
 function registerTeam() {
-  teamName = document.getElementById('team-input').value.trim();
-  if (!teamName) {
-    localStorage.removeItem(CONNECT_NAME_KEY);
-    teamRegistered = false;
-    roundControlEnabled = false;
-    setRoundBanner('Χωρίς σύνδεση ομάδας: ελεύθερος πειραματισμός.', 'waiting');
-    updateConnDot();
-    return;
-  }
-
-  localStorage.setItem(CONNECT_NAME_KEY, teamName);
-
+  teamName = ensureRegisteredTeamName();
   if (!classroomApi || !classroomApi.isConnected()) {
     connectWS();
-    setTimeout(registerTeam, 500);
     return;
   }
   sendPayload({ type: 'register_student', team: teamName });
   teamRegistered = true;
   roundControlEnabled = true;
-  setRoundBanner('Συνδεθήκατε. Περιμένετε την έναρξη από τον καθηγητή.', 'waiting');
+  setRoundBanner('???????????. ?????????? ??? ?????? ??? ??? ????????.', 'waiting');
   updateConnDot();
   sendUpdate();
 }
@@ -149,8 +125,11 @@ function sendUpdate() {
 }
 
 function updateConnDot() {
-  const dot = document.getElementById('conn-dot');
-  dot.classList.toggle('connected', socketConnected && teamRegistered);
+  const status = document.getElementById('connection-status');
+  if (!status) return;
+  const connected = socketConnected && teamRegistered;
+  status.textContent = connected ? 'Connected to server' : 'Connecting to server…';
+  status.classList.toggle('connected', connected);
 }
 
 function clamp(value, min, max) {
@@ -468,16 +447,6 @@ function drawChart() {
   chartCtx.fillText('# βελόνες',PAD.left+pw/2,ch-4);
 }
 
-function toggleChart() {
-  const body=document.getElementById('chart-body'), arrow=document.getElementById('chart-arrow');
-  const open=body.classList.toggle('open'); arrow.classList.toggle('open',open);
-  if(open) drawChart();
-}
-function toggleFormula() {
-  document.getElementById('formula-body').classList.toggle('open');
-  document.getElementById('formula-arrow').classList.toggle('open');
-}
-
 // ── Reset ─────────────────────────────────────────
 function resetAll() {
   drops=0; hits=0; history=[];
@@ -494,51 +463,25 @@ function changeStep(d){ setStep(stepN+d); }
 
 // ── Init ──────────────────────────────────────────
 function initStudentApp() {
-  const teamInput = document.getElementById('team-input');
-  if (!teamInput) return;
-  const storedConnectName = localStorage.getItem(CONNECT_NAME_KEY);
-
-  if (PREFILL_TEAM) {
-    teamInput.value = PREFILL_TEAM;
-  } else if (storedConnectName && storedConnectName.trim()) {
-    teamInput.value = storedConnectName.trim();
-  }
-
-  teamInput.addEventListener('input', () => {
-    const currentName = teamInput.value.trim();
-    if (currentName) {
-      localStorage.setItem(CONNECT_NAME_KEY, currentName);
-    }
-
-    if (!currentName || currentName !== teamName) {
-      teamRegistered = false;
-      roundControlEnabled = false;
-      setRoundBanner('Χωρίς σύνδεση ομάδας: ελεύθερος πειραματισμός.', 'waiting');
-      updateConnDot();
-    }
-  });
-
-  teamInput.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-      registerTeam();
-    }
-  });
-
-  setRoundBanner('Ελεύθερος πειραματισμός. Συνδεθείτε ως ομάδα για αγώνα!', 'waiting');
-  if (!teamInput.value.trim()) {
-    teamInput.value = buildFallbackTeamName();
-  }
+  ensureRegisteredTeamName();
+  setRoundBanner('????????? ?????????????. ?????????? ?? ????? ??? ?????!', 'waiting');
   connectWS();
-
-  if (SHOULD_AUTOCONNECT && teamInput.value.trim()) {
-    setTimeout(registerTeam, 180);
-  }
-
   updateConnDot();
   drawGrid();
   drawPreviewNeedle();
   updateStats(null);
 }
+
+const handleIdentityChange = (event) => {
+  const nextName = event?.detail?.name?.trim();
+  if (!nextName) return;
+  teamName = nextName;
+  teamRegistered = false;
+  roundControlEnabled = false;
+  if (classroomApi && classroomApi.isConnected()) registerTeam();
+  else updateConnDot();
+};
+window.addEventListener('strobe:identity-change', handleIdentityChange);
 
 const handleBeforeUnload = () => {
   stopAutoDrop();
@@ -559,16 +502,16 @@ initStudentApp();
     doStep,
     toggleAutoDrop,
     resetAll,
-    toggleFormula,
-    toggleChart,
   };
 
   Object.assign(window, globalFns);
 
   return () => {
+    cleanupAccordions();
     stopAutoDrop();
     stopRoundBannerTimer();
     window.removeEventListener('beforeunload', handleBeforeUnload);
+    window.removeEventListener('strobe:identity-change', handleIdentityChange);
 
     if (classroomApi && typeof classroomApi.stop === 'function') {
       classroomApi.stop();

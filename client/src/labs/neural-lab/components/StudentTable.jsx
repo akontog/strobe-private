@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { StudentTable as SharedStudentTable } from '../../../shared/components';
 
 export const StudentTable = ({ 
@@ -10,6 +11,7 @@ export const StudentTable = ({
   threshold = { op: '>=', boundary: 5 },
   activity = '1'
   }) => {
+  const { t } = useTranslation('neural');
   const showInput1 = Boolean(selectedInputs?.i1);
   const showInput2 = Boolean(selectedInputs?.i2);
   const showProducts = activity === '2' || activity === '3' || activity === '4';
@@ -26,7 +28,7 @@ export const StudentTable = ({
       },
       {
         key: 'w1',
-        label: 'w₁',
+        label: 'w1',
         className: 'weight-value',
         style: { background: '#ef4444', color: 'white' },
         render: (student) => student.weights?.w1 ?? (activity !== '3' && activity !== '4' ? 2 : '-')
@@ -43,7 +45,7 @@ export const StudentTable = ({
       },
       {
         key: 'w2',
-        label: 'w₂',
+        label: 'w2',
         className: 'weight-value',
         style: { background: '#ef4444', color: 'white' },
         render: (student) => student.weights?.w2 ?? (activity !== '3' && activity !== '4' ? 3 : '-')
@@ -55,7 +57,7 @@ export const StudentTable = ({
   if (showProducts && showInput1) {
     columns.push({
       key: 'p1',
-      label: 'p₁ (w₁×i₁)',
+      label: 'w1 × i1',
       render: (student) => student?.products?.p1 ?? '-'
     });
   }
@@ -63,7 +65,7 @@ export const StudentTable = ({
   if (showProducts && showInput2) {
     columns.push({
       key: 'p2',
-      label: 'p₂ (w₂×i₂)',
+      label: 'w2 × i2',
       render: (student) => student?.products?.p2 ?? '-'
     });
   }
@@ -71,7 +73,7 @@ export const StudentTable = ({
   // Add result column
   columns.push({
     key: 'result',
-    label: 'Αποτέλεσμα o',
+    label: t('result') + ' o',
     className: 'result-visible',
     render: (student) => {
       const resultValue = student.total ?? student.result ?? '-';
@@ -81,7 +83,7 @@ export const StudentTable = ({
           <span>{resultValue}</span>
           {showThreshold && typeof student.aboveThreshold === 'boolean' && (
             <span style={{ marginLeft: '0.45rem', fontWeight: 700, color: student.aboveThreshold ? '#059669' : '#dc2626' }}>
-              {student.aboveThreshold ? `${threshold.op} ${threshold.boundary}` : `όχι ${threshold.op} ${threshold.boundary}`}
+              {student.aboveThreshold ? `${threshold.op} ${threshold.boundary}` : `${t('belowThreshold')} ${threshold.op} ${threshold.boundary}`}
             </span>
           )}
         </div>
@@ -91,12 +93,12 @@ export const StudentTable = ({
 
   return (
     <SharedStudentTable
-      title="📋 Πίνακας μαθητών"
+      title={t('studentTableTitle')}
       participants={participants}
-      emptyMessage="Δεν υπάρχουν συνδεδεμένοι μαθητές."
-      nameFallback="Μαθητής"
+      emptyMessage={t('noConnectedStudents')}
+      nameFallback={t('studentName')}
       getRowKey={(student, index) => student.id || student.username || student.name || index}
-      getDisplayName={(student) => student.username || student.name || student.displayName || 'Μαθητής'}
+      getDisplayName={(student) => student.username || student.name || student.displayName || t('studentName')}
       getIsConnected={(student) => student.isConnected ?? true}
       columns={columns}
     />

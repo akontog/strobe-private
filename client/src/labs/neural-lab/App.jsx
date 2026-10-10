@@ -1,4 +1,5 @@
 ﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import CommonZoneFullscreenButton from '../../shared/components/identity/CommonZoneFullscreenButton';
 import { TeacherCard } from './components/TeacherCard';
 import { DatasetSelector } from './components/DatasetSelector';
@@ -110,6 +111,7 @@ const resolveSeparableBySelectedInputs = (separable, selectedInputs) => {
 
 
 const App = ({ role = 'teacher' }) => {
+  const { t, i18n } = useTranslation('neural');
   // Σταθερές αναφορές (refs) για την αποθήκευση αντικειμένων που 
   // δεν προκαλούν επανασχεδιασμό όταν αλλάζουν.
 
@@ -171,10 +173,10 @@ const App = ({ role = 'teacher' }) => {
   const [lessonIcon, setLessonIcon] = useState('🚗');
   const [lessonName, setLessonName] = useState('Αυτοκίνητο');
   const NEURAL_ACTIVITY_OPTIONS = [
-    { value: '1', label: '1. Βρίσκω την είσοδο' },
-    { value: '2', label: '2. Υπολογίζω την έξοδο' },
-    { value: '3', label: '3. Προσαρμόζω τα βάρη' },
-    { value: '4', label: '4. Συγκρίνω' }
+    { value: '1', label: t('activity1') },
+    { value: '2', label: t('activity2') },
+    { value: '3', label: t('activity3') },
+    { value: '4', label: t('activity4') }
   ];
   const getNeuralActivityTitle = (activityId, fallback = NEURAL_ACTIVITY_OPTIONS[0].label) => {
     const normalizedId = String(activityId ?? '').trim();
@@ -182,6 +184,7 @@ const App = ({ role = 'teacher' }) => {
     return match ? match.label : fallback;
   };
   const [lessonActivityTitle, setLessonActivityTitle] = useState(getNeuralActivityTitle('1'));
+  useEffect(() => setLessonActivityTitle(getNeuralActivityTitle(lessonActivity)), [i18n.resolvedLanguage, lessonActivity]);
   
 
 
@@ -228,10 +231,21 @@ const [studentColor, setStudentColor] = useState(() => {
   const isStudent = role === 'student';
   const activeActivity = isTeacher ? selectedActivity : lessonActivity;
   const displayIcon = isTeacher ? currentExampleData.icon : lessonIcon;
-  const displayName = isTeacher ? currentExampleData.name : lessonName;
-
   const displayDataset = isTeacher ? currentDataset : lessonDataset;
   const safeDisplayDataset = DATASETS[displayDataset] ? displayDataset : 'vehicles';
+  const displayName = isTeacher
+    ? t(`exampleLabels.${currentDataset}.${currentExample}`, { defaultValue: currentExampleData.name })
+    : t(`exampleLabels.${lessonDataset}.${lessonExampleIndex}`, { defaultValue: lessonName });
+  const localizedFeatures = {
+    i1: {
+      ...DATASETS[safeDisplayDataset].features.i1,
+      label: t(`featureLabels.${safeDisplayDataset}.i1`, { defaultValue: DATASETS[safeDisplayDataset].features.i1.label })
+    },
+    i2: {
+      ...DATASETS[safeDisplayDataset].features.i2,
+      label: t(`featureLabels.${safeDisplayDataset}.i2`, { defaultValue: DATASETS[safeDisplayDataset].features.i2.label })
+    }
+  };
   const effectiveSelectedInputs = isTeacher ? selectedInputs : lessonSelectedInputs;
   const showInput1 = Boolean(effectiveSelectedInputs.i1);
   const showInput2 = Boolean(effectiveSelectedInputs.i2);
@@ -244,7 +258,7 @@ const [studentColor, setStudentColor] = useState(() => {
     : null;
 
   let demoIcon = null;
-  let demoLabel = 'Μη επιλεγμένο';
+  let demoLabel = t('notSelected');
 
   // Activities 1-3 keep right-side icon area empty.
   if (activeActivity === '4' && effectiveLinearDemoIndex !== undefined && DATASETS[safeDisplayDataset]?.linear_demos) {
@@ -255,7 +269,8 @@ const [studentColor, setStudentColor] = useState(() => {
         ex => ex.name === selectedDemo.example
       );
       demoIcon = targetExample ? targetExample.icon : null;
-      demoLabel = selectedDemo.example || 'Μη επιλεγμένο';
+      const targetIndex = DATASETS[safeDisplayDataset].examples.findIndex((example) => example.name === selectedDemo.example);
+      demoLabel = t(`exampleLabels.${safeDisplayDataset}.${targetIndex}`, { defaultValue: selectedDemo.example || t('notSelected') });
     }
   }
 
@@ -748,14 +763,14 @@ const [studentColor, setStudentColor] = useState(() => {
       {isScreen && (
         <>
           <div className="screen-top-bar">
-            <strong>Προβολή τάξης</strong>
-            <span>{DATASETS[safeDisplayDataset].emoji} {DATASETS[safeDisplayDataset].label}</span>
+            <strong>{t('classroomView')}</strong>
+            <span>{DATASETS[safeDisplayDataset].emoji} {t(`datasetLabels.${safeDisplayDataset}`, { defaultValue: DATASETS[safeDisplayDataset].label })}</span>
             <span>{displayIcon} {displayName}</span>
             <span>i1={i1}, i2={i2}</span>
             <span>w1={currentW1}, w2={currentW2}</span>
             <span>o={total}</span>
           </div>
-          <div className="operation-tree" aria-label="Δέντρο πράξεων">
+          <div className="operation-tree" aria-label={t('operationTree')}>
             <div className="tree-level">
               <div className="tree-node tree-root">o = {total}</div>
             </div>
@@ -774,7 +789,7 @@ const [studentColor, setStudentColor] = useState(() => {
           icon={displayIcon}
           demoIcon={demoIcon}
           demoLabel={demoLabel}
-          features={DATASETS[safeDisplayDataset].features}
+          features={localizedFeatures}
           prod1={displayedProd1}
           prod2={displayedProd2}
           w1={currentW1}
@@ -830,7 +845,7 @@ const [studentColor, setStudentColor] = useState(() => {
             currentLinearDemoIndex={effectiveLinearDemoIndex}
             activityId={activeActivity}
             selectedInputs={effectiveSelectedInputs}
-            features={DATASETS[safeDisplayDataset].features}
+            features={localizedFeatures}
             weights={{ w1: currentW1, w2: currentW2 }}
           />
         </div>
@@ -842,7 +857,7 @@ const [studentColor, setStudentColor] = useState(() => {
             i1={lessonInputs.i1}
             i2={lessonInputs.i2}
             selectedInputs={lessonSelectedInputs}
-            features={DATASETS[safeDisplayDataset].features}
+            features={localizedFeatures}
             threshold={effectiveThresholdRule}
             participants={sortedParticipants}
             activity={lessonActivity}
@@ -854,9 +869,9 @@ const [studentColor, setStudentColor] = useState(() => {
         <>
 
           <ActivitiesMenu
-            title="Δραστηριότητες"
+            title={t('activitiesTitle')}
             icon="🔬"
-            label="Επιλογή δραστηριότητας"
+            label={t('chooseActivity')}
             options={NEURAL_ACTIVITY_OPTIONS}
             value={selectedActivity}
             onChange={setSelectedActivity}
@@ -868,7 +883,7 @@ const [studentColor, setStudentColor] = useState(() => {
             currentExample={currentExample}
             currentLinearDemoIndex={currentLinearDemoIndex}
             selectedInputs={selectedInputs}
-            features={DATASETS[safeDisplayDataset].features}
+            features={localizedFeatures}
             onDatasetChange={(dataset) => {
               const nextExampleData = DATASETS[dataset]?.examples?.[0];
               setCurrentDataset(dataset);

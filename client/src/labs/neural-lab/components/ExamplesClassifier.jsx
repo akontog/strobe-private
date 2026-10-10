@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Accordion } from '../../../shared/components';
 
 // Υπολογίζει output = w1*i1 + w2*i2, λαμβάνοντας υπόψη μόνο τα ενεργά inputs
@@ -47,6 +48,7 @@ export const ExamplesClassifier = ({
   features,
   weights // { w1, w2 } -- τα τρέχοντα βάρη που έθεσε ο μαθητής/δάσκαλος
 }) => {
+  const { t } = useTranslation('neural');
   const activeInputs = {
     i1: selectedInputs?.i1 !== false,
     i2: Boolean(selectedInputs?.i2)
@@ -111,8 +113,7 @@ export const ExamplesClassifier = ({
   }
 
   return (
-    <Accordion 
-      title="Ταξινόμηση Παραδειγμάτων"
+    <Accordion title={t('examplesClassifier')}
       icon= " 🔎 "
       open={true} 
     >
@@ -120,18 +121,18 @@ export const ExamplesClassifier = ({
         <table className="data-table">
           <thead>
             <tr>
-              <th>Παράδειγμα</th>
-              {activeInputs.i1 && <th>{features?.i1?.icon} {features?.i1?.label}</th>}
-              {activeInputs.i2 && <th>{features?.i2?.icon} {features?.i2?.label}</th>}
+              <th>{t('chooseExample')}</th>
+              {activeInputs.i1 && <th>{features?.i1?.icon} {t(`featureLabels.${currentDataset}.i1`, { defaultValue: features?.i1?.label })}</th>}
+              {activeInputs.i2 && <th>{features?.i2?.icon} {t(`featureLabels.${currentDataset}.i2`, { defaultValue: features?.i2?.label })}</th>}
               <th>w1·i1 + w2·i2</th>
-              {showResultDetails && <th>Αποτέλεσμα</th>}
+              {showResultDetails && <th>{t('result')}</th>}
             </tr>
           </thead>
           <tbody>
             {classifiedExamples.map((ex, idx) => (
               <tr key={idx}>
                 <td>
-                  <span className="icon-in-table">{ex.icon}</span> {ex.name}
+                  <span className="icon-in-table">{ex.icon}</span> {t(`exampleLabels.${currentDataset}.${idx}`, { defaultValue: ex.name })}
                 </td>
                 {activeInputs.i1 && <td className="weight-value">{ex.i1}</td>}
                 {activeInputs.i2 && <td className="weight-value">{ex.i2}</td>}
@@ -156,29 +157,27 @@ export const ExamplesClassifier = ({
                 fontWeight: 'bold',
                 padding: '10px 0',
                 borderBottom: '2px solid #e2e8f0'
-                }}>
-                Confusion Matrix
-                </th>
+                }}>{t('confusionMatrix')}</th>
             </tr>
             <tr>
                 {/* 2η γραμμή: Οι κύριες κατηγορίες στηλών */}
-                <th rowSpan="2">Πραγματική κλάση</th>
-                <th colSpan="2">Πρόβλεψη</th>
+                <th rowSpan="2">{t('actualClass')}</th>
+                <th colSpan="2">{t('prediction')}</th>
             </tr>
             <tr>
                 {/* 3η γραμμή: Οι υποκατηγορίες της πρόβλεψης */}
-                <th>Θετικό</th>
-                <th>Αρνητικό</th>
+                <th>{t('positive')}</th>
+                <th>{t('negative')}</th>
             </tr>
             </thead>
             <tbody>
             <tr>
-                <td>Θετική</td>
+                <td>{t('positive')}</td>
                 <td className="result-positive">TP: {metricValue('tp')}</td>
                 <td className="result-negative">FN: {metricValue('fn')}</td>
             </tr>
             <tr>
-                <td>Αρνητική</td>
+                <td>{t('negative')}</td>
                 <td className="result-negative">FP: {metricValue('fp')}</td>
                 <td className="result-positive">TN: {metricValue('tn')}</td>
             </tr>
@@ -186,8 +185,7 @@ export const ExamplesClassifier = ({
         </table>
         </div>
 
-        <div className="student-inline-note" style={{ marginTop: '0.6rem' }}>
-          Τρέχοντα βάρη: w1 = {safeWeights.w1}, w2 = {safeWeights.w2}
+        <div className="student-inline-note" style={{ marginTop: '0.6rem' }}>          {t('currentWeights')}: w1 = {safeWeights.w1}, w2 = {safeWeights.w2}
           {showResultDetails && threshold && ` | threshold: ${threshold.op} ${threshold.boundary}`}
         </div>
       </div>

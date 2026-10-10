@@ -1,4 +1,5 @@
 ﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import CommonZoneFullscreenButton from '../../shared/components/identity/CommonZoneFullscreenButton';
 import NumberGrid from './components/NumberGrid';
 import SelectionSummaryAccordion from './components/SelectionSummaryAccordion';
@@ -49,6 +50,7 @@ const isPrimeNumber = (number) => {
 };
 
 const App = ({ role = 'teacher' }) => {
+  const { t } = useTranslation('primes');
   const isTeacher = role === 'teacher';
   const wsRef = useRef(null);
   const reconnectTimerRef = useRef(null);
@@ -66,11 +68,11 @@ const App = ({ role = 'teacher' }) => {
   });
   const [editingName, setEditingName] = useState(false);
   const [studentNameInput, setStudentNameInput] = useState(studentName);
-  const [message, setMessage] = useState('Διάλεξε μια βάση και ξεκίνα το κόσκινο.');
+  const [message, setMessage] = useState(() => t('messages.chooseBase'));
 
   const effectiveStudentId = isTeacher ? activeStudentId : localStudentId;
   const activeStudent = students.find((student) => student.id === effectiveStudentId) || students[0];
-  const viewerName = isTeacher ? activeStudent?.name || 'β€”' : studentName;
+  const viewerName = isTeacher ? activeStudent?.name || '—' : studentName;
   const viewerColor = isTeacher ? activeStudent?.color || '#22c55e' : studentColor;
 
   const correctOwnerByNumber = useMemo(() => {
@@ -146,7 +148,7 @@ const App = ({ role = 'teacher' }) => {
       return;
     }
     setCurrentPrime(prime);
-    setMessage(`Τώρα δουλεύουμε με τη βάση ${prime}. Τα πολλαπλάσιά της φωτίζονται στον πίνακα.`);
+    setMessage(t('messages.selectedBase', { prime }));
   };
 
   const handleSelectActiveStudent = (studentId) => {
@@ -214,7 +216,7 @@ const App = ({ role = 'teacher' }) => {
     }
 
     if (number === currentPrime) {
-      setMessage(`Ο ${number} είναι η βάση του βήματος, όχι πολλαπλάσιο.`);
+      setMessage(t('messages.baseIsNotMultiple', { number }));
       return;
     }
 
@@ -223,13 +225,13 @@ const App = ({ role = 'teacher' }) => {
     if (isTarget) {
       const ownerId = correctOwnerByNumber[number];
       if (ownerId && ownerId !== effectiveStudentId) {
-        const ownerName = students.find((student) => student.id === ownerId)?.name || 'άλλος μαθητής';
-        setMessage(`${number} έχει ήδη κλειδωθεί σωστά από τη/τον ${ownerName}.`);
+        const ownerName = students.find((student) => student.id === ownerId)?.name || t('anotherStudent');
+        setMessage(t('messages.alreadyClaimedBy', { number, name: ownerName }));
         return;
       }
 
       if (ownerId === effectiveStudentId) {
-        setMessage(`${number} έχει ήδη κλειδωθεί σωστά από τη/τον ${activeStudent?.name || 'μαθητή'}.`);
+        setMessage(t('messages.claimedBySelf', { number, name: activeStudent?.name || t('student') }));
         return;
       }
 
@@ -239,7 +241,7 @@ const App = ({ role = 'teacher' }) => {
         selectedWrong: student.selectedWrong.filter((item) => item !== number)
       }));
 
-      setMessage(`${viewerName || 'Ο μαθητής'} κλείδωσε σωστά το ${number}.`);
+      setMessage(t('messages.correctSelection', { name: viewerName || t('student'), number }));
       return;
     }
 
@@ -253,7 +255,7 @@ const App = ({ role = 'teacher' }) => {
       };
     });
 
-    setMessage(`${viewerName || 'Ο μαθητής'} σημείωσε το ${number} ως λάθος επιλογή.`);
+    setMessage(t('messages.wrongSelection', { name: viewerName || t('student'), number }));
   };
 
   useEffect(() => {
@@ -378,10 +380,10 @@ const App = ({ role = 'teacher' }) => {
       <div className="teacher-card primes-card">
         <header className="hero-title primes-hero">
           <div>
-            <p className="primes-kicker">Sieve of Eratosthenes</p>
-            <h1>Κόσκινο του Ερατοσθένη</h1>
+            <p className="primes-kicker">{t('kicker')}</p>
+            <h1>{t('title')}</h1>
             <p className="primes-subtitle">
-              Από το 2 έως το 100, οι μαθητές ανακαλύπτουν ποιοι αριθμοί είναι πολλαπλάσια και ποιοι μένουν ως πρώτοι.
+              {t('subtitle')}
             </p>
           </div>
           <ConnectionNameControl
@@ -399,9 +401,9 @@ const App = ({ role = 'teacher' }) => {
             color={viewerColor}
             showColorPicker={!isTeacher}
             onColorChange={saveStudentColor}
-            connectedLabel={isTeacher ? 'Σε σύνδεση' : 'Συνδεδεμένος'}
-            disconnectedLabel="Εκτός σύνδεσης"
-            namePrefix="όνομα χρήστη"
+            connectedLabel={isTeacher ? t('connectedTeacher') : t('connectedStudent')}
+            disconnectedLabel={t('disconnected')}
+            namePrefix={t('namePrefix')}
             showNameLabel={!isTeacher}
             className="primes-identity"
           />
@@ -411,13 +413,13 @@ const App = ({ role = 'teacher' }) => {
           <CommonZoneFullscreenButton />
           <div className="primes-board-header">
             <div>
-              <p>Κεντρικό πάνελ</p>
-              <h2>Αριθμοί 2 έως 100</h2>
+              <p>{t('board')}</p>
+              <h2>{t('range')}</h2>
             </div>
             {isTeacher ? (
               <div className="primes-board-header__legend">
-                <span className="legend-item"><i className="legend-dot legend-dot--eliminated" />κλειδωμένο</span>
-                <span className="legend-item"><i className="legend-dot legend-dot--prime" />πρώτος</span>
+                <span className="legend-item"><i className="legend-dot legend-dot--eliminated" />{t('locked')}</span>
+                <span className="legend-item"><i className="legend-dot legend-dot--prime" />{t('prime')}</span>
               </div>
             ) : null}
           </div>
@@ -469,20 +471,20 @@ const App = ({ role = 'teacher' }) => {
               />
 
               <div className="primes-note primes-compact-note">
-                <h2>Τι απομένει</h2>
-                <p>Από τους αριθμούς που δεν έχουν κλειδωθεί, μένουν {progress.remainingCount} και από αυτούς {progress.primeCount} είναι πρώτοι.</p>
+                <h2>{t('remaining')}</h2>
+                <p>{t('remainingDescription', { remaining: progress.remainingCount, primes: progress.primeCount })}</p>
                 <div className="primes-note__stats primes-note__stats--compact">
                   <div>
-                    <span>Πολλαπλάσια που περιμένουν</span>
+                    <span>{t('waitingMultiples')}</span>
                     <strong>{remainingTargetNumbers.length}</strong>
                   </div>
                   <div>
-                    <span>Ολοκληρωμένα βήματα</span>
+                    <span>{t('completedSteps')}</span>
                     <strong>{progress.solvedCount}</strong>
                   </div>
                   <div>
-                    <span>Τρέχων μαθητής</span>
-                    <strong>{activeStudent?.name || 'β€”'}</strong>
+                    <span>{t('activeStudent')}</span>
+                    <strong>{activeStudent?.name || '—'}</strong>
                   </div>
                 </div>
               </div>

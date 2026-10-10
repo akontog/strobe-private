@@ -62,24 +62,24 @@ export default function StudentPage() {
   const extraStudentTools = [
     {
       id: 'linear-systems-lab-link',
-      title: 'Linear Systems Lab',
-      description: 'Γραφική και αλγεβρική επίλυση γραμμικών συστημάτων με κοινή ροή teacher-student.',
+      titleKey: 'linearSystemsTitle',
+      descriptionKey: 'linearSystemsDescription',
       path: '/labs/linear-systems-lab/student',
       tone: 'indigo',
       icon: '📘'
     },
     {
       id: 'identities-lab-link',
-      title: 'Identities Lab',
-      description: 'Αλγεβρική και γεωμετρική κατανόηση βασικών αλγεβρικών ταυτοτήτων.',
+      titleKey: 'identitiesTitle',
+      descriptionKey: 'identitiesDescription',
       path: '/labs/identities-lab/student',
       tone: 'amber',
       icon: '🧠'
     },
     {
       id: 'geogebra-collab',
-      title: 'GeoGebra Collaborative Component',
-      description: 'Κοινός GeoGebra πίνακας για student συμμετοχή με server-side δικαιώματα.',
+      titleKey: 'geoGebraCollaborativeTitle',
+      descriptionKey: 'geoGebraCollaborativeDescription',
       path: '/tools/geogebra-collab',
       tone: 'green',
       icon: '📐'
@@ -94,7 +94,7 @@ export default function StudentPage() {
             <img className="page-hero__logo" src="/icons/strobelogo.svg" alt={t('strobeLogo')} />
             <h1>{t('studentLauncher')}</h1>
           </div>
-          <p className="page-hero__lead">Επιλογή app και μετάβαση σε student routes που ανήκουν πλέον στο React Router.</p>
+          <p className="page-hero__lead">{t('studentLead')}</p>
           <div className="page-meta-row">
             <span className="page-chip">GET /client/apps</span>
             <span className="page-chip">{t('spaNavigation')}</span>
@@ -111,10 +111,10 @@ export default function StudentPage() {
                 <div className="app-head">
                   <div>
                     <div className="muted">{t('student')}</div>
-                    <h2 className="app-title">{iconBySlug[app.slug] || '🧩'} {app.title}</h2>
+                    <h2 className="app-title">{iconBySlug[app.slug] || '🧩'} {t(`apps.${app.slug}.title`, { defaultValue: app.title })}</h2>
                   </div>
                 </div>
-                <p className="app-desc">{app.description}</p>
+                <p className="app-desc">{t(`apps.${app.slug}.description`, { defaultValue: app.description })}</p>
                 <ul className="role-features">
                   <li>{app.slug}</li>
                   <li>{app.kind}</li>
@@ -130,10 +130,10 @@ export default function StudentPage() {
                 <div className="app-head">
                   <div>
                     <div className="muted">{t('tool')}</div>
-                    <h2 className="app-title">{tool.icon} {tool.title}</h2>
+                    <h2 className="app-title">{tool.icon} {t(tool.titleKey)}</h2>
                   </div>
                 </div>
-                <p className="app-desc">{tool.description}</p>
+                <p className="app-desc">{t(tool.descriptionKey)}</p>
                 <ul className="role-features">
                   <li>{t('studentAccessible')}</li>
                   <li>{tool.path}</li>

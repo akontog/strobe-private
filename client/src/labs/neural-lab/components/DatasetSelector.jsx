@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Accordion } from '../../../shared/components';
 export const DatasetSelector = ({
   datasets,
@@ -14,10 +15,11 @@ export const DatasetSelector = ({
   isLinearDemoDisabled = false,
   demoIconWhenDisabled = '?'
 }) => {
+  const { t } = useTranslation('neural');
   // Παίρνουμε τα δεδομένα του τρέχοντος dataset
   const currentData = datasets[currentDataset];
   if (!currentData) {
-    return <div>Δεν υπάρχουν δεδομένα για το επιλεγμένο dataset</div>;
+    return <div>{t('noData')}</div>;
   }
 
   // Ο πίνακας linear_demos (αν υπάρχει)
@@ -36,20 +38,10 @@ export const DatasetSelector = ({
   };
 
   const resolveThresholdLabel = (threshold) => {
-    if (!threshold || typeof threshold !== 'object') {
-      return ' (Μη διαχωρίσιμο)';
-    }
-
-    if (!threshold.both && !threshold.i1 && !threshold.i2) {
-      return ` (Όριο: ${threshold.op} ${threshold.boundary})`;
-    }
-
-    const key = resolveSelectionKey();
-
-    const selectedThreshold = threshold[key] || threshold.both || threshold.i1 || threshold.i2;
-    return selectedThreshold
-      ? ` (Όριο: ${selectedThreshold.op} ${selectedThreshold.boundary})`
-      : ' (Μη διαχωρίσιμο)';
+    const selectedThreshold = threshold && (threshold[resolveSelectionKey()] || threshold.both || threshold.i1 || threshold.i2 || threshold);
+    return selectedThreshold && typeof selectedThreshold === 'object'
+      ? t('thresholdInfo', selectedThreshold)
+      : t('notSeparableInfo');
   };
 
   const resolveSeparableStatus = (separable) => {
@@ -76,28 +68,27 @@ export const DatasetSelector = ({
   };
   
   return (
-    <Accordion 
-      title="Δεδομένα" 
+    <Accordion title={t('datasetsTitle')} 
       icon= "🗄️"
       open={false}  
     >
     <div className="control-bar">
       <div className="select-group">
-        <label>📊 Σύνολο δεδομένων</label>
+        <label>{t('chooseDataset')}</label>
         <select
           value={currentDataset}
           onChange={(e) => onDatasetChange(e.target.value)}
         >
           {Object.entries(datasets).map(([key, val]) => (
             <option key={key} value={key}>
-              {val.emoji} {val.label}
+              {val.emoji} {t(`datasetLabels.${key}`, { defaultValue: val.label })}
             </option>
           ))}
         </select>
       </div>
 
       <div className="select-group">
-        <label>🏷️ Παράδειγμα</label>
+        <label>{t('chooseExample')}</label>
 
         <select
           value={currentExample}
@@ -105,14 +96,14 @@ export const DatasetSelector = ({
         >
           {datasets[currentDataset].examples.map((ex, idx) => (
             <option key={idx} value={idx}>
-              {ex.icon} {ex.name}
+              {ex.icon} {t(`exampleLabels.${currentDataset}.${idx}`, { defaultValue: ex.name })}
             </option>
           ))}
         </select>
       </div>
 
       <div className="select-group">
-        <label>🎛️ Ενεργά Inputs</label>
+        <label>{t('activeInputs')}</label>
         <div className="inputs-toggle-group">
           <label className="input-toggle-item">
             <input
@@ -127,7 +118,7 @@ export const DatasetSelector = ({
                 }
               }}
             />
-            <span>{features?.i1?.icon} {features?.i1?.label || 'Input 1'}</span>
+            <span>{features?.i1?.icon} {t(`featureLabels.${currentDataset}.i1`, { defaultValue: features?.i1?.label || t('inputOne') })}</span>
           </label>
           <label className="input-toggle-item">
             <input
@@ -142,21 +133,21 @@ export const DatasetSelector = ({
                 }
               }}
             />
-            <span>{features?.i2?.icon} {features?.i2?.label || 'Input 2'}</span>
+            <span>{features?.i2?.icon} {t(`featureLabels.${currentDataset}.i2`, { defaultValue: features?.i2?.label || t('inputTwo') })}</span>
           </label>
         </div>
       </div>
       
       <div className="select-group">
-          <label>📐 Διαχωρισμός {isLinearDemoDisabled ? demoIconWhenDisabled : ''}</label>
+          <label>{t('separation')} {isLinearDemoDisabled ? demoIconWhenDisabled : ''}</label>
           <select 
             value={currentLinearDemoIndex !== undefined ? currentLinearDemoIndex : ''} 
             onChange={(e) => onLinearDemoChange(e.target.value !== '' ? parseInt(e.target.value, 10) : undefined)}
             disabled={isLinearDemoDisabled}
           >
-            <option value="">-- Επιλέξτε --</option>
+            <option value="">{t('selectPrompt')}</option>
             {linearDemos.map((demo, idx) => {
-              const label = demo.example;
+              const label = t(`exampleLabels.${currentDataset}.${idx}`, { defaultValue: demo.example });
               const status = resolveSeparableStatus(demo.separable);
               const thresholdInfo = resolveThresholdLabel(demo.threshold);
               return (

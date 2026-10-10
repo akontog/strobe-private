@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import './shared/i18n';
+import './framework/assets/js/classroom-api.js';
 import App from './App';
 import './styles/globals.css';
 import './styles/postit-cards.css';

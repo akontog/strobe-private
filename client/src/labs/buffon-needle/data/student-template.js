@@ -1,15 +1,4 @@
-export const studentTemplate = String.raw`<div style="text-align:center">
-  <h1>Προσέγγιση του π</h1>
-  <div class="subtitle">Η βελόνα του Buffon</div>
-</div>
-
-<!-- Team name -->
-<div class="team-bar">
-  <div class="conn-dot" id="conn-dot"></div>
-  <label>ΟΜΑΔΑ</label>
-  <input type="text" id="team-input" placeholder="Δώστε το όνομα της ομάδας σας" maxlength="30">
-  <button onclick="registerTeam()">Σύνδεση</button>
-</div>
+export const studentTemplate = String.raw`<div class="connection-status" id="connection-status" role="status" aria-live="polite"></div>
 
 <div class="round-banner waiting" id="round-banner">Περιμένετε την έναρξη.</div>
 
@@ -98,12 +87,12 @@ export const studentTemplate = String.raw`<div style="text-align:center">
 </div>
 
 <!-- Formula collapsible -->
-<div class="chart-wrap">
-  <div class="chart-header" onclick="toggleFormula()">
+<div class="accordion buffon-accordion chart-wrap" data-accordion-id="student-formula">
+  <button type="button" class="accordion-btn chart-header" aria-expanded="false">
     <span class="c-lbl">ΤΥΠΟΣ</span>
-    <span class="chart-toggle" id="formula-arrow">▼</span>
-  </div>
-  <div class="chart-body" id="formula-body">
+    <span class="accordion-icon" id="formula-arrow">+</span>
+  </button>
+  <div class="accordion-content chart-body" id="formula-body">
     <div style="text-align:center;font-size:13px;line-height:2;padding:4px 0 8px;">
       <div style="display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;">
         <span style="color:#a78bfa">\(\hat{\pi}\)</span>
@@ -139,12 +128,12 @@ export const studentTemplate = String.raw`<div style="text-align:center">
 </div>
 
 <!-- Chart collapsible -->
-<div class="chart-wrap">
-  <div class="chart-header" onclick="toggleChart()">
+<div class="accordion buffon-accordion chart-wrap" data-accordion-id="student-chart">
+  <button type="button" class="accordion-btn chart-header" aria-expanded="false">
     <span class="c-lbl">ΣΥΓΚΛΙΣΗ ΠΡΟΣ π</span>
-    <span class="chart-toggle" id="chart-arrow">▼</span>
-  </div>
-  <div class="chart-body" id="chart-body">
+    <span class="accordion-icon" id="chart-arrow">+</span>
+  </button>
+  <div class="accordion-content chart-body" id="chart-body">
     <canvas id="chart-cv"></canvas>
   </div>
 </div>`;
