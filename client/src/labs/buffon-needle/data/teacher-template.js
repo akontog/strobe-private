@@ -1,20 +1,4 @@
-export const teacherTemplate = String.raw`<div class="accordion buffon-accordion chart-wrap" data-accordion-id="teacher-join-qr">
-  <button type="button" class="accordion-btn chart-header" aria-expanded="true">
-    <span class="c-lbl">ΣΥΝΔΕΣΗ ΜΑΘΗΤΩΝ</span>
-    <span class="accordion-icon" id="join-qr-arrow">−</span>
-  </button>
-  <div class="accordion-content chart-body open" id="join-qr-body">
-    <div class="join-box">
-      <div class="join-copy">
-        <div class="join-help">Σαρώστε το QR για να ανοίξετε την εφαρμογή.</div>
-        <div class="join-help"><a href="/labs/buffon-needle/student" target="_blank" rel="noopener noreferrer">Άνοιγμα student σε νέα καρτέλα</a></div>
-      </div>
-      <img class="join-qr" src="qrcode.png" alt="QR code για student.html">
-    </div>
-  </div>
-</div>
-
-<div class="round-panel">
+export const teacherTemplate = String.raw`<div class="round-panel lab-card">
   <div class="round-grid">
     <div class="round-control">
       <div class="lbl">ΧΡΟΝΟΣ ΓΥΡΟΥ</div>
@@ -44,7 +28,7 @@ export const teacherTemplate = String.raw`<div class="accordion buffon-accordion
   <div class="round-status round-result" id="round-result">—</div>
 </div>
 
-<div class="accordion buffon-accordion chart-wrap" data-accordion-id="teacher-live-board">
+<div class="accordion chart-wrap" data-accordion-id="teacher-live-board">
   <button type="button" class="accordion-btn chart-header" aria-expanded="true">
     <span class="c-lbl">ΤΡΕΧΟΥΣΑ ΒΑΘΜΟΛΟΓΙΑ (LIVE)</span>
     <span class="accordion-icon" id="live-board-arrow">−</span>
@@ -67,7 +51,7 @@ export const teacherTemplate = String.raw`<div class="accordion buffon-accordion
   </div>
 </div>
 
-<div class="accordion buffon-accordion chart-wrap" data-accordion-id="teacher-total-board">
+<div class="accordion chart-wrap" data-accordion-id="teacher-total-board">
   <button type="button" class="accordion-btn chart-header" aria-expanded="true">
     <span class="c-lbl">ΣΥΝΟΛΙΚΗ ΒΑΘΜΟΛΟΓΙΑ</span>
     <span class="accordion-icon" id="total-board-arrow">−</span>
@@ -87,7 +71,7 @@ export const teacherTemplate = String.raw`<div class="accordion buffon-accordion
   </div>
 </div>
 
-<div class="accordion buffon-accordion chart-wrap" data-accordion-id="teacher-chart">
+<div class="accordion chart-wrap" data-accordion-id="teacher-chart">
   <button type="button" class="accordion-btn chart-header" aria-expanded="true">
     <span class="c-lbl">ΣΥΓΚΛΙΣΗ ΟΜΑΔΩΝ ΠΡΟΣ \(\pi\)</span>
     <span class="accordion-icon" id="teacher-chart-arrow">−</span>

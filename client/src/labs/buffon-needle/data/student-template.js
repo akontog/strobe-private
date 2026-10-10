@@ -35,7 +35,7 @@ export const studentTemplate = String.raw`<div class="connection-status" id="con
 </div>
 
 <!-- Controls -->
-<div class="panel">
+<div class="panel lab-card">
   <div class="run-controls">
     <div class="step-inline">
       <div class="step-col">
@@ -63,7 +63,7 @@ export const studentTemplate = String.raw`<div class="connection-status" id="con
 </div>
 
 <!-- Stats -->
-<div class="stats-row">
+<div class="stats-row lab-card">
   <div class="stat-box">
     <div class="s-lbl">\(\hat{\pi}\)</div>
     <div class="s-val" id="s-pi" style="color:#34d399">—</div>
@@ -87,7 +87,7 @@ export const studentTemplate = String.raw`<div class="connection-status" id="con
 </div>
 
 <!-- Formula collapsible -->
-<div class="accordion buffon-accordion chart-wrap" data-accordion-id="student-formula">
+<div class="accordion chart-wrap" data-accordion-id="student-formula">
   <button type="button" class="accordion-btn chart-header" aria-expanded="false">
     <span class="c-lbl">ΤΥΠΟΣ</span>
     <span class="accordion-icon" id="formula-arrow">+</span>
@@ -128,7 +128,7 @@ export const studentTemplate = String.raw`<div class="connection-status" id="con
 </div>
 
 <!-- Chart collapsible -->
-<div class="accordion buffon-accordion chart-wrap" data-accordion-id="student-chart">
+<div class="accordion chart-wrap" data-accordion-id="student-chart">
   <button type="button" class="accordion-btn chart-header" aria-expanded="false">
     <span class="c-lbl">ΣΥΓΚΛΙΣΗ ΠΡΟΣ π</span>
     <span class="accordion-icon" id="chart-arrow">+</span>

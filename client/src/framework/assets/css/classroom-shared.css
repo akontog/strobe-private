@@ -602,6 +602,16 @@
   padding: 1rem;
 }
 
+.student-qr-section a {
+  color: #1d4ed8;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.student-qr-section a:hover {
+  text-decoration: underline;
+}
+
 .student-qr-image {
   width: min(220px, 70vw);
   max-width: 220px;

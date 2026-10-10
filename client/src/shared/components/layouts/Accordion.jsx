@@ -13,7 +13,7 @@ export const Accordion = ({ title, icon = null, open = false, children }) => {
         onClick={() => setIsOpen(!isOpen)}
       >
         <span>{prefix}{title}</span>
-        <span className="accordion-icon">{isOpen ? '−' : '+'}</span>
+        <span className="accordion-icon">{isOpen ? '-' : '+'}</span>
       </button>
       <div className={`accordion-content ${isOpen ? 'open' : ''}`}>
         {children}

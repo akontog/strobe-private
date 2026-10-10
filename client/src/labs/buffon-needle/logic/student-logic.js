@@ -1,7 +1,7 @@
 import { mountAccordionInteractions } from '../../../shared/components/layouts/accordionDom';
 import { readIdentityName, writeIdentityName } from '../../../shared/components/identity/identityStorage';
 
-export function mountBuffonStudent(rootElement) {
+export function mountBuffonStudent(rootElement, t) {
 const cleanupAccordions = mountAccordionInteractions(rootElement, (accordionId, isOpen) => {
   if (accordionId === 'student-chart' && isOpen) drawChart();
 });
@@ -35,7 +35,7 @@ function ensureRegisteredTeamName() {
   return teamName;
 }
 
-// ── WebSocket ─────────────────────────────────────
+// β”€β”€ WebSocket β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€
 function connectWS() {
   if (!window.SharedClassroomApi || typeof window.SharedClassroomApi.createClient !== 'function') {
     socketConnected = false;
@@ -57,7 +57,7 @@ function connectWS() {
       sendPayload({ type: 'register_student', team: ensuredTeamName });
       teamRegistered = true;
       roundControlEnabled = true;
-      setRoundBanner('Συνδεθήκατε. Περιμένετε την έναρξη.', 'waiting');
+      setRoundBanner(t('student.connected'), 'waiting');
       sendUpdate();
       updateConnDot();
     },
@@ -83,7 +83,7 @@ function connectWS() {
       roundActive = false;
       stopAutoDrop();
       stopRoundBannerTimer();
-      setRoundBanner('Αποσύνδεση από server... μπορείτε να συνεχίσετε ελεύθερο πειραματισμό.', 'waiting');
+      setRoundBanner(t('student.disconnected'), 'waiting');
       updateConnDot();
     },
     onError() {
@@ -113,7 +113,7 @@ function registerTeam() {
   sendPayload({ type: 'register_student', team: teamName });
   teamRegistered = true;
   roundControlEnabled = true;
-  setRoundBanner('???????????. ?????????? ??? ?????? ??? ??? ????????.', 'waiting');
+  setRoundBanner(t('student.connected'), 'waiting');
   updateConnDot();
   sendUpdate();
 }
@@ -128,7 +128,7 @@ function updateConnDot() {
   const status = document.getElementById('connection-status');
   if (!status) return;
   const connected = socketConnected && teamRegistered;
-  status.textContent = connected ? 'Connected to server' : 'Connecting to server…';
+  status.textContent = connected ? t('student.connected') : t('student.connecting');
   status.classList.toggle('connected', connected);
 }
 
@@ -154,10 +154,11 @@ function stopRoundBannerTimer() {
 
 function updateActiveRoundBanner() {
   const secs = Math.max(0, Math.ceil((roundEndAt - Date.now()) / 1000));
-  const targetText = Number.isFinite(roundTargetError)
-    ? `στόχος ≤ ${roundTargetError.toFixed(3)}`
-    : 'στόχος σφάλματος';
-  setRoundBanner(`Γύρος ${roundNumber}: ${targetText} | απομένουν ${secs} sec`, 'active');
+  setRoundBanner(t('student.roundBanner', {
+    round: roundNumber,
+    target: Number.isFinite(roundTargetError) ? roundTargetError.toFixed(3) : t('targetError'),
+    seconds: secs
+  }), 'active');
 }
 
 function startRoundBannerTimer() {
@@ -224,33 +225,18 @@ function handleRoundEnd(msg) {
   document.getElementById('auto-toggle').checked = false;
   stopRoundBannerTimer();
 
-  let reason = 'Ο χρόνος της διαδικασίας έληξε.';
-  if (msg.reason === 'target_reached') {
-    reason = 'Ο στόχος σφάλματος επιτεύχθηκε.';
-  } else if (msg.reason === 'manual_stop') {
-    reason = 'Ο γύρος σταμάτησε χειροκίνητα από τον καθηγητή.';
-  }
-
-  const winnerText = msg.winnerTeam
-    ? ` Νικήτρια ομάδα: ${msg.winnerTeam}.`
+  const reasonKey = msg.reason === 'target_reached'
+    ? 'student.targetReached'
+    : msg.reason === 'manual_stop'
+      ? 'student.manualStop'
+      : 'student.roundEnd';
+  const parts = [t(reasonKey)];
+  if (msg.winnerTeam) parts.push(t('student.winner', { team: msg.winnerTeam }));
+  const podium = Array.isArray(msg.rankings)
+    ? msg.rankings.slice(0, 3).map((entry) => `${entry.rank}:${entry.team}`).join(' | ')
     : '';
-
-  let podium = '';
-  if (Array.isArray(msg.rankings) && msg.rankings.length > 0) {
-    podium = msg.rankings
-      .slice(0, 3)
-      .map((entry) => {
-        const rank = Number.parseInt(entry && entry.rank, 10);
-        const team = String((entry && entry.team) || '').trim();
-        if (!team) return null;
-        return `${Number.isInteger(rank) ? rank : '?'}:${team}`;
-      })
-      .filter(Boolean)
-      .join(' | ');
-  }
-
-  const podiumText = podium ? ` Κατάταξη: ${podium}.` : '';
-  setRoundBanner(`${reason}${winnerText}${podiumText}`, 'ended');
+  if (podium) parts.push(t('student.podium', { ranking: podium }));
+  setRoundBanner(parts.join(' '), 'ended');
 }
 
 function handleTournamentReset(msg) {
@@ -265,7 +251,7 @@ function handleTournamentReset(msg) {
 
   const defaults = msg && msg.defaults ? msg.defaults : {};
   applyRoundDefaults(defaults);
-  setRoundBanner('Έγινε συνολικό reset από τον καθηγητή. Περιμένετε νέο γύρο.', 'waiting');
+  setRoundBanner(t('student.tournamentReset'), 'waiting');
 }
 
 function canPlayCurrentRound() {
@@ -273,7 +259,7 @@ function canPlayCurrentRound() {
   return roundActive;
 }
 
-// ── Grid ──────────────────────────────────────────
+// β”€β”€ Grid β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€
 function drawGrid() {
   simCtx.clearRect(0, 0, SW, SH);
   simCtx.strokeStyle = '#94a3b8'; simCtx.lineWidth = 1.5;
@@ -325,7 +311,7 @@ function drawPreviewNeedle() {
   drawDashedNeedle(greenX, greenY, Math.PI / 2, 'rgba(34,197,94,0.98)');
 }
 
-// ── Needles ───────────────────────────────────────
+// β”€β”€ Needles β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€
 function dropNeedles(count) {
   if (drops === 0) {
     // Remove preview needle before first real drop so counts match visuals.
@@ -389,24 +375,24 @@ function toggleAutoDrop(enabled) {
   }
 }
 
-// ── Stats ─────────────────────────────────────────
+// β”€β”€ Stats β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€
 function updateStats(piEst) {
   document.getElementById('s-drops').textContent = drops.toLocaleString();
   document.getElementById('s-hits').textContent  = hits.toLocaleString();
   document.getElementById('s-miss').textContent  = (drops-hits).toLocaleString();
-  document.getElementById('s-pi').textContent    = piEst ? piEst.toFixed(5) : '—';
-  document.getElementById('s-err').textContent   = piEst ? Math.abs(piEst-Math.PI).toFixed(6) : '—';
+  document.getElementById('s-pi').textContent    = piEst ? piEst.toFixed(5) : 'β€”';
+  document.getElementById('s-err').textContent   = piEst ? Math.abs(piEst-Math.PI).toFixed(6) : 'β€”';
   document.getElementById('f-l').textContent     = needleL;
   document.getElementById('f-d').textContent     = lineD;
   document.getElementById('f-n').textContent     = drops.toLocaleString();
   document.getElementById('f-h').textContent     = hits.toLocaleString();
-  document.getElementById('f-result').textContent = piEst ? piEst.toFixed(4) : '—';
+  document.getElementById('f-result').textContent = piEst ? piEst.toFixed(4) : 'β€”';
   const r = (needleL/lineD).toFixed(2), ok = needleL<=lineD;
   document.getElementById('ratio-badge').innerHTML =
-    `<span style="color:${ok?'#34d399':'#fbbf24'}">l/d=${r} ${ok?'✓':'⚠'}</span>`;
+    `<span style="color:${ok?'#34d399':'#fbbf24'}">l/d=${r} ${ok?'β“':'β '}</span>`;
 }
 
-// ── Chart ─────────────────────────────────────────
+// β”€β”€ Chart β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€
 function drawChart() {
   const body = document.getElementById('chart-body');
   if (!body.classList.contains('open')) return;
@@ -437,36 +423,37 @@ function drawChart() {
   }
   chartCtx.restore();
   chartCtx.fillStyle='#fbbf24'; chartCtx.font='9px Courier New'; chartCtx.textAlign='left';
-  chartCtx.fillText('π',PAD.left+pw+3,pyp+3);
+  chartCtx.fillText('Ο€',PAD.left+pw+3,pyp+3);
   chartCtx.strokeStyle='#475569'; chartCtx.lineWidth=1;
   chartCtx.beginPath(); chartCtx.moveTo(PAD.left,PAD.top); chartCtx.lineTo(PAD.left,PAD.top+ph); chartCtx.lineTo(PAD.left+pw,PAD.top+ph); chartCtx.stroke();
   chartCtx.fillStyle='#475569'; chartCtx.font='9px Courier New'; chartCtx.textAlign='right';
   [1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0].forEach(y=>chartCtx.fillText(y.toFixed(1),PAD.left-4,toY(y)+3));
   chartCtx.textAlign='center';
   for(let i=0;i<=5;i++){const n=Math.round(xRange*i/5);chartCtx.fillText(n>=1000?`${Math.round(n/1000)}k`:n,toX(n),PAD.top+ph+14);}
-  chartCtx.fillText('# βελόνες',PAD.left+pw/2,ch-4);
+  chartCtx.fillText(t('drops'), PAD.left + pw / 2, ch - 4);
 }
 
-// ── Reset ─────────────────────────────────────────
+// β”€β”€ Reset β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€
 function resetAll() {
   drops=0; hits=0; history=[];
   drawGrid(); drawPreviewNeedle(); updateStats(null); drawChart(); sendUpdate();
 }
 
-// ── Spinners ──────────────────────────────────────
+// β”€β”€ Spinners β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€
 function setL(v){ needleL=Math.min(120,Math.max(10,v)); document.getElementById('val-l').textContent=needleL; document.getElementById('range-l').value=needleL; document.getElementById('f-l').textContent=needleL; resetAll(); }
 function changeL(d){ setL(needleL+d); }
 function setD(v){ lineD=Math.min(150,Math.max(30,v)); document.getElementById('val-d').textContent=lineD; document.getElementById('range-d').value=lineD; document.getElementById('f-d').textContent=lineD; resetAll(); }
 function changeD(d){ setD(lineD+d); }
-function setStep(v){ stepN=Math.min(1000,Math.max(1,v)); document.getElementById('step-val').textContent=stepN; document.getElementById('range-step').value=stepN; document.getElementById('step-btn').textContent=`▶ +${stepN} βελόν${stepN===1?'α':'ες'}`; }
+function setStep(v){ stepN=Math.min(1000,Math.max(1,v)); document.getElementById('step-val').textContent=stepN; document.getElementById('range-step').value=stepN; document.getElementById('step-btn').textContent = t('student.stepButton', { count: stepN }); }
 function changeStep(d){ setStep(stepN+d); }
 
-// ── Init ──────────────────────────────────────────
+// β”€β”€ Init β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€
 function initStudentApp() {
   ensureRegisteredTeamName();
-  setRoundBanner('????????? ?????????????. ?????????? ?? ????? ??? ?????!', 'waiting');
+  setRoundBanner(t('student.freeExperiment'), 'waiting');
   connectWS();
   updateConnDot();
+  setStep(stepN);
   drawGrid();
   drawPreviewNeedle();
   updateStats(null);
@@ -482,6 +469,15 @@ const handleIdentityChange = (event) => {
   else updateConnDot();
 };
 window.addEventListener('strobe:identity-change', handleIdentityChange);
+
+const handleLanguageChange = () => {
+  updateConnDot();
+  setStep(stepN);
+  if (roundActive) updateActiveRoundBanner();
+  else if (socketConnected && teamRegistered) setRoundBanner(t('student.connected'), 'waiting');
+  else if (!socketConnected) setRoundBanner(t('student.disconnected'), 'waiting');
+};
+window.StrobeI18n?.on('languageChanged', handleLanguageChange);
 
 const handleBeforeUnload = () => {
   stopAutoDrop();
@@ -512,6 +508,7 @@ initStudentApp();
     stopRoundBannerTimer();
     window.removeEventListener('beforeunload', handleBeforeUnload);
     window.removeEventListener('strobe:identity-change', handleIdentityChange);
+    window.StrobeI18n?.off('languageChanged', handleLanguageChange);
 
     if (classroomApi && typeof classroomApi.stop === 'function') {
       classroomApi.stop();
@@ -524,3 +521,4 @@ initStudentApp();
     });
   };
 }
+

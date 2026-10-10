@@ -1,32 +1,11 @@
-* {
-	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
-}
-
-body {
-	background: #f0f4f9;
-	color: #1e293b;
-	font-family: 'Segoe UI', 'Roboto', 'Comic Neue', 'Fredoka One', sans-serif;
-	overflow-y: auto;
-}
-
-body,
-#root {
-	display: flex;
-	align-items: stretch;
-	justify-content: flex-start;
-	min-height: 100vh;
-	width: 100%;
-	padding: 2rem;
-}
-
 .buffon-app {
-	width: 100%;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
 	gap: 1.2rem;
+}
+
+.buffon-zone {
+	margin-bottom: 0;
 }
 
 .buffon-content {
@@ -35,6 +14,21 @@ body,
 	flex-direction: column;
 	align-items: center;
 	gap: 1.2rem;
+}
+
+.buffon-content .lab-card {
+	border: 2px solid #e2e8f0;
+	border-radius: 1.4rem;
+	box-shadow: none;
+}
+
+.buffon-content.teacher .round-panel.lab-card,
+.buffon-content.student .panel.lab-card,
+.buffon-content.student .stats-row.lab-card {
+	background: #ffffff;
+	border: 2px solid #e2e8f0;
+	border-radius: 1.4rem;
+	box-shadow: none;
 }
 
 .buffon-content.teacher {
@@ -58,34 +52,12 @@ body,
 	color: #15803d;
 }
 
-.buffon-content .buffon-accordion {
-  width: 100%;
-  max-width: var(--panel-max);
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 2rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
-}
-
-.buffon-content .accordion-btn .c-lbl {
-  font-size: 0.75rem;
-  color: #334155;
-  letter-spacing: 0.08em;
-  margin: 0;
-  font-weight: 800;
-}
-
-.buffon-content .accordion-content.open {
-  padding: 0 10px 10px;
-}
-
 /* Student view */
 .buffon-content.student .round-banner {
 	width: 100%;
 	max-width: 580px;
-	border-radius: 2rem;
-	border: 2px solid #cbd5e1;
+	border-radius: 1.4rem;
+	border: 1px solid #cbd5e1;
 	background: #ffffff;
 	padding: 11px 14px;
 	font-size: 15px;
@@ -93,7 +65,7 @@ body,
 	text-align: center;
 	font-weight: 800;
 	line-height: 1.35;
-	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+	box-shadow: none;
 }
 
 .buffon-content.student .round-banner.active {
@@ -723,48 +695,6 @@ body,
 	font-weight: 800;
 }
 
-.buffon-content.teacher .join-box {
-	width: 100%;
-	max-width: 760px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 14px;
-	background: #ffffff;
-	border: 2px solid #dce3ec;
-	border-radius: 2rem;
-	padding: 12px 16px;
-}
-
-.buffon-content.teacher .join-copy {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-}
-
-.buffon-content.teacher .join-title {
-	font-size: 10px;
-	color: #64748b;
-	letter-spacing: 1px;
-}
-
-.buffon-content.teacher .join-help {
-	font-size: 13px;
-	color: #1e293b;
-	font-weight: 700;
-}
-
-.buffon-content.teacher .join-qr {
-	width: 140px;
-	height: 140px;
-	object-fit: contain;
-	background: #ffffff;
-	border-radius: 8px;
-	padding: 6px;
-	border: 1px solid #cbd5e1;
-	flex-shrink: 0;
-}
-
 @media (max-width: 1024px) and (orientation: portrait) {
 	body,
 	#root {
@@ -900,16 +830,5 @@ body,
 		margin-left: 0;
 		width: 100%;
 		justify-content: space-between;
-	}
-
-	.buffon-content.teacher .join-box {
-		flex-direction: column;
-		align-items: flex-start;
-	}
-
-	.buffon-content.teacher .join-qr {
-		align-self: center;
-		width: 170px;
-		height: 170px;
 	}
 }

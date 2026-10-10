@@ -1,6 +1,6 @@
 import { mountAccordionInteractions } from '../../../shared/components/layouts/accordionDom';
 
-export function mountBuffonTeacher(rootElement) {
+export function mountBuffonTeacher(rootElement, t) {
 const cleanupAccordions = mountAccordionInteractions(rootElement, (accordionId, isOpen) => {
   if (accordionId === 'teacher-chart' && isOpen) drawTeacherChart();
 });
@@ -34,7 +34,7 @@ const teacherChartCtx = teacherChartCv.getContext('2d');
 
 function connectWS() {
   if (!window.SharedClassroomApi || typeof window.SharedClassroomApi.createClient !== 'function') {
-    setRoundStatus('Λείπει το shared API script.', 'ended');
+    setRoundStatus(t('needApi'), 'ended');
     return;
   }
 
@@ -48,7 +48,7 @@ function connectWS() {
     reconnectDelayMs: 2000,
     onOpen() {
       sendWs({ type: 'register_teacher' });
-      setRoundStatus('Συνδεδεμένος.', roundActive ? 'active' : 'idle');
+      setRoundStatus(t('teacherConnected'), roundActive ? 'active' : 'idle');
     },
     onMessage(type, payload) {
       if (type === 'roster') {
@@ -57,7 +57,7 @@ function connectWS() {
       }
     },
     onClose() {
-      setRoundStatus('Αποσύνδεση από τον server — επανασύνδεση...', 'ended');
+      setRoundStatus(t('student.disconnected'), 'ended');
     }
   });
 
@@ -92,19 +92,19 @@ function updateRoundControlLabels() {
   const targetSlider = document.getElementById('round-target-slider');
   const timeSec = Number.parseInt(timeSlider.value, 10) || 60;
   const target = sliderToTarget(targetSlider.value);
-  document.getElementById('round-time-value').textContent = `${timeSec} sec`;
+  document.getElementById('round-time-value').textContent = `${timeSec} ${t('seconds')}`;
   document.getElementById('round-target-value').textContent = target.toFixed(3);
 }
 
 function updateTimerLabel() {
   const timerEl = document.getElementById('round-timer');
   if (!roundActive) {
-    timerEl.textContent = '—';
+    timerEl.textContent = 'β€”';
     return;
   }
 
   const secondsLeft = Math.max(0, Math.ceil((roundEndAt - Date.now()) / 1000));
-  timerEl.textContent = `${secondsLeft} sec`;
+  timerEl.textContent = `${secondsLeft} ${t('seconds')}`;
 }
 
 function stopRoundTimer() {
@@ -268,9 +268,9 @@ function startRoundFromTeacher() {
     piEst: null,
   }));
 
-  document.getElementById('round-info').textContent = `Γύρος: ${currentRound} | στόχος ≤ ${roundConfig.targetError.toFixed(3)}`;
-  document.getElementById('round-result').textContent = '—';
-  setRoundStatus(`Ξεκίνησε ο γύρος ${currentRound}.`, 'active');
+  document.getElementById('round-info').textContent = t('roundStartedInfo', { round: currentRound, target: roundConfig.targetError.toFixed(3) });
+  document.getElementById('round-result').textContent = t('scoresReset');
+  setRoundStatus(t('roundStarted', { round: currentRound }), 'active');
   updateRoundActionButtons();
 
   render();
@@ -313,10 +313,10 @@ function resetTournamentScores() {
     piEst: null,
   }));
 
-  document.getElementById('round-info').textContent = 'Γύρος: —';
-  document.getElementById('round-result').textContent = 'Όλοι οι πόντοι μηδενίστηκαν.';
-  document.getElementById('round-timer').textContent = '—';
-  setRoundStatus('Έγινε συνολικό reset. Ξεκινήστε νέο γύρο.', 'ended');
+  document.getElementById('round-info').textContent = `${t('round')}: -`;
+  document.getElementById('round-result').textContent = t('scoresReset');
+  document.getElementById('round-timer').textContent = 'β€”';
+  setRoundStatus(t('tournamentReset'), 'ended');
   updateRoundActionButtons();
 
   sendWs({ type: 'reset_tournament' });
@@ -360,18 +360,17 @@ function endRound(reason, options = {}) {
 
   lastRoundWinnerTeam = awards.length ? awards[0].team : '';
 
-  let reasonText = 'Ο χρόνος του γύρου ολοκληρώθηκε.';
-  if (reason === 'target_reached') {
-    reasonText = `Στόχος σφάλματος επιτεύχθηκε από την ομάδα ${lastRoundWinnerTeam || '—'}.`;
-  } else if (reason === 'manual_stop') {
-    reasonText = 'Ο γύρος σταμάτησε χειροκίνητα από τον καθηγητή.';
-  }
+  const reasonText = reason === 'target_reached'
+    ? t('student.targetReached')
+    : reason === 'manual_stop'
+      ? t('student.manualStop')
+      : t('student.roundEnd');
 
   const podium = awards.slice(0, 3).map((entry) => `${entry.rank}. ${entry.team} (+${entry.points})`).join(' | ');
-  document.getElementById('round-info').textContent = `Γύρος: ${currentRound} ολοκληρώθηκε`;
-  document.getElementById('round-result').textContent = podium || 'Δεν υπάρχουν αποτελέσματα για αυτόν τον γύρο.';
-  setRoundStatus(`${reasonText} Η διαδικασία τελείωσε.`, 'ended');
-  document.getElementById('round-timer').textContent = '0 sec';
+  document.getElementById('round-info').textContent = t('roundCompletedInfo', { round: currentRound });
+  document.getElementById('round-result').textContent = podium || t('noResults');
+  setRoundStatus(reasonText, 'ended');
+  document.getElementById('round-timer').textContent = `0 ${t('seconds')}`;
   updateRoundActionButtons();
 
   sendWs({
@@ -395,8 +394,8 @@ function render() {
   const totalBody = document.getElementById('total-board-body');
 
   if (students.length === 0) {
-    liveBody.innerHTML = '<div class="empty">Καμία ομάδα δεν είναι συνδεδεμένη ακόμα...</div>';
-    totalBody.innerHTML = '<div class="empty">Καμία ομάδα δεν είναι συνδεδεμένη ακόμα...</div>';
+    liveBody.innerHTML = `<div class="empty">${t('noTeams')}</div>`;
+    totalBody.innerHTML = `<div class="empty">${t('noTeams')}</div>`;
     latestLiveSorted = [];
     previousLiveRanks = new Map();
     previousTotalRanks = new Map();
@@ -428,8 +427,8 @@ function render() {
     const key = studentKey(student);
     const delta = liveMovement.get(key);
     const hasPi = hasPiEstimate(student);
-    const err = hasPi ? Math.abs(student.piEst - Math.PI).toFixed(6) : '—';
-    const piStr = hasPi ? student.piEst.toFixed(5) : '—';
+    const err = hasPi ? Math.abs(student.piEst - Math.PI).toFixed(6) : 'β€”';
+    const piStr = hasPi ? student.piEst.toFixed(5) : 'β€”';
     const miss = Math.max(0, (student.drops || 0) - (student.hits || 0));
 
     const movementClass =
@@ -454,8 +453,8 @@ function render() {
     const key = studentKey(student);
     const delta = totalMovement.get(key);
     const roundPoints = roundActive
-      ? '—'
-      : (currentRound > 0 ? (lastRoundPoints.get(key) || 0).toLocaleString() : '—');
+      ? 'β€”'
+      : (currentRound > 0 ? (lastRoundPoints.get(key) || 0).toLocaleString() : 'β€”');
     const totalPoints = (teamPoints.get(key) || 0).toLocaleString();
 
     const movementClass =
@@ -559,7 +558,7 @@ function drawTeacherChart() {
     teacherChartCtx.fillStyle = '#64748b';
     teacherChartCtx.font = '12px Courier New';
     teacherChartCtx.textAlign = 'center';
-    teacherChartCtx.fillText('Χωρίς εκτιμήσεις π ακόμα', cw / 2, ch / 2);
+    teacherChartCtx.fillText(t('noEstimates'), cw / 2, ch / 2);
     return;
   }
 
@@ -622,7 +621,7 @@ function drawTeacherChart() {
   teacherChartCtx.fillStyle = '#fbbf24';
   teacherChartCtx.font = '9px Courier New';
   teacherChartCtx.textAlign = 'left';
-  teacherChartCtx.fillText('π', PAD.left + pw + 3, piY + 3);
+  teacherChartCtx.fillText('Ο€', PAD.left + pw + 3, piY + 3);
 
   teacherChartCtx.strokeStyle = '#475569';
   teacherChartCtx.lineWidth = 1;
@@ -645,7 +644,7 @@ function drawTeacherChart() {
     const label = n >= 1000 ? `${Math.round(n / 1000)}k` : n;
     teacherChartCtx.fillText(label, toX(n), PAD.top + ph + 14);
   }
-  teacherChartCtx.fillText('# βελόνες', PAD.left + pw / 2, ch - 4);
+  teacherChartCtx.fillText(t('drops'), PAD.left + pw / 2, ch - 4);
 
   let lx = PAD.left;
   let ly = PAD.top + 12;
@@ -662,7 +661,12 @@ function drawTeacherChart() {
 
 updateRoundControlLabels();
 updateRoundActionButtons();
-setRoundStatus('Πάτησε «ΕΝΑΡΞΗ ΓΥΡΟΥ» για νέο παιχνίδι.', 'idle');
+setRoundStatus(t('initialTeacherStatus'), 'idle');
+const handleLanguageChange = () => {
+  setRoundStatus(roundActive ? t('roundStarted', { round: currentRound }) : classroomApi?.isConnected() ? t('teacherConnected') : t('student.disconnected'), roundActive ? 'active' : 'idle');
+  updateRoundControlLabels();
+};
+window.StrobeI18n?.on('languageChanged', handleLanguageChange);
 connectWS();
 window.addEventListener('resize', drawTeacherChart);
 
@@ -684,6 +688,7 @@ window.addEventListener('resize', drawTeacherChart);
     }
 
     window.removeEventListener('resize', drawTeacherChart);
+    window.StrobeI18n?.off('languageChanged', handleLanguageChange);
 
     Object.keys(globalFns).forEach((key) => {
       if (window[key] === globalFns[key]) {
@@ -692,3 +697,4 @@ window.addEventListener('resize', drawTeacherChart);
     });
   };
 }
+
