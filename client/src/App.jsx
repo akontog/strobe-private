@@ -22,6 +22,7 @@ import LabPage from './pages/LabPage';
 import StudentPage from './pages/StudentPage';
 import TeacherPage from './pages/TeacherPage';
 import ToolsPage from './pages/ToolsPage';
+import StudentScoresPage from './pages/StudentScoresPage';
 import ActivityBuilder from './tools/activity-builder/ActivityBuilder';
 import CameraSpeedTest from './tools/camera-speed-test/CameraSpeedTest';
 import GeoGebraCollabTool from './tools/geogebra-collab/GeoGebraCollabTool';
@@ -42,6 +43,7 @@ function App() {
   const [authReady, setAuthReady] = useState(false);
   const [teacherUsername, setTeacherUsername] = useState('');
   const [activeMenu, setActiveMenu] = useState('');
+  const [clickedMenu, setClickedMenu] = useState('');
   const [serverConnected, setServerConnected] = useState(false);
 
   useEffect(() => {
@@ -82,13 +84,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (pathname.startsWith('/tools/')) {
-      setActiveMenu(pathname.includes('camera-speed-test') || pathname.includes('/console') ? 'system' : 'tools');
-    } else if (pathname.startsWith('/labs/')) {
-      setActiveMenu('labs');
-    } else {
-      setActiveMenu('');
-    }
+    setClickedMenu('');
+    setActiveMenu('');
   }, [pathname]);
 
   async function loginTeacher(username, password) {
@@ -130,7 +127,8 @@ function App() {
     ] },
     system: { label: tNav('system'), items: [
       { label: tNav('items.camera'), path: '/tools/camera-speed-test' },
-      { label: tNav('items.console'), path: '/tools/console' }
+      { label: tNav('items.console'), path: '/tools/console' },
+      { label: tNav('items.scores'), path: '/tools/student-scores' }
     ] },
     tools: { label: tNav('tools'), items: [
       { label: tNav('items.separation'), path: '/tools/linear-separation' },
@@ -138,18 +136,50 @@ function App() {
       { label: tNav('items.builder'), path: '/tools/activity-builder' }
     ] }
   };
-  const visibleMenu = activeMenu === 'labs' || role === 'teacher' ? menuGroups[activeMenu] : null;
+  const clickedMenuGroup = clickedMenu === 'labs' || role === 'teacher' ? menuGroups[clickedMenu] : null;
 
   return (
     <div className="client-shell">
-      <header className="client-topbar">
+      <header className="client-topbar" onMouseLeave={() => setActiveMenu('')}>
         <Link className="client-home-link" to="/" aria-label="Strobe"><img src="/icons/strobelogo.svg" alt="Strobe" /></Link>
         <div className="client-topbar-main">
-          <nav className="client-section-nav" aria-label={tNav('sectionNavigation')}>
+          <nav className="client-section-nav" aria-label={tNav('sectionNavigation')} onMouseLeave={() => setActiveMenu('')}>
             {Object.entries(menuGroups).map(([key, group]) => {
               const hiddenForStudent = role !== 'teacher' && key !== 'labs';
               return (
-                <button key={key} type="button" className={`client-section-button ${activeMenu === key ? 'active' : ''} ${hiddenForStudent ? 'is-menu-hidden' : ''}`} onClick={() => setActiveMenu((current) => current === key ? '' : key)} onMouseEnter={() => { if (!hiddenForStudent) setActiveMenu(key); }} aria-expanded={activeMenu === key} aria-hidden={hiddenForStudent} tabIndex={hiddenForStudent ? -1 : 0} disabled={hiddenForStudent}>{group.label}</button>
+                <div
+                  key={key}
+                  className={`client-section-nav-item ${hiddenForStudent ? 'is-menu-hidden' : ''}`}
+                  onMouseEnter={() => { if (!hiddenForStudent) setActiveMenu(key); }}
+                >
+                  <button
+                    type="button"
+                    className={`client-section-button ${activeMenu === key ? 'active' : ''}`}
+                    onClick={() => {
+                      setClickedMenu(key);
+                      setActiveMenu(key);
+                    }}
+                    aria-expanded={activeMenu === key}
+                    aria-haspopup="true"
+                    tabIndex={hiddenForStudent ? -1 : 0}
+                    disabled={hiddenForStudent}
+                  >
+                    {group.label}
+                  </button>
+                  {activeMenu === key && !hiddenForStudent ? (
+                    <nav className="client-submenu" aria-label={group.label}>
+                      {group.items.map((item) => (
+                        <Link
+                          key={item.path}
+                          className="client-submenu__item"
+                          to={item.path.startsWith('/labs/') ? `${item.path}/${role === 'teacher' ? 'teacher' : 'student'}` : item.path}
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </nav>
+                  ) : null}
+                </div>
               );
             })}
           </nav>
@@ -161,16 +191,30 @@ function App() {
           />
           <LanguageSwitcher />
         </div>
-      {visibleMenu ? (
-        <nav className="client-submenu" aria-label={visibleMenu.label} onMouseLeave={() => setActiveMenu('')}>
-          {visibleMenu.items.map((item) => (
-            <Link key={item.path} className="client-submenu__item" to={item.path.startsWith('/labs/') ? `${item.path}/${role === 'teacher' ? 'teacher' : 'student'}` : item.path}>{item.label}</Link>
-          ))}
-        </nav>
-      ) : null}
       </header>
       <div className="client-content">
-        <Routes>
+        {clickedMenuGroup ? (
+          <section className="client-menu-cards" aria-label={clickedMenuGroup.label}>
+            <div className="postit-grid">
+              {clickedMenuGroup.items.map((item, index) => {
+                const to = item.path.startsWith('/labs/')
+                  ? `${item.path}/${role === 'teacher' ? 'teacher' : 'student'}`
+                  : item.path;
+                const colors = ['blue', 'violet', 'orange', 'green', 'amber', 'indigo'];
+                return (
+                  <Link
+                    key={item.path}
+                    className={`strobe-note strobe-note--${colors[index % colors.length]} client-menu-card`}
+                    to={to}
+                  >
+                    <span className="app-title">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        ) : null}
+        {!clickedMenuGroup ? <Routes>
           <Route index element={<HomePage />} />
           <Route path="/teacher" element={teacherOnly(<TeacherPage />)} />
           <Route path="/client" element={<StudentPage />} />
@@ -182,6 +226,7 @@ function App() {
           <Route path="/tools/geogebra-collab-test" element={teacherOnly(<GeoGebraCollabTestTool />)} />
           <Route path="/tools/geogebra-monitor" element={teacherOnly(<GeogebraMonitorTool />)} />
           <Route path="/tools/console" element={teacherOnly(<ConsoleTool />)} />
+          <Route path="/tools/student-scores" element={teacherOnly(<StudentScoresPage />)} />
           <Route path="/tools/linear-separation" element={teacherOnly(<LinearSeparation />)} />
           <Route path="/tools/linear-seperation" element={teacherOnly(<LinearSeparation />)} />
           <Route path="/apps-launcher" element={<AppsLauncherPage />} />
@@ -202,7 +247,7 @@ function App() {
           <Route path="/labs/:slug/teacher" element={teacherOnly(<LabPage role="teacher" />)} />
           <Route path="/labs/:slug/student" element={<LabPage role="student" />} />
           <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        </Routes> : null}
       </div>
     </div>
   );

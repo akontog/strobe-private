@@ -27,7 +27,8 @@ body {
   grid-template-columns: minmax(0, 1fr) max-content minmax(0, 1fr);
   align-items: center;
   gap: 16px;
-  padding: 14px 20px;
+  min-height: 60px;
+  padding: 4px 20px;
   background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(16, 35, 63, 0.08);
@@ -46,6 +47,9 @@ body {
 .client-home-link {
   grid-column: 1;
   justify-self: start;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
   text-decoration: none;
   color: #1d4ed8;
   font-weight: 700;
@@ -58,16 +62,18 @@ body {
 
 .client-home-link img {
   display: block;
-  width: 48px;
-  height: 42px;
+  width: auto;
+  height: 100%;
+  max-height: 64px;
   object-fit: contain;
 }
 
 .client-topbar-main {
   grid-column: 2;
   justify-self: center;
+  align-self: stretch;
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 20px;
   flex: 1 1 auto;
   min-width: 0;
@@ -75,9 +81,15 @@ body {
 
 .client-section-nav {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  align-items: stretch;
+  gap: 2px;
   flex-wrap: nowrap;
+}
+
+.client-section-nav-item {
+  position: relative;
+  display: flex;
+  align-items: stretch;
 }
 
 .client-section-button,
@@ -86,7 +98,7 @@ body {
   border-radius: 9px;
   background: transparent;
   color: #10233f;
-  padding: 7px 11px;
+  padding: 6px 10px;
   font: inherit;
   font-weight: 700;
   cursor: pointer;
@@ -239,25 +251,97 @@ body {
   padding: 20px;
 }
 
-.language-switcher {
-  display: inline-flex;
+.client-menu-cards {
+  margin-bottom: 24px;
+}
+
+.client-menu-card {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.client-menu-card .app-title {
+  position: relative;
+  z-index: 1;
+}
+
+.student-scores-panel,
+.student-scores-own {
+  display: grid;
+  gap: 12px;
+  padding: 10px 4px 4px;
+}
+
+.student-scores-toolbar,
+.student-scores-actions,
+.student-scores-own {
+  display: flex;
+  align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.shared-action-button {
+  border: 1px solid rgba(29, 78, 216, 0.2);
+  border-radius: 8px;
+  padding: 7px 10px;
+  background: #fff;
+  color: #10233f;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.shared-action-button:hover {
+  background: #eff6ff;
+}
+
+.student-scores-reset-all {
+  color: #9a3412;
+  border-color: rgba(234, 88, 12, 0.3);
+}
+
+.student-scores-delete {
+  color: #b91c1c;
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+.student-scores-error {
+  margin: 0;
+  color: #b91c1c;
+}
+
+.student-scores-empty {
+  text-align: center;
+  opacity: 0.72;
+}
+
+.language-switcher {
+  display: inline-flex;
+  gap: 0;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  border: 1px solid rgba(29, 78, 216, 0.25);
+  border-radius: 8px;
 }
 
 .language-switcher-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  border: 1px solid rgba(29, 78, 216, 0.25);
-  border-radius: 999px;
+  border: 0;
+  border-radius: 0;
   background: white;
   color: #10233f;
-  padding: 8px 10px;
+  padding: 4px 7px;
   font: inherit;
   cursor: pointer;
-  min-width: 64px;
+  min-width: 0;
   justify-content: center;
+}
+
+.language-switcher-btn + .language-switcher-btn {
+  border-left: 1px solid rgba(29, 78, 216, 0.2);
 }
 
 .language-switcher-btn.active {
@@ -296,6 +380,12 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-height: 0;
+    padding: 6px 12px;
+  }
+
+  .client-home-link {
+    align-self: center;
   }
 
   .client-topbar-controls {
@@ -326,6 +416,10 @@ body {
   .client-topbar-main {
     grid-column: 1 / -1;
     grid-row: 2;
+  }
+
+  .client-home-link {
+    grid-row: 1 / span 2;
   }
 
   .client-topbar-controls {

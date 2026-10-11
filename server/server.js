@@ -18,6 +18,7 @@ const createAppsRouter = require('./routes/apps');
 const appDataRouter = require('./routes/appData');
 const createActivitiesRouter = require('./routes/activities');
 const createAuthRouter = require('./routes/auth');
+const createScoresRouter = require('./routes/scores');
 
 /**** 3. Import helper functions, variables, and settings ****/
 const {
@@ -77,6 +78,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(sessionMiddleware());
 app.use('/api/auth', createAuthRouter());
+app.use('/api/scores', createScoresRouter());
 
 // Session management middleware
 app.get('/health', (req, res) => {

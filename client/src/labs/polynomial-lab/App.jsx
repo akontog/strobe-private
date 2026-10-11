@@ -11,6 +11,7 @@ import {
   ActivityInputGrid,
   SharedInputRow,
   StudentQrAccordion,
+  StudentScoresAccordion,
   StudentTable,
   AlgebraTiles,
   randomIdentityColor,
@@ -1312,6 +1313,25 @@ export default function App({ role = 'teacher' }) {
     }
   }, [selectedActivityId]);
 
+  const currentStudentAnswers = getCurrentStudentAnswerPayload(
+    selectedExpressionId,
+    activeExpression,
+    expressionDrafts,
+    groupingPlacementsByExpression,
+    teamAnswers,
+    isGroupingActivity,
+    isDegreeOnlyActivity,
+    isMonomialResultActivity,
+    isPolynomialResultActivity
+  );
+  const hasCurrentStudentAnswer = Object.values(currentStudentAnswers || {}).some((value) => String(value ?? '').trim() !== '');
+  const currentStudentScore = hasCurrentStudentAnswer
+    ? computeStudentScore({ answers: currentStudentAnswers }, activeExpression, {
+      scoreCorrect: activeExpression?.scoreCorrect ?? SCORE_CORRECT,
+      scoreIncorrect: activeExpression?.scoreIncorrect ?? SCORE_INCORRECT
+    })
+    : 0;
+
   return (
     <div className="lab-shell poly-lab-shell">
       <header className="lab-header poly-lab-header">
@@ -1601,7 +1621,12 @@ export default function App({ role = 'teacher' }) {
         </>
       )}
 
-      {!isTeacher && null}
+      <StudentScoresAccordion
+        role={role}
+        studentName={studentName}
+        activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
+        currentScore={currentStudentScore}
+      />
     </div>
   );
 }

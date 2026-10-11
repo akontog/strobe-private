@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-10-10T11:02:08.568Z",
+  "savedAt": "2026-10-11T13:17:18.280Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -919,13 +919,13 @@
       "userId": "user_1791527667945_27pt91q",
       "ip": "127.0.0.1",
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
-      "username": "antonis",
+      "username": "Buffon teacher",
       "role": "teacher",
       "teacherAccount": "antonis",
-      "source": "teacher-login",
+      "source": "buffon",
       "activeApps": [
-        "polynomial-lab",
-        "neural"
+        "neural",
+        "buffon"
       ],
       "appData": {
         "neural": {
@@ -936,7 +936,7 @@
             "w2": 1
           },
           "active": true,
-          "lastUpdated": "2026-10-10T06:37:01.253Z",
+          "lastUpdated": "2026-10-11T13:17:10.996Z",
           "lesson": {
             "dataset": "vehicles",
             "exampleIndex": 0,
@@ -956,7 +956,7 @@
               "w2": 3
             },
             "activityId": "1",
-            "activityTitle": "1. Find the input",
+            "activityTitle": "1. Βρίσκω την είσοδο",
             "threshold": {
               "op": ">=",
               "boundary": 5
@@ -972,11 +972,11 @@
           "name": "Buffon teacher",
           "role": "teacher",
           "active": true,
-          "lastUpdated": "2026-10-10T06:37:07.423Z"
+          "lastUpdated": "2026-10-11T13:17:18.276Z"
         }
       },
       "connectedAt": 1791527667945,
-      "lastSeenAt": 1791629210431,
+      "lastSeenAt": 1791724638280,
       "isActive": true
     },
     {
@@ -984,12 +984,13 @@
       "userId": "user_1791550835233_4lxbbly",
       "ip": "127.0.0.1",
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0",
-      "username": "as3232",
-      "role": "teacher",
-      "teacherAccount": "antonis",
+      "username": "εεε",
+      "role": "student",
+      "teacherAccount": "",
       "source": "polynomial-lab",
       "activeApps": [
         "neural",
+        "polynomial",
         "polynomial-lab"
       ],
       "appData": {
@@ -1003,17 +1004,24 @@
         },
         "neural": {
           "role": "client",
-          "color": "#a855f7",
+          "color": "#14b8a6",
           "weights": {
             "w1": 1,
             "w2": 1
           },
           "active": true,
-          "lastUpdated": "2026-10-10T10:58:33.629Z"
+          "lastUpdated": "2026-10-11T07:08:04.318Z"
+        },
+        "polynomial": {
+          "id": "student-1",
+          "name": "εεε",
+          "color": "#14b8a6",
+          "active": true,
+          "lastUpdated": "2026-10-11T13:16:45.461Z"
         }
       },
       "connectedAt": 1791550835233,
-      "lastSeenAt": 1791630128568,
+      "lastSeenAt": 1791724620779,
       "isActive": true
     },
     {

@@ -2,7 +2,7 @@
 export { StudentQrAccordion } from './layouts/StudentQrAccordion';
 export { default as SharedCommonZoneLayout } from './layouts/SharedCommonZoneLayout';
 export { default as Toolbar } from './layouts/Toolbar';
-export { ActivitiesMenu } from './activities/ActivitiesMenu';
+export { ActivitiesMenu, DEFAULT_ACTIVITY_OPTIONS } from './activities/ActivitiesMenu';
 export { default as GroupingDragDrop } from './activities/GroupingDragDrop';
 export { default as HeroTitle } from './display/HeroTitle';
 export { default as MathFormula } from './display/MathFormula';
@@ -11,6 +11,7 @@ export * from './data/studentTableColumnPresets.jsx';
 export { default as BlueNumberBox } from './primitives/BlueNumberBox';
 export { default as AlgebraTiles } from './activities/AlgebraTiles';
 export { default as ActivityInputGrid } from './activities/ActivityInputGrid';
+export { default as StudentScoresAccordion } from './activities/StudentScoresAccordion';
 export { default as SharedInputBox } from './primitives/SharedInputBox';
 export { default as SharedInputRow } from './primitives/SharedInputRow';
 export { default as CollaborativeGeoGebra } from './collaboration/CollaborativeGeoGebra';
@@ -19,6 +20,7 @@ export { default as CommonZoneFullscreenButton } from './identity/CommonZoneFull
 export { default as ConnectionNameControl } from './identity/ConnectionNameControl';
 export { default as LanguageSwitcher } from './identity/LanguageSwitcher';
 export { default as StudentIdentityControl } from './identity/StudentIdentityControl';
+export { default as RoleAccessControl } from './identity/RoleAccessControl';
 export * from './identity/identityStorage';
 export { default as SimpleCoordinateSystem } from './plot/SimpleCoordinateSystem';
 

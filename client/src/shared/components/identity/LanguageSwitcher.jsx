@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../../i18n';
 
 const OPTIONS = [
-  { code: 'el', icon: '🇬🇷', labelKey: 'greek', codeLabel: 'EL' },
-  { code: 'en', icon: '🇬🇧', labelKey: 'english', codeLabel: 'EN' }
+  { code: 'en', labelKey: 'english', codeLabel: 'en' },
+  { code: 'el', labelKey: 'greek', codeLabel: 'el' }
 ];
 
 export default function LanguageSwitcher() {
@@ -23,7 +23,6 @@ export default function LanguageSwitcher() {
           aria-label={t(option.labelKey)}
           aria-pressed={activeLanguage?.startsWith(option.code) || false}
         >
-          <span>{option.icon}</span>
           <span>{option.codeLabel}</span>
         </button>
       ))}

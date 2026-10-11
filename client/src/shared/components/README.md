@@ -44,6 +44,7 @@ layouts και activities
 - `GroupingDragDrop`: ταξινόμηση `items` σε `groups`. Το `placements` περιγράφει τις θέσεις και το `onChange` επιστρέφει τις αλλαγές. Υποστηρίζονται ανενεργά και λανθασμένα αντικείμενα.
 - `AlgebraTiles`: διαδραστικό μοντέλο αλγεβρικών πλακιδίων με λειτουργίες πλακιδίων, πολλαπλασιασμού και παραγοντοποίησης. Μπορεί να κρατά τοπικά τα πλακίδια ή να δέχεται `tiles` και να αναφέρει αλλαγές με `onTilesChange`.
 - `ActivityInputGrid`: κοινός renderer για πλέγμα εισόδων και τιμών. Το εργαστήριο παρέχει πίνακα `fields` με όσα πεδία χρειάζεται, μαζί με labels, values και callbacks. Το `columns` ορίζει τις στήλες. Tokens και read-only τιμές μπορούν επίσης να περιγραφούν ως fields. Με `customLayout` η διάταξη ορίζεται από το CSS του καλούντος.
+- `StudentScoresAccordion`: κοινό accordion βαθμολογιών. Σε student mode αποθηκεύει το τρέχον σκορ στον server με βάση το όνομα και το activity key. Σε teacher mode εμφανίζει τους μαθητές και επιτρέπει μηδενισμό όλων ή συγκεκριμένου σκορ. Η σελίδα διαχείρισης ενεργοποιεί επιπλέον τη διαγραφή εγγραφών.
 
 Το `ActivityInputGrid` χρησιμοποιείται στο `polynomial-lab` για τα πεδία συντελεστή και βαθμών και στο `neural-lab` για τα πεδία εισόδου, βάρους και γινομένου. Ο κοινός renderer φτιάχνει τα πεδία· κάθε εργαστήριο διαλέγει το πλήθος, τα labels, τις τιμές, τα callbacks και την εμφάνιση.
 
@@ -55,6 +56,7 @@ layouts και activities
 ### `identity/` — ταυτότητα και σύνδεση
 
 - `StudentIdentityControl`: επεξεργασία ονόματος και χρώματος μαθητή με αποθήκευση/ανάγνωση από το `identityStorage`.
+- `RoleAccessControl`: επιλογή student/teacher και φόρμα teacher login μέσω callbacks.
 - `ConnectionNameControl`: κατάσταση σύνδεσης, εμφάνιση ή επεξεργασία ονόματος και προαιρετική επιλογή χρώματος μέσω callbacks.
 - `LanguageSwitcher`: αλλαγή γλώσσας μέσω `i18next`.
 - `CommonZoneFullscreenButton`: κουμπί πλήρους οθόνης για την κοινή ζώνη.
@@ -75,9 +77,12 @@ import {
   AlgebraTiles,
   GroupingDragDrop,
   MathFormula,
+  StudentScoresAccordion,
   SimpleCoordinateSystem
 } from '../../shared/components';
 ```
+
+Οι βαθμολογίες αποθηκεύονται στο `server/data/scores.json`. Τα teacher actions περνούν από τα προστατευμένα endpoints `/api/scores`, ενώ το student activity στέλνει τρέχον σκορ στο `/api/scores/current`.
 
 Παράδειγμα διαμόρφωσης πλέγματος ανά δραστηριότητα:
 
