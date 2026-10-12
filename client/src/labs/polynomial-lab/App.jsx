@@ -1418,11 +1418,6 @@ export default function App({ role = 'teacher' }) {
             {isGroupingActivity ? (
               <div className="poly-grouping-panel">
                 {isPolynomialGroupingActivity && (
-                  <p className="poly-hero-text">
-                    {t('groupTermsInstruction')}
-                  </p>
-                )}
-                {isPolynomialGroupingActivity && (
                   <div className="poly-grouping-equation">
                     <div className="poly-grouping-expression-card">
                       <MathFormula formula={`\\(${activeExpression.leftPolynomial}\\)`} />
@@ -1453,9 +1448,6 @@ export default function App({ role = 'teacher' }) {
                       <div className="lab-math-box lab-math-box--compact poly-expression-math poly-expression-math--small">
                         {renderWrappedExpression(polynomialGroupingResult?.formula || '')}
                       </div>
-                      {!polynomialGroupingResult?.isComplete && (
-                        <p className="poly-grouping-hint">{t('finishGroupsHint')}</p>
-                      )}
                     </div>
                   </>
                 )}
@@ -1471,14 +1463,12 @@ export default function App({ role = 'teacher' }) {
               />
             ) : isGeogebraAreaActivity ? (
               <div className="poly-geogebra-area-panel">
-                <p className="poly-hero-text">
-                  {t('moveSlider')}
-                </p>
                 <CollaborativeGeoGebra
                   roomId={geogebraRoomId}
                   className="poly-geogebra-board"
+                  showStatus={false}
                   showPermissionControls={isTeacher}
-                  showLegend={isTeacher}
+                  showLegend={false}
                   showToolBar={false}
                   showAlgebraView={false}
                   showAlgebraInput={false}

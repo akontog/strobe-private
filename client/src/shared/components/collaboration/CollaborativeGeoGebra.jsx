@@ -135,6 +135,7 @@ function objectExists(api, name) {
 export default function CollaborativeGeoGebra({
   roomId = 'geogebra-default',
   className = '',
+  showStatus = true,
   showLegend = true,
   showToolBar = true,
   showAlgebraView = true,
@@ -539,14 +540,16 @@ export default function CollaborativeGeoGebra({
 
   return (
     <section className={`gg-collab ${className}`.trim()}>
-      <div className="gg-collab__status">
-        <span className={`gg-collab__chip ${connected ? 'is-online' : ''}`}>
-          {connected ? 'Connected' : 'Disconnected'}
-        </span>
-        <span className="gg-collab__chip">Room: {roomId}</span>
-        <span className="gg-collab__chip">Identity: {studentIdentity.name || '-'}</span>
-        <span className="gg-collab__chip">Locked objects: {lockedNames.length}</span>
-      </div>
+      {showStatus ? (
+        <div className="gg-collab__status">
+          <span className={`gg-collab__chip ${connected ? 'is-online' : ''}`}>
+            {connected ? 'Connected' : 'Disconnected'}
+          </span>
+          <span className="gg-collab__chip">Room: {roomId}</span>
+          <span className="gg-collab__chip">Identity: {studentIdentity.name || '-'}</span>
+          <span className="gg-collab__chip">Locked objects: {lockedNames.length}</span>
+        </div>
+      ) : null}
 
       {errorText ? <p className="gg-collab__error">{errorText}</p> : null}
 
