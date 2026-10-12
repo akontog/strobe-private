@@ -131,7 +131,7 @@
   background: #eef2ff;
   border-radius: 1.4rem;
   border: 2px solid #94a3b8;
-  min-width: 280px;
+  min-width: 0;
   max-width: 320px;
   padding: 0.95rem;
   display: flex;
@@ -149,6 +149,23 @@
   font-weight: 800;
   letter-spacing: 0.02em;
   color: #1e293b;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.poly-wrapped-expression {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem 0.4rem;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.poly-wrapped-expression mjx-container {
+  max-width: 100%;
 }
 
 .poly-stacked-expression {
@@ -319,12 +336,58 @@
 
 .poly-data-menu {
   display: grid;
-  gap: 0.8rem;
+  grid-template-columns: minmax(220px, 1fr) minmax(220px, auto);
+  align-items: end;
+  gap: 1rem;
+  padding: 0.9rem;
+  border: 1px solid #dbe4ef;
+  border-radius: 0.9rem;
+  background: #f8fafc;
 }
 
 .poly-select-group {
   display: grid;
   gap: 0.45rem;
+}
+
+.poly-select-group .shared-activity-select {
+  width: 100%;
+  min-height: 2.7rem;
+}
+
+.poly-feedback-option {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.7rem;
+  padding: 0 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.7rem;
+  background: #fff;
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.poly-feedback-option input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: #2563eb;
+}
+
+.poly-team-field input.poly-input--invalid {
+  border-color: #dc2626;
+  background: #fee2e2;
+  color: #991b1b;
+  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.14);
+}
+
+@media (max-width: 640px) {
+  .poly-data-menu {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .poly-hero-card {

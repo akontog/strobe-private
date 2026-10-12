@@ -22,7 +22,8 @@ function initPolynomial({
     activityId: '1.1',
     datasetKey: 'monomials',
     expressionId: 'm-1',
-    geogebraRoomId: ''
+    geogebraRoomId: '',
+    feedbackEnabled: false
   };
   const algebraTilesByExpression = {};
   const allowedAlgebraTileTypes = new Set(['one', 'x', 'y', 'x2', 'xy', 'y2']);
@@ -227,6 +228,9 @@ function initPolynomial({
         }
         if (Object.prototype.hasOwnProperty.call(next, 'geogebraRoomId')) {
           lessonState.geogebraRoomId = geogebraRoomId || '';
+        }
+        if (Object.prototype.hasOwnProperty.call(next, 'feedbackEnabled')) {
+          lessonState.feedbackEnabled = Boolean(next.feedbackEnabled);
         }
 
         emitState();

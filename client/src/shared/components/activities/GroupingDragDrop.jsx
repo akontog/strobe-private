@@ -193,7 +193,7 @@ export default function GroupingDragDrop({
               aria-label={group.title || group.id}
             >
               <header className="grouping-dd-zone-head">
-                <p className="grouping-dd-zone-title">{group.title || 'Ομάδα'}</p>
+                {group.title ? <p className="grouping-dd-zone-title">{group.title}</p> : null}
                 {group.hint && <div className="grouping-dd-zone-hint">{group.hint}</div>}
               </header>
               <div className="grouping-dd-zone-body">

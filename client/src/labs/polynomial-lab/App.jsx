@@ -9,7 +9,6 @@ import {
   MathFormula,
   SharedCommonZoneLayout,
   ActivityInputGrid,
-  SharedInputRow,
   StudentQrAccordion,
   StudentScoresAccordion,
   StudentTable,
@@ -29,7 +28,6 @@ const ACTIVITY_LIBRARY = [
     id: '1.1',
     code: '1.1',
     title: '1.1 Βασικές έννοιες μονωνύμων',
-    objective: 'Αναγνώριση συντελεστή, εκθετών και βαθμού ενός μονωνύμου.',
     tasks: ['Συντελεστής', 'Βαθμός ως προς x', 'Βαθμός ως προς y', 'Συνολικός βαθμός']
   },
   {
@@ -152,6 +150,21 @@ const getGroupingValidationState = (expressionItem, placements) => {
     }
     return state;
   }, { invalidItemIds: [] });
+};
+
+const isCorrectAnswer = (value, expected) => {
+  const actualText = String(value ?? '').trim();
+  if (!actualText || expected === undefined || expected === null) {
+    return false;
+  }
+
+  const actualNumber = Number(actualText);
+  const expectedNumber = Number(expected);
+  if (Number.isFinite(actualNumber) && Number.isFinite(expectedNumber)) {
+    return actualNumber === expectedNumber;
+  }
+
+  return actualText.toLowerCase() === String(expected).trim().toLowerCase();
 };
 
 const ALGEBRA_DATASETS = {
@@ -786,6 +799,7 @@ export default function App({ role = 'teacher' }) {
   const [studentColor, setStudentColor] = useState(() => readIdentityColor(randomIdentityColor()));
   const [lastSentAnswers, setLastSentAnswers] = useState('');
   const [lessonGeogebraRoomId, setLessonGeogebraRoomId] = useState('');
+  const [feedbackEnabled, setFeedbackEnabled] = useState(false);
   const [algebraTilesByExpression, setAlgebraTilesByExpression] = useState({});
 
   useEffect(() => {
@@ -870,7 +884,7 @@ export default function App({ role = 'teacher' }) {
       const coefficient = slot.coefficient || '';
       const degreeX = slot.degreeX || '';
       const degreeY = slot.degreeY || '';
-      return `${coefficient}x^${degreeX}y^${degreeY}`;
+      return `${coefficient}x^{${degreeX}}y^{${degreeY}}`;
     });
 
     return rendered.join(expressionItem.connector || ' + ');
@@ -880,7 +894,7 @@ export default function App({ role = 'teacher' }) {
     const coefficient = parts?.[0]?.coefficient || '';
     const degreeX = parts?.[0]?.degreeX || '';
     const degreeY = parts?.[0]?.degreeY || '';
-    return `${coefficient}x^${degreeX}y^${degreeY}`;
+    return `${coefficient}x^{${degreeX}}y^{${degreeY}}`;
   };
 
   const isMonomialGroupingActivity = selectedActivityId === '1.2';
@@ -921,6 +935,16 @@ export default function App({ role = 'teacher' }) {
     : isMonomialResultActivity
       ? getMonomialAnswerPreview(activeExpressionParts)
       : getExpressionPreview(activeExpression, activeExpressionParts);
+  const isInputIncorrect = (index, field, value) => {
+    if (!feedbackEnabled) {
+      return false;
+    }
+    const correctAnswers = activeExpression?.correctAnswers;
+    const expected = Array.isArray(correctAnswers)
+      ? correctAnswers[index]?.[field]
+      : correctAnswers?.[field];
+    return !isCorrectAnswer(value, expected);
+  };
   const getExpressionOptionLabel = (item) => {
     if (isMonomialGroupingActivity && Array.isArray(item?.groups) && item.groups.length > 0) {
       return item.groups.map((group) => group.hint).join(' | ');
@@ -932,6 +956,14 @@ export default function App({ role = 'teacher' }) {
 
     return item?.expression || item?.id || '';
   };
+  const renderWrappedExpression = (expression) => {
+    const terms = String(expression || '').match(/[+-]?\s*[^+-]+/g) || [String(expression || '')];
+    return (
+      <div className="poly-wrapped-expression">
+        {terms.map((term, index) => <MathFormula key={`${term}-${index}`} formula={`\\(${term.trim()}\\)`} />)}
+      </div>
+    );
+  };
   const groupingItems = useMemo(
     () => (activeExpression?.items || []).map((item) => ({
       id: item.id,
@@ -942,10 +974,10 @@ export default function App({ role = 'teacher' }) {
   const groupingGroups = useMemo(
     () => (activeExpression?.groups || []).map((group) => ({
       id: group.id,
-      title: group.title,
+      title: isGroupingActivity ? '' : group.title,
       hint: <MathFormula formula={`\\(${group.hint}\\)`} />
     })),
-    [activeExpression]
+    [activeExpression, isGroupingActivity]
   );
   const groupingValidationState = useMemo(
     () => getGroupingValidationState(activeExpression, activeGroupingPlacements),
@@ -1067,7 +1099,8 @@ export default function App({ role = 'teacher' }) {
         activityId: nextId,
         datasetKey: ACTIVITY_DATASET_KEYS[nextId] || 'monomials',
         expressionId: nextExpression,
-        geogebraRoomId: String(nextDataset.items[0]?.geogebraRoomId || '').trim()
+        geogebraRoomId: String(nextDataset.items[0]?.geogebraRoomId || '').trim(),
+        feedbackEnabled
       }
     });
   };
@@ -1082,10 +1115,25 @@ export default function App({ role = 'teacher' }) {
         activityId: selectedActivityId,
         datasetKey: ACTIVITY_DATASET_KEYS[selectedActivityId] || 'monomials',
         expressionId: nextExpressionId,
+        feedbackEnabled,
         geogebraRoomId: String(
           (activeItems.find((item) => item.id === nextExpressionId)?.geogebraRoomId)
           || ''
         ).trim()
+      }
+    });
+  };
+
+  const setFeedbackOption = (enabled) => {
+    setFeedbackEnabled(enabled);
+    sendSocketMessage({
+      type: 'teacher_lesson',
+      lesson: {
+        activityId: selectedActivityId,
+        datasetKey: ACTIVITY_DATASET_KEYS[selectedActivityId] || 'monomials',
+        expressionId: selectedExpressionId,
+        geogebraRoomId: lessonGeogebraRoomId,
+        feedbackEnabled: enabled
       }
     });
   };
@@ -1192,6 +1240,7 @@ export default function App({ role = 'teacher' }) {
           }
 
           setLessonGeogebraRoomId(nextGeogebraRoomId);
+          setFeedbackEnabled(Boolean(message.lesson.feedbackEnabled));
         }
 
         if (Array.isArray(message.participants)) {
@@ -1354,22 +1403,19 @@ export default function App({ role = 'teacher' }) {
               ) : groupedPolynomialExpression ? (
                 <div className="poly-stacked-expression">
                   <div className="poly-stacked-expression-row">
-                    <MathFormula formula={`\\(${groupedPolynomialExpression.left}\\)`} />
+                    {renderWrappedExpression(groupedPolynomialExpression.left)}
                   </div>
                   <div className="poly-stacked-expression-operator" aria-label="operator between polynomial terms">
                     {groupedPolynomialExpression.operator}
                   </div>
                   <div className="poly-stacked-expression-row">
-                    <MathFormula formula={`\\(${groupedPolynomialExpression.right}\\)`} />
+                    {renderWrappedExpression(groupedPolynomialExpression.right)}
                   </div>
                 </div>
               ) : (
                 <div className="lab-math-box poly-expression-math">
-                  <MathFormula formula={`\\(${leftExpressionText}\\)`} />
+                  {renderWrappedExpression(leftExpressionText)}
                 </div>
-              )}
-              {selectedActivityId === '1.1' && (
-                <p className="poly-hero-text">{activeActivity.objective}</p>
               )}
             </div>
           ) : null}
@@ -1377,11 +1423,11 @@ export default function App({ role = 'teacher' }) {
           <div className={`lab-card lab-card--panel poly-team-card ${isGeogebraAreaActivity ? 'poly-team-card--geogebra' : ''}`.trim()}>
             {isGroupingActivity ? (
               <div className="poly-grouping-panel">
-                <p className="poly-hero-text">
-                  {isPolynomialGroupingActivity
-                    ? 'Ομαδοποίησε τους όρους από τα δύο πολυώνυμα. Αν ένας όρος μπει λάθος, γίνεται κόκκινος και πρέπει να αφαιρεθεί πρώτα.'
-                    : 'Σύρε κάθε μονώνυμο στην ομάδα με το ίδιο μεταβλητό μέρος.'}
-                </p>
+                {isPolynomialGroupingActivity && (
+                  <p className="poly-hero-text">
+                    Ομαδοποίησε τους όρους από τα δύο πολυώνυμα.
+                  </p>
+                )}
                 {isPolynomialGroupingActivity && (
                   <div className="poly-grouping-equation">
                     <div className="poly-grouping-expression-card">
@@ -1399,7 +1445,7 @@ export default function App({ role = 'teacher' }) {
                   groups={groupingGroups}
                   placements={activeGroupingPlacements}
                   onChange={setGroupingPlacements}
-                  invalidItemIds={invalidGroupingItemIds}
+                  invalidItemIds={feedbackEnabled ? invalidGroupingItemIds : []}
                   disabledItemIds={groupingLockedItemIds}
                   bankLabel="Μονώνυμα προς ομαδοποίηση"
                 />
@@ -1411,7 +1457,7 @@ export default function App({ role = 'teacher' }) {
                     <div className="lab-preview poly-preview-panel">
                       <p className="lab-mini-label poly-mini-label">Αυτόματο αποτέλεσμα</p>
                       <div className="lab-math-box lab-math-box--compact poly-expression-math poly-expression-math--small">
-                        <MathFormula formula={`\\(${polynomialGroupingResult?.formula || ''}\\)`} />
+                        {renderWrappedExpression(polynomialGroupingResult?.formula || '')}
                       </div>
                       {!polynomialGroupingResult?.isComplete && (
                         <p className="poly-grouping-hint">Ολοκλήρωσε σωστά όλες τις ομάδες για τελικό αποτέλεσμα.</p>
@@ -1451,108 +1497,34 @@ export default function App({ role = 'teacher' }) {
               </div>
             ) : isTemplateActivity ? (
               <div className="poly-template-answer-panel">
-                {isDegreeOnlyActivity ? (
-                  <div className="poly-team-grid poly-team-grid--full">
-                    <div className="poly-term-block poly-term-block--result">
-                      <div className="poly-term-inputs poly-term-inputs--result">
-                        <SharedInputRow
-                          activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
-                          rowLabel="1."
-                          hideLabels
-                          defaultPlaceholder=""
-                          boxes={[
-                            {
-                              label: 'Βαθμός ως προς x',
-                              value: degreeOnlyInputValues.degreeX,
-                              onChange: (event) => updateExpressionPart(0, 'degreeX', event.target.value)
-                            },
-                            {
-                              label: 'Βαθμός ως προς y',
-                              value: degreeOnlyInputValues.degreeY,
-                              onChange: (event) => updateExpressionPart(0, 'degreeY', event.target.value)
-                            },
-                            {
-                              label: 'Συνολικός βαθμός',
-                              value: degreeOnlyInputValues.totalDegree,
-                              onChange: (event) => updateExpressionPart(0, 'totalDegree', event.target.value)
-                            }
-                          ]}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ) : isPolynomialResultActivity ? (
-                  <div className="poly-team-grid poly-team-grid--full">
-                    {activeExpressionParts.map((part, index) => (
-                      <div key={`${selectedExpressionId}-term-${index}`} className="poly-term-block poly-term-block--result">
-                        <div className="poly-term-inputs poly-term-inputs--result">
-                          <SharedInputRow
-                            activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
-                            rowLabel={`${index + 1}.`}
-                            tokens={['x^', 'y^', '']}
-                            hideLabels
-                            defaultPlaceholder=""
-                            boxes={[
-                              {
-                                label: 'συντελεστής',
-                                value: part.coefficient || '',
-                                onChange: (event) => updateExpressionPart(index, 'coefficient', event.target.value)
-                              },
-                              {
-                                label: 'x^',
-                                value: part.degreeX || '',
-                                onChange: (event) => updateExpressionPart(index, 'degreeX', event.target.value)
-                              },
-                              {
-                                label: 'y^',
-                                value: part.degreeY || '',
-                                onChange: (event) => updateExpressionPart(index, 'degreeY', event.target.value)
-                              }
-                            ]}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="poly-team-grid poly-team-grid--full">
-                    <div className="poly-term-block poly-term-block--result">
-                      <div className="poly-term-inputs poly-term-inputs--result">
-                        <SharedInputRow
-                          activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
-                          rowLabel="1."
-                          tokens={['x^', 'y^', '']}
-                          hideLabels
-                          defaultPlaceholder=""
-                          boxes={[
-                            {
-                              label: 'συντελεστής',
-                              value: resultInputValues.coefficient,
-                              onChange: (event) => updateExpressionPart(0, 'coefficient', event.target.value)
-                            },
-                            {
-                              label: 'x^',
-                              value: resultInputValues.degreeX,
-                              onChange: (event) => updateExpressionPart(0, 'degreeX', event.target.value)
-                            },
-                            {
-                              label: 'y^',
-                              value: resultInputValues.degreeY,
-                              onChange: (event) => updateExpressionPart(0, 'degreeY', event.target.value)
-                            }
-                          ]}
-                        />
-                      </div>
+                <ActivityInputGrid
+                  activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
+                  columns={2}
+                  className="lab-input-grid poly-team-grid"
+                  labelClassName="shared-input-box__label"
+                  fields={isDegreeOnlyActivity ? [
+                    { id: 'degree-x', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'degreeX', degreeOnlyInputValues.degreeX) ? ' poly-input--invalid' : ''}`, label: 'Βαθμός ως προς x', value: degreeOnlyInputValues.degreeX, onChange: (value) => updateExpressionPart(0, 'degreeX', value) },
+                    { id: 'degree-y', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'degreeY', degreeOnlyInputValues.degreeY) ? ' poly-input--invalid' : ''}`, label: 'Βαθμός ως προς y', value: degreeOnlyInputValues.degreeY, onChange: (value) => updateExpressionPart(0, 'degreeY', value) },
+                    { id: 'total-degree', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'totalDegree', degreeOnlyInputValues.totalDegree) ? ' poly-input--invalid' : ''}`, label: 'Συνολικός βαθμός', value: degreeOnlyInputValues.totalDegree, onChange: (value) => updateExpressionPart(0, 'totalDegree', value) }
+                  ] : isPolynomialResultActivity ? activeExpressionParts.flatMap((part, index) => ([
+                    { id: `part-${index}-coefficient`, className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(index, 'coefficient', part.coefficient) ? ' poly-input--invalid' : ''}`, label: `Συντελεστής όρου ${index + 1}`, value: part.coefficient || '', onChange: (value) => updateExpressionPart(index, 'coefficient', value) },
+                    { id: `part-${index}-degree-x`, className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(index, 'degreeX', part.degreeX) ? ' poly-input--invalid' : ''}`, label: `Βαθμός ως προς x (όρος ${index + 1})`, value: part.degreeX || '', onChange: (value) => updateExpressionPart(index, 'degreeX', value) },
+                    { id: `part-${index}-degree-y`, className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(index, 'degreeY', part.degreeY) ? ' poly-input--invalid' : ''}`, label: `Βαθμός ως προς y (όρος ${index + 1})`, value: part.degreeY || '', onChange: (value) => updateExpressionPart(index, 'degreeY', value) }
+                  ])) : [
+                    { id: 'coefficient', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'coefficient', resultInputValues.coefficient) ? ' poly-input--invalid' : ''}`, label: 'Συντελεστής', value: resultInputValues.coefficient, onChange: (value) => updateExpressionPart(0, 'coefficient', value) },
+                    { id: 'degree-x', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'degreeX', resultInputValues.degreeX) ? ' poly-input--invalid' : ''}`, label: 'Βαθμός ως προς x', value: resultInputValues.degreeX, onChange: (value) => updateExpressionPart(0, 'degreeX', value) },
+                    { id: 'degree-y', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'degreeY', resultInputValues.degreeY) ? ' poly-input--invalid' : ''}`, label: 'Βαθμός ως προς y', value: resultInputValues.degreeY, onChange: (value) => updateExpressionPart(0, 'degreeY', value) }
+                  ]}
+                />
+
+                {!isDegreeOnlyActivity && (
+                  <div className="lab-preview poly-preview-panel">
+                    <p className="lab-mini-label poly-mini-label">Απάντηση</p>
+                    <div className="lab-math-box lab-math-box--compact poly-expression-math poly-expression-math--small">
+                      {renderWrappedExpression(rightPreviewText)}
                     </div>
                   </div>
                 )}
-
-                <div className="lab-preview poly-preview-panel">
-                  <p className="lab-mini-label poly-mini-label">Απάντηση</p>
-                  <div className="lab-math-box lab-math-box--compact poly-expression-math poly-expression-math--small">
-                    <MathFormula formula={`\\(${rightPreviewText}\\)`} />
-                  </div>
-                </div>
               </div>
             ) : (
               <ActivityInputGrid
@@ -1561,10 +1533,10 @@ export default function App({ role = 'teacher' }) {
                 className="lab-input-grid poly-team-grid"
                 labelClassName="shared-input-box__label"
                 fields={[
-                  { id: 'coefficient', className: 'shared-input-box lab-field poly-team-field', inputClassName: 'shared-input-box__input', label: 'Συντελεστής', value: teamAnswers.coefficient, onChange: (value) => setTeamField('coefficient', value) },
-                  { id: 'degree-x', className: 'shared-input-box lab-field poly-team-field', inputClassName: 'shared-input-box__input', label: 'Βαθμός ως προς x', value: teamAnswers.degreeX, onChange: (value) => setTeamField('degreeX', value) },
-                  { id: 'degree-y', className: 'shared-input-box lab-field poly-team-field', inputClassName: 'shared-input-box__input', label: 'Βαθμός ως προς y', value: teamAnswers.degreeY, onChange: (value) => setTeamField('degreeY', value) },
-                  { id: 'total-degree', className: 'shared-input-box lab-field poly-team-field', inputClassName: 'shared-input-box__input', label: 'Συνολικός βαθμός', value: teamAnswers.totalDegree, onChange: (value) => setTeamField('totalDegree', value) }
+                  { id: 'coefficient', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'coefficient', teamAnswers.coefficient) ? ' poly-input--invalid' : ''}`, label: 'Συντελεστής', value: teamAnswers.coefficient, onChange: (value) => setTeamField('coefficient', value) },
+                  { id: 'degree-x', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'degreeX', teamAnswers.degreeX) ? ' poly-input--invalid' : ''}`, label: 'Βαθμός ως προς x', value: teamAnswers.degreeX, onChange: (value) => setTeamField('degreeX', value) },
+                  { id: 'degree-y', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'degreeY', teamAnswers.degreeY) ? ' poly-input--invalid' : ''}`, label: 'Βαθμός ως προς y', value: teamAnswers.degreeY, onChange: (value) => setTeamField('degreeY', value) },
+                  { id: 'total-degree', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'totalDegree', teamAnswers.totalDegree) ? ' poly-input--invalid' : ''}`, label: 'Συνολικός βαθμός', value: teamAnswers.totalDegree, onChange: (value) => setTeamField('totalDegree', value) }
                 ]}
               />
             )}
@@ -1598,6 +1570,14 @@ export default function App({ role = 'teacher' }) {
                   ))}
                 </select>
               </div>
+              <label className="poly-feedback-option">
+                <input
+                  type="checkbox"
+                  checked={feedbackEnabled}
+                  onChange={(event) => setFeedbackOption(event.target.checked)}
+                />
+                <span>Εμφάνιση feedback για λάθος απαντήσεις</span>
+              </label>
             </div>
           </Accordion>
 

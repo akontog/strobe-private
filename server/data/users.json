@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-10-12T08:29:16.931Z",
+  "savedAt": "2026-10-12T09:43:04.216Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -936,7 +936,7 @@
             "w2": 1
           },
           "active": true,
-          "lastUpdated": "2026-10-11T13:17:10.996Z",
+          "lastUpdated": "2026-10-12T09:10:08.280Z",
           "lesson": {
             "dataset": "vehicles",
             "exampleIndex": 0,
@@ -956,7 +956,7 @@
               "w2": 3
             },
             "activityId": "1",
-            "activityTitle": "1. Βρίσκω την είσοδο",
+            "activityTitle": "1. Find the input",
             "threshold": {
               "op": ">=",
               "boundary": 5
@@ -976,7 +976,7 @@
         }
       },
       "connectedAt": 1791527667945,
-      "lastSeenAt": 1791793756328,
+      "lastSeenAt": 1791798183336,
       "isActive": true
     },
     {
@@ -1015,13 +1015,13 @@
         "polynomial": {
           "id": "student-2",
           "name": "εεε",
-          "color": "#22c55e",
+          "color": "#a855f7",
           "active": true,
-          "lastUpdated": "2026-10-12T08:29:16.927Z"
+          "lastUpdated": "2026-10-12T09:43:04.212Z"
         }
       },
       "connectedAt": 1791550835233,
-      "lastSeenAt": 1791793756931,
+      "lastSeenAt": 1791798184215,
       "isActive": true
     },
     {
@@ -1197,6 +1197,21 @@
       "appData": {},
       "connectedAt": 1791789326149,
       "lastSeenAt": 1791789326149,
+      "isActive": true
+    },
+    {
+      "id": "a0f7fe70-15dd-47c8-b9ab-2e2f436d3763",
+      "userId": "user_1791794793088_rkqo6ak",
+      "ip": "142.93.37.226",
+      "userAgent": "CGrab/v8.24.1-dev-throughput",
+      "username": "user-a0f7fe",
+      "role": "student",
+      "teacherAccount": "",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791794793088,
+      "lastSeenAt": 1791794793088,
       "isActive": true
     }
   ]
