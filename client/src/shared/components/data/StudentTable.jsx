@@ -27,7 +27,7 @@ export const StudentTable = ({
   const extraColumns = Array.isArray(columns) ? columns : [];
   const totalColumns = 1 + extraColumns.length;
   const groupedSpanTotal = Array.isArray(headerGroups) ? headerGroups.reduce((sum, group) => sum + (group.colSpan || 1), 0) : 0;
-  const resolvedTitle = title || `📋 ${t('connectedStudents', { ns: 'neural' })}`;
+  const resolvedTitle = title || `📋 ${t('studentTableTitle', { ns: 'neural' })}`;
   const resolvedEmptyMessage = emptyMessage || t('notAvailable');
   const resolvedFallback = nameFallback || t('student');
 
@@ -86,6 +86,8 @@ export const StudentTable = ({
                   <td style={{ whiteSpace: 'nowrap' }}>
                     <span
                       className="green-dot"
+                      title={isConnected ? t('connected') : t('disconnected')}
+                      aria-label={isConnected ? t('connected') : t('disconnected')}
                       style={{
                         display: 'inline-block',
                         backgroundColor: isConnected ? '#22c55e' : '#9ca3af',

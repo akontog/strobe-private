@@ -174,5 +174,5 @@
     "console": "Live view of messages exchanged between users and the server.",
     "linearSeparation": "Interactive dataset-based linear separation tool."
   },
-  "studentConnection": "Student connection"
+  "studentConnection": "Connection (QR Code)"
 }

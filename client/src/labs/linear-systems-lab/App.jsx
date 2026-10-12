@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Accordion,
+  SettingsAccordion,
+  CommonSessionSettings,
   ActivitiesMenu,
   GroupingDragDrop,
   HeroTitle,
@@ -931,7 +932,8 @@ export default function App({ role = 'student' }) {
 
       {isTeacher ? (
         <div className="linear-bottom-panels">
-          <Accordion title="Δεδομένα δραστηριότητας" icon="🗂️" open>
+          <SettingsAccordion open>
+            <CommonSessionSettings />
             <div className="lab-data-section data-section">
               <label className="shared-activity-label" htmlFor="linear-expression">Άσκηση</label>
               <select
@@ -955,7 +957,7 @@ export default function App({ role = 'student' }) {
                 <span>Εμφάνιση οπτικής γραφικής απεικόνισης (δεξιά)</span>
               </label>
             </div>
-          </Accordion>
+          </SettingsAccordion>
 
           <StudentTable
             title="📋 Πίνακας μαθητών"
@@ -977,7 +979,7 @@ export default function App({ role = 'student' }) {
               { key: 'classification', label: 'Ομαδοποίηση', render: (entry) => entry.answers?.classification || '-' },
               { key: 'score', label: 'Σκορ', render: (entry) => entry.answers?.score || '-' }
             ]}
-            emptyMessage="Δεν υπάρχουν ακόμη συνδεδεμένοι μαθητές."
+            emptyMessage="Δεν υπάρχουν ακόμη μαθητές."
           />
         </div>
       ) : null}

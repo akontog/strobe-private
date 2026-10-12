@@ -2,7 +2,7 @@ import React from 'react';
 import { Accordion } from './Accordion';
 
 export const StudentQrAccordion = ({
-  title = '\u03a3\u03cd\u03bd\u03b4\u03b5\u03c3\u03b7 \u03bc\u03b1\u03b8\u03b7\u03c4\u03ce\u03bd',
+  title = '\u03a3\u03cd\u03bd\u03b4\u03b5\u03c3\u03b7 (QR Code)',
   icon = '\u{1F4F1}',
   open = false,
   qrSrc,

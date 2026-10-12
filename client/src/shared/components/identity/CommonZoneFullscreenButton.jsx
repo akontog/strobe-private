@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function CommonZoneFullscreenButton() {
+  const { t } = useTranslation('common');
   const buttonRef = useRef(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -24,7 +26,7 @@ export default function CommonZoneFullscreenButton() {
     }
   }
 
-  const label = isFullscreen ? 'Έξοδος από πλήρη οθόνη' : 'Μετάβαση σε πλήρη οθόνη';
+  const label = isFullscreen ? t('exitFullscreen') : t('enterFullscreen');
   return (
     <button ref={buttonRef} type="button" className="common-zone-fullscreen-toggle"
       aria-label={label} aria-pressed={isFullscreen} title={label} onClick={toggleFullscreen}>

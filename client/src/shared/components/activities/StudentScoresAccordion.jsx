@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Accordion } from '../layouts/Accordion';
+import { useSessionInputLogger } from './SessionLogContext';
 
 function formatScore(value) {
   const score = Number(value);
@@ -13,13 +14,15 @@ export default function StudentScoresAccordion({
   activity = '',
   currentScore = 0,
   manageUsers = false,
-  open = false
+  open = false,
+  hidePanel = false
 }) {
   const { t } = useTranslation('scores');
   const [students, setStudents] = useState([]);
   const [ownScore, setOwnScore] = useState(null);
   const [error, setError] = useState('');
   const isTeacher = role === 'teacher';
+  const sessionLogging = useSessionInputLogger();
 
   const loadScores = useCallback(async () => {
     const response = await fetch('/api/scores');
@@ -30,7 +33,7 @@ export default function StudentScoresAccordion({
   }, [t]);
 
   useEffect(() => {
-    if (!isTeacher) return undefined;
+    if (!isTeacher || hidePanel) return undefined;
     let cancelled = false;
     const refresh = () => loadScores().catch((loadError) => {
       if (!cancelled) setError(loadError.message || t('loadFailed'));
@@ -41,7 +44,7 @@ export default function StudentScoresAccordion({
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [isTeacher, loadScores, t]);
+  }, [hidePanel, isTeacher, loadScores, t]);
 
   useEffect(() => {
     if (isTeacher || !studentName || !activity || !Number.isFinite(Number(currentScore))) return undefined;
@@ -101,6 +104,8 @@ export default function StudentScoresAccordion({
       setError(actionError.message || t('actionFailed'));
     }
   }
+
+  if (hidePanel || (!isTeacher && sessionLogging?.scoreVisible === false)) return null;
 
   return (
     <Accordion title={t('title')} icon="📊" open={open}>

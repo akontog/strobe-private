@@ -95,7 +95,7 @@ export const StudentTable = ({
     <SharedStudentTable
       title={t('studentTableTitle')}
       participants={participants}
-      emptyMessage={t('noConnectedStudents')}
+      emptyMessage={t('noStudents')}
       nameFallback={t('studentName')}
       getRowKey={(student, index) => student.id || student.username || student.name || index}
       getDisplayName={(student) => student.username || student.name || student.displayName || t('studentName')}

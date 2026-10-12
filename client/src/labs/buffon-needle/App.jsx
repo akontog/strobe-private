@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { CommonZoneFullscreenButton, HeroTitle, StudentQrAccordion } from '../../shared/components';
+import { CommonZoneFullscreenButton, HeroTitle, StudentQrAccordion, ChatAccordion } from '../../shared/components';
 import { useTranslation } from 'react-i18next';
 import { studentTemplate } from './data/student-template';
 import { teacherTemplate } from './data/teacher-template';
@@ -55,6 +55,7 @@ function App({ role = 'teacher' }) {
         <CommonZoneFullscreenButton />
         <div ref={rootRef} className={`buffon-content ${role}`} />
       </section>
+      <ChatAccordion />
       {role === 'teacher' ? (
         <StudentQrAccordion
           title={tInterface('studentConnection')}

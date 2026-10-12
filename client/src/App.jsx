@@ -34,12 +34,16 @@ import StudentIdentityControl from './shared/components/identity/StudentIdentity
 import LanguageSwitcher from './shared/components/identity/LanguageSwitcher';
 import RoleAccessControl from './shared/components/identity/RoleAccessControl';
 import { SessionLogProvider } from './shared/components/activities/SessionLogContext';
+import { SettingsAccordion, ChatAccordion, CommonSessionSettings } from './shared/components';
 
 function App() {
   const { t } = useTranslation(['common', 'menu']);
   const { t: tNav } = useTranslation('navigation');
   const location = useLocation();
   const pathname = String(location?.pathname || '').toLowerCase();
+  const currentLabSlug = pathname.match(/^\/labs\/([^/]+)/)?.[1] || '';
+  const labHasOwnSettings = ['polynomial-lab', 'linear-systems-lab', 'neural-lab', 'identities-lab'].includes(currentLabSlug);
+  const labHasInlineChat = ['polynomial-lab', 'neural-lab', 'buffon-needle'].includes(currentLabSlug);
   const [role, setRole] = useState('student');
   const [authReady, setAuthReady] = useState(false);
   const [teacherUsername, setTeacherUsername] = useState('');
@@ -225,6 +229,7 @@ function App() {
         </div>
       </header>
       <div className="client-content">
+        {pathname.startsWith('/labs/') && role === 'teacher' && !labHasOwnSettings ? <SettingsAccordion open><CommonSessionSettings /></SettingsAccordion> : null}
         {clickedMenuGroup ? (
           <section className="client-menu-cards" aria-label={clickedMenuGroup.label}>
             <div className="postit-grid">
@@ -280,6 +285,7 @@ function App() {
           <Route path="/labs/:slug/student" element={<LabPage role="student" />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes> : null}
+        {pathname.startsWith('/labs/') && !labHasInlineChat ? <ChatAccordion /> : null}
       </div>
     </div>
     </SessionLogProvider>

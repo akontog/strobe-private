@@ -23,5 +23,8 @@ export { default as StudentIdentityControl } from './identity/StudentIdentityCon
 export { default as RoleAccessControl } from './identity/RoleAccessControl';
 export * from './identity/identityStorage';
 export { default as SimpleCoordinateSystem } from './plot/SimpleCoordinateSystem';
+export { default as SettingsAccordion } from './layouts/SettingsAccordion';
+export { default as ChatAccordion } from './activities/ChatAccordion';
+export { default as CommonSessionSettings } from './activities/CommonSessionSettings';
 
 

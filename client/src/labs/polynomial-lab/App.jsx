@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import {
   CommonZoneFullscreenButton,
   Accordion,
+  SettingsAccordion,
   ActivitiesMenu,
   CollaborativeGeoGebra,
   GroupingDragDrop,
@@ -12,6 +13,8 @@ import {
   ActivityInputGrid,
   StudentQrAccordion,
   StudentScoresAccordion,
+  CommonSessionSettings,
+  ChatAccordion,
   StudentTable,
   AlgebraTiles,
   randomIdentityColor,
@@ -21,6 +24,7 @@ import {
   writeIdentityColor,
   writeIdentityName
 } from '../../shared/components';
+import { useSessionInputLogger } from '../../shared/components/activities/SessionLogContext';
 import { SCORE_CORRECT, SCORE_INCORRECT, computeStudentScore, getAnswerFieldDefinitions } from './grading';
 import './App.css';
 
@@ -775,6 +779,7 @@ const getAnswerHeaderGroupsForExpression = (expressionItem, t) => {
 
 export default function App({ role = 'teacher' }) {
   const { t } = useTranslation('polynomial');
+  const sessionLogging = useSessionInputLogger();
   const isTeacher = role === 'teacher';
   const isStudent = role === 'student';
   const wsRef = useRef(null);
@@ -791,6 +796,7 @@ export default function App({ role = 'teacher' }) {
   });
   const [isSocketConnected, setIsSocketConnected] = useState(false);
   const [participants, setParticipants] = useState([]);
+  const [scoreRecords, setScoreRecords] = useState([]);
   const [roster, setRoster] = useState([]);
   const [studentName, setStudentName] = useState(() => readIdentityName(`Student-${Math.floor(Math.random() * 900 + 100)}`));
   const [studentColor, setStudentColor] = useState(() => readIdentityColor(randomIdentityColor()));
@@ -1073,6 +1079,32 @@ export default function App({ role = 'teacher' }) {
       .sort((a, b) => String(a.name || a.username || '').localeCompare(String(b.name || b.username || ''))),
     [participants]
   );
+
+  useEffect(() => {
+    if (!isTeacher || !sessionLogging?.scoreVisible) {
+      setScoreRecords([]);
+      return undefined;
+    }
+
+    let cancelled = false;
+    const refreshScores = async () => {
+      try {
+        const response = await fetch('/api/scores');
+        if (!response.ok) return;
+        const payload = await response.json();
+        if (!cancelled) setScoreRecords(Array.isArray(payload.students) ? payload.students : []);
+      } catch {
+        // Keep the last available score values if a refresh fails.
+      }
+    };
+
+    refreshScores();
+    const timer = window.setInterval(refreshScores, 5000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [isTeacher, sessionLogging?.scoreVisible]);
 
   const expectedAnswers = {
     coefficient: activeExpression?.coefficient ?? '-',
@@ -1456,8 +1488,6 @@ export default function App({ role = 'teacher' }) {
               <AlgebraTiles
                 activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
                 key={selectedExpressionId}
-                initialExample={selectedExpressionId === 'algebra-tiles-quadratic' ? 'quadratic' : 'linear'}
-                canvasMode="multiplication"
                 tiles={algebraTilesByExpression[selectedExpressionId]}
                 onTilesChange={updateAlgebraTiles}
               />
@@ -1542,7 +1572,15 @@ export default function App({ role = 'teacher' }) {
             onChange={setActivity}
           />
 
-          <Accordion title={t('data')} icon="🗂️" open>
+          <SettingsAccordion open>
+            <CommonSessionSettings
+              feedbackEnabled={feedbackEnabled}
+              onFeedbackChange={setFeedbackOption}
+              feedbackDescription={t('feedbackToggle')}
+            />
+          </SettingsAccordion>
+
+          <Accordion title={t('expression')} icon="🔢" open>
             <div className="lab-data-section data-section poly-data-menu">
               <div className="lab-select-group poly-select-group">
                 <label className="shared-activity-label" htmlFor="poly-expression">{t('expression')}</label>
@@ -1557,14 +1595,6 @@ export default function App({ role = 'teacher' }) {
                   ))}
                 </select>
               </div>
-              <label className="poly-feedback-option">
-                <input
-                  type="checkbox"
-                  checked={feedbackEnabled}
-                  onChange={(event) => setFeedbackOption(event.target.checked)}
-                />
-                <span>{t('feedbackToggle')}</span>
-              </label>
             </div>
           </Accordion>
 
@@ -1573,23 +1603,32 @@ export default function App({ role = 'teacher' }) {
             participants={sortedParticipants}
             columns={[
               ...getAnswerColumnsForExpression(activeExpression, t),
-              {
-                key: 'score',
-                label: t('totalScore'),
-                render: (student) => {
-                  const numericScore = getStudentScoreForExpression(student, activeExpression);
-                  return Number.isFinite(numericScore) ? numericScore : '-';
+              ...(sessionLogging?.scoreVisible ? [
+                {
+                  key: 'activityScore',
+                  label: t('currentScore', { ns: 'scores' }),
+                  render: (student) => {
+                    const participantName = String(student.username || student.name || student.displayName || '').trim().toLocaleLowerCase();
+                    const record = scoreRecords.find((entry) => String(entry.name || '').trim().toLocaleLowerCase() === participantName);
+                    const value = record?.activities?.[`polynomial:${selectedActivityId}:${selectedExpressionId}`];
+                    return Number.isFinite(Number(value)) ? Number(Number(value).toFixed(2)) : '-';
+                  }
+                },
+                {
+                  key: 'totalScore',
+                  label: t('totalScore', { ns: 'scores' }),
+                  render: (student) => {
+                    const participantName = String(student.username || student.name || student.displayName || '').trim().toLocaleLowerCase();
+                    const record = scoreRecords.find((entry) => String(entry.name || '').trim().toLocaleLowerCase() === participantName);
+                    return Number.isFinite(Number(record?.totalScore)) ? Number(Number(record.totalScore).toFixed(2)) : '-';
+                  }
                 }
-              }
+              ] : [])
             ]}
             headerGroups={getAnswerHeaderGroupsForExpression(activeExpression, t)}
             emptyMessage={t('noStudents')}
           />
 
-          <StudentQrAccordion
-            qrSrc="/labs/polynomial-lab/media/polynomial_student_qrcode.png"
-            alt={t('studentQrAlt')}
-          />
         </>
       )}
 
@@ -1598,7 +1637,15 @@ export default function App({ role = 'teacher' }) {
         studentName={studentName}
         activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
         currentScore={currentStudentScore}
+        hidePanel
       />
+      <ChatAccordion />
+      {isTeacher ? (
+        <StudentQrAccordion
+          qrSrc="/labs/polynomial-lab/media/polynomial_student_qrcode.png"
+          alt={t('studentQrAlt')}
+        />
+      ) : null}
     </div>
   );
 }

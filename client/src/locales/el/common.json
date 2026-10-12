@@ -10,6 +10,12 @@
   "settings": "Ρυθμίσεις",
   "language": "Γλώσσα",
   "greek": "Ελληνικά",
+  "enableChat": "Εμφάνιση συνομιλίας στους μαθητές",
+  "enableFeedback": "Ενεργοποίηση ανατροφοδότησης",
+  "showScoreToStudents": "Εμφάνιση σκορ στους μαθητές",
+  "chat": "Συνομιλία",
+  "chatMessage": "Γράψτε μήνυμα",
+  "chatSend": "Αποστολή",
   "english": "English",
   "startSession": "Έναρξη συνεδρίας",
   "endSession": "Ολοκλήρωση συνεδρίας",
@@ -18,5 +24,7 @@
   "status": "Κατάσταση",
   "username": "Όνομα χρήστη",
   "connected": "Συνδεδεμένος",
-  "disconnected": "Αποσυνδεδεμένος"
+  "disconnected": "Αποσυνδεδεμένος",
+  "enterFullscreen": "Μετάβαση σε πλήρη οθόνη",
+  "exitFullscreen": "Έξοδος από πλήρη οθόνη"
 }

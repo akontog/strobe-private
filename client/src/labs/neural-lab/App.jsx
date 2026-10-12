@@ -7,6 +7,9 @@ import { VerticalProducts } from './components/VerticalProducts';
 import { ExamplesClassifier } from './components/ExamplesClassifier';
 import {
   Accordion,
+  SettingsAccordion,
+  CommonSessionSettings,
+  ChatAccordion,
   ActivitiesMenu,
   StudentQrAccordion,
   StudentTable,
@@ -158,7 +161,7 @@ const App = ({ role = 'teacher' }) => {
   const [dynamicW2, setDynamicW2] = useState(3);
   // Το isSocketConnected δείχνει αν η σύνδεση WebSocket είναι ενεργή ή όχι.
   const [isSocketConnected, setIsSocketConnected] = useState(false);
-  // Ποιοι και πόσοι συνδεδεμένοι μαθητές υπάρχουν αυτή τη στιγμή (χρησιμοποιείται μόνο από τον δάσκαλο).
+  // Οι συμμετέχοντες εμφανίζονται στον κοινό πίνακα μαθητών.
   const [participants, setParticipants] = useState([]);
   const [roster, setRoster] = useState([]);
   const [lessonInputs, setLessonInputs] = useState({ i1: 4, i2: 1 });
@@ -852,20 +855,6 @@ const [studentColor, setStudentColor] = useState(() => {
         </div>
       )}
 
-      {(isTeacher || isScreen) && (
-        <div className="live-table-wrap">
-          <StudentTable
-            i1={lessonInputs.i1}
-            i2={lessonInputs.i2}
-            selectedInputs={lessonSelectedInputs}
-            features={localizedFeatures}
-            threshold={effectiveThresholdRule}
-            participants={sortedParticipants}
-            activity={lessonActivity}
-          />
-        </div>
-      )}
-
       {isTeacher && (
         <>
 
@@ -877,6 +866,10 @@ const [studentColor, setStudentColor] = useState(() => {
             value={selectedActivity}
             onChange={setSelectedActivity}
           />
+
+          <SettingsAccordion open>
+            <CommonSessionSettings />
+          </SettingsAccordion>
 
           <DatasetSelector
             datasets={DATASETS}
@@ -918,14 +911,30 @@ const [studentColor, setStudentColor] = useState(() => {
             demoIconWhenDisabled="?"
           />
 
-          <StudentQrAccordion
-            qrSrc="/labs/neural-lab/media/neural_lab_student_qrcode.png"
-            alt="QR code για το Neural Lab student link"
-          />
-          
         </>
       )}
 
+      {(isTeacher || isScreen) && (
+        <div className="live-table-wrap">
+          <StudentTable
+            i1={lessonInputs.i1}
+            i2={lessonInputs.i2}
+            selectedInputs={lessonSelectedInputs}
+            features={localizedFeatures}
+            threshold={effectiveThresholdRule}
+            participants={sortedParticipants}
+            activity={lessonActivity}
+          />
+        </div>
+      )}
+
+      <ChatAccordion />
+      {isTeacher ? (
+        <StudentQrAccordion
+          qrSrc="/labs/neural-lab/media/neural_lab_student_qrcode.png"
+          alt="QR code για το Neural Lab student link"
+        />
+      ) : null}
       
       
     </TeacherCard>

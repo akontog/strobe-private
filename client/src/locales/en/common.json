@@ -8,6 +8,12 @@
   "teacher": "Teacher",
   "student": "Student",
   "settings": "Settings",
+  "enableChat": "Show chat to students",
+  "enableFeedback": "Enable feedback",
+  "showScoreToStudents": "Show scores to students",
+  "chat": "Chat",
+  "chatMessage": "Write a message",
+  "chatSend": "Send",
   "language": "Language",
   "greek": "Greek",
   "english": "English",
@@ -18,5 +24,7 @@
   "status": "Status",
   "username": "Username",
   "connected": "Connected",
-  "disconnected": "Disconnected"
+  "disconnected": "Disconnected",
+  "enterFullscreen": "Enter fullscreen",
+  "exitFullscreen": "Exit fullscreen"
 }

@@ -1,8 +1,12 @@
-﻿import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import '../../shared/i18n';
 import CommonZoneFullscreenButton from '../../shared/components/identity/CommonZoneFullscreenButton';
 import {
   Accordion,
   ActivitiesMenu,
+  SettingsAccordion,
+  CommonSessionSettings,
   HeroTitle,
   MathFormula,
   SharedCommonZoneLayout,
@@ -15,38 +19,37 @@ const ACTIVITY_LIBRARY = [
   {
     id: '1',
     code: '1.',
-    title: 'Τετράγωνο αθροίσματος',
-    objective: 'Συμπλήρωσε τα μέλη της ταυτότητας (a+b)^2 = a^2 + 2ab + b^2.',
+    titleKey: 'activity1Title',
+    objectiveKey: 'activity1Objective',
+    geometricKey: 'activity1Geometric',
     expression: '(a+b)^2',
     expected: ['a^2', '2ab', 'b^2'],
-    geometric: 'Τετράγωνο πλευράς a+b που χωρίζεται σε a^2, b^2 και δύο ίσα ορθογώνια ab.'
   },
   {
     id: '2',
     code: '2.',
-    title: 'Τετράγωνο διαφοράς',
-    objective: 'Συμπλήρωσε τα μέλη της ταυτότητας (a-b)^2 = a^2 - 2ab + b^2.',
+    titleKey: 'activity2Title',
+    objectiveKey: 'activity2Objective',
+    geometricKey: 'activity2Geometric',
     expression: '(a-b)^2',
     expected: ['a^2', '-2ab', 'b^2'],
-    geometric: 'Ξεκινάμε από a^2 και αφαιρούμε δύο ορθογώνια ab, ενώ προσθέτουμε πίσω το b^2 για διόρθωση διπλής αφαίρεσης.'
   },
   {
     id: '3',
     code: '3.',
-    title: 'Διαφορά τετραγώνων',
-    objective: 'Συμπλήρωσε τα μέλη της ταυτότητας (a+b)(a-b) = a^2 - b^2.',
+    titleKey: 'activity3Title',
+    objectiveKey: 'activity3Objective',
+    geometricKey: 'activity3Geometric',
     expression: '(a+b)(a-b)',
     expected: ['a^2', '-b^2', ''],
-    geometric: 'Το εμβαδό ενός ορθογωνίου (a+b)(a-b) ισούται με τη διαφορά δύο τετραγώνων a^2 και b^2.'
   },
   {
     id: '4',
     code: '4.',
-    title: 'Γεωμετρική απόδειξη',
-    objective: 'Επέλεξε τιμές για a, b και δες αριθμητική επιβεβαίωση των γεωμετρικών αποδείξεων.',
-    expression: 'Geometric Proof',
+    titleKey: 'activity4Title',
+    objectiveKey: 'activity4Objective',
+    geometricKey: 'activity4Geometric',
     expected: [],
-    geometric: 'Αριθμητικός έλεγχος των ταυτοτήτων μέσω εμβαδών για συγκεκριμένες τιμές a και b.'
   }
 ];
 
@@ -71,6 +74,7 @@ function toNumber(value) {
 }
 
 export default function App({ role = 'student' }) {
+  const { t } = useTranslation('identities');
   const isTeacher = role === 'teacher';
   const [selectedActivityId, setSelectedActivityId] = useState(ACTIVITY_LIBRARY[0].id);
   const [answersByActivity, setAnswersByActivity] = useState({});
@@ -86,8 +90,8 @@ export default function App({ role = 'student' }) {
   const isProofMode = selectedActivityId === '4';
 
   const leftPanel = (
-    <div className="lab-card lab-card--highlight poly-expression-card identities-expression-card" aria-label="ταυτότητα">
-      <p className="lab-mini-label poly-mini-label">Ταυτότητα</p>
+    <div className="lab-card lab-card--highlight poly-expression-card identities-expression-card" aria-label={t('identityAriaLabel')}>
+      <p className="lab-mini-label poly-mini-label">{t('identityLabel')}</p>
       <div className="lab-math-box poly-expression-math">
         <MathFormula
           formula={
@@ -97,14 +101,14 @@ export default function App({ role = 'student' }) {
           }
         />
       </div>
-      <p className="identities-note">{activeActivity.geometric}</p>
+      <p className="identities-note">{t(activeActivity.geometricKey)}</p>
     </div>
   );
 
   const resultRows = [
-    { label: '1ος όρος', value: activeAnswers.term1, key: 'term1' },
-    { label: '2ος όρος', value: activeAnswers.term2, key: 'term2' },
-    { label: '3ος όρος', value: activeAnswers.term3, key: 'term3' }
+    { label: t('term1'), value: activeAnswers.term1, key: 'term1' },
+    { label: t('term2'), value: activeAnswers.term2, key: 'term2' },
+    { label: t('term3'), value: activeAnswers.term3, key: 'term3' }
   ];
 
   const checkIdentityAnswers = () => {
@@ -117,7 +121,7 @@ export default function App({ role = 'student' }) {
       && isEquivalent(activeAnswers.term2, expected[1])
       && isEquivalent(activeAnswers.term3, expected[2]);
 
-    setFeedback(allCorrect ? 'Σωστά! Η ταυτότητα είναι πλήρης.' : 'Έλεγξε ξανά τους όρους της ανάπτυξης.');
+    setFeedback(allCorrect ? t('correctFeedback') : t('incorrectFeedback'));
   };
 
   const aValue = toNumber(numericInputs.a);
@@ -151,7 +155,7 @@ export default function App({ role = 'student' }) {
     <div className="lab-card lab-card--panel poly-team-card identities-team-card">
       {!isProofMode ? (
         <div className="poly-template-answer-panel">
-          <p className="identities-note">Συμπλήρωσε το δεξί μέλος της ταυτότητας.</p>
+          <p className="identities-note">{t('completeRightSide')}</p>
           <div className="poly-team-grid poly-team-grid--full">
             <div className="poly-term-block poly-term-block--result">
               <div className="poly-term-inputs poly-term-inputs--result">
@@ -180,13 +184,13 @@ export default function App({ role = 'student' }) {
             </div>
           </div>
           <div className="identities-actions">
-            <button type="button" className="linear-btn" onClick={checkIdentityAnswers}>Έλεγχος</button>
+          <button type="button" className="linear-btn" onClick={checkIdentityAnswers}>{t('check')}</button>
           </div>
           {feedback ? <p className="linear-feedback">{feedback}</p> : null}
         </div>
       ) : (
         <div className="poly-template-answer-panel">
-          <p className="identities-note">Βάλε τιμές και έλεγξε ισότητα αριστερού και δεξιού μέλους.</p>
+          <p className="identities-note">{t('checkEquality')}</p>
           <div className="identities-proof-inputs">
             <SharedInputBox
               activity={`identities:${selectedActivityId}`}
@@ -205,7 +209,7 @@ export default function App({ role = 'student' }) {
           </div>
 
           <div className="lab-preview poly-preview-panel">
-            <p className="lab-mini-label poly-mini-label">Αριθμητική επαλήθευση</p>
+            <p className="lab-mini-label poly-mini-label">{t('numericVerification')}</p>
             {numericProof ? (
               <div className="identities-proof-results">
                 <p>(a+b)^2 = {numericProof.sumSquareLeft} | a^2+2ab+b^2 = {numericProof.sumSquareRight}</p>
@@ -213,7 +217,7 @@ export default function App({ role = 'student' }) {
                 <p>(a+b)(a-b) = {numericProof.squaresDiffLeft} | a^2-b^2 = {numericProof.squaresDiffRight}</p>
               </div>
             ) : (
-              <p className="identities-note">Συμπλήρωσε και τα δύο πεδία με αριθμούς.</p>
+              <p className="identities-note">{t('enterBothNumbers')}</p>
             )}
           </div>
         </div>
@@ -223,14 +227,14 @@ export default function App({ role = 'student' }) {
 
   const rightPanel = (
     <aside className="lab-card lab-card--panel poly-team-card identities-geometry-card">
-      <p className="lab-mini-label poly-mini-label">Γεωμετρική απόδειξη</p>
-      <div className="identities-geometry-figure" aria-label="geometric proof blocks">
-        <div className="identities-square identities-square--a2">aΒ²</div>
+      <p className="lab-mini-label poly-mini-label">{t('geometricProof')}</p>
+      <div className="identities-geometry-figure" aria-label={t('geometricProofAriaLabel')}>
+        <div className="identities-square identities-square--a2">a²</div>
         <div className="identities-rect identities-rect--ab-1">ab</div>
         <div className="identities-rect identities-rect--ab-2">ab</div>
-        <div className="identities-square identities-square--b2">bΒ²</div>
+        <div className="identities-square identities-square--b2">b²</div>
       </div>
-      <p className="identities-note">Το σχήμα δείχνει πώς το (a+b)^2 διασπάται σε a^2 + 2ab + b^2.</p>
+      <p className="identities-note">{t('geometricExplanation')}</p>
       <div className="lab-math-box lab-math-box--compact poly-expression-math poly-expression-math--small">
         <MathFormula formula="\\((a+b)^2=a^2+2ab+b^2\\)" />
       </div>
@@ -247,15 +251,15 @@ export default function App({ role = 'student' }) {
     <div className="linear-lab-shell identities-lab-shell">
       <header className="linear-lab-header">
         <HeroTitle
-          title={`${activeActivity.code} ${activeActivity.title}`}
-          subtitle={activeActivity.objective}
+          title={`${activeActivity.code} ${t(activeActivity.titleKey)}`}
+          subtitle={t(activeActivity.objectiveKey)}
         />
       </header>
 
       <section className="common-zone lab-zone linear-common-zone">
         <CommonZoneFullscreenButton />
         <div className="linear-topbar">
-          <span className="poly-status-pill">{isTeacher ? 'Teacher mode' : 'Student mode'}</span>
+          <span className="poly-status-pill">{isTeacher ? t('teacherMode') : t('studentMode')}</span>
         </div>
 
         <SharedCommonZoneLayout
@@ -269,12 +273,12 @@ export default function App({ role = 'student' }) {
       {isTeacher ? (
         <>
           <ActivitiesMenu
-            title="Δραστηριότητα"
+            title={t('activities')}
             icon="🎯"
-            label="Επιλογή δραστηριότητας"
+            label={t('chooseActivity')}
             options={ACTIVITY_LIBRARY.map((activity) => ({
               value: activity.id,
-              label: `${activity.code} ${activity.title}`
+              label: `${activity.code} ${t(activity.titleKey)}`
             }))}
             value={selectedActivityId}
             onChange={(nextId) => {
@@ -283,11 +287,15 @@ export default function App({ role = 'student' }) {
             }}
           />
 
-          <Accordion title="Διδακτικός οδηγός" icon="🧭" open>
+          <SettingsAccordion open>
+            <CommonSessionSettings />
+          </SettingsAccordion>
+
+          <Accordion title={t('teacherGuide')} icon="🧭" open>
             <div className="lab-data-section data-section poly-data-menu">
-              <p className="identities-note">1. Πρώτα οι μαθητές συμπληρώνουν αλγεβρικά την ανάπτυξη.</p>
-              <p className="identities-note">2. Έπειτα συνδέουν κάθε όρο με εμβαδά τετραγώνων/ορθογωνίων.</p>
-              <p className="identities-note">3. Τέλος χρησιμοποιούν αριθμητικές τιμές για επιβεβαίωση της γεωμετρικής απόδειξης.</p>
+              <p className="identities-note">{t('guideStep1')}</p>
+              <p className="identities-note">{t('guideStep2')}</p>
+              <p className="identities-note">{t('guideStep3')}</p>
             </div>
           </Accordion>
         </>
