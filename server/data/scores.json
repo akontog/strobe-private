@@ -3,10 +3,13 @@
     {
       "id": "εεε",
       "name": "εεε",
-      "totalScore": 0,
+      "totalScore": -0.5,
       "currentScore": 0,
-      "activities": {},
-      "updatedAt": "2026-10-11T13:17:29.306Z"
+      "activities": {
+        "polynomial:1.1:m-1": -0.5,
+        "polynomial:1.2:grouping-1": 0
+      },
+      "updatedAt": "2026-10-12T07:31:33.801Z"
     }
   ]
 }

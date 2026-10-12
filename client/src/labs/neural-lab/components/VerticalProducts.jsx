@@ -4,6 +4,7 @@ import { ProductRow } from './ProductRow';
 export const VerticalProducts = ({
   icon = '🚗',
   features,
+  activity = '',
   prod1,
   prod2,
   w1,
@@ -99,6 +100,7 @@ export const VerticalProducts = ({
       <div className="products-stack">
         {showInput1 && (
           <ProductRow
+            activity={activity}
             icon={features.i1.icon}
             label={features.i1.label}
             input1={i1}
@@ -122,6 +124,7 @@ export const VerticalProducts = ({
         )}
         {showInput2 && (
           <ProductRow
+            activity={activity}
             icon={features.i2.icon}
             label={features.i2.label}
             input1={i2}

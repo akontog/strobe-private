@@ -1394,6 +1394,7 @@ export default function App({ role = 'teacher' }) {
                   </div>
                 )}
                 <GroupingDragDrop
+                  activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
                   items={groupingItems}
                   groups={groupingGroups}
                   placements={activeGroupingPlacements}
@@ -1552,6 +1553,7 @@ export default function App({ role = 'teacher' }) {
               </div>
             ) : (
               <ActivityInputGrid
+                activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
                 columns={2}
                 className="lab-input-grid poly-team-grid"
                 labelClassName="shared-input-box__label"

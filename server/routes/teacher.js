@@ -3,6 +3,7 @@ const express = require('express');
 const { getAppBySlug, listAppsForRole, toPublicApp } = require('../apps/registry');
 const { saveActivity, listActivities, getActivity } = require('../services/appActivities');
 const { requireRole } = require('../middleware/checkRole');
+const { createSession, appendRecord, endSession } = require('../services/sessionLogs');
 
 const router = express.Router();
 router.use(requireRole(['teacher']));
@@ -26,6 +27,44 @@ function resolveTeacherApp(req, res) {
 router.get('/apps', (req, res) => {
   const apps = listAppsForRole('teacher').map((app) => toPublicApp(app, 'teacher'));
   res.json(apps);
+});
+
+router.post('/sessions', (req, res) => {
+  const appSlug = String(req.body && req.body.app || '').trim();
+  const app = getAppBySlug(appSlug);
+  if (!app || !app.roles.includes('teacher')) return res.status(400).json({ error: 'Choose a valid teacher app.' });
+  const session = createSession({
+    app: app.slug,
+    activity: String(req.body && req.body.activity || '').trim().slice(0, 120),
+    teacherId: req.session.teacherAccount
+  });
+  return res.status(201).json(session);
+});
+
+router.post('/sessions/:sessionId/state', (req, res) => {
+  const state = req.body && req.body.students;
+  if (!state || typeof state !== 'object' || Array.isArray(state)) return res.status(400).json({ error: 'State must contain a students object.' });
+  const record = appendRecord(req.params.sessionId, 'state.jsonl', { students: state });
+  if (!record) return res.status(404).json({ error: 'Active session not found.' });
+  return res.status(201).json({ seq: record.seq, t: record.t });
+});
+
+router.post('/sessions/:sessionId/events', (req, res) => {
+  const event = String(req.body && req.body.event || '').trim().slice(0, 120);
+  if (!event) return res.status(400).json({ error: 'Event name is required.' });
+  const record = appendRecord(req.params.sessionId, 'events.jsonl', {
+    event,
+    ...(req.body.student ? { student: String(req.body.student).slice(0, 120) } : {}),
+    ...(req.body.data && typeof req.body.data === 'object' ? { data: req.body.data } : {})
+  });
+  if (!record) return res.status(404).json({ error: 'Active session not found.' });
+  return res.status(201).json({ seq: record.seq, t: record.t });
+});
+
+router.post('/sessions/:sessionId/end', (req, res) => {
+  const session = endSession(req.params.sessionId);
+  if (!session) return res.status(404).json({ error: 'Active session not found.' });
+  return res.json(session);
 });
 
 router.get('/activities/:slug', (req, res) => {

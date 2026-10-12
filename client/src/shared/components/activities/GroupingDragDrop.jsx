@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useSessionInputLogger } from './SessionLogContext';
 import './GroupingDragDrop.css';
 
 const BANK_ZONE_ID = '__bank__';
@@ -12,6 +13,7 @@ export default function GroupingDragDrop({
   items = [],
   groups = [],
   placements = {},
+  activity = '',
   onChange,
   disabled = false,
   invalidItemIds = [],
@@ -19,6 +21,9 @@ export default function GroupingDragDrop({
   bankLabel = 'Αντικείμενα προς ομαδοποίηση',
   emptyZoneLabel = 'Σύρε αντικείμενα εδώ'
 }) {
+  const sessionLogging = useSessionInputLogger();
+  const canEdit = sessionLogging?.canEdit ?? true;
+  const interactionDisabled = disabled || !canEdit;
   const [draggingItemId, setDraggingItemId] = useState(null);
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [hoverZoneId, setHoverZoneId] = useState(null);
@@ -71,7 +76,7 @@ export default function GroupingDragDrop({
   };
 
   const moveItemToZone = (itemId, zoneId) => {
-    if (!itemId || disabled) {
+    if (!itemId || interactionDisabled) {
       return;
     }
 
@@ -88,6 +93,11 @@ export default function GroupingDragDrop({
     };
 
     onChange?.(nextPlacements);
+    sessionLogging?.logEvent('grouping.item.moved', activity, {
+      itemId: String(itemId),
+      from: currentGroupId || BANK_ZONE_ID,
+      to: nextGroupId || BANK_ZONE_ID
+    });
   };
 
   useEffect(() => {
@@ -118,10 +128,10 @@ export default function GroupingDragDrop({
       window.removeEventListener('pointerup', stopDrag);
       window.removeEventListener('pointercancel', stopDrag);
     };
-  }, [draggingItemId, placements, groupIds]);
+  }, [draggingItemId, placements, groupIds, interactionDisabled, activity, onChange, sessionLogging]);
 
   const handleItemPointerDown = (event, itemId) => {
-    if (disabled || disabledSet.has(itemId)) {
+    if (interactionDisabled || disabledSet.has(itemId)) {
       return;
     }
 
@@ -132,7 +142,7 @@ export default function GroupingDragDrop({
   };
 
   const handleItemClick = (itemId) => {
-    if (disabled || disabledSet.has(itemId) || Date.now() < ignoreClickUntilRef.current) {
+    if (interactionDisabled || disabledSet.has(itemId) || Date.now() < ignoreClickUntilRef.current) {
       return;
     }
 
@@ -140,7 +150,7 @@ export default function GroupingDragDrop({
   };
 
   const handleZoneClick = (zoneId) => {
-    if (disabled || !selectedItemId) {
+    if (interactionDisabled || !selectedItemId) {
       return;
     }
 
@@ -161,7 +171,7 @@ export default function GroupingDragDrop({
         className={`grouping-dd-item${isSelected ? ' is-selected' : ''}${isDragging ? ' is-dragging' : ''}${isInvalid ? ' is-invalid' : ''}${isItemDisabled ? ' is-locked' : ''}`}
         onPointerDown={(event) => handleItemPointerDown(event, item.id)}
         onClick={() => handleItemClick(item.id)}
-        disabled={disabled || isItemDisabled}
+        disabled={interactionDisabled || isItemDisabled}
       >
         {item.content}
       </button>

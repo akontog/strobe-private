@@ -1,5 +1,6 @@
 ﻿import React from 'react';
 import './ActivityInputGrid.css';
+import { useSessionInputLogger } from './SessionLogContext';
 
 /**
  * Renders configurable input and display cells for reusable activities.
@@ -14,10 +15,13 @@ import './ActivityInputGrid.css';
 export default function ActivityInputGrid({
   fields = [],
   columns = 2,
+  activity = '',
   className = '',
   customLayout = false,
   labelClassName = ''
 }) {
+  const sessionLogging = useSessionInputLogger();
+  const canEdit = sessionLogging?.canEdit ?? true;
   const gridClassName = customLayout
     ? className
     : ['activity-input-grid', className].filter(Boolean).join(' ');
@@ -58,9 +62,16 @@ export default function ActivityInputGrid({
               type={field.type || 'text'}
               value={field.value === null || field.value === undefined ? '' : String(field.value)}
               placeholder={field.placeholder || ''}
-              disabled={Boolean(field.disabled)}
+              disabled={Boolean(field.disabled) || !canEdit}
               aria-label={field.ariaLabel || field.label || undefined}
-              onChange={(event) => field.onChange?.(event.target.value, event)}
+              onChange={(event) => {
+                const value = event.target.value;
+                field.onChange?.(value, event);
+                sessionLogging?.logEvent('activity.input.changed', activity, {
+                  field: String(field.id || field.key || field.label || key),
+                  value
+                });
+              }}
             />
           </label>
         );

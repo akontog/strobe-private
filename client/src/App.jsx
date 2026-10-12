@@ -33,6 +33,7 @@ import ConsoleTool from './tools/console/ConsoleTool';
 import StudentIdentityControl from './shared/components/identity/StudentIdentityControl';
 import LanguageSwitcher from './shared/components/identity/LanguageSwitcher';
 import RoleAccessControl from './shared/components/identity/RoleAccessControl';
+import { SessionLogProvider } from './shared/components/activities/SessionLogContext';
 
 function App() {
   const { t } = useTranslation(['common', 'menu']);
@@ -45,6 +46,8 @@ function App() {
   const [activeMenu, setActiveMenu] = useState('');
   const [clickedMenu, setClickedMenu] = useState('');
   const [serverConnected, setServerConnected] = useState(false);
+  const [teacherSession, setTeacherSession] = useState(null);
+  const [teacherSessionBusy, setTeacherSessionBusy] = useState(false);
 
   useEffect(() => {
     fetch('/api/auth/session').then((response) => response.json()).then((session) => {
@@ -113,6 +116,29 @@ function App() {
     }
   }
 
+  async function toggleTeacherSession() {
+    setTeacherSessionBusy(true);
+    try {
+      const labMatch = pathname.match(/^\/labs\/([^/]+)\//);
+      const app = labMatch ? labMatch[1] : 'geometry-live';
+      const endpoint = teacherSession
+        ? `/teacher/sessions/${encodeURIComponent(teacherSession.sessionId)}/end`
+        : '/teacher/sessions';
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        ...(!teacherSession ? { body: JSON.stringify({ app }) } : {})
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || 'Η ενέργεια συνεδρίας απέτυχε.');
+      setTeacherSession(teacherSession ? null : payload);
+    } catch (sessionError) {
+      window.alert(sessionError.message || 'Η ενέργεια συνεδρίας απέτυχε.');
+    } finally {
+      setTeacherSessionBusy(false);
+    }
+  }
+
   const teacherOnly = (element) => authReady
     ? (role === 'teacher' ? element : <Navigate to="/client" replace />)
     : null;
@@ -139,6 +165,7 @@ function App() {
   const clickedMenuGroup = clickedMenu === 'labs' || role === 'teacher' ? menuGroups[clickedMenu] : null;
 
   return (
+    <SessionLogProvider app={pathname.match(/^\/labs\/([^/]+)/)?.[1]} role={role} sessionId={teacherSession?.sessionId}>
     <div className="client-shell">
       <header className="client-topbar" onMouseLeave={() => setActiveMenu('')}>
         <Link className="client-home-link" to="/" aria-label="Strobe"><img src="/icons/strobelogo.svg" alt="Strobe" /></Link>
@@ -188,6 +215,11 @@ function App() {
           <StudentIdentityControl
             roleLabel={role === 'teacher' ? t('teacher') : t('student')}
             roleControl={<RoleAccessControl role={role} username={teacherUsername} connected={serverConnected} onLogin={loginTeacher} onRoleChange={changeRole} labels={{ teacher: t('teacher'), student: t('student'), username: t('username'), password: tNav('password'), login: tNav('login'), connected: tNav('connected'), disconnected: tNav('disconnected') }} />}
+            sessionControl={role === 'teacher' ? (
+              <button type="button" className="student-identity-control__name" onClick={toggleTeacherSession} disabled={teacherSessionBusy}>
+                {teacherSessionBusy ? '…' : teacherSession ? 'Ολοκλήρωση συνεδρίας' : 'Έναρξη συνεδρίας'}
+              </button>
+            ) : null}
           />
           <LanguageSwitcher />
         </div>
@@ -250,6 +282,7 @@ function App() {
         </Routes> : null}
       </div>
     </div>
+    </SessionLogProvider>
   );
 }
 

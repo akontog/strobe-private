@@ -786,6 +786,7 @@ const [studentColor, setStudentColor] = useState(() => {
       <div className="common-zone">
         <CommonZoneFullscreenButton />
         <VerticalProducts
+          activity={`neural-lab:${activeActivity}`}
           icon={displayIcon}
           demoIcon={demoIcon}
           demoLabel={demoLabel}

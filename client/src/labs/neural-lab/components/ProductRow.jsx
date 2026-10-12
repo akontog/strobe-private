@@ -4,6 +4,7 @@ import { ActivityInputGrid } from '../../../shared/components';
 export const ProductRow = ({
   icon,
   label,
+  activity = '',
   input1,
   weight,
   product,
@@ -21,6 +22,7 @@ export const ProductRow = ({
         <span className="feature-text">{label}</span>
       </div>
       <ActivityInputGrid
+        activity={activity}
         customLayout
         className="math-group"
         fields={[

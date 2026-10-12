@@ -820,6 +820,7 @@ export default function App({ role = 'student' }) {
         <>
           <p className="linear-note">Ομαδοποίησε κάθε σύστημα στις 3 ομάδες: καμία, μία, άπειρες λύσεις.</p>
           <GroupingDragDrop
+            activity={`linear-systems:${selectedActivityId}`}
             items={activeItems}
             groups={groupingGroups}
             placements={activeGroupingPlacements}

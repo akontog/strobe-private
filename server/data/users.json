@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-10-11T13:17:18.280Z",
+  "savedAt": "2026-10-12T07:31:13.236Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -919,13 +919,13 @@
       "userId": "user_1791527667945_27pt91q",
       "ip": "127.0.0.1",
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
-      "username": "Buffon teacher",
+      "username": "dd",
       "role": "teacher",
       "teacherAccount": "antonis",
-      "source": "buffon",
+      "source": "polynomial-lab",
       "activeApps": [
         "neural",
-        "buffon"
+        "polynomial-lab"
       ],
       "appData": {
         "neural": {
@@ -976,7 +976,7 @@
         }
       },
       "connectedAt": 1791527667945,
-      "lastSeenAt": 1791724638280,
+      "lastSeenAt": 1791790268708,
       "isActive": true
     },
     {
@@ -1013,15 +1013,15 @@
           "lastUpdated": "2026-10-11T07:08:04.318Z"
         },
         "polynomial": {
-          "id": "student-1",
+          "id": "student-2",
           "name": "εεε",
-          "color": "#14b8a6",
+          "color": "#22c55e",
           "active": true,
-          "lastUpdated": "2026-10-11T13:16:45.461Z"
+          "lastUpdated": "2026-10-12T07:31:13.231Z"
         }
       },
       "connectedAt": 1791550835233,
-      "lastSeenAt": 1791724620779,
+      "lastSeenAt": 1791790273236,
       "isActive": true
     },
     {
@@ -1182,6 +1182,21 @@
       "appData": {},
       "connectedAt": 1791623495251,
       "lastSeenAt": 1791623495251,
+      "isActive": true
+    },
+    {
+      "id": "cc0ab475-909f-4b2f-9cc6-a9959021173e",
+      "userId": "user_1791789326148_x0wf7op",
+      "ip": "44.203.125.226",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
+      "username": "user-cc0ab4",
+      "role": "student",
+      "teacherAccount": "",
+      "source": "http",
+      "activeApps": [],
+      "appData": {},
+      "connectedAt": 1791789326149,
+      "lastSeenAt": 1791789326149,
       "isActive": true
     }
   ]
