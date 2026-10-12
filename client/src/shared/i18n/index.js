@@ -11,6 +11,7 @@ import interfaceEl from '../../locales/el/interface.json';
 import primesEl from '../../locales/el/primes.json';
 import navigationEl from '../../locales/el/navigation.json';
 import scoresEl from '../../locales/el/scores.json';
+import polynomialEl from '../../locales/el/polynomial.json';
 
 import commonEn from '../../locales/en/common.json';
 import menuEn from '../../locales/en/menu.json';
@@ -21,6 +22,7 @@ import interfaceEn from '../../locales/en/interface.json';
 import primesEn from '../../locales/en/primes.json';
 import navigationEn from '../../locales/en/navigation.json';
 import scoresEn from '../../locales/en/scores.json';
+import polynomialEn from '../../locales/en/polynomial.json';
 
 export const preferredLanguageStorageKey = 'preferredLanguage';
 
@@ -34,7 +36,8 @@ const resources = {
     interface: interfaceEl,
     primes: primesEl,
     navigation: navigationEl,
-    scores: scoresEl
+    scores: scoresEl,
+    polynomial: polynomialEl
   },
   en: {
     common: commonEn,
@@ -45,7 +48,8 @@ const resources = {
     interface: interfaceEn,
     primes: primesEn,
     navigation: navigationEn,
-    scores: scoresEn
+    scores: scoresEn,
+    polynomial: polynomialEn
   }
 };
 
@@ -58,7 +62,7 @@ if (!i18n.isInitialized) {
       fallbackLng: 'el',
       supportedLngs: ['el', 'en'],
       defaultNS: 'common',
-      ns: ['common', 'menu', 'geometry', 'buffon', 'neural', 'interface', 'primes', 'navigation', 'scores'],
+      ns: ['common', 'menu', 'geometry', 'buffon', 'neural', 'interface', 'primes', 'navigation', 'scores', 'polynomial'],
       interpolation: {
         escapeValue: false
       },
