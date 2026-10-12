@@ -1,5 +1,6 @@
 ﻿import React, { useMemo, useState } from 'react';
 import './algebra-tiles.css';
+import { useSessionInputLogger } from './SessionLogContext';
 
 const TILE_TYPES = [
   { id: 'one', label: '1', name: 'Μονάδα', className: 'unit' },
@@ -64,7 +65,9 @@ function exampleTiles(initialExample) {
   }));
 }
 
-export default function AlgebraTiles({ initialExample = 'linear', canvasMode = 'multiplication', tiles: sharedTiles, onTilesChange }) {
+export default function AlgebraTiles({ initialExample = 'linear', canvasMode = 'multiplication', activity = '', tiles: sharedTiles, onTilesChange }) {
+  const sessionLogging = useSessionInputLogger();
+  const canEdit = sessionLogging?.canEdit ?? true;
   const [localTiles, setLocalTiles] = useState(() => exampleTiles(initialExample));
   const tiles = Array.isArray(sharedTiles) ? sharedTiles : localTiles;
   const [mode, setMode] = useState('tiles');
@@ -79,8 +82,15 @@ export default function AlgebraTiles({ initialExample = 'linear', canvasMode = '
   }, {}), [tiles]);
 
   const commitTiles = (nextTiles) => {
+    if (!canEdit) return;
     setLocalTiles(nextTiles);
     onTilesChange?.(nextTiles);
+    sessionLogging?.logEvent('activity.tiles.changed', activity, {
+      tiles: nextTiles.map(({ id, type, sign, x, y }) => ({ id, type, sign, x, y }))
+    });
+  };
+  const logFieldChange = (field, value) => {
+    sessionLogging?.logEvent('activity.input.changed', activity, { field, value: String(value) });
   };
   const addTile = (type, sign) => {
     const nextIndex = tiles.length;
@@ -101,6 +111,7 @@ export default function AlgebraTiles({ initialExample = 'linear', canvasMode = '
     event.dataTransfer.setData('text/plain', serialized);
   };
   const dropTile = (event) => {
+    if (!canEdit) return;
     event.preventDefault();
     try {
       const serialized = event.dataTransfer.getData('application/x-algebra-tile') || event.dataTransfer.getData('text/plain');
@@ -137,30 +148,30 @@ export default function AlgebraTiles({ initialExample = 'linear', canvasMode = '
         <>
           <div className="algebra-tiles__examples">
             <span>Παραδείγματα:</span>
-            <button type="button" onClick={() => loadExample('linear')}>3x + 2</button>
-            <button type="button" onClick={() => loadExample('quadratic')}>2x² − x + 4</button>
-            <button type="button" onClick={() => setTiles([])}>Καθαρισμός</button>
+            <button type="button" disabled={!canEdit} onClick={() => loadExample('linear')}>3x + 2</button>
+            <button type="button" disabled={!canEdit} onClick={() => loadExample('quadratic')}>2x² − x + 4</button>
+            <button type="button" disabled={!canEdit} onClick={() => setTiles([])}>Καθαρισμός</button>
           </div>
           <div className="algebra-tiles__palette">
             {TILE_TYPES.map((tile) => (
               <div className="algebra-tiles__palette-item" key={tile.id}>
-                <span className={`algebra-tile algebra-tile--${tile.className}`} aria-hidden="true" draggable
+                <span className={`algebra-tile algebra-tile--${tile.className}`} aria-hidden="true" draggable={canEdit}
                   onDragStart={(event) => beginTileDrag(event, { type: tile.id, sign: 1 }, true)}>{tile.label}</span>
-                <span className={`algebra-tile algebra-tile--${tile.className} is-negative algebra-tiles__negative-source`} aria-hidden="true" draggable
+                <span className={`algebra-tile algebra-tile--${tile.className} is-negative algebra-tiles__negative-source`} aria-hidden="true" draggable={canEdit}
                   onDragStart={(event) => beginTileDrag(event, { type: tile.id, sign: -1 }, true)}>{tile.label}</span>
                 <strong>{tile.name}</strong>
-                <div><button type="button" aria-label={`Προσθήκη θετικού ${tile.name}`} onClick={() => addTile(tile.id, 1)}>+ Προσθήκη</button>
-                  <button type="button" aria-label={`Προσθήκη αρνητικού ${tile.name}`} onClick={() => addTile(tile.id, -1)}>− Προσθήκη</button></div>
+                <div><button type="button" disabled={!canEdit} aria-label={`Προσθήκη θετικού ${tile.name}`} onClick={() => addTile(tile.id, 1)}>+ Προσθήκη</button>
+                  <button type="button" disabled={!canEdit} aria-label={`Προσθήκη αρνητικού ${tile.name}`} onClick={() => addTile(tile.id, -1)}>− Προσθήκη</button></div>
               </div>
             ))}
           </div>
           <section className="algebra-tiles__board" aria-label="Κοινός καμβάς πλακιδίων">
             <div className="algebra-tiles__board-title"><h3>Πίνακας</h3><output>{formatPolynomial(counts, ['x2', 'xy', 'y2', 'x', 'y', 'one'])}</output></div>
             <div className={`algebra-tiles__placed algebra-tiles__placed--${canvasMode}`}
-              onDragOver={(event) => event.preventDefault()} onDrop={dropTile}>
+              onDragOver={(event) => { if (canEdit) event.preventDefault(); }} onDrop={dropTile}>
               {tiles.map((tile) => {
                 const definition = TILE_TYPES.find((item) => item.id === tile.type);
-                return <button key={tile.id} type="button" draggable
+                return <button key={tile.id} type="button" draggable={canEdit} disabled={!canEdit}
                   onDragStart={(event) => beginTileDrag(event, tile)}
                   style={{ left: `${(tile.x || 0) * GRID_UNIT}px`, top: `${(tile.y || 0) * GRID_UNIT}px` }}
                   className={`algebra-tile algebra-tile--${definition.className} ${tile.sign < 0 ? 'is-negative' : ''}`}
@@ -176,8 +187,8 @@ export default function AlgebraTiles({ initialExample = 'linear', canvasMode = '
         <section className="algebra-tiles__model">
           <div className="algebra-tiles__controls">
             <h3>Μοντέλο ορθογωνίου</h3>
-            <label>Πλευρά A: x + <input type="number" min="0" max="8" value={sideA} onChange={(event) => setSideA(Math.max(0, Math.min(8, Number(event.target.value))))} /></label>
-            <label>Πλευρά B: x + <input type="number" min="0" max="8" value={sideB} onChange={(event) => setSideB(Math.max(0, Math.min(8, Number(event.target.value))))} /></label>
+            <label>Πλευρά A: x + <input type="number" min="0" max="8" value={sideA} disabled={!canEdit} onChange={(event) => { const value = Math.max(0, Math.min(8, Number(event.target.value))); setSideA(value); logFieldChange('sideA', value); }} /></label>
+            <label>Πλευρά B: x + <input type="number" min="0" max="8" value={sideB} disabled={!canEdit} onChange={(event) => { const value = Math.max(0, Math.min(8, Number(event.target.value))); setSideB(value); logFieldChange('sideB', value); }} /></label>
             <strong>(x + {sideA})(x + {sideB}) = xΒ² + {sideA + sideB}x + {sideA * sideB}</strong>
           </div>
           <div className="algebra-tiles__area" aria-label="Ανάλυση εμβαδού">
@@ -193,8 +204,8 @@ export default function AlgebraTiles({ initialExample = 'linear', canvasMode = '
         <section className="algebra-tiles__model algebra-tiles__factor">
           <div className="algebra-tiles__controls"><h3>Αντίστροφο μοντέλο: παραγοντοποίηση</h3>
             <p>Βρες δύο αριθμούς με άθροισμα τον συντελεστή του x και γινόμενο τον σταθερό όρο.</p>
-            <label>Συντελεστής x <input type="number" value={factorB} onChange={(event) => setFactorB(event.target.value)} /></label>
-            <label>Σταθερός όρος <input type="number" value={factorC} onChange={(event) => setFactorC(event.target.value)} /></label>
+            <label>Συντελεστής x <input type="number" value={factorB} disabled={!canEdit} onChange={(event) => { setFactorB(event.target.value); logFieldChange('factorB', event.target.value); }} /></label>
+            <label>Σταθερός όρος <input type="number" value={factorC} disabled={!canEdit} onChange={(event) => { setFactorC(event.target.value); logFieldChange('factorC', event.target.value); }} /></label>
           </div>
           <div className="algebra-tiles__factor-result">
             <span>x² {Number(factorB) < 0 ? '−' : '+'} {Math.abs(Number(factorB) || 0)}x {Number(factorC) < 0 ? '−' : '+'} {Math.abs(Number(factorC) || 0)}</span>

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-10-12T07:31:13.236Z",
+  "savedAt": "2026-10-12T08:29:16.931Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -976,7 +976,7 @@
         }
       },
       "connectedAt": 1791527667945,
-      "lastSeenAt": 1791790268708,
+      "lastSeenAt": 1791793756328,
       "isActive": true
     },
     {
@@ -1017,11 +1017,11 @@
           "name": "εεε",
           "color": "#22c55e",
           "active": true,
-          "lastUpdated": "2026-10-12T07:31:13.231Z"
+          "lastUpdated": "2026-10-12T08:29:16.927Z"
         }
       },
       "connectedAt": 1791550835233,
-      "lastSeenAt": 1791790273236,
+      "lastSeenAt": 1791793756931,
       "isActive": true
     },
     {

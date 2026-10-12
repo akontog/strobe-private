@@ -11,6 +11,8 @@
   "language": "Language",
   "greek": "Greek",
   "english": "English",
+  "startSession": "Start session",
+  "endSession": "End session",
   "input": "Input",
   "notAvailable": "Not available",
   "status": "Status",

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSessionInputLogger } from '../activities/SessionLogContext';
 import './shared-inputs.css';
 
 export default function SharedInputBox({
@@ -12,9 +13,12 @@ export default function SharedInputBox({
   inputClassName = '',
   labelClassName = '',
   disabled = false,
+  activity = '',
   id,
   autoComplete = 'off'
 }) {
+  const sessionLogging = useSessionInputLogger();
+  const canEdit = sessionLogging?.canEdit ?? true;
   const wrapperClassName = ['shared-input-box', className].filter(Boolean).join(' ');
   const finalInputClassName = ['shared-input-box__input', inputClassName].filter(Boolean).join(' ');
   const finalLabelClassName = ['shared-input-box__label', labelClassName].filter(Boolean).join(' ');
@@ -27,9 +31,15 @@ export default function SharedInputBox({
         className={finalInputClassName}
         type={type}
         value={value}
-        onChange={onChange}
+        onChange={(event) => {
+          onChange?.(event);
+          sessionLogging?.logEvent('activity.input.changed', activity, {
+            field: String(id || label || 'input'),
+            value: event.target.value
+          });
+        }}
         placeholder={placeholder}
-        disabled={disabled}
+        disabled={disabled || !canEdit}
         autoComplete={autoComplete}
       />
     </label>

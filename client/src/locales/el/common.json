@@ -11,6 +11,8 @@
   "language": "Γλώσσα",
   "greek": "Ελληνικά",
   "english": "English",
+  "startSession": "Έναρξη συνεδρίας",
+  "endSession": "Ολοκλήρωση συνεδρίας",
   "input": "Είσοδος",
   "notAvailable": "Δεν είναι διαθέσιμο",
   "status": "Κατάσταση",

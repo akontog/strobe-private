@@ -764,6 +764,7 @@ export default function App({ role = 'student' }) {
             <div className="poly-term-block poly-term-block--result">
               <div className="poly-term-inputs poly-term-inputs--result">
                 <SharedInputRow
+                  activity={`linear-systems:${selectedActivityId}`}
                   rowLabel="1."
                   tokens={['x +', 'y =', '']}
                   hideLabels
@@ -788,6 +789,7 @@ export default function App({ role = 'student' }) {
                 />
 
                 <SharedInputRow
+                  activity={`linear-systems:${selectedActivityId}`}
                   rowLabel="2."
                   tokens={['x +', 'y =', '']}
                   hideLabels
@@ -833,7 +835,6 @@ export default function App({ role = 'student' }) {
             }}
             invalidItemIds={invalidGroupingItemIds}
             bankLabel="Συστήματα προς ομαδοποίηση"
-            emptyZoneLabel="Σύρε σύστημα εδώ"
           />
         </>
       ) : null}
@@ -848,6 +849,7 @@ export default function App({ role = 'student' }) {
           ) : null}
           <div className="linear-input-grid">
             <SharedInputBox
+              activity={`linear-systems:${selectedActivityId}`}
               label="x"
               value={answer.x}
               onChange={(event) => setAnswer((prev) => ({ ...prev, x: event.target.value }))}
@@ -855,6 +857,7 @@ export default function App({ role = 'student' }) {
               className="lab-field"
             />
             <SharedInputBox
+              activity={`linear-systems:${selectedActivityId}`}
               label="y"
               value={answer.y}
               onChange={(event) => setAnswer((prev) => ({ ...prev, y: event.target.value }))}

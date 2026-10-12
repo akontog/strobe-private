@@ -10,7 +10,8 @@ export default function SharedInputRow({
   rowLabelClassName = '',
   defaultLabel = '',
   defaultPlaceholder = '',
-  hideLabels = false
+  hideLabels = false,
+  activity = ''
 }) {
   const wrapperClassName = ['shared-input-row', className].filter(Boolean).join(' ');
   const rowLabelClasses = ['shared-input-row__label', rowLabelClassName].filter(Boolean).join(' ');
@@ -32,6 +33,7 @@ export default function SharedInputRow({
             inputClassName={box.inputClassName || ''}
             labelClassName={box.labelClassName || ''}
             disabled={Boolean(box.disabled)}
+            activity={activity}
             id={box.id}
             autoComplete={box.autoComplete || 'off'}
           />

@@ -214,14 +214,14 @@ function App() {
         <div className="client-topbar-controls">
           <StudentIdentityControl
             roleLabel={role === 'teacher' ? t('teacher') : t('student')}
+            hideIdentityFields={role === 'teacher'}
             roleControl={<RoleAccessControl role={role} username={teacherUsername} connected={serverConnected} onLogin={loginTeacher} onRoleChange={changeRole} labels={{ teacher: t('teacher'), student: t('student'), username: t('username'), password: tNav('password'), login: tNav('login'), connected: tNav('connected'), disconnected: tNav('disconnected') }} />}
-            sessionControl={role === 'teacher' ? (
-              <button type="button" className="student-identity-control__name" onClick={toggleTeacherSession} disabled={teacherSessionBusy}>
-                {teacherSessionBusy ? '…' : teacherSession ? 'Ολοκλήρωση συνεδρίας' : 'Έναρξη συνεδρίας'}
-              </button>
-            ) : null}
           />
-          <LanguageSwitcher />
+          <LanguageSwitcher sessionControl={role === 'teacher' ? (
+            <button type="button" className="locale-session-button" onClick={toggleTeacherSession} disabled={teacherSessionBusy}>
+              {teacherSessionBusy ? '…' : teacherSession ? t('common:endSession') : t('common:startSession')}
+            </button>
+          ) : null} />
         </div>
       </header>
       <div className="client-content">

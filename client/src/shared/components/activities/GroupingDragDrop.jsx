@@ -19,7 +19,6 @@ export default function GroupingDragDrop({
   invalidItemIds = [],
   disabledItemIds = [],
   bankLabel = 'Αντικείμενα προς ομαδοποίηση',
-  emptyZoneLabel = 'Σύρε αντικείμενα εδώ'
 }) {
   const sessionLogging = useSessionInputLogger();
   const canEdit = sessionLogging?.canEdit ?? true;
@@ -200,7 +199,7 @@ export default function GroupingDragDrop({
               <div className="grouping-dd-zone-body">
                 {groupedState[group.id].length > 0
                   ? groupedState[group.id].map(renderItem)
-                  : <p className="grouping-dd-empty">{emptyZoneLabel}</p>}
+                  : null}
               </div>
             </section>
           );
@@ -216,7 +215,7 @@ export default function GroupingDragDrop({
         <div className="grouping-dd-bank-items">
           {groupedState[BANK_ZONE_ID].length > 0
             ? groupedState[BANK_ZONE_ID].map(renderItem)
-            : <p className="grouping-dd-empty">Όλα τα αντικείμενα έχουν τοποθετηθεί.</p>}
+            : null}
         </div>
       </section>
 

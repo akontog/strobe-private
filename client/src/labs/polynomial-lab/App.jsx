@@ -1402,7 +1402,6 @@ export default function App({ role = 'teacher' }) {
                   invalidItemIds={invalidGroupingItemIds}
                   disabledItemIds={groupingLockedItemIds}
                   bankLabel="Μονώνυμα προς ομαδοποίηση"
-                  emptyZoneLabel="Άφησε εδώ μονώνυμα"
                 />
                 {isPolynomialGroupingActivity && (
                   <>
@@ -1423,6 +1422,7 @@ export default function App({ role = 'teacher' }) {
               </div>
             ) : isAlgebraTilesActivity ? (
               <AlgebraTiles
+                activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
                 key={selectedExpressionId}
                 initialExample={selectedExpressionId === 'algebra-tiles-quadratic' ? 'quadratic' : 'linear'}
                 canvasMode="multiplication"
@@ -1456,6 +1456,7 @@ export default function App({ role = 'teacher' }) {
                     <div className="poly-term-block poly-term-block--result">
                       <div className="poly-term-inputs poly-term-inputs--result">
                         <SharedInputRow
+                          activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
                           rowLabel="1."
                           hideLabels
                           defaultPlaceholder=""
@@ -1486,6 +1487,7 @@ export default function App({ role = 'teacher' }) {
                       <div key={`${selectedExpressionId}-term-${index}`} className="poly-term-block poly-term-block--result">
                         <div className="poly-term-inputs poly-term-inputs--result">
                           <SharedInputRow
+                            activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
                             rowLabel={`${index + 1}.`}
                             tokens={['x^', 'y^', '']}
                             hideLabels
@@ -1517,6 +1519,7 @@ export default function App({ role = 'teacher' }) {
                     <div className="poly-term-block poly-term-block--result">
                       <div className="poly-term-inputs poly-term-inputs--result">
                         <SharedInputRow
+                          activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
                           rowLabel="1."
                           tokens={['x^', 'y^', '']}
                           hideLabels

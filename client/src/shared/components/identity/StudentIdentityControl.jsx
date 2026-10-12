@@ -11,7 +11,7 @@ function clampName(value) {
   return String(value || '').trim().replace(/\s+/g, ' ').slice(0, 80);
 }
 
-export default function StudentIdentityControl({ className = '', roleLabel = 'Student', roleControl = null, sessionControl = null }) {
+export default function StudentIdentityControl({ className = '', roleLabel = 'Student', roleControl = null, hideIdentityFields = false }) {
   const [snapshot, setSnapshot] = useState(() => readIdentitySnapshot({
     nameFallback: roleLabel,
     colorFallback: randomIdentityColor()
@@ -78,7 +78,7 @@ export default function StudentIdentityControl({ className = '', roleLabel = 'St
   return (
     <div className={`student-identity-control ${className}`.trim()}>
       {roleControl}
-      {sessionControl ? sessionControl : <div className="student-identity-control__fields">
+      {!hideIdentityFields ? <div className="student-identity-control__fields">
         {isEditing ? (
           <input
             ref={inputRef}
@@ -121,7 +121,7 @@ export default function StudentIdentityControl({ className = '', roleLabel = 'St
           aria-label={`${roleLabel} color`}
           title={`${roleLabel} color`}
         />
-      </div>}
+      </div> : null}
     </div>
   );
 }

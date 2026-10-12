@@ -156,6 +156,7 @@ export default function App({ role = 'student' }) {
             <div className="poly-term-block poly-term-block--result">
               <div className="poly-term-inputs poly-term-inputs--result">
                 <SharedInputRow
+                  activity={`identities:${selectedActivityId}`}
                   rowLabel="R"
                   tokens={['+', '+', '']}
                   defaultPlaceholder=""
@@ -188,12 +189,14 @@ export default function App({ role = 'student' }) {
           <p className="identities-note">Βάλε τιμές και έλεγξε ισότητα αριστερού και δεξιού μέλους.</p>
           <div className="identities-proof-inputs">
             <SharedInputBox
+              activity={`identities:${selectedActivityId}`}
               label="a"
               value={numericInputs.a}
               onChange={(event) => setNumericInputs((prev) => ({ ...prev, a: event.target.value }))}
               placeholder=""
             />
             <SharedInputBox
+              activity={`identities:${selectedActivityId}`}
               label="b"
               value={numericInputs.b}
               onChange={(event) => setNumericInputs((prev) => ({ ...prev, b: event.target.value }))}

@@ -42,11 +42,11 @@ export function SessionLogProvider({ app, role = 'student', sessionId: suppliedS
       body: JSON.stringify({
         event,
         student,
-        activity,
+        activity: activity || app || 'unknown',
         data
       })
     }).catch(() => {});
-  }, [activeSessionId]);
+  }, [activeSessionId, app]);
 
   const canEdit = role === 'teacher' || Boolean(activeSessionId);
 
