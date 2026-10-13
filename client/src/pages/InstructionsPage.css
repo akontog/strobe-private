@@ -1,0 +1,49 @@
+.instructions-page {
+  width: min(100% - 2rem, 960px);
+  margin: 1.5rem auto;
+}
+
+.instructions-page__header {
+  margin-bottom: 1.25rem;
+}
+
+.instructions-page__header h1 {
+  margin: 0 0 0.5rem;
+}
+
+.instructions-page__header p {
+  margin: 0;
+  opacity: 0.8;
+}
+
+.instructions-page__sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+  gap: 1rem;
+}
+
+.instructions-page__section {
+  padding: 1rem 1.15rem;
+  border: 1px solid rgb(100 116 139 / 22%);
+  border-radius: 0.85rem;
+  background: var(--surface, #fff);
+  box-shadow: 0 3px 12px rgb(15 23 42 / 6%);
+}
+
+.instructions-page__section h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1.1rem;
+}
+
+.instructions-page__section p {
+  margin: 0 0 0.55rem;
+}
+
+.instructions-page__section ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.instructions-page__section li + li {
+  margin-top: 0.45rem;
+}

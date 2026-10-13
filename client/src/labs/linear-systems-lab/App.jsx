@@ -932,7 +932,7 @@ export default function App({ role = 'student' }) {
 
       {isTeacher ? (
         <div className="linear-bottom-panels">
-          <SettingsAccordion open>
+          <SettingsAccordion>
             <CommonSessionSettings />
             <div className="lab-data-section data-section">
               <label className="shared-activity-label" htmlFor="linear-expression">Άσκηση</label>
@@ -960,7 +960,7 @@ export default function App({ role = 'student' }) {
           </SettingsAccordion>
 
           <StudentTable
-            title="📋 Πίνακας μαθητών"
+            title="Πίνακας μαθητών"
             participants={sortedParticipants}
             getRowStyle={(entry) => {
               const completed = String(entry?.answers?.completed || '') === '1';

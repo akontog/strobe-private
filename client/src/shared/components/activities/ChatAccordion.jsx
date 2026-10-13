@@ -47,7 +47,7 @@ export default function ChatAccordion() {
 
   if (!session?.chatEnabled || !session?.activeSessionId) return null;
   return (
-    <Accordion title={t('chat')} icon="💬" open>
+    <Accordion title={t('chat')} icon="💬">
       <section className="chat-accordion">
       <div className="chat-accordion__messages" aria-live="polite">
         {messages.map((item) => (

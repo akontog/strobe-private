@@ -115,7 +115,6 @@ export const ExamplesClassifier = ({
   return (
     <Accordion title={t('examplesClassifier')}
       icon= " 🔎 "
-      open={true} 
     >
       <div className="data-section">
         <table className="data-table">

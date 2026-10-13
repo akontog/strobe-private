@@ -118,12 +118,20 @@ export default function AlgebraTiles({ activity = '', tiles: sharedTiles, onTile
           {tiles.map((tile) => {
             const definition = TILE_TYPES.find((item) => item.id === tile.type);
             if (!definition) return null;
+            const orientation = tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal');
+            const [spanX, spanY] = getTileSpans(tile.type, orientation);
             return (
               <button key={tile.id} type="button" draggable={canEdit} disabled={!canEdit}
                 onDragStart={(event) => beginTileDrag(event, tile)}
                 onClick={() => removeTile(tile.id)}
-                style={{ left: `${(tile.x || 0) * GRID_UNIT}px`, top: `${(tile.y || 0) * GRID_UNIT}px` }}
-                className={`algebra-tile algebra-tile--${definition.className} is-${tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal')} ${tile.sign < 0 ? 'is-negative' : ''}`}
+                style={{
+                  left: `${(tile.x || 0) * GRID_UNIT}px`,
+                  top: `${(tile.y || 0) * GRID_UNIT}px`,
+                  ...(orientation === 'vertical' && (tile.type === 'x' || tile.type === 'y')
+                    ? { boxSizing: 'border-box', width: `${spanX * GRID_UNIT}px`, height: `${spanY * GRID_UNIT}px` }
+                    : {})
+                }}
+                className={`algebra-tile algebra-tile--${definition.className} is-${orientation} ${tile.sign < 0 ? 'is-negative' : ''}`}
                 aria-label={`${tile.sign < 0 ? 'Αρνητικό' : 'Θετικό'} πλακίδιο ${definition.name}`}
                 title="Σύρε το πλακίδιο για μεταφορά ή πάτησε για αφαίρεση">
                 {definition.label}

@@ -867,7 +867,7 @@ const [studentColor, setStudentColor] = useState(() => {
             onChange={setSelectedActivity}
           />
 
-          <SettingsAccordion open>
+          <SettingsAccordion>
             <CommonSessionSettings />
           </SettingsAccordion>
 

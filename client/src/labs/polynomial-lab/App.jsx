@@ -648,6 +648,46 @@ const ALGEBRA_DATASETS = {
         correctAnswers: {},
         scoreCorrect: SCORE_CORRECT,
         scoreIncorrect: SCORE_INCORRECT
+      },
+      {
+        id: 'algebra-tiles-y-linear',
+        expression: '3y + 2',
+        resultMode: 'algebraTiles',
+        correctAnswers: {},
+        scoreCorrect: SCORE_CORRECT,
+        scoreIncorrect: SCORE_INCORRECT
+      },
+      {
+        id: 'algebra-tiles-xy-linear',
+        expression: '2x + 3y + 1',
+        resultMode: 'algebraTiles',
+        correctAnswers: {},
+        scoreCorrect: SCORE_CORRECT,
+        scoreIncorrect: SCORE_INCORRECT
+      },
+      {
+        id: 'algebra-tiles-perfect-square',
+        expression: 'x² + 2xy + y²',
+        resultMode: 'algebraTiles',
+        correctAnswers: {},
+        scoreCorrect: SCORE_CORRECT,
+        scoreIncorrect: SCORE_INCORRECT
+      },
+      {
+        id: 'algebra-tiles-difference-squares',
+        expression: 'x² − y²',
+        resultMode: 'algebraTiles',
+        correctAnswers: {},
+        scoreCorrect: SCORE_CORRECT,
+        scoreIncorrect: SCORE_INCORRECT
+      },
+      {
+        id: 'algebra-tiles-rectangle-factorization',
+        expression: 'xy + 2x + 3y + 6',
+        resultMode: 'algebraTiles',
+        correctAnswers: {},
+        scoreCorrect: SCORE_CORRECT,
+        scoreIncorrect: SCORE_INCORRECT
       }
     ]
   }
@@ -1572,7 +1612,7 @@ export default function App({ role = 'teacher' }) {
             onChange={setActivity}
           />
 
-          <SettingsAccordion open>
+          <SettingsAccordion>
             <CommonSessionSettings
               feedbackEnabled={feedbackEnabled}
               onFeedbackChange={setFeedbackOption}
@@ -1580,7 +1620,7 @@ export default function App({ role = 'teacher' }) {
             />
           </SettingsAccordion>
 
-          <Accordion title={t('expression')} icon="🔢" open>
+          <Accordion title={t('expression')} icon="🔢">
             <div className="lab-data-section data-section poly-data-menu">
               <div className="lab-select-group poly-select-group">
                 <label className="shared-activity-label" htmlFor="poly-expression">{t('expression')}</label>

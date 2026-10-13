@@ -126,7 +126,6 @@ export default function ActivityBuilder() {
         <Accordion
           title="Activity Editor"
           icon= "📝"
-          open={true}
         >
           <EditorPanel
             apps={apps}

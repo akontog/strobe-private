@@ -15,7 +15,7 @@ const TeacherPanel = ({
 
   return (
     <div className="teacher-panel">
-      <Accordion title={t('teacher.stepTitle')} subtitle={t('teacher.stepSubtitle')} defaultOpen>
+      <Accordion title={t('teacher.stepTitle')} subtitle={t('teacher.stepSubtitle')}>
         <div className="teacher-panel__buttons">
           {primeNumbers.map((prime) => (
             <button
@@ -30,7 +30,7 @@ const TeacherPanel = ({
         </div>
       </Accordion>
 
-      <Accordion title={t('teacher.activeTitle')} subtitle={t('teacher.activeSubtitle')} defaultOpen>
+      <Accordion title={t('teacher.activeTitle')} subtitle={t('teacher.activeSubtitle')}>
         <div className="teacher-panel__buttons teacher-panel__buttons--students">
           {students.map((student) => (
             <button
@@ -48,7 +48,7 @@ const TeacherPanel = ({
         </p>
       </Accordion>
 
-      <Accordion title={t('teacher.ruleTitle')} subtitle={t('teacher.ruleSubtitle', { prime: currentPrime })} defaultOpen>
+      <Accordion title={t('teacher.ruleTitle')} subtitle={t('teacher.ruleSubtitle', { prime: currentPrime })}>
         <p className="teacher-panel__formula">
           {t('teacher.ruleText', { prime: currentPrime })}
         </p>

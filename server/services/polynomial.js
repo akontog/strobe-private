@@ -253,11 +253,15 @@ function initPolynomial({
           const sign = Number(tile.sign);
           const x = Number(tile.x);
           const y = Number(tile.y);
+          const orientation = tile.orientation === 'vertical' || (!tile.orientation && tile.type === 'y')
+            ? 'vertical'
+            : 'horizontal';
           if ((sign !== 1 && sign !== -1) || !Number.isInteger(x) || !Number.isInteger(y)) return result;
           result.push({
             id: sanitizeString(tile.id, 80) || `tile-${index}`,
             type: tile.type,
             sign,
+            orientation,
             x: Math.max(0, Math.min(500, x)),
             y: Math.max(0, Math.min(500, y))
           });

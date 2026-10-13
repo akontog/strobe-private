@@ -23,6 +23,7 @@ import StudentPage from './pages/StudentPage';
 import TeacherPage from './pages/TeacherPage';
 import ToolsPage from './pages/ToolsPage';
 import StudentScoresPage from './pages/StudentScoresPage';
+import InstructionsPage from './pages/InstructionsPage';
 import ActivityBuilder from './tools/activity-builder/ActivityBuilder';
 import CameraSpeedTest from './tools/camera-speed-test/CameraSpeedTest';
 import GeoGebraCollabTool from './tools/geogebra-collab/GeoGebraCollabTool';
@@ -164,9 +165,12 @@ function App() {
       { label: tNav('items.separation'), path: '/tools/linear-separation' },
       { label: tNav('items.monitor'), path: '/tools/geogebra-monitor' },
       { label: tNav('items.builder'), path: '/tools/activity-builder' }
+    ] },
+    help: { label: tNav('help'), items: [
+      { label: tNav('items.instructions'), path: '/instructions' }
     ] }
   };
-  const clickedMenuGroup = clickedMenu === 'labs' || role === 'teacher' ? menuGroups[clickedMenu] : null;
+  const clickedMenuGroup = clickedMenu === 'labs' || clickedMenu === 'help' || role === 'teacher' ? menuGroups[clickedMenu] : null;
 
   return (
     <SessionLogProvider app={pathname.match(/^\/labs\/([^/]+)/)?.[1]} role={role} sessionId={teacherSession?.sessionId}>
@@ -176,7 +180,7 @@ function App() {
         <div className="client-topbar-main">
           <nav className="client-section-nav" aria-label={tNav('sectionNavigation')} onMouseLeave={() => setActiveMenu('')}>
             {Object.entries(menuGroups).map(([key, group]) => {
-              const hiddenForStudent = role !== 'teacher' && key !== 'labs';
+              const hiddenForStudent = role !== 'teacher' && key !== 'labs' && key !== 'help';
               return (
                 <div
                   key={key}
@@ -229,7 +233,7 @@ function App() {
         </div>
       </header>
       <div className="client-content">
-        {pathname.startsWith('/labs/') && role === 'teacher' && !labHasOwnSettings ? <SettingsAccordion open><CommonSessionSettings /></SettingsAccordion> : null}
+        {pathname.startsWith('/labs/') && role === 'teacher' && !labHasOwnSettings ? <SettingsAccordion><CommonSessionSettings /></SettingsAccordion> : null}
         {clickedMenuGroup ? (
           <section className="client-menu-cards" aria-label={clickedMenuGroup.label}>
             <div className="postit-grid">
@@ -253,6 +257,7 @@ function App() {
         ) : null}
         {!clickedMenuGroup ? <Routes>
           <Route index element={<HomePage />} />
+          <Route path="/instructions" element={<InstructionsPage />} />
           <Route path="/teacher" element={teacherOnly(<TeacherPage />)} />
           <Route path="/client" element={<StudentPage />} />
           <Route path="/student" element={<StudentPage />} />

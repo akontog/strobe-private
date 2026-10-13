@@ -3,10 +3,17 @@
     {
       "id": "εεε",
       "name": "εεε",
-      "totalScore": 0,
+      "totalScore": 1,
       "currentScore": 0,
-      "activities": {},
-      "updatedAt": "2026-10-12T19:34:08.727Z"
+      "activities": {
+        "polynomial:1.1:m-1": 1,
+        "polynomial:2.4:poly-op-1": 0,
+        "polynomial:1.2:grouping-1": 0,
+        "polynomial:2.7:algebra-tiles-linear": 0,
+        "polynomial:2.7:algebra-tiles-quadratic": 0,
+        "polynomial:2.7:algebra-tiles-difference-squares": 0
+      },
+      "updatedAt": "2026-10-13T05:36:02.035Z"
     }
   ]
 }

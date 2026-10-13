@@ -287,17 +287,10 @@ export default function App({ role = 'student' }) {
             }}
           />
 
-          <SettingsAccordion open>
+          <SettingsAccordion>
             <CommonSessionSettings />
           </SettingsAccordion>
 
-          <Accordion title={t('teacherGuide')} icon="🧭" open>
-            <div className="lab-data-section data-section poly-data-menu">
-              <p className="identities-note">{t('guideStep1')}</p>
-              <p className="identities-note">{t('guideStep2')}</p>
-              <p className="identities-note">{t('guideStep3')}</p>
-            </div>
-          </Accordion>
         </>
       ) : null}
     </div>

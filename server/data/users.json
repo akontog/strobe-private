@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "savedAt": "2026-10-12T19:55:17.025Z",
+  "savedAt": "2026-10-13T05:35:51.591Z",
   "sessions": [
     {
       "id": "2fbf4679-332f-41d0-86cf-403b901521fd",
@@ -936,7 +936,7 @@
             "w2": 1
           },
           "active": true,
-          "lastUpdated": "2026-10-12T19:49:31.212Z",
+          "lastUpdated": "2026-10-13T05:10:03.694Z",
           "lesson": {
             "dataset": "vehicles",
             "exampleIndex": 0,
@@ -976,7 +976,7 @@
         }
       },
       "connectedAt": 1791527667945,
-      "lastSeenAt": 1791834917024,
+      "lastSeenAt": 1791869751590,
       "isActive": true
     },
     {
@@ -1017,11 +1017,11 @@
           "name": "εεε",
           "color": "#7146ca",
           "active": true,
-          "lastUpdated": "2026-10-12T19:55:10.712Z"
+          "lastUpdated": "2026-10-13T05:35:42.146Z"
         }
       },
       "connectedAt": 1791550835233,
-      "lastSeenAt": 1791834915907,
+      "lastSeenAt": 1791869750677,
       "isActive": true
     },
     {

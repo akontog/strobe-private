@@ -1,0 +1,48 @@
+{
+  "title": "User guide",
+  "intro": "A short guide to using the Strobe collaborative labs.",
+  "teacher": {
+    "title": "For teachers",
+    "description": "Sign in with a teacher account to manage the class and activities.",
+    "steps": [
+      "Open a lab from the Labs menu and choose the teacher view.",
+      "Select an activity and adjust its available options in the corresponding panels.",
+      "Share the QR code or connection link with your students."
+    ]
+  },
+  "student": {
+    "title": "For students",
+    "description": "Students join from their own devices and work together in the shared activity.",
+    "steps": [
+      "Open the link or scan the QR code provided by the teacher.",
+      "Enter a display name when prompted, then wait for the session to start.",
+      "Inputs become available after the teacher starts the session."
+    ]
+  },
+  "sessions": {
+    "title": "Sessions",
+    "description": "A session controls when students can work and records activity as it happens.",
+    "steps": [
+      "The teacher selects Start session before work begins.",
+      "Changes and events are recorded automatically during the session.",
+      "Selecting End session locks student inputs again."
+    ]
+  },
+  "settings": {
+    "title": "Settings and scores",
+    "description": "Available options depend on the lab.",
+    "steps": [
+      "The teacher can enable Feedback, Score, and Chat in Settings.",
+      "When Score is enabled, relevant scores are shown to students and in the student table where supported.",
+      "The student table indicates which participants are connected."
+    ]
+  },
+  "chat": {
+    "title": "Chat",
+    "description": "Chat is shared by teachers and students when enabled by the teacher.",
+    "steps": [
+      "Type your message in the input at the bottom of the chat and send it.",
+      "Messages show the sender's name and time and are visible to all participants."
+    ]
+  }
+}

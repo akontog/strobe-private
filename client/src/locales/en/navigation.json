@@ -2,6 +2,7 @@
   "labs": "Labs",
   "system": "System",
   "tools": "Tools",
+  "help": "Help",
   "sectionNavigation": "Sections",
   "items": {
     "buffon": "Buffon",
@@ -15,7 +16,8 @@
     "scores": "Student Scores",
     "separation": "Linear Separation",
     "monitor": "GeoGebra Central Monitor",
-    "builder": "Activity Builder"
+    "builder": "Activity Builder",
+    "instructions": "User guide"
   },
   "password": "Password",
   "login": "Log in",
