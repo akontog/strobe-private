@@ -272,26 +272,17 @@ Client υλοποίηση:
 
 ---
 
-## 5.6 Geometry Live (μέσω `/ws/realtime`)
+## 5.6 Camera Speed Test (μέσω `/ws/realtime`)
 
 ### Client -> Server (`event`, `data`)
-- `user-position`
-- `camera-frame`
 - `camera-speed-frame`
-- `activity-update`
 
 ### Server -> Client (`event`, `data`)
-- `users-update`
-- `camera-points`
 - `camera-speed-result`
-- `activity-loaded`
 
 ### Κώδικας
-- Server:
-  - `server/services/geometry.js`
-- Client:
-  - `client/src/workshops/geometry-live/js/realtime-socket.js`
-  - legacy html integration: `client/src/workshops/geometry-live/teacher.html`
+- Server: `server/services/geometry.js`
+- Client: `client/src/system/camera-speed-test/CameraSpeedTest.jsx`
 
 ---
 

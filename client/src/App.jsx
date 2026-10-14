@@ -6,8 +6,6 @@ import BuffonStudentView from './workshops/buffon-needle/StudentView';
 import BuffonTeacherView from './workshops/buffon-needle/TeacherView';
 import NeuralStudentView from './workshops/neural/StudentView';
 import NeuralTeacherView from './workshops/neural/TeacherView';
-import GeometryStudentView from './workshops/geometry-live/StudentView';
-import GeometryTeacherView from './workshops/geometry-live/TeacherView';
 import PrimesStudentView from './workshops/primes/StudentView';
 import PrimesTeacherView from './workshops/primes/TeacherView';
 import PolynomialStudentView from './workshops/polynomial/StudentView';
@@ -197,7 +195,7 @@ function App() {
     setTeacherSessionBusy(true);
     try {
       const labMatch = pathname.match(/^\/labs\/([^/]+)\//);
-      const app = labMatch ? labMatch[1] : 'geometry-live';
+      const app = labMatch ? labMatch[1] : null;
       const endpoint = teacherSession
         ? `/teacher/sessions/${encodeURIComponent(teacherSession.sessionId)}/end`
         : '/teacher/sessions';
@@ -374,8 +372,6 @@ function App() {
           <Route path="/labs/linear-systems-lab/teacher" element={teacherOnly(<LinearSystemsTeacherView />)} />
           <Route path="/labs/identities-lab/student" element={studentLabOnly('identities-lab', <IdentitiesStudentView />)} />
           <Route path="/labs/identities-lab/teacher" element={teacherOnly(<IdentitiesTeacherView />)} />
-          <Route path="/labs/geometry-live/student" element={studentLabOnly('geometry-live', <GeometryStudentView />)} />
-          <Route path="/labs/geometry-live/teacher" element={teacherOnly(<GeometryTeacherView />)} />
           <Route path="/labs/:slug/teacher" element={teacherOnly(<LabPage role="teacher" />)} />
           <Route path="/labs/:slug/student" element={studentLabOnly(currentLabSlug, <LabPage role="student" />)} />
           <Route path="*" element={<Navigate to="/" replace />} />

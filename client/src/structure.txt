@@ -5,19 +5,6 @@ C:.
 |   main.jsx
 |   structure.txt
 |   
-+---framework
-|   \---assets
-|       +---css
-|       |       classroom-shared.css
-|       |       presentation-shell.css
-|       |       
-|       \---js
-|               classroom-api.js
-|               classroom-shared.js
-|               presentation-config.js
-|               presentation-shell.js
-|               presentation-toc.js
-|               
 +---lib
 |       api.js
 |       socket.js
@@ -125,10 +112,14 @@ C:.
 |   |       usePresentationSync.js
 |   |       useRealtimeSocket.js
 |   |       
-|   \---i18n
-|           index.js
+|   +---i18n
+|   |       index.js
+|   |       
+|   \---services
+|           classroom-api.js
 |           
 +---styles
+|       classroom-shared.css
 |       dashboard-pages.css
 |       globals.css
 |       postit-cards.css
@@ -203,7 +194,6 @@ C:.
     |       GeoGebraCollabTool.css
     |       GeoGebraCollabTool.jsx
     |       
-    +---geometry-live
     |   |   App.jsx
     |   |   camera.html
     |   |   index.jsx
@@ -222,8 +212,6 @@ C:.
     |   |       modes.js
     |   |       
     |   \---js
-    |           presentation-shell.js
-    |           presentation-sidebar-manager.js
     |           realtime-socket.js
     |           
     +---identities
@@ -254,13 +242,10 @@ C:.
     |   |   TeacherView.jsx
     |   |   
     |   +---components
-    |   |       ActivitiesMenu.jsx
     |   |       DatasetSelector.jsx
     |   |       ExamplesClassifier.jsx
     |   |       index.js
-    |   |       MathFormula.jsx
     |   |       ProductRow.jsx
-    |   |       StudentTable.jsx
     |   |       TeacherCard.jsx
     |   |       VerticalProducts.jsx
     |   |       
@@ -290,10 +275,8 @@ C:.
         |   TeacherView.jsx
         |   
         +---components
-        |       Accordion.jsx
         |       NumberGrid.jsx
         |       SelectionSummaryAccordion.jsx
-        |       StudentsTable.jsx
         |       TeacherPanel.jsx
         |       
         \---data

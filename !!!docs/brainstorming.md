@@ -19,7 +19,6 @@
 
 - [Το παράδοξο του Monty Hall](https://www.dpmath.gr/index.php/news/math/item/400-to-paradokso-tou-monty-hall)
 
-# geometry-live
 
 ## Δραστηριότητες
 

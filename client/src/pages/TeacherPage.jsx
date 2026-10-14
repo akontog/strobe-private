@@ -42,7 +42,6 @@ export default function TeacherPage() {
   }, []);
 
   const toneBySlug = {
-    'geometry-live': 'indigo',
     'buffon-needle': 'red',
     'neural-lab': 'magenta',
     'primes-lab': 'amber',
@@ -51,7 +50,6 @@ export default function TeacherPage() {
   };
 
   const iconBySlug = {
-    'geometry-live': '📐',
     'buffon-needle': '📌',
     'neural-lab': '🧠',
     'primes-lab': '🔢',

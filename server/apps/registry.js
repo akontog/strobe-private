@@ -5,18 +5,6 @@ const LABS_ROOT = path.join(__dirname, '..', '..', 'client', 'src', 'labs');
 // Root directory for all lab static files
 const APP_DEFINITIONS = [
   {
-    slug: 'geometry-live',
-    labId: 'geometry-lab',
-    title: 'Geometry Lab',
-    description: 'Existing shared canvas with real-time points and shapes.',
-    roles: ['teacher', 'client'],
-    kind: 'static',
-    staticDir: path.join(LABS_ROOT, 'geometry-live'),
-    teacherEntry: 'teacher.html',
-    clientEntry: 'mouse.html',
-    screenEntry: 'camera.html'
-  },
-  {
     slug: 'buffon-needle',
     labId: 'buffon-lab',
     title: 'Buffon Lab',

@@ -3,14 +3,12 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 const toneBySlug = {
-  'geometry-live': 'indigo',
   'buffon-needle': 'red',
   'neural-lab': 'magenta',
   'primes-lab': 'amber'
 };
 
 const iconBySlug = {
-  'geometry-live': '📐',
   'buffon-needle': '📌',
   'neural-lab': '🧠',
   'primes-lab': '🔢'

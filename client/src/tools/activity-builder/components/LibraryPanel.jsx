@@ -1,11 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function LibraryPanel({ selectedAppTitle, activities, onOpenActivity, preview }) {
+export default function LibraryPanel({ selectedResourceTitle, activities, onOpenActivity, preview }) {
   const { t } = useTranslation('interface');
   return (
     <article className="tool-card">
-      <p className="tool-subtitle">{t('currentApp', { title: selectedAppTitle })}</p>
+      <p className="tool-subtitle">{t('activityBuilder.libraryResource', { title: selectedResourceTitle })}</p>
 
       <div className="activity-list">
         {activities.map((item) => (
@@ -17,8 +17,8 @@ export default function LibraryPanel({ selectedAppTitle, activities, onOpenActiv
         {!activities.length ? <p className="tool-muted">{t('noSavedActivities')}</p> : null}
       </div>
 
-      <h3>{t('preview')}</h3>
-      <pre className="tool-preview">{preview}</pre>
+      <h3>{t('activityBuilder.preview')}</h3>
+      <pre className="tool-preview">{preview || t('activityBuilder.previewEmpty')}</pre>
     </article>
   );
 }

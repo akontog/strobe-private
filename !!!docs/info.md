@@ -70,13 +70,8 @@ FastApi
 - lab.manifest.json → metadata/δήλωση κάθε lab.
 
 ### Υποφάκελοι (εφαρμογές)
-- **`geometry-live/`**  
-  – Διαδραστική γεωμετρία (σημεία, γραμμές, κύκλους) με real-time σχεδίαση.
-
 - **`buffon-needle/`**  
   – Προσομοίωση της βελόνας του Buffon.
-
-  – 
 
 - **`neural-lab/`** (React)  
   – Διδακτική εφαρμογή για νευρωνικά δίκτυα (εξίσωση w₁·i₁ + w₂·i₂ = o).  
@@ -417,9 +412,6 @@ npm run build:linear
 ```
 
 ## App routes
-- Geometry Live:
-    - /apps/geometry-live/teacher.html
-    - /apps/geometry-live/student.html
 - Buffon Needle:
     - /apps/buffon-needle/teacher.html
     - /apps/buffon-needle/student.html

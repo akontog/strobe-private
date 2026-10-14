@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './ActivityBuilder.css';
 import { EditorPanel, LibraryPanel } from './components';
 import { Accordion } from '../../shared/components';
@@ -6,17 +7,25 @@ import { fetchApps, fetchActivities, fetchActivity, saveActivityRequest } from '
 import { toJsonString } from './logic/jsonUtils';
 import { DEFAULT_CONFIG_TEXT } from './data/defaultConfig';
 
+function getResourceActivities(t, resource) {
+  const options = t(`activityBuilder.resources.${resource}`, { returnObjects: true });
+  return Array.isArray(options) ? options : [];
+}
+
 export default function ActivityBuilder() {
+  const { t } = useTranslation('interface');
   const [apps, setApps] = useState([]);
-  const [selectedApp, setSelectedApp] = useState('');
+  const [selectedResource, setSelectedResource] = useState('');
+  const [selectedActivity, setSelectedActivity] = useState('');
   const [activityName, setActivityName] = useState('');
   const [notes, setNotes] = useState('');
   const [configText, setConfigText] = useState(DEFAULT_CONFIG_TEXT);
   const [activities, setActivities] = useState([]);
-  const [preview, setPreview] = useState('Select an activity to preview JSON.');
-  const [status, setStatus] = useState('Loading apps...');
+  const [preview, setPreview] = useState('');
+  const [status, setStatus] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const libraryRequestId = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -25,15 +34,16 @@ export default function ActivityBuilder() {
       .then((nextApps) => {
         if (cancelled) return;
         setApps(nextApps);
-        const firstSlug = nextApps[0]?.slug || '';
-        setSelectedApp(firstSlug);
-        setStatus(firstSlug ? 'Ready' : 'No teacher apps available.');
+        const firstResource = nextApps[0]?.slug || '';
+        setSelectedResource(firstResource);
+        setSelectedActivity(getResourceActivities(t, firstResource)[0]?.value || '');
+        setStatus({ key: firstResource ? 'activityBuilder.ready' : 'activityBuilder.noResources' });
         setError('');
       })
-      .catch((fetchError) => {
+      .catch(() => {
         if (cancelled) return;
-        setError(fetchError instanceof Error ? fetchError.message : 'Failed to load apps.');
-        setStatus('Cannot load apps');
+        setError(t('activityBuilder.loadResourcesError'));
+        setStatus({ key: 'activityBuilder.loadError' });
       });
 
     return () => {
@@ -41,48 +51,49 @@ export default function ActivityBuilder() {
     };
   }, []);
 
-  async function loadActivities(slug) {
-    if (!slug) {
+  async function loadActivities(resource) {
+    const requestId = libraryRequestId.current + 1;
+    libraryRequestId.current = requestId;
+    if (!resource) {
       setActivities([]);
       return;
     }
 
     try {
-      const nextActivities = await fetchActivities(slug);
+      const nextActivities = await fetchActivities(resource);
+      if (requestId !== libraryRequestId.current) return;
       setActivities(nextActivities);
       setError('');
-    } catch (fetchError) {
-      setError(fetchError instanceof Error ? fetchError.message : 'Failed to load activities.');
+    } catch {
+      if (requestId !== libraryRequestId.current) return;
+      setError(t('activityBuilder.loadLibraryError'));
     }
   }
 
   useEffect(() => {
-    loadActivities(selectedApp);
-  }, [selectedApp]);
+    loadActivities(selectedResource);
+  }, [selectedResource]);
 
   async function openActivity(filename) {
-    if (!selectedApp || !filename) {
-      return;
-    }
+    if (!selectedResource || !filename) return;
 
     try {
-      const payload = await fetchActivity(selectedApp, filename);
+      const payload = await fetchActivity(selectedResource, filename);
       setPreview(toJsonString(payload));
       setActivityName(payload?.name || '');
       setNotes(payload?.notes || '');
-      if (payload && payload.config) {
-        setConfigText(toJsonString(payload.config));
-      }
-      setStatus(`Loaded ${filename}`);
+      setSelectedActivity(String(payload?.config?.activityId || ''));
+      if (payload?.config) setConfigText(toJsonString(payload.config));
+      setStatus({ key: 'activityBuilder.loaded', values: { filename } });
       setError('');
-    } catch (fetchError) {
-      setError(fetchError instanceof Error ? fetchError.message : 'Failed to load activity.');
+    } catch {
+      setError(t('activityBuilder.loadActivityError'));
     }
   }
 
   async function saveActivity() {
-    if (!selectedApp) {
-      setError('Select an app first.');
+    if (!selectedResource) {
+      setError(t('activityBuilder.selectResource'));
       return;
     }
 
@@ -90,47 +101,54 @@ export default function ActivityBuilder() {
     try {
       config = JSON.parse(configText || '{}');
     } catch (jsonError) {
-      setError(`Invalid config JSON: ${jsonError.message}`);
+      setError(t('activityBuilder.invalidConfig', { message: jsonError.message }));
       return;
     }
 
     setSaving(true);
-    setStatus('Saving...');
+    setStatus({ key: 'activityBuilder.saving' });
     setError('');
 
     try {
-      const payload = await saveActivityRequest(selectedApp, { name: activityName, config, notes });
+      const payload = await saveActivityRequest(selectedResource, {
+        name: activityName,
+        config: { ...config, activityId: selectedActivity },
+        notes
+      });
       setPreview(toJsonString(payload));
-      setStatus('Saved successfully');
-      await loadActivities(selectedApp);
-    } catch (fetchError) {
-      setError(fetchError instanceof Error ? fetchError.message : 'Failed to save activity.');
-      setStatus('Save failed');
+      setStatus({ key: 'activityBuilder.saved' });
+      await loadActivities(selectedResource);
+    } catch {
+      setError(t('activityBuilder.saveError'));
+      setStatus({ key: 'activityBuilder.saveFailed' });
     } finally {
       setSaving(false);
     }
   }
 
-  const selectedAppTitle = useMemo(() => {
-    const found = apps.find((app) => app.slug === selectedApp);
-    return found ? found.title : 'No app selected';
-  }, [apps, selectedApp]);
+  const selectedResourceTitle = t(`activityBuilder.resourceNames.${selectedResource}`, {
+    defaultValue: apps.find((app) => app.slug === selectedResource)?.title || ''
+  });
+  const activityOptions = getResourceActivities(t, selectedResource);
 
   return (
     <section className="tool-page activity-builder-page">
       <header className="tool-page-header">
-        <h1>Activity Builder</h1>
+        <h1>{t('activityBuilder.title')}</h1>
       </header>
 
       <div className="tool-grid tool-grid--two">
-        <Accordion
-          title="Activity Editor"
-          icon= "📝"
-        >
+        <Accordion title={t('activityBuilder.editorTitle')} icon="📝">
           <EditorPanel
             apps={apps}
-            selectedApp={selectedApp}
-            onSelectedAppChange={setSelectedApp}
+            selectedResource={selectedResource}
+            onSelectedResourceChange={(resource) => {
+              setSelectedResource(resource);
+              setSelectedActivity(getResourceActivities(t, resource)[0]?.value || '');
+            }}
+            activityOptions={activityOptions}
+            selectedActivity={selectedActivity}
+            onSelectedActivityChange={setSelectedActivity}
             activityName={activityName}
             onActivityNameChange={setActivityName}
             notes={notes}
@@ -139,22 +157,18 @@ export default function ActivityBuilder() {
             onConfigTextChange={setConfigText}
             onSave={saveActivity}
             saving={saving}
-            status={status}
+            status={status.key ? t(status.key, status.values) : ''}
             error={error}
           />
         </Accordion>
-        <Accordion
-          title="Activity Library"
-          icon= "📚"
-          open={false}
-        >
+        <Accordion title={t('activityBuilder.libraryTitle')} icon="📚" open={false}>
           <LibraryPanel
-            selectedAppTitle={selectedAppTitle}
+            selectedResourceTitle={selectedResourceTitle}
             activities={activities}
             onOpenActivity={openActivity}
             preview={preview}
           />
-          </Accordion>
+        </Accordion>
       </div>
     </section>
   );

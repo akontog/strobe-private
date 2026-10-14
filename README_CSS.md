@@ -56,7 +56,6 @@
 
 | Αρχείο | Ευθύνη / χρήση |
 |---|---|
-| `public/css/styles.css` | Βασικά και ειδικά styles των geometry-live σελίδων `camera.html`, `mouse.html` και `teacher.html`. |
 | `public/css/presentation-shell.css` | Έκδοση του presentation shell στο `public`. Είναι αντίστοιχη με το `public/css/presentation-shell.css`. |
 | `public/css/presentation-shell-v2.css` | Δεύτερη έκδοση του presentation shell στο `public`. Ελέγξτε ποια έκδοση φορτώνει η αντίστοιχη σελίδα πριν από αλλαγές. |
 | `public/css/postit-cards.css` | Έκδοση των post-it cards για τις σελίδες του `public`, όπως το `public/index.html`. Αντίστοιχο stylesheet υπάρχει και κάτω από `client/src/styles`. |

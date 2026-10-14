@@ -1,1 +1,0 @@
-export { GeometryLabShell } from './GeometryLabShell';

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const BASE_ACTIVITIES_DIR = path.join(__dirname, '..', 'activities');
+const BASE_ACTIVITIES_DIR = path.join(__dirname, '..', 'data', 'activities');
 
 function ensureBaseDir() {
   if (!fs.existsSync(BASE_ACTIVITIES_DIR)) {
@@ -32,25 +32,22 @@ function sanitizeFilename(filename) {
   return cleaned.endsWith('.json') ? cleaned : '';
 }
 
-function appDir(appSlug) {
-  ensureBaseDir();
+function resourceSlug(appSlug) {
+  return sanitizeSlug(appSlug);
+}
 
-  const safeSlug = sanitizeSlug(appSlug);
-  const dir = path.join(BASE_ACTIVITIES_DIR, safeSlug);
-
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-
-  return dir;
+function activityPath(filename) {
+  return path.join(BASE_ACTIVITIES_DIR, filename);
 }
 
 function saveActivity(appSlug, data, author) {
-  const dir = appDir(appSlug);
+  ensureBaseDir();
+  const safeSlug = resourceSlug(appSlug);
   const safeName = sanitizeName(data && data.name);
-  const filename = `${Date.now()}_${safeName}.json`;
+  const filename = `${Date.now()}_${safeSlug}_${safeName}.json`;
 
   const activityRecord = {
+    resource: safeSlug,
     name: data && data.name ? String(data.name) : 'Untitled activity',
     config: data && data.config ? data.config : {},
     notes: data && typeof data.notes === 'string' ? data.notes : '',
@@ -59,7 +56,7 @@ function saveActivity(appSlug, data, author) {
   };
 
   fs.writeFileSync(
-    path.join(dir, filename),
+    activityPath(filename),
     JSON.stringify(activityRecord, null, 2),
     'utf8'
   );
@@ -71,42 +68,42 @@ function saveActivity(appSlug, data, author) {
 }
 
 function listActivities(appSlug) {
-  const dir = appDir(appSlug);
+  ensureBaseDir();
+  const safeSlug = resourceSlug(appSlug);
 
   return fs
-    .readdirSync(dir)
+    .readdirSync(BASE_ACTIVITIES_DIR)
     .filter((file) => file.endsWith('.json'))
     .map((file) => {
-      const filePath = path.join(dir, file);
+      const filePath = activityPath(file);
 
       try {
         const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+        if (parsed.resource !== safeSlug) return null;
         return {
           filename: file,
           name: parsed.name || file,
           createdAt: parsed.createdAt || null,
           author: parsed.author || null
         };
-      } catch (error) {
-        return {
-          filename: file,
-          name: file,
-          createdAt: null,
-          author: null
-        };
+      } catch {
+        return null;
       }
     })
+    .filter(Boolean)
     .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
 }
 
 function getActivity(appSlug, filename) {
+  ensureBaseDir();
+  const safeSlug = resourceSlug(appSlug);
   const safeFilename = sanitizeFilename(filename);
 
   if (!safeFilename) {
     return null;
   }
 
-  const filePath = path.join(appDir(appSlug), safeFilename);
+  const filePath = activityPath(safeFilename);
 
   if (!fs.existsSync(filePath)) {
     return null;
@@ -114,6 +111,7 @@ function getActivity(appSlug, filename) {
 
   try {
     const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    if (parsed.resource !== safeSlug) return null;
     return {
       filename: safeFilename,
       ...parsed

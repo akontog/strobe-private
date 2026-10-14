@@ -62,7 +62,6 @@ npm run build:client
 ```powershell
 npm run clean:labs
 npm run build:buffon-needle
-npm run build:geometry-live
 npm run build:neural-lab
 npm run build:primes-lab
 npm run build:labs
@@ -83,9 +82,6 @@ npm run build:linear
 - /health health check
 
 ## Lab URLs
-- /labs/geometry-live/teacher.html
-- /labs/geometry-live/mouse.html
-- /labs/geometry-live/camera.html
 - /labs/buffon-needle/teacher.html
 - /labs/buffon-needle/student.html
 - /labs/neural-lab/teacher.html
@@ -94,8 +90,6 @@ npm run build:linear
 - /labs/primes-lab/student.html
 
 # Εφαρμογές
-
-## Geometry Live
 
 ## Buffon Needle
 

@@ -129,10 +129,6 @@
   "minimumMaxW": "Smallest max|w|",
   "currentAppLabel": "Current app: {{title}}",
   "apps": {
-    "geometry-live": {
-      "title": "Geometry Lab",
-      "description": "Shared canvas with real-time points and shapes."
-    },
     "buffon-needle": {
       "title": "Buffon Lab",
       "description": "Multiplayer Buffon experiment with rounds and scoreboards."
@@ -156,6 +152,85 @@
     "identities-lab": {
       "title": "Identities Lab",
       "description": "Algebraic identities with geometric proofs of fundamental identities."
+    }
+  },
+  "activityBuilder": {
+    "title": "Activity Builder",
+    "editorTitle": "Activity Editor",
+    "libraryTitle": "Activity Library",
+    "resource": "Resource",
+    "chooseResource": "Choose a resource",
+    "activity": "Activity",
+    "chooseActivity": "Choose an activity",
+    "activityName": "Activity name",
+    "activityNamePlaceholder": "Lesson activity",
+    "notes": "Notes",
+    "notesPlaceholder": "Teacher notes",
+    "configJson": "Resource settings (JSON)",
+    "saveActivity": "Save Activity",
+    "preview": "Preview",
+    "previewEmpty": "Select an activity to preview its JSON.",
+    "libraryResource": "Resource: {{title}}",
+    "ready": "Ready",
+    "noResources": "No resources available.",
+    "loadResourcesError": "Failed to load resources.",
+    "loadLibraryError": "Failed to load activity library.",
+    "loadActivityError": "Failed to load activity.",
+    "selectResource": "Choose a resource first.",
+    "invalidConfig": "Invalid settings JSON: {{message}}",
+    "saving": "Saving…",
+    "saved": "Saved successfully.",
+    "saveError": "Failed to save activity.",
+    "saveFailed": "Save failed.",
+    "loadError": "Cannot load resources.",
+    "loaded": "Loaded {{filename}}",
+    "resourceNames": {
+      "buffon-needle": "Buffon needle experiment",
+      "neural-lab": "Neural network",
+      "primes-lab": "Prime numbers",
+      "polynomial-lab": "Polynomials",
+      "linear-systems-lab": "Linear systems",
+      "identities-lab": "Algebraic identities"
+    },
+    "resources": {
+      "buffon-needle": [{ "value": "round", "label": "Buffon needle experiment" }],
+      "neural-lab": [
+        { "value": "1", "label": "1. Find the input" },
+        { "value": "2", "label": "2. Calculate the output" },
+        { "value": "3", "label": "3. Adjust the weights" },
+        { "value": "4", "label": "4. Compare" }
+      ],
+      "primes-lab": [
+        { "value": "sieve", "label": "Sieve of Eratosthenes" },
+        { "value": "number-grid", "label": "Prime number grid" }
+      ],
+      "polynomial-lab": [
+        { "value": "1.1", "label": "1.1 Monomial concepts" },
+        { "value": "1.2", "label": "1.2 Identify like monomials" },
+        { "value": "1.3", "label": "1.3 Operations with monomials" },
+        { "value": "1.4", "label": "1.4 Multiplying monomials" },
+        { "value": "2.1", "label": "2.1 Polynomial basics" },
+        { "value": "2.2", "label": "2.2 Combine like terms" },
+        { "value": "2.3", "label": "2.3 Group terms in polynomials" },
+        { "value": "2.4", "label": "2.4 Add and subtract polynomials" },
+        { "value": "2.5", "label": "2.5 Multiply polynomials" },
+        { "value": "2.6", "label": "2.6 Area model multiplication" },
+        { "value": "2.7", "label": "2.7 Algebra tiles" }
+      ],
+      "linear-systems-lab": [
+        { "value": "1", "label": "1. Create a system graphically" },
+        { "value": "2", "label": "2. One, none, or infinitely many solutions" },
+        { "value": "3", "label": "3. Embodied activity" },
+        { "value": "4", "label": "4. Solve by elimination" },
+        { "value": "5", "label": "5. Verify the solution on the graph" },
+        { "value": "6", "label": "6. Embodied zone sorting" }
+      ],
+      "identities-lab": [
+        { "value": "1", "label": "1. Square of a sum" },
+        { "value": "2", "label": "2. Square of a difference" },
+        { "value": "3", "label": "3. Difference of squares" },
+        { "value": "4", "label": "4. Practice" }
+      ]
     }
   },
   "toolHelpers": {
