@@ -41,7 +41,7 @@ Client υλοποίηση:
 - `public/js/realtime-socket.js`
   - `.emit(event, data)`
   - `.on(event, handler)`
-- `client/src/framework/assets/js/classroom-api.js`
+- `client/src/shared/services/classroom-api.js`
   - `normalizeMessage`: δέχεται και `{type}` και `{event,data}`
 
 ### B. Type-based protocol σε dedicated ws paths
@@ -476,7 +476,7 @@ Client υλοποίηση:
   - `server/services/linearSystems.js`
 - Shared client transport:
   - `public/js/realtime-socket.js`
-  - `client/src/framework/assets/js/classroom-api.js`
+  - `client/src/shared/services/classroom-api.js`
 - App clients:
   - `client/src/workshops/primes/App.jsx`
   - `client/src/workshops/polynomial/App.jsx`

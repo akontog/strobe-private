@@ -39,9 +39,7 @@ function registerStaticFiles(app, {
                 '..',
                 'client',
                 'src',
-                'framework',
-                'assets',
-                'css'
+                'styles'
             )
         )
     );
@@ -55,9 +53,8 @@ function registerStaticFiles(app, {
                 '..',
                 'client',
                 'src',
-                'framework',
-                'assets',
-                'js'
+                'shared',
+                'services'
             )
         )
     );

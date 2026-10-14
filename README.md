@@ -15,7 +15,7 @@ Unified classroom platform with:
 
 ## Client
 
-- client/src/framework/assets/* shared framework CSS/JS assets served at /framework/*
+- client/src/styles/classroom-shared.css shared workshop layout styles\n- client/src/shared/services/classroom-api.js shared classroom client API
 - client/src/shared/* shared React components/hooks/i18n
   - components
     - resources

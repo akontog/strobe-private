@@ -7,7 +7,7 @@
 | Αρχείο | Ευθύνη | Φόρτωση |
 |---|---|---|
 | `client/src/styles/globals.css` | Βασικές ρυθμίσεις του εγγράφου και του React root, κοινή διάταξη της εφαρμογής (`.client-shell`, κεφαλίδα, περιεχόμενο), γενικό φόντο και επαναχρησιμοποιούμενα στοιχεία πλοήγησης/σελίδων. Εδώ μπαίνουν κανόνες που αφορούν συνολικά το κέλυφος της εφαρμογής. | `client/src/main.jsx` |
-| `client/src/framework/assets/css/classroom-shared.css` | Κοινά στοιχεία του classroom dock, κοινά μοτίβα διάταξης εργαστηρίων (`.lab-shell`, `.lab-workspace`, `.common-zone`) και μικρά κοινά βοηθητικά στοιχεία τάξης. Χρησιμοποιείται και από τις αυτόνομες σελίδες εργαστηρίων. | `client/src/main.jsx` και αρχεία HTML ορισμένων εργαστηρίων |
+| `client/src/styles/classroom-shared.css` | Κοινά στοιχεία του classroom dock, κοινά μοτίβα διάταξης εργαστηρίων (`.lab-shell`, `.lab-workspace`, `.common-zone`) και μικρά κοινά βοηθητικά στοιχεία τάξης. Χρησιμοποιείται και από τις αυτόνομες σελίδες εργαστηρίων. | `client/src/main.jsx` και αρχεία HTML ορισμένων εργαστηρίων |
 
 Άρα τα δύο αρχεία δεν είναι δύο αντίγραφα του ίδιου stylesheet: το πρώτο ορίζει το γενικό πλαίσιο της εφαρμογής· το δεύτερο ορίζει κοινά στοιχεία και μοτίβα για το περιβάλλον τάξης και τα εργαστήρια. Για αλλαγές στο κεντράρισμα ή στο πλάτος ολόκληρης της εφαρμογής ξεκινάμε από το `globals.css`. Για κοινό μοτίβο που αφορά τις περιοχές εργαστηρίων ή το classroom dock χρησιμοποιούμε το `classroom-shared.css`.
 
@@ -28,7 +28,7 @@
 | `client/src/shared/components/resources/CollaborativeGeoGebra.css` | Στυλ του shared GeoGebra resource. |
 | `client/src/tools/geogebra-monitor/GeogebraMonitor.css` | Στυλ της σελίδας GeoGebra monitor tool. |
 | `client/src/shared/components/widgets/SimpleCoordinateSystem.css` | Απλό σύστημα συντεταγμένων που χρησιμοποιείται από components. |
-| `client/src/framework/assets/css/presentation-shell.css` | Styles για sidebar και πλοήγηση παρουσιάσεων. |
+| `public/css/presentation-shell.css` | Styles για sidebar και πλοήγηση παρουσιάσεων. |
 
 ### CSS εργαστηρίων
 
@@ -57,7 +57,7 @@
 | Αρχείο | Ευθύνη / χρήση |
 |---|---|
 | `public/css/styles.css` | Βασικά και ειδικά styles των geometry-live σελίδων `camera.html`, `mouse.html` και `teacher.html`. |
-| `public/css/presentation-shell.css` | Έκδοση του presentation shell στο `public`. Είναι αντίστοιχη με το `client/src/framework/assets/css/presentation-shell.css`. |
+| `public/css/presentation-shell.css` | Έκδοση του presentation shell στο `public`. Είναι αντίστοιχη με το `public/css/presentation-shell.css`. |
 | `public/css/presentation-shell-v2.css` | Δεύτερη έκδοση του presentation shell στο `public`. Ελέγξτε ποια έκδοση φορτώνει η αντίστοιχη σελίδα πριν από αλλαγές. |
 | `public/css/postit-cards.css` | Έκδοση των post-it cards για τις σελίδες του `public`, όπως το `public/index.html`. Αντίστοιχο stylesheet υπάρχει και κάτω από `client/src/styles`. |
 
@@ -66,7 +66,7 @@
 ## Πού προσθέτω μια αλλαγή;
 
 1. Για ρίζα σελίδας, header, βασικό πλάτος ή γενικό κεντράρισμα React: `client/src/styles/globals.css`.
-2. Για κοινό classroom dock ή επαναχρησιμοποιούμενη διάταξη εργαστηρίων: `client/src/framework/assets/css/classroom-shared.css`.
+2. Για κοινό classroom dock ή επαναχρησιμοποιούμενη διάταξη εργαστηρίων: `client/src/styles/classroom-shared.css`.
 3. Για εμφάνιση shared React component: το CSS στον φάκελο του component (`client/src/shared/components/...`).
 4. Για εμφάνιση που αφορά ένα μόνο εργαστήριο ή εργαλείο: το αντίστοιχο `App.css` ή CSS του εργαλείου.
 5. Για standalone σελίδα κάτω από `public` ή HTML εργαστηρίου: ακολουθήστε το `<link rel="stylesheet">` αυτής της σελίδας· τα React imports δεν φορτώνονται αυτόματα εκεί.

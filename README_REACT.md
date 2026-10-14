@@ -8,7 +8,7 @@
 client/src/
 ├── App.jsx                     # routes και κεντρικό navigation
 ├── main.jsx                    # React root, BrowserRouter και βασικά CSS
-├── framework/assets/           # runtime JS/CSS που χρησιμοποιούν και οι legacy σελίδες
+├── shared/services/ and styles/           # runtime JS/CSS που χρησιμοποιούν και οι legacy σελίδες
 ├── labs/<lab>/                 # κώδικας κάθε εργαστηρίου
 ├── pages/                      # σελίδες που συνθέτουν routes
 ├── shared/

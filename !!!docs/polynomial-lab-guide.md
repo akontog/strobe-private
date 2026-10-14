@@ -86,7 +86,7 @@ This lets the teacher switch activities and keep the student view synchronized w
 
 Use common reusable patterns in:
 
-- `client/src/framework/assets/css/classroom-shared.css`
+- `client/src/styles/classroom-shared.css`
 
 Examples of shared rules to keep there:
 
@@ -234,7 +234,7 @@ Before you consider the new lab complete:
 1. Add lab folder under `client/src/workshops/<slug>/`
 2. Add `App.jsx`, `TeacherView.jsx`, `StudentView.jsx`
 3. Add HTML entry files and their JSX entrypoints
-4. Add shared CSS patterns into `framework/assets/css/classroom-shared.css`
+4. Add shared CSS patterns into `client/src/styles/classroom-shared.css`
 5. Add lab-specific CSS to `App.css`
 6. Add registry entry in `server/apps/registry.js`
 7. Add main router entries in `client/src/App.jsx`
