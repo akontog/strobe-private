@@ -6,14 +6,14 @@ This document describes the full workflow for creating a new collaborative lab i
 
 Each lab lives under:
 
-- `client/src/labs/<lab-slug>/`
+- `client/src/workshops/<lab-slug>/`
 - `server/apps/registry.js`
 - optional static entry files such as `teacher.html` and `student.html`
 
 Recommended structure:
 
 ```text
-client/src/labs/polynomial-lab/
+client/src/workshops/polynomial/
   App.jsx
   App.css
   StudentView.jsx
@@ -101,7 +101,7 @@ Examples of shared rules to keep there:
 
 Then use lab-specific styles only for the unique layout of that lab, such as:
 
-- `client/src/labs/polynomial-lab/App.css`
+- `client/src/workshops/polynomial/App.css`
 
 ### 2.5 Entry HTML files
 
@@ -138,8 +138,8 @@ These can be served through the static lab route, for example:
 Add the lab to `client/src/App.jsx`:
 
 ```jsx
-import PolynomialStudentView from './labs/polynomial-lab/StudentView';
-import PolynomialTeacherView from './labs/polynomial-lab/TeacherView';
+import PolynomialStudentView from './workshops/polynomial/StudentView';
+import PolynomialTeacherView from './workshops/polynomial/TeacherView';
 ```
 
 And add the matching routes:
@@ -231,7 +231,7 @@ Recommended component pattern:
 
 Before you consider the new lab complete:
 
-1. Add lab folder under `client/src/labs/<slug>/`
+1. Add lab folder under `client/src/workshops/<slug>/`
 2. Add `App.jsx`, `TeacherView.jsx`, `StudentView.jsx`
 3. Add HTML entry files and their JSX entrypoints
 4. Add shared CSS patterns into `framework/assets/css/classroom-shared.css`

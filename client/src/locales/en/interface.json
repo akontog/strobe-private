@@ -21,10 +21,6 @@
       "title": "GeoGebra Collaborative Component",
       "description": "Shared GeoGebra board with role-aware permissions."
     },
-    "geogebra-collab-test": {
-      "title": "GeoGebra Protocol Test Runner",
-      "description": "Protocol integration tests with simulated WebSocket clients."
-    },
     "geogebra-monitor": {
       "title": "GeoGebra Central Monitor",
       "description": "Central dashboard for all connected collaborative GeoGebra rooms."
@@ -109,8 +105,6 @@
   "separatorFound": "A separator was found.",
   "minimumMaxWeight": "Smallest max|w|",
   "margin": "Margin",
-  "geoGebraProtocolTest": "GeoGebra Protocol Test Runner",
-  "geoGebraProtocolDescription": "Runs real-time integration checks with simulated WebSocket clients over the event and data protocol.",
   "runTests": "Run tests",
   "summary": "Summary",
   "activityBuilder": "Activity Builder",
@@ -126,11 +120,8 @@
   "messageCount": "{{count}} messages",
   "incomingServer": "→ server",
   "serverOutgoing": "server →",
-  "protocolTestsFailed": "One or more protocol tests failed.",
   "failedTestsRun": "Failed to run tests.",
   "running": "Running...",
-  "runProtocolTests": "Run protocol tests",
-  "passedSummary": "{{passed}}/{{total}} passed",
   "geoGebraMonitorIntro": "Monitor all connected collaborative GeoGebra rooms and view object creation, movement, renaming, and deletion in real time.",
   "notEnoughSeparationData": "Not enough data yet.",
   "noSeparator": "No separator found.",
@@ -171,7 +162,6 @@
     "activityBuilder": "Teacher lesson designer and activity JSON editor.",
     "cameraSpeedTest": "Round-trip frame benchmark for the detection pipeline.",
     "geoGebraCollaborative": "Shared GeoGebra board with role-aware object locks.",
-    "geoGebraProtocolTest": "Protocol-level integration tests with fake WebSocket clients.",
     "geoGebraMonitor": "Central dashboard for all connected collaborative GeoGebra rooms.",
     "console": "Live view of messages exchanged between users and the server.",
     "linearSeparation": "Interactive dataset-based linear separation tool."

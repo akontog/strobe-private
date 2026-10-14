@@ -1,11 +1,11 @@
-﻿# Shared components
+# Shared components
 
 Ο φάκελος περιέχει React components και βοηθητικά modules που επαναχρησιμοποιούνται σε εργαστήρια. Η δομή ακολουθεί τον ρόλο τους: μικρά στοιχεία εμφάνισης και εισαγωγής δεδομένων, layouts, δραστηριότητες και εργαλεία συνεργασίας.
 
 ## Πώς συνδυάζονται
 
 ```text
-primitives / display / plot
+widgets / display
             ↓
 layouts και activities
             ↓
@@ -18,45 +18,21 @@ layouts και activities
 
 ### `display/` — εμφάνιση περιεχομένου
 
-- `MathFormula`: εμφανίζει μαθηματικό περιεχόμενο μέσω του MathJax που υπάρχει στο `window`. Δέχεται `formula`.
 - `HeroTitle`: τίτλος και προαιρετικός υπότιτλος.
-
-### `primitives/` — απλά δομικά στοιχεία
-
-- `SharedInputBox`: ελεγχόμενο πεδίο εισαγωγής με label και προαιρετικές ρυθμίσεις εμφάνισης.
-- `SharedInputRow`: συνθέτει πολλά πεδία σε σειρά και μπορεί να βάλει tokens ανάμεσά τους.
-- `BlueNumberBox`: εμφανίζει αριθμητική τιμή και προαιρετική ετικέτα.
 
 ### `layouts/` — πλαίσια και διάταξη
 
-- `SettingsAccordion`: κοινό accordion ρυθμίσεων με εικονίδιο γραναζιού και προαιρετικό τίτλο ειδικών ρυθμίσεων δραστηριότητας.
 
 - `Accordion`: πτυσσόμενο πλαίσιο με τίτλο, προαιρετικό εικονίδιο και περιεχόμενο.
-- `StudentQrAccordion`: εμφανίζει QR εικόνα μέσα σε Accordion, αν δοθεί `qrSrc`.
 - `Toolbar`: τίτλος και περιοχή ενεργειών.
 - `SharedCommonZoneLayout`: διατάσσει αριστερό, κεντρικό και δεξί panel ή δέχεται πλήρες περιεχόμενο με `children`. Σε λειτουργία ομαδοποίησης κρύβει τα πλευρικά panels.
 
-### `plot/` — γραφήματα
-
-- `SimpleCoordinateSystem`: καρτεσιανό σύστημα με έως δύο ευθείες. Κάθε ευθεία ορίζεται με κλίση `m` και σταθερό όρο `b`, καθώς και προαιρετικά `id`, `color`, `label`. Τα όρια αξόνων, οι διαστάσεις και το υπόμνημα ρυθμίζονται με props.
-
 ### `activities/` — συμπεριφορά δραστηριοτήτων και κοινά activity controls
 
-- `ChatAccordion`: κοινό chat συνεδρίας, ορατό σε όλους όταν το ενεργοποιήσει ο δάσκαλος. Τα μηνύματα εμφανίζουν αποστολέα και ώρα και αποθηκεύονται ως συμβάντα στο `events.jsonl`.
-- `CommonSessionSettings`: κοινές ρυθμίσεις συνεδρίας που ελέγχει ο δάσκαλος, όπως η εμφάνιση του chat και του σκορ στους μαθητές.
 
 - `ActivitiesMenu`: επιλογέας δραστηριότητας μέσα σε Accordion. Το εργαστήριο παρέχει `options`, `value` και `onChange`.
-- `GroupingDragDrop`: ταξινόμηση `items` σε `groups`. Το `placements` περιγράφει τις θέσεις και το `onChange` επιστρέφει τις αλλαγές. Υποστηρίζονται ανενεργά και λανθασμένα αντικείμενα.
-- `AlgebraTiles`: κοινός πίνακας με αχνό πλέγμα και snap, μαζί με παλέτα έξι τύπων θετικών/αρνητικών πλακιδίων για σύρσιμο. Μπορεί να κρατά τοπικά τα πλακίδια ή να δέχεται `tiles` και να αναφέρει αλλαγές με `onTilesChange`.
-- `ActivityInputGrid`: κοινός renderer για πλέγμα εισόδων και τιμών. Το εργαστήριο παρέχει πίνακα `fields` με όσα πεδία χρειάζεται, μαζί με labels, values και callbacks. Το `columns` ορίζει τις στήλες. Tokens και read-only τιμές μπορούν επίσης να περιγραφούν ως fields. Με `customLayout` η διάταξη ορίζεται από το CSS του καλούντος.
-- `StudentScoresAccordion`: στέλνει το σκορ της τρέχουσας δραστηριότητας στον server, όπου διατηρείται μόνο στη μνήμη.
 
-Το `ActivityInputGrid` χρησιμοποιείται στο `polynomial-lab` για τα πεδία συντελεστή και βαθμών και στο `neural-lab` για τα πεδία εισόδου, βάρους και γινομένου. Ο κοινός renderer φτιάχνει τα πεδία· κάθε εργαστήριο διαλέγει το πλήθος, τα labels, τις τιμές, τα callbacks και την εμφάνιση.
-
-### `collaboration/` — συνεργατικά εργαλεία
-
-- `CollaborativeGeoGebra`: ενσωματώνει συνεργατικό περιβάλλον GeoGebra.
-- `GeogebraMonitor`: παρακολουθεί συνεδρίες GeoGebra και δέχεται προαιρετικό `roomFilter`.
+Το `InputGrid` χρησιμοποιείται στο `polynomial-lab` για τα πεδία συντελεστή και βαθμών και στο `neural-lab` για τα πεδία εισόδου, βάρους και γινομένου. Ο κοινός renderer φτιάχνει τα πεδία· κάθε εργαστήριο διαλέγει το πλήθος, τα labels, τις τιμές, τα callbacks και την εμφάνιση.
 
 ### `identity/` — ταυτότητα και σύνδεση
 
@@ -67,18 +43,13 @@ layouts και activities
 - `CommonZoneFullscreenButton`: κουμπί πλήρους οθόνης για την κοινή ζώνη.
 - `identityStorage.js`: βοηθητικές συναρτήσεις ανάγνωσης και εγγραφής ονόματος/χρώματος.
 
-### `data/` — πίνακες και ορισμοί στηλών
-
-- `StudentTable`: πίνακας συμμετεχόντων με προαιρετικές στήλες, ομαδοποιημένες επικεφαλίδες και προσαρμόσιμες συναρτήσεις για γραμμές.
-- `studentTableColumnPresets.jsx`: builders στηλών για Neural Lab, Buffon και Geometry.
-
 ## Εισαγωγές
 
 Το `index.js` είναι το δημόσιο barrel για εισαγωγές από το `shared/components`:
 
 ```jsx
 import {
-  ActivityInputGrid,
+  InputGrid,
   AlgebraTiles,
   GroupingDragDrop,
   MathFormula,
@@ -92,7 +63,7 @@ import {
 Παράδειγμα διαμόρφωσης πλέγματος ανά δραστηριότητα:
 
 ```jsx
-<ActivityInputGrid
+<InputGrid
   columns={2}
   fields={[
     { id: 'coefficient', label: 'Συντελεστής', value, onChange },
@@ -101,3 +72,23 @@ import {
 />
 ```
 
+### `resources/` — reusable learning resources
+
+- `CollaborativeGeoGebra`: embeds the collaborative GeoGebra board used by labs and tools.
+- `GroupingDragDrop`: sorts `items` into `groups`; `placements` describes current positions and `onChange` reports updates.
+- `AlgebraTiles`: shared board with grid snapping and a palette of six positive and negative tile types.
+- `InputGrid`: shared renderer for input, output, and token cells, configured through `fields`, `columns`, and callbacks.
+
+### `widgets/` — reusable visual and input elements
+
+- `SharedInputBox`: shared editable field; `SharedInputRow` composes it from `widgets/`.
+- `BlueNumberBox`: displays a numeric value with an optional label.
+- `SharedInputRow`: composes shared input fields with optional tokens.
+- `MathFormula`: renders mathematical expressions using the available MathJax instance.
+- `SimpleCoordinateSystem`: reusable Cartesian coordinate system.
+
+### `services/` — shared classroom services
+
+- `StudentTable` and its column presets: shared participant table and column builders.
+- `ChatAccordion`, `SettingsAccordion`, `CommonSessionSettings`, and `StudentQrAccordion`: classroom chat, teacher settings, and connection QR UI.
+- `StudentScoresAccordion`: displays and reports current activity scores.

@@ -27,7 +27,7 @@ client/src/
 ```jsx
 import {
   Accordion,
-  ActivityInputGrid,
+  InputGrid,
   HeroTitle,
   MathFormula,
   SharedInputBox
@@ -204,12 +204,12 @@ Props: `items`, `groups`, `placements`, `onChange(nextPlacements)`, `disabled`, 
 
 Props: `initialExample` (`linear` ή `quadratic`), `canvasMode`, `tiles`, `onTilesChange(nextTiles)`. Χωρίς `tiles` χρησιμοποιεί εσωτερικό state.
 
-### `ActivityInputGrid`
+### `InputGrid`
 
 Φτιάχνει πλέγμα με όσα inputs, outputs και tokens περιγράφονται στο `fields`.
 
 ```jsx
-<ActivityInputGrid
+<InputGrid
   columns={2}
   fields={[
     { id: 'coefficient', label: 'Συντελεστής', value, onChange: setValue },
@@ -380,15 +380,9 @@ import {
 
 Props: `roomId`, `className`, `showLegend`, `showToolBar`, `showAlgebraView`, `showAlgebraInput`, `showMenuBar`, `showResetIcon`, `showZoomButtons`, `showFullscreenButton`, `showSuggestionButtons`, `onConnectionChange(connected)`, `onObjectsChange(state)`, `onPermissionsChange(permissions)`.
 
-### `GeogebraMonitor`
+### GeoGebra Central Monitor tool
 
-Παρακολουθεί rooms και ενέργειες GeoGebra.
-
-```jsx
-<GeogebraMonitor roomFilter="polynomial" className="monitor-panel" />
-```
-
-Props: `roomFilter`, `className`.
+The monitor is a tool at `/tools/geogebra-monitor`; its implementation lives under `client/src/tools/geogebra-monitor`, not in the shared component barrel.
 
 ## Άλλα shared modules
 

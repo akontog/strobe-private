@@ -57,11 +57,6 @@ export default function ToolsPage() {
       tone: 'green',
       helper: 'toolHelpers.geoGebraCollaborative'
     },
-    'geogebra-collab-test': {
-      icon: '🧪',
-      tone: 'orange',
-      helper: 'toolHelpers.geoGebraProtocolTest'
-    },
     'geogebra-monitor': {
       icon: '📊',
       tone: 'indigo',

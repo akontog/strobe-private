@@ -148,7 +148,7 @@ Client υλοποίηση:
     - `emitState` (`type: 'polynomial_state'`)
     - message handlers για τα παραπάνω `type`
 - Client:
-  - `client/src/labs/polynomial-lab/App.jsx`
+  - `client/src/workshops/polynomial/App.jsx`
     - open socket στο `/ws/polynomial-lab`
     - send `register_*`, `request_state`, `teacher_lesson`, `student_answers`
     - consume `polynomial_state`
@@ -183,7 +183,7 @@ Client υλοποίηση:
     - `lessonState` (activityId/itemId/showEquationGraph)
     - `emitState` (`type: 'linear_systems_state'`)
 - Client:
-  - `client/src/labs/linear-systems-lab/App.jsx`
+  - `client/src/workshops/linear-systems/App.jsx`
 
 ---
 
@@ -211,7 +211,7 @@ Client υλοποίηση:
 - Server:
   - `server/services/primes.js`
 - Client:
-  - `client/src/labs/primes-lab/App.jsx`
+  - `client/src/workshops/primes/App.jsx`
 
 ---
 
@@ -240,7 +240,7 @@ Client υλοποίηση:
 - Server:
   - `server/services/neural.js`
 - Client:
-  - `client/src/labs/neural-lab/App.jsx`
+  - `client/src/workshops/neural/App.jsx`
 
 ---
 
@@ -267,8 +267,8 @@ Client υλοποίηση:
 - Server:
   - `server/services/buffon.js`
 - Client:
-  - teacher: `client/src/labs/buffon-needle/logic/teacher-logic.js`
-  - student: `client/src/labs/buffon-needle/logic/student-logic.js`
+  - teacher: `client/src/workshops/buffon-needle/logic/teacher-logic.js`
+  - student: `client/src/workshops/buffon-needle/logic/student-logic.js`
 
 ---
 
@@ -290,8 +290,8 @@ Client υλοποίηση:
 - Server:
   - `server/services/geometry.js`
 - Client:
-  - `client/src/labs/geometry-live/js/realtime-socket.js`
-  - legacy html integration: `client/src/labs/geometry-live/teacher.html`
+  - `client/src/workshops/geometry-live/js/realtime-socket.js`
+  - legacy html integration: `client/src/workshops/geometry-live/teacher.html`
 
 ---
 
@@ -336,7 +336,6 @@ Client υλοποίηση:
 
 - `GET /health`
 - `GET /api/tools`
-- `POST /api/tools/geogebra-collab-test/run`
 
 Κώδικας:
 - `server/server.js`
@@ -479,12 +478,12 @@ Client υλοποίηση:
   - `public/js/realtime-socket.js`
   - `client/src/framework/assets/js/classroom-api.js`
 - App clients:
-  - `client/src/labs/primes-lab/App.jsx`
-  - `client/src/labs/polynomial-lab/App.jsx`
-  - `client/src/labs/linear-systems-lab/App.jsx`
-  - `client/src/labs/neural-lab/App.jsx`
-  - `client/src/labs/buffon-needle/logic/teacher-logic.js`
-  - `client/src/labs/buffon-needle/logic/student-logic.js`
+  - `client/src/workshops/primes/App.jsx`
+  - `client/src/workshops/polynomial/App.jsx`
+  - `client/src/workshops/linear-systems/App.jsx`
+  - `client/src/workshops/neural/App.jsx`
+  - `client/src/workshops/buffon-needle/logic/teacher-logic.js`
+  - `client/src/workshops/buffon-needle/logic/student-logic.js`
 
 ---
 

@@ -2,20 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { Link, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-import BuffonStudentView from './labs/buffon-needle/StudentView';
-import BuffonTeacherView from './labs/buffon-needle/TeacherView';
-import NeuralStudentView from './labs/neural-lab/StudentView';
-import NeuralTeacherView from './labs/neural-lab/TeacherView';
-import GeometryStudentView from './labs/geometry-live/StudentView';
-import GeometryTeacherView from './labs/geometry-live/TeacherView';
-import PrimesStudentView from './labs/primes-lab/StudentView';
-import PrimesTeacherView from './labs/primes-lab/TeacherView';
-import PolynomialStudentView from './labs/polynomial-lab/StudentView';
-import PolynomialTeacherView from './labs/polynomial-lab/TeacherView';
-import LinearSystemsStudentView from './labs/linear-systems-lab/StudentView';
-import LinearSystemsTeacherView from './labs/linear-systems-lab/TeacherView';
-import IdentitiesStudentView from './labs/identities-lab/StudentView';
-import IdentitiesTeacherView from './labs/identities-lab/TeacherView';
+import BuffonStudentView from './workshops/buffon-needle/StudentView';
+import BuffonTeacherView from './workshops/buffon-needle/TeacherView';
+import NeuralStudentView from './workshops/neural/StudentView';
+import NeuralTeacherView from './workshops/neural/TeacherView';
+import GeometryStudentView from './workshops/geometry-live/StudentView';
+import GeometryTeacherView from './workshops/geometry-live/TeacherView';
+import PrimesStudentView from './workshops/primes/StudentView';
+import PrimesTeacherView from './workshops/primes/TeacherView';
+import PolynomialStudentView from './workshops/polynomial/StudentView';
+import PolynomialTeacherView from './workshops/polynomial/TeacherView';
+import LinearSystemsStudentView from './workshops/linear-systems/StudentView';
+import LinearSystemsTeacherView from './workshops/linear-systems/TeacherView';
+import IdentitiesStudentView from './workshops/identities/StudentView';
+import IdentitiesTeacherView from './workshops/identities/TeacherView';
 import AppsLauncherPage from './pages/AppsLauncherPage';
 import HomePage from './pages/HomePage';
 import LabPage from './pages/LabPage';
@@ -24,12 +24,11 @@ import TeacherPage from './pages/TeacherPage';
 import ToolsPage from './pages/ToolsPage';
 import InstructionsPage from './pages/InstructionsPage';
 import ActivityBuilder from './tools/activity-builder/ActivityBuilder';
-import CameraSpeedTest from './tools/camera-speed-test/CameraSpeedTest';
-import GeoGebraCollabTool from './tools/geogebra-collab/GeoGebraCollabTool';
-import GeoGebraCollabTestTool from './tools/geogebra-collab-test/GeoGebraCollabTestTool';
+import CameraSpeedTest from './system/camera-speed-test/CameraSpeedTest';
+import GeoGebraCollabTool from './workshops/geogebra-collab/GeoGebraCollabTool';
 import GeogebraMonitorTool from './tools/geogebra-monitor/GeogebraMonitorTool';
 import LinearSeparation from './tools/linear-separation/LinearSeparation';
-import ConsoleTool from './tools/console/ConsoleTool';
+import ConsoleTool from './system/console/ConsoleTool';
 import StudentIdentityControl from './shared/components/identity/StudentIdentityControl';
 import LanguageSwitcher from './shared/components/identity/LanguageSwitcher';
 import RoleAccessControl from './shared/components/identity/RoleAccessControl';
@@ -358,7 +357,6 @@ function App() {
           <Route path="/tools/activity-builder" element={teacherOnly(<ActivityBuilder />)} />
           <Route path="/tools/camera-speed-test" element={teacherOnly(<CameraSpeedTest />)} />
           <Route path="/tools/geogebra-collab" element={studentToolOnly('geogebra-collab', <GeoGebraCollabTool />)} />
-          <Route path="/tools/geogebra-collab-test" element={teacherOnly(<GeoGebraCollabTestTool />)} />
           <Route path="/tools/geogebra-monitor" element={teacherOnly(<GeogebraMonitorTool />)} />
           <Route path="/tools/console" element={teacherOnly(<ConsoleTool />)} />
           <Route path="/tools/linear-separation" element={teacherOnly(<LinearSeparation />)} />

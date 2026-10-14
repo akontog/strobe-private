@@ -3,17 +3,28 @@
 Unified classroom platform with:
 - Node.js server (API, dashboards, WebSocket)
 - Vite/React client
-- Labs served from client/src/labs/*
+- Workshops source folders under client/src/workshops/*
 
-## Structure
+# Structure
+
+## Server
 - server/ server runtime and routes
 - server/apps/registry.js app registry used by teacher/student launchers
 - server/utils/
   - COMM_EVENT_CATALOG: catalog with all events
+
+## Client
+
 - client/src/framework/assets/* shared framework CSS/JS assets served at /framework/*
 - client/src/shared/* shared React components/hooks/i18n
+  - components
+    - resources
+    - services
+    - widgets
 - client/src/layout/* layout area (when present in client code)
-- vision/
+
+
+## vision/
 	- camera_server.py
 	- camera_tracking.py
 	- models/yolov8n.pt

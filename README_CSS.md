@@ -19,36 +19,36 @@
 |---|---|
 | `client/src/styles/dashboard-pages.css` | Διάταξη και εμφάνιση σελίδων dashboard. |
 | `client/src/styles/postit-cards.css` | Κοινές κάρτες τύπου sticky note και οι χρωματικές μεταβλητές τους. |
-| `client/src/shared/components/primitives/shared-inputs.css` | Κοινά πεδία εισαγωγής και σειρές πεδίων. |
-| `client/src/shared/components/activities/ActivityInputGrid.css` | Διάταξη του shared grid εισαγωγής απαντήσεων. |
-| `client/src/shared/components/activities/GroupingDragDrop.css` | Διάταξη και εμφάνιση της shared δραστηριότητας ταξινόμησης με σύρσιμο. |
-| `client/src/shared/components/activities/algebra-tiles.css` | Shared δραστηριότητα algebra tiles. |
+| `client/src/shared/components/widgets/shared-inputs.css` | Κοινά πεδία εισαγωγής και σειρές πεδίων. |
+| `client/src/shared/components/resources/InputGrid.css` | Διάταξη του shared grid εισαγωγής απαντήσεων. |
+| `client/src/shared/components/resources/GroupingDragDrop.css` | Διάταξη και εμφάνιση της shared δραστηριότητας ταξινόμησης με σύρσιμο. |
+| `client/src/shared/components/resources/AlgebraTiles.css` | Shared δραστηριότητα algebra tiles. |
 | `client/src/shared/components/layouts/shared-common-zone-layout.css` | Διάταξη της κοινής περιοχής δραστηριότητας, ανάλογα με τον τύπο δραστηριότητας. |
 | `client/src/shared/components/identity/StudentIdentityControl.css` | Έλεγχος ταυτότητας και ένδειξη σύνδεσης μαθητή. |
-| `client/src/shared/components/collaboration/CollaborativeGeoGebra.css` | Κοινό συνεργατικό component GeoGebra. |
-| `client/src/shared/components/collaboration/GeogebraMonitor.css` | Κοινό component παρακολούθησης GeoGebra. |
-| `client/src/shared/components/plot/SimpleCoordinateSystem.css` | Απλό σύστημα συντεταγμένων που χρησιμοποιείται από components. |
+| `client/src/shared/components/resources/CollaborativeGeoGebra.css` | Στυλ του shared GeoGebra resource. |
+| `client/src/tools/geogebra-monitor/GeogebraMonitor.css` | Στυλ της σελίδας GeoGebra monitor tool. |
+| `client/src/shared/components/widgets/SimpleCoordinateSystem.css` | Απλό σύστημα συντεταγμένων που χρησιμοποιείται από components. |
 | `client/src/framework/assets/css/presentation-shell.css` | Styles για sidebar και πλοήγηση παρουσιάσεων. |
 
 ### CSS εργαστηρίων
 
 | Αρχείο | Ευθύνη |
 |---|---|
-| `client/src/labs/buffon-needle/App.css` | Διάταξη και στοιχεία του εργαστηρίου Buffon needle. |
-| `client/src/labs/identities-lab/App.css` | Ειδικές προσαρμογές του εργαστηρίου ταυτοτήτων. Εισάγει επίσης το CSS του linear systems. |
-| `client/src/labs/linear-systems-lab/App.css` | Διάταξη και στοιχεία του εργαστηρίου γραμμικών συστημάτων· εισάγει το CSS του polynomial lab και προσθέτει τις δικές του προσαρμογές. |
-| `client/src/labs/neural-lab/App.css` | Styles του neural lab. Περιλαμβάνει και γενικούς selectors όπως `body` και `#root`, άρα οι αλλαγές του μπορούν να επηρεάσουν και άλλες διαδρομές της React εφαρμογής. |
-| `client/src/labs/polynomial-lab/App.css` | Ειδικές διατάξεις και στοιχεία του polynomial lab. |
-| `client/src/labs/primes-lab/App.css` | Styles του primes lab. Περιλαμβάνει και γενικούς selectors όπως `body` και `#root`, άρα χρειάζεται προσοχή σε αλλαγές τους. |
+| `client/src/workshops/buffon-needle/App.css` | Διάταξη και στοιχεία του εργαστηρίου Buffon needle. |
+| `client/src/workshops/identities/App.css` | Ειδικές προσαρμογές του εργαστηρίου ταυτοτήτων. Εισάγει επίσης το CSS του linear systems. |
+| `client/src/workshops/linear-systems/App.css` | Διάταξη και στοιχεία του εργαστηρίου γραμμικών συστημάτων· εισάγει το CSS του polynomial lab και προσθέτει τις δικές του προσαρμογές. |
+| `client/src/workshops/neural/App.css` | Styles του neural lab. Περιλαμβάνει και γενικούς selectors όπως `body` και `#root`, άρα οι αλλαγές του μπορούν να επηρεάσουν και άλλες διαδρομές της React εφαρμογής. |
+| `client/src/workshops/polynomial/App.css` | Ειδικές διατάξεις και στοιχεία του polynomial lab. |
+| `client/src/workshops/primes/App.css` | Styles του primes lab. Περιλαμβάνει και γενικούς selectors όπως `body` και `#root`, άρα χρειάζεται προσοχή σε αλλαγές τους. |
 
 ### CSS εργαλείων
 
 | Αρχείο | Ευθύνη |
 |---|---|
 | `client/src/tools/activity-builder/ActivityBuilder.css` | Σελίδα δημιουργίας δραστηριοτήτων. |
-| `client/src/tools/camera-speed-test/CameraSpeedTest.css` | Σελίδα ελέγχου ταχύτητας κάμερας. |
-| `client/src/tools/console/ConsoleTool.css` | Κονσόλα επικοινωνίας και τα φίλτρα/μηνύματά της. |
-| `client/src/tools/geogebra-collab/GeoGebraCollabTool.css` | Σελίδα εργαλείου συνεργατικού GeoGebra. |
+| `client/src/system/camera-speed-test/CameraSpeedTest.css` | Σελίδα ελέγχου ταχύτητας κάμερας. |
+| `client/src/system/console/ConsoleTool.css` | Κονσόλα επικοινωνίας και τα φίλτρα/μηνύματά της. |
+| `client/src/workshops/geogebra-collab/GeoGebraCollabTool.css` | Σελίδα εργαλείου συνεργατικού GeoGebra. |
 | `client/src/tools/geogebra-monitor/GeogebraMonitorTool.css` | Σελίδα εργαλείου παρακολούθησης GeoGebra. |
 | `client/src/tools/linear-separation/LinearSeparation.css` | Εργαλείο γραμμικού διαχωρισμού. |
 

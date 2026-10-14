@@ -1,0 +1,301 @@
+Folder PATH listing for volume OS
+Volume serial number is 4EE2-6C3B
+C:.
+|   App.jsx
+|   main.jsx
+|   structure.txt
+|   
++---framework
+|   \---assets
+|       +---css
+|       |       classroom-shared.css
+|       |       presentation-shell.css
+|       |       
+|       \---js
+|               classroom-api.js
+|               classroom-shared.js
+|               presentation-config.js
+|               presentation-shell.js
+|               presentation-toc.js
+|               
++---lib
+|       api.js
+|       socket.js
+|       
++---locales
+|   +---el
+|   |       buffon.json
+|   |       common.json
+|   |       geometry.json
+|   |       identities.json
+|   |       instructions.json
+|   |       interface.json
+|   |       menu.json
+|   |       navigation.json
+|   |       neural.json
+|   |       polynomial.json
+|   |       primes.json
+|   |       scores.json
+|   |       
+|   \---en
+|           buffon.json
+|           common.json
+|           geometry.json
+|           identities.json
+|           instructions.json
+|           interface.json
+|           menu.json
+|           navigation.json
+|           neural.json
+|           polynomial.json
+|           primes.json
+|           scores.json
+|           
++---pages
+|       AppsLauncherPage.jsx
+|       HomePage.jsx
+|       InstructionsPage.css
+|       InstructionsPage.jsx
+|       LabPage.jsx
+|       StudentWaitingPage.jsx
+|       TeacherPage.jsx
+|       ToolsPage.jsx
+|       
++---shared
+|   +---components
+|   |   |   index.js
+|   |   |   README.md
+|   |   |   structure.txt
+|   |   |   
+|   |   +---activities
+|   |   |       ActivitiesMenu.jsx
+|   |   |       SessionLogContext.jsx
+|   |   |       
+|   |   +---data
+|   |   +---display
+|   |   |       HeroTitle.jsx
+|   |   |       
+|   |   +---identity
+|   |   |       CommonZoneFullscreenButton.jsx
+|   |   |       ConnectionNameControl.jsx
+|   |   |       identityStorage.js
+|   |   |       LanguageSwitcher.jsx
+|   |   |       RoleAccessControl.jsx
+|   |   |       StudentIdentityControl.css
+|   |   |       StudentIdentityControl.jsx
+|   |   |       
+|   |   +---layouts
+|   |   |       Accordion.jsx
+|   |   |       accordionDom.js
+|   |   |       shared-common-zone-layout.css
+|   |   |       SharedCommonZoneLayout.jsx
+|   |   |       Toolbar.jsx
+|   |   |       
+|   |   +---resources
+|   |   |       AlgebraTiles.css
+|   |   |       AlgebraTiles.jsx
+|   |   |       CollaborativeGeoGebra.css
+|   |   |       CollaborativeGeoGebra.jsx
+|   |   |       GroupingDragDrop.css
+|   |   |       GroupingDragDrop.jsx
+|   |   |       InputGrid.css
+|   |   |       InputGrid.jsx
+|   |   |       
+|   |   +---services
+|   |   |       chat-accordion.css
+|   |   |       ChatAccordion.jsx
+|   |   |       common-session-settings.css
+|   |   |       CommonSessionSettings.jsx
+|   |   |       SettingsAccordion.jsx
+|   |   |       StudentQrAccordion.jsx
+|   |   |       StudentScoresAccordion.jsx
+|   |   |       StudentTable.jsx
+|   |   |       studentTableColumnPresets.jsx
+|   |   |       
+|   |   \---widgets
+|   |           BlueNumberBox.jsx
+|   |           MathFormula.jsx
+|   |           shared-inputs.css
+|   |           SharedInputBox.jsx
+|   |           SharedInputRow.jsx
+|   |           SimpleCoordinateSystem.css
+|   |           SimpleCoordinateSystem.jsx
+|   |           
+|   +---hooks
+|   |       usePresentationSync.js
+|   |       useRealtimeSocket.js
+|   |       
+|   \---i18n
+|           index.js
+|           
++---styles
+|       dashboard-pages.css
+|       globals.css
+|       postit-cards.css
+|       
++---system
+|   +---camera-speed-test
+|   |       CameraSpeedTest.css
+|   |       CameraSpeedTest.jsx
+|   |       
+|   \---console
+|           ConsoleTool.css
+|           ConsoleTool.jsx
+|           
++---tools
+|   +---activity-builder
+|   |   |   ActivityBuilder.css
+|   |   |   ActivityBuilder.jsx
+|   |   |   
+|   |   +---components
+|   |   |       EditorPanel.jsx
+|   |   |       index.js
+|   |   |       LibraryPanel.jsx
+|   |   |       
+|   |   +---data
+|   |   |       defaultConfig.js
+|   |   |       
+|   |   \---logic
+|   |           activityApi.js
+|   |           jsonUtils.js
+|   |           
+|   +---geogebra-monitor
+|   |       GeogebraMonitor.css
+|   |       GeogebraMonitor.jsx
+|   |       GeogebraMonitorTool.css
+|   |       GeogebraMonitorTool.jsx
+|   |       
+|   \---linear-separation
+|       |   LinearSeparation.css
+|       |   LinearSeparation.jsx
+|       |   
+|       +---components
+|       |       ClassificationTable.jsx
+|       |       index.js
+|       |       InputPanel.jsx
+|       |       ResultsPanel.jsx
+|       |       SettingsPanel.jsx
+|       |       
+|       +---data
+|       |       defaultDataset.js
+|       |       
+|       \---logic
+|               datasetUtils.js
+|               linearSeparator.js
+|               
+\---workshops
+    +---buffon-needle
+    |   |   App.css
+    |   |   App.jsx
+    |   |   lab.manifest.json
+    |   |   StudentView.jsx
+    |   |   TeacherView.jsx
+    |   |   
+    |   +---data
+    |   |       student-template.js
+    |   |       teacher-template.js
+    |   |       
+    |   \---logic
+    |           student-logic.js
+    |           teacher-logic.js
+    |           
+    +---geogebra-collab
+    |       GeoGebraCollabTool.css
+    |       GeoGebraCollabTool.jsx
+    |       
+    +---geometry-live
+    |   |   App.jsx
+    |   |   camera.html
+    |   |   index.jsx
+    |   |   lab.manifest.json
+    |   |   mouse.html
+    |   |   StudentView.jsx
+    |   |   teacher.html
+    |   |   TeacherView.jsx
+    |   |   
+    |   +---assets
+    |   +---components
+    |   |       GeometryLabShell.jsx
+    |   |       index.js
+    |   |       
+    |   +---data
+    |   |       modes.js
+    |   |       
+    |   \---js
+    |           presentation-shell.js
+    |           presentation-sidebar-manager.js
+    |           realtime-socket.js
+    |           
+    +---identities
+    |       App.css
+    |       App.jsx
+    |       student.html
+    |       student.jsx
+    |       StudentView.jsx
+    |       teacher.html
+    |       teacher.jsx
+    |       TeacherView.jsx
+    |       
+    +---linear-systems
+    |       App.css
+    |       App.jsx
+    |       student.html
+    |       student.jsx
+    |       StudentView.jsx
+    |       teacher.html
+    |       teacher.jsx
+    |       TeacherView.jsx
+    |       
+    +---neural
+    |   |   App.css
+    |   |   App.jsx
+    |   |   lab.manifest.json
+    |   |   StudentView.jsx
+    |   |   TeacherView.jsx
+    |   |   
+    |   +---components
+    |   |       ActivitiesMenu.jsx
+    |   |       DatasetSelector.jsx
+    |   |       ExamplesClassifier.jsx
+    |   |       index.js
+    |   |       MathFormula.jsx
+    |   |       ProductRow.jsx
+    |   |       StudentTable.jsx
+    |   |       TeacherCard.jsx
+    |   |       VerticalProducts.jsx
+    |   |       
+    |   +---data
+    |   |       datasets.js
+    |   |       
+    |   \---media
+    |           neural_lab_student_qrcode.png
+    |           
+    +---polynomial
+    |       App.css
+    |       App.jsx
+    |       grading.js
+    |       grading.test.js
+    |       student.html
+    |       student.jsx
+    |       StudentView.jsx
+    |       teacher.html
+    |       teacher.jsx
+    |       TeacherView.jsx
+    |       
+    \---primes
+        |   App.css
+        |   App.jsx
+        |   lab.manifest.json
+        |   StudentView.jsx
+        |   TeacherView.jsx
+        |   
+        +---components
+        |       Accordion.jsx
+        |       NumberGrid.jsx
+        |       SelectionSummaryAccordion.jsx
+        |       StudentsTable.jsx
+        |       TeacherPanel.jsx
+        |       
+        \---data
+                primes.js
+                

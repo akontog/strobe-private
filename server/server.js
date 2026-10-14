@@ -62,7 +62,6 @@ const initLinearSystems = require('./services/linearSystems');
 const initGeogebraCollab = require('./services/geogebraCollab');
 const { createGeogebraLessonStore } = require('./utils/geogebraLessonStore');
 const wsRegistry = require('./services/websocketRegistry');
-const { runGeogebraCollabProtocolRunner } = require('./tools/geogebraCollabProtocolRunner');
 
 /**** 5. Create Express application and HTTP server ****/
 // Create Express application instance
@@ -244,13 +243,6 @@ app.get('/api/tools', (req, res) => {
       available: true
     },
     {
-      id: 'geogebra-collab-test',
-      title: 'GeoGebra Protocol Test Runner',
-      description: 'Runs integration tests with fake realtime clients over the geogebra collaboration protocol.',
-      path: '/tools/geogebra-collab-test/',
-      available: true
-    },
-    {
       id: 'geogebra-monitor',
       title: 'GeoGebra Central Monitor',
       description: 'Teacher-facing dashboard for all collaborative GeoGebra rooms and live student moves.',
@@ -266,11 +258,6 @@ app.get('/api/tools', (req, res) => {
     }
   ]);
 });
-
-app.post('/api/tools/geogebra-collab-test/run', asyncHandler(async (req, res) => {
-  const result = await runGeogebraCollabProtocolRunner({ verbose: false });
-  res.status(result.ok ? 200 : 500).json(result);
-}));
 
 io.on('connection', (socket) => {
   registerGeometrySocketHandlers(socket);

@@ -202,7 +202,7 @@ Unified classroom platform with:
 ## New Structure (no root apps)
 - server/ server runtime and routes
 - server/apps/registry.js app registry used by teacher/student launchers
-- client/src/labs/* React StudentView/TeacherView wrappers
+- client/src/workshops/* React StudentView/TeacherView wrappers
 - client/src/shared/* shared React utilities/components
 - client/src/layout/* layout area (when present in client code)
 

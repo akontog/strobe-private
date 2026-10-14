@@ -1,5 +1,5 @@
 import React from 'react';
-import { GeogebraMonitor } from '../../shared/components';
+import GeogebraMonitor from './GeogebraMonitor';
 import './GeogebraMonitorTool.css';
 
 export default function GeogebraMonitorTool() {

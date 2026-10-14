@@ -1,0 +1,61 @@
+Folder PATH listing for volume OS
+Volume serial number is 4EE2-6C3B
+C:.
+|   index.js
+|   README.md
+|   structure.txt
+|   
++---activities
+|       ActivitiesMenu.jsx
+|       SessionLogContext.jsx
+|       
++---data
++---display
+|       HeroTitle.jsx
+|       
++---identity
+|       CommonZoneFullscreenButton.jsx
+|       ConnectionNameControl.jsx
+|       identityStorage.js
+|       LanguageSwitcher.jsx
+|       RoleAccessControl.jsx
+|       StudentIdentityControl.css
+|       StudentIdentityControl.jsx
+|       
++---layouts
+|       Accordion.jsx
+|       accordionDom.js
+|       shared-common-zone-layout.css
+|       SharedCommonZoneLayout.jsx
+|       Toolbar.jsx
+|       
++---resources
+|       AlgebraTiles.css
+|       AlgebraTiles.jsx
+|       CollaborativeGeoGebra.css
+|       CollaborativeGeoGebra.jsx
+|       GroupingDragDrop.css
+|       GroupingDragDrop.jsx
+|       InputGrid.css
+|       InputGrid.jsx
+|       
++---services
+|       chat-accordion.css
+|       ChatAccordion.jsx
+|       common-session-settings.css
+|       CommonSessionSettings.jsx
+|       SettingsAccordion.jsx
+|       StudentQrAccordion.jsx
+|       StudentScoresAccordion.jsx
+|       StudentTable.jsx
+|       studentTableColumnPresets.jsx
+|       
+\---widgets
+        BlueNumberBox.jsx
+        MathFormula.jsx
+        shared-inputs.css
+        SharedInputBox.jsx
+        SharedInputRow.jsx
+        SimpleCoordinateSystem.css
+        SimpleCoordinateSystem.jsx
+        
