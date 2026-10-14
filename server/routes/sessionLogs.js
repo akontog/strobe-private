@@ -1,6 +1,6 @@
 const express = require('express');
 const { getAppBySlug } = require('../apps/registry');
-const { appendRecord, getActiveSessionForApp, getActiveSession, getAppSettings, setAppSetting, getChatMessages } = require('../services/sessionLogs');
+const { appendRecord, getActiveSessionForApp, getActiveSession, getAppSettings, setAppSetting, getChatMessages, getActiveSessionStudents } = require('../services/sessionLogs');
 const { requireRole } = require('../middleware/checkRole');
 
 const router = express.Router();
@@ -18,6 +18,11 @@ router.get('/api/session-logs/active/:app/chat', (req, res) => {
   const sessionId = getActiveSessionForApp(req.params.app);
   const session = sessionId ? getActiveSession(sessionId) : null;
   return res.json({ sessionId, enabled: Boolean(session?.metadata.chatEnabled), messages: session?.metadata.chatEnabled ? getChatMessages(sessionId) : [] });
+});
+
+router.get('/api/session-logs/active/:app/students', requireRole(['teacher']), (req, res) => {
+  if (!getAppBySlug(req.params.app)) return res.status(404).json({ error: 'Unknown app.' });
+  return res.json({ students: getActiveSessionStudents(req.params.app, `${req.params.app === 'identities-lab' ? 'identities:' : ''}`) });
 });
 
 router.post('/api/session-logs/active/:app/chat/settings', requireRole(['teacher']), (req, res) => {

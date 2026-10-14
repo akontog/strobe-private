@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-export const Accordion = ({ title, icon = null, open = false, children }) => {
-  const [isOpen, setIsOpen] = useState(open);
+export const Accordion = ({ title, subtitle = '', icon = null, open = false, defaultOpen = false, children }) => {
+  const [isOpen, setIsOpen] = useState(open || defaultOpen);
   const prefix = icon ? `${icon} ` : '';
 
   return (
@@ -12,7 +12,7 @@ export const Accordion = ({ title, icon = null, open = false, children }) => {
         aria-expanded={isOpen}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span>{prefix}{title}</span>
+        <span>{prefix}{title}{subtitle ? <small className="accordion-subtitle">{subtitle}</small> : null}</span>
         <span className="accordion-icon">{isOpen ? '-' : '+'}</span>
       </button>
       <div className={`accordion-content ${isOpen ? 'open' : ''}`}>

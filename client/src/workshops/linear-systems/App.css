@@ -81,14 +81,6 @@
   min-width: 0;
 }
 
-.linear-topbar {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 0.9rem;
-}
-
 .linear-label {
   color: #2563eb;
   letter-spacing: 0.08em;
@@ -148,16 +140,6 @@
   overflow: hidden;
 }
 
-.linear-input-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.7rem;
-}
-
-.linear-input-grid .lab-field {
-  margin: 0;
-}
-
 .linear-actions {
   margin-top: 0.8rem;
   display: flex;
@@ -205,10 +187,6 @@
 }
 
 @media (max-width: 980px) {
-  .linear-input-grid {
-    grid-template-columns: 1fr;
-  }
-
   .linear-neural-zone {
     flex-direction: column;
   }

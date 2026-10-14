@@ -119,6 +119,41 @@ function getChatMessages(sessionId) {
   });
 }
 
+function getActiveSessionStudents(app, activityPrefix = '') {
+  const sessionId = getActiveSessionForApp(app);
+  const session = sessionId ? getActiveSession(sessionId) : null;
+  if (!session) return [];
+
+  const students = new Map((session.metadata.students || []).map((name) => [name, {
+    id: name,
+    name,
+    activityId: '',
+    answers: {}
+  }]));
+  const filename = path.join(session.directory, 'events.jsonl');
+
+  fs.readFileSync(filename, 'utf8').split(/\r?\n/).filter(Boolean).forEach((line) => {
+    try {
+      const record = JSON.parse(line);
+      if (record.event !== 'activity.input.changed' || !record.student) return;
+      if (activityPrefix && !String(record.activity || '').startsWith(activityPrefix)) return;
+
+      const student = students.get(record.student);
+      if (!student) return;
+      const activityId = String(record.activity || '').split(':')[1] || '';
+      student.activityId = activityId;
+      const field = String(record.data?.field || '').trim();
+      if (!field || !activityId) return;
+      student.answers[activityId] ||= {};
+      student.answers[activityId][field] = String(record.data?.value ?? '');
+    } catch {
+      // Ignore malformed event records and keep the remaining student data.
+    }
+  });
+
+  return [...students.values()];
+}
+
 function appendRecord(sessionId, filename, record) {
   const session = getActiveSession(sessionId);
   if (!session) return false;
@@ -148,4 +183,4 @@ function endSession(sessionId) {
   return session.metadata;
 }
 
-module.exports = { createSession, appendRecord, endSession, getActiveSession, getActiveSessionForApp, getAppSettings, setAppSetting, getChatMessages, updateSessionActivity, updateSessionStudentScore };
+module.exports = { createSession, appendRecord, endSession, getActiveSession, getActiveSessionForApp, getAppSettings, setAppSetting, getChatMessages, getActiveSessionStudents, updateSessionActivity, updateSessionStudentScore };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import Accordion from './Accordion';
+import { Accordion } from '../../../shared/components';
 
 const TeacherPanel = ({
   currentPrime,

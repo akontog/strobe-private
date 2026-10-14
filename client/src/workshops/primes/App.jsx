@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import CommonZoneFullscreenButton from '../../shared/components/identity/CommonZoneFullscreenButton';
 import NumberGrid from './components/NumberGrid';
 import SelectionSummaryAccordion from './components/SelectionSummaryAccordion';
-import StudentsTable from './components/StudentsTable';
 import TeacherPanel from './components/TeacherPanel';
 import {
+  StudentTable,
   ConnectionNameControl,
   randomIdentityColor,
   readIdentityColor,
@@ -461,13 +461,44 @@ const App = ({ role = 'teacher' }) => {
             </div>
 
             <div className="primes-lower-column">
-              <StudentsTable
-                students={visibleStudents}
-                activeStudentId={activeStudentId}
-                currentPrime={currentPrime}
-                claimedNumbers={claimedNumbers}
-                wrongSelectionsByNumber={wrongSelectionsByNumber}
-                studentColorById={studentColorById}
+              <StudentTable
+                title={t('table.title')}
+                participants={visibleStudents}
+                nameFallback={t('table.student')}
+                getRowKey={(student) => student.id}
+                getDisplayName={(student) => student.name}
+                getIsConnected={() => true}
+                columns={[
+                  {
+                    key: 'color',
+                    label: t('table.color'),
+                    render: (student) => {
+                      const color = studentColorById?.[student.id] || '#3b82f6';
+                      return <span className="student-color-chip" style={{ backgroundColor: color }} title={color} />;
+                    }
+                  },
+                  {
+                    key: 'correct',
+                    label: t('table.correct'),
+                    render: (student) => {
+                      const selected = student.selectedCorrect.filter((number) => claimedNumbers.has(number));
+                      return <div className="number-chips number-chips--success">{selected.length ? selected.join(', ') : '—'}</div>;
+                    }
+                  },
+                  {
+                    key: 'wrong',
+                    label: t('table.wrong'),
+                    render: (student) => {
+                      const selected = student.selectedWrong.filter((number) => (wrongSelectionsByNumber[number] || []).includes(student.id));
+                      return <div className="number-chips number-chips--danger">{selected.length ? selected.join(', ') : '—'}</div>;
+                    }
+                  },
+                  {
+                    key: 'status',
+                    label: t('table.status'),
+                    render: (student) => student.id === activeStudentId ? t('table.activeNow') : t('table.viewing')
+                  }
+                ]}
               />
 
               <div className="primes-note primes-compact-note">

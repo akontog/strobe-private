@@ -21,7 +21,6 @@ import {
   writeIdentityName
 } from '../../shared/components';
 import DATASETS from './data/datasets';
-//import { StudentTable } from '../shared-components/StudentTable';
 import './App.css';
 
 const DEFAULT_THRESHOLD_RULE = { op: '>=', boundary: 5 };
@@ -917,13 +916,35 @@ const [studentColor, setStudentColor] = useState(() => {
       {(isTeacher || isScreen) && (
         <div className="live-table-wrap">
           <StudentTable
-            i1={lessonInputs.i1}
-            i2={lessonInputs.i2}
-            selectedInputs={lessonSelectedInputs}
-            features={localizedFeatures}
-            threshold={effectiveThresholdRule}
+            title={t('studentTableTitle')}
             participants={sortedParticipants}
-            activity={lessonActivity}
+            emptyMessage={t('noStudents')}
+            nameFallback={t('studentName')}
+            getRowKey={(student, index) => student.id || student.username || student.name || index}
+            getDisplayName={(student) => student.username || student.name || student.displayName || t('studentName')}
+            getIsConnected={(student) => student.isConnected ?? true}
+            columns={[
+              ...(lessonSelectedInputs?.i1 ? [
+                { key: 'i1', label: `i₁ (${localizedFeatures.i1.label})`, render: (student) => <>{student?.inputs?.i1 ?? lessonInputs.i1} <span className="icon-in-table">{localizedFeatures.i1.icon}</span></> },
+                { key: 'w1', label: 'w1', className: 'weight-value', style: { background: '#ef4444', color: 'white' }, render: (student) => student.weights?.w1 ?? (lessonActivity !== '3' && lessonActivity !== '4' ? 2 : '-') }
+              ] : []),
+              ...(lessonSelectedInputs?.i2 ? [
+                { key: 'i2', label: `i₂ (${localizedFeatures.i2.label})`, render: (student) => <>{student?.inputs?.i2 ?? lessonInputs.i2} <span className="icon-in-table">{localizedFeatures.i2.icon}</span></> },
+                { key: 'w2', label: 'w2', className: 'weight-value', style: { background: '#ef4444', color: 'white' }, render: (student) => student.weights?.w2 ?? (lessonActivity !== '3' && lessonActivity !== '4' ? 3 : '-') }
+              ] : []),
+              ...(['2', '3', '4'].includes(lessonActivity) && lessonSelectedInputs?.i1 ? [{ key: 'p1', label: 'w1 × i1', render: (student) => student?.products?.p1 ?? '-' }] : []),
+              ...(['2', '3', '4'].includes(lessonActivity) && lessonSelectedInputs?.i2 ? [{ key: 'p2', label: 'w2 × i2', render: (student) => student?.products?.p2 ?? '-' }] : []),
+              {
+                key: 'result',
+                label: `${t('result')} o`,
+                className: 'result-visible',
+                render: (student) => {
+                  const resultValue = student.total ?? student.result ?? '-';
+                  const showThreshold = lessonActivity === '4';
+                  return <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}><span>{resultValue}</span>{showThreshold && typeof student.aboveThreshold === 'boolean' ? <span style={{ marginLeft: '0.45rem', fontWeight: 700, color: student.aboveThreshold ? '#059669' : '#dc2626' }}>{student.aboveThreshold ? `${effectiveThresholdRule.op} ${effectiveThresholdRule.boundary}` : `${t('belowThreshold')} ${effectiveThresholdRule.op} ${effectiveThresholdRule.boundary}`}</span> : null}</div>;
+                }
+              }
+            ]}
           />
         </div>
       )}

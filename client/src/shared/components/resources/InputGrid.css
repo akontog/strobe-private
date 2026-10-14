@@ -8,6 +8,12 @@
   min-width: 0;
 }
 
+.activity-input-grid__label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 700;
+}
+
 .activity-input-grid__input {
   box-sizing: border-box;
   width: 100%;

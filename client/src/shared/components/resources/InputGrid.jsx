@@ -18,7 +18,7 @@ export default function InputGrid({
   activity = '',
   className = '',
   customLayout = false,
-  labelClassName = ''
+  labelClassName = 'activity-input-grid__label'
 }) {
   const sessionLogging = useSessionInputLogger();
   const canEdit = sessionLogging?.canEdit ?? true;

@@ -1,18 +1,22 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../../shared/i18n';
 import CommonZoneFullscreenButton from '../../shared/components/identity/CommonZoneFullscreenButton';
 import {
   Accordion,
   ActivitiesMenu,
+  StudentTable,
+  StudentScoresAccordion,
   SettingsAccordion,
   CommonSessionSettings,
   HeroTitle,
   MathFormula,
+  readIdentityName,
   SharedCommonZoneLayout,
   SharedInputBox,
   SharedInputRow
 } from '../../shared/components';
+import { useSessionInputLogger } from '../../shared/components/activities/SessionLogContext';
 import './App.css';
 
 const ACTIVITY_LIBRARY = [
@@ -23,7 +27,6 @@ const ACTIVITY_LIBRARY = [
     objectiveKey: 'activity1Objective',
     geometricKey: 'activity1Geometric',
     expression: '(a+b)^2',
-    expected: ['a^2', '2ab', 'b^2'],
   },
   {
     id: '2',
@@ -32,7 +35,6 @@ const ACTIVITY_LIBRARY = [
     objectiveKey: 'activity2Objective',
     geometricKey: 'activity2Geometric',
     expression: '(a-b)^2',
-    expected: ['a^2', '-2ab', 'b^2'],
   },
   {
     id: '3',
@@ -41,7 +43,6 @@ const ACTIVITY_LIBRARY = [
     objectiveKey: 'activity3Objective',
     geometricKey: 'activity3Geometric',
     expression: '(a+b)(a-b)',
-    expected: ['a^2', '-b^2', ''],
   },
   {
     id: '4',
@@ -49,20 +50,8 @@ const ACTIVITY_LIBRARY = [
     titleKey: 'activity4Title',
     objectiveKey: 'activity4Objective',
     geometricKey: 'activity4Geometric',
-    expected: [],
   }
 ];
-
-function normalize(value) {
-  return String(value || '').trim().replace(/\s+/g, '');
-}
-
-function isEquivalent(actual, expected) {
-  if (!expected) {
-    return normalize(actual) === '';
-  }
-  return normalize(actual) === normalize(expected);
-}
 
 function toNumber(value) {
   const normalized = String(value || '').trim().replace(',', '.');
@@ -76,18 +65,166 @@ function toNumber(value) {
 export default function App({ role = 'student' }) {
   const { t } = useTranslation('identities');
   const isTeacher = role === 'teacher';
+  const sessionLogging = useSessionInputLogger();
+  const [studentName, setStudentName] = useState(() => readIdentityName('Student'));
+  const studentNameRef = useRef(studentName);
   const [selectedActivityId, setSelectedActivityId] = useState(ACTIVITY_LIBRARY[0].id);
   const [answersByActivity, setAnswersByActivity] = useState({});
   const [numericInputs, setNumericInputs] = useState({ a: '', b: '' });
-  const [feedback, setFeedback] = useState('');
+  const [students, setStudents] = useState([]);
+  const [participants, setParticipants] = useState([]);
+  const [isSocketConnected, setIsSocketConnected] = useState(false);
+  const [scoreRecords, setScoreRecords] = useState([]);
+  const wsRef = useRef(null);
+  const reconnectTimerRef = useRef(null);
+
+  useEffect(() => {
+    const syncIdentity = (event) => {
+      setStudentName(String(event.detail?.name || readIdentityName('Student')).trim());
+    };
+    window.addEventListener('strobe:identity-change', syncIdentity);
+    window.addEventListener('storage', syncIdentity);
+    return () => {
+      window.removeEventListener('strobe:identity-change', syncIdentity);
+      window.removeEventListener('storage', syncIdentity);
+    };
+  }, []);
+
+  useEffect(() => {
+    studentNameRef.current = studentName;
+  }, [studentName]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const connect = () => {
+      if (cancelled) return;
+      const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+      const socket = new WebSocket(`${protocol}://${window.location.host}/ws/identities-lab`);
+      wsRef.current = socket;
+
+      socket.addEventListener('open', () => {
+        if (cancelled) return;
+        setIsSocketConnected(true);
+        socket.send(JSON.stringify({
+          type: isTeacher ? 'register_teacher' : 'register_student',
+          name: studentNameRef.current
+        }));
+        socket.send(JSON.stringify({ type: 'request_state' }));
+      });
+
+      socket.addEventListener('message', (event) => {
+        let message;
+        try {
+          message = JSON.parse(event.data);
+        } catch {
+          return;
+        }
+        if (message?.type === 'identities_state' && Array.isArray(message.participants)) {
+          setParticipants(message.participants);
+        }
+      });
+
+      socket.addEventListener('close', () => {
+        if (cancelled) return;
+        setIsSocketConnected(false);
+        reconnectTimerRef.current = window.setTimeout(connect, 1000);
+      });
+
+      socket.addEventListener('error', () => {
+        if (!cancelled) setIsSocketConnected(false);
+      });
+    };
+
+    connect();
+    return () => {
+      cancelled = true;
+      if (reconnectTimerRef.current) window.clearTimeout(reconnectTimerRef.current);
+      const socket = wsRef.current;
+      wsRef.current = null;
+      if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+        socket.close();
+      }
+    };
+  }, [isTeacher]);
+
+  useEffect(() => {
+    const socket = wsRef.current;
+    if (!isSocketConnected || !socket || socket.readyState !== WebSocket.OPEN) return;
+    socket.send(JSON.stringify({
+      type: isTeacher ? 'register_teacher' : 'register_student',
+      name: studentName
+    }));
+  }, [isSocketConnected, isTeacher, studentName]);
 
   const activeActivity = useMemo(
     () => ACTIVITY_LIBRARY.find((activity) => activity.id === selectedActivityId) || ACTIVITY_LIBRARY[0],
     [selectedActivityId]
   );
 
+  useEffect(() => {
+    if (!isTeacher) return undefined;
+    let cancelled = false;
+    const loadStudents = async () => {
+      try {
+        const response = await fetch('/api/session-logs/active/identities-lab/students', { cache: 'no-store' });
+        const payload = response.ok ? await response.json() : null;
+        if (!cancelled) setStudents(Array.isArray(payload?.students) ? payload.students : []);
+      } catch {
+        if (!cancelled) setStudents([]);
+      }
+    };
+    loadStudents();
+    const intervalId = window.setInterval(loadStudents, 1500);
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+    };
+  }, [isTeacher]);
+
+  useEffect(() => {
+    if (!isTeacher || !sessionLogging?.scoreVisible) {
+      setScoreRecords([]);
+      return undefined;
+    }
+    let cancelled = false;
+    const refreshScores = async () => {
+      try {
+        const response = await fetch('/api/scores');
+        if (!response.ok) return;
+        const payload = await response.json();
+        if (!cancelled) setScoreRecords(Array.isArray(payload.students) ? payload.students : []);
+      } catch {
+        // Keep the most recently loaded scores if refresh fails.
+      }
+    };
+    refreshScores();
+    const intervalId = window.setInterval(refreshScores, 5000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+    };
+  }, [isTeacher, sessionLogging?.scoreVisible]);
+
   const activeAnswers = answersByActivity[selectedActivityId] || { term1: '', term2: '', term3: '' };
   const isProofMode = selectedActivityId === '4';
+  const sortedStudents = useMemo(
+    () => {
+      const sessionStudentsByName = new Map(students.map((student) => [String(student.name || '').trim().toLocaleLowerCase(), student]));
+      return participants
+        .filter((student) => student?.isConnected !== false)
+        .map((participant) => {
+          const sessionStudent = sessionStudentsByName.get(String(participant.name || '').trim().toLocaleLowerCase());
+          return {
+            ...sessionStudent,
+            ...participant,
+            activityId: sessionStudent?.activityId || '',
+            answers: sessionStudent?.answers || {}
+          };
+        })
+        .sort((left, right) => String(left.name || '').localeCompare(String(right.name || '')));
+    },
+    [participants, students]
+  );
 
   const leftPanel = (
     <div className="lab-card lab-card--highlight poly-expression-card identities-expression-card" aria-label={t('identityAriaLabel')}>
@@ -110,19 +247,6 @@ export default function App({ role = 'student' }) {
     { label: t('term2'), value: activeAnswers.term2, key: 'term2' },
     { label: t('term3'), value: activeAnswers.term3, key: 'term3' }
   ];
-
-  const checkIdentityAnswers = () => {
-    if (isProofMode) {
-      return;
-    }
-
-    const expected = activeActivity.expected;
-    const allCorrect = isEquivalent(activeAnswers.term1, expected[0])
-      && isEquivalent(activeAnswers.term2, expected[1])
-      && isEquivalent(activeAnswers.term3, expected[2]);
-
-    setFeedback(allCorrect ? t('correctFeedback') : t('incorrectFeedback'));
-  };
 
   const aValue = toNumber(numericInputs.a);
   const bValue = toNumber(numericInputs.b);
@@ -165,6 +289,7 @@ export default function App({ role = 'student' }) {
                   tokens={['+', '+', '']}
                   defaultPlaceholder=""
                   boxes={resultRows.map((row) => ({
+                    id: row.key,
                     key: row.key,
                     label: row.label,
                     value: row.value,
@@ -183,16 +308,13 @@ export default function App({ role = 'student' }) {
               </div>
             </div>
           </div>
-          <div className="identities-actions">
-          <button type="button" className="linear-btn" onClick={checkIdentityAnswers}>{t('check')}</button>
-          </div>
-          {feedback ? <p className="linear-feedback">{feedback}</p> : null}
         </div>
       ) : (
         <div className="poly-template-answer-panel">
           <p className="identities-note">{t('checkEquality')}</p>
           <div className="identities-proof-inputs">
             <SharedInputBox
+              id="a"
               activity={`identities:${selectedActivityId}`}
               label="a"
               value={numericInputs.a}
@@ -200,6 +322,7 @@ export default function App({ role = 'student' }) {
               placeholder=""
             />
             <SharedInputBox
+              id="b"
               activity={`identities:${selectedActivityId}`}
               label="b"
               value={numericInputs.b}
@@ -283,7 +406,6 @@ export default function App({ role = 'student' }) {
             value={selectedActivityId}
             onChange={(nextId) => {
               setSelectedActivityId(nextId);
-              setFeedback('');
             }}
           />
 
@@ -291,8 +413,44 @@ export default function App({ role = 'student' }) {
             <CommonSessionSettings />
           </SettingsAccordion>
 
+          <StudentTable
+            title={t('studentTableTitle', { defaultValue: 'Πίνακας μαθητών' })}
+            participants={sortedStudents}
+            columns={[
+              { key: 'activity', label: t('activities'), render: (student) => student.activityId || '—' },
+              { key: 'term1', label: t('term1'), render: (student) => student.answers?.[student.activityId]?.term1 || '—' },
+              { key: 'term2', label: t('term2'), render: (student) => student.answers?.[student.activityId]?.term2 || '—' },
+              { key: 'term3', label: t('term3'), render: (student) => student.answers?.[student.activityId]?.term3 || '—' },
+              { key: 'a', label: 'a', render: (student) => student.answers?.[student.activityId]?.a || '—' },
+              { key: 'b', label: 'b', render: (student) => student.answers?.[student.activityId]?.b || '—' },
+              ...(sessionLogging?.scoreVisible ? [{
+                key: 'score',
+                label: t('score', { ns: 'scores' }),
+                render: (student) => {
+                  const studentNameKey = String(student.name || '').trim().toLocaleLowerCase();
+                  const scoreRecord = scoreRecords.find((record) => String(record.name || '').trim().toLocaleLowerCase() === studentNameKey);
+                  const score = scoreRecord?.activities?.[`identities:${student.activityId}`];
+                  return Number.isFinite(Number(score)) ? Number(Number(score).toFixed(2)) : '—';
+                }
+              }] : [])
+            ]}
+            emptyMessage={t('noStudents', { defaultValue: 'Δεν υπάρχουν ακόμη μαθητές.' })}
+          />
+
         </>
       ) : null}
+      <StudentScoresAccordion
+        role={role}
+        studentName={studentName}
+        activity={`identities:${selectedActivityId}`}
+        currentScore={activeActivity.expected?.reduce((score, expected, index) => {
+          const answer = String(activeAnswers[`term${index + 1}`] ?? '').trim();
+          if (!answer) return score;
+          const normalizedAnswer = answer.replace(/\s+/g, '');
+          const normalizedExpected = String(expected ?? '').trim().replace(/\s+/g, '');
+          return score + (normalizedAnswer === normalizedExpected ? 1 : -0.5);
+        }, 0) ?? 0}
+      />
     </div>
   );
 }

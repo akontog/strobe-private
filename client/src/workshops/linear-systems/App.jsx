@@ -8,7 +8,7 @@ import {
   HeroTitle,
   MathFormula,
   SharedCommonZoneLayout,
-  SharedInputBox,
+  InputGrid,
   SharedInputRow,
   SimpleCoordinateSystem,
   StudentTable,
@@ -757,7 +757,6 @@ export default function App({ role = 'student' }) {
       ) : (
         <div className="lab-math-box poly-expression-math poly-expression-math--empty" />
       )}
-      <p className="linear-note">{activeItem && activeItem.hint ? activeItem.hint : activeActivity.objective}</p>
     </div>
   );
 
@@ -852,24 +851,29 @@ export default function App({ role = 'student' }) {
               <MathFormula formula={`\\(${activeItem.eliminationLatex}\\)`} />
             </div>
           ) : null}
-          <div className="linear-input-grid">
-            <SharedInputBox
-              activity={`linear-systems:${selectedActivityId}`}
-              label="x"
-              value={answer.x}
-              onChange={(event) => setAnswer((prev) => ({ ...prev, x: event.target.value }))}
-              placeholder="π.χ. 3"
-              className="lab-field"
-            />
-            <SharedInputBox
-              activity={`linear-systems:${selectedActivityId}`}
-              label="y"
-              value={answer.y}
-              onChange={(event) => setAnswer((prev) => ({ ...prev, y: event.target.value }))}
-              placeholder="π.χ. 1"
-              className="lab-field"
-            />
-          </div>
+          <InputGrid
+            activity={`linear-systems:${selectedActivityId}`}
+            columns={2}
+            labelClassName="activity-input-grid__label"
+            fields={[
+              {
+                id: 'x',
+                label: 'x',
+                value: answer.x,
+                placeholder: 'π.χ. 3',
+                inputClassName: 'activity-input-grid__input',
+                onChange: (value) => setAnswer((prev) => ({ ...prev, x: value }))
+              },
+              {
+                id: 'y',
+                label: 'y',
+                value: answer.y,
+                placeholder: 'π.χ. 1',
+                inputClassName: 'activity-input-grid__input',
+                onChange: (value) => setAnswer((prev) => ({ ...prev, y: value }))
+              }
+            ]}
+          />
         </>
       ) : null}
 
@@ -910,10 +914,6 @@ export default function App({ role = 'student' }) {
 
       <section className="common-zone lab-zone linear-common-zone">
         <CommonZoneFullscreenButton />
-        <div className="linear-topbar">
-          <span className="poly-status-pill">{isTeacher ? 'Teacher mode' : 'Student mode'}</span>
-        </div>
-
         <SharedCommonZoneLayout
           className="linear-neural-zone"
           isGroupingMode={isGroupingMode}

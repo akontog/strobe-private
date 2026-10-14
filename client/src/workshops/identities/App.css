@@ -34,11 +34,6 @@
   line-height: 1.5;
 }
 
-.identities-actions {
-  display: flex;
-  justify-content: flex-start;
-}
-
 .identities-proof-inputs {
   display: grid;
   grid-template-columns: 1fr 1fr;

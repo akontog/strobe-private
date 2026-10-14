@@ -2,4 +2,3 @@
 export { TeacherCard } from './TeacherCard';
 export { VerticalProducts } from './VerticalProducts';
 export { ProductRow } from './ProductRow';
-export { StudentTable } from './StudentTable';
