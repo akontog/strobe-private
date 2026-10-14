@@ -1,4 +1,5 @@
 ﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   SettingsAccordion,
   CommonSessionSettings,
@@ -12,7 +13,8 @@ import {
   SimpleCoordinateSystem,
   StudentTable,
   readIdentitySnapshot,
-  CommonZoneFullscreenButton
+  CommonZoneFullscreenButton,
+  useSessionInputLogger
 } from '../../shared/components';
 import './App.css';
 
@@ -244,6 +246,8 @@ function extractSystemEquations(activeItem) {
 }
 
 export default function App({ role = 'student' }) {
+  const { t: tScores } = useTranslation('scores');
+  const sessionLogging = useSessionInputLogger();
   const isTeacher = role === 'teacher';
   const isStudent = !isTeacher;
 
@@ -977,7 +981,7 @@ export default function App({ role = 'student' }) {
               { key: 'equation1', label: 'Εξίσωση 1', render: (entry) => entry.answers?.equation1 || '-' },
               { key: 'equation2', label: 'Εξίσωση 2', render: (entry) => entry.answers?.equation2 || '-' },
               { key: 'classification', label: 'Ομαδοποίηση', render: (entry) => entry.answers?.classification || '-' },
-              { key: 'score', label: 'Σκορ', render: (entry) => entry.answers?.score || '-' }
+              ...(sessionLogging?.scoreVisible ? [{ key: 'score', label: tScores('score'), render: (entry) => entry.answers?.score ?? '-' }] : [])
             ]}
             emptyMessage="Δεν υπάρχουν ακόμη μαθητές."
           />
@@ -986,3 +990,4 @@ export default function App({ role = 'student' }) {
     </div>
   );
 }
+

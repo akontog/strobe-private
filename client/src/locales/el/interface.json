@@ -1,6 +1,8 @@
 {
   "appsLauncher": "Εκκίνηση εφαρμογών",
   "studentLauncher": "Εκκίνηση μαθητή",
+  "studentWaitingTitle": "Καλώς ήρθες",
+  "studentWaitingMessage": "Περίμενε να επιλέξει ο εκπαιδευτικός μια δραστηριότητα. Θα μεταφερθείς αυτόματα στο εργαστήριο.",
   "teacherDashboard": "Πίνακας εκπαιδευτικού",
   "tools": {
     "activity-builder": {

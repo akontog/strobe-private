@@ -1646,21 +1646,12 @@ export default function App({ role = 'teacher' }) {
               ...(sessionLogging?.scoreVisible ? [
                 {
                   key: 'activityScore',
-                  label: t('currentScore', { ns: 'scores' }),
+                  label: t('score', { ns: 'scores' }),
                   render: (student) => {
                     const participantName = String(student.username || student.name || student.displayName || '').trim().toLocaleLowerCase();
                     const record = scoreRecords.find((entry) => String(entry.name || '').trim().toLocaleLowerCase() === participantName);
                     const value = record?.activities?.[`polynomial:${selectedActivityId}:${selectedExpressionId}`];
                     return Number.isFinite(Number(value)) ? Number(Number(value).toFixed(2)) : '-';
-                  }
-                },
-                {
-                  key: 'totalScore',
-                  label: t('totalScore', { ns: 'scores' }),
-                  render: (student) => {
-                    const participantName = String(student.username || student.name || student.displayName || '').trim().toLocaleLowerCase();
-                    const record = scoreRecords.find((entry) => String(entry.name || '').trim().toLocaleLowerCase() === participantName);
-                    return Number.isFinite(Number(record?.totalScore)) ? Number(Number(record.totalScore).toFixed(2)) : '-';
                   }
                 }
               ] : [])

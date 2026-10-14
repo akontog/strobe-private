@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Link, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import BuffonStudentView from './labs/buffon-needle/StudentView';
@@ -19,10 +19,9 @@ import IdentitiesTeacherView from './labs/identities-lab/TeacherView';
 import AppsLauncherPage from './pages/AppsLauncherPage';
 import HomePage from './pages/HomePage';
 import LabPage from './pages/LabPage';
-import StudentPage from './pages/StudentPage';
+import StudentWaitingPage from './pages/StudentWaitingPage';
 import TeacherPage from './pages/TeacherPage';
 import ToolsPage from './pages/ToolsPage';
-import StudentScoresPage from './pages/StudentScoresPage';
 import InstructionsPage from './pages/InstructionsPage';
 import ActivityBuilder from './tools/activity-builder/ActivityBuilder';
 import CameraSpeedTest from './tools/camera-speed-test/CameraSpeedTest';
@@ -41,6 +40,7 @@ function App() {
   const { t } = useTranslation(['common', 'menu']);
   const { t: tNav } = useTranslation('navigation');
   const location = useLocation();
+  const navigate = useNavigate();
   const pathname = String(location?.pathname || '').toLowerCase();
   const currentLabSlug = pathname.match(/^\/labs\/([^/]+)/)?.[1] || '';
   const labHasOwnSettings = ['polynomial-lab', 'linear-systems-lab', 'neural-lab', 'identities-lab'].includes(currentLabSlug);
@@ -53,6 +53,8 @@ function App() {
   const [serverConnected, setServerConnected] = useState(false);
   const [teacherSession, setTeacherSession] = useState(null);
   const [teacherSessionBusy, setTeacherSessionBusy] = useState(false);
+  const [classroomLab, setClassroomLab] = useState('');
+  const [classroomSelectionLoaded, setClassroomSelectionLoaded] = useState(false);
 
   useEffect(() => {
     fetch('/api/auth/session').then((response) => response.json()).then((session) => {
@@ -64,6 +66,66 @@ function App() {
       setAuthReady(true);
     });
   }, []);
+
+  useEffect(() => {
+    if (!authReady || role !== 'teacher') return undefined;
+    const teacherLab = pathname.match(/^\/labs\/([^/]+)\/teacher$/)?.[1]
+      || (pathname === '/tools/geogebra-collab' ? 'geogebra-collab' : '');
+    const publishSelection = () => fetch('/teacher/classroom/selection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ app: teacherLab || null })
+      }).catch(() => {});
+    publishSelection();
+    if (!teacherLab) return undefined;
+    const timer = window.setInterval(publishSelection, 5000);
+    return () => window.clearInterval(timer);
+  }, [authReady, pathname, role]);
+
+  useEffect(() => {
+    if (!authReady || role !== 'student') return undefined;
+    let cancelled = false;
+    let requestInFlight = false;
+
+    const refreshClassroomSelection = async () => {
+      if (requestInFlight) return;
+      requestInFlight = true;
+      try {
+        const response = await fetch('/client/classroom/selection', { cache: 'no-store' });
+        const payload = response.ok ? await response.json() : null;
+        if (!cancelled && payload) {
+          setClassroomLab(typeof payload.app === 'string' ? payload.app : '');
+          setClassroomSelectionLoaded(true);
+        }
+      } catch {
+        // Continue polling until the teacher's selection is available.
+      } finally {
+        requestInFlight = false;
+      }
+    };
+
+    refreshClassroomSelection();
+    const timer = window.setInterval(refreshClassroomSelection, 1000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [authReady, role]);
+
+  useEffect(() => {
+    if (!authReady || role !== 'student' || !classroomSelectionLoaded) return;
+    const labRoute = pathname.match(/^\/labs\/([^/]+)\/(?:student|teacher)$/)?.[1] || '';
+    if (classroomLab) {
+      const target = classroomLab === 'geogebra-collab'
+        ? '/tools/geogebra-collab'
+        : `/labs/${classroomLab}/student`;
+      if (pathname !== target) navigate(target, { replace: true });
+      return;
+    }
+    if (labRoute || pathname === '/client' || pathname === '/student' || pathname === '/tools/geogebra-collab') {
+      navigate('/', { replace: true });
+    }
+  }, [authReady, classroomLab, classroomSelectionLoaded, navigate, pathname, role]);
 
   useEffect(() => {
     let active = true;
@@ -96,6 +158,12 @@ function App() {
     setActiveMenu('');
   }, [pathname]);
 
+  useEffect(() => {
+    const handleSessionEnded = () => setTeacherSession(null);
+    window.addEventListener('strobe:session-ended', handleSessionEnded);
+    return () => window.removeEventListener('strobe:session-ended', handleSessionEnded);
+  }, []);
+
   async function loginTeacher(username, password) {
     try {
       const response = await fetch('/api/auth/login', {
@@ -115,6 +183,11 @@ function App() {
 
   async function changeRole(nextRole) {
     if (nextRole === 'student') {
+      await fetch('/teacher/classroom/selection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ app: null })
+      }).catch(() => {});
       await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
       setRole('student');
       setTeacherUsername('');
@@ -137,6 +210,11 @@ function App() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || 'Η ενέργεια συνεδρίας απέτυχε.');
       setTeacherSession(teacherSession ? null : payload);
+      if (teacherSession) {
+        window.dispatchEvent(new CustomEvent('strobe:session-ended', {
+          detail: { sessionId: teacherSession.sessionId }
+        }));
+      }
     } catch (sessionError) {
       window.alert(sessionError.message || 'Η ενέργεια συνεδρίας απέτυχε.');
     } finally {
@@ -147,6 +225,24 @@ function App() {
   const teacherOnly = (element) => authReady
     ? (role === 'teacher' ? element : <Navigate to="/client" replace />)
     : null;
+  const studentLabOnly = (slug, element) => {
+    if (!authReady) return null;
+    if (role !== 'student') return element;
+    if (!classroomSelectionLoaded) return null;
+    if (classroomLab === slug) return element;
+    return classroomLab
+      ? <Navigate to={classroomLab === 'geogebra-collab' ? '/tools/geogebra-collab' : `/labs/${classroomLab}/student`} replace />
+      : <Navigate to="/" replace />;
+  };
+  const studentToolOnly = (selection, element) => {
+    if (!authReady) return null;
+    if (role !== 'student') return element;
+    if (!classroomSelectionLoaded) return null;
+    if (classroomLab === selection) return element;
+    return classroomLab
+      ? <Navigate to={classroomLab === 'geogebra-collab' ? '/tools/geogebra-collab' : `/labs/${classroomLab}/student`} replace />
+      : <Navigate to="/" replace />;
+  };
   const menuGroups = {
     labs: { label: tNav('labs'), items: [
       { label: tNav('items.buffon'), path: '/labs/buffon-needle' },
@@ -159,7 +255,6 @@ function App() {
     system: { label: tNav('system'), items: [
       { label: tNav('items.camera'), path: '/tools/camera-speed-test' },
       { label: tNav('items.console'), path: '/tools/console' },
-      { label: tNav('items.scores'), path: '/tools/student-scores' }
     ] },
     tools: { label: tNav('tools'), items: [
       { label: tNav('items.separation'), path: '/tools/linear-separation' },
@@ -170,7 +265,7 @@ function App() {
       { label: tNav('items.instructions'), path: '/instructions' }
     ] }
   };
-  const clickedMenuGroup = clickedMenu === 'labs' || clickedMenu === 'help' || role === 'teacher' ? menuGroups[clickedMenu] : null;
+  const clickedMenuGroup = role === 'teacher' ? menuGroups[clickedMenu] : null;
 
   return (
     <SessionLogProvider app={pathname.match(/^\/labs\/([^/]+)/)?.[1]} role={role} sessionId={teacherSession?.sessionId}>
@@ -180,12 +275,12 @@ function App() {
         <div className="client-topbar-main">
           <nav className="client-section-nav" aria-label={tNav('sectionNavigation')} onMouseLeave={() => setActiveMenu('')}>
             {Object.entries(menuGroups).map(([key, group]) => {
-              const hiddenForStudent = role !== 'teacher' && key !== 'labs' && key !== 'help';
+              if (role !== 'teacher') return null;
               return (
                 <div
                   key={key}
-                  className={`client-section-nav-item ${hiddenForStudent ? 'is-menu-hidden' : ''}`}
-                  onMouseEnter={() => { if (!hiddenForStudent) setActiveMenu(key); }}
+                  className="client-section-nav-item"
+                  onMouseEnter={() => setActiveMenu(key)}
                 >
                   <button
                     type="button"
@@ -196,12 +291,10 @@ function App() {
                     }}
                     aria-expanded={activeMenu === key}
                     aria-haspopup="true"
-                    tabIndex={hiddenForStudent ? -1 : 0}
-                    disabled={hiddenForStudent}
                   >
                     {group.label}
                   </button>
-                  {activeMenu === key && !hiddenForStudent ? (
+                  {activeMenu === key ? (
                     <nav className="client-submenu" aria-label={group.label}>
                       {group.items.map((item) => (
                         <Link
@@ -256,38 +349,37 @@ function App() {
           </section>
         ) : null}
         {!clickedMenuGroup ? <Routes>
-          <Route index element={<HomePage />} />
+          <Route index element={role === 'student' ? <StudentWaitingPage /> : <HomePage />} />
           <Route path="/instructions" element={<InstructionsPage />} />
           <Route path="/teacher" element={teacherOnly(<TeacherPage />)} />
-          <Route path="/client" element={<StudentPage />} />
-          <Route path="/student" element={<StudentPage />} />
+          <Route path="/client" element={<StudentWaitingPage />} />
+          <Route path="/student" element={<StudentWaitingPage />} />
           <Route path="/tools" element={teacherOnly(<ToolsPage />)} />
           <Route path="/tools/activity-builder" element={teacherOnly(<ActivityBuilder />)} />
           <Route path="/tools/camera-speed-test" element={teacherOnly(<CameraSpeedTest />)} />
-          <Route path="/tools/geogebra-collab" element={<GeoGebraCollabTool />} />
+          <Route path="/tools/geogebra-collab" element={studentToolOnly('geogebra-collab', <GeoGebraCollabTool />)} />
           <Route path="/tools/geogebra-collab-test" element={teacherOnly(<GeoGebraCollabTestTool />)} />
           <Route path="/tools/geogebra-monitor" element={teacherOnly(<GeogebraMonitorTool />)} />
           <Route path="/tools/console" element={teacherOnly(<ConsoleTool />)} />
-          <Route path="/tools/student-scores" element={teacherOnly(<StudentScoresPage />)} />
           <Route path="/tools/linear-separation" element={teacherOnly(<LinearSeparation />)} />
           <Route path="/tools/linear-seperation" element={teacherOnly(<LinearSeparation />)} />
-          <Route path="/apps-launcher" element={<AppsLauncherPage />} />
-          <Route path="/labs/buffon-needle/student" element={<BuffonStudentView />} />
+          <Route path="/apps-launcher" element={teacherOnly(<AppsLauncherPage />)} />
+          <Route path="/labs/buffon-needle/student" element={studentLabOnly('buffon-needle', <BuffonStudentView />)} />
           <Route path="/labs/buffon-needle/teacher" element={teacherOnly(<BuffonTeacherView />)} />
-          <Route path="/labs/neural-lab/student" element={<NeuralStudentView />} />
+          <Route path="/labs/neural-lab/student" element={studentLabOnly('neural-lab', <NeuralStudentView />)} />
           <Route path="/labs/neural-lab/teacher" element={teacherOnly(<NeuralTeacherView />)} />
-          <Route path="/labs/primes-lab/student" element={<PrimesStudentView />} />
+          <Route path="/labs/primes-lab/student" element={studentLabOnly('primes-lab', <PrimesStudentView />)} />
           <Route path="/labs/primes-lab/teacher" element={teacherOnly(<PrimesTeacherView />)} />
-          <Route path="/labs/polynomial-lab/student" element={<PolynomialStudentView />} />
+          <Route path="/labs/polynomial-lab/student" element={studentLabOnly('polynomial-lab', <PolynomialStudentView />)} />
           <Route path="/labs/polynomial-lab/teacher" element={teacherOnly(<PolynomialTeacherView />)} />
-          <Route path="/labs/linear-systems-lab/student" element={<LinearSystemsStudentView />} />
+          <Route path="/labs/linear-systems-lab/student" element={studentLabOnly('linear-systems-lab', <LinearSystemsStudentView />)} />
           <Route path="/labs/linear-systems-lab/teacher" element={teacherOnly(<LinearSystemsTeacherView />)} />
-          <Route path="/labs/identities-lab/student" element={<IdentitiesStudentView />} />
+          <Route path="/labs/identities-lab/student" element={studentLabOnly('identities-lab', <IdentitiesStudentView />)} />
           <Route path="/labs/identities-lab/teacher" element={teacherOnly(<IdentitiesTeacherView />)} />
-          <Route path="/labs/geometry-live/student" element={<GeometryStudentView />} />
+          <Route path="/labs/geometry-live/student" element={studentLabOnly('geometry-live', <GeometryStudentView />)} />
           <Route path="/labs/geometry-live/teacher" element={teacherOnly(<GeometryTeacherView />)} />
           <Route path="/labs/:slug/teacher" element={teacherOnly(<LabPage role="teacher" />)} />
-          <Route path="/labs/:slug/student" element={<LabPage role="student" />} />
+          <Route path="/labs/:slug/student" element={studentLabOnly(currentLabSlug, <LabPage role="student" />)} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes> : null}
         {pathname.startsWith('/labs/') && !labHasInlineChat ? <ChatAccordion /> : null}

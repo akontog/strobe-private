@@ -3,7 +3,8 @@ const express = require('express');
 const { getAppBySlug, listAppsForRole, toPublicApp } = require('../apps/registry');
 const { saveActivity, listActivities, getActivity } = require('../services/appActivities');
 const { requireRole } = require('../middleware/checkRole');
-const { createSession, appendRecord, endSession } = require('../services/sessionLogs');
+const { createSession, appendRecord, endSession, updateSessionActivity } = require('../services/sessionLogs');
+const { setActiveLab } = require('../services/classroomSelection');
 
 const router = express.Router();
 router.use(requireRole(['teacher']));
@@ -27,6 +28,13 @@ function resolveTeacherApp(req, res) {
 router.get('/apps', (req, res) => {
   const apps = listAppsForRole('teacher').map((app) => toPublicApp(app, 'teacher'));
   res.json(apps);
+});
+
+router.post('/classroom/selection', (req, res) => {
+  const app = req.body && req.body.app;
+  const activeLab = setActiveLab(app);
+  if (activeLab === null) return res.status(400).json({ error: 'Choose a valid student lab.' });
+  return res.json({ app: activeLab || null });
 });
 
 router.post('/sessions', (req, res) => {
@@ -63,6 +71,12 @@ router.post('/sessions/:sessionId/events', (req, res) => {
 
 router.post('/sessions/:sessionId/end', (req, res) => {
   const session = endSession(req.params.sessionId);
+  if (!session) return res.status(404).json({ error: 'Active session not found.' });
+  return res.json(session);
+});
+
+router.post('/sessions/:sessionId/activity', (req, res) => {
+  const session = updateSessionActivity(req.params.sessionId, req.body?.activity);
   if (!session) return res.status(404).json({ error: 'Active session not found.' });
   return res.json(session);
 });

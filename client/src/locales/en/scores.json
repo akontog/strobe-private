@@ -1,20 +1,3 @@
 {
-  "title": "Student scores",
-  "managementTitle": "Student management",
-  "managementDescription": "Review student scores, reset them, or remove a student record.",
-  "student": "Student",
-  "totalScore": "Total score",
-  "currentScore": "Current score",
-  "actions": "Actions",
-  "empty": "No student scores have been recorded yet.",
-  "refresh": "Refresh",
-  "resetAll": "Reset all scores",
-  "reset": "Reset scores",
-  "delete": "Delete student",
-  "confirmResetAll": "Reset the scores of every student?",
-  "confirmResetStudent": "Reset all scores for {{name}}?",
-  "confirmDeleteStudent": "Delete the score record for {{name}}?",
-  "loadFailed": "Could not load student scores.",
-  "saveFailed": "Could not save the score.",
-  "actionFailed": "The action could not be completed."
+  "score": "Score"
 }

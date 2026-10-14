@@ -12,6 +12,7 @@ export { default as BlueNumberBox } from './primitives/BlueNumberBox';
 export { default as AlgebraTiles } from './activities/AlgebraTiles';
 export { default as ActivityInputGrid } from './activities/ActivityInputGrid';
 export { default as StudentScoresAccordion } from './activities/StudentScoresAccordion';
+export { useSessionInputLogger } from './activities/SessionLogContext';
 export { default as SharedInputBox } from './primitives/SharedInputBox';
 export { default as SharedInputRow } from './primitives/SharedInputRow';
 export { default as CollaborativeGeoGebra } from './collaboration/CollaborativeGeoGebra';

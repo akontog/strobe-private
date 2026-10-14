@@ -1,6 +1,8 @@
 {
   "appsLauncher": "Apps Launcher",
   "studentLauncher": "Student Launcher",
+  "studentWaitingTitle": "Welcome",
+  "studentWaitingMessage": "Wait for your teacher to choose an activity. You will be taken to the lab automatically.",
   "teacherDashboard": "Teacher Dashboard",
   "tools": {
     "activity-builder": {

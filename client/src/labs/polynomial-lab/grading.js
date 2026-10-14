@@ -91,43 +91,9 @@ export function computeStudentScore(student = {}, expressionItem = {}, overrides
   const incorrectScore = overrides.scoreIncorrect ?? expressionItem.scoreIncorrect ?? SCORE_INCORRECT;
   const expectedAnswers = flattenCorrectAnswers(expressionItem);
   const studentAnswers = buildStudentAnswerMap(student?.answers || {});
-
-  if (expressionItem?.resultMode === 'grouping') {
-    const fields = Object.keys(expectedAnswers);
-    if (fields.length === 0) {
-      return 0;
-    }
-
-    return fields.reduce((total, fieldName) => {
-      const expectedValue = normalizeAnswerValue(expectedAnswers[fieldName]);
-      const actualValue = normalizeAnswerValue(studentAnswers[fieldName]);
-      return total + (actualValue === expectedValue ? correctScore : incorrectScore);
-    }, 0);
-  }
-
-  if (Array.isArray(expressionItem.correctAnswers)) {
-    return expressionItem.correctAnswers.reduce((total, answer, index) => {
-      const answerFields = Object.keys(answer || {});
-      const isCorrect = answerFields.every((fieldName) => {
-        const expectedValue = answer[fieldName];
-        const actualValue = studentAnswers[`part-${index}-${fieldName}`];
-        return normalizeAnswerValue(actualValue) === normalizeAnswerValue(expectedValue);
-      });
-      return total + (isCorrect ? correctScore : incorrectScore);
-    }, 0);
-  }
-
-  const candidateAnswers = Object.keys(expectedAnswers).length > 0 ? expectedAnswers : null;
-
-  if (!candidateAnswers) {
-    return 0;
-  }
-
-  const isCorrect = Object.keys(candidateAnswers).every((fieldName) => {
-    const expectedValue = candidateAnswers[fieldName];
-    const actualValue = studentAnswers[fieldName];
-    return normalizeAnswerValue(actualValue) === normalizeAnswerValue(expectedValue);
-  });
-
-  return isCorrect ? correctScore : incorrectScore;
+  return Object.entries(expectedAnswers).reduce((total, [fieldName, expectedValue]) => {
+    const actualValue = normalizeAnswerValue(studentAnswers[fieldName]);
+    if (actualValue === '') return total;
+    return total + (actualValue === normalizeAnswerValue(expectedValue) ? correctScore : incorrectScore);
+  }, 0);
 }

@@ -4,6 +4,7 @@ const path = require('path');
 const SESSIONS_DIR = path.join(__dirname, '..', 'data', 'sessions');
 const SETTINGS_FILE = path.join(__dirname, '..', 'data', 'session-settings.json');
 const activeSessions = new Map();
+const recentlyEndedSessions = new Map();
 let sequence = 0;
 
 function readAppSettings() {
@@ -53,7 +54,8 @@ function createSession({ app, activity, teacherId }) {
     endedAt: null,
     teacherId,
     students: [],
-    activity: activity || '',
+    studentScores: [],
+    activity: activity || app,
     chatEnabled: appSettings.chatEnabled,
     scoreVisible: appSettings.scoreVisible,
     feedbackEnabled: appSettings.feedbackEnabled
@@ -67,6 +69,35 @@ function createSession({ app, activity, teacherId }) {
 
 function getActiveSession(sessionId) {
   return activeSessions.get(sessionId);
+}
+
+function updateSessionActivity(sessionId, activity) {
+  const session = getActiveSession(sessionId);
+  if (!session) return null;
+  const name = String(activity || '').trim().slice(0, 160);
+  if (!name) return session.metadata;
+  session.metadata.activity = name;
+  fs.writeFileSync(path.join(session.directory, 'session.json'), `${JSON.stringify(session.metadata, null, 2)}\n`);
+  return session.metadata;
+}
+
+function updateSessionStudentScore(sessionId, studentName, score) {
+  let session = getActiveSession(sessionId);
+  if (!session) {
+    const recentlyEnded = recentlyEndedSessions.get(sessionId);
+    if (recentlyEnded && recentlyEnded.expiresAt > Date.now()) session = recentlyEnded.session;
+    else if (recentlyEnded) recentlyEndedSessions.delete(sessionId);
+  }
+  const name = String(studentName || '').trim().slice(0, 80);
+  const value = Number(score);
+  if (!session || !name || !Number.isFinite(value)) return null;
+  if (!Array.isArray(session.metadata.studentScores)) session.metadata.studentScores = [];
+  if (!session.metadata.students.includes(name)) session.metadata.students.push(name);
+  const existing = session.metadata.studentScores.find((entry) => entry.student === name);
+  if (existing) existing.score = value;
+  else session.metadata.studentScores.push({ student: name, score: value });
+  fs.writeFileSync(path.join(session.directory, 'session.json'), `${JSON.stringify(session.metadata, null, 2)}\n`);
+  return session.metadata;
 }
 
 function getActiveSessionForApp(app) {
@@ -113,7 +144,8 @@ function endSession(sessionId) {
   session.metadata.endedAt = new Date().toISOString();
   fs.writeFileSync(path.join(session.directory, 'session.json'), `${JSON.stringify(session.metadata, null, 2)}\n`);
   activeSessions.delete(sessionId);
+  recentlyEndedSessions.set(sessionId, { session, expiresAt: Date.now() + 5 * 60 * 1000 });
   return session.metadata;
 }
 
-module.exports = { createSession, appendRecord, endSession, getActiveSession, getActiveSessionForApp, getAppSettings, setAppSetting, getChatMessages };
+module.exports = { createSession, appendRecord, endSession, getActiveSession, getActiveSessionForApp, getAppSettings, setAppSetting, getChatMessages, updateSessionActivity, updateSessionStudentScore };

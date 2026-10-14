@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { readIdentityName } from '../identity/identityStorage';
 
 const SessionLogContext = createContext(null);
@@ -8,6 +8,14 @@ export function SessionLogProvider({ app, role = 'student', sessionId: suppliedS
   const [chatEnabled, setChatEnabled] = useState(false);
   const [scoreVisible, setScoreVisible] = useState(true);
   const [feedbackEnabled, setFeedbackEnabled] = useState(false);
+  const [studentName, setStudentName] = useState(() => readIdentityName(''));
+  const joinedSessionRef = useRef('');
+
+  useEffect(() => {
+    const refreshIdentity = (event) => setStudentName(String(event.detail?.name || readIdentityName('')).trim());
+    window.addEventListener('strobe:identity-change', refreshIdentity);
+    return () => window.removeEventListener('strobe:identity-change', refreshIdentity);
+  }, []);
 
   useEffect(() => {
     setActiveSessionId(suppliedSessionId || null);
@@ -22,7 +30,7 @@ export function SessionLogProvider({ app, role = 'student', sessionId: suppliedS
         const response = await fetch(`/api/session-logs/active/${encodeURIComponent(app)}`);
         const payload = response.ok ? await response.json() : null;
         if (!cancelled) {
-          setActiveSessionId(suppliedSessionId || payload?.sessionId || null);
+          setActiveSessionId(payload?.sessionId || null);
           setChatEnabled(Boolean(payload?.chatEnabled));
           setScoreVisible(payload?.scoreVisible !== false);
           setFeedbackEnabled(Boolean(payload?.feedbackEnabled));
@@ -41,6 +49,36 @@ export function SessionLogProvider({ app, role = 'student', sessionId: suppliedS
     };
   }, [app, suppliedSessionId]);
 
+  useEffect(() => {
+    if (typeof document === 'undefined') return undefined;
+    document.body.classList.toggle('session-not-started', Boolean(app && !activeSessionId));
+    return () => document.body.classList.remove('session-not-started');
+  }, [activeSessionId, app]);
+
+  useEffect(() => {
+    const handleSessionEnded = (event) => {
+      const endedSessionId = event.detail?.sessionId;
+      setActiveSessionId((current) => !endedSessionId || current === endedSessionId ? null : current);
+    };
+    window.addEventListener('strobe:session-ended', handleSessionEnded);
+    return () => window.removeEventListener('strobe:session-ended', handleSessionEnded);
+  }, []);
+
+  useEffect(() => {
+    if (role !== 'student' || !activeSessionId || !studentName) return;
+    if (joinedSessionRef.current === activeSessionId) return;
+    joinedSessionRef.current = activeSessionId;
+    fetch(`/api/session-logs/${encodeURIComponent(activeSessionId)}/events`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event: 'student.joined', student: studentName })
+    }).then((response) => {
+      if (!response.ok) joinedSessionRef.current = '';
+    }).catch(() => {
+      joinedSessionRef.current = '';
+    });
+  }, [activeSessionId, role, studentName]);
+
   const logEvent = useCallback((event, activity, data) => {
     if (!activeSessionId) return;
     const student = readIdentityName('Student');
@@ -55,6 +93,29 @@ export function SessionLogProvider({ app, role = 'student', sessionId: suppliedS
       })
     }).catch(() => {});
   }, [activeSessionId, app]);
+
+  const endSession = useCallback(async () => {
+    if (role !== 'teacher' || !app) return;
+    const activeResponse = await fetch(`/api/session-logs/active/${encodeURIComponent(app)}`, { cache: 'no-store' });
+    const activePayload = activeResponse.ok ? await activeResponse.json() : null;
+    const sessionId = activePayload?.sessionId || activeSessionId;
+    if (sessionId) {
+      const response = await fetch(`/teacher/sessions/${encodeURIComponent(sessionId)}/end`, { method: 'POST' });
+      if (!response.ok && response.status !== 404) throw new Error('Could not end the current session.');
+    }
+    setActiveSessionId(null);
+    window.dispatchEvent(new CustomEvent('strobe:session-ended', { detail: { sessionId } }));
+  }, [activeSessionId, app, role]);
+
+  const updateActivity = useCallback(async (activity) => {
+    if (role !== 'teacher' || !activeSessionId || !activity) return;
+    const response = await fetch(`/teacher/sessions/${encodeURIComponent(activeSessionId)}/activity`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ activity })
+    });
+    if (!response.ok) throw new Error('Could not update the session activity.');
+  }, [activeSessionId, role]);
 
   const canEdit = role === 'teacher' || Boolean(activeSessionId);
 
@@ -110,7 +171,7 @@ export function SessionLogProvider({ app, role = 'student', sessionId: suppliedS
   }, [app, feedbackEnabled, role]);
 
   return (
-    <SessionLogContext.Provider value={{ logEvent, canEdit, app, role, activeSessionId, chatEnabled, scoreVisible, feedbackEnabled, updateChatEnabled, updateScoreVisible, updateFeedbackEnabled }}>
+    <SessionLogContext.Provider value={{ logEvent, canEdit, app, role, activeSessionId, chatEnabled, scoreVisible, feedbackEnabled, endSession, updateActivity, updateChatEnabled, updateScoreVisible, updateFeedbackEnabled }}>
       {children}
     </SessionLogContext.Provider>
   );
