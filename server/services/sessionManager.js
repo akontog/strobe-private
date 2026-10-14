@@ -1,16 +1,10 @@
-const fs = require('fs');
-const path = require('path');
 const crypto = require('crypto');
  
 class SessionManager {
-  // Αρχικοποιεί in-memory indexes και φορτώνει persisted sessions από δίσκο.
+  // Κρατά ενεργά session metadata στη μνήμη όσο τρέχει ο server.
   constructor() {
     this.sessions = new Map();
     this.users = new Map();
-    this.lastSaveErrorAt = 0;
-    this.dataDir = path.join(__dirname, '..', 'data');
-    this.dataFile = path.join(this.dataDir, 'users.json');
-    this.loadFromFile();
   }
  
   // Δημιουργεί/ενεργοποιεί session με συγκεκριμένο id (χρήσιμο για ws/realtime ids).
@@ -49,7 +43,6 @@ class SessionManager {
  
     this.sessions.set(id, session);
     this._addUserIndex(username, id);
-    this.saveToFile();
     return session;
   }
  
@@ -132,7 +125,6 @@ class SessionManager {
     }
  
     session.lastSeenAt = Date.now();
-    this.saveToFile();
     return session;
   }
  
@@ -191,7 +183,6 @@ class SessionManager {
     };
     session.activeApps.add(app);
     session.lastSeenAt = Date.now();
-    this.saveToFile();
     return session.appData[app];
   }
  
@@ -289,14 +280,10 @@ class SessionManager {
       }
     });
  
-    if (cleaned > 0) {
-      this.saveToFile();
-    }
- 
     return cleaned;
   }
  
-  // Αφαιρεί οριστικά session από indexes και persistence.
+  // Αφαιρεί session από τα in-memory indexes.
   remove(sessionId) {
     const id = String(sessionId || '').trim();
     if (!id) return false;
@@ -315,152 +302,10 @@ class SessionManager {
     }
  
     this.sessions.delete(id);
-    this.saveToFile();
     return true;
   }
  
-  // Αποθηκεύει atomically όλα τα sessions σε αρχείο json.
-  saveToFile() {
-    try {
-      if (!fs.existsSync(this.dataDir)) {
-        fs.mkdirSync(this.dataDir, { recursive: true });
-      }
- 
-      const payload = {
-        schemaVersion: 2,
-        savedAt: new Date().toISOString(),
-        sessions: [...this.sessions.values()].map((session) => ({
-          ...session,
-          activeApps: [...session.activeApps]
-        }))
-      };
- 
-      const tempFile = `${this.dataFile}.tmp`;
-      fs.writeFileSync(tempFile, JSON.stringify(payload, null, 2), 'utf-8');
-      fs.renameSync(tempFile, this.dataFile);
-    } catch (error) {
-      const now = Date.now();
-      if ((now - this.lastSaveErrorAt) > 30 * 1000) {
-        this.lastSaveErrorAt = now;
-        console.warn('Warning: session persistence temporarily unavailable:', error && error.message ? error.message : error);
-      }
-    }
-  }
- 
-  // Φορτώνει sessions από νέο schema ή από legacy users map μορφή.
-  loadFromFile() {
-    this.sessions = new Map();
-    this.users = new Map();
- 
-    try {
-      if (!fs.existsSync(this.dataFile)) {
-        return;
-      }
- 
-      const raw = fs.readFileSync(this.dataFile, 'utf-8');
-      const parsed = JSON.parse(raw);
- 
-      const candidates = Array.isArray(parsed)
-        ? this._fromLegacyMapEntries(parsed)
-        : Array.isArray(parsed && parsed.sessions)
-          ? parsed.sessions
-          : [];
- 
-      candidates.forEach((item) => {
-        const normalized = this._normalizePersistedSession(item);
-        if (!normalized) {
-          return;
-        }
- 
-        this.sessions.set(normalized.id, normalized);
-        this._addUserIndex(normalized.username, normalized.id);
-      });
- 
-      console.log(`[SessionManager] Loaded ${this.sessions.size} sessions from file`);
-    } catch (error) {
-      console.error('Error loading sessions from file:', error && error.message ? error.message : error);
-      this.sessions = new Map();
-      this.users = new Map();
-    }
-  }
- 
-  // Μετατρέπει legacy UserManager map entries σε normalized candidate sessions.
-  _fromLegacyMapEntries(entries) {
-    return entries
-      .map((entry) => {
-        if (!Array.isArray(entry) || entry.length < 2) {
-          return null;
-        }
- 
-        const [legacyId, legacy] = entry;
-        if (!legacy || typeof legacy !== 'object') {
-          return null;
-        }
- 
-        const apps = legacy.apps && typeof legacy.apps === 'object' ? legacy.apps : {};
-        const appData = {};
-        const activeApps = [];
- 
-        Object.keys(apps).forEach((app) => {
-          const value = apps[app];
-          if (!value || typeof value !== 'object') {
-            return;
-          }
- 
-          appData[app] = { ...value };
-          if (value.active) {
-            activeApps.push(app);
-          }
-        });
- 
-        return {
-          id: String(legacy.sessionId || legacyId || '').trim(),
-          userId: String(legacy.userId || `user_${String(legacyId || '').slice(0, 6)}`),
-          ip: String((legacy.metadata && legacy.metadata.ipAddress) || 'unknown'),
-          userAgent: String((legacy.metadata && legacy.metadata.userAgent) || 'unknown'),
-          username: String((legacy.metadata && legacy.metadata.displayName) || (legacy.metadata && legacy.metadata.username) || legacy.userId || `user_${String(legacyId || '').slice(0, 6)}`),
-          role: String((legacy.metadata && legacy.metadata.role) || 'student'),
-          source: 'legacy',
-          activeApps,
-          appData,
-          connectedAt: Date.parse(legacy.createdAt || '') || Date.now(),
-          lastSeenAt: Date.parse(legacy.lastActivity || '') || Date.now(),
-          isActive: true
-        };
-      })
-      .filter(Boolean);
-  }
- 
-  // Εξασφαλίζει έγκυρο persisted session shape πριν γίνει restore.
-  _normalizePersistedSession(item) {
-    if (!item || typeof item !== 'object') {
-      return null;
-    }
- 
-    const id = String(item.id || item.sessionId || '').trim();
-    if (!id) {
-      return null;
-    }
- 
-    const username = this._normalizeUsername(item.username, id);
-    return {
-      id,
-      userId: String(item.userId || `user_${id.slice(0, 6)}`),
-      ip: String(item.ip || 'unknown'),
-      userAgent: String(item.userAgent || 'unknown'),
-      username,
-      role: String(item.role || 'client'),
-      teacherAccount: String(item.teacherAccount || ''),
-      source: String(item.source || 'realtime'),
-      activeApps: new Set(Array.isArray(item.activeApps) ? item.activeApps : []),
-      appData: item.appData && typeof item.appData === 'object' ? item.appData : {},
-      connectedAt: Number(item.connectedAt) || Date.now(),
-      lastSeenAt: Number(item.lastSeenAt) || Date.now(),
-      isActive: item.isActive !== false
-    };
-  }
- 
-  // Καθαρίζει username και εφαρμόζει deterministic fallback.
+  // Κανονικοποιεί username και εφαρμόζει deterministic fallback.
   _normalizeUsername(value, fallbackId) {
     const cleaned = String(value || '')
       .trim()

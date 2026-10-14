@@ -52,7 +52,6 @@ FastApi
 - Shared assets στο assets.
 - Κοινό WebSocket API client για όλα τα apps: `apps/assets/js/classroom-api.js`.
 - Κοινό classroom dock UI module: `apps/assets/js/classroom-shared.js` + `apps/assets/css/classroom-shared.css`.
-- Session/data storage στο server με in-memory + file persistence (data/users.json).
 
 # Δομή φακέλων
 
@@ -189,7 +188,6 @@ http://localhost:3000/
 - [readme](reports/neural-lab/README-neural-lab.md)
 
 ## 📂 `data/` – Αποθήκευση σε αρχεία (JSON)
-- **`users.json`** – Λίστα χρηστών (username, role, progress, settings).
 
 --- 
 
@@ -361,7 +359,6 @@ npm run build:client
 - `camera_tracking.py`
 
 **Προαιρετικά (αν χρησιμοποιείται):**
-- `data/users.json` - αν έχει προϋπάρχοντα δεδομένα
 - `.env` - environment variables (δημιουργείται ή ενημερώνεται στον server)
 
 **ΔΕΝ απαιτείται μεταφορά:**
@@ -434,7 +431,6 @@ npm run build:linear
 - Υλοποίηση: services/UserManager.js
 - Middleware: middleware/sessionMiddleware.js
 - Endpoints: routes/appData.js
-- Storage file: data/users.json
 
 Ο server αποθηκεύει:
 - sessionId/userId
