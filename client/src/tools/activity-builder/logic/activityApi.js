@@ -1,7 +1,7 @@
-export async function fetchApps() {
-  const response = await fetch('/teacher/apps');
+export async function fetchResources() {
+  const response = await fetch('/teacher/resources');
   if (!response.ok) {
-    throw new Error(`Apps request failed with ${response.status}`);
+    throw new Error(`Resources request failed with ${response.status}`);
   }
   const payload = await response.json();
   return Array.isArray(payload) ? payload : [];
@@ -31,7 +31,7 @@ export async function saveActivityRequest(slug, { name, config, notes }) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      name: name || 'Activity',
+      name,
       config,
       notes,
       authorName: 'tools-spa'

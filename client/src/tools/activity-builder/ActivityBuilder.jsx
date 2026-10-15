@@ -3,23 +3,58 @@ import { useTranslation } from 'react-i18next';
 import './ActivityBuilder.css';
 import { EditorPanel, LibraryPanel } from './components';
 import { Accordion } from '../../shared/components';
-import { fetchApps, fetchActivities, fetchActivity, saveActivityRequest } from './logic/activityApi';
+import { fetchResources, fetchActivities, fetchActivity, saveActivityRequest } from './logic/activityApi';
 import { toJsonString } from './logic/jsonUtils';
-import { DEFAULT_CONFIG_TEXT } from './data/defaultConfig';
+import { RESOURCE_DEFAULTS } from './data/resourceDefaults';
 
-function getResourceActivities(t, resource) {
-  const options = t(`activityBuilder.resources.${resource}`, { returnObjects: true });
-  return Array.isArray(options) ? options : [];
+function cloneResourceDefaults(resource, t) {
+  const defaults = JSON.parse(JSON.stringify(RESOURCE_DEFAULTS[resource] || {}));
+  if (resource === 'input-grid') {
+    defaults.props.fields.forEach((field, index) => {
+      field.label = t('activityBuilder.defaultInput', { index: index + 1 });
+    });
+  }
+  if (resource === 'grouping-drag-drop') {
+    defaults.props.groups.forEach((group, index) => {
+      group.title = t('activityBuilder.defaultGroup', { index: index + 1 });
+    });
+    defaults.props.items.forEach((item, index) => {
+      item.content = t('activityBuilder.defaultItem', { index: index + 1 });
+    });
+    defaults.props.bankLabel = t('activityBuilder.defaultItemsBank');
+  }
+  return defaults;
+}
+
+function buildActivityConfig(resource, settings, activityName) {
+  const config = {
+    resource,
+    props: { ...(settings.props || {}) },
+    labCard: { ...(settings.labCard || {}) }
+  };
+
+  if (resource === 'input-grid') {
+    config.props.activity = activityName;
+    config.grading = {
+      answers: Object.fromEntries((settings.props?.fields || []).map((field) => [field.id, field.correctAnswer ?? '']))
+    };
+  } else if (resource === 'grouping-drag-drop') {
+    config.props.activity = activityName;
+    config.grading = settings.grading || {};
+  } else if (settings.grading) {
+    config.grading = settings.grading;
+  }
+
+  return config;
 }
 
 export default function ActivityBuilder() {
   const { t } = useTranslation('interface');
-  const [apps, setApps] = useState([]);
+  const [resources, setResources] = useState([]);
   const [selectedResource, setSelectedResource] = useState('');
-  const [selectedActivity, setSelectedActivity] = useState('');
+  const [resourceSettings, setResourceSettings] = useState({});
   const [activityName, setActivityName] = useState('');
   const [notes, setNotes] = useState('');
-  const [configText, setConfigText] = useState(DEFAULT_CONFIG_TEXT);
   const [activities, setActivities] = useState([]);
   const [preview, setPreview] = useState('');
   const [status, setStatus] = useState('');
@@ -30,15 +65,14 @@ export default function ActivityBuilder() {
   useEffect(() => {
     let cancelled = false;
 
-    fetchApps()
-      .then((nextApps) => {
+    fetchResources()
+      .then((nextResources) => {
         if (cancelled) return;
-        setApps(nextApps);
-        const firstResource = nextApps[0]?.slug || '';
+        setResources(nextResources);
+        const firstResource = nextResources[0]?.slug || '';
         setSelectedResource(firstResource);
-        setSelectedActivity(getResourceActivities(t, firstResource)[0]?.value || '');
+        setResourceSettings(cloneResourceDefaults(firstResource, t));
         setStatus({ key: firstResource ? 'activityBuilder.ready' : 'activityBuilder.noResources' });
-        setError('');
       })
       .catch(() => {
         if (cancelled) return;
@@ -79,11 +113,11 @@ export default function ActivityBuilder() {
 
     try {
       const payload = await fetchActivity(selectedResource, filename);
+      const config = payload?.config || {};
       setPreview(toJsonString(payload));
       setActivityName(payload?.name || '');
       setNotes(payload?.notes || '');
-      setSelectedActivity(String(payload?.config?.activityId || ''));
-      if (payload?.config) setConfigText(toJsonString(payload.config));
+      setResourceSettings({ ...cloneResourceDefaults(selectedResource, t), ...config, props: config.props || {} });
       setStatus({ key: 'activityBuilder.loaded', values: { filename } });
       setError('');
     } catch {
@@ -96,12 +130,8 @@ export default function ActivityBuilder() {
       setError(t('activityBuilder.selectResource'));
       return;
     }
-
-    let config;
-    try {
-      config = JSON.parse(configText || '{}');
-    } catch (jsonError) {
-      setError(t('activityBuilder.invalidConfig', { message: jsonError.message }));
+    if (!activityName.trim()) {
+      setError(t('activityBuilder.activityNameRequired'));
       return;
     }
 
@@ -110,9 +140,10 @@ export default function ActivityBuilder() {
     setError('');
 
     try {
+      const config = buildActivityConfig(selectedResource, resourceSettings, activityName);
       const payload = await saveActivityRequest(selectedResource, {
         name: activityName,
-        config: { ...config, activityId: selectedActivity },
+        config,
         notes
       });
       setPreview(toJsonString(payload));
@@ -126,10 +157,7 @@ export default function ActivityBuilder() {
     }
   }
 
-  const selectedResourceTitle = t(`activityBuilder.resourceNames.${selectedResource}`, {
-    defaultValue: apps.find((app) => app.slug === selectedResource)?.title || ''
-  });
-  const activityOptions = getResourceActivities(t, selectedResource);
+  const selectedResourceTitle = resources.find((resource) => resource.slug === selectedResource)?.title || '';
 
   return (
     <section className="tool-page activity-builder-page">
@@ -140,21 +168,22 @@ export default function ActivityBuilder() {
       <div className="tool-grid tool-grid--two">
         <Accordion title={t('activityBuilder.editorTitle')} icon="📝">
           <EditorPanel
-            apps={apps}
+            resources={resources}
             selectedResource={selectedResource}
+            resourceSettings={resourceSettings}
             onSelectedResourceChange={(resource) => {
               setSelectedResource(resource);
-              setSelectedActivity(getResourceActivities(t, resource)[0]?.value || '');
+              setResourceSettings(cloneResourceDefaults(resource, t));
+              setError('');
             }}
-            activityOptions={activityOptions}
-            selectedActivity={selectedActivity}
-            onSelectedActivityChange={setSelectedActivity}
+            onResourceSettingsChange={setResourceSettings}
             activityName={activityName}
-            onActivityNameChange={setActivityName}
+            onActivityNameChange={(value) => {
+              setActivityName(value);
+              if (value.trim()) setError('');
+            }}
             notes={notes}
             onNotesChange={setNotes}
-            configText={configText}
-            onConfigTextChange={setConfigText}
             onSave={saveActivity}
             saving={saving}
             status={status.key ? t(status.key, status.values) : ''}

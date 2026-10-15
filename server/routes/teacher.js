@@ -9,25 +9,29 @@ const { setActiveLab } = require('../services/classroomSelection');
 const router = express.Router();
 router.use(requireRole(['teacher']));
 
-function resolveTeacherApp(req, res) {
-  const app = getAppBySlug(req.params.slug);
+const ACTIVITY_RESOURCES = [
+  { slug: 'input-grid', title: 'Input Grid' },
+  { slug: 'grouping-drag-drop', title: 'Grouping Drag & Drop' },
+  { slug: 'algebra-tiles', title: 'Algebra Tiles' },
+  { slug: 'collaborative-geogebra', title: 'Collaborative GeoGebra' }
+];
 
-  if (!app) {
-    res.status(404).json({ error: 'Unknown app' });
+function resolveTeacherResource(req, res) {
+  const resource = ACTIVITY_RESOURCES.find((item) => item.slug === req.params.slug);
+  if (!resource) {
+    res.status(404).json({ error: 'Unknown shared resource' });
     return null;
   }
-
-  if (!app.roles.includes('teacher')) {
-    res.status(403).json({ error: 'App is not available for teacher role' });
-    return null;
-  }
-
-  return app;
+  return resource;
 }
 
 router.get('/apps', (req, res) => {
   const apps = listAppsForRole('teacher').map((app) => toPublicApp(app, 'teacher'));
   res.json(apps);
+});
+
+router.get('/resources', (req, res) => {
+  res.json(ACTIVITY_RESOURCES);
 });
 
 router.post('/classroom/selection', (req, res) => {
@@ -82,15 +86,15 @@ router.post('/sessions/:sessionId/activity', (req, res) => {
 });
 
 router.get('/activities/:slug', (req, res) => {
-  const app = resolveTeacherApp(req, res);
-  if (!app) return;
+  const resource = resolveTeacherResource(req, res);
+  if (!resource) return;
 
-  res.json(listActivities(app.slug));
+  res.json(listActivities(resource.slug));
 });
 
 router.post('/activities/:slug', (req, res) => {
-  const app = resolveTeacherApp(req, res);
-  if (!app) return;
+  const resource = resolveTeacherResource(req, res);
+  if (!resource) return;
 
   const payload = {
     name: req.body.name,
@@ -98,7 +102,7 @@ router.post('/activities/:slug', (req, res) => {
     notes: req.body.notes
   };
 
-  const saved = saveActivity(app.slug, payload, {
+  const saved = saveActivity(resource.slug, payload, {
     username: String(req.body && req.body.authorName ? req.body.authorName : 'teacher-link').trim() || 'teacher-link',
     role: 'teacher'
   });
@@ -107,10 +111,10 @@ router.post('/activities/:slug', (req, res) => {
 });
 
 router.get('/activities/:slug/:filename', (req, res) => {
-  const app = resolveTeacherApp(req, res);
-  if (!app) return;
+  const resource = resolveTeacherResource(req, res);
+  if (!resource) return;
 
-  const activity = getActivity(app.slug, req.params.filename);
+  const activity = getActivity(resource.slug, req.params.filename);
 
   if (!activity) {
     return res.status(404).json({ error: 'Activity not found' });

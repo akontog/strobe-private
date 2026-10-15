@@ -1,19 +1,17 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import ResourceSettings from './ResourceSettings';
 
 export default function EditorPanel({
-  apps,
+  resources,
   selectedResource,
+  resourceSettings,
   onSelectedResourceChange,
-  activityOptions,
-  selectedActivity,
-  onSelectedActivityChange,
+  onResourceSettingsChange,
   activityName,
   onActivityNameChange,
   notes,
   onNotesChange,
-  configText,
-  onConfigTextChange,
   onSave,
   saving,
   status,
@@ -27,23 +25,22 @@ export default function EditorPanel({
         {t('activityBuilder.resource')}
         <select value={selectedResource} onChange={(event) => onSelectedResourceChange(event.target.value)}>
           <option value="">{t('activityBuilder.chooseResource')}</option>
-          {apps.map((app) => (
-            <option key={app.slug} value={app.slug}>
-              {t(`activityBuilder.resourceNames.${app.slug}`, { defaultValue: app.title })}
+          {resources.map((resource) => (
+            <option key={resource.slug} value={resource.slug}>
+              {t(`activityBuilder.resourceNames.${resource.slug}`, { defaultValue: resource.title })}
             </option>
           ))}
         </select>
       </label>
 
-      <label>
-        {t('activityBuilder.activity')}
-        <select value={selectedActivity} onChange={(event) => onSelectedActivityChange(event.target.value)} disabled={!selectedResource}>
-          <option value="">{t('activityBuilder.chooseActivity')}</option>
-          {activityOptions.map((activity) => (
-            <option key={activity.value} value={activity.value}>{activity.label}</option>
-          ))}
-        </select>
-      </label>
+      {selectedResource ? (
+        <ResourceSettings
+          resource={selectedResource}
+          value={resourceSettings}
+          onChange={onResourceSettingsChange}
+          t={t}
+        />
+      ) : null}
 
       <label>
         {t('activityBuilder.activityName')}
@@ -53,11 +50,6 @@ export default function EditorPanel({
       <label>
         {t('activityBuilder.notes')}
         <textarea value={notes} onChange={(event) => onNotesChange(event.target.value)} rows={4} placeholder={t('activityBuilder.notesPlaceholder')} />
-      </label>
-
-      <label>
-        {t('activityBuilder.configJson')}
-        <textarea value={configText} onChange={(event) => onConfigTextChange(event.target.value)} rows={12} />
       </label>
 
       <div className="tool-actions">

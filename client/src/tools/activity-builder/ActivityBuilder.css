@@ -139,3 +139,55 @@
   overflow: auto;
   font-size: 0.8rem;
 }
+
+.activity-resource-settings {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.activity-resource-settings h3,
+.activity-resource-settings h4 {
+  margin: 4px 0;
+}
+
+.activity-builder-rows,
+.activity-builder-card-settings {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #d7e2f0;
+  border-radius: 10px;
+}
+
+.activity-builder-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  align-items: end;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.activity-builder-row label {
+  margin-bottom: 0;
+}
+
+.activity-resource-settings button {
+  width: fit-content;
+  border: 1px solid #94a3b8;
+  border-radius: 8px;
+  background: #fff;
+  padding: 7px 10px;
+  cursor: pointer;
+}
+
+.activity-builder-check {
+  display: flex !important;
+  align-items: center;
+  gap: 8px !important;
+}
+
+.activity-builder-check input {
+  width: auto;
+}
