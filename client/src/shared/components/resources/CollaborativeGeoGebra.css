@@ -29,12 +29,30 @@
   font-size: 0.86rem;
 }
 
+.gg-collab__board-shell {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+}
+
 .gg-collab__board {
   min-height: 480px;
   border-radius: 14px;
   border: 1px solid #d5d8e2;
   background: linear-gradient(180deg, #fefefe, #f6f8fb);
   overflow: hidden;
+}
+
+.gg-collab__board-shell.is-locked .gg-collab__board {
+  pointer-events: none;
+}
+
+.gg-collab__lock-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: rgba(226, 232, 240, 0.72);
+  cursor: not-allowed;
 }
 
 .gg-collab__controls {

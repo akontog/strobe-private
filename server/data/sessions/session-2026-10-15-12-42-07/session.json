@@ -1,0 +1,15 @@
+{
+  "sessionId": "session-2026-10-15-12-42-07",
+  "app": "geogebra-collab",
+  "startedAt": "2026-10-15T09:42:07.268Z",
+  "endedAt": "2026-10-15T09:42:30.083Z",
+  "teacherId": "antonis",
+  "students": [
+    "dd"
+  ],
+  "studentScores": [],
+  "activity": "geogebra-collab",
+  "chatEnabled": false,
+  "scoreVisible": true,
+  "feedbackEnabled": false
+}

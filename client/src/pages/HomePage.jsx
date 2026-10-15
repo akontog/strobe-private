@@ -47,10 +47,10 @@ export default function HomePage() {
     }
   ];
   const quickLinks = [
-    { to: '/labs/buffon-needle/teacher', label: tNeural('openBuffonTeacher') },
-    { to: '/labs/buffon-needle/student', label: tNeural('openBuffonStudent') },
-    { to: '/labs/neural-lab/teacher', label: tNeural('openTeacher') },
-    { to: '/labs/neural-lab/student', label: tNeural('openStudent') },
+    { to: '/workshops/buffon-needle/teacher', label: tNeural('openBuffonTeacher') },
+    { to: '/workshops/buffon-needle/student', label: tNeural('openBuffonStudent') },
+    { to: '/workshops/neural-lab/teacher', label: tNeural('openTeacher') },
+    { to: '/workshops/neural-lab/student', label: tNeural('openStudent') },
   ];
 
   return (

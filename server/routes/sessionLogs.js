@@ -4,9 +4,10 @@ const { appendRecord, getActiveSessionForApp, getActiveSession, getAppSettings, 
 const { requireRole } = require('../middleware/checkRole');
 
 const router = express.Router();
+const isSessionApp = (slug) => slug === 'geogebra-collab' || Boolean(getAppBySlug(slug));
 
 router.get('/api/session-logs/active/:app', (req, res) => {
-  if (!getAppBySlug(req.params.app)) return res.status(404).json({ error: 'Unknown app.' });
+  if (!isSessionApp(req.params.app)) return res.status(404).json({ error: 'Unknown app.' });
   const sessionId = getActiveSessionForApp(req.params.app);
   const session = sessionId ? getActiveSession(sessionId) : null;
   const settings = session?.metadata || getAppSettings(req.params.app);
@@ -14,7 +15,7 @@ router.get('/api/session-logs/active/:app', (req, res) => {
 });
 
 router.get('/api/session-logs/active/:app/chat', (req, res) => {
-  if (!getAppBySlug(req.params.app)) return res.status(404).json({ error: 'Unknown app.' });
+  if (!isSessionApp(req.params.app)) return res.status(404).json({ error: 'Unknown app.' });
   const sessionId = getActiveSessionForApp(req.params.app);
   const session = sessionId ? getActiveSession(sessionId) : null;
   return res.json({ sessionId, enabled: Boolean(session?.metadata.chatEnabled), messages: session?.metadata.chatEnabled ? getChatMessages(sessionId) : [] });

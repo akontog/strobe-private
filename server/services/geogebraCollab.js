@@ -1,4 +1,6 @@
 const { sanitizeString } = require('../utils/helpers');
+const { getAppBySlug } = require('../apps/registry');
+const { appendRecord, getActiveSession, getActiveSessionForApp } = require('./sessionLogs');
 
 const ROOM_EVENT = 'geogebra:join';
 const ELEVATED_ROLES = new Set(['teacher', 'admin']);
@@ -6,6 +8,7 @@ const ELEVATED_ROLES = new Set(['teacher', 'admin']);
 function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraLessonStore }) {
   const rooms = new Map();
   const socketRoom = new Map();
+  const socketSessionApps = new Map();
   const monitorSockets = new Set();
   const activityFeed = [];
 
@@ -51,8 +54,10 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
         value: Number.isFinite(value.value) ? value.value : null,
         x: Number.isFinite(value.x) ? value.x : null,
         y: Number.isFinite(value.y) ? value.y : null,
-        owner: perm ? perm.owner : null,
-        editors: perm ? [...perm.editors] : []
+        owner: perm ? (perm.ownerName || perm.owner) : null,
+        ownerId: perm ? (perm.ownerId || null) : null,
+        editors: perm ? [...perm.editors] : [],
+        editorNames: perm ? { ...(perm.editorNames || {}) } : {}
       });
     });
 
@@ -115,6 +120,11 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
   function cleanRoomId(value) {
     const cleaned = sanitizeString(value || 'geogebra-default', 80);
     return cleaned || 'geogebra-default';
+  }
+
+  function normalizeSessionApp(value) {
+    const app = sanitizeString(value || '', 80);
+    return app === 'geogebra-collab' || getAppBySlug(app) ? app : 'geogebra-collab';
   }
 
   function cleanObjectName(value) {
@@ -183,7 +193,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
           : []
       );
 
-      room.perms.set(objectName, { owner, editors });
+      room.perms.set(objectName, { owner, ownerName: owner, ownerId: '', editors, editorNames: {} });
     });
 
     publishStateChange(room, 'lesson-bootstrap', {
@@ -200,7 +210,8 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     const role = String((session && session.role) || 'student').trim().toLowerCase() || 'student';
     const id = String((session && session.userId) || socket.userId || socket.sessionId || socket.id).trim();
     const displayName = sanitizeString(
-      (session && (session.username || session.displayName))
+      (session && (role === 'teacher' ? session.teacherAccount : session.username))
+      || (session && session.displayName)
       || (socket && socket.user && socket.user.displayName)
       || (socket && socket.displayName)
       || id,
@@ -263,6 +274,10 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       return true;
     }
 
+    if (perm.ownerId) {
+      return perm.ownerId === user.id || perm.editors.has('*') || perm.editors.has(user.id);
+    }
+
     const aliases = buildUserAliases(room, user);
 
     if ([...aliases].some((alias) => perm.owner === alias)) {
@@ -281,8 +296,10 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
 
     room.perms.forEach((perm, name) => {
       info[name] = {
-        owner: perm.owner,
-        editors: [...perm.editors]
+        owner: perm.ownerName || perm.owner,
+        ownerId: perm.ownerId || null,
+        editors: [...perm.editors],
+        editorNames: { ...(perm.editorNames || {}) }
       };
     });
 
@@ -324,8 +341,10 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
         value: Number.isFinite(objectValue.value) ? objectValue.value : null,
         x: Number.isFinite(objectValue.x) ? objectValue.x : null,
         y: Number.isFinite(objectValue.y) ? objectValue.y : null,
-        owner: perm ? perm.owner : null,
-        editors: perm ? [...perm.editors] : []
+        owner: perm ? (perm.ownerName || perm.owner) : null,
+        ownerId: perm ? (perm.ownerId || null) : null,
+        editors: perm ? [...perm.editors] : [],
+        editorNames: perm ? { ...(perm.editorNames || {}) } : {}
       });
     });
 
@@ -363,7 +382,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     });
   }
 
-  function publishStateChange(room, action, details = {}) {
+  function publishStateChange(room, action, details = {}, actor = null) {
     const snapshot = buildRoomSnapshot(room);
     const payload = {
       roomId: room.id,
@@ -374,6 +393,47 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
 
     pushFeed(payload);
     broadcastMonitorSnapshot();
+    recordSessionAction(room, action, details, actor);
+  }
+
+  function recordSessionAction(room, action, details, actor) {
+    if (!actor || !actor.socket || !actor.user) return;
+    const app = socketSessionApps.get(actor.socket.id) || 'geogebra-collab';
+    const sessionId = getActiveSessionForApp(app);
+    const session = sessionId ? getActiveSession(sessionId) : null;
+    if (!session) return;
+
+    const objectName = details.to || details.object || '';
+    const objectValue = objectName ? room.state.get(objectName) : null;
+    const permission = objectName ? room.perms.get(objectName) : null;
+    const state = objectValue ? {
+      name: objectName,
+      cmd: objectValue.cmd || '',
+      xml: objectValue.xml || '',
+      value: Number.isFinite(objectValue.value) ? objectValue.value : null,
+      x: Number.isFinite(objectValue.x) ? objectValue.x : null,
+      y: Number.isFinite(objectValue.y) ? objectValue.y : null
+    } : details.state || null;
+
+    appendRecord(sessionId, 'events.jsonl', {
+      event: 'geogebra.action',
+      activity: session.metadata.activity || app,
+      student: getActorDisplayName(room, actor.socket, actor.user),
+      data: {
+        roomId: room.id,
+        action,
+        object: details.object || details.from || objectName || null,
+        to: details.to || null,
+        target: details.targetName || null,
+        state,
+        objects: Array.isArray(details.objects) ? details.objects : undefined,
+        access: permission ? {
+          owner: permission.ownerName || permission.owner,
+          editors: [...permission.editors],
+          editorNames: { ...(permission.editorNames || {}) }
+        } : undefined
+      }
+    });
   }
 
   function sendRollback(room, socket, objectName, reasonText) {
@@ -409,14 +469,17 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     });
   }
 
-  function ensurePermissionEntry(room, name, ownerId) {
+  function ensurePermissionEntry(room, name, ownerId, ownerName) {
     if (room.perms.has(name)) {
       return room.perms.get(name);
     }
 
     const perm = {
       owner: ownerId,
-      editors: new Set()
+      ownerId,
+      ownerName: ownerName || ownerId,
+      editors: new Set(),
+      editorNames: {}
     };
 
     room.perms.set(name, perm);
@@ -429,6 +492,11 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       roomId: room.id,
       ...payload
     });
+  }
+
+  function getActorDisplayName(room, socket, user) {
+    const member = room.membersMeta.get(socket.id);
+    return (member && member.displayName) || user.displayName || user.id;
   }
 
   function handleAdd(room, socket, user, data) {
@@ -449,28 +517,8 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     const y = Number.isFinite(Number(data && data.y)) ? Number(data.y) : null;
 
     const member = room.membersMeta.get(socket.id);
-    const ownerId = sanitizeString(
-      (member && (member.displayName || member.userId))
-      || user.displayName
-      || user.id,
-      80
-    ) || 'system';
-    const creatorIds = new Set();
-    if (ownerId) {
-      creatorIds.add(ownerId);
-    }
-    if (member && member.userId) {
-      creatorIds.add(sanitizeString(member.userId, 80));
-    }
-    if (member && member.displayName) {
-      creatorIds.add(sanitizeString(member.displayName, 80));
-    }
-    if (user && user.id) {
-      creatorIds.add(sanitizeString(user.id, 80));
-    }
-    if (user && user.displayName) {
-      creatorIds.add(sanitizeString(user.displayName, 80));
-    }
+    const ownerId = sanitizeString(user.id, 120) || 'system';
+    const ownerName = sanitizeString((member && member.displayName) || user.displayName || ownerId, 80) || ownerId;
 
     room.state.set(name, {
       cmd,
@@ -481,17 +529,20 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     });
 
     room.perms.set(name, {
-      owner: ownerId,
-      editors: creatorIds
+      owner: ownerName,
+      ownerId,
+      ownerName,
+      editors: new Set([ownerId]),
+      editorNames: { [ownerId]: ownerName }
     });
 
     emitToRoom(room, 'geogebra:upsert', { name, cmd, xml, value, x, y });
     broadcastPermissions(room);
     publishStateChange(room, 'add', {
       object: name,
-      by: ownerId,
+      by: ownerName,
       cmd
-    });
+    }, { socket, user });
   }
 
   function handleUpdate(room, socket, user, data) {
@@ -539,9 +590,9 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     emitToRoom(room, 'geogebra:upsert', { name, cmd, xml, value, x, y });
     publishStateChange(room, 'update', {
       object: name,
-      by: user.displayName || user.id,
+      by: getActorDisplayName(room, socket, user),
       cmd
-    });
+    }, { socket, user });
   }
 
   function handleRemove(room, socket, user, data) {
@@ -555,6 +606,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       return;
     }
 
+    const removedState = room.state.get(name);
     room.state.delete(name);
     room.perms.delete(name);
 
@@ -562,8 +614,9 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     broadcastPermissions(room);
     publishStateChange(room, 'remove', {
       object: name,
-      by: user.displayName || user.id
-    });
+      by: getActorDisplayName(room, socket, user),
+      state: removedState ? { name, ...removedState } : null
+    }, { socket, user });
   }
 
   function handleRename(room, socket, user, data) {
@@ -594,8 +647,8 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     publishStateChange(room, 'rename', {
       object: from,
       to,
-      by: user.displayName || user.id
-    });
+      by: getActorDisplayName(room, socket, user)
+    }, { socket, user });
   }
 
   function handleClear(room, socket, user, data) {
@@ -606,16 +659,19 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
 
     const objectName = cleanObjectName(data && data.name);
     const removedNames = [];
+    const removedObjects = [];
 
     if (objectName) {
       if (room.state.has(objectName)) {
         removedNames.push(objectName);
+        removedObjects.push({ name: objectName, ...room.state.get(objectName) });
         room.state.delete(objectName);
         room.perms.delete(objectName);
       }
     } else {
       room.state.forEach((_, name) => {
         removedNames.push(name);
+        removedObjects.push({ name, ...room.state.get(name) });
       });
       room.state.clear();
       room.perms.clear();
@@ -635,10 +691,11 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     });
     broadcastPermissions(room);
     publishStateChange(room, 'clear', {
-      by: user.displayName || user.id,
+      by: getActorDisplayName(room, socket, user),
       object: objectName || 'room',
-      cleared: removedNames
-    });
+      cleared: removedNames,
+      objects: removedObjects
+    }, { socket, user });
   }
 
   function handleGrant(room, socket, user, data) {
@@ -650,10 +707,16 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       return;
     }
 
-    const ownerId = user.displayName || user.id;
-    const perm = ensurePermissionEntry(room, name, ownerId);
+    if (!room.perms.has(name) && !isElevated(user)) {
+      return;
+    }
+
+    const ownerId = user.id;
+    const ownerName = getActorDisplayName(room, socket, user);
+    const perm = ensurePermissionEntry(room, name, ownerId, ownerName);
     const actorAliases = buildUserAliases(room, user);
-    const canGrant = isElevated(user) || [...actorAliases].some((alias) => perm.owner === alias);
+    const canGrant = isElevated(user)
+      || (perm.ownerId ? perm.ownerId === user.id : [...actorAliases].some((alias) => perm.owner === alias));
 
     if (!canGrant) {
       socket.emit('geogebra:error', { message: 'Μόνο owner ή teacher/admin μπορεί να αλλάξει δικαιώματα.' });
@@ -665,27 +728,38 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       return;
     }
 
-    const targetMember = [...room.membersMeta.values()].find((member) => (
-      member
-      && (member.displayName === targetUserId || member.userId === targetUserId || member.socketId === targetUserId)
-    ));
+    const members = [...room.membersMeta.values()];
+    const targetMember = members.find((member) => (
+      member && (member.userId === targetUserId || member.socketId === targetUserId)
+    )) || members.find((member) => member && member.displayName === targetUserId);
 
-    const targetAliases = new Set([targetUserId]);
+    const targetAliases = new Set();
     if (targetMember) {
-      if (targetMember.displayName) {
-        targetAliases.add(targetMember.displayName);
-      }
       if (targetMember.userId) {
         targetAliases.add(targetMember.userId);
       }
+      if (!perm.ownerId && targetMember.displayName) {
+        targetAliases.add(targetMember.displayName);
+      }
+    } else {
+      targetAliases.add(targetUserId);
     }
 
     if (revoke) {
-      targetAliases.forEach((alias) => perm.editors.delete(alias));
+      targetAliases.forEach((alias) => {
+        perm.editors.delete(alias);
+        if (perm.editorNames) {
+          delete perm.editorNames[alias];
+        }
+      });
     } else {
       targetAliases.forEach((alias) => {
         if (alias !== perm.owner) {
           perm.editors.add(alias);
+          if (targetMember && targetMember.userId === alias) {
+            perm.editorNames = perm.editorNames || {};
+            perm.editorNames[alias] = targetMember.displayName || alias;
+          }
         }
       });
     }
@@ -693,9 +767,10 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     broadcastPermissions(room);
     publishStateChange(room, revoke ? 'revoke' : 'grant', {
       object: name,
-      by: ownerId,
-      targetUserId
-    });
+      by: ownerName,
+      targetUserId,
+      targetName: targetMember && targetMember.displayName
+    }, { socket, user });
   }
 
   function handleJoin(socket, data) {
@@ -709,6 +784,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     }
 
     socketRoom.set(socket.id, roomId);
+    socketSessionApps.set(socket.id, normalizeSessionApp(data && data.sessionApp));
     socket.join(roomId);
 
     const room = getRoom(roomId);
@@ -717,7 +793,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
 
     const user = getUserFromSocket(socket);
     const member = updateMemberMeta(room, socket, {
-      displayName: data && data.displayName,
+      displayName: isElevated(user) ? user.displayName : data && data.displayName,
       color: data && data.color,
       role: user.role,
       userId: user.id
@@ -727,7 +803,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       by: member.displayName,
       role: user.role,
       userId: user.id
-    });
+    }, { socket, user });
 
     socket.emit('geogebra:init', {
       me: {
@@ -804,15 +880,16 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       }
 
       const room = getRoom(roomId);
+      const user = getUserFromSocket(socket);
       const member = updateMemberMeta(room, socket, {
-        displayName: data && data.displayName,
+        displayName: isElevated(user) ? user.displayName : data && data.displayName,
         color: data && data.color
       });
 
       publishStateChange(room, 'identity', {
         by: member.displayName,
         userId: member.userId
-      });
+      }, { socket, user });
     });
 
     routeEvent(socket, 'geogebra:add', 'add', handleAdd);
@@ -825,6 +902,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     socket.on('disconnect', () => {
       const roomId = socketRoom.get(socket.id);
       socketRoom.delete(socket.id);
+      socketSessionApps.delete(socket.id);
       monitorSockets.delete(socket);
 
       if (!roomId) {

@@ -1535,10 +1535,11 @@ export default function App({ role = 'teacher' }) {
               <div className="poly-geogebra-area-panel">
                 <CollaborativeGeoGebra
                   roomId={geogebraRoomId}
+                  sessionApp="polynomial-lab"
                   className="poly-geogebra-board"
                   showStatus={false}
+                  editable={Boolean(sessionLogging?.activeSessionId)}
                   showPermissionControls={isTeacher}
-                  showLegend={false}
                   showToolBar={false}
                   showAlgebraView={false}
                   showAlgebraInput={false}

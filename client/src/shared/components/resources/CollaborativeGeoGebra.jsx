@@ -134,9 +134,10 @@ function objectExists(api, name) {
 
 export default function CollaborativeGeoGebra({
   roomId = 'geogebra-default',
+  sessionApp = 'geogebra-collab',
   className = '',
-  showStatus = true,
-  showLegend = true,
+  showStatus = false,
+  editable = true,
   showToolBar = true,
   showAlgebraView = true,
   showAlgebraInput = true,
@@ -154,6 +155,7 @@ export default function CollaborativeGeoGebra({
   const ggbApiRef = useRef(null);
   const applyingRemoteRef = useRef(false);
   const updateTimersRef = useRef(new Map());
+  const pendingObjectTimersRef = useRef(new Map());
 
   const [connected, setConnected] = useState(false);
   const [errorText, setErrorText] = useState('');
@@ -192,12 +194,24 @@ export default function CollaborativeGeoGebra({
     });
   }, [studentIdentity]);
 
+  useEffect(() => {
+    if (editable || !boardRef.current) {
+      return;
+    }
+
+    const activeElement = document.activeElement;
+    if (activeElement && boardRef.current.contains(activeElement) && typeof activeElement.blur === 'function') {
+      activeElement.blur();
+    }
+  }, [editable]);
+
   function emit(event, data) {
     if (!socketRef.current) {
       return;
     }
     socketRef.current.emit(event, {
       roomId,
+      sessionApp,
       ...data
     });
   }
@@ -229,7 +243,7 @@ export default function CollaborativeGeoGebra({
     });
   }
 
-  function applyObjectFromServer(payload) {
+  function applyObjectFromServer(payload, attempt = 0) {
     const api = ggbApiRef.current;
     if (!api || !payload || !payload.name) {
       return;
@@ -242,26 +256,52 @@ export default function CollaborativeGeoGebra({
     const y = typeof payload.y === 'number' && Number.isFinite(payload.y) ? payload.y : null;
     const hasCoords = x !== null && y !== null;
 
+    let applied = false;
     withRemoteApply(() => {
       const exists = objectExists(api, payload.name);
+      applied = hasCoords && exists;
 
       // For moved points, prefer direct coord updates to avoid stale cmd/xml resets to center.
       if (!(hasCoords && exists)) {
-        if (xml && typeof api.evalXML === 'function') {
-          api.evalXML(xml);
-        } else if (cmd && typeof api.evalCommand === 'function') {
-          api.evalCommand(cmd);
+        try {
+          if (cmd && typeof api.evalCommand === 'function') {
+            applied = api.evalCommand(cmd) !== false && objectExists(api, payload.name);
+          }
+          if (!applied && xml && typeof api.evalXML === 'function') {
+            api.evalXML(xml);
+            applied = objectExists(api, payload.name);
+          }
+        } catch {
+          applied = objectExists(api, payload.name);
         }
       }
 
-      if (value !== null && typeof api.setValue === 'function') {
+      if (applied && value !== null && typeof api.setValue === 'function') {
         api.setValue(payload.name, value);
       }
 
-      if (hasCoords && typeof api.setCoords === 'function') {
+      if (applied && hasCoords && typeof api.setCoords === 'function') {
         api.setCoords(payload.name, x, y);
       }
     });
+
+    if (!applied && attempt < 20) {
+      const previousTimer = pendingObjectTimersRef.current.get(payload.name);
+      if (previousTimer) {
+        clearTimeout(previousTimer);
+      }
+      const timer = setTimeout(() => {
+        pendingObjectTimersRef.current.delete(payload.name);
+        applyObjectFromServer(payload, attempt + 1);
+      }, 100);
+      pendingObjectTimersRef.current.set(payload.name, timer);
+    } else {
+      const timer = pendingObjectTimersRef.current.get(payload.name);
+      if (timer) {
+        clearTimeout(timer);
+        pendingObjectTimersRef.current.delete(payload.name);
+      }
+    }
   }
 
   function applyLocks(locked) {
@@ -332,10 +372,6 @@ export default function CollaborativeGeoGebra({
     if (typeof api.registerAddListener === 'function') {
       api.registerAddListener((name) => {
         if (applyingRemoteRef.current) {
-          return;
-        }
-
-        if (typeof api.isIndependent === 'function' && !api.isIndependent(name)) {
           return;
         }
 
@@ -430,6 +466,7 @@ export default function CollaborativeGeoGebra({
           setErrorText('');
           socket.emit('geogebra:join', {
             roomId,
+            sessionApp,
             displayName: studentIdentity.name,
             color: studentIdentity.color
           });
@@ -454,6 +491,8 @@ export default function CollaborativeGeoGebra({
         });
 
         socket.on('geogebra:init', (payload) => {
+          pendingObjectTimersRef.current.forEach((timer) => clearTimeout(timer));
+          pendingObjectTimersRef.current.clear();
           withRemoteApply(() => {
             clearBoard();
             const state = Array.isArray(payload && payload.state) ? payload.state : [];
@@ -522,9 +561,12 @@ export default function CollaborativeGeoGebra({
 
       updateTimersRef.current.forEach((timer) => clearTimeout(timer));
       updateTimersRef.current.clear();
+      pendingObjectTimersRef.current.forEach((timer) => clearTimeout(timer));
+      pendingObjectTimersRef.current.clear();
     };
   }, [
     roomId,
+    sessionApp,
     onConnectionChange,
     onObjectsChange,
     onPermissionsChange,
@@ -553,15 +595,11 @@ export default function CollaborativeGeoGebra({
 
       {errorText ? <p className="gg-collab__error">{errorText}</p> : null}
 
-      <div ref={boardRef} className="gg-collab__board" />
+      <div className={`gg-collab__board-shell${editable ? '' : ' is-locked'}`} aria-disabled={!editable}>
+        <div ref={boardRef} className="gg-collab__board" inert={!editable ? '' : undefined} />
+        {!editable ? <div className="gg-collab__lock-overlay" aria-hidden="true" /> : null}
+      </div>
 
-      {showLegend ? (
-        <ul className="gg-collab__legend">
-          <li>Only independent objects are synced from local edits.</li>
-          <li>Permissions are server-authoritative; unauthorized edits are rolled back.</li>
-          <li>Grant/Revoke targets are identified by realtime user id.</li>
-        </ul>
-      ) : null}
     </section>
   );
 }

@@ -47,9 +47,9 @@ function describeAction(entry) {
     case 'rename':
       return `${actor} renamed ${objectName} to ${entry.to || '?'}`;
     case 'grant':
-      return `${actor} granted access for ${objectName} to ${entry.targetUserId || '?'}`;
+      return `${actor} granted access for ${objectName} to ${entry.targetName || entry.targetUserId || '?'}`;
     case 'revoke':
-      return `${actor} revoked access for ${objectName} from ${entry.targetUserId || '?'}`;
+      return `${actor} revoked access for ${objectName} from ${entry.targetName || entry.targetUserId || '?'}`;
     case 'join':
       return `${actor} joined room ${entry.roomId || ''}`;
     default:
@@ -161,7 +161,7 @@ export default function GeogebraMonitor({ roomFilter = '', className = '' }) {
     }
   }, [selectedRoomId, visibleRooms]);
 
-  function emitGrant(roomId, objectName, userId) {
+  function emitGrant(roomId, objectName, userId, revoke = false) {
     if (!roomId || !objectName || !String(userId || '').trim()) {
       return;
     }
@@ -174,7 +174,8 @@ export default function GeogebraMonitor({ roomFilter = '', className = '' }) {
     socket.emit('geogebra:grant', {
       roomId,
       name: objectName,
-      userId: String(userId).trim()
+      userId: String(userId).trim(),
+      revoke
     });
   }
 
@@ -247,7 +248,6 @@ export default function GeogebraMonitor({ roomFilter = '', className = '' }) {
           <CollaborativeGeoGebra
             roomId={selectedRoom.id}
             className="gg-monitor__board"
-            showLegend={false}
             showToolBar
             showAlgebraView={false}
             showAlgebraInput={false}
@@ -280,10 +280,18 @@ export default function GeogebraMonitor({ roomFilter = '', className = '' }) {
                       const grantKey = `${room.id}:${object.name}`;
                       const grantTarget = grantInputs[grantKey] || '';
                       const memberOptions = Array.isArray(room.memberList) ? room.memberList : [];
-                      const grantOptions = memberOptions.length > 0
-                        ? memberOptions.map((member) => String(member.displayName || member.userId || member.socketId || ''))
-                        : [];
-                      const uniqueGrantOptions = [...new Set(grantOptions.filter(Boolean))];
+                      const grantOptions = memberOptions
+                        .map((member) => ({
+                          userId: String(member.userId || member.socketId || ''),
+                          displayName: String(member.displayName || member.userId || member.socketId || '')
+                        }))
+                        .filter((member) => member.userId && member.userId !== object.ownerId);
+                      const uniqueGrantOptions = [...new Map(grantOptions.map((member) => [member.userId, member])).values()];
+                      const editorNames = (Array.isArray(object.editors) ? object.editors : [])
+                        .filter((userId) => userId !== object.ownerId)
+                        .map((userId) => object.editorNames?.[userId]
+                          || uniqueGrantOptions.find((member) => member.userId === userId)?.displayName
+                          || userId);
 
                       return (
                         <li key={grantKey}>
@@ -292,6 +300,9 @@ export default function GeogebraMonitor({ roomFilter = '', className = '' }) {
                             <button type="button" className="gg-monitor__clearButton gg-monitor__clearButton--small" onClick={() => emitClear(room.id, object.name)}>
                               Remove
                             </button>
+                          </div>
+                          <div className="gg-monitor__meta">
+                            Access: owner{editorNames.length ? `, ${editorNames.join(', ')}` : ' only'}
                           </div>
                           {selected ? (
                             <div className="gg-monitor__grantRow">
@@ -305,15 +316,15 @@ export default function GeogebraMonitor({ roomFilter = '', className = '' }) {
                                   }))}
                                 >
                                   <option value="">Select user</option>
-                                  {uniqueGrantOptions.map((userId) => (
-                                    <option key={`${room.id}:${object.name}:${userId}`} value={userId}>{userId}</option>
+                                  {uniqueGrantOptions.map((member) => (
+                                    <option key={`${room.id}:${object.name}:${member.userId}`} value={member.userId}>{member.displayName}</option>
                                   ))}
                                 </select>
                               ) : (
                                 <input
                                   className="gg-monitor__input"
                                   type="text"
-                                  placeholder="grant to userId"
+                                  placeholder="grant to user ID"
                                   value={grantTarget}
                                   onChange={(event) => setGrantInputs((current) => ({
                                     ...current,
@@ -327,6 +338,13 @@ export default function GeogebraMonitor({ roomFilter = '', className = '' }) {
                                 onClick={() => emitGrant(room.id, object.name, grantTarget)}
                               >
                                 Grant
+                              </button>
+                              <button
+                                type="button"
+                                className="gg-monitor__clearButton gg-monitor__clearButton--small"
+                                onClick={() => emitGrant(room.id, object.name, grantTarget, true)}
+                              >
+                                Revoke
                               </button>
                             </div>
                           ) : null}

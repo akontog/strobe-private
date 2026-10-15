@@ -59,7 +59,7 @@ function App({ role = 'teacher' }) {
       {role === 'teacher' ? (
         <StudentQrAccordion
           title={tInterface('studentConnection')}
-          linkHref="/labs/buffon-needle/student"
+          linkHref="/workshops/buffon-needle/student"
           linkLabel={tInterface('openStudentView')}
         />
       ) : null}

@@ -4,7 +4,7 @@ const { getAppBySlug, listAppsForRole, toPublicApp } = require('../apps/registry
 const { saveActivity, listActivities, getActivity } = require('../services/appActivities');
 const { requireRole } = require('../middleware/checkRole');
 const { createSession, appendRecord, endSession, updateSessionActivity } = require('../services/sessionLogs');
-const { setActiveLab } = require('../services/classroomSelection');
+const { getActiveSelection, setActiveLab } = require('../services/classroomSelection');
 
 const router = express.Router();
 router.use(requireRole(['teacher']));
@@ -36,17 +36,20 @@ router.get('/resources', (req, res) => {
 
 router.post('/classroom/selection', (req, res) => {
   const app = req.body && req.body.app;
-  const activeLab = setActiveLab(app);
+  const activeLab = setActiveLab(app, req.body && req.body.roomId);
   if (activeLab === null) return res.status(400).json({ error: 'Choose a valid student lab.' });
-  return res.json({ app: activeLab || null });
+  const selection = getActiveSelection();
+  return res.json({ app: activeLab || null, roomId: selection.roomId });
 });
 
 router.post('/sessions', (req, res) => {
   const appSlug = String(req.body && req.body.app || '').trim();
   const app = getAppBySlug(appSlug);
-  if (!app || !app.roles.includes('teacher')) return res.status(400).json({ error: 'Choose a valid teacher app.' });
+  if (appSlug !== 'geogebra-collab' && (!app || !app.roles.includes('teacher'))) {
+    return res.status(400).json({ error: 'Choose a valid teacher app.' });
+  }
   const session = createSession({
-    app: app.slug,
+    app: app ? app.slug : appSlug,
     activity: String(req.body && req.body.activity || '').trim().slice(0, 120),
     teacherId: req.session.teacherAccount
   });

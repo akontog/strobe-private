@@ -151,29 +151,14 @@ function getLaunchPath(app, role) {
   }
 
   const normalizedRole = String(role || '').toLowerCase();
-  const mode = normalizedRole === 'teacher' || normalizedRole === 'admin' ? 'teacher' : 'client';
+  const publicSlug = app.slug === 'polynomial-lab'
+    ? 'polynomials'
+    : app.slug === 'linear-systems-lab'
+      ? 'linear-systems'
+      : app.slug;
+  const routeRole = normalizedRole === 'teacher' || normalizedRole === 'admin' ? 'teacher' : 'student';
 
-  if (normalizedRole === 'screen' && app.screenEntry) {
-    return `/labs/${app.slug}/${app.screenEntry}`;
-  }
-
-  const entry = normalizedRole === 'teacher' ? app.teacherEntry : app.clientEntry || app.studentEntry || app.teacherEntry;
-
-  if (!entry) {
-    return `/labs/${app.slug}/`;
-  }
-
-  const entryPath = `/labs/${app.slug}/${entry}`;
-
-  if (entry.includes('?')) {
-    return entryPath;
-  }
-
-  if (app.teacherEntry === app.clientEntry) {
-    return `${entryPath}?mode=${mode}`;
-  }
-
-  return entryPath;
+  return `/workshops/${publicSlug}/${routeRole}`;
 }
 
 function toPublicApp(app, role) {

@@ -23,7 +23,7 @@ import ToolsPage from './pages/ToolsPage';
 import InstructionsPage from './pages/InstructionsPage';
 import ActivityBuilder from './tools/activity-builder/ActivityBuilder';
 import CameraSpeedTest from './system/camera-speed-test/CameraSpeedTest';
-import GeoGebraCollabTool from './workshops/geogebra-collab/GeoGebraCollabTool';
+import GeoGebraCollabTool from './tools/geogebra-collab/GeoGebraCollabTool';
 import GeogebraMonitorTool from './tools/geogebra-monitor/GeogebraMonitorTool';
 import LinearSeparation from './tools/linear-separation/LinearSeparation';
 import ConsoleTool from './system/console/ConsoleTool';
@@ -32,6 +32,7 @@ import LanguageSwitcher from './shared/components/identity/LanguageSwitcher';
 import RoleAccessControl from './shared/components/identity/RoleAccessControl';
 import { SessionLogProvider } from './shared/components/activities/SessionLogContext';
 import { SettingsAccordion, ChatAccordion, CommonSessionSettings } from './shared/components';
+import { getAppSlug, getWorkshopPath } from './shared/utils/workshopPaths';
 
 function App() {
   const { t } = useTranslation(['common', 'menu']);
@@ -39,7 +40,10 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const pathname = String(location?.pathname || '').toLowerCase();
-  const currentLabSlug = pathname.match(/^\/labs\/([^/]+)/)?.[1] || '';
+  const routePath = pathname.replace(/\/+$/, '') || '/';
+  const currentWorkshopSlug = pathname.match(/^\/workshops\/([^/]+)/)?.[1] || '';
+  const currentLabSlug = getAppSlug(currentWorkshopSlug);
+  const currentSessionApp = routePath === '/tools/geogebra-collab' ? 'geogebra-collab' : currentLabSlug;
   const labHasOwnSettings = ['polynomial-lab', 'linear-systems-lab', 'neural-lab', 'identities-lab'].includes(currentLabSlug);
   const labHasInlineChat = ['polynomial-lab', 'neural-lab', 'buffon-needle'].includes(currentLabSlug);
   const [role, setRole] = useState('student');
@@ -51,6 +55,7 @@ function App() {
   const [teacherSession, setTeacherSession] = useState(null);
   const [teacherSessionBusy, setTeacherSessionBusy] = useState(false);
   const [classroomLab, setClassroomLab] = useState('');
+  const [classroomRoomId, setClassroomRoomId] = useState('');
   const [classroomSelectionLoaded, setClassroomSelectionLoaded] = useState(false);
 
   useEffect(() => {
@@ -66,18 +71,21 @@ function App() {
 
   useEffect(() => {
     if (!authReady || role !== 'teacher') return undefined;
-    const teacherLab = pathname.match(/^\/labs\/([^/]+)\/teacher$/)?.[1]
-      || (pathname === '/tools/geogebra-collab' ? 'geogebra-collab' : '');
+    const teacherLab = getAppSlug(pathname.match(/^\/workshops\/([^/]+)\/teacher$/)?.[1] || '')
+      || (routePath === '/tools/geogebra-collab' ? 'geogebra-collab' : '');
+    const roomId = teacherLab === 'geogebra-collab'
+      ? new URLSearchParams(location.search).get('room') || 'geogebra-default'
+      : '';
     const publishSelection = () => fetch('/teacher/classroom/selection', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ app: teacherLab || null })
+        body: JSON.stringify({ app: teacherLab || null, roomId })
       }).catch(() => {});
     publishSelection();
     if (!teacherLab) return undefined;
     const timer = window.setInterval(publishSelection, 5000);
     return () => window.clearInterval(timer);
-  }, [authReady, pathname, role]);
+  }, [authReady, location.search, pathname, role, routePath]);
 
   useEffect(() => {
     if (!authReady || role !== 'student') return undefined;
@@ -92,6 +100,7 @@ function App() {
         const payload = response.ok ? await response.json() : null;
         if (!cancelled && payload) {
           setClassroomLab(typeof payload.app === 'string' ? payload.app : '');
+          setClassroomRoomId(typeof payload.roomId === 'string' ? payload.roomId : '');
           setClassroomSelectionLoaded(true);
         }
       } catch {
@@ -111,18 +120,18 @@ function App() {
 
   useEffect(() => {
     if (!authReady || role !== 'student' || !classroomSelectionLoaded) return;
-    const labRoute = pathname.match(/^\/labs\/([^/]+)\/(?:student|teacher)$/)?.[1] || '';
+    const labRoute = pathname.match(/^\/workshops\/([^/]+)\/(?:student|teacher)$/)?.[1] || '';
     if (classroomLab) {
       const target = classroomLab === 'geogebra-collab'
-        ? '/tools/geogebra-collab'
-        : `/labs/${classroomLab}/student`;
-      if (pathname !== target) navigate(target, { replace: true });
+        ? `/tools/geogebra-collab?room=${encodeURIComponent(classroomRoomId || 'geogebra-default')}`
+        : getWorkshopPath(classroomLab, 'student');
+      if (`${pathname}${location.search}` !== target) navigate(target, { replace: true });
       return;
     }
     if (labRoute || pathname === '/client' || pathname === '/student' || pathname === '/tools/geogebra-collab') {
       navigate('/', { replace: true });
     }
-  }, [authReady, classroomLab, classroomSelectionLoaded, navigate, pathname, role]);
+  }, [authReady, classroomLab, classroomRoomId, classroomSelectionLoaded, location.search, navigate, pathname, role]);
 
   useEffect(() => {
     let active = true;
@@ -194,8 +203,7 @@ function App() {
   async function toggleTeacherSession() {
     setTeacherSessionBusy(true);
     try {
-      const labMatch = pathname.match(/^\/labs\/([^/]+)\//);
-      const app = labMatch ? labMatch[1] : null;
+      const app = currentSessionApp || null;
       const endpoint = teacherSession
         ? `/teacher/sessions/${encodeURIComponent(teacherSession.sessionId)}/end`
         : '/teacher/sessions';
@@ -228,7 +236,7 @@ function App() {
     if (!classroomSelectionLoaded) return null;
     if (classroomLab === slug) return element;
     return classroomLab
-      ? <Navigate to={classroomLab === 'geogebra-collab' ? '/tools/geogebra-collab' : `/labs/${classroomLab}/student`} replace />
+      ? <Navigate to={classroomLab === 'geogebra-collab' ? '/tools/geogebra-collab' : getWorkshopPath(classroomLab, 'student')} replace />
       : <Navigate to="/" replace />;
   };
   const studentToolOnly = (selection, element) => {
@@ -237,17 +245,16 @@ function App() {
     if (!classroomSelectionLoaded) return null;
     if (classroomLab === selection) return element;
     return classroomLab
-      ? <Navigate to={classroomLab === 'geogebra-collab' ? '/tools/geogebra-collab' : `/labs/${classroomLab}/student`} replace />
+      ? <Navigate to={classroomLab === 'geogebra-collab' ? '/tools/geogebra-collab' : getWorkshopPath(classroomLab, 'student')} replace />
       : <Navigate to="/" replace />;
   };
   const menuGroups = {
     labs: { label: tNav('labs'), items: [
-      { label: tNav('items.buffon'), path: '/labs/buffon-needle' },
-      { label: tNav('items.identities'), path: '/labs/identities-lab' },
-      { label: tNav('items.neural'), path: '/labs/neural-lab' },
-      { label: tNav('items.polynomial'), path: '/labs/polynomial-lab' },
-      { label: tNav('items.primes'), path: '/labs/primes-lab' },
-      { label: tNav('items.geogebra'), path: '/tools/geogebra-collab' }
+      { label: tNav('items.buffon'), path: '/workshops/buffon-needle' },
+      { label: tNav('items.identities'), path: '/workshops/identities-lab' },
+      { label: tNav('items.neural'), path: '/workshops/neural-lab' },
+      { label: tNav('items.polynomial'), path: '/workshops/polynomials' },
+      { label: tNav('items.primes'), path: '/workshops/primes-lab' }
     ] },
     system: { label: tNav('system'), items: [
       { label: tNav('items.camera'), path: '/tools/camera-speed-test' },
@@ -255,6 +262,7 @@ function App() {
     ] },
     tools: { label: tNav('tools'), items: [
       { label: tNav('items.separation'), path: '/tools/linear-separation' },
+      { label: tNav('items.geogebra'), path: '/tools/geogebra-collab' },
       { label: tNav('items.monitor'), path: '/tools/geogebra-monitor' },
       { label: tNav('items.builder'), path: '/tools/activity-builder' }
     ] },
@@ -265,7 +273,7 @@ function App() {
   const clickedMenuGroup = role === 'teacher' ? menuGroups[clickedMenu] : null;
 
   return (
-    <SessionLogProvider app={pathname.match(/^\/labs\/([^/]+)/)?.[1]} role={role} sessionId={teacherSession?.sessionId}>
+    <SessionLogProvider app={currentSessionApp} role={role} sessionId={teacherSession?.sessionId}>
     <div className="client-shell">
       <header className="client-topbar" onMouseLeave={() => setActiveMenu('')}>
         <Link className="client-home-link" to="/" aria-label="Strobe"><img src="/icons/strobelogo.svg" alt="Strobe" /></Link>
@@ -297,7 +305,7 @@ function App() {
                         <Link
                           key={item.path}
                           className="client-submenu__item"
-                          to={item.path.startsWith('/labs/') ? `${item.path}/${role === 'teacher' ? 'teacher' : 'student'}` : item.path}
+                          to={item.path.startsWith('/workshops/') ? `${item.path}/${role === 'teacher' ? 'teacher' : 'student'}` : item.path}
                         >
                           {item.label}
                         </Link>
@@ -323,12 +331,12 @@ function App() {
         </div>
       </header>
       <div className="client-content">
-        {pathname.startsWith('/labs/') && role === 'teacher' && !labHasOwnSettings ? <SettingsAccordion><CommonSessionSettings /></SettingsAccordion> : null}
+        {pathname.startsWith('/workshops/') && role === 'teacher' && !labHasOwnSettings ? <SettingsAccordion><CommonSessionSettings /></SettingsAccordion> : null}
         {clickedMenuGroup ? (
           <section className="client-menu-cards" aria-label={clickedMenuGroup.label}>
             <div className="postit-grid">
               {clickedMenuGroup.items.map((item, index) => {
-                const to = item.path.startsWith('/labs/')
+                const to = item.path.startsWith('/workshops/')
                   ? `${item.path}/${role === 'teacher' ? 'teacher' : 'student'}`
                   : item.path;
                 const colors = ['blue', 'violet', 'orange', 'green', 'amber', 'indigo'];
@@ -354,29 +362,30 @@ function App() {
           <Route path="/tools" element={teacherOnly(<ToolsPage />)} />
           <Route path="/tools/activity-builder" element={teacherOnly(<ActivityBuilder />)} />
           <Route path="/tools/camera-speed-test" element={teacherOnly(<CameraSpeedTest />)} />
-          <Route path="/tools/geogebra-collab" element={studentToolOnly('geogebra-collab', <GeoGebraCollabTool />)} />
+          <Route path="/tools/geogebra-collab" element={studentToolOnly('geogebra-collab', <GeoGebraCollabTool canSelectRoom={role === 'teacher'} />)} />
           <Route path="/tools/geogebra-monitor" element={teacherOnly(<GeogebraMonitorTool />)} />
           <Route path="/tools/console" element={teacherOnly(<ConsoleTool />)} />
           <Route path="/tools/linear-separation" element={teacherOnly(<LinearSeparation />)} />
           <Route path="/tools/linear-seperation" element={teacherOnly(<LinearSeparation />)} />
           <Route path="/apps-launcher" element={teacherOnly(<AppsLauncherPage />)} />
-          <Route path="/labs/buffon-needle/student" element={studentLabOnly('buffon-needle', <BuffonStudentView />)} />
-          <Route path="/labs/buffon-needle/teacher" element={teacherOnly(<BuffonTeacherView />)} />
-          <Route path="/labs/neural-lab/student" element={studentLabOnly('neural-lab', <NeuralStudentView />)} />
-          <Route path="/labs/neural-lab/teacher" element={teacherOnly(<NeuralTeacherView />)} />
-          <Route path="/labs/primes-lab/student" element={studentLabOnly('primes-lab', <PrimesStudentView />)} />
-          <Route path="/labs/primes-lab/teacher" element={teacherOnly(<PrimesTeacherView />)} />
-          <Route path="/labs/polynomial-lab/student" element={studentLabOnly('polynomial-lab', <PolynomialStudentView />)} />
-          <Route path="/labs/polynomial-lab/teacher" element={teacherOnly(<PolynomialTeacherView />)} />
-          <Route path="/labs/linear-systems-lab/student" element={studentLabOnly('linear-systems-lab', <LinearSystemsStudentView />)} />
-          <Route path="/labs/linear-systems-lab/teacher" element={teacherOnly(<LinearSystemsTeacherView />)} />
-          <Route path="/labs/identities-lab/student" element={studentLabOnly('identities-lab', <IdentitiesStudentView />)} />
-          <Route path="/labs/identities-lab/teacher" element={teacherOnly(<IdentitiesTeacherView />)} />
-          <Route path="/labs/:slug/teacher" element={teacherOnly(<LabPage role="teacher" />)} />
-          <Route path="/labs/:slug/student" element={studentLabOnly(currentLabSlug, <LabPage role="student" />)} />
+          <Route path="/workshops/:slug" element={<Navigate to={getWorkshopPath(getAppSlug(currentWorkshopSlug), role === 'teacher' ? 'teacher' : 'student')} replace />} />
+          <Route path="/workshops/buffon-needle/student" element={studentLabOnly('buffon-needle', <BuffonStudentView />)} />
+          <Route path="/workshops/buffon-needle/teacher" element={teacherOnly(<BuffonTeacherView />)} />
+          <Route path="/workshops/neural-lab/student" element={studentLabOnly('neural-lab', <NeuralStudentView />)} />
+          <Route path="/workshops/neural-lab/teacher" element={teacherOnly(<NeuralTeacherView />)} />
+          <Route path="/workshops/primes-lab/student" element={studentLabOnly('primes-lab', <PrimesStudentView />)} />
+          <Route path="/workshops/primes-lab/teacher" element={teacherOnly(<PrimesTeacherView />)} />
+          <Route path="/workshops/polynomials/student" element={studentLabOnly('polynomial-lab', <PolynomialStudentView />)} />
+          <Route path="/workshops/polynomials/teacher" element={teacherOnly(<PolynomialTeacherView />)} />
+          <Route path="/workshops/linear-systems/student" element={studentLabOnly('linear-systems-lab', <LinearSystemsStudentView />)} />
+          <Route path="/workshops/linear-systems/teacher" element={teacherOnly(<LinearSystemsTeacherView />)} />
+          <Route path="/workshops/identities-lab/student" element={studentLabOnly('identities-lab', <IdentitiesStudentView />)} />
+          <Route path="/workshops/identities-lab/teacher" element={teacherOnly(<IdentitiesTeacherView />)} />
+          <Route path="/workshops/:slug/teacher" element={teacherOnly(<LabPage role="teacher" />)} />
+          <Route path="/workshops/:slug/student" element={studentLabOnly(currentLabSlug, <LabPage role="student" />)} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes> : null}
-        {pathname.startsWith('/labs/') && !labHasInlineChat ? <ChatAccordion /> : null}
+        {pathname.startsWith('/workshops/') && !labHasInlineChat ? <ChatAccordion /> : null}
       </div>
     </div>
     </SessionLogProvider>

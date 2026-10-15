@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { getWorkshopPath } from '../shared/utils/workshopPaths';
 
 export default function TeacherPage() {
   const { t } = useTranslation('interface');
@@ -102,7 +103,7 @@ export default function TeacherPage() {
                   <li>{app.kind}</li>
                 </ul>
                 <div className="btn-row dashboard-action-row">
-                  <Link className="dashboard-action-link" to={`/labs/${app.slug}/teacher`}>{t('openTeacherView')}</Link>
+                  <Link className="dashboard-action-link" to={getWorkshopPath(app.slug, 'teacher')}>{t('openTeacherView')}</Link>
                 </div>
               </article>
             ))}

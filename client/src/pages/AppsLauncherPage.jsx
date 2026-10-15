@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { getWorkshopPath } from '../shared/utils/workshopPaths';
 
 const toneBySlug = {
   'buffon-needle': 'red',
@@ -79,8 +80,8 @@ export default function AppsLauncherPage() {
                 </div>
                 <p className="app-desc">{t(`apps.${app.slug}.description`, { defaultValue: app.description })}</p>
                 <div className="btn-row dashboard-action-row">
-                  <Link className="dashboard-action-link" to={`/labs/${app.slug}/teacher`}>{t('teacher')}</Link>
-                  <Link className="dashboard-action-link" to={`/labs/${app.slug}/student`}>{t('student')}</Link>
+                  <Link className="dashboard-action-link" to={getWorkshopPath(app.slug, 'teacher')}>{t('teacher')}</Link>
+                  <Link className="dashboard-action-link" to={getWorkshopPath(app.slug, 'student')}>{t('student')}</Link>
                 </div>
               </article>
             ))}
