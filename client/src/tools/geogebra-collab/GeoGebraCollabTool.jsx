@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CollaborativeGeoGebra, CommonZoneFullscreenButton } from '../../shared/components';
+import { Accordion, CollaborativeGeoGebra, CommonZoneFullscreenButton, HeroTitle } from '../../shared/components';
+import GeogebraMonitorAccordion from './GeogebraMonitorAccordion';
 import './GeoGebraCollabTool.css';
 
 export default function GeoGebraCollabTool({ canSelectRoom = false }) {
@@ -25,22 +26,11 @@ export default function GeoGebraCollabTool({ canSelectRoom = false }) {
   return (
     <section className="dashboard-page">
       <div className="dashboard-shell geo-tool-page">
-        <header className="geo-tool-page__header">
-          <h1>{t('geoGebraCollaborative')}</h1>
-          <p className="geo-tool-page__helper">
-            {t('geoGebraCollaborativeDescriptionShort')}
-          </p>
-        </header>
-
-        {canSelectRoom ? <div className="geo-tool-page__room">
-          <input
-            type="text"
-            value={roomInput}
-            onChange={(event) => setRoomInput(event.target.value)}
-            placeholder={t('roomId')}
-          />
-          <button type="button" onClick={applyRoom}>{t('joinRoom')}</button>
-        </div> : null}
+        <HeroTitle
+          title={t('geoGebraCollaborative')}
+          subtitle={t('geoGebraCollaborativeDescriptionShort')}
+          className="geo-tool-page__hero"
+        />
 
         <section className="common-zone lab-zone geo-common-zone">
           <CommonZoneFullscreenButton />
@@ -50,6 +40,24 @@ export default function GeoGebraCollabTool({ canSelectRoom = false }) {
             </div>
           </div>
         </section>
+
+        {canSelectRoom ? (
+          <Accordion title={t('geoGebraMonitor')} icon="📊">
+            <div className="geo-tool-page__controls">
+              <div className="geo-tool-page__room">
+                <input
+                  type="text"
+                  value={roomInput}
+                  onChange={(event) => setRoomInput(event.target.value)}
+                  placeholder={t('roomId')}
+                />
+                <button type="button" onClick={applyRoom}>{t('joinRoom')}</button>
+              </div>
+              <p className="geo-monitor-intro">{t('geoGebraMonitorIntro')}</p>
+              <GeogebraMonitorAccordion />
+            </div>
+          </Accordion>
+        ) : null}
       </div>
     </section>
   );

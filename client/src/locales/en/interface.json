@@ -21,10 +21,6 @@
       "title": "GeoGebra Collaborative Component",
       "description": "Shared GeoGebra board with role-aware permissions."
     },
-    "geogebra-monitor": {
-      "title": "GeoGebra Central Monitor",
-      "description": "Central dashboard for all connected collaborative GeoGebra rooms."
-    },
     "console": {
       "title": "Console",
       "description": "Live view of messages exchanged between users and the server."
@@ -41,7 +37,6 @@
   "openStudentView": "Open student view",
   "openTeacherView": "Open teacher view",
   "openTool": "Open tool",
-  "openMonitor": "Open monitor",
   "available": "Available",
   "unavailable": "Unavailable",
   "readyToOpen": "Ready to open",
@@ -59,17 +54,15 @@
   "identitiesDescription": "Algebraic and geometric understanding of fundamental algebraic identities.",
   "geoGebraCollaborativeTitle": "GeoGebra Collaborative Component",
   "geoGebraCollaborativeDescription": "A shared GeoGebra board for student collaboration with server-side permissions.",
-  "geoGebraMonitorTitle": "GeoGebra Central Monitor",
-  "geoGebraMonitorDescription": "Monitor collaborative GeoGebra rooms and student activity in real time.",
   "failedApps": "Failed to load apps.",
   "failedTools": "Failed to load tools.",
   "labNotFound": "Lab not found.",
   "mainNavigation": "Main navigation",
   "roomId": "Room ID",
   "joinRoom": "Join room",
-  "geoGebraCollaborative": "GeoGebra Collaborative Component",
-  "geoGebraCollaborativeDescriptionShort": "Collaborative GeoGebra component.",
-  "geoGebraMonitor": "GeoGebra Central Monitor",
+  "geoGebraCollaborative": "Collaborative GeoGebra",
+  "geoGebraCollaborativeDescriptionShort": "A shared GeoGebra board for collaborative work.",
+  "geoGebraMonitor": "GeoGebra Controls",
   "console": "Console",
   "consoleIntro": "Live log of messages between users and the server. Refreshes every two seconds.",
   "consoleFetchFailed": "Failed to retrieve messages ({{status}}).",
@@ -122,7 +115,7 @@
   "serverOutgoing": "server →",
   "failedTestsRun": "Failed to run tests.",
   "running": "Running...",
-  "geoGebraMonitorIntro": "Monitor all connected collaborative GeoGebra rooms and view object creation, movement, renaming, and deletion in real time.",
+  "geoGebraMonitorIntro": "Manage connected rooms, object access, room contents, and the live activity feed.",
   "notEnoughSeparationData": "Not enough data yet.",
   "noSeparator": "No separator found.",
   "separator": "A separator was found.",

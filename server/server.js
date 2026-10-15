@@ -244,13 +244,6 @@ app.get('/api/tools', (req, res) => {
       available: true
     },
     {
-      id: 'geogebra-monitor',
-      title: 'GeoGebra Central Monitor',
-      description: 'Teacher-facing dashboard for all collaborative GeoGebra rooms and live student moves.',
-      path: '/tools/geogebra-monitor/',
-      available: true
-    },
-    {
       id: 'console',
       title: 'Console',
       description: 'Live console for messages exchanged between users and the server.',

@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import CollaborativeGeoGebra from '../../shared/components/resources/CollaborativeGeoGebra';
-import './GeogebraMonitor.css';
+import './GeogebraMonitorAccordion.css';
 
 function loadRealtimeSocket() {
   if (window.createRealtimeSocket) {
@@ -238,27 +237,6 @@ export default function GeogebraMonitor({ roomFilter = '', className = '' }) {
           Clear messages
         </button>
       </div>
-
-      {selectedRoom ? (
-        <div className="gg-monitor__preview">
-          <div className="gg-monitor__previewHeader">
-            <h3>Board preview</h3>
-            <span className="gg-monitor__meta">{selectedRoom.id}</span>
-          </div>
-          <CollaborativeGeoGebra
-            roomId={selectedRoom.id}
-            className="gg-monitor__board"
-            showToolBar
-            showAlgebraView={false}
-            showAlgebraInput={false}
-            showMenuBar={false}
-            showResetIcon={false}
-            showZoomButtons={false}
-            showFullscreenButton={false}
-            showSuggestionButtons={false}
-          />
-        </div>
-      ) : null}
 
       <div className="gg-monitor__layout">
         <div className="gg-monitor__roomList">

@@ -3,18 +3,18 @@
   gap: 1rem;
 }
 
-.geo-tool-page__header {
+.geo-tool-page__hero {
+  margin-bottom: 0;
+}
+
+.geo-monitor-intro {
+  margin: 0;
+  color: #475569;
+}
+
+.geo-tool-page__controls {
   display: grid;
-  gap: 0.45rem;
-}
-
-.geo-tool-page__header h1 {
-  margin: 0;
-}
-
-.geo-tool-page__helper {
-  margin: 0;
-  color: #334155;
+  gap: 1rem;
 }
 
 .geo-tool-page__room {

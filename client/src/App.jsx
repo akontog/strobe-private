@@ -24,7 +24,6 @@ import InstructionsPage from './pages/InstructionsPage';
 import ActivityBuilder from './tools/activity-builder/ActivityBuilder';
 import CameraSpeedTest from './system/camera-speed-test/CameraSpeedTest';
 import GeoGebraCollabTool from './tools/geogebra-collab/GeoGebraCollabTool';
-import GeogebraMonitorTool from './tools/geogebra-monitor/GeogebraMonitorTool';
 import LinearSeparation from './tools/linear-separation/LinearSeparation';
 import ConsoleTool from './system/console/ConsoleTool';
 import StudentIdentityControl from './shared/components/identity/StudentIdentityControl';
@@ -263,7 +262,6 @@ function App() {
     tools: { label: tNav('tools'), items: [
       { label: tNav('items.separation'), path: '/tools/linear-separation' },
       { label: tNav('items.geogebra'), path: '/tools/geogebra-collab' },
-      { label: tNav('items.monitor'), path: '/tools/geogebra-monitor' },
       { label: tNav('items.builder'), path: '/tools/activity-builder' }
     ] },
     help: { label: tNav('help'), items: [
@@ -363,7 +361,6 @@ function App() {
           <Route path="/tools/activity-builder" element={teacherOnly(<ActivityBuilder />)} />
           <Route path="/tools/camera-speed-test" element={teacherOnly(<CameraSpeedTest />)} />
           <Route path="/tools/geogebra-collab" element={studentToolOnly('geogebra-collab', <GeoGebraCollabTool canSelectRoom={role === 'teacher'} />)} />
-          <Route path="/tools/geogebra-monitor" element={teacherOnly(<GeogebraMonitorTool />)} />
           <Route path="/tools/console" element={teacherOnly(<ConsoleTool />)} />
           <Route path="/tools/linear-separation" element={teacherOnly(<LinearSeparation />)} />
           <Route path="/tools/linear-seperation" element={teacherOnly(<LinearSeparation />)} />

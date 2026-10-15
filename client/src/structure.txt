@@ -150,12 +150,6 @@ C:.
 |   |           activityApi.js
 |   |           jsonUtils.js
 |   |           
-|   +---geogebra-monitor
-|   |       GeogebraMonitor.css
-|   |       GeogebraMonitor.jsx
-|   |       GeogebraMonitorTool.css
-|   |       GeogebraMonitorTool.jsx
-|   |       
 |   \---linear-separation
 |       |   LinearSeparation.css
 |       |   LinearSeparation.jsx
@@ -193,6 +187,8 @@ C:.
     +---geogebra-collab
     |       GeoGebraCollabTool.css
     |       GeoGebraCollabTool.jsx
+    |       GeogebraMonitorAccordion.css
+    |       GeogebraMonitorAccordion.jsx
     |       
     |   |   App.jsx
     |   |   camera.html

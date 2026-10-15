@@ -21,10 +21,6 @@
       "title": "Συνεργατικό GeoGebra",
       "description": "Κοινόχρηστος πίνακας GeoGebra με δικαιώματα ανά ρόλο."
     },
-    "geogebra-monitor": {
-      "title": "Κεντρική Παρακολούθηση GeoGebra",
-      "description": "Κεντρικός πίνακας για όλες τις συνδεδεμένες συνεργατικές αίθουσες GeoGebra."
-    },
     "console": {
       "title": "Κονσόλα",
       "description": "Ζωντανή προβολή μηνυμάτων μεταξύ χρηστών και διακομιστή."
@@ -41,7 +37,6 @@
   "openStudentView": "Άνοιγμα προβολής μαθητή",
   "openTeacherView": "Άνοιγμα προβολής εκπαιδευτικού",
   "openTool": "Άνοιγμα εργαλείου",
-  "openMonitor": "Άνοιγμα παρακολούθησης",
   "available": "Διαθέσιμο",
   "unavailable": "Μη διαθέσιμο",
   "readyToOpen": "Έτοιμο για άνοιγμα",
@@ -59,17 +54,15 @@
   "identitiesDescription": "Αλγεβρική και γεωμετρική κατανόηση βασικών αλγεβρικών ταυτοτήτων.",
   "geoGebraCollaborativeTitle": "Συνεργατικό στοιχείο GeoGebra",
   "geoGebraCollaborativeDescription": "Κοινός πίνακας GeoGebra για συνεργασία μαθητών με δικαιώματα από τον διακομιστή.",
-  "geoGebraMonitorTitle": "Κεντρική παρακολούθηση GeoGebra",
-  "geoGebraMonitorDescription": "Παρακολούθηση συνεργατικών αιθουσών GeoGebra και δραστηριότητας μαθητών σε πραγματικό χρόνο.",
   "failedApps": "Η φόρτωση των εφαρμογών απέτυχε.",
   "failedTools": "Η φόρτωση των εργαλείων απέτυχε.",
   "labNotFound": "Το εργαστήριο δεν βρέθηκε.",
   "mainNavigation": "Κύρια πλοήγηση",
   "roomId": "Κωδικός αίθουσας",
   "joinRoom": "Σύνδεση στην αίθουσα",
-  "geoGebraCollaborative": "Συνεργατικό στοιχείο GeoGebra",
-  "geoGebraCollaborativeDescriptionShort": "Συνεργατικό στοιχείο GeoGebra.",
-  "geoGebraMonitor": "Κεντρική παρακολούθηση GeoGebra",
+  "geoGebraCollaborative": "Συνεργατικό GeoGebra",
+  "geoGebraCollaborativeDescriptionShort": "Κοινόχρηστος πίνακας GeoGebra για συνεργατική εργασία.",
+  "geoGebraMonitor": "Στοιχεία ελέγχου GeoGebra",
   "console": "Κονσόλα",
   "consoleIntro": "Ζωντανή καταγραφή μηνυμάτων μεταξύ χρηστών και διακομιστή. Ανανέωση κάθε δύο δευτερόλεπτα.",
   "consoleFetchFailed": "Αποτυχία ανάκτησης μηνυμάτων ({{status}}).",
@@ -122,7 +115,7 @@
   "serverOutgoing": "διακομιστής →",
   "failedTestsRun": "Η εκτέλεση των δοκιμών απέτυχε.",
   "running": "Εκτελείται...",
-  "geoGebraMonitorIntro": "Παρακολουθήστε όλες τις συνδεδεμένες συνεργατικές αίθουσες GeoGebra και δείτε σε πραγματικό χρόνο τη δημιουργία, μετακίνηση, μετονομασία και διαγραφή αντικειμένων.",
+  "geoGebraMonitorIntro": "Διαχειριστείτε τις συνδεδεμένες αίθουσες, την πρόσβαση στα αντικείμενα, το περιεχόμενο και τη ζωντανή ροή ενεργειών.",
   "notEnoughSeparationData": "Δεν υπάρχουν ακόμα αρκετά δεδομένα.",
   "noSeparator": "Δεν βρέθηκε διαχωριστής.",
   "separator": "Βρέθηκε διαχωριστής.",

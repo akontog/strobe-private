@@ -58,17 +58,6 @@ export default function TeacherPage() {
     'identities-lab': '🧮'
   };
 
-  const extraTeacherTools = [
-    {
-      id: 'geogebra-monitor',
-      titleKey: 'geoGebraMonitorTitle',
-      descriptionKey: 'geoGebraMonitorDescription',
-      path: '/tools/geogebra-monitor',
-      tone: 'indigo',
-      icon: '📊'
-    }
-  ];
-
   return (
     <section className="dashboard-page">
       <div className="dashboard-shell">
@@ -108,24 +97,6 @@ export default function TeacherPage() {
               </article>
             ))}
 
-            {extraTeacherTools.map((tool) => (
-              <article key={tool.id} className={`strobe-note strobe-note--${tool.tone}`}>
-                <div className="app-head">
-                  <div>
-                    <div className="muted">{t('tool')}</div>
-                    <h2 className="app-title">{tool.icon} {t(tool.titleKey)}</h2>
-                  </div>
-                </div>
-                <p className="app-desc">{t(tool.descriptionKey)}</p>
-                <ul className="role-features">
-                  <li>{t('teacherAccessible')}</li>
-                  <li>{tool.path}</li>
-                </ul>
-                <div className="btn-row dashboard-action-row">
-                  <Link className="dashboard-action-link" to={tool.path}>{t('openMonitor')}</Link>
-                </div>
-              </article>
-            ))}
           </div>
         ) : null}
       </div>
