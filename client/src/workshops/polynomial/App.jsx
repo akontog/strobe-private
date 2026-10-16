@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import {
   FullScreenButton,
   Accordion,
@@ -25,105 +26,8 @@ import {
 } from '../../shared/components';
 import { useSessionInputLogger } from '../../shared/components/activities/SessionLogContext';
 import { SCORE_CORRECT, SCORE_INCORRECT, computeStudentScore, getAnswerFieldDefinitions } from './grading';
+import { ACTIVITY_LIBRARY, ALGEBRA_DATASETS, getActivityDatasetKey } from './data/activityLibrary';
 import './App.css';
-
-const ACTIVITY_LIBRARY = [
-  {
-    id: '1.1',
-    code: '1.1',
-    title: '1.1 Βασικές έννοιες μονωνύμων',
-    tasks: ['Συντελεστής', 'Βαθμός ως προς x', 'Βαθμός ως προς y', 'Συνολικός βαθμός']
-  },
-  {
-    id: '1.2',
-    code: '1.2',
-    title: '1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)',
-    objective: 'Ομαδοποίηση μονωνύμων με ίδιο μεταβλητό μέρος.',
-    tasks: ['Αναγνώριση όμοιων μονωνύμων', 'Ταξινόμηση με drag and drop']
-  },
-  {
-    id: '1.3',
-    code: '1.3',
-    title: '1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)',
-    objective: 'Πρόσθεση και αφαίρεση όμοιων μονωνύμων.',
-    tasks: ['Κοινός όρος', 'Συνδυασμός όρων', 'Αφαίρεση μονωνύμων']
-  },
-  {
-    id: '1.4',
-    code: '1.4',
-    title: '1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)',
-    objective: 'Πολλαπλασιασμός μονωνύμων με συντελεστές και εκθέτες.',
-    tasks: ['Πολλαπλασιασμός δύο μονωνύμων', 'Πολλαπλασιασμός τριών μονωνύμων']
-  },
-  {
-    id: '2.1',
-    code: '2.1',
-    title: '2.1 Βασικές έννοιες πολυωνύμων',
-    objective: 'Εντοπισμός βαθμού ως προς x, βαθμού ως προς y και συνολικού βαθμού ενός πολυωνύμου.',
-    tasks: ['Βαθμός ως προς x', 'Βαθμός ως προς y', 'Συνολικός βαθμός']
-  },
-  {
-    id: '2.2',
-    code: '2.2',
-    title: '2.2 Αναγωγή ομοίων όρων',
-    objective: 'Συνδυασμός όμοιων μονωνύμων σε ένα απλοποιημένο αποτέλεσμα.',
-    tasks: ['Όμοιοι όροι', 'Απλοποίηση', 'Αναγωγή']
-  },
-  {
-    id: '2.3',
-    code: '2.3',
-    title: '2.3 Ομαδοποίηση όμοιων όρων δύο πολυωνύμων',
-    objective: 'Ομαδοποίηση όρων από δύο πολυώνυμα και αυτόματη πρόσθεση ανά ομάδα ομοίων όρων.',
-    tasks: ['Ταξινόμηση όρων', 'Έλεγχος ομοιότητας', 'Αυτόματο αποτέλεσμα']
-  },
-  {
-    id: '2.4',
-    code: '2.4',
-    title: '2.4 Πράξεις με πολυώνυμα (πρόσθεση-αφαίρεση)',
-    objective: 'Πρόσθεση και αφαίρεση πολυωνύμων με αναγωγή όμοιων όρων.',
-    tasks: ['Άθροισμα', 'Διαφορά', 'Μικτό αποτέλεσμα']
-  },
-  {
-    id: '2.5',
-    code: '2.5',
-    title: '2.5 Πράξεις με πολυώνυμα (πολλαπλασιασμός)',
-    objective: 'Πολλαπλασιασμός πολυωνύμων και αναγνώριση όρων του αποτελέσματος.',
-    tasks: ['Πολλαπλασιασμός δύο όρων', 'Πολλαπλασιασμός τριών όρων']
-  },
-  {
-    id: '2.6',
-    code: '2.6',
-    title: '2.6 Πολλαπλασιασμός με εμβαδά ορθογωνίου',
-    objective: 'Οπτικοποίηση του (2x+4)(x+5) με ορθογώνιο και επιμέρους εμβαδά.',
-    tasks: ['Μετακίνηση σημείου x', 'Παρατήρηση 4 υπο-εμβαδών', 'Σύνδεση με ανάπτυγμα πολυωνύμου']
-  },
-  {
-    id: '2.7',
-    code: '2.7',
-    title: '2.7 Πλακίδια άλγεβρας: πολλαπλασιασμός και παραγοντοποίηση',
-    objective: 'Αναπαράσταση πολυωνύμων με θετικά και αρνητικά πλακίδια, μοντέλο εμβαδού και αντίστροφη παραγοντοποίηση.',
-    tasks: ['Σύνθεση πολυωνύμου με πλακίδια', 'Μοντέλο εμβαδού για γινόμενο', 'Παραγοντοποίηση τριωνύμου']
-  }
-];
-
-const ACTIVITY_DATASET_KEYS = {
-  '1.1': 'monomials',
-  '1.2': 'monomialGrouping',
-  '1.3': 'monomialOperations',
-  '1.4': 'monomialMultiplications',
-  '2.1': 'polynomialBasics',
-  '2.2': 'likeTermReduction',
-  '2.3': 'polynomialLikeTermGrouping',
-  '2.4': 'polynomialOperations',
-  '2.5': 'polynomialMultiplications',
-  '2.6': 'polynomialAreaModel',
-  '2.7': 'algebraTiles'
-};
-
-const buildGroupingCorrectAnswers = (items = []) => items.reduce((answers, item) => {
-  answers[`item-${item.id}`] = item.correctGroupId;
-  return answers;
-}, {});
 
 const formatMonomialFromParts = (coefficient, degreeX, degreeY) => {
   if (!Number.isFinite(coefficient) || coefficient === 0) {
@@ -169,527 +73,6 @@ const isCorrectAnswer = (value, expected) => {
   }
 
   return actualText.toLowerCase() === String(expected).trim().toLowerCase();
-};
-
-const ALGEBRA_DATASETS = {
-  monomials: {
-    label: 'Μονώνυμα',
-    items: [
-      {
-        id: 'm-1',
-        expression: '3x^4y^2',
-        coefficient: 3,
-        degreeX: 4,
-        degreeY: 2,
-        totalDegree: 6,
-        correctAnswers: { coefficient: 3, degreeX: 4, degreeY: 2, totalDegree: 6 },
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'm-2',
-        expression: '-5x^2y^3',
-        coefficient: -5,
-        degreeX: 2,
-        degreeY: 3,
-        totalDegree: 5,
-        correctAnswers: { coefficient: -5, degreeX: 2, degreeY: 3, totalDegree: 5 },
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'm-3',
-        expression: '7x^3y',
-        coefficient: 7,
-        degreeX: 3,
-        degreeY: 1,
-        totalDegree: 4,
-        correctAnswers: { coefficient: 7, degreeX: 3, degreeY: 1, totalDegree: 4 },
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      }
-    ]
-  },
-  monomialGrouping: {
-    label: 'Ομαδοποίηση μονωνύμων',
-    items: [
-      {
-        id: 'grouping-1',
-        expression: 'Ομαδοποίηση όμοιων μονωνύμων (Α)',
-        resultMode: 'grouping',
-        groups: [
-          { id: 'g1', title: 'Ομάδα 1', hint: '3x^2y' },
-          { id: 'g2', title: 'Ομάδα 2', hint: '5xy^2' },
-          { id: 'g3', title: 'Ομάδα 3', hint: '7x^3y' }
-        ],
-        items: [
-          { id: 'a1', label: '-2x^2y', correctGroupId: 'g1' },
-          { id: 'a2', label: '8x^2y', correctGroupId: 'g1' },
-          { id: 'b1', label: '4xy^2', correctGroupId: 'g2' },
-          { id: 'b2', label: '3xy^2', correctGroupId: 'g2' },
-          { id: 'c1', label: '6x^3y', correctGroupId: 'g3' },
-          { id: 'c2', label: '-5x^3y', correctGroupId: 'g3' }
-        ],
-        correctAnswers: buildGroupingCorrectAnswers([
-          { id: 'a1', correctGroupId: 'g1' },
-          { id: 'a2', correctGroupId: 'g1' },
-          { id: 'b1', correctGroupId: 'g2' },
-          { id: 'b2', correctGroupId: 'g2' },
-          { id: 'c1', correctGroupId: 'g3' },
-          { id: 'c2', correctGroupId: 'g3' }
-        ]),
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'grouping-2',
-        expression: 'Ομαδοποίηση όμοιων μονωνύμων (Β)',
-        resultMode: 'grouping',
-        groups: [
-          { id: 'g1', title: 'Ομάδα 1', hint: '-2x^3y^2' },
-          { id: 'g2', title: 'Ομάδα 2', hint: '4xy' }
-        ],
-        items: [
-          { id: 'd1', label: '6x^3y^2', correctGroupId: 'g1' },
-          { id: 'd2', label: '-9x^3y^2', correctGroupId: 'g1' },
-          { id: 'e1', label: '7xy', correctGroupId: 'g2' },
-          { id: 'e2', label: '-3xy', correctGroupId: 'g2' },
-          { id: 'd3', label: 'x^3y^2', correctGroupId: 'g1' },
-          { id: 'e3', label: '12xy', correctGroupId: 'g2' }
-        ],
-        correctAnswers: buildGroupingCorrectAnswers([
-          { id: 'd1', correctGroupId: 'g1' },
-          { id: 'd2', correctGroupId: 'g1' },
-          { id: 'e1', correctGroupId: 'g2' },
-          { id: 'e2', correctGroupId: 'g2' },
-          { id: 'd3', correctGroupId: 'g1' },
-          { id: 'e3', correctGroupId: 'g2' }
-        ]),
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      }
-    ]
-  },
-  monomialOperations: {
-    label: 'Πράξεις με μονώνυμα',
-    items: [
-      {
-        id: 'sum-1',
-        expression: '2x^2y + 3x^2y',
-        answerTemplate: 'x^{}y^{}',
-        resultMode: 'monomial',
-        parts: [
-          { coefficient: '', degreeX: '', degreeY: '' }
-        ],
-        connector: ' + ',
-        correctAnswers: { coefficient: 5, degreeX: 2, degreeY: 1 },
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'sum-2',
-        expression: '4xy^3 - 2xy^3',
-        answerTemplate: 'x^{}y^{}',
-        resultMode: 'monomial',
-        parts: [
-          { coefficient: '', degreeX: '', degreeY: '' }
-        ],
-        connector: ' - ',
-        correctAnswers: { coefficient: 2, degreeX: 1, degreeY: 3 },
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'sum-3',
-        expression: '7x^3y^2 + 3x^3y^2 - x^3y^2',
-        answerTemplate: 'x^{}y^{}',
-        resultMode: 'monomial',
-        parts: [
-          { coefficient: '', degreeX: '', degreeY: '' }
-        ],
-        connector: ' + ',
-        correctAnswers: { coefficient: 9, degreeX: 3, degreeY: 2 },
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      }
-    ]
-  },
-  monomialMultiplications: {
-    label: 'Πολλαπλασιασμός μονωνύμων',
-    items: [
-      {
-        id: 'mul-1',
-        expression: '3x^2y · 5x^3y^2',
-        answerTemplate: 'x^{}y^{}',
-        resultMode: 'monomial',
-        parts: [
-          { coefficient: '', degreeX: '', degreeY: '' }
-        ],
-        connector: ' · ',
-        correctAnswers: { coefficient: 15, degreeX: 5, degreeY: 3 },
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'mul-2',
-        expression: '-2x^3y · 4xy',
-        answerTemplate: 'x^{}y^{}',
-        resultMode: 'monomial',
-        parts: [
-          { coefficient: '', degreeX: '', degreeY: '' }
-        ],
-        connector: ' · ',
-        correctAnswers: { coefficient: -8, degreeX: 4, degreeY: 2 },
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'mul-3',
-        expression: '6x^2y^3 · 3x^4y',
-        answerTemplate: 'x^{}y^{}',
-        resultMode: 'monomial',
-        parts: [
-          { coefficient: '', degreeX: '', degreeY: '' }
-        ],
-        connector: ' · ',
-        correctAnswers: { coefficient: 18, degreeX: 6, degreeY: 4 },
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      }
-    ]
-  },
-  polynomialBasics: {
-    label: 'Βασικές έννοιες πολυωνύμων',
-    items: [
-      {
-        id: 'poly-basic-1',
-        expression: '3x^2y + 5xy^3 - 7x^4 + 2y^2',
-        degreeX: 4,
-        degreeY: 3,
-        totalDegree: 7,
-        resultMode: 'degreeOnly',
-        parts: [
-          { degreeX: '', degreeY: '', totalDegree: '' }
-        ],
-        correctAnswers: { degreeX: 4, degreeY: 3, totalDegree: 7 },
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'poly-basic-2',
-        expression: '2x^3y^2 - 4x^2y + 3x^5',
-        degreeX: 5,
-        degreeY: 2,
-        totalDegree: 7,
-        resultMode: 'degreeOnly',
-        parts: [
-          { degreeX: '', degreeY: '', totalDegree: '' }
-        ],
-        correctAnswers: { degreeX: 5, degreeY: 2, totalDegree: 7 },
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'poly-basic-3',
-        expression: 'x^4y - 5xy^2 + 3x^2y^3',
-        degreeX: 4,
-        degreeY: 3,
-        totalDegree: 7,
-        resultMode: 'degreeOnly',
-        parts: [
-          { degreeX: '', degreeY: '', totalDegree: '' }
-        ],
-        correctAnswers: { degreeX: 4, degreeY: 3, totalDegree: 7 },
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      }
-    ]
-  },
-  likeTermReduction: {
-    label: 'Αναγωγή ομοίων όρων',
-    items: [
-      {
-        id: 'reduce-1',
-        expression: '3x^2y + 5x^2y - 2x^2y',
-        answerTemplate: 'x^{}y^{}',
-        resultMode: 'monomial',
-        parts: [
-          { coefficient: '', degreeX: '', degreeY: '' }
-        ],
-        connector: ' + ',
-        correctAnswers: { coefficient: 6, degreeX: 2, degreeY: 1 },
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'reduce-2',
-        expression: '4xy^3 + 2xy^3 - 3xy^3',
-        answerTemplate: 'x^{}y^{}',
-        resultMode: 'monomial',
-        parts: [
-          { coefficient: '', degreeX: '', degreeY: '' }
-        ],
-        connector: ' + ',
-        correctAnswers: { coefficient: 3, degreeX: 1, degreeY: 3 },
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'reduce-3',
-        expression: '7x^3y^2 - 2x^3y^2 + 4x^3y^2',
-        answerTemplate: 'x^{}y^{}',
-        resultMode: 'monomial',
-        parts: [
-          { coefficient: '', degreeX: '', degreeY: '' }
-        ],
-        connector: ' + ',
-        correctAnswers: { coefficient: 9, degreeX: 3, degreeY: 2 },
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      }
-    ]
-  },
-  polynomialLikeTermGrouping: {
-    label: 'Ομαδοποίηση όμοιων όρων (δύο πολυώνυμα)',
-    items: [
-      {
-        id: 'poly-group-1',
-        expression: '(3x^2 + 5xy - 2y^2) + (4x^2 - 3xy + y^2)',
-        resultMode: 'grouping',
-        leftPolynomial: '3x^2 + 5xy - 2y^2',
-        rightPolynomial: '4x^2 - 3xy + y^2',
-        operator: '+',
-        groups: [
-          { id: 'g-x2', title: 'Όμοιοι όροι x^2', hint: 'x^2', degreeX: 2, degreeY: 0 },
-          { id: 'g-xy', title: 'Όμοιοι όροι xy', hint: 'xy', degreeX: 1, degreeY: 1 },
-          { id: 'g-y2', title: 'Όμοιοι όροι y^2', hint: 'y^2', degreeX: 0, degreeY: 2 }
-        ],
-        items: [
-          { id: 'l1', label: '3x^2', coefficient: 3, degreeX: 2, degreeY: 0, source: 'L', correctGroupId: 'g-x2' },
-          { id: 'l2', label: '5xy', coefficient: 5, degreeX: 1, degreeY: 1, source: 'L', correctGroupId: 'g-xy' },
-          { id: 'l3', label: '-2y^2', coefficient: -2, degreeX: 0, degreeY: 2, source: 'L', correctGroupId: 'g-y2' },
-          { id: 'r1', label: '4x^2', coefficient: 4, degreeX: 2, degreeY: 0, source: 'R', correctGroupId: 'g-x2' },
-          { id: 'r2', label: '-3xy', coefficient: -3, degreeX: 1, degreeY: 1, source: 'R', correctGroupId: 'g-xy' },
-          { id: 'r3', label: 'y^2', coefficient: 1, degreeX: 0, degreeY: 2, source: 'R', correctGroupId: 'g-y2' }
-        ],
-        resultOrder: ['g-x2', 'g-xy', 'g-y2'],
-        correctAnswers: buildGroupingCorrectAnswers([
-          { id: 'l1', correctGroupId: 'g-x2' },
-          { id: 'l2', correctGroupId: 'g-xy' },
-          { id: 'l3', correctGroupId: 'g-y2' },
-          { id: 'r1', correctGroupId: 'g-x2' },
-          { id: 'r2', correctGroupId: 'g-xy' },
-          { id: 'r3', correctGroupId: 'g-y2' }
-        ]),
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      }
-    ]
-  },
-  polynomialOperations: {
-    label: 'Πράξεις με πολυώνυμα',
-    items: [
-      {
-        id: 'poly-op-1',
-        expression: '(3x^2y + 5xy^2) + (2x^2y - 3xy^2)',
-        answerTemplate: 'x^{}y^{} + x^{}y^{}',
-        resultMode: 'polynomial',
-        parts: [
-          { coefficient: '', degreeX: '', degreeY: '' },
-          { coefficient: '', degreeX: '', degreeY: '' }
-        ],
-        connector: ' + ',
-        correctAnswers: [
-          { coefficient: 5, degreeX: 2, degreeY: 1 },
-          { coefficient: 2, degreeX: 1, degreeY: 2 }
-        ],
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'poly-op-2',
-        expression: '(7x^3 - 2x^2y) + (4x^3 + 5x^2y)',
-        answerTemplate: 'x^{}y^{} + x^{}y^{}',
-        resultMode: 'polynomial',
-        parts: [
-          { coefficient: '', degreeX: '', degreeY: '' },
-          { coefficient: '', degreeX: '', degreeY: '' }
-        ],
-        connector: ' + ',
-        correctAnswers: [
-          { coefficient: 11, degreeX: 3, degreeY: 0 },
-          { coefficient: 3, degreeX: 2, degreeY: 1 }
-        ],
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'poly-op-3',
-        expression: '(6x^2y^2 - 3xy + 2x) - (2x^2y^2 - xy + x)',
-        answerTemplate: 'x^{}y^{} + x^{}y^{} + x^{}y^{}',
-        resultMode: 'polynomial',
-        parts: [
-          { coefficient: '', degreeX: '', degreeY: '' },
-          { coefficient: '', degreeX: '', degreeY: '' },
-          { coefficient: '', degreeX: '', degreeY: '' }
-        ],
-        connector: ' + ',
-        correctAnswers: [
-          { coefficient: 4, degreeX: 2, degreeY: 2 },
-          { coefficient: -2, degreeX: 1, degreeY: 1 },
-          { coefficient: 1, degreeX: 1, degreeY: 0 }
-        ],
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      }
-    ]
-  },
-  polynomialMultiplications: {
-    label: 'Πολλαπλασιασμός πολυωνύμων',
-    items: [
-      {
-        id: 'poly-mul-1',
-        expression: '(2x + 3y)(x + y)',
-        answerTemplate: 'x^{}y^{} + x^{}y^{} + x^{}y^{}',
-        resultMode: 'polynomial',
-        parts: [
-          { coefficient: '', degreeX: '', degreeY: '' },
-          { coefficient: '', degreeX: '', degreeY: '' },
-          { coefficient: '', degreeX: '', degreeY: '' }
-        ],
-        connector: ' + ',
-        correctAnswers: [
-          { coefficient: 2, degreeX: 2, degreeY: 0 },
-          { coefficient: 5, degreeX: 1, degreeY: 1 },
-          { coefficient: 3, degreeX: 0, degreeY: 2 }
-        ],
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'poly-mul-2',
-        expression: '(x + 2y)(3x - y)',
-        answerTemplate: 'x^{}y^{} + x^{}y^{} + x^{}y^{}',
-        resultMode: 'polynomial',
-        parts: [
-          { coefficient: '', degreeX: '', degreeY: '' },
-          { coefficient: '', degreeX: '', degreeY: '' },
-          { coefficient: '', degreeX: '', degreeY: '' }
-        ],
-        connector: ' + ',
-        correctAnswers: [
-          { coefficient: 3, degreeX: 2, degreeY: 0 },
-          { coefficient: 5, degreeX: 1, degreeY: 1 },
-          { coefficient: -2, degreeX: 0, degreeY: 2 }
-        ],
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'poly-mul-3',
-        expression: '(2x - y)(x + 4y)',
-        answerTemplate: 'x^{}y^{} + x^{}y^{} + x^{}y^{}',
-        resultMode: 'polynomial',
-        parts: [
-          { coefficient: '', degreeX: '', degreeY: '' },
-          { coefficient: '', degreeX: '', degreeY: '' },
-          { coefficient: '', degreeX: '', degreeY: '' }
-        ],
-        connector: ' + ',
-        correctAnswers: [
-          { coefficient: 2, degreeX: 2, degreeY: 0 },
-          { coefficient: 7, degreeX: 1, degreeY: 1 },
-          { coefficient: -4, degreeX: 0, degreeY: 2 }
-        ],
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      }
-    ]
-  },
-  polynomialAreaModel: {
-    label: 'Εμβαδικό μοντέλο πολυωνύμου',
-    items: [
-      {
-        id: 'poly-area-1',
-        expression: '(x + 4)(x + 5)',
-        geogebraRoomId: 'polynomial-lab-2-6-area-x',
-        resultMode: 'geogebraArea',
-        correctAnswers: {},
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'poly-area-2',
-        expression: '(2x + 4)(x + 5)',
-        geogebraRoomId: 'polynomial-lab-2-6-area-2x',
-        resultMode: 'geogebraArea',
-        correctAnswers: {},
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      }
-    ]
-  },
-  algebraTiles: {
-    label: 'Πλακίδια άλγεβρας',
-    items: [
-      {
-        id: 'algebra-tiles-linear',
-        expression: '3x + 2',
-        resultMode: 'algebraTiles',
-        correctAnswers: {},
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'algebra-tiles-quadratic',
-        expression: '2x² − x + 4',
-        resultMode: 'algebraTiles',
-        correctAnswers: {},
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'algebra-tiles-y-linear',
-        expression: '3y + 2',
-        resultMode: 'algebraTiles',
-        correctAnswers: {},
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'algebra-tiles-xy-linear',
-        expression: '2x + 3y + 1',
-        resultMode: 'algebraTiles',
-        correctAnswers: {},
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'algebra-tiles-perfect-square',
-        expression: 'x² + 2xy + y²',
-        resultMode: 'algebraTiles',
-        correctAnswers: {},
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'algebra-tiles-difference-squares',
-        expression: 'x² − y²',
-        resultMode: 'algebraTiles',
-        correctAnswers: {},
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      },
-      {
-        id: 'algebra-tiles-rectangle-factorization',
-        expression: 'xy + 2x + 3y + 6',
-        resultMode: 'algebraTiles',
-        correctAnswers: {},
-        scoreCorrect: SCORE_CORRECT,
-        scoreIncorrect: SCORE_INCORRECT
-      }
-    ]
-  }
 };
 
 const DEFAULT_ACTIVITY_ID = ACTIVITY_LIBRARY[0].id;
@@ -818,6 +201,7 @@ const getAnswerHeaderGroupsForExpression = (expressionItem, t) => {
 
 export default function App({ role = 'teacher' }) {
   const { t } = useTranslation('polynomial');
+  const navigate = useNavigate();
   const sessionLogging = useSessionInputLogger();
   const isTeacher = role === 'teacher';
   const isStudent = role === 'student';
@@ -826,7 +210,7 @@ export default function App({ role = 'teacher' }) {
   const hasRegisteredRef = useRef(false);
 
   const [selectedActivityId, setSelectedActivityId] = useState(DEFAULT_ACTIVITY_ID);
-  const [selectedExpressionId, setSelectedExpressionId] = useState(ALGEBRA_DATASETS[ACTIVITY_DATASET_KEYS[DEFAULT_ACTIVITY_ID]].items[0].id);
+  const [selectedExpressionId, setSelectedExpressionId] = useState(ALGEBRA_DATASETS[getActivityDatasetKey(DEFAULT_ACTIVITY_ID)].items[0].id);
   const [teamAnswers, setTeamAnswers] = useState({
     coefficient: '',
     degreeX: '',
@@ -843,6 +227,25 @@ export default function App({ role = 'teacher' }) {
   const [lessonGeogebraRoomId, setLessonGeogebraRoomId] = useState('');
   const [feedbackEnabled, setFeedbackEnabled] = useState(false);
   const [algebraTilesByExpression, setAlgebraTilesByExpression] = useState({});
+  const [savedActivities, setSavedActivities] = useState([]);
+
+  useEffect(() => {
+    if (!isTeacher) return undefined;
+    let cancelled = false;
+    const loadActivities = () => fetch('/teacher/activities', { cache: 'no-store' })
+      .then((response) => response.ok ? response.json() : [])
+      .then((activities) => {
+        if (!cancelled) setSavedActivities(Array.isArray(activities) ? activities : []);
+      })
+      .catch(() => {});
+
+    loadActivities();
+    const timer = window.setInterval(loadActivities, 10000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [isTeacher]);
 
   useEffect(() => {
     function syncIdentity() {
@@ -866,7 +269,7 @@ export default function App({ role = 'teacher' }) {
 
   const activityTitle = t(`activity_${selectedActivityId.replace('.', '_')}`);
 
-  const activeDatasetKey = ACTIVITY_DATASET_KEYS[selectedActivityId] || 'monomials';
+  const activeDatasetKey = getActivityDatasetKey(selectedActivityId) || 'monomials';
   const activeDataset = ALGEBRA_DATASETS[activeDatasetKey] || ALGEBRA_DATASETS.monomials;
   const activeItems = activeDataset.items;
   const [expressionDrafts, setExpressionDrafts] = useState(() => {
@@ -1153,7 +556,31 @@ export default function App({ role = 'teacher' }) {
   };
 
   const setActivity = (nextId) => {
-    const nextDataset = ALGEBRA_DATASETS[ACTIVITY_DATASET_KEYS[nextId]] || ALGEBRA_DATASETS.monomials;
+    if (nextId.startsWith('saved:')) {
+      const activityPath = nextId.slice('saved:'.length);
+      const separator = activityPath.indexOf('/');
+      const resource = activityPath.slice(0, separator);
+      const filename = activityPath.slice(separator + 1);
+      fetch(`/teacher/activities/${encodeURIComponent(resource)}/${encodeURIComponent(filename)}`, { cache: 'no-store' })
+        .then((response) => {
+          if (!response.ok) throw new Error('Activity could not be loaded.');
+          return response.json();
+        })
+        .then((activity) => fetch('/teacher/classroom/selection', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ app: 'activity-runner', activity })
+        }))
+        .then((response) => {
+          if (!response.ok) throw new Error('Activity could not be opened for the classroom.');
+          navigate('/workshops/activities/teacher');
+        })
+        .catch((error) => window.alert(error.message));
+      return;
+    }
+
+    const nextDatasetKey = getActivityDatasetKey(nextId);
+    const nextDataset = ALGEBRA_DATASETS[nextDatasetKey] || ALGEBRA_DATASETS.monomials;
     const nextExpression = nextDataset.items[0]?.id || '';
     setSelectedActivityId(nextId);
     setSelectedExpressionId(nextExpression);
@@ -1162,7 +589,7 @@ export default function App({ role = 'teacher' }) {
       type: 'teacher_lesson',
       lesson: {
         activityId: nextId,
-        datasetKey: ACTIVITY_DATASET_KEYS[nextId] || 'monomials',
+        datasetKey: nextDatasetKey || 'monomials',
         expressionId: nextExpression,
         geogebraRoomId: String(nextDataset.items[0]?.geogebraRoomId || '').trim(),
         feedbackEnabled
@@ -1178,7 +605,7 @@ export default function App({ role = 'teacher' }) {
       type: 'teacher_lesson',
       lesson: {
         activityId: selectedActivityId,
-        datasetKey: ACTIVITY_DATASET_KEYS[selectedActivityId] || 'monomials',
+        datasetKey: getActivityDatasetKey(selectedActivityId) || 'monomials',
         expressionId: nextExpressionId,
         feedbackEnabled,
         geogebraRoomId: String(
@@ -1195,7 +622,7 @@ export default function App({ role = 'teacher' }) {
       type: 'teacher_lesson',
       lesson: {
         activityId: selectedActivityId,
-        datasetKey: ACTIVITY_DATASET_KEYS[selectedActivityId] || 'monomials',
+        datasetKey: getActivityDatasetKey(selectedActivityId) || 'monomials',
         expressionId: selectedExpressionId,
         geogebraRoomId: lessonGeogebraRoomId,
         feedbackEnabled: enabled
@@ -1414,8 +841,9 @@ export default function App({ role = 'teacher' }) {
   ]);
 
   useEffect(() => {
-    if (selectedActivityId && ACTIVITY_DATASET_KEYS[selectedActivityId]) {
-      const dataset = ALGEBRA_DATASETS[ACTIVITY_DATASET_KEYS[selectedActivityId]];
+    const datasetKey = getActivityDatasetKey(selectedActivityId);
+    if (selectedActivityId && datasetKey) {
+      const dataset = ALGEBRA_DATASETS[datasetKey];
       if (dataset && dataset.items.length > 0) {
         setSelectedExpressionId((prev) => {
           if (dataset.items.some((item) => item.id === prev)) {
@@ -1607,7 +1035,10 @@ export default function App({ role = 'teacher' }) {
             options={ACTIVITY_LIBRARY.map((activity) => ({
               value: activity.id,
               label: t(`activity_${activity.id.replace('.', '_')}`)
-            }))}
+            })).concat(savedActivities.map((activity) => ({
+              value: `saved:${activity.resource}/${activity.filename}`,
+              label: `${activity.name} (${t(`activityBuilder.resourceNames.${activity.resource}`, { ns: 'interface', defaultValue: activity.resource })})`
+            })))}
             value={selectedActivityId}
             onChange={setActivity}
           />

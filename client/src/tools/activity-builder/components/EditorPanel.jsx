@@ -13,7 +13,6 @@ export default function EditorPanel({
   return (
     <article className="tool-card activity-settings-card">
       <div className="activity-settings-heading">
-        <h2>{t('activityBuilder.settingsTitle')}</h2>
         <button type="button" className="activity-open-file" onClick={onOpenFile}>{t('activityBuilder.openFile')}</button>
         <input ref={fileInputRef} type="file" accept=".json,application/json" onChange={onFileChange} hidden />
       </div>

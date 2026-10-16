@@ -148,7 +148,7 @@
     }
   },
   "activityBuilder": {
-    "title": "Διαχείριση Δραστηριοτήτων / Activity Settings",
+    "title": "Διαχείριση Δραστηριοτήτων",
     "settingsTitle": "Διαχείριση Δραστηριοτήτων / Activity Settings",
     "titleLabel": "Τίτλος",
     "titlePlaceholder": "Τίτλος δραστηριότητας",
