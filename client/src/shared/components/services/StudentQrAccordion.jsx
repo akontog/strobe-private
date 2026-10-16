@@ -5,14 +5,15 @@ export const StudentQrAccordion = ({
   title = '\u03a3\u03cd\u03bd\u03b4\u03b5\u03c3\u03b7 (QR Code)',
   icon = '\u{1F4F1}',
   open = false,
-  qrSrc,
+  qrSrc = '/qr_195_251_162_87_3000.png',
   alt = 'QR code',
   linkHref = '',
   linkLabel = '',
   wrapperClassName = 'data-section student-qr-section',
-  imageClassName = 'student-qr-image'
+  imageClassName = 'student-qr-image',
+  accordionClassName = 'student-qr-accordion'
 }) => (
-  <Accordion title={title} icon={icon} open={open}>
+  <Accordion title={title} icon={icon} open={open} className={accordionClassName}>
     <div className={wrapperClassName}>
       {qrSrc ? <img className={imageClassName} src={qrSrc} alt={alt} /> : null}
       {linkHref && linkLabel ? (

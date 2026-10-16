@@ -1,27 +1,69 @@
-shared/components
-|-- activities
-|   |-- ActivitiesMenu.jsx
-|   `-- SessionLogContext.jsx
-|-- display
-|   `-- HeroTitle.jsx
-|-- identity
-|-- layouts
-|-- primitives
-|   |-- BlueNumberBox.jsx
-|   |-- MathFormula.jsx
-|   |-- SharedInputBox.css
-|   |-- SharedInputBox.jsx
-|   |-- SharedInputRow.css
-|   `-- SharedInputRow.jsx
-|-- resources
-|   |-- AlgebraTiles.jsx / AlgebraTiles.css
-|   |-- CollaborativeGeoGebra.jsx / CollaborativeGeoGebra.css
-|   |-- GroupingDragDrop.jsx / GroupingDragDrop.css
-|   `-- InputGrid.jsx / InputGrid.css
-|-- services
-`-- widgets
-    |-- ActivityWidgets.jsx
-    |-- EquationWidget.jsx / EquationWidget.css
-    |-- IconWidget.jsx / IconWidget.css
-    |-- SimpleCoordinateSystem.jsx / SimpleCoordinateSystem.css
-    `-- registry.js
+Folder PATH listing for volume OS
+Volume serial number is 4EE2-6C3B
+C:.
+|   index.js
+|   README.md
+|   structure.txt
+|   
++---activities
+|       ActivitiesMenu.jsx
+|       SessionLogContext.jsx
+|       
++---data
++---menu
+|       ConnectionNameControl.jsx
+|       identityStorage.js
+|       LanguageSwitcher.jsx
+|       RoleAccessControl.jsx
+|       StudentIdentityControl.css
+|       StudentIdentityControl.jsx
+|       
++---layouts
+|       Accordion.jsx
+|       accordionDom.js
+|       shared-common-zone-layout.css
+|       SharedCommonZoneLayout.jsx
+|       Toolbar.jsx
+|       
++---primitives
+|       BlueNumberBox.jsx
+|       FullScreenButton.jsx
+|       HeroTitle.jsx
+|       MathFormula.jsx
+|       SharedInputBox.css
+|       SharedInputBox.jsx
+|       SharedInputRow.css
+|       SharedInputRow.jsx
+|       
++---resources
+|       AlgebraTiles.css
+|       AlgebraTiles.jsx
+|       CollaborativeGeoGebra.css
+|       CollaborativeGeoGebra.jsx
+|       GroupingDragDrop.css
+|       GroupingDragDrop.jsx
+|       InputGrid.css
+|       InputGrid.jsx
+|       
++---services
+|       chat-accordion.css
+|       ChatAccordion.jsx
+|       common-session-settings.css
+|       CommonSessionSettings.jsx
+|       SettingsAccordion.jsx
+|       StudentQrAccordion.jsx
+|       StudentScoresAccordion.jsx
+|       StudentTable.jsx
+|       studentTableColumnPresets.jsx
+|       
+\---widgets
+        widget-renderer.css
+        widget-renderer.jsx
+        EquationWidget.css
+        EquationWidget.jsx
+        IconWidget.css
+        IconWidget.jsx
+        registry.js
+        PlotWidget.css
+        PlotWidget.jsx
+        

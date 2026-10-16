@@ -2,14 +2,17 @@ const { getAppBySlug } = require('../apps/registry');
 
 let activeLabSlug = '';
 let activeRoomId = '';
+let activeActivity = null;
 let activeLabUpdatedAt = 0;
 const ACTIVE_LAB_TIMEOUT_MS = 15000;
 
 function setActiveLab(slug, roomId = '') {
   const normalizedSlug = String(slug || '').trim().toLowerCase();
+  if (normalizedSlug !== activeLabSlug && normalizedSlug !== 'activity-runner') activeActivity = null;
   if (!normalizedSlug) {
     activeLabSlug = '';
     activeRoomId = '';
+    activeActivity = null;
     activeLabUpdatedAt = 0;
     return activeLabSlug;
   }
@@ -32,10 +35,17 @@ function setActiveLab(slug, roomId = '') {
   return activeLabSlug;
 }
 
+function setActiveActivity(activity) {
+  activeActivity = activity && typeof activity === 'object' ? activity : null;
+  activeLabUpdatedAt = Date.now();
+  return activeActivity;
+}
+
 function getActiveLab() {
   if (activeLabSlug && Date.now() - activeLabUpdatedAt > ACTIVE_LAB_TIMEOUT_MS) {
     activeLabSlug = '';
     activeRoomId = '';
+    activeActivity = null;
     activeLabUpdatedAt = 0;
   }
   return activeLabSlug;
@@ -43,7 +53,11 @@ function getActiveLab() {
 
 function getActiveSelection() {
   const app = getActiveLab();
-  return { app, roomId: app === 'geogebra-collab' ? activeRoomId || 'geogebra-default' : '' };
+  return {
+    app,
+    roomId: app === 'geogebra-collab' ? activeRoomId || 'geogebra-default' : '',
+    activity: app === 'activity-runner' ? activeActivity : null
+  };
 }
 
-module.exports = { getActiveLab, getActiveSelection, setActiveLab };
+module.exports = { getActiveLab, getActiveSelection, setActiveLab, setActiveActivity };

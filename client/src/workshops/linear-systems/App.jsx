@@ -10,10 +10,10 @@ import {
   SharedCommonZoneLayout,
   InputGrid,
   SharedInputRow,
-  SimpleCoordinateSystem,
+  PlotWidget,
   StudentTable,
   readIdentitySnapshot,
-  CommonZoneFullscreenButton,
+  FullScreenButton,
   useSessionInputLogger
 } from '../../shared/components';
 import './App.css';
@@ -891,7 +891,7 @@ export default function App({ role = 'student' }) {
 
   const rightPanel = graphPanelVisible ? (
     <aside className="lab-card lab-card--panel poly-team-card linear-graph-card">
-      <SimpleCoordinateSystem
+      <PlotWidget
         lines={coordinateLines}
         title="Γραφική παράσταση"
         showLegend
@@ -913,7 +913,7 @@ export default function App({ role = 'student' }) {
       </header>
 
       <section className="common-zone lab-zone linear-common-zone">
-        <CommonZoneFullscreenButton />
+        <FullScreenButton />
         <SharedCommonZoneLayout
           className="linear-neural-zone"
           isGroupingMode={isGroupingMode}

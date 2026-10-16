@@ -59,11 +59,7 @@ C:.
 |   |   |       SessionLogContext.jsx
 |   |   |       
 |   |   +---data
-|   |   +---display
-|   |   |       HeroTitle.jsx
-|   |   |       
-|   |   +---identity
-|   |   |       CommonZoneFullscreenButton.jsx
+|   |   +---menu
 |   |   |       ConnectionNameControl.jsx
 |   |   |       identityStorage.js
 |   |   |       LanguageSwitcher.jsx
@@ -80,6 +76,8 @@ C:.
 |   |   |       
 |   |   +---primitives
 |   |   |       BlueNumberBox.jsx
+|   |   |       FullScreenButton.jsx
+|   |   |       HeroTitle.jsx
 |   |   |       MathFormula.jsx
 |   |   |       SharedInputBox.css
 |   |   |       SharedInputBox.jsx
@@ -108,14 +106,15 @@ C:.
 |   |   |       studentTableColumnPresets.jsx
 |   |   |       
 |   |   \---widgets
-|   |           ActivityWidgets.jsx
+|   |           widget-renderer.css
+|   |           widget-renderer.jsx
 |   |           EquationWidget.css
 |   |           EquationWidget.jsx
 |   |           IconWidget.css
 |   |           IconWidget.jsx
 |   |           registry.js
-|   |           SimpleCoordinateSystem.css
-|   |           SimpleCoordinateSystem.jsx
+|   |           PlotWidget.css
+|   |           PlotWidget.jsx
 |   |           
 |   +---hooks
 |   |       usePresentationSync.js

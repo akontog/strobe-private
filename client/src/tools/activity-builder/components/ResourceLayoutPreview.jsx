@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityWidgets } from '../../../shared/components';
+import { WidgetRenderer } from '../../../shared/components';
 import { ACTIVITY_WIDGETS } from '../../../shared/components/widgets/registry';
 import WidgetSettings from './WidgetSettings';
 import './ResourceLayoutPreview.css';
@@ -80,8 +80,8 @@ function PositionSlot({
                 </button>
               </div>
             </header>
-            {widget.type === 'simple-coordinate-system' ? (
-              <ActivityWidgets widgets={[widget]} position={position} />
+            {widget.type === 'plot-widget' || widget.type === 'simple-coordinate-system' ? (
+              <WidgetRenderer widgets={[widget]} position={position} />
             ) : null}
             <WidgetSettings widget={widget} onChange={onUpdateWidget} t={t} />
           </article>

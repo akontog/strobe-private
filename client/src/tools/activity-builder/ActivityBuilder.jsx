@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import './ActivityBuilder.css';
 import { EditorPanel } from './components';
 import { HeroTitle } from '../../shared/components';
-import { fetchResources, saveActivityRequest } from './logic/activityApi';
+import { fetchResources, fetchAllActivities, fetchActivity, saveActivityRequest } from './logic/activityApi';
 import { toJsonString } from './logic/jsonUtils';
 import { RESOURCE_DEFAULTS } from './data/resourceDefaults';
 
@@ -62,6 +63,9 @@ function buildActivityConfig(resource, settings, title) {
 }
 
 function normalizeWidget(widget, index) {
+  if (widget.type === 'simple-coordinate-system') {
+    return { ...widget, type: 'plot-widget', id: widget.id || `widget-${index + 1}`, position: widget.position || 'left' };
+  }
   if (widget.type !== 'lab-card') {
     return { ...widget, id: widget.id || `widget-${index + 1}`, position: widget.position || 'left' };
   }
@@ -81,6 +85,7 @@ function normalizeWidget(widget, index) {
 
 export default function ActivityBuilder() {
   const { t } = useTranslation('interface');
+  const navigate = useNavigate();
   const fileInput = useRef(null);
   const [resources, setResources] = useState([]);
   const [selectedResource, setSelectedResource] = useState('');
@@ -90,13 +95,16 @@ export default function ActivityBuilder() {
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [activities, setActivities] = useState([]);
+  const [selectedServerActivity, setSelectedServerActivity] = useState('');
 
   useEffect(() => {
     let cancelled = false;
-    fetchResources()
-      .then((nextResources) => {
+    Promise.all([fetchResources(), fetchAllActivities().catch(() => [])])
+      .then(([nextResources, nextActivities]) => {
         if (cancelled) return;
         setResources(nextResources);
+        setActivities(nextActivities);
         const firstResource = nextResources[0]?.slug || '';
         setSelectedResource(firstResource);
         setResourceSettings(cloneResourceDefaults(firstResource, t));
@@ -110,6 +118,16 @@ export default function ActivityBuilder() {
       });
     return () => { cancelled = true; };
   }, []);
+
+  async function launchActivity(activity) {
+    const response = await fetch('/teacher/classroom/selection', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ app: 'activity-runner', activity })
+    });
+    if (!response.ok) throw new Error('Could not open activity for the classroom.');
+    navigate('/workshops/activities/teacher');
+  }
 
   async function openFile(event) {
     const file = event.target.files?.[0];
@@ -142,6 +160,23 @@ export default function ActivityBuilder() {
       setNotes(payload.notes || '');
       setStatus(t('activityBuilder.fileLoaded', { filename: file.name }));
       setError('');
+      await launchActivity({
+        resource,
+        name: payload.title || payload.name || file.name.replace(/\.json$/i, ''),
+        notes: payload.notes || '',
+        config: { ...config, resource, widgets }
+      });
+    } catch {
+      setError(t('activityBuilder.openFileError'));
+    }
+  }
+
+  async function openServerActivity() {
+    if (!selectedServerActivity) return;
+    const [resource, filename] = selectedServerActivity.split('/');
+    try {
+      const activity = await fetchActivity(resource, filename);
+      await launchActivity(activity);
     } catch {
       setError(t('activityBuilder.openFileError'));
     }
@@ -162,6 +197,7 @@ export default function ActivityBuilder() {
     try {
       const config = buildActivityConfig(selectedResource, resourceSettings, title);
       await saveActivityRequest(selectedResource, { name: title, config, notes });
+      setActivities(await fetchAllActivities());
       setStatus(t('activityBuilder.saved'));
     } catch {
       setError(t('activityBuilder.saveError'));
@@ -184,6 +220,10 @@ export default function ActivityBuilder() {
       </header>
       <EditorPanel
         resources={resources}
+        activities={activities}
+        selectedServerActivity={selectedServerActivity}
+        onSelectedServerActivityChange={setSelectedServerActivity}
+        onOpenServerActivity={openServerActivity}
         selectedResource={selectedResource}
         resourceSettings={resourceSettings}
         onSelectedResourceChange={handleResourceChange}

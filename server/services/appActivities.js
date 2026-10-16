@@ -94,6 +94,29 @@ function listActivities(appSlug) {
     .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
 }
 
+function listAllActivities() {
+  ensureBaseDir();
+  return fs
+    .readdirSync(BASE_ACTIVITIES_DIR)
+    .filter((file) => file.endsWith('.json'))
+    .map((file) => {
+      try {
+        const parsed = JSON.parse(fs.readFileSync(activityPath(file), 'utf8'));
+        return {
+          filename: file,
+          resource: parsed.resource || '',
+          name: parsed.name || file,
+          createdAt: parsed.createdAt || null,
+          author: parsed.author || null
+        };
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean)
+    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+}
+
 function getActivity(appSlug, filename) {
   ensureBaseDir();
   const safeSlug = resourceSlug(appSlug);
@@ -124,5 +147,6 @@ function getActivity(appSlug, filename) {
 module.exports = {
   saveActivity,
   listActivities,
+  listAllActivities,
   getActivity
 };

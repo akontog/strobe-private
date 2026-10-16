@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { readIdentityName } from '../identity/identityStorage';
+import { readIdentityName } from '../menu/identityStorage';
 import { Accordion } from '../layouts/Accordion';
 import { useSessionInputLogger } from '../activities/SessionLogContext';
 import './chat-accordion.css';

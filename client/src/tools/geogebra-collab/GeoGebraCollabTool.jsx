@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Accordion, CollaborativeGeoGebra, CommonZoneFullscreenButton, HeroTitle } from '../../shared/components';
+import { Accordion, CollaborativeGeoGebra, FullScreenButton, HeroTitle } from '../../shared/components';
 import GeogebraMonitorAccordion from './GeogebraMonitorAccordion';
 import './GeoGebraCollabTool.css';
 
@@ -33,7 +33,7 @@ export default function GeoGebraCollabTool({ canSelectRoom = false }) {
         />
 
         <section className="common-zone lab-zone geo-common-zone">
-          <CommonZoneFullscreenButton />
+          <FullScreenButton />
           <div className="lab-workspace">
             <div className="lab-card lab-card--panel">
               <CollaborativeGeoGebra roomId={activeRoomId} sessionApp="geogebra-collab" />

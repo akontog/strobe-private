@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function CommonZoneFullscreenButton() {
+export default function FullScreenButton() {
   const { t } = useTranslation('common');
   const buttonRef = useRef(null);
   const [isFullscreen, setIsFullscreen] = useState(false);

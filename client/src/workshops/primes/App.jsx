@@ -1,6 +1,6 @@
 ﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import CommonZoneFullscreenButton from '../../shared/components/identity/CommonZoneFullscreenButton';
+import FullScreenButton from '../../shared/components/primitives/FullScreenButton';
 import NumberGrid from './components/NumberGrid';
 import SelectionSummaryAccordion from './components/SelectionSummaryAccordion';
 import TeacherPanel from './components/TeacherPanel';
@@ -410,7 +410,7 @@ const App = ({ role = 'teacher' }) => {
         </header>
 
         <section className="common-zone primes-board-zone primes-board-zone--compact">
-          <CommonZoneFullscreenButton />
+          <FullScreenButton />
           <div className="primes-board-header">
             <div>
               <p>{t('board')}</p>

@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { readIdentityName } from '../identity/identityStorage';
+import { readIdentityName } from '../menu/identityStorage';
 
 const SessionLogContext = createContext(null);
 

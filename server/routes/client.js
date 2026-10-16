@@ -12,7 +12,7 @@ router.get('/apps', (req, res) => {
 
 router.get('/classroom/selection', (req, res) => {
   const selection = getActiveSelection();
-  res.json({ app: selection.app || null, roomId: selection.roomId || '' });
+  res.json({ app: selection.app || null, roomId: selection.roomId || '', activity: selection.activity || null });
 });
 
 module.exports = router;

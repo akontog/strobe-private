@@ -1,5 +1,5 @@
 import { mountAccordionInteractions } from '../../../shared/components/layouts/accordionDom';
-import { readIdentityName, writeIdentityName } from '../../../shared/components/identity/identityStorage';
+import { readIdentityName, writeIdentityName } from '../../../shared/components/menu/identityStorage';
 
 export function mountBuffonStudent(rootElement, t) {
 const cleanupAccordions = mountAccordionInteractions(rootElement, (accordionId, isOpen) => {

@@ -24,6 +24,31 @@
   margin-bottom: 16px;
 }
 
+.activity-server-library {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #d7e2f0;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.activity-server-library label {
+  margin: 0;
+}
+
+.activity-server-library button {
+  min-height: 40px;
+}
+
+@media (max-width: 560px) {
+  .activity-server-library {
+    grid-template-columns: 1fr;
+  }
+}
+
 .activity-open-file {
   border: 1px solid #1d4ed8;
   border-radius: 10px;

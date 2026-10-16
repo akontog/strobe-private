@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../../shared/i18n';
-import CommonZoneFullscreenButton from '../../shared/components/identity/CommonZoneFullscreenButton';
+import FullScreenButton from '../../shared/components/primitives/FullScreenButton';
 import {
   Accordion,
   ActivitiesMenu,
@@ -380,7 +380,7 @@ export default function App({ role = 'student' }) {
       </header>
 
       <section className="common-zone lab-zone linear-common-zone">
-        <CommonZoneFullscreenButton />
+        <FullScreenButton />
         <div className="linear-topbar">
           <span className="poly-status-pill">{isTeacher ? t('teacherMode') : t('studentMode')}</span>
         </div>

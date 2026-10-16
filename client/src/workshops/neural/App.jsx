@@ -1,6 +1,6 @@
 ﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import CommonZoneFullscreenButton from '../../shared/components/identity/CommonZoneFullscreenButton';
+import FullScreenButton from '../../shared/components/primitives/FullScreenButton';
 import { TeacherCard } from './components/TeacherCard';
 import { DatasetSelector } from './components/DatasetSelector';
 import { VerticalProducts } from './components/VerticalProducts';
@@ -11,7 +11,6 @@ import {
   CommonSessionSettings,
   ChatAccordion,
   ActivitiesMenu,
-  StudentQrAccordion,
   StudentTable,
   randomIdentityColor,
   readIdentitySnapshot,
@@ -786,7 +785,7 @@ const [studentColor, setStudentColor] = useState(() => {
       )}
 
       <div className="common-zone">
-        <CommonZoneFullscreenButton />
+        <FullScreenButton />
         <VerticalProducts
           activity={`neural-lab:${activeActivity}`}
           icon={displayIcon}
@@ -950,12 +949,6 @@ const [studentColor, setStudentColor] = useState(() => {
       )}
 
       <ChatAccordion />
-      {isTeacher ? (
-        <StudentQrAccordion
-          qrSrc="/labs/neural-lab/media/neural_lab_student_qrcode.png"
-          alt="QR code για το Neural Lab student link"
-        />
-      ) : null}
       
       
     </TeacherCard>

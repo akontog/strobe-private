@@ -557,6 +557,10 @@ body.session-not-started .common-zone {
   margin-top: 0.5rem;
 }
 
+.accordion.student-qr-accordion {
+  margin-top: 0;
+}
+
 .accordion-btn {
   width: 100%;
   background: #eef2ff;

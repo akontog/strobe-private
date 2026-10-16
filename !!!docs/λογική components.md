@@ -1,10 +1,13 @@
 
+Υλοποιούνται στο φάκελο \src\shared\components
+# Resources (Πόροι)
+- Υλοποίηση: \resources
 
-# Πλέγμα Εισόδων (Input Grid)
+## Πλέγμα Εισόδων (Input Grid)
 
 - Υλοποίηση: InputGrid
 
-## Περιγραφή
+### Περιγραφή
 
 Πλέγμα από input boxes για συμπλήρωση.
 
@@ -22,21 +25,21 @@
 * υπολογισμό,
 * αναγνώριση παραμέτρων.
 
-# Drag and Drop Matching
+## Drag and Drop Matching
 
 - Υλοποίηση: GroupingDragDrop
 
-## Περιγραφή
+### Περιγραφή
 
 Οι μαθητές μεταφέρουν αντικείμενα και τα τοποθετούν στην κατάλληλη περιοχή (Αντιστοίχιση).
 
-# Algebra Tiles
+## Algebra Tiles
 
 - Υλοποίηση: AlgebraTiles
 
-## Περιγραφή
+### Περιγραφή
 
-## Πλακίδια τριών σχημάτων
+### Πλακίδια τριών σχημάτων
 
 | Πλακίδιο | Σχήμα | Αξία |
 |---|---|---|
@@ -48,7 +51,7 @@
 
 Πλακίδια δύο μεγεθών, x και y.
 
-## Παραδείγματα
+### Παραδείγματα
 
 ### Η $3x + 2$ φτιάχνεται με:
 
@@ -61,7 +64,7 @@
 - 1 αρνητικό $x$
 - 4 θετικά $1$
 
-## Πραξεις:
+### Πραξεις:
 
 ### Πολλαπλασιασμός: μοντέλο του ορθογωνίου/εμβαδού
   π.χ. (x + 2)(x + 3)
@@ -77,14 +80,16 @@
 
 ###  Παραγοντοποίηση: το αντίστροφο
 
-## Links
+### Links
 
 - [A Beginner's Guide to Teaching with Algebra Tiles](https://www.youtube.com/watch?v=AN4MGUP4VXQ)
 - [polypad](https://polypad.amplify.com/p#algebra-tiles)
 
-# Collaborative GeoGebra
+## Collaborative GeoGebra
 
-## Περιγραφή
+- Υλοποίηση: CollaborativeGeoGebra
+
+### Περιγραφή
 
 Συνεργατικό GeoGebra που λειτουργεί real-time.
 
@@ -100,15 +105,17 @@
 
 Να χρησιμοποιείται κυρίως για **διερεύνηση και οπτική κατανόηση**.
 
-## Links
+### Links
 - [GeoGebra Apps Embedding](https://geogebra.github.io/docs/reference/en/GeoGebra_Apps_Embedding/)
 - [Embedding Math Apps in your website](https://github.com/geogebra/math-apps-examples)
 - [GeoGebra Apps API](https://geogebra.github.io/docs/reference/en/GeoGebra_Apps_API/)
 - 
 
-# Embodied / Camera
+## Embodied / Camera
 
 ## Περιγραφή
+
+
 
 Χρήση camera tracking και persistent ID.
 
@@ -127,3 +134,10 @@
 - y
 - zoneId
 - timestamp
+
+
+
+# Widgets
+- Υλοποίηση: \resources
+
+# Primitives

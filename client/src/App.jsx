@@ -22,27 +22,31 @@ import TeacherPage from './pages/TeacherPage';
 import ToolsPage from './pages/ToolsPage';
 import InstructionsPage from './pages/InstructionsPage';
 import ActivityBuilder from './tools/activity-builder/ActivityBuilder';
+import ActivityRunner from './workshops/activities/ActivityRunner';
 import CameraSpeedTest from './system/camera-speed-test/CameraSpeedTest';
 import GeoGebraCollabTool from './tools/geogebra-collab/GeoGebraCollabTool';
 import LinearSeparation from './tools/linear-separation/LinearSeparation';
 import ConsoleTool from './system/console/ConsoleTool';
-import StudentIdentityControl from './shared/components/identity/StudentIdentityControl';
-import LanguageSwitcher from './shared/components/identity/LanguageSwitcher';
-import RoleAccessControl from './shared/components/identity/RoleAccessControl';
+import StudentIdentityControl from './shared/components/menu/StudentIdentityControl';
+import LanguageSwitcher from './shared/components/menu/LanguageSwitcher';
+import RoleAccessControl from './shared/components/menu/RoleAccessControl';
 import { SessionLogProvider } from './shared/components/activities/SessionLogContext';
-import { SettingsAccordion, ChatAccordion, CommonSessionSettings } from './shared/components';
+import { SettingsAccordion, ChatAccordion, CommonSessionSettings, StudentQrAccordion } from './shared/components';
 import { getAppSlug, getWorkshopPath } from './shared/utils/workshopPaths';
 
 function App() {
   const { t } = useTranslation(['common', 'menu']);
   const { t: tNav } = useTranslation('navigation');
+  const { t: tInterface } = useTranslation('interface');
   const location = useLocation();
   const navigate = useNavigate();
   const pathname = String(location?.pathname || '').toLowerCase();
   const routePath = pathname.replace(/\/+$/, '') || '/';
   const currentWorkshopSlug = pathname.match(/^\/workshops\/([^/]+)/)?.[1] || '';
   const currentLabSlug = getAppSlug(currentWorkshopSlug);
-  const currentSessionApp = routePath === '/tools/geogebra-collab' ? 'geogebra-collab' : currentLabSlug;
+  const currentSessionApp = routePath.startsWith('/workshops/activities/')
+    ? 'activity-runner'
+    : routePath === '/tools/geogebra-collab' ? 'geogebra-collab' : currentLabSlug;
   const labHasOwnSettings = ['polynomial-lab', 'linear-systems-lab', 'neural-lab', 'identities-lab'].includes(currentLabSlug);
   const labHasInlineChat = ['polynomial-lab', 'neural-lab', 'buffon-needle'].includes(currentLabSlug);
   const [role, setRole] = useState('student');
@@ -55,6 +59,7 @@ function App() {
   const [teacherSessionBusy, setTeacherSessionBusy] = useState(false);
   const [classroomLab, setClassroomLab] = useState('');
   const [classroomRoomId, setClassroomRoomId] = useState('');
+  const [classroomActivity, setClassroomActivity] = useState(null);
   const [classroomSelectionLoaded, setClassroomSelectionLoaded] = useState(false);
 
   useEffect(() => {
@@ -70,7 +75,9 @@ function App() {
 
   useEffect(() => {
     if (!authReady || role !== 'teacher') return undefined;
-    const teacherLab = getAppSlug(pathname.match(/^\/workshops\/([^/]+)\/teacher$/)?.[1] || '')
+    const teacherLab = routePath === '/workshops/activities/teacher'
+      ? 'activity-runner'
+      : getAppSlug(pathname.match(/^\/workshops\/([^/]+)\/teacher$/)?.[1] || '')
       || (routePath === '/tools/geogebra-collab' ? 'geogebra-collab' : '');
     const roomId = teacherLab === 'geogebra-collab'
       ? new URLSearchParams(location.search).get('room') || 'geogebra-default'
@@ -100,6 +107,7 @@ function App() {
         if (!cancelled && payload) {
           setClassroomLab(typeof payload.app === 'string' ? payload.app : '');
           setClassroomRoomId(typeof payload.roomId === 'string' ? payload.roomId : '');
+          setClassroomActivity(payload.activity && typeof payload.activity === 'object' ? payload.activity : null);
           setClassroomSelectionLoaded(true);
         }
       } catch {
@@ -123,6 +131,8 @@ function App() {
     if (classroomLab) {
       const target = classroomLab === 'geogebra-collab'
         ? `/tools/geogebra-collab?room=${encodeURIComponent(classroomRoomId || 'geogebra-default')}`
+        : classroomLab === 'activity-runner'
+          ? '/workshops/activities/student'
         : getWorkshopPath(classroomLab, 'student');
       if (`${pathname}${location.search}` !== target) navigate(target, { replace: true });
       return;
@@ -378,11 +388,19 @@ function App() {
           <Route path="/workshops/linear-systems/teacher" element={teacherOnly(<LinearSystemsTeacherView />)} />
           <Route path="/workshops/identities-lab/student" element={studentLabOnly('identities-lab', <IdentitiesStudentView />)} />
           <Route path="/workshops/identities-lab/teacher" element={teacherOnly(<IdentitiesTeacherView />)} />
+          <Route path="/workshops/activities/teacher" element={teacherOnly(<ActivityRunner role="teacher" />)} />
+          <Route path="/workshops/activities/student" element={studentLabOnly('activity-runner', <ActivityRunner role="student" activity={classroomActivity} />)} />
           <Route path="/workshops/:slug/teacher" element={teacherOnly(<LabPage role="teacher" />)} />
           <Route path="/workshops/:slug/student" element={studentLabOnly(currentLabSlug, <LabPage role="student" />)} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes> : null}
         {pathname.startsWith('/workshops/') && !labHasInlineChat ? <ChatAccordion /> : null}
+        {!clickedMenuGroup && role === 'teacher' && pathname.startsWith('/workshops/') ? (
+          <StudentQrAccordion
+            title={tInterface('studentConnection')}
+            alt={tInterface('studentQrAlt')}
+          />
+        ) : null}
       </div>
     </div>
     </SessionLogProvider>

@@ -69,6 +69,14 @@ const APP_DEFINITIONS = [
     staticDir: path.join(LABS_ROOT, 'identities-lab'),
     teacherEntry: 'teacher.html',
     clientEntry: 'student.html'
+  },
+  {
+    slug: 'activity-runner',
+    labId: 'activity-runner',
+    title: 'Shared Activities',
+    description: 'Teacher selected activities built from shared resources.',
+    roles: ['teacher', 'student', 'client'],
+    kind: 'react'
   }
 ];
 

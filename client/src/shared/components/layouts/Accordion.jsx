@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-export const Accordion = ({ title, subtitle = '', icon = null, open = false, defaultOpen = false, children }) => {
+export const Accordion = ({ title, subtitle = '', icon = null, open = false, defaultOpen = false, className = '', children }) => {
   const [isOpen, setIsOpen] = useState(open || defaultOpen);
   const prefix = icon ? `${icon} ` : '';
 
   return (
-    <div className="accordion">
+    <div className={['accordion', className].filter(Boolean).join(' ')}>
       <button
         type="button"
         className="accordion-btn"

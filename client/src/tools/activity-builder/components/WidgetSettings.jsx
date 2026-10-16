@@ -100,7 +100,7 @@ export default function WidgetSettings({ widget, onChange, t }) {
         </div>
       ) : null}
 
-      {widget.type === 'simple-coordinate-system' ? (
+      {widget.type === 'plot-widget' || widget.type === 'simple-coordinate-system' ? (
         <>
           <TextField label={t('activityBuilder.graphTitle')} value={settings.title} onChange={(value) => update('title', value)} />
           {[

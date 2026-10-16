@@ -16,6 +16,13 @@ export async function fetchActivities(slug) {
   return Array.isArray(payload) ? payload : [];
 }
 
+export async function fetchAllActivities() {
+  const response = await fetch('/teacher/activities');
+  if (!response.ok) throw new Error(`Activities request failed with ${response.status}`);
+  const payload = await response.json();
+  return Array.isArray(payload) ? payload : [];
+}
+
 export async function fetchActivity(slug, filename) {
   const response = await fetch(`/teacher/activities/${encodeURIComponent(slug)}/${encodeURIComponent(filename)}`);
   if (!response.ok) {

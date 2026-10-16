@@ -1,10 +1,10 @@
 const express = require('express');
 
 const { getAppBySlug, listAppsForRole, toPublicApp } = require('../apps/registry');
-const { saveActivity, listActivities, getActivity } = require('../services/appActivities');
+const { saveActivity, listActivities, listAllActivities, getActivity } = require('../services/appActivities');
 const { requireRole } = require('../middleware/checkRole');
 const { createSession, appendRecord, endSession, updateSessionActivity } = require('../services/sessionLogs');
-const { getActiveSelection, setActiveLab } = require('../services/classroomSelection');
+const { getActiveSelection, setActiveLab, setActiveActivity } = require('../services/classroomSelection');
 
 const router = express.Router();
 router.use(requireRole(['teacher']));
@@ -38,8 +38,11 @@ router.post('/classroom/selection', (req, res) => {
   const app = req.body && req.body.app;
   const activeLab = setActiveLab(app, req.body && req.body.roomId);
   if (activeLab === null) return res.status(400).json({ error: 'Choose a valid student lab.' });
+  if (activeLab === 'activity-runner' && req.body && Object.prototype.hasOwnProperty.call(req.body, 'activity')) {
+    setActiveActivity(req.body.activity);
+  }
   const selection = getActiveSelection();
-  return res.json({ app: activeLab || null, roomId: selection.roomId });
+  return res.json({ app: activeLab || null, roomId: selection.roomId, activity: selection.activity });
 });
 
 router.post('/sessions', (req, res) => {
@@ -93,6 +96,10 @@ router.get('/activities/:slug', (req, res) => {
   if (!resource) return;
 
   res.json(listActivities(resource.slug));
+});
+
+router.get('/activities', (req, res) => {
+  res.json(listAllActivities());
 });
 
 router.post('/activities/:slug', (req, res) => {

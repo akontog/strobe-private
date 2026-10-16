@@ -10,7 +10,7 @@ export const ACTIVITY_WIDGETS = [
     defaults: { expression: '' }
   },
   {
-    type: 'simple-coordinate-system',
+    type: 'plot-widget',
     titleKey: 'activityBuilder.widgetNames.graph',
     defaults: {
       title: '',

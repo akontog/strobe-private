@@ -154,6 +154,9 @@
     "titlePlaceholder": "Τίτλος δραστηριότητας",
     "titleRequired": "Συμπληρώστε τον τίτλο της δραστηριότητας.",
     "openFile": "Άνοιγμα αρχείου",
+    "serverActivity": "Αποθηκευμένες δραστηριότητες",
+    "chooseServerActivity": "Επιλογή δραστηριότητας",
+    "openServerActivity": "Άνοιγμα δραστηριότητας",
     "fileLoaded": "Φορτώθηκε το {{filename}}",
     "openFileError": "Δεν ήταν δυνατό να ανοίξει αυτό το αρχείο JSON δραστηριότητας.",
     "jsonPreview": "JSON δραστηριότητας",
@@ -328,5 +331,6 @@
     "console": "Ζωντανή προβολή μηνυμάτων μεταξύ χρηστών και διακομιστή.",
     "linearSeparation": "Διαδραστικό εργαλείο γραμμικού διαχωρισμού με σύνολα δεδομένων."
   },
-  "studentConnection": "Σύνδεση (QR Code)"
+  "studentConnection": "Σύνδεση (QR Code)",
+  "studentQrAlt": "Κωδικός QR για σύνδεση μαθητών"
 }

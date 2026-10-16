@@ -154,6 +154,9 @@
     "titlePlaceholder": "Activity title",
     "titleRequired": "Enter an activity title.",
     "openFile": "Open file",
+    "serverActivity": "Saved activities",
+    "chooseServerActivity": "Choose an activity",
+    "openServerActivity": "Open activity",
     "fileLoaded": "Loaded {{filename}}",
     "openFileError": "Could not open this activity JSON file.",
     "jsonPreview": "Activity JSON",
@@ -328,5 +331,6 @@
     "console": "Live view of messages exchanged between users and the server.",
     "linearSeparation": "Interactive dataset-based linear separation tool."
   },
-  "studentConnection": "Connection (QR Code)"
+  "studentConnection": "Connection (QR Code)",
+  "studentQrAlt": "QR code for the student connection"
 }

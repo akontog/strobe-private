@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import './SimpleCoordinateSystem.css';
+import './PlotWidget.css';
 
 const EPSILON = 1e-9;
 
@@ -36,7 +36,7 @@ export function parseLinearEquation(expression = '') {
   return null;
 }
 
-export default function SimpleCoordinateSystem({
+export default function PlotWidget({
   lines = [],
   width = 360,
   height = 300,

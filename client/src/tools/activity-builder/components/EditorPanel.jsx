@@ -5,6 +5,7 @@ import ResourceSettings from './ResourceSettings';
 export default function EditorPanel({
   resources, selectedResource, resourceSettings, onSelectedResourceChange,
   onResourceSettingsChange, title, onTitleChange, notes, onNotesChange,
+  activities, selectedServerActivity, onSelectedServerActivityChange, onOpenServerActivity,
   onOpenFile, onFileChange, fileInputRef, onSave, saving, status, error, preview
 }) {
   const { t } = useTranslation('interface');
@@ -15,6 +16,23 @@ export default function EditorPanel({
         <h2>{t('activityBuilder.settingsTitle')}</h2>
         <button type="button" className="activity-open-file" onClick={onOpenFile}>{t('activityBuilder.openFile')}</button>
         <input ref={fileInputRef} type="file" accept=".json,application/json" onChange={onFileChange} hidden />
+      </div>
+
+      <div className="activity-server-library">
+        <label>
+          {t('activityBuilder.serverActivity')}
+          <select value={selectedServerActivity} onChange={(event) => onSelectedServerActivityChange(event.target.value)}>
+            <option value="">{t('activityBuilder.chooseServerActivity')}</option>
+            {(activities || []).map((activity) => (
+              <option key={`${activity.resource}/${activity.filename}`} value={`${activity.resource}/${activity.filename}`}>
+                {activity.name} · {t(`activityBuilder.resourceNames.${activity.resource}`, { defaultValue: activity.resource })}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button type="button" onClick={onOpenServerActivity} disabled={!selectedServerActivity}>
+          {t('activityBuilder.openServerActivity')}
+        </button>
       </div>
 
       <label>

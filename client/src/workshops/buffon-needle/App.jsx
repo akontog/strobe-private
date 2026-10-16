@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { CommonZoneFullscreenButton, HeroTitle, StudentQrAccordion, ChatAccordion } from '../../shared/components';
 import { useTranslation } from 'react-i18next';
+import { FullScreenButton, HeroTitle, ChatAccordion } from '../../shared/components';
 import { studentTemplate } from './data/student-template';
 import { teacherTemplate } from './data/teacher-template';
 import { mountBuffonStudent } from './logic/student-logic';
@@ -9,7 +9,6 @@ import './App.css';
 
 function App({ role = 'teacher' }) {
   const rootRef = useRef(null);
-  const { t: tInterface } = useTranslation('interface');
   const { t: tBuffon } = useTranslation('buffon');
 
   useEffect(() => {
@@ -52,17 +51,10 @@ function App({ role = 'teacher' }) {
         />
       </header>
       <section className="common-zone lab-zone buffon-zone">
-        <CommonZoneFullscreenButton />
+        <FullScreenButton />
         <div ref={rootRef} className={`buffon-content ${role}`} />
       </section>
       <ChatAccordion />
-      {role === 'teacher' ? (
-        <StudentQrAccordion
-          title={tInterface('studentConnection')}
-          linkHref="/workshops/buffon-needle/student"
-          linkLabel={tInterface('openStudentView')}
-        />
-      ) : null}
     </div>
   );
 }

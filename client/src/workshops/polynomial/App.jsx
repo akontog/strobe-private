@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  CommonZoneFullscreenButton,
+  FullScreenButton,
   Accordion,
   SettingsAccordion,
   ActivitiesMenu,
@@ -11,7 +11,6 @@ import {
   MathFormula,
   SharedCommonZoneLayout,
   InputGrid,
-  StudentQrAccordion,
   StudentScoresAccordion,
   CommonSessionSettings,
   ChatAccordion,
@@ -1456,7 +1455,7 @@ export default function App({ role = 'teacher' }) {
       </header>
 
       <section className="common-zone lab-zone poly-common-zone">
-        <CommonZoneFullscreenButton />
+        <FullScreenButton />
         <SharedCommonZoneLayout
           className={isGeogebraAreaActivity ? 'poly-neural-zone--geogebra' : ''}
           isGroupingMode={isGroupingActivity}
@@ -1672,12 +1671,6 @@ export default function App({ role = 'teacher' }) {
         hidePanel
       />
       <ChatAccordion />
-      {isTeacher ? (
-        <StudentQrAccordion
-          qrSrc="/labs/polynomial-lab/media/polynomial_student_qrcode.png"
-          alt={t('studentQrAlt')}
-        />
-      ) : null}
     </div>
   );
 }
