@@ -1,7 +1,12 @@
 {
   "labId": "primes-lab",
   "slug": "primes-lab",
+  "workshopSlug": "primes-lab",
   "name": "Primes Lab",
+  "entry": {
+    "teacher": "TeacherView.jsx",
+    "student": "StudentView.jsx"
+  },
   "roles": [
     "student",
     "teacher"

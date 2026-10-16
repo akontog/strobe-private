@@ -2,21 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Link, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-import BuffonStudentView from './workshops/buffon-needle/StudentView';
-import BuffonTeacherView from './workshops/buffon-needle/TeacherView';
-import NeuralStudentView from './workshops/neural/StudentView';
-import NeuralTeacherView from './workshops/neural/TeacherView';
-import PrimesStudentView from './workshops/primes/StudentView';
-import PrimesTeacherView from './workshops/primes/TeacherView';
-import PolynomialStudentView from './workshops/polynomial/StudentView';
-import PolynomialTeacherView from './workshops/polynomial/TeacherView';
-import LinearSystemsStudentView from './workshops/linear-systems/StudentView';
-import LinearSystemsTeacherView from './workshops/linear-systems/TeacherView';
-import IdentitiesStudentView from './workshops/identities/StudentView';
-import IdentitiesTeacherView from './workshops/identities/TeacherView';
+import WorkshopView from './workshops/WorkshopView';
 import AppsLauncherPage from './pages/AppsLauncherPage';
 import HomePage from './pages/HomePage';
-import LabPage from './pages/LabPage';
 import StudentWaitingPage from './pages/StudentWaitingPage';
 import TeacherPage from './pages/TeacherPage';
 import ToolsPage from './pages/ToolsPage';
@@ -241,7 +229,12 @@ function App() {
     : null;
   const studentLabOnly = (slug, element) => {
     if (!authReady) return null;
-    if (role !== 'student') return element;
+    if (role === 'teacher') {
+      const teacherPath = slug === 'activity-runner'
+        ? '/workshops/activities/teacher'
+        : getWorkshopPath(slug, 'teacher');
+      return <Navigate to={teacherPath} replace />;
+    }
     if (!classroomSelectionLoaded) return null;
     if (classroomLab === slug) return element;
     return classroomLab
@@ -376,22 +369,10 @@ function App() {
           <Route path="/tools/linear-seperation" element={teacherOnly(<LinearSeparation />)} />
           <Route path="/apps-launcher" element={teacherOnly(<AppsLauncherPage />)} />
           <Route path="/workshops/:slug" element={<Navigate to={getWorkshopPath(getAppSlug(currentWorkshopSlug), role === 'teacher' ? 'teacher' : 'student')} replace />} />
-          <Route path="/workshops/buffon-needle/student" element={studentLabOnly('buffon-needle', <BuffonStudentView />)} />
-          <Route path="/workshops/buffon-needle/teacher" element={teacherOnly(<BuffonTeacherView />)} />
-          <Route path="/workshops/neural-lab/student" element={studentLabOnly('neural-lab', <NeuralStudentView />)} />
-          <Route path="/workshops/neural-lab/teacher" element={teacherOnly(<NeuralTeacherView />)} />
-          <Route path="/workshops/primes-lab/student" element={studentLabOnly('primes-lab', <PrimesStudentView />)} />
-          <Route path="/workshops/primes-lab/teacher" element={teacherOnly(<PrimesTeacherView />)} />
-          <Route path="/workshops/polynomials/student" element={studentLabOnly('polynomial-lab', <PolynomialStudentView />)} />
-          <Route path="/workshops/polynomials/teacher" element={teacherOnly(<PolynomialTeacherView />)} />
-          <Route path="/workshops/linear-systems/student" element={studentLabOnly('linear-systems-lab', <LinearSystemsStudentView />)} />
-          <Route path="/workshops/linear-systems/teacher" element={teacherOnly(<LinearSystemsTeacherView />)} />
-          <Route path="/workshops/identities-lab/student" element={studentLabOnly('identities-lab', <IdentitiesStudentView />)} />
-          <Route path="/workshops/identities-lab/teacher" element={teacherOnly(<IdentitiesTeacherView />)} />
           <Route path="/workshops/activities/teacher" element={teacherOnly(<ActivityRunner role="teacher" />)} />
           <Route path="/workshops/activities/student" element={studentLabOnly('activity-runner', <ActivityRunner role="student" activity={classroomActivity} />)} />
-          <Route path="/workshops/:slug/teacher" element={teacherOnly(<LabPage role="teacher" />)} />
-          <Route path="/workshops/:slug/student" element={studentLabOnly(currentLabSlug, <LabPage role="student" />)} />
+          <Route path="/workshops/:slug/teacher" element={teacherOnly(<WorkshopView slug={currentWorkshopSlug} role="teacher" />)} />
+          <Route path="/workshops/:slug/student" element={studentLabOnly(currentLabSlug, <WorkshopView slug={currentWorkshopSlug} role="student" />)} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes> : null}
         {pathname.startsWith('/workshops/') && !labHasInlineChat ? <ChatAccordion /> : null}

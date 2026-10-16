@@ -1,0 +1,10 @@
+{
+  "labId": "linear-systems-lab",
+  "slug": "linear-systems-lab",
+  "workshopSlug": "linear-systems",
+  "name": "Linear Systems Lab",
+  "entry": {
+    "teacher": "TeacherView.jsx",
+    "student": "StudentView.jsx"
+  }
+}

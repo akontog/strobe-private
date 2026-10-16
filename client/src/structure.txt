@@ -52,13 +52,19 @@ C:.
 |   +---components
 |   |   |   index.js
 |   |   |   README.md
-|   |   |   structure.txt
 |   |   |   
 |   |   +---activities
 |   |   |       ActivitiesMenu.jsx
 |   |   |       SessionLogContext.jsx
 |   |   |       
 |   |   +---data
+|   |   +---layouts
+|   |   |       Accordion.jsx
+|   |   |       accordionDom.js
+|   |   |       shared-common-zone-layout.css
+|   |   |       SharedCommonZoneLayout.jsx
+|   |   |       Toolbar.jsx
+|   |   |       
 |   |   +---menu
 |   |   |       ConnectionNameControl.jsx
 |   |   |       identityStorage.js
@@ -66,13 +72,6 @@ C:.
 |   |   |       RoleAccessControl.jsx
 |   |   |       StudentIdentityControl.css
 |   |   |       StudentIdentityControl.jsx
-|   |   |       
-|   |   +---layouts
-|   |   |       Accordion.jsx
-|   |   |       accordionDom.js
-|   |   |       shared-common-zone-layout.css
-|   |   |       SharedCommonZoneLayout.jsx
-|   |   |       Toolbar.jsx
 |   |   |       
 |   |   +---primitives
 |   |   |       BlueNumberBox.jsx
@@ -106,15 +105,15 @@ C:.
 |   |   |       studentTableColumnPresets.jsx
 |   |   |       
 |   |   \---widgets
-|   |           widget-renderer.css
-|   |           widget-renderer.jsx
 |   |           EquationWidget.css
 |   |           EquationWidget.jsx
 |   |           IconWidget.css
 |   |           IconWidget.jsx
-|   |           registry.js
 |   |           PlotWidget.css
 |   |           PlotWidget.jsx
+|   |           registry.js
+|   |           widget-renderer.css
+|   |           widget-renderer.jsx
 |   |           
 |   +---hooks
 |   |       usePresentationSync.js
@@ -123,8 +122,11 @@ C:.
 |   +---i18n
 |   |       index.js
 |   |       
-|   \---services
-|           classroom-api.js
+|   +---services
+|   |       classroom-api.js
+|   |       
+|   \---utils
+|           workshopPaths.js
 |           
 +---styles
 |       classroom-shared.css
@@ -155,12 +157,19 @@ C:.
 |   |   |       WidgetSettings.jsx
 |   |   |       
 |   |   +---data
+|   |   |       defaultConfig.js
 |   |   |       resourceDefaults.js
 |   |   |       
 |   |   \---logic
 |   |           activityApi.js
 |   |           jsonUtils.js
 |   |           
+|   +---geogebra-collab
+|   |       GeoGebraCollabTool.css
+|   |       GeoGebraCollabTool.jsx
+|   |       GeogebraMonitorAccordion.css
+|   |       GeogebraMonitorAccordion.jsx
+|   |       
 |   \---linear-separation
 |       |   LinearSeparation.css
 |       |   LinearSeparation.jsx
@@ -180,6 +189,11 @@ C:.
 |               linearSeparator.js
 |               
 \---workshops
+    |   WorkshopView.jsx
+    +---activities
+    |       ActivityRunner.css
+    |       ActivityRunner.jsx
+    |       
     +---buffon-needle
     |   |   App.css
     |   |   App.jsx
@@ -195,50 +209,18 @@ C:.
     |           student-logic.js
     |           teacher-logic.js
     |           
-    +---geogebra-collab
-    |       GeoGebraCollabTool.css
-    |       GeoGebraCollabTool.jsx
-    |       GeogebraMonitorAccordion.css
-    |       GeogebraMonitorAccordion.jsx
-    |       
-    |   |   App.jsx
-    |   |   camera.html
-    |   |   index.jsx
-    |   |   lab.manifest.json
-    |   |   mouse.html
-    |   |   StudentView.jsx
-    |   |   teacher.html
-    |   |   TeacherView.jsx
-    |   |   
-    |   +---assets
-    |   +---components
-    |   |       GeometryLabShell.jsx
-    |   |       index.js
-    |   |       
-    |   +---data
-    |   |       modes.js
-    |   |       
-    |   \---js
-    |           realtime-socket.js
-    |           
     +---identities
     |       App.css
     |       App.jsx
-    |       student.html
-    |       student.jsx
+    |       lab.manifest.json
     |       StudentView.jsx
-    |       teacher.html
-    |       teacher.jsx
     |       TeacherView.jsx
     |       
     +---linear-systems
     |       App.css
     |       App.jsx
-    |       student.html
-    |       student.jsx
+    |       lab.manifest.json
     |       StudentView.jsx
-    |       teacher.html
-    |       teacher.jsx
     |       TeacherView.jsx
     |       
     +---neural
@@ -267,11 +249,8 @@ C:.
     |       App.jsx
     |       grading.js
     |       grading.test.js
-    |       student.html
-    |       student.jsx
+    |       lab.manifest.json
     |       StudentView.jsx
-    |       teacher.html
-    |       teacher.jsx
     |       TeacherView.jsx
     |       
     \---primes

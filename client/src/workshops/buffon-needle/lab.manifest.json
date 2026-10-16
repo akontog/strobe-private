@@ -1,9 +1,10 @@
 {
   "labId": "buffon-lab",
   "slug": "buffon-needle",
+  "workshopSlug": "buffon-needle",
   "name": "Buffon Lab",
   "entry": {
-    "teacher": "teacher.html",
-    "student": "student.html"
+    "teacher": "TeacherView.jsx",
+    "student": "StudentView.jsx"
   }
 }

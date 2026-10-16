@@ -1,0 +1,10 @@
+{
+  "labId": "polynomial-lab",
+  "slug": "polynomial-lab",
+  "workshopSlug": "polynomials",
+  "name": "Polynomial Lab",
+  "entry": {
+    "teacher": "TeacherView.jsx",
+    "student": "StudentView.jsx"
+  }
+}

@@ -138,6 +138,9 @@
 
 
 # Widgets
-- Υλοποίηση: \resources
+- Υλοποίηση: \widgets
+- 
+
 
 # Primitives
+- Υλοποίηση: \primitives

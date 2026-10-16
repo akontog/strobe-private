@@ -1,0 +1,10 @@
+{
+  "labId": "identities-lab",
+  "slug": "identities-lab",
+  "workshopSlug": "identities-lab",
+  "name": "Identities Lab",
+  "entry": {
+    "teacher": "TeacherView.jsx",
+    "student": "StudentView.jsx"
+  }
+}

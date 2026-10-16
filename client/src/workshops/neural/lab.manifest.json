@@ -1,10 +1,11 @@
 {
   "labId": "neural-lab",
   "slug": "neural-lab",
+  "workshopSlug": "neural-lab",
   "name": "Neural Lab",
   "entry": {
-    "teacher": "teacher.html",
-    "student": "student.html"
+    "teacher": "TeacherView.jsx",
+    "student": "StudentView.jsx"
   },
   "build": {
     "teacherJs": "/dist/labs/neural-lab/teacher.bundle.js",
