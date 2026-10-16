@@ -12,6 +12,46 @@
   margin: 0;
 }
 
+.activity-settings-card {
+  width: 100%;
+}
+
+.activity-settings-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.activity-open-file {
+  border: 1px solid #1d4ed8;
+  border-radius: 10px;
+  background: #fff;
+  color: #1d4ed8;
+  padding: 8px 12px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.activity-grid-coordinate {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.activity-json-preview {
+  margin-top: 16px;
+}
+
+.activity-json-preview summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
 .tool-page-header p {
   margin: 8px 0 0;
   color: #475569;
@@ -158,6 +198,189 @@
   padding: 12px;
   border: 1px solid #d7e2f0;
   border-radius: 10px;
+}
+
+.activity-widget-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.activity-widget-fields > label,
+.activity-widget-fields > p {
+  margin: 0;
+}
+
+.activity-widget-field-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.activity-widget-field-info {
+  display: inline-grid;
+  width: 16px;
+  height: 16px;
+  place-items: center;
+  border: 1px solid #94a3b8;
+  border-radius: 50%;
+  color: #475569;
+  cursor: help;
+  font-size: 0.7rem;
+  line-height: 1;
+}
+
+.activity-graph-range {
+  display: grid;
+  grid-template-columns: 28px repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 8px;
+}
+
+.activity-graph-range > strong {
+  padding-bottom: 9px;
+  color: #334155;
+}
+
+.activity-graph-items {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 8px;
+}
+
+.activity-graph-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(84px, 110px) 30px;
+  align-items: end;
+  gap: 8px;
+  padding: 9px;
+  border: 1px solid #d7e2f0;
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+.activity-graph-item > label,
+.activity-graph-point-fields {
+  min-width: 0;
+  margin: 0;
+}
+
+.activity-graph-item > label:first-child {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+.activity-graph-point-coordinates {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.activity-graph-point-coordinates input {
+  width: auto;
+  margin: 0;
+}
+
+.activity-graph-point-fields {
+  grid-column: 1;
+  grid-row: 3;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.activity-graph-item > label:has(input[type="color"]) {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.activity-graph-item > label:has(input[type="color"]) input {
+  min-height: 34px;
+  padding: 3px;
+}
+
+.activity-graph-items__add,
+.activity-graph-item__remove {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #fff;
+  color: #334155;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+
+.activity-graph-item__remove {
+  grid-column: 3;
+  grid-row: 2 / span 2;
+  width: 30px;
+  height: 34px;
+  font-size: 1.2rem;
+}
+
+.activity-graph-item:has(> label:nth-child(3):not(:has(input[type="color"]))) > label:has(input[type="color"]) {
+  grid-row: 2;
+}
+
+.activity-graph-item > label:has(input[type="color"]) .activity-widget-field-label {
+  font-size: 0.7rem;
+}
+
+.activity-icon-code-field {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr) 64px;
+  align-items: end;
+  gap: 10px;
+}
+
+.activity-icon-code-field > label {
+  margin: 0;
+}
+
+.activity-icon-code-preview {
+  display: grid;
+  place-items: center;
+  min-height: 42px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background: #fff;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.activity-icon-code-preview .tool-muted {
+  padding: 4px;
+  font-size: 0.55rem;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.activity-equation-code-field {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(0, 1fr) minmax(100px, 0.8fr);
+  align-items: end;
+  gap: 10px;
+}
+
+.activity-equation-code-field > label {
+  margin: 0;
+}
+
+.activity-equation-code-preview {
+  display: grid;
+  place-items: center;
+  min-height: 42px;
+  padding: 6px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background: #fff;
+  overflow-x: auto;
+}
+
+.activity-widget-fields > label:has(textarea) {
+  grid-column: 1 / -1;
 }
 
 .activity-builder-row {

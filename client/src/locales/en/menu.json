@@ -4,7 +4,7 @@
   "settings": "Settings",
   "mainNavigation": "Main navigation",
   "tools": "Tools",
-  "activityBuilder": "Activity Builder",
+  "activityBuilder": "Activity Settings",
   "cameraSpeedTest": "Camera Speed Test",
   "geoGebraCollab": "GeoGebra Collab",
   "geoGebraMonitor": "GeoGebra Monitor",
@@ -23,7 +23,7 @@
   "studentFeatureAccess": "Quick access",
   "toolsCard": "Learning Tools",
   "toolsDescription": "Open tools for learning, activity building, and collaboration.",
-  "toolsFeatureBuilder": "Activity Builder",
+  "toolsFeatureBuilder": "Activity Settings",
   "toolsFeatureCamera": "Camera Speed Test",
   "toolsFeatureGeoGebra": "GeoGebra Collab",
   "toolsFeatureSeparation": "Linear Separation"

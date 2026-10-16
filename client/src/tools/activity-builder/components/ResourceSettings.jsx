@@ -1,4 +1,5 @@
 import React from 'react';
+import ResourceLayoutPreview from './ResourceLayoutPreview';
 
 function updateRow(rows, index, property, value) {
   return rows.map((row, rowIndex) => rowIndex === index ? { ...row, [property]: value } : row);
@@ -10,6 +11,23 @@ function addRow(rows, row) {
 
 function removeRow(rows, index) {
   return rows.filter((_, rowIndex) => rowIndex !== index);
+}
+
+function resizeGridFields(fields, rows, columns, t) {
+  const current = new Map((fields || []).map((field) => [`${field.row}:${field.column}`, field]));
+  return Array.from({ length: rows * columns }, (_, index) => {
+    const row = Math.floor(index / columns) + 1;
+    const column = (index % columns) + 1;
+    return current.get(`${row}:${column}`) || {
+      id: `cell-r${row}-c${column}`,
+      row,
+      column,
+      label: t('activityBuilder.defaultInput', { index: index + 1 }),
+      placeholder: '',
+      type: 'text',
+      correctAnswer: ''
+    };
+  });
 }
 
 function TextField({ label, value, onChange, type = 'text' }) {
@@ -69,73 +87,58 @@ function JsonArrayField({ label, value, onChange, invalidText }) {
 export default function ResourceSettings({ resource, value, onChange, t }) {
   const config = value || {};
   const props = config.props || {};
-  const card = config.labCard || {};
+  const widgets = config.widgets || [];
   const updateProps = (nextProps) => onChange({ ...config, props: nextProps });
-  const updateCard = (nextCard) => onChange({ ...config, labCard: nextCard });
+  const updateWidgets = (nextWidgets) => onChange({ ...config, widgets: nextWidgets });
 
   return (
     <section className="activity-resource-settings">
       <h3>{t('activityBuilder.resourceSettings')}</h3>
+      <ResourceLayoutPreview
+        resource={resource}
+        props={props}
+        widgets={widgets}
+        onChangeWidgets={updateWidgets}
+        t={t}
+      />
 
       {resource === 'input-grid' ? (
         <>
           <TextField
+            label={t('activityBuilder.rows')}
+            type="number"
+            value={props.rows}
+            onChange={(value) => {
+              const rows = Math.max(1, Math.min(20, Number(value) || 1));
+              updateProps({ ...props, rows, fields: resizeGridFields(props.fields, rows, props.columns || 1, t) });
+            }}
+          />
+          <TextField
             label={t('activityBuilder.columns')}
             type="number"
             value={props.columns}
-            onChange={(columns) => updateProps({ ...props, columns: Math.max(1, Number(columns) || 1) })}
+            onChange={(value) => {
+              const columns = Math.max(1, Math.min(20, Number(value) || 1));
+              updateProps({ ...props, columns, fields: resizeGridFields(props.fields, props.rows || 1, columns, t) });
+            }}
           />
-          <TextField label={t('activityBuilder.className')} value={props.className} onChange={(className) => updateProps({ ...props, className })} />
-          <TextField label={t('activityBuilder.labelClassName')} value={props.labelClassName} onChange={(labelClassName) => updateProps({ ...props, labelClassName })} />
-          <CheckField label={t('activityBuilder.customLayout')} checked={props.customLayout} onChange={(customLayout) => updateProps({ ...props, customLayout })} />
           <div className="activity-builder-rows">
             <h4>{t('activityBuilder.inputFields')}</h4>
             {(props.fields || []).map((field, index) => (
               <div className="activity-builder-row" key={field.id || index}>
-                <TextField
-                  label={t('activityBuilder.fieldId')}
-                  value={field.id}
-                  onChange={(id) => updateProps({ ...props, fields: updateRow(props.fields, index, 'id', id) })}
-                />
+                <p className="activity-grid-coordinate">{t('activityBuilder.gridCell', { row: field.row || Math.floor(index / (props.columns || 1)) + 1, column: field.column || (index % (props.columns || 1)) + 1 })}</p>
                 <TextField
                   label={t('activityBuilder.fieldLabel')}
                   value={field.label}
                   onChange={(label) => updateProps({ ...props, fields: updateRow(props.fields, index, 'label', label) })}
                 />
                 <TextField
-                  label={t('activityBuilder.fieldPlaceholder')}
-                  value={field.placeholder}
-                  onChange={(placeholder) => updateProps({ ...props, fields: updateRow(props.fields, index, 'placeholder', placeholder) })}
-                />
-                <label>
-                  {t('activityBuilder.fieldType')}
-                  <select value={field.type || 'text'} onChange={(event) => updateProps({ ...props, fields: updateRow(props.fields, index, 'type', event.target.value) })}>
-                    <option value="text">{t('activityBuilder.textType')}</option>
-                    <option value="number">{t('activityBuilder.numberType')}</option>
-                  </select>
-                </label>
-                <TextField
                   label={t('activityBuilder.correctAnswer')}
                   value={field.correctAnswer}
                   onChange={(correctAnswer) => updateProps({ ...props, fields: updateRow(props.fields, index, 'correctAnswer', correctAnswer) })}
                 />
-                <button type="button" onClick={() => updateProps({ ...props, fields: removeRow(props.fields, index) })}>
-                  {t('activityBuilder.remove')}
-                </button>
               </div>
             ))}
-            <button type="button" onClick={() => updateProps({
-              ...props,
-              fields: addRow(props.fields || [], {
-                id: `field-${(props.fields || []).length + 1}`,
-                label: `${t('activityBuilder.fieldLabel')} ${(props.fields || []).length + 1}`,
-                placeholder: '',
-                type: 'text',
-                correctAnswer: ''
-              })
-            })}>
-              {t('activityBuilder.addField')}
-            </button>
           </div>
         </>
       ) : null}
@@ -205,7 +208,6 @@ export default function ResourceSettings({ resource, value, onChange, t }) {
       {resource === 'collaborative-geogebra' ? (
         <>
           <TextField label={t('activityBuilder.roomId')} value={props.roomId} onChange={(roomId) => updateProps({ ...props, roomId })} />
-          <TextField label={t('activityBuilder.className')} value={props.className} onChange={(className) => updateProps({ ...props, className })} />
           {[
             'showStatus', 'showLegend', 'showToolBar', 'showAlgebraView', 'showAlgebraInput',
             'showMenuBar', 'showResetIcon', 'showZoomButtons', 'showFullscreenButton', 'showSuggestionButtons'
@@ -215,21 +217,6 @@ export default function ResourceSettings({ resource, value, onChange, t }) {
         </>
       ) : null}
 
-      <div className="activity-builder-card-settings">
-        <h4>{t('activityBuilder.labCard')}</h4>
-        <label>
-          {t('activityBuilder.cardDisplay')}
-          <select value={card.type || 'icon'} onChange={(event) => updateCard({ ...card, type: event.target.value })}>
-            <option value="icon">{t('activityBuilder.cardIcon')}</option>
-            <option value="expression">{t('activityBuilder.cardExpression')}</option>
-          </select>
-        </label>
-        {card.type !== 'expression' ? (
-          <TextField label={t('activityBuilder.icon')} value={card.icon} onChange={(icon) => updateCard({ ...card, icon })} />
-        ) : (
-          <TextField label={t('activityBuilder.expression')} value={card.expression} onChange={(expression) => updateCard({ ...card, expression })} />
-        )}
-      </div>
     </section>
   );
 }

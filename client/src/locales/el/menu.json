@@ -4,7 +4,7 @@
   "settings": "Ρυθμίσεις",
   "mainNavigation": "Κύρια πλοήγηση",
   "tools": "Εργαλεία",
-  "activityBuilder": "Δημιουργία δραστηριοτήτων",
+  "activityBuilder": "Διαχείριση Δραστηριοτήτων / Activity Settings",
   "cameraSpeedTest": "Έλεγχος ταχύτητας κάμερας",
   "geoGebraCollab": "Συνεργασία GeoGebra",
   "geoGebraMonitor": "Παρακολούθηση GeoGebra",
@@ -23,7 +23,7 @@
   "studentFeatureAccess": "Γρήγορη πρόσβαση",
   "toolsCard": "Εργαλεία μάθησης",
   "toolsDescription": "Άνοιξε εργαλεία μάθησης, δημιουργίας δραστηριοτήτων και συνεργασίας.",
-  "toolsFeatureBuilder": "Δημιουργία δραστηριοτήτων",
+  "toolsFeatureBuilder": "Διαχείριση Δραστηριοτήτων / Activity Settings",
   "toolsFeatureCamera": "Έλεγχος ταχύτητας κάμερας",
   "toolsFeatureGeoGebra": "Συνεργασία GeoGebra",
   "toolsFeatureSeparation": "Γραμμικός διαχωρισμός"

@@ -1,21 +1,11 @@
 import React from 'react';
 import { useSessionInputLogger } from '../activities/SessionLogContext';
-import './shared-inputs.css';
+import './SharedInputBox.css';
 
 export default function SharedInputBox({
-  label = '',
-  value,
-  onChange,
-  placeholder = '',
-  showLabel = true,
-  type = 'text',
-  className = 'lab-field poly-team-field',
-  inputClassName = '',
-  labelClassName = '',
-  disabled = false,
-  activity = '',
-  id,
-  autoComplete = 'off'
+  label = '', value, onChange, placeholder = '', showLabel = true,
+  type = 'text', className = 'lab-field poly-team-field', inputClassName = '',
+  labelClassName = '', disabled = false, activity = '', id, autoComplete = 'off'
 }) {
   const sessionLogging = useSessionInputLogger();
   const canEdit = sessionLogging?.canEdit ?? true;

@@ -1,0 +1,9 @@
+.activity-icon-widget {
+  display: grid;
+  place-items: center;
+  min-width: 3rem;
+  min-height: 3rem;
+  color: #1d4ed8;
+  font-size: 2rem;
+  line-height: 1;
+}

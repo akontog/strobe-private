@@ -156,6 +156,7 @@ export default function CollaborativeGeoGebra({
   const applyingRemoteRef = useRef(false);
   const updateTimersRef = useRef(new Map());
   const pendingObjectTimersRef = useRef(new Map());
+  const pendingRemoteEventsRef = useRef([]);
 
   const [connected, setConnected] = useState(false);
   const [errorText, setErrorText] = useState('');
@@ -425,6 +426,63 @@ export default function CollaborativeGeoGebra({
     }
   }
 
+  function applyRemoteEvent(event, payload) {
+    if (!ggbApiRef.current) {
+      pendingRemoteEventsRef.current.push({ event, payload });
+      return;
+    }
+
+    if (event === 'init') {
+      pendingObjectTimersRef.current.forEach((timer) => clearTimeout(timer));
+      pendingObjectTimersRef.current.clear();
+      const state = Array.isArray(payload && payload.state) ? payload.state : [];
+      withRemoteApply(() => {
+        clearBoard();
+        state.forEach((entry) => applyObjectFromServer(entry));
+      });
+      if (typeof onObjectsChange === 'function') {
+        onObjectsChange(state);
+      }
+      return;
+    }
+
+    if (event === 'upsert') {
+      applyObjectFromServer(payload);
+      return;
+    }
+
+    if (event === 'remove') {
+      const api = ggbApiRef.current;
+      const name = payload && payload.name;
+      if (!name || typeof api.deleteObject !== 'function') {
+        return;
+      }
+      withRemoteApply(() => api.deleteObject(name));
+      return;
+    }
+
+    if (event === 'rename') {
+      const api = ggbApiRef.current;
+      const from = payload && payload.from;
+      const to = payload && payload.to;
+      if (!from || !to || typeof api.renameObject !== 'function') {
+        return;
+      }
+      withRemoteApply(() => api.renameObject(from, to));
+      return;
+    }
+
+    if (event === 'permissions') {
+      const locked = Array.isArray(payload && payload.locked) ? payload.locked : [];
+      const info = payload && payload.info && typeof payload.info === 'object' ? payload.info : {};
+      setLockedNames(locked);
+      applyLocks(locked);
+      if (typeof onPermissionsChange === 'function') {
+        onPermissionsChange({ locked, info });
+      }
+    }
+  }
+
   useEffect(() => {
     let cancelled = false;
 
@@ -453,6 +511,8 @@ export default function CollaborativeGeoGebra({
           appletOnLoad(api) {
             ggbApiRef.current = api;
             setupGeoListeners(api);
+            const pendingEvents = pendingRemoteEventsRef.current.splice(0);
+            pendingEvents.forEach(({ event, payload }) => applyRemoteEvent(event, payload));
           }
         }, true);
 
@@ -490,59 +550,11 @@ export default function CollaborativeGeoGebra({
           setErrorText((payload && payload.message) || 'GeoGebra sync rejected by server.');
         });
 
-        socket.on('geogebra:init', (payload) => {
-          pendingObjectTimersRef.current.forEach((timer) => clearTimeout(timer));
-          pendingObjectTimersRef.current.clear();
-          withRemoteApply(() => {
-            clearBoard();
-            const state = Array.isArray(payload && payload.state) ? payload.state : [];
-            state.forEach((entry) => applyObjectFromServer(entry));
-            if (typeof onObjectsChange === 'function') {
-              onObjectsChange(state);
-            }
-          });
-        });
-
-        socket.on('geogebra:upsert', (payload) => {
-          applyObjectFromServer(payload);
-        });
-
-        socket.on('geogebra:remove', (payload) => {
-          const api = ggbApiRef.current;
-          const name = payload && payload.name;
-          if (!api || !name || typeof api.deleteObject !== 'function') {
-            return;
-          }
-
-          withRemoteApply(() => {
-            api.deleteObject(name);
-          });
-        });
-
-        socket.on('geogebra:rename', (payload) => {
-          const api = ggbApiRef.current;
-          const from = payload && payload.from;
-          const to = payload && payload.to;
-          if (!api || !from || !to || typeof api.renameObject !== 'function') {
-            return;
-          }
-
-          withRemoteApply(() => {
-            api.renameObject(from, to);
-          });
-        });
-
-        socket.on('geogebra:permissions', (payload) => {
-          const locked = Array.isArray(payload && payload.locked) ? payload.locked : [];
-          const info = payload && payload.info && typeof payload.info === 'object' ? payload.info : {};
-
-          setLockedNames(locked);
-          applyLocks(locked);
-
-          if (typeof onPermissionsChange === 'function') {
-            onPermissionsChange({ locked, info });
-          }
-        });
+        socket.on('geogebra:init', (payload) => applyRemoteEvent('init', payload));
+        socket.on('geogebra:upsert', (payload) => applyRemoteEvent('upsert', payload));
+        socket.on('geogebra:remove', (payload) => applyRemoteEvent('remove', payload));
+        socket.on('geogebra:rename', (payload) => applyRemoteEvent('rename', payload));
+        socket.on('geogebra:permissions', (payload) => applyRemoteEvent('permissions', payload));
 
         socket.connect();
       } catch (error) {
@@ -563,6 +575,7 @@ export default function CollaborativeGeoGebra({
       updateTimersRef.current.clear();
       pendingObjectTimersRef.current.forEach((timer) => clearTimeout(timer));
       pendingObjectTimersRef.current.clear();
+      pendingRemoteEventsRef.current = [];
     };
   }, [
     roomId,

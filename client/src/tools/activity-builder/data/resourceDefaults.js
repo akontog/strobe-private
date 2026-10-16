@@ -1,16 +1,14 @@
 export const RESOURCE_DEFAULTS = {
   'input-grid': {
     props: {
+      rows: 1,
       columns: 2,
-      className: '',
-      customLayout: false,
-      labelClassName: 'activity-input-grid__label',
       fields: [
-        { id: 'field-1', label: 'Input 1', placeholder: '', type: 'text', correctAnswer: '' },
-        { id: 'field-2', label: 'Input 2', placeholder: '', type: 'text', correctAnswer: '' }
+        { id: 'cell-r1-c1', row: 1, column: 1, label: 'Input 1', placeholder: '', type: 'text', correctAnswer: '' },
+        { id: 'cell-r1-c2', row: 1, column: 2, label: 'Input 2', placeholder: '', type: 'text', correctAnswer: '' }
       ]
     },
-    labCard: { type: 'icon', icon: '🧩', expression: '' }
+    widgets: []
   },
   'grouping-drag-drop': {
     props: {
@@ -23,16 +21,15 @@ export const RESOURCE_DEFAULTS = {
       bankLabel: 'Items to group'
     },
     grading: { correctGroupByItem: { 'item-1': 'group-1' } },
-    labCard: { type: 'icon', icon: '↔️', expression: '' }
+    widgets: []
   },
   'algebra-tiles': {
     props: { activity: '', tiles: [] },
-    labCard: { type: 'icon', icon: '🔢', expression: '' }
+    widgets: []
   },
   'collaborative-geogebra': {
     props: {
       roomId: 'activity-room',
-      className: '',
       showStatus: true,
       showLegend: true,
       showToolBar: true,
@@ -44,6 +41,6 @@ export const RESOURCE_DEFAULTS = {
       showFullscreenButton: false,
       showSuggestionButtons: false
     },
-    labCard: { type: 'icon', icon: '📐', expression: '' }
+    widgets: []
   }
 };

@@ -1,0 +1,36 @@
+.shared-input-box {
+  margin: 0;
+}
+
+.poly-team-field {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.85rem;
+  padding: 0.65rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.poly-team-field span {
+  font-size: 0.78rem;
+  color: #475569;
+  font-weight: 700;
+}
+
+.poly-team-field input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.65rem;
+  padding: 0.45rem 0.6rem;
+  font: inherit;
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.shared-input-box__label {
+  display: inline-block;
+}
+
+.shared-input-box__input {
+  width: 100%;
+}

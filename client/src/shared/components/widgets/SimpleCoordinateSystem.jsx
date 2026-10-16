@@ -20,6 +20,22 @@ function formatNumber(value) {
   return String(Math.round(rounded * 100) / 100);
 }
 
+export function parseLinearEquation(expression = '') {
+  const source = String(expression).replace(/\s+/g, '').replace(/^y=/i, '');
+  if (!source) return null;
+  const match = source.match(/^([+-]?(?:\d*\.)?\d*)x(?:([+-](?:\d*\.)?\d+))?$/i);
+  if (match) {
+    const coefficient = match[1] === '' || match[1] === '+' ? 1 : match[1] === '-' ? -1 : Number(match[1]);
+    const intercept = Number(match[2] || 0);
+    return Number.isFinite(coefficient) && Number.isFinite(intercept) ? { m: coefficient, b: intercept } : null;
+  }
+  if (/^[+-]?(?:\d*\.)?\d+$/.test(source)) {
+    const intercept = Number(source);
+    return Number.isFinite(intercept) ? { m: 0, b: intercept } : null;
+  }
+  return null;
+}
+
 export default function SimpleCoordinateSystem({
   lines = [],
   width = 360,
@@ -29,6 +45,8 @@ export default function SimpleCoordinateSystem({
   yMin = -10,
   yMax = 10,
   showLegend = true,
+  showGrid = true,
+  graphItems = [],
   title = 'Οπτικοποίηση συστήματος'
 }) {
   const safeWidth = Math.max(220, Number(width) || 360);
@@ -80,7 +98,14 @@ export default function SimpleCoordinateSystem({
       horizontalGrid.push({ y, py: toY(y) });
     }
 
-    const linePaths = normalizedLines.map((line) => {
+    const equationLines = (Array.isArray(graphItems) ? graphItems : [])
+      .filter((item) => item?.type === 'equation')
+      .map((item, index) => {
+        const parsed = parseLinearEquation(item.expression);
+        return parsed ? { ...parsed, id: item.id || `equation-${index}`, color: item.color || '#2563eb', label: item.expression || `y${index + 1}` } : null;
+      })
+      .filter(Boolean);
+    const linePaths = [...normalizedLines, ...equationLines].map((line) => {
       const points = [];
       const sampleCount = 60;
       for (let step = 0; step <= sampleCount; step += 1) {
@@ -103,29 +128,34 @@ export default function SimpleCoordinateSystem({
       verticalGrid,
       horizontalGrid,
       linePaths,
+      pointItems: (Array.isArray(graphItems) ? graphItems : [])
+        .filter((item) => item?.type === 'point' && Number.isFinite(Number(item.x)) && Number.isFinite(Number(item.y)))
+        .map((item, index) => ({ ...item, id: item.id || `point-${index}`, x: Number(item.x), y: Number(item.y), color: item.color || '#dc2626' })),
       xTicks: [xMin, -5, 0, 5, xMax].filter((value, index, arr) => arr.indexOf(value) === index),
       yTicks: [yMin, -5, 0, 5, yMax].filter((value, index, arr) => arr.indexOf(value) === index),
       toX,
       toY
     };
-  }, [normalizedLines, safeHeight, safeWidth, xMax, xMin, yMax, yMin]);
+  }, [graphItems, normalizedLines, safeHeight, safeWidth, xMax, xMin, yMax, yMin]);
 
   return (
     <section className="simple-coord" aria-label={title}>
-      <header className="simple-coord__header">
-        <h3>{title}</h3>
-      </header>
+      {title ? (
+        <header className="simple-coord__header">
+          <h3>{title}</h3>
+        </header>
+      ) : null}
 
       <svg className="simple-coord__svg" width={safeWidth} height={safeHeight} viewBox={`0 0 ${safeWidth} ${safeHeight}`} role="img" aria-label="Cartesian plot">
         <rect x="0" y="0" width={safeWidth} height={safeHeight} className="simple-coord__bg" />
 
-        {draw.verticalGrid.map((column) => (
+        {showGrid ? draw.verticalGrid.map((column) => (
           <line key={`vx-${column.x}`} x1={column.px} y1={draw.padding.top} x2={column.px} y2={safeHeight - draw.padding.bottom} className="simple-coord__grid" />
-        ))}
+        )) : null}
 
-        {draw.horizontalGrid.map((row) => (
+        {showGrid ? draw.horizontalGrid.map((row) => (
           <line key={`hy-${row.y}`} x1={draw.padding.left} y1={row.py} x2={safeWidth - draw.padding.right} y2={row.py} className="simple-coord__grid" />
-        ))}
+        )) : null}
 
         <line x1={draw.padding.left} y1={draw.axisY} x2={safeWidth - draw.padding.right} y2={draw.axisY} className="simple-coord__axis" />
         <line x1={draw.axisX} y1={draw.padding.top} x2={draw.axisX} y2={safeHeight - draw.padding.bottom} className="simple-coord__axis" />
@@ -142,6 +172,16 @@ export default function SimpleCoordinateSystem({
           />
         ))}
 
+        {draw.pointItems.map((point) => (
+          <circle key={point.id} cx={draw.toX(point.x)} cy={draw.toY(point.y)} r="4" fill={point.color} className="simple-coord__point" />
+        ))}
+
+        {draw.pointItems.filter((point) => point.showCoordinates !== false).map((point) => (
+          <text key={`point-label-${point.id}`} x={draw.toX(point.x) + 7} y={draw.toY(point.y) - 7} className="simple-coord__point-label">
+            ({formatNumber(point.x)}, {formatNumber(point.y)})
+          </text>
+        ))}
+
         {draw.xTicks.map((x) => (
           <text key={`tx-${x}`} x={draw.toX(x)} y={safeHeight - 8} className="simple-coord__tick" textAnchor="middle">{formatNumber(x)}</text>
         ))}
@@ -156,6 +196,18 @@ export default function SimpleCoordinateSystem({
       {showLegend ? (
         <ul className="simple-coord__legend">
           {normalizedLines.map((line) => (
+            <li key={`legend-${line.id}`}>
+              <span className="simple-coord__swatch" style={{ backgroundColor: line.color }} aria-hidden="true" />
+              <span>{line.label}</span>
+            </li>
+          ))}
+          {draw.pointItems.map((point) => (
+            <li key={`legend-${point.id}`}>
+              <span className="simple-coord__swatch simple-coord__swatch--point" style={{ backgroundColor: point.color }} aria-hidden="true" />
+              <span>({formatNumber(point.x)}, {formatNumber(point.y)})</span>
+            </li>
+          ))}
+          {draw.linePaths.filter((line) => !normalizedLines.some((legacyLine) => legacyLine.id === line.id)).map((line) => (
             <li key={`legend-${line.id}`}>
               <span className="simple-coord__swatch" style={{ backgroundColor: line.color }} aria-hidden="true" />
               <span>{line.label}</span>

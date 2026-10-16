@@ -1,17 +1,10 @@
 import React from 'react';
 import SharedInputBox from './SharedInputBox';
-import './shared-inputs.css';
+import './SharedInputRow.css';
 
 export default function SharedInputRow({
-  rowLabel = '',
-  boxes = [],
-  tokens = [],
-  className = '',
-  rowLabelClassName = '',
-  defaultLabel = '',
-  defaultPlaceholder = '',
-  hideLabels = false,
-  activity = ''
+  rowLabel = '', boxes = [], tokens = [], className = '', rowLabelClassName = '',
+  defaultLabel = '', defaultPlaceholder = '', hideLabels = false, activity = ''
 }) {
   const wrapperClassName = ['shared-input-row', className].filter(Boolean).join(' ');
   const rowLabelClasses = ['shared-input-row__label', rowLabelClassName].filter(Boolean).join(' ');
@@ -19,7 +12,6 @@ export default function SharedInputRow({
   return (
     <div className={wrapperClassName}>
       {rowLabel ? <span className={rowLabelClasses}>{rowLabel}</span> : null}
-
       {boxes.map((box, index) => (
         <React.Fragment key={box.id || box.key || `box-${index}`}>
           <SharedInputBox
@@ -37,7 +29,6 @@ export default function SharedInputRow({
             id={box.id}
             autoComplete={box.autoComplete || 'off'}
           />
-
           {tokens[index] ? <span className="shared-input-row__token">{tokens[index]}</span> : null}
         </React.Fragment>
       ))}

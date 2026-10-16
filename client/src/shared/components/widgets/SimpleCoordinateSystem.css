@@ -33,6 +33,21 @@
   stroke-width: 1.4;
 }
 
+.simple-coord__point {
+  stroke: #fff;
+  stroke-width: 1.5;
+}
+
+.simple-coord__point-label {
+  fill: #334155;
+  font-size: 9px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-linejoin: round;
+  stroke-width: 3px;
+}
+
 .simple-coord__tick {
   fill: #64748b;
   font-size: 10px;
@@ -68,4 +83,11 @@
   height: 0.8rem;
   border-radius: 0.2rem;
   border: 1px solid rgba(15, 23, 42, 0.18);
+}
+
+.simple-coord__swatch--point {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: #dc2626;
 }

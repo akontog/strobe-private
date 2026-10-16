@@ -78,6 +78,14 @@ C:.
 |   |   |       SharedCommonZoneLayout.jsx
 |   |   |       Toolbar.jsx
 |   |   |       
+|   |   +---primitives
+|   |   |       BlueNumberBox.jsx
+|   |   |       MathFormula.jsx
+|   |   |       SharedInputBox.css
+|   |   |       SharedInputBox.jsx
+|   |   |       SharedInputRow.css
+|   |   |       SharedInputRow.jsx
+|   |   |       
 |   |   +---resources
 |   |   |       AlgebraTiles.css
 |   |   |       AlgebraTiles.jsx
@@ -100,11 +108,12 @@ C:.
 |   |   |       studentTableColumnPresets.jsx
 |   |   |       
 |   |   \---widgets
-|   |           BlueNumberBox.jsx
-|   |           MathFormula.jsx
-|   |           shared-inputs.css
-|   |           SharedInputBox.jsx
-|   |           SharedInputRow.jsx
+|   |           ActivityWidgets.jsx
+|   |           EquationWidget.css
+|   |           EquationWidget.jsx
+|   |           IconWidget.css
+|   |           IconWidget.jsx
+|   |           registry.js
 |   |           SimpleCoordinateSystem.css
 |   |           SimpleCoordinateSystem.jsx
 |   |           
@@ -141,10 +150,13 @@ C:.
 |   |   +---components
 |   |   |       EditorPanel.jsx
 |   |   |       index.js
-|   |   |       LibraryPanel.jsx
+|   |   |       ResourceLayoutPreview.css
+|   |   |       ResourceLayoutPreview.jsx
+|   |   |       ResourceSettings.jsx
+|   |   |       WidgetSettings.jsx
 |   |   |       
 |   |   +---data
-|   |   |       defaultConfig.js
+|   |   |       resourceDefaults.js
 |   |   |       
 |   |   \---logic
 |   |           activityApi.js
