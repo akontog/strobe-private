@@ -1,7 +1,7 @@
 export const teacherTemplate = String.raw`<div class="round-panel lab-card">
   <div class="round-grid">
     <div class="round-control">
-      <div class="lbl">ΧΡΟΝΟΣ ΓΥΡΟΥ</div>
+      <div class="lbl">ΔΙΑΡΚΕΙΑ ΓΥΡΟΥ</div>
       <div class="val" id="round-time-value">60 sec</div>
       <input type="range" id="round-time-slider" min="20" max="120" step="1" value="60" oninput="updateRoundControlLabels()">
       <div class="scale"><span>20 sec</span><span>120 sec</span></div>
@@ -16,65 +16,22 @@ export const teacherTemplate = String.raw`<div class="round-panel lab-card">
 
   <div class="round-actions">
     <button class="round-start" id="round-start-btn" onclick="startRoundFromTeacher()">ΕΝΑΡΞΗ ΓΥΡΟΥ</button>
-    <button class="round-stop" id="round-stop-btn" onclick="stopRoundManually()" disabled>ΧΕΙΡΟΚΙΝΗΤΟ STOP</button>
-    <button class="round-reset" id="round-reset-btn" onclick="resetTournamentScores()">ΣΥΝΟΛΙΚΟ RESET</button>
+    <button class="round-stop" id="round-stop-btn" onclick="stopRoundManually()" disabled>ΔΙΑΚΟΠΗ</button>
+    <button class="round-reset" id="round-reset-btn" onclick="resetTournamentScores()">ΜΗΔΕΝΙΣΜΟΣ</button>
     <div class="round-meta">
-      <span id="round-info">Γύρος: —</span>
-      <span class="round-timer" id="round-timer">—</span>
+      <span id="round-info">Γύρος: -</span>
+      <span class="round-timer" id="round-timer">-</span>
     </div>
   </div>
 
-  <div class="round-status" id="round-status">Πάτησε «ΕΝΑΡΞΗ ΓΥΡΟΥ» για νέο παιχνίδι.</div>
-  <div class="round-status round-result" id="round-result">—</div>
-</div>
-
-<div class="accordion chart-wrap" data-accordion-id="teacher-live-board">
-  <button type="button" class="accordion-btn chart-header" aria-expanded="true">
-    <span class="c-lbl">ΤΡΕΧΟΥΣΑ ΒΑΘΜΟΛΟΓΙΑ (LIVE)</span>
-    <span class="accordion-icon" id="live-board-arrow">−</span>
-  </button>
-  <div class="accordion-content chart-body open" id="live-board-wrap">
-    <div class="board">
-      <div class="board-header live-board-header">
-        <span>#</span>
-        <span>ΟΜΑΔΑ</span>
-        <span>\(\hat{\pi}\)</span>
-        <span>ΣΦΑΛΜΑ</span>
-        <span>ΒΕΛΟΝΕΣ</span>
-        <span>HITS</span>
-        <span>MISS</span>
-      </div>
-      <div class="board-body" id="live-board-body">
-        <div class="empty">Καμία ομάδα δεν είναι συνδεδεμένη ακόμα...</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="accordion chart-wrap" data-accordion-id="teacher-total-board">
-  <button type="button" class="accordion-btn chart-header" aria-expanded="true">
-    <span class="c-lbl">ΣΥΝΟΛΙΚΗ ΒΑΘΜΟΛΟΓΙΑ</span>
-    <span class="accordion-icon" id="total-board-arrow">−</span>
-  </button>
-  <div class="accordion-content chart-body open" id="total-board-wrap">
-    <div class="board">
-      <div class="board-header score-board-header">
-        <span>#</span>
-        <span>ΟΜΑΔΑ</span>
-        <span>ΓΥΡΟΣ</span>
-        <span>ΣΥΝΟΛΟ</span>
-      </div>
-      <div class="board-body" id="total-board-body">
-        <div class="empty">Καμία ομάδα δεν είναι συνδεδεμένη ακόμα...</div>
-      </div>
-    </div>
-  </div>
+  <div class="round-status" id="round-status">Πάτησε «Έναρξη γύρου» για νέο παιχνίδι.</div>
+  <div class="round-status round-result" id="round-result">-</div>
 </div>
 
 <div class="accordion chart-wrap" data-accordion-id="teacher-chart">
   <button type="button" class="accordion-btn chart-header" aria-expanded="true">
-    <span class="c-lbl">ΣΥΓΚΛΙΣΗ ΟΜΑΔΩΝ ΠΡΟΣ \(\pi\)</span>
-    <span class="accordion-icon" id="teacher-chart-arrow">−</span>
+    <span class="c-lbl">ΣΥΓΚΛΙΣΗ ΟΜΑΔΩΝ ΠΡΟΣ π</span>
+    <span class="accordion-icon" id="teacher-chart-arrow">⌄</span>
   </button>
   <div class="accordion-content chart-body open" id="teacher-chart-body">
     <canvas id="teacher-chart-cv"></canvas>

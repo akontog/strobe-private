@@ -11,7 +11,7 @@
   font-weight: 700;
 }
 
-.poly-lab-header .hero-title {
+.poly-lab-header .hero {
   margin-top: 0.5rem;
   min-block-size: 5rem;
   display: flex;
@@ -19,7 +19,7 @@
   justify-content: center;
 }
 
-.poly-lab-header .hero-equation {
+.poly-lab-header .hero-title {
   box-sizing: border-box;
   display: flex;
   align-items: center;

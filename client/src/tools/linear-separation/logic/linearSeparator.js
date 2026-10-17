@@ -35,7 +35,7 @@ export function dot(a, b) {
 // Επιστρέφει 
 export function findIntegerSeparator(positive, negative, maxRadius = 12) {
   if (positive.length === 0 || negative.length === 0) {
-    return { separable: false, reason: 'Χρειάζεται τουλάχιστον ένα θετικό και ένα αρνητικό δείγμα.' };
+    return { separable: false, reason: 'missingClasses' };
   }
 
   const dim = positive[0].x.length;
@@ -62,6 +62,7 @@ export function findIntegerSeparator(positive, negative, maxRadius = 12) {
 
   return {
     separable: false,
-    reason: `Δεν βρέθηκε ακέραιος διαχωριστής για |w_j| <= ${maxRadius}.`
+    reason: 'separatorLimit',
+    maxRadius
   };
 }

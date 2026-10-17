@@ -6,6 +6,7 @@ import SelectionSummaryAccordion from './components/SelectionSummaryAccordion';
 import TeacherPanel from './components/TeacherPanel';
 import {
   StudentTable,
+  HeroTitle,
   ConnectionNameControl,
   randomIdentityColor,
   readIdentityColor,
@@ -378,13 +379,10 @@ const App = ({ role = 'teacher' }) => {
   return (
     <div className={isTeacher ? 'primes-app is-teacher' : 'primes-app is-student'}>
       <div className="teacher-card primes-card">
-        <header className="hero-title primes-hero">
+        <header className="primes-hero">
           <div>
             <p className="primes-kicker">{t('kicker')}</p>
-            <h1>{t('title')}</h1>
-            <p className="primes-subtitle">
-              {t('subtitle')}
-            </p>
+            <HeroTitle title={t('title')} subtitle={t('subtitle')} className="primes-title" />
           </div>
           <ConnectionNameControl
             connected

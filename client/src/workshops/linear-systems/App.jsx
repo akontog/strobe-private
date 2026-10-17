@@ -168,6 +168,7 @@ function extractSystemEquations(activeItem) {
 }
 
 export default function App({ role = 'student' }) {
+  const { t } = useTranslation('linearSystems');
   const { t: tScores } = useTranslation('scores');
   const sessionLogging = useSessionInputLogger();
   const isTeacher = role === 'teacher';
@@ -234,8 +235,12 @@ export default function App({ role = 'student' }) {
   );
 
   const groupingGroups = useMemo(
-    () => (LESSON_DATA[selectedActivityId] && LESSON_DATA[selectedActivityId].groups) || [],
-    [selectedActivityId]
+    () => ((LESSON_DATA[selectedActivityId] && LESSON_DATA[selectedActivityId].groups) || []).map((group) => ({
+      ...group,
+      title: t(group.titleKey),
+      hint: t(group.hintKey)
+    })),
+    [selectedActivityId, t]
   );
 
   const activeGroupingPlacements = useMemo(() => groupingPlacementsByActivity[selectedActivityId] || {}, [groupingPlacementsByActivity, selectedActivityId]);
@@ -349,7 +354,7 @@ export default function App({ role = 'student' }) {
       const isComplete = Boolean(x1 && y1 && rhs1 && x2 && y2 && rhs2);
       return {
         ready: hasAnyInput,
-        feedback: isComplete ? 'Το σύστημα ενημερώθηκε και αποτυπώθηκε στο γράφημα.' : 'Συμπλήρωσε σταδιακά τους συντελεστές του συστήματος.',
+        feedback: isComplete ? t('ui.feedback.systemUpdated') : t('ui.feedback.enterCoefficients'),
         invalidIds: [],
         payload: {
           completed: isComplete ? '1' : '0',
@@ -380,8 +385,8 @@ export default function App({ role = 'student' }) {
       const correctCount = expectedItems.length - invalidIds.length;
       const score = invalidIds.length === 0 ? 10 : 0;
       const feedback = invalidIds.length === 0
-        ? 'Άριστα! Όλα τα συστήματα ομαδοποιήθηκαν σωστά.'
-        : 'Υπάρχουν λάθη στην ομαδοποίηση. Έλεγξε τα κόκκινα στοιχεία.';
+        ? t('ui.feedback.allGrouped')
+        : t('ui.feedback.groupingErrors');
 
       return {
         ready: true,
@@ -407,7 +412,7 @@ export default function App({ role = 'student' }) {
     }
 
     const score = (answerX === normalizeText(expected && expected.x) ? 5 : 0) + (answerY === normalizeText(expected && expected.y) ? 5 : 0);
-    const feedback = score === 10 ? 'Σωστό αποτέλεσμα.' : `Μερικό/λάθος αποτέλεσμα (${score}/10).`;
+    const feedback = score === 10 ? t('ui.feedback.correct') : t('ui.feedback.partial', { score });
 
     return {
       ready: true,
@@ -420,7 +425,7 @@ export default function App({ role = 'student' }) {
         y: answerY
       }
     };
-  }, [activeActivity.mode, activeEquationInputs.equation1, activeEquationInputs.equation2, activeGroupingPlacements, activeItem, activeItems, answer.x, answer.y, coordinateLines.length]);
+  }, [activeActivity.mode, activeEquationInputs.equation1, activeEquationInputs.equation2, activeGroupingPlacements, activeItem, activeItems, answer.x, answer.y, coordinateLines.length, t]);
 
   useEffect(() => {
     setInvalidGroupingItemIds(evaluation.invalidIds);
@@ -665,10 +670,10 @@ export default function App({ role = 'student' }) {
   const isGroupingMode = activeActivity.mode === 'grouping';
 
   const leftPanel = (
-    <div className="lab-card lab-card--highlight poly-expression-card linear-expression-card" aria-label="σύστημα">
-      <p className="lab-mini-label poly-mini-label">Σύστημα</p>
+    <div className="lab-card lab-card--highlight poly-expression-card linear-expression-card" aria-label={t('ui.systemAria')}>
+      <p className="lab-mini-label poly-mini-label">{t('ui.system')}</p>
       {activeActivity.mode === 'graphing-input' ? (
-        <div className="linear-system-preview" aria-label="system preview">
+        <div className="linear-system-preview" aria-label={t('ui.systemPreview')}>
           <p>{formatEquationFromRow(activeEquationInputs.equation1)}</p>
           <p>{formatEquationFromRow(activeEquationInputs.equation2)}</p>
         </div>
@@ -697,17 +702,17 @@ export default function App({ role = 'student' }) {
                   defaultPlaceholder=""
                   boxes={[
                     {
-                      label: 'συντ. x',
+                      label: t('ui.coefficientX'),
                       value: activeEquationInputs.equation1.x,
                       onChange: (event) => updateEquationInput('equation1', 'x', event.target.value)
                     },
                     {
-                      label: 'συντ. y',
+                      label: t('ui.coefficientY'),
                       value: activeEquationInputs.equation1.y,
                       onChange: (event) => updateEquationInput('equation1', 'y', event.target.value)
                     },
                     {
-                      label: 'δεξιά τιμή',
+                      label: t('ui.rightHandSide'),
                       value: activeEquationInputs.equation1.rhs,
                       onChange: (event) => updateEquationInput('equation1', 'rhs', event.target.value)
                     }
@@ -722,17 +727,17 @@ export default function App({ role = 'student' }) {
                   defaultPlaceholder=""
                   boxes={[
                     {
-                      label: 'συντ. x',
+                      label: t('ui.coefficientX'),
                       value: activeEquationInputs.equation2.x,
                       onChange: (event) => updateEquationInput('equation2', 'x', event.target.value)
                     },
                     {
-                      label: 'συντ. y',
+                      label: t('ui.coefficientY'),
                       value: activeEquationInputs.equation2.y,
                       onChange: (event) => updateEquationInput('equation2', 'y', event.target.value)
                     },
                     {
-                      label: 'δεξιά τιμή',
+                      label: t('ui.rightHandSide'),
                       value: activeEquationInputs.equation2.rhs,
                       onChange: (event) => updateEquationInput('equation2', 'rhs', event.target.value)
                     }
@@ -746,7 +751,7 @@ export default function App({ role = 'student' }) {
 
       {activeActivity.mode === 'grouping' ? (
         <>
-          <p className="linear-note">Ομαδοποίησε κάθε σύστημα στις 3 ομάδες: καμία, μία, άπειρες λύσεις.</p>
+          <p className="linear-note">{t('ui.groupingInstruction')}</p>
           <GroupingDragDrop
             activity={`linear-systems:${selectedActivityId}`}
             items={activeItems}
@@ -760,14 +765,14 @@ export default function App({ role = 'student' }) {
               setInvalidGroupingItemIds([]);
             }}
             invalidItemIds={invalidGroupingItemIds}
-            bankLabel="Συστήματα προς ομαδοποίηση"
+            bankLabel={t('ui.groupingBank')}
           />
         </>
       ) : null}
 
       {activeActivity.mode === 'algebra' ? (
         <>
-          <p className="linear-note">Συμπλήρωσε τη λύση του συστήματος.</p>
+          <p className="linear-note">{t('ui.solutionInstruction')}</p>
           {activeItem && activeItem.eliminationLatex ? (
             <div className="linear-expression">
               <MathFormula formula={`\\(${activeItem.eliminationLatex}\\)`} />
@@ -782,7 +787,7 @@ export default function App({ role = 'student' }) {
                 id: 'x',
                 label: 'x',
                 value: answer.x,
-                placeholder: 'π.χ. 3',
+                placeholder: t('ui.example', { value: '3' }),
                 inputClassName: 'activity-input-grid__input',
                 onChange: (value) => setAnswer((prev) => ({ ...prev, x: value }))
               },
@@ -790,7 +795,7 @@ export default function App({ role = 'student' }) {
                 id: 'y',
                 label: 'y',
                 value: answer.y,
-                placeholder: 'π.χ. 1',
+                placeholder: t('ui.example', { value: '1' }),
                 inputClassName: 'activity-input-grid__input',
                 onChange: (value) => setAnswer((prev) => ({ ...prev, y: value }))
               }
@@ -801,9 +806,9 @@ export default function App({ role = 'student' }) {
 
       {activeActivity.mode === 'embodied' ? (
         <div className="linear-placeholder">
-          <strong>Embodied mode placeholder</strong>
-          <p>Η δραστηριότητα είναι δηλωμένη και θα συνδεθεί με camera tracking στη 2η φάση.</p>
-          <p>Θα χρησιμοποιηθούν zone mappings και real-time feedback ανά studentId.</p>
+          <strong>{t('ui.embodiedTitle')}</strong>
+          <p>{t('ui.embodiedDescription')}</p>
+          <p>{t('ui.embodiedZones')}</p>
         </div>
       ) : null}
 
@@ -815,7 +820,7 @@ export default function App({ role = 'student' }) {
     <aside className="lab-card lab-card--panel poly-team-card linear-graph-card">
       <PlotWidget
         lines={coordinateLines}
-        title="Γραφική παράσταση"
+        title={t('ui.graph')}
         showLegend
         xMin={-6}
         xMax={6}
@@ -829,8 +834,8 @@ export default function App({ role = 'student' }) {
     <div className="linear-lab-shell">
       <header className="linear-lab-header">
         <HeroTitle
-          title={`${activeActivity.code} ${activeActivity.title}`}
-          subtitle={activeActivity.objective}
+          title={`${activeActivity.code} ${t(activeActivity.titleKey)}`}
+          subtitle={t(activeActivity.objectiveKey)}
         />
       </header>
 
@@ -847,10 +852,10 @@ export default function App({ role = 'student' }) {
 
       {isTeacher ? (
         <ActivitiesMenu
-          title="Δραστηριότητα"
+          title={t('ui.activity')}
           icon="🎯"
-          label="Επιλογή δραστηριότητας"
-          options={ACTIVITY_LIBRARY.map((activity) => ({ value: activity.id, label: `${activity.code} ${activity.title}` }))}
+          label={t('ui.selectActivity')}
+          options={ACTIVITY_LIBRARY.map((activity) => ({ value: activity.id, label: `${activity.code} ${t(activity.titleKey)}` }))}
           value={selectedActivityId}
           onChange={setActivity}
         />
@@ -861,14 +866,14 @@ export default function App({ role = 'student' }) {
           <SettingsAccordion>
             <CommonSessionSettings />
             <div className="lab-data-section data-section">
-              <label className="shared-activity-label" htmlFor="linear-expression">Άσκηση</label>
+              <label className="shared-activity-label" htmlFor="linear-expression">{t('ui.exercise')}</label>
               <select
                 id="linear-expression"
                 className="shared-activity-select"
                 value={selectedItemId}
                 onChange={(event) => setLessonItem(event.target.value)}
               >
-                {activeItems.length === 0 ? <option value="">Δεν υπάρχουν ασκήσεις</option> : null}
+                {activeItems.length === 0 ? <option value="">{t('ui.noExercises')}</option> : null}
                 {activeItems.map((item, index) => (
                   <option key={item.id} value={item.id}>{`${index + 1}.`}</option>
                 ))}
@@ -880,13 +885,13 @@ export default function App({ role = 'student' }) {
                   checked={showEquationGraph}
                   onChange={(event) => setGraphVisibility(event.target.checked)}
                 />
-                <span>Εμφάνιση οπτικής γραφικής απεικόνισης (δεξιά)</span>
+                <span>{t('ui.showGraph')}</span>
               </label>
             </div>
           </SettingsAccordion>
 
           <StudentTable
-            title="Πίνακας μαθητών"
+            title={t('ui.studentTable')}
             participants={sortedParticipants}
             getRowStyle={(entry) => {
               const completed = String(entry?.answers?.completed || '') === '1';
@@ -898,14 +903,14 @@ export default function App({ role = 'student' }) {
                 : undefined;
             }}
             columns={[
-              { key: 'activityCode', label: 'Δραστηριότητα', render: (entry) => entry.activityId || '-' },
-              { key: 'itemId', label: 'Άσκηση', render: (entry) => entry.itemId || '-' },
-              { key: 'equation1', label: 'Εξίσωση 1', render: (entry) => entry.answers?.equation1 || '-' },
-              { key: 'equation2', label: 'Εξίσωση 2', render: (entry) => entry.answers?.equation2 || '-' },
-              { key: 'classification', label: 'Ομαδοποίηση', render: (entry) => entry.answers?.classification || '-' },
+              { key: 'activityCode', label: t('ui.activity'), render: (entry) => entry.activityId || '-' },
+              { key: 'itemId', label: t('ui.exercise'), render: (entry) => entry.itemId || '-' },
+              { key: 'equation1', label: t('ui.equation', { number: 1 }), render: (entry) => entry.answers?.equation1 || '-' },
+              { key: 'equation2', label: t('ui.equation', { number: 2 }), render: (entry) => entry.answers?.equation2 || '-' },
+              { key: 'classification', label: t('ui.classification'), render: (entry) => entry.answers?.classification || '-' },
               ...(sessionLogging?.scoreVisible ? [{ key: 'score', label: tScores('score'), render: (entry) => entry.answers?.score ?? '-' }] : [])
             ]}
-            emptyMessage="Δεν υπάρχουν ακόμη μαθητές."
+            emptyMessage={t('ui.noStudents')}
           />
         </div>
       ) : null}

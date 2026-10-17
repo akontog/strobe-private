@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { HeroTitle } from '../../shared/components';
 import './CameraSpeedTest.css';
 
 function pushBounded(list, value, max = 40) {
@@ -50,6 +52,7 @@ function loadRealtimeSocketScript() {
 }
 
 export default function CameraSpeedTest() {
+  const { t } = useTranslation('interface');
   const captureCanvasRef = useRef(null);
   const trackedCanvasRef = useRef(null);
   const videoRef = useRef(null);
@@ -72,7 +75,7 @@ export default function CameraSpeedTest() {
   const [sendFps, setSendFps] = useState(8);
   const [jpegQuality, setJpegQuality] = useState(0.65);
   const [running, setRunning] = useState(false);
-  const [statusText, setStatusText] = useState('Idle');
+  const [statusText, setStatusText] = useState('idle');
   const [trackingBackend, setTrackingBackend] = useState('-');
   const [boxesCount, setBoxesCount] = useState(0);
   const [rttAvg, setRttAvg] = useState('-');
@@ -224,7 +227,7 @@ export default function CameraSpeedTest() {
     }
 
     setRunning(false);
-    setStatusText('Stopped');
+    setStatusText('stopped');
   }
 
   async function ensureSocket() {
@@ -242,12 +245,12 @@ export default function CameraSpeedTest() {
     state.socket = window.createRealtimeSocket({ autoConnect: true, reconnect: true });
 
     state.socket.on('connect', () => {
-      setStatusText('Realtime connected');
+      setStatusText('realtimeConnected');
       setErrorText('');
     });
 
     state.socket.on('disconnect', () => {
-      setStatusText('Realtime disconnected');
+      setStatusText('realtimeDisconnected');
     });
 
     state.socket.on('camera-speed-result', (payload) => {
@@ -312,14 +315,14 @@ export default function CameraSpeedTest() {
 
       setBoxesCount(0);
       setRunning(true);
-      setStatusText('Streaming test started');
+      setStatusText('streamingStarted');
       setErrorText('');
 
       drawCaptureLoop();
       startSendLoop();
     } catch (error) {
       setErrorText(error instanceof Error ? error.message : 'Camera permission denied or unavailable.');
-      setStatusText('Cannot start test');
+      setStatusText('cannotStart');
     }
   }
 
@@ -341,50 +344,51 @@ export default function CameraSpeedTest() {
   }, []);
 
   return (
-    <section className="tool-page camera-speed-test-page">
-      <header className="tool-page-header">
-        <h1>Camera Speed Test</h1>
-        <p>Raw camera frame vs server-tracked frame (DeepSORT).</p>
+    <>
+      <header className="camera-speed-test-header">
+        <HeroTitle title={t('cameraSpeedTest')} subtitle={t('cameraSpeedDescription')} />
       </header>
 
+      <section className="tool-page camera-speed-test-page">
       <div className="tool-controls-row">
-        <button type="button" className="tool-btn tool-btn--primary" onClick={startTest} disabled={running}>Start Test</button>
-        <button type="button" className="tool-btn tool-btn--danger" onClick={stopTest} disabled={!running}>Stop Test</button>
+        <button type="button" className="tool-btn tool-btn--primary" onClick={startTest} disabled={running}>{t('startTest')}</button>
+        <button type="button" className="tool-btn tool-btn--danger" onClick={stopTest} disabled={!running}>{t('stopTest')}</button>
 
         <label>
-          Send FPS
+          {t('sendFps')}
           <input type="number" min="1" max="30" step="1" value={sendFps} onChange={(event) => setSendFps(Number(event.target.value))} />
         </label>
 
         <label>
-          JPEG quality
+          {t('jpegQuality')}
           <input type="number" min="0.2" max="0.95" step="0.05" value={jpegQuality} onChange={(event) => setJpegQuality(Number(event.target.value))} />
         </label>
 
-        <div className={statusClassName}>{errorText || statusText}</div>
+        <div className={statusClassName}>{errorText || t(`cameraStatus.${statusText}`)}</div>
       </div>
 
       <div className="tool-stats-grid">
-        <div className="tool-stat"><span>Tracking Backend</span><strong>{trackingBackend}</strong></div>
-        <div className="tool-stat"><span>Round Trip (avg)</span><strong>{rttAvg}</strong></div>
-        <div className="tool-stat"><span>Server Proc (avg)</span><strong>{serverAvg}</strong></div>
-        <div className="tool-stat"><span>Send FPS</span><strong>{sendFpsOut}</strong></div>
-        <div className="tool-stat"><span>Response FPS</span><strong>{recvFpsOut}</strong></div>
-        <div className="tool-stat"><span>Tracked Boxes</span><strong>{boxesCount}</strong></div>
+        <div className="tool-stat"><span>{t('trackingBackend')}</span><strong>{trackingBackend}</strong></div>
+        <div className="tool-stat"><span>{t('roundTripAverage')}</span><strong>{rttAvg}</strong></div>
+        <div className="tool-stat"><span>{t('serverProcessAverage')}</span><strong>{serverAvg}</strong></div>
+        <div className="tool-stat"><span>{t('sendFps')}</span><strong>{sendFpsOut}</strong></div>
+        <div className="tool-stat"><span>{t('responseFps')}</span><strong>{recvFpsOut}</strong></div>
+        <div className="tool-stat"><span>{t('trackedBoxes')}</span><strong>{boxesCount}</strong></div>
       </div>
 
       <div className="camera-canvas-grid">
         <article className="tool-card">
-          <h2>Camera Capture (client)</h2>
+          <h2>{t('cameraCaptureClient')}</h2>
           <canvas ref={captureCanvasRef} width={960} height={540} />
         </article>
         <article className="tool-card">
-          <h2>Tracked Frame (server response)</h2>
+          <h2>{t('trackedFrameServer')}</h2>
           <canvas ref={trackedCanvasRef} width={960} height={540} />
         </article>
       </div>
 
       <video ref={videoRef} autoPlay playsInline muted hidden />
-    </section>
+      </section>
+    </>
   );
 }

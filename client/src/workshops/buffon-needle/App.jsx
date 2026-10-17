@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FullScreenButton, HeroTitle, ChatAccordion } from '../../shared/components';
+import { FullScreenButton, HeroTitle, ChatAccordion, SettingsAccordion, StudentTable } from '../../shared/components';
 import { studentTemplate } from './data/student-template';
 import { teacherTemplate } from './data/teacher-template';
 import { mountBuffonStudent } from './logic/student-logic';
@@ -9,7 +9,9 @@ import './App.css';
 
 function App({ role = 'teacher' }) {
   const rootRef = useRef(null);
+  const settingsHostRef = useRef(null);
   const { t: tBuffon } = useTranslation('buffon');
+  const [standings, setStandings] = React.useState([]);
 
   useEffect(() => {
     const rootElement = rootRef.current;
@@ -21,11 +23,15 @@ function App({ role = 'teacher' }) {
       rootElement.innerHTML = teacherTemplate;
     }
 
-    applyTemplateTranslations(rootElement, role, tBuffon, true);
+    if (role === 'teacher') {
+      const settings = rootElement.querySelector('.round-panel');
+      if (settings && settingsHostRef.current) settingsHostRef.current.appendChild(settings);
+    }
+    applyTemplateTranslations(rootElement, role, tBuffon, true, settingsHostRef.current);
 
     const cleanup = role === 'student'
       ? mountBuffonStudent(rootElement, translateBuffon)
-      : mountBuffonTeacher(rootElement, translateBuffon);
+      : mountBuffonTeacher(rootElement, translateBuffon, setStandings);
 
     if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
       window.MathJax.typesetPromise([rootElement]).catch(() => {});
@@ -38,7 +44,7 @@ function App({ role = 'teacher' }) {
   }, [role]);
 
   useEffect(() => {
-    if (rootRef.current) applyTemplateTranslations(rootRef.current, role, tBuffon);
+    if (rootRef.current) applyTemplateTranslations(rootRef.current, role, tBuffon, false, settingsHostRef.current);
   }, [role, tBuffon]);
 
   return (
@@ -54,14 +60,37 @@ function App({ role = 'teacher' }) {
         <FullScreenButton />
         <div ref={rootRef} className={`buffon-content ${role}`} />
       </section>
+      {role === 'teacher' ? (
+        <>
+          <SettingsAccordion>
+            <div ref={settingsHostRef} className="buffon-settings-host buffon-content teacher" />
+          </SettingsAccordion>
+          <StudentTable
+            title={tBuffon('standings')}
+            participants={standings}
+            columns={[
+              { key: 'liveRank', label: tBuffon('liveRank'), render: (entry) => entry.liveRank },
+              { key: 'totalRank', label: tBuffon('totalRank'), render: (entry) => entry.totalRank },
+              { key: 'estimate', label: tBuffon('estimate'), render: (entry) => entry.piEstimate },
+              { key: 'error', label: tBuffon('error'), render: (entry) => entry.error },
+              { key: 'drops', label: tBuffon('drops'), render: (entry) => entry.drops },
+              { key: 'hits', label: tBuffon('hits'), render: (entry) => entry.hits },
+              { key: 'misses', label: tBuffon('misses'), render: (entry) => entry.misses },
+              { key: 'roundPoints', label: tBuffon('roundPoints'), render: (entry) => entry.roundPoints },
+              { key: 'totalPoints', label: tBuffon('total'), render: (entry) => entry.totalPoints }
+            ]}
+            emptyMessage={tBuffon('noTeams')}
+          />
+        </>
+      ) : null}
       <ChatAccordion />
     </div>
   );
 }
 
-function applyTemplateTranslations(rootElement, role, t, initialize = false) {
+function applyTemplateTranslations(rootElement, role, t, initialize = false, settingsRoot = null) {
   const setText = (selector, key, options) => {
-    const element = rootElement.querySelector(selector);
+    const element = settingsRoot?.querySelector(selector) || rootElement.querySelector(selector);
     if (element) element.textContent = t(key, options);
   };
 
@@ -89,12 +118,12 @@ function applyTemplateTranslations(rootElement, role, t, initialize = false) {
       if (statLabels[index + 1]) statLabels[index + 1].textContent = t(key);
     });
   } else {
-    const labels = rootElement.querySelectorAll('.round-control .lbl');
+    const labels = (settingsRoot || rootElement).querySelectorAll('.round-control .lbl');
     if (labels[0]) labels[0].textContent = t('roundDuration');
     if (labels[1]) labels[1].textContent = t('targetError');
 
     const seconds = t('seconds');
-    rootElement.querySelectorAll('.round-control .scale span').forEach((element) => {
+    (settingsRoot || rootElement).querySelectorAll('.round-control .scale span').forEach((element) => {
       element.textContent = element.textContent.replace(/\s*sec$/, ` ${seconds}`);
     });
 
@@ -105,19 +134,7 @@ function applyTemplateTranslations(rootElement, role, t, initialize = false) {
       setText('#round-status', 'initialTeacherStatus');
       setText('#round-info', 'round');
     }
-    setText('[data-accordion-id="teacher-live-board"] .c-lbl', 'liveBoard');
-    setText('[data-accordion-id="teacher-total-board"] .c-lbl', 'totalBoard');
     setText('[data-accordion-id="teacher-chart"] .c-lbl', 'student.chart');
-    rootElement.querySelectorAll('.board-header').forEach((header, index) => {
-      const keys = index === 0
-        ? ['', 'team', 'estimate', 'error', 'drops', 'hits', 'misses']
-        : index === 1
-          ? ['', 'team', 'round', 'total']
-          : [];
-      header.querySelectorAll('span').forEach((span, spanIndex) => {
-        if (keys[spanIndex]) span.textContent = t(keys[spanIndex]);
-      });
-    });
   }
 }
 

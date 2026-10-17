@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { findIntegerSeparator, dot } from './logic/linearSeparator';
 import { inferFeatureKeys, formatRule } from './logic/datasetUtils';
-import { Accordion } from '../../shared/components';
+import { Accordion, HeroTitle } from '../../shared/components';
 import { InputPanel, SettingsPanel, ResultsPanel } from './components';
 
 import { DEFAULT_JSON } from './data/defaultDataset';
@@ -9,6 +10,7 @@ import './LinearSeparation.css';
 
 
 export default function LinearSeparation() {
+  const { t } = useTranslation('interface');
   const [jsonText, setJsonText] = useState(DEFAULT_JSON);
   const [parsed, setParsed] = useState(() => {
     try {
@@ -113,11 +115,10 @@ export default function LinearSeparation() {
   return (
     <section className="tool-page linear-tool-page">
       <header className="tool-page-header">
-        <h1>Linear Separation Tool</h1>
-        <p>Δώσε JSON τύπου datasets.js και βρες υπερεπίπεδο για target-vs-rest.</p>
+        <HeroTitle title={t('linearSeparation')} subtitle={t('linearSeparationLead')} />
       </header>
       <Accordion 
-        title="Εισαγωγή Dataset JSON"
+        title={t('linearSeparationInputTitle')}
         icon= "📥"
         open={false}
       >
@@ -131,7 +132,7 @@ export default function LinearSeparation() {
       </Accordion>
       
       <Accordion 
-        title="Ρυθμίσεις"
+        title={t('settings')}
         icon= "⚙️"
         open={false}  
       >
@@ -145,7 +146,7 @@ export default function LinearSeparation() {
         />
       </Accordion>
     <Accordion
-      title="Αποτέλεσμα"
+      title={t('result')}
       icon= "📊"
       open={false}
     >

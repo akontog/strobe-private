@@ -1,10 +1,13 @@
 .comm-console { display: grid; gap: 1.25rem; }
-.comm-console__header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-.comm-console__header h1, .comm-console__header p { margin: 0; }
+.comm-console__header { display: flex; align-items: center; gap: 1rem; }
+.comm-console__header p { margin: 0; }
+.comm-console__hero { margin: 0 auto; text-align: center; }
 .comm-console__header > div { display: grid; gap: .35rem; }
 .comm-console__header p { color: #475569; }
-.comm-console__eyebrow { color: #2563eb !important; font-size: .75rem; font-weight: 800; letter-spacing: .12em; }
 .comm-console__refresh, .comm-console__clear { padding: .65rem .9rem; border: 1px solid #cbd5e1; border-radius: .65rem; background: white; color: #0f172a; cursor: pointer; }
+.comm-console__refresh { display: inline-flex; align-items: center; justify-content: center; width: 2.6rem; height: 2.6rem; padding: .55rem; }
+.comm-console__refresh svg { width: 1.25rem; height: 1.25rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.comm-console__refresh:hover { background: #eef2ff; border-color: #94a3b8; }
 .comm-console__filters { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem; padding: 1rem; border: 1px solid #dbe3ef; border-radius: .9rem; background: #f8fafc; }
 .comm-console__filter { display: grid; gap: .35rem; min-width: 12rem; color: #334155; font-weight: 700; }
 .comm-console__filter select { min-width: 12rem; height: 6rem; padding: .35rem; border: 1px solid #cbd5e1; border-radius: .5rem; background: white; }

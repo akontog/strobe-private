@@ -9,8 +9,8 @@ export default function HeroTitle({
   const resolvedTitle = title || children;
 
   return (
-    <div className={`hero-title ${className}`.trim()}>
-      <div className="hero-equation">{resolvedTitle}</div>
+    <div className={`hero ${className}`.trim()}>
+      <div className="hero-title">{resolvedTitle}</div>
       {subtitle ? <p className="hero-subtitle">{subtitle}</p> : null}
     </div>
   );

@@ -42,7 +42,7 @@ input {
   border: 2px solid #dce3ec;
 }
 
-.hero-title {
+.hero {
   text-align: center;
   margin-bottom: 1rem;
 }
@@ -63,12 +63,17 @@ input {
   font-weight: 700;
 }
 
-.primes-hero h1 {
+.primes-title .hero-title {
   margin: 0;
   font-size: clamp(1.9rem, 3.5vw, 2.9rem);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  display: block;
 }
 
-.primes-subtitle {
+.primes-title .hero-subtitle {
   margin: 0.5rem 0 0;
   color: #64748b;
   max-width: 65ch;

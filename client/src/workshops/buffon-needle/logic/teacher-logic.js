@@ -1,6 +1,6 @@
 import { mountAccordionInteractions } from '../../../shared/components/layouts/accordionDom';
 
-export function mountBuffonTeacher(rootElement, t) {
+export function mountBuffonTeacher(rootElement, t, onStandingsChange = () => {}) {
 const cleanupAccordions = mountAccordionInteractions(rootElement, (accordionId, isOpen) => {
   if (accordionId === 'teacher-chart' && isOpen) drawTeacherChart();
 });
@@ -390,10 +390,11 @@ function endRound(reason, options = {}) {
 }
 
 function render() {
-  const liveBody = document.getElementById('live-board-body');
-  const totalBody = document.getElementById('total-board-body');
+  const liveBody = document.getElementById('live-board-body') || { innerHTML: '' };
+  const totalBody = document.getElementById('total-board-body') || { innerHTML: '' };
 
   if (students.length === 0) {
+    onStandingsChange([]);
     liveBody.innerHTML = `<div class="empty">${t('noTeams')}</div>`;
     totalBody.innerHTML = `<div class="empty">${t('noTeams')}</div>`;
     latestLiveSorted = [];
@@ -408,6 +409,26 @@ function render() {
   if (roundActive) detectTargetReached(baseLiveSorted);
   const liveSorted = roundActive ? applyLockedWinner(baseLiveSorted) : baseLiveSorted;
   const totalSorted = sortStudentsByTotalPoints(students);
+
+  const totalRanks = new Map(totalSorted.map((student, index) => [studentKey(student), index + 1]));
+  onStandingsChange(liveSorted.map((student, index) => {
+    const key = studentKey(student);
+    const hasPi = hasPiEstimate(student);
+    return {
+      id: key,
+      name: student.team,
+      isConnected: true,
+      liveRank: index + 1,
+      totalRank: totalRanks.get(key) || '-',
+      piEstimate: hasPi ? student.piEst.toFixed(5) : '-',
+      error: hasPi ? Math.abs(student.piEst - Math.PI).toFixed(6) : '-',
+      drops: (student.drops || 0).toLocaleString(),
+      hits: (student.hits || 0).toLocaleString(),
+      misses: Math.max(0, (student.drops || 0) - (student.hits || 0)).toLocaleString(),
+      roundPoints: roundActive ? '-' : currentRound > 0 ? (lastRoundPoints.get(key) || 0).toLocaleString() : '-',
+      totalPoints: (teamPoints.get(key) || 0).toLocaleString()
+    };
+  }));
 
   const liveMovement = new Map();
   liveSorted.forEach((student, idx) => {

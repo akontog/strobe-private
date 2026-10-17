@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { HeroTitle } from '../shared/components';
 import './InstructionsPage.css';
 
 export default function InstructionsPage() {
@@ -9,8 +10,7 @@ export default function InstructionsPage() {
   return (
     <main className="instructions-page">
       <header className="instructions-page__header">
-        <h1>{t('title')}</h1>
-        <p>{t('intro')}</p>
+        <HeroTitle title={t('title')} subtitle={t('intro')} />
       </header>
       <div className="instructions-page__sections">
         {sections.map((section) => (

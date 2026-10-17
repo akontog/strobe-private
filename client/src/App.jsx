@@ -22,6 +22,17 @@ import { SessionLogProvider } from './shared/components/activities/SessionLogCon
 import { SettingsAccordion, ChatAccordion, CommonSessionSettings, StudentQrAccordion } from './shared/components';
 import { getAppSlug, getWorkshopPath } from './shared/utils/workshopPaths';
 
+const SESSION_ENABLED_APPS = new Set([
+  'activity-runner',
+  'geogebra-collab',
+  'buffon-needle',
+  'neural-lab',
+  'primes-lab',
+  'polynomial-lab',
+  'linear-systems-lab',
+  'identities-lab'
+]);
+
 function App() {
   const { t } = useTranslation(['common', 'menu']);
   const { t: tNav } = useTranslation('navigation');
@@ -326,7 +337,12 @@ function App() {
             roleControl={<RoleAccessControl role={role} username={teacherUsername} connected={serverConnected} onLogin={loginTeacher} onRoleChange={changeRole} labels={{ teacher: t('teacher'), student: t('student'), username: t('username'), password: tNav('password'), login: tNav('login'), connected: tNav('connected'), disconnected: tNav('disconnected') }} />}
           />
           <LanguageSwitcher sessionControl={role === 'teacher' ? (
-            <button type="button" className="locale-session-button" onClick={toggleTeacherSession} disabled={teacherSessionBusy}>
+            <button
+              type="button"
+              className="locale-session-button"
+              onClick={toggleTeacherSession}
+              disabled={teacherSessionBusy || (!teacherSession && !SESSION_ENABLED_APPS.has(currentSessionApp))}
+            >
               {teacherSessionBusy ? '…' : teacherSession ? t('common:endSession') : t('common:startSession')}
             </button>
           ) : null} />

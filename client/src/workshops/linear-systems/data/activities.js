@@ -2,43 +2,43 @@ const ACTIVITY_LIBRARY = [
   {
     id: '1',
     code: '1.',
-    title: 'Γραφική δημιουργία συστήματος',
-    objective: 'Οι μαθητές γράφουν δύο εξισώσεις και βλέπουν το αντίστοιχο γράφημα.' ,
+    titleKey: 'activities.graphing.title',
+    objectiveKey: 'activities.graphing.objective',
     mode: 'graphing-input'
   },
   {
     id: '2',
     code: '2.',
-    title: 'Μία/Καμία/Άπειρες λύσεις',
-    objective: 'Σύνδεση γεωμετρικής εικόνας με πλήθος λύσεων.',
+    titleKey: 'activities.classification.title',
+    objectiveKey: 'activities.classification.objective',
     mode: 'grouping'
   },
   {
     id: '3',
     code: '3.',
-    title: 'Ενσώματη δραστηριότητα (camera placeholder)',
-    objective: 'Θα ενεργοποιηθεί σε 2η φάση με camera tracking.',
+    titleKey: 'activities.embodied.title',
+    objectiveKey: 'activities.embodied.objective',
     mode: 'embodied'
   },
   {
     id: '4',
     code: '4.',
-    title: 'Αλγεβρική επίλυση - μέθοδος απαλοιφής',
-    objective: 'Εξαγωγή x, y και έλεγχος λύσης.',
+    titleKey: 'activities.algebra.title',
+    objectiveKey: 'activities.algebra.objective',
     mode: 'algebra'
   },
   {
     id: '5',
     code: '5.',
-    title: 'Επαλήθευση αλγεβρικής λύσης στο γράφημα',
-    objective: 'Σύνδεση αλγεβρικής λύσης με το σημείο τομής.',
+    titleKey: 'activities.graphVerification.title',
+    objectiveKey: 'activities.graphVerification.objective',
     mode: 'graphing-fixed'
   },
   {
     id: '6',
     code: '6.',
-    title: 'Ενσώματη ταξινόμηση ζωνών (placeholder)',
-    objective: 'Θα ενεργοποιηθεί σε 2η φάση με embodied zones.',
+    titleKey: 'activities.zoneClassification.title',
+    objectiveKey: 'activities.zoneClassification.objective',
     mode: 'embodied'
   }
 ];
@@ -51,9 +51,9 @@ const LESSON_DATA = {
   },
   '2': {
     groups: [
-      { id: 'none', title: 'Καμία λύση', hint: 'Παράλληλες ευθείες' },
-      { id: 'one', title: 'Μία λύση', hint: 'Τέμνονται σε ένα σημείο' },
-      { id: 'infinite', title: 'Άπειρες λύσεις', hint: 'Ταυτίζονται' }
+      { id: 'none', titleKey: 'groups.none.title', hintKey: 'groups.none.hint' },
+      { id: 'one', titleKey: 'groups.one.title', hintKey: 'groups.one.hint' },
+      { id: 'infinite', titleKey: 'groups.infinite.title', hintKey: 'groups.infinite.hint' }
     ],
     items: [
       { id: 'c-1', content: 'y = 2x + 1 | y = 2x - 3', correctGroupId: 'none' },

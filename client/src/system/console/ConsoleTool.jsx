@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { HeroTitle } from '../../shared/components';
 import './ConsoleTool.css';
 
 const POLL_INTERVAL = 2000;
@@ -65,15 +66,17 @@ export default function ConsoleTool() {
     <section className="dashboard-page">
       <div className="dashboard-shell comm-console">
         <header className="comm-console__header">
-          <div><p className="comm-console__eyebrow">{t('realtimeServer')}</p><h1>{t('console')}</h1>
-            <p>{t('consoleIntro')}</p>
+          <div>
+            <HeroTitle title={t('console')} subtitle={t('consoleIntro')} className="comm-console__hero" />
           </div>
-          <button type="button" className="comm-console__refresh" onClick={refresh}>{t('refresh')}</button>
         </header>
         <div className="comm-console__filters">
           <MultiSelectFilter label={t('users')} values={filterOptions.users} selected={users} onChange={setUsers} />
           <MultiSelectFilter label={t('labs')} values={filterOptions.labs} selected={labs} onChange={setLabs} />
           <MultiSelectFilter label={t('messageTypes')} values={filterOptions.types} selected={types} onChange={setTypes} />
+          <button type="button" className="comm-console__refresh" onClick={refresh} title={t('refresh')} aria-label={t('refresh')}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4.9 9a7.5 7.5 0 0 1 12.6-3L20 9M4 17v-5h5m10.1 3a7.5 7.5 0 0 1-12.6 3L4 15" /></svg>
+          </button>
           <button type="button" className="comm-console__clear" onClick={() => { setUsers([]); setLabs([]); setTypes([]); }}>{t('clearFilters')}</button>
           <span className="comm-console__count">{t('messageCount', { count: visibleMessages.length })}</span>
         </div>

@@ -2,8 +2,9 @@
   color: #f8fafc;
 }
 
-.camera-speed-test-page .tool-page-header p {
+.camera-speed-test-header .hero-subtitle {
   color: #93c5fd;
+  text-align: center;
 }
 
 .camera-speed-test-page .tool-card,
