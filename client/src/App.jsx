@@ -254,6 +254,7 @@ function App() {
     labs: { label: tNav('labs'), items: [
       { label: tNav('items.buffon'), path: '/workshops/buffon-needle' },
       { label: tNav('items.identities'), path: '/workshops/identities-lab' },
+      { label: tNav('items.linearSystems'), path: '/workshops/linear-systems' },
       { label: tNav('items.neural'), path: '/workshops/neural-lab' },
       { label: tNav('items.polynomial'), path: '/workshops/polynomials' },
       { label: tNav('items.primes'), path: '/workshops/primes-lab' }

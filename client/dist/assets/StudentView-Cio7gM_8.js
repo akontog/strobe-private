@@ -1,1 +1,0 @@
-import{j as t}from"./index-B2x3tLHP.js";import{A as r}from"./App-BIgKMXQM.js";function s(){return t.jsx(r,{role:"student"})}export{s as StudentView,s as default};

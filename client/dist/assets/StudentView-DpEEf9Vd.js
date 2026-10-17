@@ -1,0 +1,1 @@
+import{j as t}from"./index-Cy7UySK5.js";import{A as r}from"./App-BH6JdhW0.js";import"./ActivitiesMenu-DtwXz3rf.js";import"./StudentTable-CCfppSSv.js";import"./SharedInputRow-BmQSsN-J.js";function s(){return t.jsx(r,{role:"student"})}export{s as StudentView,s as default};

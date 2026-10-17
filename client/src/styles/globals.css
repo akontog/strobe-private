@@ -50,7 +50,7 @@ body {
   top: 0;
   z-index: 20;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) max-content minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: 16px;
   min-height: 60px;
@@ -96,7 +96,7 @@ body {
 
 .client-topbar-main {
   grid-column: 2;
-  justify-self: center;
+  justify-self: stretch;
   align-self: stretch;
   display: flex;
   align-items: stretch;
@@ -109,7 +109,9 @@ body {
   display: flex;
   align-items: stretch;
   gap: 2px;
-  flex-wrap: nowrap;
+  min-width: 0;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .client-section-nav-item {
@@ -128,6 +130,10 @@ body {
   font: inherit;
   font-weight: 700;
   cursor: pointer;
+}
+
+.client-section-button {
+  white-space: nowrap;
 }
 
 .client-section-button:hover,
@@ -201,11 +207,12 @@ body {
 .role-access-control__menu {
   position: absolute;
   top: calc(100% + 8px);
-  left: 0;
+  right: 0;
   z-index: 30;
   display: grid;
   gap: 4px;
   min-width: 180px;
+  max-width: calc(100vw - 32px);
   padding: 8px;
   border: 1px solid rgba(16, 35, 63, 0.14);
   border-radius: 10px;

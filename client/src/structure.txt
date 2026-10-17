@@ -216,12 +216,18 @@ C:.
     |       StudentView.jsx
     |       TeacherView.jsx
     |       
+    |   \---data
+    |           activities.js
+    |       
     +---linear-systems
     |       App.css
     |       App.jsx
     |       lab.manifest.json
     |       StudentView.jsx
     |       TeacherView.jsx
+    |       
+    |   \---data
+    |           activities.js
     |       
     +---neural
     |   |   App.css
