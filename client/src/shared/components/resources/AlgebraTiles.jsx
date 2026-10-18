@@ -52,7 +52,7 @@ function formatPolynomial(tiles) {
 
 function getTileSpans(type, orientation) {
   const [width, height] = TILE_SPANS[type] || [1, 1];
-  if ((type === 'x' || type === 'y') && orientation === 'vertical') {
+  if (['x', 'y', 'xy'].includes(type) && orientation === 'vertical') {
     return [height, width];
   }
   return [width, height];
@@ -62,6 +62,7 @@ export default function AlgebraTiles({ activity = '', tiles: sharedTiles, onTile
   const sessionLogging = useSessionInputLogger();
   const canEdit = sessionLogging?.canEdit ?? true;
   const [localTiles, setLocalTiles] = useState([]);
+  const [sourceOrientations, setSourceOrientations] = useState({ x: 'horizontal', y: 'horizontal', xy: 'horizontal' });
   const tiles = Array.isArray(sharedTiles) ? sharedTiles : localTiles;
   const tChartTiles = layout === 't-chart'
     ? tiles.reduce((groups, tile) => {
@@ -129,20 +130,30 @@ export default function AlgebraTiles({ activity = '', tiles: sharedTiles, onTile
     event.dataTransfer.setData('text/plain', serialized);
   };
 
+  const rotateOrientation = (orientation) => orientation === 'vertical' ? 'horizontal' : 'vertical';
+
   const renderChoices = (type, key, orientation) => {
     const definition = TILE_TYPES.find((item) => item.id === type);
+    const canRotate = ['x', 'y', 'xy'].includes(type);
     return (
       <div className={`algebra-tiles__choice-cell algebra-tiles__choice-cell--${type}`} key={key}>
         {[1, -1].map((sign) => (
-          <div key={sign}
-            className={`algebra-tile algebra-tile--source algebra-tile--${definition.className} is-${orientation} ${sign < 0 ? 'is-negative' : ''}`}
-            role="button"
-            tabIndex={canEdit ? 0 : -1}
-            aria-label={`${orientation === 'vertical' ? 'Κατακόρυφο' : 'Οριζόντιο'} ${sign < 0 ? 'αρνητικό' : 'θετικό'} πλακίδιο ${definition.name}`}
-            aria-disabled={!canEdit}
-            draggable={canEdit}
-            onDragStart={(event) => beginTileDrag(event, { type, sign, orientation })}>
-            {definition.label}
+          <div key={sign} className={`algebra-tile-source-wrap${orientation === 'vertical' ? ' is-vertical' : ''}`}>
+            <div
+              className={`algebra-tile algebra-tile--source algebra-tile--${definition.className} is-${orientation} ${sign < 0 ? 'is-negative' : ''}`}
+              role="button"
+              tabIndex={canEdit ? 0 : -1}
+              aria-label={`${orientation === 'vertical' ? 'Κατακόρυφο' : 'Οριζόντιο'} ${sign < 0 ? 'αρνητικό' : 'θετικό'} πλακίδιο ${definition.name}`}
+              aria-disabled={!canEdit}
+              draggable={canEdit}
+              onDragStart={(event) => beginTileDrag(event, { type, sign, orientation })}>
+              {definition.label}
+              {canRotate ? <button type="button" className="algebra-tile__rotate" aria-label={`Περιστροφή πλακιδίου ${definition.name}`} disabled={!canEdit}
+                draggable={false} onClick={(event) => {
+                  event.stopPropagation();
+                  setSourceOrientations((current) => ({ ...current, [type]: rotateOrientation(current[type]) }));
+                }}>↻</button> : null}
+            </div>
           </div>
         ))}
       </div>
@@ -270,15 +281,16 @@ export default function AlgebraTiles({ activity = '', tiles: sharedTiles, onTile
             const orientation = tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal');
             const [spanX, spanY] = getTileSpans(tile.type, orientation);
             return (
-              <button key={tile.id} type="button" draggable={canEdit} disabled={!canEdit}
+              <div key={tile.id} role="button" tabIndex={canEdit ? 0 : -1} draggable={canEdit} aria-disabled={!canEdit}
                 onDragStart={(event) => beginTileDrag(event, tile)}
                 onClick={() => removeTile(tile.id)}
+                onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') removeTile(tile.id); }}
                 style={{
                   left: layout === 'equation'
                     ? `calc(${tile.side === 'right' ? '50% + ' : ''}8px + ${(tile.x || 0) * GRID_UNIT}px)`
                     : `${(tile.x || 0) * GRID_UNIT}px`,
                   top: `${(tile.y || 0) * GRID_UNIT}px`,
-                  ...(orientation === 'vertical' && (tile.type === 'x' || tile.type === 'y')
+                  ...(orientation === 'vertical' && ['x', 'y', 'xy'].includes(tile.type)
                     ? { boxSizing: 'border-box', width: `${spanX * GRID_UNIT}px`, height: `${spanY * GRID_UNIT}px` }
                     : {})
                 }}
@@ -288,22 +300,24 @@ export default function AlgebraTiles({ activity = '', tiles: sharedTiles, onTile
                   ? 'Πάτησε για αφαίρεση ίσων πλακιδίων και από τις δύο πλευρές'
                   : 'Σύρε το πλακίδιο για μεταφορά ή πάτησε για αφαίρεση'}>
                 {definition.label}
-              </button>
+                {['x', 'y', 'xy'].includes(tile.type) ? <button type="button" className="algebra-tile__rotate" aria-label={`Περιστροφή πλακιδίου ${definition.name}`} disabled={!canEdit}
+                  draggable={false} onClick={(event) => {
+                    event.stopPropagation();
+                    commitTiles(tiles.map((item) => item.id === tile.id ? { ...item, orientation: rotateOrientation(orientation) } : item));
+                  }}>↻</button> : null}
+              </div>
             );
           })}
         </div>
       </section>
 
       <section className="algebra-tiles__palette" aria-label="Επιλογή πλακιδίων">
-        {renderChoices('one', 'unit')}
-        {renderChoices('x', 'x-horizontal', 'horizontal')}
-        {renderChoices('y', 'y-horizontal', 'horizontal')}
-        {renderChoices('x', 'x-vertical', 'vertical')}
-        {renderChoices('x2', 'x2')}
-        {renderChoices('xy', 'xy-top')}
-        {renderChoices('y', 'y-vertical', 'vertical')}
-        {renderChoices('xy', 'xy-bottom')}
-        {renderChoices('y2', 'y2')}
+        {renderChoices('one', 'unit', 'horizontal')}
+        {renderChoices('x', 'x', sourceOrientations.x)}
+        {renderChoices('y', 'y', sourceOrientations.y)}
+        {renderChoices('x2', 'x2', 'horizontal')}
+        {renderChoices('xy', 'xy', sourceOrientations.xy)}
+        {renderChoices('y2', 'y2', 'horizontal')}
       </section>
     </div>
   );
