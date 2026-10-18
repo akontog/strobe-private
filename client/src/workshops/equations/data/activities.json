@@ -1,0 +1,57 @@
+{
+  "activities": [
+    {
+      "id": "1",
+      "code": "1.",
+      "titleKey": "activity1Title",
+      "objectiveKey": "activity1Objective",
+      "resultMode": "equationTiles",
+      "widgets": [
+        { "type": "algebra-tiles", "region": "center", "card": false, "layout": "equation" },
+        { "type": "equation-answer", "region": "center", "card": false }
+      ],
+      "scoreCorrect": 1,
+      "scoreIncorrect": -0.5,
+      "questions": [
+        {
+          "id": "x-plus-2-equals-5",
+          "label": "x + 2 = 5",
+          "solution": 3,
+          "leftTerms": [
+            { "type": "x", "count": 1 },
+            { "type": "one", "count": 2 }
+          ],
+          "rightTerms": [
+            { "type": "one", "count": 5 }
+          ]
+        },
+        {
+          "id": "2x-plus-3-equals-x-plus-7",
+          "label": "2x + 3 = x + 7",
+          "solution": 4,
+          "leftTerms": [
+            { "type": "x", "count": 2 },
+            { "type": "one", "count": 3 }
+          ],
+          "rightTerms": [
+            { "type": "x", "count": 1 },
+            { "type": "one", "count": 7 }
+          ]
+        },
+        {
+          "id": "3x-plus-2-equals-2x-plus-6",
+          "label": "3x + 2 = 2x + 6",
+          "solution": 4,
+          "leftTerms": [
+            { "type": "x", "count": 3 },
+            { "type": "one", "count": 2 }
+          ],
+          "rightTerms": [
+            { "type": "x", "count": 2 },
+            { "type": "one", "count": 6 }
+          ]
+        }
+      ]
+    }
+  ]
+}

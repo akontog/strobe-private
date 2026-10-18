@@ -18,7 +18,8 @@ export const ActivitiesMenu = ({
   options = DEFAULT_OPTIONS,
   onChange,
   open = false,
-  className = ''
+  className = '',
+  preserveSession = false
 }) => {
   const session = useSessionInputLogger();
   const selectedActivityName = (Array.isArray(options) ? options : [])
@@ -34,7 +35,7 @@ export const ActivitiesMenu = ({
   const handleChange = async (nextValue) => {
     if (nextValue === value || typeof onChange !== 'function') return;
     try {
-      if (session?.role === 'teacher') await session.endSession();
+      if (session?.role === 'teacher' && !preserveSession) await session.endSession();
       onChange(nextValue);
     } catch (error) {
       window.alert(error.message || 'Could not end the current session.');

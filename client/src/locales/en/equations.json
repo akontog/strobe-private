@@ -1,0 +1,11 @@
+{
+  "activity1Title": "Solve simple equations",
+  "activity1Objective": "Remove matching tiles from both sides to isolate x.",
+  "removeMatchingTiles": "Click a tile to remove the matching tile from both sides of the equation.",
+  "solutionPrompt": "Solution",
+  "solutionLabel": "Value of x",
+  "questions": "Equations",
+  "chooseQuestion": "Choose an equation",
+  "studentTableTitle": "Student answers",
+  "noStudents": "No students are connected."
+}

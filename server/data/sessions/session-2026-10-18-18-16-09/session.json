@@ -1,0 +1,15 @@
+{
+  "sessionId": "session-2026-10-18-18-16-09",
+  "app": "equations-lab",
+  "startedAt": "2026-10-18T15:16:09.804Z",
+  "endedAt": null,
+  "teacherId": "antonis",
+  "students": [
+    "dd"
+  ],
+  "studentScores": [],
+  "activity": "x + 2 = 5",
+  "chatEnabled": false,
+  "scoreVisible": true,
+  "feedbackEnabled": false
+}

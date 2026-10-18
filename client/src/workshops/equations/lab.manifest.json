@@ -1,0 +1,10 @@
+{
+  "labId": "equations-lab",
+  "slug": "equations-lab",
+  "workshopSlug": "equations-lab",
+  "name": "Equations",
+  "entry": {
+    "teacher": "TeacherView.jsx",
+    "student": "StudentView.jsx"
+  }
+}

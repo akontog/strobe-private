@@ -12,7 +12,8 @@ function createScoresRouter() {
     const activity = String(req.body?.activity || '').trim().slice(0, 120);
     const currentScore = Number(req.body?.currentScore);
     const sessionId = String(req.body?.sessionId || '').trim()
-      || (activity.startsWith('polynomial:') ? getActiveSessionForApp('polynomial-lab') : '');
+      || (activity.startsWith('polynomial:') ? getActiveSessionForApp('polynomial-lab') : '')
+      || (activity.startsWith('equations:') ? getActiveSessionForApp('equations-lab') : '');
     if (!name || !activity || !Number.isFinite(currentScore)) {
       return res.status(400).json({ error: 'Student name, activity and finite score are required.' });
     }

@@ -71,6 +71,14 @@ const APP_DEFINITIONS = [
     clientEntry: 'student.html'
   },
   {
+    slug: 'equations-lab',
+    labId: 'equations-lab',
+    title: 'Equations',
+    description: 'Collaborative algebra-tile activities for solving simple equations.',
+    roles: ['teacher', 'student', 'client'],
+    kind: 'react'
+  },
+  {
     slug: 'activity-runner',
     labId: 'activity-runner',
     title: 'Shared Activities',

@@ -13,6 +13,7 @@ import navigationEl from '../../locales/el/navigation.json';
 import scoresEl from '../../locales/el/scores.json';
 import polynomialEl from '../../locales/el/polynomial.json';
 import identitiesEl from '../../locales/el/identities.json';
+import equationsEl from '../../locales/el/equations.json';
 import instructionsEl from '../../locales/el/instructions.json';
 import linearSystemsEl from '../../locales/el/linearSystems.json';
 
@@ -27,6 +28,7 @@ import navigationEn from '../../locales/en/navigation.json';
 import scoresEn from '../../locales/en/scores.json';
 import polynomialEn from '../../locales/en/polynomial.json';
 import identitiesEn from '../../locales/en/identities.json';
+import equationsEn from '../../locales/en/equations.json';
 import instructionsEn from '../../locales/en/instructions.json';
 import linearSystemsEn from '../../locales/en/linearSystems.json';
 
@@ -45,6 +47,7 @@ const resources = {
     scores: scoresEl,
     polynomial: polynomialEl,
     identities: identitiesEl,
+    equations: equationsEl,
     instructions: instructionsEl,
     linearSystems: linearSystemsEl
   },
@@ -60,6 +63,7 @@ const resources = {
     scores: scoresEn,
     polynomial: polynomialEn,
     identities: identitiesEn,
+    equations: equationsEn,
     instructions: instructionsEn,
     linearSystems: linearSystemsEn
   }
@@ -74,7 +78,7 @@ if (!i18n.isInitialized) {
       fallbackLng: 'el',
       supportedLngs: ['el', 'en'],
       defaultNS: 'common',
-      ns: ['common', 'menu', 'geometry', 'buffon', 'neural', 'interface', 'primes', 'navigation', 'scores', 'polynomial', 'identities', 'instructions', 'linearSystems'],
+      ns: ['common', 'menu', 'geometry', 'buffon', 'neural', 'interface', 'primes', 'navigation', 'scores', 'polynomial', 'identities', 'equations', 'instructions', 'linearSystems'],
       interpolation: {
         escapeValue: false
       },

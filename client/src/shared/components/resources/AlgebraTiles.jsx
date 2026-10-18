@@ -20,7 +20,10 @@ const TILE_SPANS = {
   y2: [4, 4]
 };
 const GRID_UNIT = 20;
-const T_CHART_AXIS = 160;
+const T_CHART_AXIS_X = 120;
+const T_CHART_AXIS_Y = 80;
+const T_CHART_HORIZONTAL_ROW_Y = 40;
+const T_CHART_VERTICAL_COLUMN_X = 80;
 
 function getTileDimensions(type, orientation) {
   const [spanX, spanY] = getTileSpans(type, orientation);
@@ -66,11 +69,17 @@ export default function AlgebraTiles({ activity = '', tiles: sharedTiles, onTile
       const { width, height } = getTileDimensions(tile.type, orientation);
       const centerX = (tile.x || 0) * GRID_UNIT + width / 2;
       const centerY = (tile.y || 0) * GRID_UNIT + height / 2;
-      if (centerY < T_CHART_AXIS && centerX >= T_CHART_AXIS) groups.horizontal.push(tile);
-      else if (centerY >= T_CHART_AXIS && centerX < T_CHART_AXIS) groups.vertical.push(tile);
-      else if (centerY >= T_CHART_AXIS && centerX >= T_CHART_AXIS) groups.product.push(tile);
+      if (centerY < T_CHART_AXIS_Y && centerX >= T_CHART_AXIS_X) groups.horizontal.push(tile);
+      else if (centerY >= T_CHART_AXIS_Y && centerX < T_CHART_AXIS_X) groups.vertical.push(tile);
+      else if (centerY >= T_CHART_AXIS_Y && centerX >= T_CHART_AXIS_X) groups.product.push(tile);
       return groups;
     }, { horizontal: [], vertical: [], product: [] })
+    : null;
+  const equationSides = layout === 'equation'
+    ? {
+      left: tiles.filter((tile) => tile.side === 'left'),
+      right: tiles.filter((tile) => tile.side === 'right')
+    }
     : null;
   const horizontalBounds = tChartTiles?.horizontal.reduce((bounds, tile) => {
     const orientation = tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal');
@@ -102,7 +111,7 @@ export default function AlgebraTiles({ activity = '', tiles: sharedTiles, onTile
     setLocalTiles(nextTiles);
     onTilesChange?.(nextTiles);
     sessionLogging?.logEvent('activity.tiles.changed', activity, {
-      tiles: nextTiles.map(({ id, type, sign, orientation, x, y }) => ({ id, type, sign, orientation, x, y }))
+      tiles: nextTiles.map(({ id, type, sign, orientation, x, y, side }) => ({ id, type, sign, orientation, x, y, side }))
     });
   };
 
@@ -157,12 +166,50 @@ export default function AlgebraTiles({ activity = '', tiles: sharedTiles, onTile
       const maxY = Math.max(0, Math.floor((board.clientHeight - tileHeight) / GRID_UNIT));
       const rawX = event.clientX - bounds.left + board.scrollLeft - dragged.offsetX;
       const rawY = event.clientY - bounds.top + board.scrollTop - dragged.offsetY;
-      const x = Math.max(0, Math.min(maxX, Math.round(rawX / GRID_UNIT)));
-      const y = Math.max(0, Math.min(maxY, Math.round(rawY / GRID_UNIT)));
+      let x = Math.max(0, Math.min(maxX, Math.round(rawX / GRID_UNIT)));
+      let y = Math.max(0, Math.min(maxY, Math.round(rawY / GRID_UNIT)));
+      let orientation = dragged.orientation;
+      let side;
+
+      if (layout === 't-chart') {
+        const isFactorTile = ['one', 'x', 'y'].includes(dragged.type);
+        if (rawY < T_CHART_AXIS_Y && isFactorTile) {
+          orientation = dragged.type === 'one' ? orientation : 'horizontal';
+          const [factorSpanX, factorSpanY] = getTileSpans(dragged.type, orientation);
+          const minX = T_CHART_AXIS_X / GRID_UNIT;
+          const minY = T_CHART_HORIZONTAL_ROW_Y / GRID_UNIT;
+          const factorMaxX = Math.max(minX, Math.floor((board.clientWidth - factorSpanX * GRID_UNIT) / GRID_UNIT));
+          x = Math.max(minX, Math.min(factorMaxX, Math.round(rawX / GRID_UNIT)));
+          y = Math.min(Math.max(0, Math.floor((board.clientHeight - factorSpanY * GRID_UNIT) / GRID_UNIT)), minY);
+        } else if (rawX < T_CHART_AXIS_X && isFactorTile) {
+          orientation = dragged.type === 'one' ? orientation : 'vertical';
+          const [factorSpanX, factorSpanY] = getTileSpans(dragged.type, orientation);
+          const minX = T_CHART_VERTICAL_COLUMN_X / GRID_UNIT;
+          const minY = T_CHART_AXIS_Y / GRID_UNIT;
+          const factorMaxY = Math.max(minY, Math.floor((board.clientHeight - factorSpanY * GRID_UNIT) / GRID_UNIT));
+          x = minX;
+          y = Math.max(minY, Math.min(factorMaxY, Math.round(rawY / GRID_UNIT)));
+        } else {
+          const [productSpanX, productSpanY] = getTileSpans(dragged.type, orientation);
+          const minX = T_CHART_AXIS_X / GRID_UNIT;
+          const minY = T_CHART_AXIS_Y / GRID_UNIT;
+          const productMaxX = Math.max(minX, Math.floor((board.clientWidth - productSpanX * GRID_UNIT) / GRID_UNIT));
+          const productMaxY = Math.max(minY, Math.floor((board.clientHeight - productSpanY * GRID_UNIT) / GRID_UNIT));
+          x = Math.max(minX, Math.min(productMaxX, Math.round(rawX / GRID_UNIT)));
+          y = Math.max(minY, Math.min(productMaxY, Math.round(rawY / GRID_UNIT)));
+        }
+      } else if (layout === 'equation') {
+        const midpoint = board.clientWidth / 2;
+        side = rawX + tileWidth / 2 < midpoint ? 'left' : 'right';
+        const sideOffset = side === 'right' ? midpoint : 0;
+        const sideWidth = board.clientWidth / 2 - GRID_UNIT;
+        const maxSideX = Math.max(0, Math.floor((sideWidth - tileWidth) / GRID_UNIT));
+        x = Math.max(0, Math.min(maxSideX, Math.round((rawX - sideOffset) / GRID_UNIT)));
+      }
       const id = dragged.id || `${Date.now()}-${Math.random()}`;
       const nextTiles = tiles
         .filter((tile) => tile.id !== id)
-        .concat({ id, type: dragged.type, sign: dragged.sign, orientation: dragged.orientation, x, y });
+        .concat({ id, type: dragged.type, sign: dragged.sign, orientation, x, y, ...(side ? { side } : {}) });
 
       commitTiles(nextTiles);
     } catch {
@@ -170,11 +217,30 @@ export default function AlgebraTiles({ activity = '', tiles: sharedTiles, onTile
     }
   };
 
-  const removeTile = (id) => commitTiles(tiles.filter((tile) => tile.id !== id));
+  const removeTile = (id) => {
+    if (layout === 'equation') {
+      const selectedTile = tiles.find((tile) => tile.id === id);
+      if (!selectedTile) return;
+      const matchingTile = tiles.find((tile) => tile.side !== selectedTile.side
+        && tile.type === selectedTile.type
+        && (tile.sign < 0) === (selectedTile.sign < 0));
+      if (!matchingTile) return;
+      commitTiles(tiles.filter((tile) => tile.id !== id && tile.id !== matchingTile.id));
+      return;
+    }
+    commitTiles(tiles.filter((tile) => tile.id !== id));
+  };
   return (
     <div className="algebra-tiles">
       <section className="algebra-tiles__board" aria-label="Πίνακας πλακιδίων">
-        <div className={`algebra-tiles__placed${layout === 't-chart' ? ' is-t-chart' : ''}`}
+        {equationSides ? (
+          <div className="algebra-tiles__equation-header" aria-live="polite">
+            <output>{formatPolynomial(equationSides.left)}</output>
+            <output>{formatPolynomial(equationSides.right)}</output>
+            <span aria-hidden="true">=</span>
+          </div>
+        ) : null}
+        <div className={`algebra-tiles__placed${layout === 't-chart' ? ' is-t-chart' : ''}${layout === 'equation' ? ' is-equation' : ''}`}
           onDragOver={(event) => { if (canEdit) event.preventDefault(); }}
           onDrop={dropTile}>
           {tChartTiles?.horizontal.length ? (
@@ -187,7 +253,7 @@ export default function AlgebraTiles({ activity = '', tiles: sharedTiles, onTile
           ) : null}
           {tChartTiles?.vertical.length ? (
             <output className="algebra-tiles__factor algebra-tiles__factor--vertical" style={{
-              left: `${Math.max(0, verticalBounds.left - 136)}px`,
+              left: `${Math.max(0, verticalBounds.left - 80)}px`,
               top: `${(verticalBounds.top + verticalBounds.bottom) / 2}px`
             }}>
               ({formatPolynomial(tChartTiles.vertical)})
@@ -208,7 +274,9 @@ export default function AlgebraTiles({ activity = '', tiles: sharedTiles, onTile
                 onDragStart={(event) => beginTileDrag(event, tile)}
                 onClick={() => removeTile(tile.id)}
                 style={{
-                  left: `${(tile.x || 0) * GRID_UNIT}px`,
+                  left: layout === 'equation'
+                    ? `calc(${tile.side === 'right' ? '50% + ' : ''}8px + ${(tile.x || 0) * GRID_UNIT}px)`
+                    : `${(tile.x || 0) * GRID_UNIT}px`,
                   top: `${(tile.y || 0) * GRID_UNIT}px`,
                   ...(orientation === 'vertical' && (tile.type === 'x' || tile.type === 'y')
                     ? { boxSizing: 'border-box', width: `${spanX * GRID_UNIT}px`, height: `${spanY * GRID_UNIT}px` }
@@ -216,7 +284,9 @@ export default function AlgebraTiles({ activity = '', tiles: sharedTiles, onTile
                 }}
                 className={`algebra-tile algebra-tile--${definition.className} is-${orientation} ${tile.sign < 0 ? 'is-negative' : ''}`}
                 aria-label={`${tile.sign < 0 ? 'Αρνητικό' : 'Θετικό'} πλακίδιο ${definition.name}`}
-                title="Σύρε το πλακίδιο για μεταφορά ή πάτησε για αφαίρεση">
+                title={layout === 'equation'
+                  ? 'Πάτησε για αφαίρεση ίσων πλακιδίων και από τις δύο πλευρές'
+                  : 'Σύρε το πλακίδιο για μεταφορά ή πάτησε για αφαίρεση'}>
                 {definition.label}
               </button>
             );

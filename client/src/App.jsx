@@ -29,6 +29,7 @@ const SESSION_ENABLED_APPS = new Set([
   'neural-lab',
   'primes-lab',
   'polynomial-lab',
+  'equations-lab',
   'linear-systems-lab',
   'identities-lab'
 ]);
@@ -46,7 +47,7 @@ function App() {
   const currentSessionApp = routePath.startsWith('/workshops/activities/')
     ? 'activity-runner'
     : routePath === '/tools/geogebra-collab' ? 'geogebra-collab' : currentLabSlug;
-  const labHasOwnSettings = pathname.startsWith('/workshops/activities/') || ['polynomial-lab', 'linear-systems-lab', 'neural-lab', 'identities-lab', 'buffon-needle', 'primes-lab'].includes(currentLabSlug);
+  const labHasOwnSettings = pathname.startsWith('/workshops/activities/') || ['polynomial-lab', 'linear-systems-lab', 'neural-lab', 'identities-lab', 'equations-lab', 'buffon-needle', 'primes-lab'].includes(currentLabSlug);
   const labHasInlineChat = ['polynomial-lab', 'neural-lab', 'buffon-needle'].includes(currentLabSlug);
   const [role, setRole] = useState('student');
   const [roles, setRoles] = useState([]);
@@ -316,6 +317,7 @@ function App() {
     labs: { label: tNav('labs'), items: [
       { label: tNav('items.buffon'), path: '/workshops/buffon-needle' },
       { label: tNav('items.identities'), path: '/workshops/identities-lab' },
+      { label: tNav('items.equations'), path: '/workshops/equations-lab' },
       { label: tNav('items.linearSystems'), path: '/workshops/linear-systems' },
       { label: tNav('items.neural'), path: '/workshops/neural-lab' },
       { label: tNav('items.polynomial'), path: '/workshops/polynomials' },

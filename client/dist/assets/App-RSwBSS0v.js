@@ -1,4 +1,4 @@
-import{r as qt,w as Yt,a as Lt,u as $t,R as Xt,j as q,H as Ot,F as zt,S as Kt,A as Ut,C as Jt}from"./index-BE1pFQ5I.js";import{S as Gt}from"./StudentTable-DKzPojB_.js";const Dt=String.raw`<div class="connection-status" id="connection-status" role="status" aria-live="polite"></div>
+import{r as qt,w as Yt,a as Lt,u as $t,R as Xt,j as q,H as Ot,F as zt,S as Kt,A as Ut,C as Jt}from"./index-32JzKpMl.js";import{S as Gt}from"./StudentTable-CJ5h_QbI.js";const Dt=String.raw`<div class="connection-status" id="connection-status" role="status" aria-live="polite"></div>
 
 <div class="round-banner waiting" id="round-banner">Περιμένετε την έναρξη.</div>
 
