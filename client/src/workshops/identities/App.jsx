@@ -11,33 +11,55 @@ import {
   CommonSessionSettings,
   HeroTitle,
   MathFormula,
+  GroupingDragDrop,
+  AlgebraTiles,
   readIdentityName,
   SharedCommonZoneLayout,
-  SharedInputBox,
-  SharedInputRow
+  InputGrid
 } from '../../shared/components';
 import { useSessionInputLogger } from '../../shared/components/activities/SessionLogContext';
-import { ACTIVITY_LIBRARY } from './data/activities';
+import activityData from './data/activities.json';
 import './App.css';
 
-function toNumber(value) {
-  const normalized = String(value || '').trim().replace(',', '.');
-  if (!normalized) {
-    return null;
+const { activities: ACTIVITY_LIBRARY } = activityData;
+
+function computeActivityScore(activity, answers) {
+  const correctAnswers = activity?.terms
+    ? activity.terms.map((term) => term.correctAnswers || {})
+    : activity?.correctAnswers || {};
+  const pointsForCorrect = activity?.scoreCorrect ?? 1;
+  const pointsForIncorrect = activity?.scoreIncorrect ?? -0.5;
+  const normalize = (value) => String(value ?? '').replace(/\s+/g, '').toLowerCase();
+
+  if (activity?.resultMode === 'identityMatching') {
+    return Object.entries(correctAnswers).reduce((score, [itemId, expectedGroupId]) => {
+      const groupId = answers?.[itemId];
+      if (!groupId) return score;
+      return score + (groupId === expectedGroupId ? pointsForCorrect : pointsForIncorrect);
+    }, 0);
   }
-  const parsed = Number(normalized);
-  return Number.isFinite(parsed) ? parsed : null;
+
+  const expectedAnswers = Array.isArray(correctAnswers)
+    ? correctAnswers.flatMap((term, index) => Object.entries(term).map(([field, value]) => [`part-${index}-${field}`, value]))
+    : Object.entries(correctAnswers);
+
+  return expectedAnswers.reduce((score, [key, expected]) => {
+    const answer = String(answers?.[key] ?? '').trim();
+    if (!answer) return score;
+    return score + (normalize(answer) === normalize(expected) ? pointsForCorrect : pointsForIncorrect);
+  }, 0);
 }
 
 export default function App({ role = 'student' }) {
   const { t } = useTranslation('identities');
+  const { t: tNav } = useTranslation('navigation');
   const isTeacher = role === 'teacher';
   const sessionLogging = useSessionInputLogger();
   const [studentName, setStudentName] = useState(() => readIdentityName('Student'));
   const studentNameRef = useRef(studentName);
   const [selectedActivityId, setSelectedActivityId] = useState(ACTIVITY_LIBRARY[0].id);
+  const [selectedIdentityVariantId, setSelectedIdentityVariantId] = useState(ACTIVITY_LIBRARY[0].variants[0].id);
   const [answersByActivity, setAnswersByActivity] = useState({});
-  const [numericInputs, setNumericInputs] = useState({ a: '', b: '' });
   const [students, setStudents] = useState([]);
   const [participants, setParticipants] = useState([]);
   const [isSocketConnected, setIsSocketConnected] = useState(false);
@@ -88,6 +110,15 @@ export default function App({ role = 'student' }) {
         }
         if (message?.type === 'identities_state' && Array.isArray(message.participants)) {
           setParticipants(message.participants);
+          if (!isTeacher && message.lesson && typeof message.lesson === 'object') {
+            const nextActivity = ACTIVITY_LIBRARY.find((activity) => activity.id === message.lesson.activityId);
+            if (nextActivity) {
+              setSelectedActivityId(nextActivity.id);
+              const nextVariant = nextActivity.variants?.find((variant) => variant.id === message.lesson.variantId);
+              if (nextVariant) setSelectedIdentityVariantId(nextVariant.id);
+              else if (nextActivity.variants?.[0]) setSelectedIdentityVariantId(nextActivity.variants[0].id);
+            }
+          }
         }
       });
 
@@ -123,10 +154,23 @@ export default function App({ role = 'student' }) {
     }));
   }, [isSocketConnected, isTeacher, studentName]);
 
+  useEffect(() => {
+    const socket = wsRef.current;
+    if (!isTeacher || !isSocketConnected || !socket || socket.readyState !== WebSocket.OPEN) return;
+    const activity = ACTIVITY_LIBRARY.find((item) => item.id === selectedActivityId) || ACTIVITY_LIBRARY[0];
+    const variant = activity.variants?.find((item) => item.id === selectedIdentityVariantId) || activity.variants?.[0];
+    socket.send(JSON.stringify({
+      type: 'teacher_lesson',
+      lesson: { activityId: activity.id, variantId: variant?.id || '' }
+    }));
+  }, [isSocketConnected, isTeacher, selectedActivityId, selectedIdentityVariantId]);
+
   const activeActivity = useMemo(
     () => ACTIVITY_LIBRARY.find((activity) => activity.id === selectedActivityId) || ACTIVITY_LIBRARY[0],
     [selectedActivityId]
   );
+  const activeIdentityVariant = activeActivity.variants?.find((variant) => variant.id === selectedIdentityVariantId)
+    || activeActivity.variants?.[0];
 
   useEffect(() => {
     if (!isTeacher) return undefined;
@@ -172,8 +216,17 @@ export default function App({ role = 'student' }) {
     };
   }, [isTeacher, sessionLogging?.scoreVisible]);
 
-  const activeAnswers = answersByActivity[selectedActivityId] || { term1: '', term2: '', term3: '' };
-  const isProofMode = selectedActivityId === '4';
+  const activityWidgets = Array.isArray(activeActivity.widgets) ? activeActivity.widgets : [];
+  const expressionWidget = activityWidgets.find((widget) => widget.type === 'identity-expression' && widget.region === 'left');
+  const centerWidget = activityWidgets.find((widget) => widget.region === 'center');
+  const isPolynomialActivity = centerWidget?.type === 'identity-polynomial';
+  const isGroupingActivity = centerWidget?.type === 'grouping-drag-drop';
+  const isAlgebraTilesActivity = centerWidget?.type === 'algebra-tiles';
+  const activeExercise = activeActivity.variants ? activeIdentityVariant : activeActivity;
+  const answerActivityKey = activeActivity.variants
+    ? `${selectedActivityId}:${activeIdentityVariant.id}`
+    : selectedActivityId;
+  const activeAnswers = answersByActivity[answerActivityKey] || { term1: '', term2: '', term3: '' };
   const sortedStudents = useMemo(
     () => {
       const sessionStudentsByName = new Map(students.map((student) => [String(student.name || '').trim().toLocaleLowerCase(), student]));
@@ -193,170 +246,144 @@ export default function App({ role = 'student' }) {
     [participants, students]
   );
 
-  const leftPanel = (
-    <div className="lab-card lab-card--highlight poly-expression-card identities-expression-card" aria-label={t('identityAriaLabel')}>
-      <p className="lab-mini-label poly-mini-label">{t('identityLabel')}</p>
-      <div className="lab-math-box poly-expression-math">
-        <MathFormula
-          formula={
-            isProofMode
-              ? '\\((a+b)^2,\\ (a-b)^2,\\ (a+b)(a-b)\\)'
-              : `\\(${activeActivity.expression}\\)`
-          }
-        />
-      </div>
-      <p className="identities-note">{t(activeActivity.geometricKey)}</p>
+  const leftPanel = expressionWidget ? (
+    <div className={`${expressionWidget.card ? 'lab-card lab-card--highlight ' : ''}poly-expression-card identities-expression-card`} aria-label={t('identityAriaLabel')}>
+        <div className="lab-math-box poly-expression-math">
+          <MathFormula formula={`\\(${activeExercise.expression}\\)`} />
+        </div>
     </div>
-  );
+  ) : null;
 
-  const resultRows = [
-    { label: t('term1'), value: activeAnswers.term1, key: 'term1' },
-    { label: t('term2'), value: activeAnswers.term2, key: 'term2' },
-    { label: t('term3'), value: activeAnswers.term3, key: 'term3' }
-  ];
+  const updateAnswer = (key, value) => {
+    setAnswersByActivity((current) => ({
+      ...current,
+      [answerActivityKey]: {
+        ...(current[answerActivityKey] || { term1: '', term2: '', term3: '' }),
+        [key]: value
+      }
+    }));
+  };
 
-  const aValue = toNumber(numericInputs.a);
-  const bValue = toNumber(numericInputs.b);
+  const identityCorrectTerms = Array.isArray(activeExercise?.terms) ? activeExercise.terms : [];
+  const identityPolynomialPreview = identityCorrectTerms.map((_, index) => {
+    const term = identityCorrectTerms[index];
+    const coefficientValue = String(activeAnswers[`part-${index}-coefficient`] ?? '').trim();
+    const coefficient = coefficientValue === '' ? null : Number(coefficientValue);
 
-  const numericProof = useMemo(() => {
-    if (aValue === null || bValue === null) {
-      return null;
-    }
+    const variables = term.variables.map((variable) => {
+      const exponentValue = String(activeAnswers[`part-${index}-degree${variable.key.toUpperCase()}`] ?? '').trim();
+      if (exponentValue === '') return `${variable.symbol}^{\\square}`;
+      const exponent = Number(exponentValue);
+      if (!Number.isFinite(exponent)) return `${variable.symbol}^{\\square}`;
+      return exponent === 0 ? '' : `${variable.symbol}${exponent === 1 ? '' : `^{${exponent}}`}`;
+    }).join('');
+    const hasValidCoefficient = coefficient !== null && Number.isFinite(coefficient);
+    const absoluteCoefficient = hasValidCoefficient ? Math.abs(coefficient) : null;
+    const coefficientText = !hasValidCoefficient
+      ? (coefficientValue || '\\square')
+      : variables && absoluteCoefficient === 1
+        ? ''
+        : String(absoluteCoefficient);
+    const body = hasValidCoefficient && coefficient === 0 ? '0' : `${coefficientText}${variables}` || '0';
+    return { coefficient, body };
+  });
+  const identityPolynomialText = identityPolynomialPreview.reduce((result, term, index) => {
+    if (index === 0) return term.coefficient < 0 ? `-${term.body}` : term.body;
+    return `${result} ${term.coefficient < 0 ? '-' : '+'} ${term.body}`;
+  }, '');
 
-    const sumSquareLeft = (aValue + bValue) ** 2;
-    const sumSquareRight = (aValue ** 2) + (2 * aValue * bValue) + (bValue ** 2);
-
-    const diffSquareLeft = (aValue - bValue) ** 2;
-    const diffSquareRight = (aValue ** 2) - (2 * aValue * bValue) + (bValue ** 2);
-
-    const squaresDiffLeft = (aValue + bValue) * (aValue - bValue);
-    const squaresDiffRight = (aValue ** 2) - (bValue ** 2);
-
-    return {
-      sumSquareLeft,
-      sumSquareRight,
-      diffSquareLeft,
-      diffSquareRight,
-      squaresDiffLeft,
-      squaresDiffRight
-    };
-  }, [aValue, bValue]);
-
-  const centerPanel = (
-    <div className="lab-card lab-card--panel poly-team-card identities-team-card">
-      {!isProofMode ? (
+  const centerContent = (
+    <>
+      {isPolynomialActivity ? (
         <div className="poly-template-answer-panel">
           <p className="identities-note">{t('completeRightSide')}</p>
-          <div className="poly-team-grid poly-team-grid--full">
-            <div className="poly-term-block poly-term-block--result">
-              <div className="poly-term-inputs poly-term-inputs--result">
-                <SharedInputRow
-                  activity={`identities:${selectedActivityId}`}
-                  rowLabel="R"
-                  tokens={['+', '+', '']}
-                  defaultPlaceholder=""
-                  boxes={resultRows.map((row) => ({
-                    id: row.key,
-                    key: row.key,
-                    label: row.label,
-                    value: row.value,
-                    onChange: (event) => {
-                      const nextValue = event.target.value;
-                      setAnswersByActivity((current) => ({
-                        ...current,
-                        [selectedActivityId]: {
-                          ...(current[selectedActivityId] || { term1: '', term2: '', term3: '' }),
-                          [row.key]: nextValue
-                        }
-                      }));
-                    }
-                  }))}
-                />
-              </div>
+          <InputGrid
+            activity={`identities:${answerActivityKey}`}
+            columns={3}
+            className="lab-input-grid identities-polynomial-answer-grid"
+            customLayout
+            labelClassName="activity-input-grid__label"
+            fields={identityCorrectTerms.flatMap((term, index) => ([
+              (() => {
+                const termPattern = `\\square ${term.variables.map((variable) => `${variable.symbol}^{\\square}`).join(' ')}`;
+                return {
+                  id: `part-${index}-coefficient`,
+                  label: <>{t('coefficientOfTerm')} <MathFormula formula={`\\(${termPattern}\\)`} /></>,
+                  ariaLabel: `${t('coefficientOfTerm')} ${term.variables.map((variable) => variable.label).join('')}`,
+                  value: activeAnswers[`part-${index}-coefficient`] || '',
+                  onChange: (value) => updateAnswer(`part-${index}-coefficient`, value)
+                };
+              })(),
+              ...term.variables.map((variable) => {
+                const key = `part-${index}-degree${variable.key.toUpperCase()}`;
+                const termPattern = `\\square ${term.variables.map((symbol) => `${symbol.symbol}^{\\square}`).join(' ')}`;
+                return {
+                  id: key,
+                  label: <>{t('exponentOf')} <MathFormula formula={`\\(${variable.symbol}\\)`} /> {t('inTerm')} <MathFormula formula={`\\(${termPattern}\\)`} /></>,
+                  ariaLabel: `${t('exponentOf')} ${variable.label} ${t('inTerm')} ${term.variables.map((symbol) => symbol.label).join('')}`,
+                  value: activeAnswers[key] || '',
+                  onChange: (value) => updateAnswer(key, value)
+                };
+              })
+            ]))}
+          />
+          <div className="lab-preview poly-preview-panel">
+            <p className="lab-mini-label poly-mini-label">{t('answer')}</p>
+            <div className="lab-math-box lab-math-box--compact poly-expression-math poly-expression-math--small">
+              <MathFormula formula={`\\(${identityPolynomialText}\\)`} />
             </div>
           </div>
         </div>
+      ) : isAlgebraTilesActivity ? (
+        <AlgebraTiles
+          activity={`identities:${answerActivityKey}`}
+          layout={centerWidget.layout}
+          tiles={activeAnswers.tiles || []}
+          onTilesChange={(tiles) => updateAnswer('tiles', tiles)}
+        />
       ) : (
-        <div className="poly-template-answer-panel">
-          <p className="identities-note">{t('checkEquality')}</p>
-          <div className="identities-proof-inputs">
-            <SharedInputBox
-              id="a"
-              activity={`identities:${selectedActivityId}`}
-              label="a"
-              value={numericInputs.a}
-              onChange={(event) => setNumericInputs((prev) => ({ ...prev, a: event.target.value }))}
-              placeholder=""
-            />
-            <SharedInputBox
-              id="b"
-              activity={`identities:${selectedActivityId}`}
-              label="b"
-              value={numericInputs.b}
-              onChange={(event) => setNumericInputs((prev) => ({ ...prev, b: event.target.value }))}
-              placeholder=""
-            />
-          </div>
-
-          <div className="lab-preview poly-preview-panel">
-            <p className="lab-mini-label poly-mini-label">{t('numericVerification')}</p>
-            {numericProof ? (
-              <div className="identities-proof-results">
-                <p>(a+b)^2 = {numericProof.sumSquareLeft} | a^2+2ab+b^2 = {numericProof.sumSquareRight}</p>
-                <p>(a-b)^2 = {numericProof.diffSquareLeft} | a^2-2ab+b^2 = {numericProof.diffSquareRight}</p>
-                <p>(a+b)(a-b) = {numericProof.squaresDiffLeft} | a^2-b^2 = {numericProof.squaresDiffRight}</p>
-              </div>
-            ) : (
-              <p className="identities-note">{t('enterBothNumbers')}</p>
-            )}
-          </div>
+        <div className="identities-matching-panel">
+          <p className="identities-note">{t(centerWidget.instructionKey)}</p>
+          <GroupingDragDrop
+            activity={`identities:${selectedActivityId}`}
+            items={activeActivity.items.map((item) => ({
+              id: item.id,
+              content: <MathFormula formula={`\\(${item.formula}\\)`} />
+            }))}
+            groups={activeActivity.groups.map((group) => ({
+              id: group.id,
+              title: <MathFormula formula={`\\(${group.formula}\\)`} />
+            }))}
+            placements={activeAnswers}
+            onChange={(placements) => {
+              setAnswersByActivity((current) => ({ ...current, [answerActivityKey]: placements }));
+            }}
+            bankLabel={t(centerWidget.bankLabelKey)}
+          />
         </div>
       )}
-    </div>
+    </>
   );
-
-  const rightPanel = (
-    <aside className="lab-card lab-card--panel poly-team-card identities-geometry-card">
-      <p className="lab-mini-label poly-mini-label">{t('geometricProof')}</p>
-      <div className="identities-geometry-figure" aria-label={t('geometricProofAriaLabel')}>
-        <div className="identities-square identities-square--a2">a²</div>
-        <div className="identities-rect identities-rect--ab-1">ab</div>
-        <div className="identities-rect identities-rect--ab-2">ab</div>
-        <div className="identities-square identities-square--b2">b²</div>
-      </div>
-      <p className="identities-note">{t('geometricExplanation')}</p>
-      <div className="lab-math-box lab-math-box--compact poly-expression-math poly-expression-math--small">
-        <MathFormula formula="\\((a+b)^2=a^2+2ab+b^2\\)" />
-      </div>
-      <div className="lab-math-box lab-math-box--compact poly-expression-math poly-expression-math--small">
-        <MathFormula formula="\\((a-b)^2=a^2-2ab+b^2\\)" />
-      </div>
-      <div className="lab-math-box lab-math-box--compact poly-expression-math poly-expression-math--small">
-        <MathFormula formula="\\((a+b)(a-b)=a^2-b^2\\)" />
-      </div>
-    </aside>
-  );
+  const centerPanel = centerWidget?.card
+    ? <div className="lab-card lab-card--panel poly-team-card identities-team-card">{centerContent}</div>
+    : centerContent;
 
   return (
-    <div className="linear-lab-shell identities-lab-shell">
-      <header className="linear-lab-header">
-        <HeroTitle
-          title={`${activeActivity.code} ${t(activeActivity.titleKey)}`}
-          subtitle={t(activeActivity.objectiveKey)}
-        />
-      </header>
+    <>
+      <HeroTitle
+        title={`${tNav('items.identities')} - ${activeActivity.code} ${t(activeActivity.titleKey)}`}
+        subtitle={t(activeExercise.objectiveKey || activeActivity.objectiveKey)}
+      />
 
-      <section className="common-zone lab-zone linear-common-zone">
+      <section className="common-zone lab-zone">
         <FullScreenButton />
-        <div className="linear-topbar">
-          <span className="poly-status-pill">{isTeacher ? t('teacherMode') : t('studentMode')}</span>
-        </div>
+       
 
         <SharedCommonZoneLayout
-          className="linear-neural-zone identities-neural-zone"
+          className={`linear-neural-zone identities-neural-zone${isPolynomialActivity || isGroupingActivity ? ' identities-answer-activity-zone' : ''}`}
           leftPanel={leftPanel}
           centerPanel={centerPanel}
-          rightPanel={rightPanel}
+          rightPanel={null}
         />
       </section>
 
@@ -409,16 +436,20 @@ export default function App({ role = 'student' }) {
       <StudentScoresAccordion
         role={role}
         studentName={studentName}
-        activity={`identities:${selectedActivityId}`}
-        currentScore={activeActivity.expected?.reduce((score, expected, index) => {
-          const answer = String(activeAnswers[`term${index + 1}`] ?? '').trim();
-          if (!answer) return score;
-          const normalizedAnswer = answer.replace(/\s+/g, '');
-          const normalizedExpected = String(expected ?? '').trim().replace(/\s+/g, '');
-          return score + (normalizedAnswer === normalizedExpected ? 1 : -0.5);
-        }, 0) ?? 0}
+        activity={`identities:${answerActivityKey}`}
+        currentScore={computeActivityScore(isGroupingActivity ? activeActivity : activeExercise, activeAnswers)}
       />
-    </div>
+      {isTeacher && activeActivity.variants ? (
+        <ActivitiesMenu
+          title={t('identityVariantTitle')}
+          icon="🧮"
+          label={t('chooseIdentityVariant')}
+          options={activeActivity.variants.map((variant) => ({ value: variant.id, label: variant.label }))}
+          value={activeIdentityVariant.id}
+          onChange={setSelectedIdentityVariantId}
+        />
+      ) : null}
+    </>
   );
 }
 

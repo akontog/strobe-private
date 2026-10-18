@@ -1,9 +1,4 @@
-import { mountAccordionInteractions } from '../../../shared/components/layouts/accordionDom';
-
-export function mountBuffonTeacher(rootElement, t, onStandingsChange = () => {}) {
-const cleanupAccordions = mountAccordionInteractions(rootElement, (accordionId, isOpen) => {
-  if (accordionId === 'teacher-chart' && isOpen) drawTeacherChart();
-});
+export function mountBuffonTeacher(t, onStandingsChange = () => {}) {
 let classroomApi = null;
 let students = [];
 let previousLiveRanks = new Map();
@@ -696,12 +691,12 @@ window.addEventListener('resize', drawTeacherChart);
     stopRoundManually,
     resetTournamentScores,
     updateRoundControlLabels,
+    drawBuffonTeacherChart: drawTeacherChart,
   };
 
   Object.assign(window, globalFns);
 
   return () => {
-    cleanupAccordions();
     stopRoundTimer();
 
     if (classroomApi && typeof classroomApi.stop === 'function') {

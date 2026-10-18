@@ -12,14 +12,40 @@ const TILE_TYPES = [
 ];
 
 const TILE_SPANS = {
-  one: [1, 1],
-  x: [3, 1],
-  y: [2, 1],
-  x2: [3, 3],
-  xy: [3, 2],
-  y2: [2, 2]
+  one: [2, 2],
+  x: [6, 2],
+  y: [4, 2],
+  x2: [6, 6],
+  xy: [6, 4],
+  y2: [4, 4]
 };
-const GRID_UNIT = 40;
+const GRID_UNIT = 20;
+const T_CHART_AXIS = 160;
+
+function getTileDimensions(type, orientation) {
+  const [spanX, spanY] = getTileSpans(type, orientation);
+  return { width: spanX * GRID_UNIT, height: spanY * GRID_UNIT };
+}
+
+function formatPolynomial(tiles) {
+  const powers = { x2: 0, xy: 0, y2: 0, x: 0, y: 0, one: 0 };
+  tiles.forEach((tile) => {
+    if (Object.hasOwn(powers, tile.type)) powers[tile.type] += tile.sign < 0 ? -1 : 1;
+  });
+
+  const terms = [
+    ['x2', 'x²'], ['xy', 'xy'], ['y2', 'y²'], ['x', 'x'], ['y', 'y'], ['one', '']
+  ].filter(([type]) => powers[type] !== 0);
+  if (!terms.length) return '0';
+
+  return terms.map(([type, monomial], index) => {
+    const coefficient = powers[type];
+    const absoluteCoefficient = Math.abs(coefficient);
+    const body = `${monomial && absoluteCoefficient === 1 ? '' : absoluteCoefficient}${monomial}` || '1';
+    if (index === 0) return coefficient < 0 ? `-${body}` : body;
+    return `${coefficient < 0 ? ' - ' : ' + '}${body}`;
+  }).join('');
+}
 
 function getTileSpans(type, orientation) {
   const [width, height] = TILE_SPANS[type] || [1, 1];
@@ -29,11 +55,47 @@ function getTileSpans(type, orientation) {
   return [width, height];
 }
 
-export default function AlgebraTiles({ activity = '', tiles: sharedTiles, onTilesChange }) {
+export default function AlgebraTiles({ activity = '', tiles: sharedTiles, onTilesChange, layout = 'free' }) {
   const sessionLogging = useSessionInputLogger();
   const canEdit = sessionLogging?.canEdit ?? true;
   const [localTiles, setLocalTiles] = useState([]);
   const tiles = Array.isArray(sharedTiles) ? sharedTiles : localTiles;
+  const tChartTiles = layout === 't-chart'
+    ? tiles.reduce((groups, tile) => {
+      const orientation = tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal');
+      const { width, height } = getTileDimensions(tile.type, orientation);
+      const centerX = (tile.x || 0) * GRID_UNIT + width / 2;
+      const centerY = (tile.y || 0) * GRID_UNIT + height / 2;
+      if (centerY < T_CHART_AXIS && centerX >= T_CHART_AXIS) groups.horizontal.push(tile);
+      else if (centerY >= T_CHART_AXIS && centerX < T_CHART_AXIS) groups.vertical.push(tile);
+      else if (centerY >= T_CHART_AXIS && centerX >= T_CHART_AXIS) groups.product.push(tile);
+      return groups;
+    }, { horizontal: [], vertical: [], product: [] })
+    : null;
+  const horizontalBounds = tChartTiles?.horizontal.reduce((bounds, tile) => {
+    const orientation = tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal');
+    const { width, height } = getTileDimensions(tile.type, orientation);
+    const left = (tile.x || 0) * GRID_UNIT;
+    const top = (tile.y || 0) * GRID_UNIT;
+    return {
+      left: Math.min(bounds.left, left),
+      right: Math.max(bounds.right, left + width),
+      top: Math.min(bounds.top, top),
+      bottom: Math.max(bounds.bottom, top + height)
+    };
+  }, { left: Infinity, right: -Infinity, top: Infinity, bottom: -Infinity });
+  const verticalBounds = tChartTiles?.vertical.reduce((bounds, tile) => {
+    const orientation = tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal');
+    const { width, height } = getTileDimensions(tile.type, orientation);
+    const left = (tile.x || 0) * GRID_UNIT;
+    const top = (tile.y || 0) * GRID_UNIT;
+    return {
+      left: Math.min(bounds.left, left),
+      right: Math.max(bounds.right, left + width),
+      top: Math.min(bounds.top, top),
+      bottom: Math.max(bounds.bottom, top + height)
+    };
+  }, { left: Infinity, right: -Infinity, top: Infinity, bottom: -Infinity });
 
   const commitTiles = (nextTiles) => {
     if (!canEdit) return;
@@ -112,9 +174,30 @@ export default function AlgebraTiles({ activity = '', tiles: sharedTiles, onTile
   return (
     <div className="algebra-tiles">
       <section className="algebra-tiles__board" aria-label="Πίνακας πλακιδίων">
-        <div className="algebra-tiles__placed"
+        <div className={`algebra-tiles__placed${layout === 't-chart' ? ' is-t-chart' : ''}`}
           onDragOver={(event) => { if (canEdit) event.preventDefault(); }}
           onDrop={dropTile}>
+          {tChartTiles?.horizontal.length ? (
+            <output className="algebra-tiles__factor algebra-tiles__factor--horizontal" style={{
+              left: `${(horizontalBounds.left + horizontalBounds.right) / 2}px`,
+              top: `${Math.max(0, horizontalBounds.top - 34)}px`
+            }}>
+              ({formatPolynomial(tChartTiles.horizontal)})
+            </output>
+          ) : null}
+          {tChartTiles?.vertical.length ? (
+            <output className="algebra-tiles__factor algebra-tiles__factor--vertical" style={{
+              left: `${Math.max(0, verticalBounds.left - 136)}px`,
+              top: `${(verticalBounds.top + verticalBounds.bottom) / 2}px`
+            }}>
+              ({formatPolynomial(tChartTiles.vertical)})
+            </output>
+          ) : null}
+          {tChartTiles ? (
+            <output className="algebra-tiles__product" aria-live="polite">
+              {formatPolynomial(tChartTiles.product)}
+            </output>
+          ) : null}
           {tiles.map((tile) => {
             const definition = TILE_TYPES.find((item) => item.id === tile.type);
             if (!definition) return null;

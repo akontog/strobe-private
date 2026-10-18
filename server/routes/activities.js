@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const { sanitizeLegacyFilename } = require('../utils/helpers');
+const { requireRole } = require('../middleware/checkRole');
 
 function createActivitiesRouter({ io }) {
   const router = express.Router();
@@ -31,7 +32,7 @@ function createActivitiesRouter({ io }) {
   });
 
   // ── GET /api/activity/list ──
-  router.get('/api/activity/list', (req, res) => {
+  router.get('/api/activity/list', requireRole(['teacher']), (req, res) => {
     const files = fs
       .readdirSync(legacyActivitiesDir)
       .filter((file) => file.endsWith('.json'))
@@ -54,7 +55,7 @@ function createActivitiesRouter({ io }) {
   });
 
   // ── GET /api/activity/load/:filename ──
-  router.get('/api/activity/load/:filename', (req, res) => {
+  router.get('/api/activity/load/:filename', requireRole(['teacher']), (req, res) => {
     const safeFilename = sanitizeLegacyFilename(req.params.filename);
     if (!safeFilename) {
       return res.status(400).json({ error: 'Invalid filename' });
@@ -71,7 +72,7 @@ function createActivitiesRouter({ io }) {
   });
 
   // ── POST /api/activity/save ──
-  router.post('/api/activity/save', (req, res) => {
+  router.post('/api/activity/save', requireRole(['teacher']), (req, res) => {
     const name = String((req.body && req.body.name) || 'activity').trim();
     const geometry = Array.isArray(req.body && req.body.geometry) ? req.body.geometry : [];
     const safeName = name.replace(/[^a-z0-9]/gi, '_') || 'activity';

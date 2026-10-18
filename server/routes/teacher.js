@@ -35,6 +35,11 @@ router.get('/resources', (req, res) => {
 });
 
 router.post('/classroom/selection', (req, res) => {
+  if (req.body?.preserve === true) {
+    const current = getActiveSelection();
+    if (current.app) setActiveLab(current.app, current.roomId);
+    return res.json(getActiveSelection());
+  }
   const app = req.body && req.body.app;
   const activeLab = setActiveLab(app, req.body && req.body.roomId);
   if (activeLab === null) return res.status(400).json({ error: 'Choose a valid student lab.' });

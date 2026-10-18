@@ -1,12 +1,13 @@
 ﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import FullScreenButton from '../../shared/components/primitives/FullScreenButton';
-import { TeacherCard } from './components/TeacherCard';
 import { DatasetSelector } from './components/DatasetSelector';
 import { VerticalProducts } from './components/VerticalProducts';
 import { ExamplesClassifier } from './components/ExamplesClassifier';
 import {
   Accordion,
+  HeroTitle,
+  MathFormula,
   SettingsAccordion,
   CommonSessionSettings,
   ChatAccordion,
@@ -113,6 +114,7 @@ const resolveSeparableBySelectedInputs = (separable, selectedInputs) => {
 
 const App = ({ role = 'teacher' }) => {
   const { t, i18n } = useTranslation('neural');
+  const { t: tNav } = useTranslation('navigation');
   // Σταθερές αναφορές (refs) για την αποθήκευση αντικειμένων που 
   // δεν προκαλούν επανασχεδιασμό όταν αλλάζουν.
 
@@ -760,7 +762,9 @@ const [studentColor, setStudentColor] = useState(() => {
   const sortedParticipants = [...participants].sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
 
   return (
-    <TeacherCard title={heroTitle}>
+    <>
+      <HeroTitle>{tNav('items.neural')} - <MathFormula formula={heroTitle} /></HeroTitle>
+      <section className="common-zone lab-zone">
       {isScreen && (
         <>
           <div className="screen-top-bar">
@@ -784,7 +788,6 @@ const [studentColor, setStudentColor] = useState(() => {
         </>
       )}
 
-      <div className="common-zone">
         <FullScreenButton />
         <VerticalProducts
           activity={`neural-lab:${activeActivity}`}
@@ -837,10 +840,9 @@ const [studentColor, setStudentColor] = useState(() => {
           thresholdValue={demoFooterText}
           showThresholdUnderIcon={showThresholdUnderIcon}
         />
-      </div>
+      </section>
         
       {(isTeacher || isScreen || isStudent) && (
-        <div className="live-table-wrap">
           <ExamplesClassifier
             datasets={DATASETS}
             currentDataset={safeDisplayDataset}
@@ -850,7 +852,6 @@ const [studentColor, setStudentColor] = useState(() => {
             features={localizedFeatures}
             weights={{ w1: currentW1, w2: currentW2 }}
           />
-        </div>
       )}
 
       {isTeacher && (
@@ -951,7 +952,7 @@ const [studentColor, setStudentColor] = useState(() => {
       <ChatAccordion />
       
       
-    </TeacherCard>
+    </>
   );
 };
 

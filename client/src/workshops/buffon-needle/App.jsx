@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FullScreenButton, HeroTitle, ChatAccordion, SettingsAccordion, StudentTable } from '../../shared/components';
+import { Accordion, FullScreenButton, HeroTitle, ChatAccordion, SettingsAccordion, StudentTable } from '../../shared/components';
 import { studentTemplate } from './data/student-template';
-import { teacherTemplate } from './data/teacher-template';
+import { teacherSettingsTemplate } from './data/teacher-template';
 import { mountBuffonStudent } from './logic/student-logic';
 import { mountBuffonTeacher } from './logic/teacher-logic';
 import './App.css';
@@ -11,6 +11,7 @@ function App({ role = 'teacher' }) {
   const rootRef = useRef(null);
   const settingsHostRef = useRef(null);
   const { t: tBuffon } = useTranslation('buffon');
+  const { t: tNav } = useTranslation('navigation');
   const [standings, setStandings] = React.useState([]);
 
   useEffect(() => {
@@ -19,46 +20,56 @@ function App({ role = 'teacher' }) {
 
     if (role === 'student') {
       rootElement.innerHTML = studentTemplate;
+      if (settingsHostRef.current) settingsHostRef.current.innerHTML = '';
     } else {
-      rootElement.innerHTML = teacherTemplate;
+      rootElement.innerHTML = studentTemplate;
+      if (settingsHostRef.current) settingsHostRef.current.innerHTML = teacherSettingsTemplate;
     }
 
+    applyTemplateTranslations(rootElement, role === 'teacher' ? 'student' : role, tBuffon, true, settingsHostRef.current);
     if (role === 'teacher') {
-      const settings = rootElement.querySelector('.round-panel');
-      if (settings && settingsHostRef.current) settingsHostRef.current.appendChild(settings);
+      applyTemplateTranslations(rootElement, 'teacher', tBuffon, true, settingsHostRef.current);
     }
-    applyTemplateTranslations(rootElement, role, tBuffon, true, settingsHostRef.current);
 
-    const cleanup = role === 'student'
-      ? mountBuffonStudent(rootElement, translateBuffon)
-      : mountBuffonTeacher(rootElement, translateBuffon, setStandings);
+    const cleanups = role === 'student'
+      ? [mountBuffonStudent(rootElement, translateBuffon)]
+      : [
+          mountBuffonStudent(rootElement, translateBuffon, { localOnly: true }),
+          mountBuffonTeacher(translateBuffon, setStandings)
+        ];
 
     if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
       window.MathJax.typesetPromise([rootElement]).catch(() => {});
     }
 
     return () => {
-      if (typeof cleanup === 'function') cleanup();
+      cleanups.forEach((cleanup) => {
+        if (typeof cleanup === 'function') cleanup();
+      });
       rootElement.innerHTML = '';
+      if (settingsHostRef.current) settingsHostRef.current.innerHTML = '';
     };
   }, [role]);
 
   useEffect(() => {
-    if (rootRef.current) applyTemplateTranslations(rootRef.current, role, tBuffon, false, settingsHostRef.current);
+    if (rootRef.current) {
+      applyTemplateTranslations(rootRef.current, role === 'teacher' ? 'student' : role, tBuffon, false, settingsHostRef.current);
+      if (role === 'teacher') {
+        applyTemplateTranslations(rootRef.current, 'teacher', tBuffon, false, settingsHostRef.current);
+      }
+    }
   }, [role, tBuffon]);
 
   return (
-    <div className={`lab-shell buffon-app ${role}`}>
-      <header className="lab-header">
-        <HeroTitle
-        title={role === 'student'
+    <>
+      <HeroTitle
+        title={`${tNav('items.buffon')} - ${role === 'student'
           ? tBuffon('studentTitle')
-          : tBuffon('teacherTitle')}
-        />
-      </header>
-      <section className="common-zone lab-zone buffon-zone">
+          : tBuffon('teacherTitle')}`}
+      />
+      <section className="common-zone lab-zone">
         <FullScreenButton />
-        <div ref={rootRef} className={`buffon-content ${role}`} />
+        <div ref={rootRef} className={`buffon-content ${role === 'teacher' ? 'student teacher-preview' : 'student'}`} />
       </section>
       {role === 'teacher' ? (
         <>
@@ -81,10 +92,21 @@ function App({ role = 'teacher' }) {
             ]}
             emptyMessage={tBuffon('noTeams')}
           />
+          <Accordion
+            title={tBuffon('student.chart')}
+            className="chart-wrap"
+            onToggle={(isOpen) => {
+              if (isOpen) window.requestAnimationFrame(() => window.drawBuffonTeacherChart?.());
+            }}
+          >
+            <div id="teacher-chart-body" className="chart-body open">
+              <canvas id="teacher-chart-cv" />
+            </div>
+          </Accordion>
         </>
       ) : null}
       <ChatAccordion />
-    </div>
+    </>
   );
 }
 
@@ -123,9 +145,9 @@ function applyTemplateTranslations(rootElement, role, t, initialize = false, set
     if (labels[1]) labels[1].textContent = t('targetError');
 
     const seconds = t('seconds');
-    (settingsRoot || rootElement).querySelectorAll('.round-control .scale span').forEach((element) => {
-      element.textContent = element.textContent.replace(/\s*sec$/, ` ${seconds}`);
-    });
+    const scaleLabels = (settingsRoot || rootElement).querySelectorAll('.round-control .scale span');
+    if (scaleLabels[0]) scaleLabels[0].textContent = `20 ${seconds}`;
+    if (scaleLabels[1]) scaleLabels[1].textContent = `120 ${seconds}`;
 
     setText('#round-start-btn', 'startRound');
     setText('#round-stop-btn', 'stopRound');
@@ -134,7 +156,6 @@ function applyTemplateTranslations(rootElement, role, t, initialize = false, set
       setText('#round-status', 'initialTeacherStatus');
       setText('#round-info', 'round');
     }
-    setText('[data-accordion-id="teacher-chart"] .c-lbl', 'student.chart');
   }
 }
 

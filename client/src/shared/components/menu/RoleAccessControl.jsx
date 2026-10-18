@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 
-export default function RoleAccessControl({ role, username = '', connected, onLogin, onRoleChange, labels }) {
+export default function RoleAccessControl({ role, roles = [], username = '', connected, onLogin, onRoleChange, labels }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [draftUsername, setDraftUsername] = useState('');
   const [draftPassword, setDraftPassword] = useState('');
+  const [requestedRole, setRequestedRole] = useState('staff');
   const [error, setError] = useState('');
 
   async function submit(event) {
     event.preventDefault();
     setError('');
-    const result = await onLogin(draftUsername, draftPassword);
+    const result = await onLogin(draftUsername, draftPassword, requestedRole);
     if (result?.error) {
       setError(result.error);
       return;
@@ -20,20 +21,28 @@ export default function RoleAccessControl({ role, username = '', connected, onLo
     setIsOpen(false);
   }
 
-  function selectStudent() {
-    onRoleChange('student');
+  async function selectRole(nextRole) {
+    await onRoleChange(nextRole);
     setShowLogin(false);
     setIsOpen(false);
   }
 
-  function selectTeacher() {
-    if (role === 'teacher') {
-      setShowLogin(false);
-      setIsOpen(false);
+  function requestRole(nextRole) {
+    if (roles.includes(nextRole)) {
+      selectRole(nextRole);
       return;
     }
+    setRequestedRole(nextRole);
+    setError('');
     setShowLogin(true);
   }
+
+  const roleLabel = role === 'student'
+    ? labels.student
+    : roles
+      .filter((availableRole) => availableRole === 'teacher' || availableRole === 'admin')
+      .map((availableRole) => labels[availableRole])
+      .join(' | ');
 
   return (
     <div className="role-access-control">
@@ -52,13 +61,24 @@ export default function RoleAccessControl({ role, username = '', connected, onLo
         }}
         aria-expanded={isOpen}
       >
-        {role === 'teacher' ? `${labels.teacher}: ${username}` : labels.student}
+        {roleLabel}
         <span className="role-access-control__chevron" aria-hidden="true">▾</span>
       </button>
       {isOpen ? (
         <div className="role-access-control__menu">
-          <button type="button" onClick={selectStudent}>{labels.student}</button>
-          <button type="button" onClick={selectTeacher}>{labels.teacher}</button>
+          <button type="button" onClick={() => selectRole('student')}>{labels.student}</button>
+          {roles.length === 0 ? (
+            <button type="button" onClick={() => requestRole('staff')}>{labels.teacher} | {labels.admin}</button>
+          ) : (
+            <>
+              {role !== 'teacher' && roles.includes('teacher') ? (
+                <button type="button" onClick={() => requestRole('teacher')}>{labels.teacher}</button>
+              ) : null}
+              {role !== 'admin' && roles.includes('admin') ? (
+                <button type="button" onClick={() => requestRole('admin')}>{labels.admin}</button>
+              ) : null}
+            </>
+          )}
           {showLogin ? (
             <form className="role-access-control__login" onSubmit={submit}>
               <input autoComplete="username" value={draftUsername} onChange={(event) => setDraftUsername(event.target.value)} placeholder={labels.username} aria-label={labels.username} required />

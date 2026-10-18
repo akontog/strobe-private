@@ -1,13 +1,3 @@
-.buffon-app {
-	display: flex;
-	flex-direction: column;
-	gap: 1.2rem;
-}
-
-.buffon-zone {
-	margin-bottom: 0;
-}
-
 .buffon-content {
 	width: 100%;
 	display: flex;
@@ -46,6 +36,10 @@
 	font-size: 0.8rem;
 	font-weight: 700;
 	text-align: center;
+}
+
+.buffon-content.teacher-preview .connection-status {
+	display: none;
 }
 
 .buffon-content .connection-status.connected {

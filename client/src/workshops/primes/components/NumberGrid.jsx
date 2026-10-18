@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { ButtonGrid, GridButton } from '../../../shared/components';
 
 const NumberGrid = ({
   numbers,
@@ -35,8 +36,13 @@ const NumberGrid = ({
   };
 
   return (
-    <div className="prime-grid" role="grid" aria-label={t('grid.ariaLabel')}>
-      {items.map((number, index) => {
+    <ButtonGrid
+      items={items}
+      columns={10}
+      className="prime-grid"
+      ariaLabel={t('grid.ariaLabel')}
+      getItemKey={(number, index) => number ?? `blank-${index}`}
+      renderItem={(number) => {
         if (number === null) {
           return <div key="blank" className="prime-grid__cell prime-grid__cell--blank" aria-hidden="true" />;
         }
@@ -92,9 +98,7 @@ const NumberGrid = ({
           .join(' ');
 
         return (
-          <button
-            key={number}
-            type="button"
+          <GridButton
             className={classNames}
             style={inlineStyle}
             onClick={() => {
@@ -102,16 +106,16 @@ const NumberGrid = ({
                 onToggleNumber(number);
               }
             }}
-            aria-pressed={studentOwnCorrect || studentWrong || teacherLocked}
+            pressed={studentOwnCorrect || studentWrong || teacherLocked}
             disabled={(mode === 'student' && isLocked && !isLockedByActiveStudent) || readonly}
             title={mode === 'teacher' && isLocked ? t('grid.lockedBy', { number, owner: ownerLabel }) : mode === 'student' && isLocked && !isLockedByActiveStudent ? t('grid.lockedByOther', { number }) : isTarget ? t('grid.multipleOf', { number, prime: currentPrime }) : t('grid.number', { number })}
           >
             <span className="prime-grid__number">{number}</span>
             {mode === 'teacher' && ownerId ? <span className="prime-grid__owner" style={{ borderColor: ownerColor }}>{ownerLabel}</span> : null}
-          </button>
+          </GridButton>
         );
-      })}
-    </div>
+      }}
+    />
   );
 };
 

@@ -251,31 +251,6 @@
   padding: 0.7rem 0.9rem;
 }
 
-.lab-shell {
-  box-sizing: border-box;
-  max-width: 1200px;
-  width: 100%;
-  min-width: 0;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 1.5rem 0 2rem;
-}
-
-.client-content > .lab-shell,
-.client-content > .linear-lab-shell {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 1200px;
-  min-width: 0;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.lab-header {
-  margin-bottom: 1.25rem;
-  text-align: center;
-}
-
 .lab-kicker {
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -553,12 +528,24 @@ body.session-not-started .common-zone {
   font-size: 0.92rem;
 }
 
-.accordion {
-  margin-top: 0.5rem;
+.client-content.workshop-content > .hero {
+  margin-bottom: 1.25rem;
 }
 
-.accordion.student-qr-accordion {
-  margin-top: 0;
+.client-content.workshop-content > .hero .hero-title {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 5rem;
+  padding: 0.65rem 1rem;
+  font-size: clamp(1.15rem, 2.4vw, 1.8rem);
+  line-height: 1.2;
+}
+
+.accordion {
+  margin-top: 0.5rem;
 }
 
 .accordion-btn {

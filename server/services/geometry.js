@@ -214,6 +214,9 @@ function initGeometry({
       }));
 
       socket.on('camera-speed-frame', asyncHandler(async (data) => {
+        if (sessionManager.get(socket.sessionId)?.role !== 'admin') {
+          return;
+        }
         if (!data || !data.image) {
           return;
         }

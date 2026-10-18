@@ -7,6 +7,7 @@ function initIdentities({ recordCommunication, getUpgradeClientInfo, getWebSocke
   const studentsBySocket = new Map();
   let studentSeq = 0;
   let sessionSeq = 0;
+  let lesson = null;
 
   function resolveSessionId(request, ws) {
     const sessionInfo = typeof getWebSocketSessionInfo === 'function'
@@ -33,7 +34,7 @@ function initIdentities({ recordCommunication, getUpgradeClientInfo, getWebSocke
       isConnected: true,
       connected: true
     }));
-    const serialized = JSON.stringify({ type: 'identities_state', participants, roster: participants });
+    const serialized = JSON.stringify({ type: 'identities_state', participants, roster: participants, lesson });
     const recipients = target ? [target] : [...teachers, ...studentsBySocket.keys()];
     recipients.forEach((socket) => {
       if (socket.readyState === 1) socket.send(serialized);
@@ -97,6 +98,14 @@ function initIdentities({ recordCommunication, getUpgradeClientInfo, getWebSocke
       }
 
       if (type === 'request_state') emitState(ws);
+
+      if (type === 'teacher_lesson' && teachers.has(ws)) {
+        const activityId = sanitizeString(message.lesson?.activityId, 64);
+        const variantId = sanitizeString(message.lesson?.variantId, 64);
+        if (!activityId) return;
+        lesson = { activityId, variantId };
+        emitState();
+      }
     });
 
     ws.on('close', () => {

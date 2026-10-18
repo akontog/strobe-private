@@ -26,8 +26,11 @@ import {
 } from '../../shared/components';
 import { useSessionInputLogger } from '../../shared/components/activities/SessionLogContext';
 import { SCORE_CORRECT, SCORE_INCORRECT, computeStudentScore, getAnswerFieldDefinitions } from './grading';
-import { ACTIVITY_LIBRARY, ALGEBRA_DATASETS, getActivityDatasetKey } from './data/activityLibrary';
+import activityData from './data/activities.json';
 import './App.css';
+
+const { activities: ACTIVITY_LIBRARY, datasets: ALGEBRA_DATASETS } = activityData;
+const getActivityDatasetKey = (activityId) => ACTIVITY_LIBRARY.find((activity) => activity.id === activityId)?.datasetKey;
 
 const formatMonomialFromParts = (coefficient, degreeX, degreeY) => {
   if (!Number.isFinite(coefficient) || coefficient === 0) {
@@ -201,6 +204,7 @@ const getAnswerHeaderGroupsForExpression = (expressionItem, t) => {
 
 export default function App({ role = 'teacher' }) {
   const { t } = useTranslation('polynomial');
+  const { t: tNav } = useTranslation('navigation');
   const navigate = useNavigate();
   const sessionLogging = useSessionInputLogger();
   const isTeacher = role === 'teacher';
@@ -875,14 +879,10 @@ export default function App({ role = 'teacher' }) {
     : 0;
 
   return (
-    <div className="lab-shell poly-lab-shell">
-      <header className="lab-header poly-lab-header">
-        <HeroTitle>
-          {activityTitle}
-        </HeroTitle>
-      </header>
+    <>
+      <HeroTitle>{`${tNav('items.polynomial')} - ${activityTitle}`}</HeroTitle>
 
-      <section className="common-zone lab-zone poly-common-zone">
+      <section className="common-zone lab-zone">
         <FullScreenButton />
         <SharedCommonZoneLayout
           className={isGeogebraAreaActivity ? 'poly-neural-zone--geogebra' : ''}
@@ -1102,6 +1102,6 @@ export default function App({ role = 'teacher' }) {
         hidePanel
       />
       <ChatAccordion />
-    </div>
+    </>
   );
 }

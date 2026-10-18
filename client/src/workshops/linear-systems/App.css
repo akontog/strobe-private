@@ -1,21 +1,5 @@
 @import '../polynomial/App.css';
 
-.linear-lab-shell {
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 1.5rem 0 2rem;
-}
-
-.linear-lab-header {
-  margin-bottom: 1.1rem;
-  text-align: center;
-}
-
-.linear-common-zone {
-  margin-bottom: 1.1rem;
-}
-
 .linear-workspace {
   background: #fcfdff;
   border-radius: 1.7rem;
@@ -94,11 +78,6 @@
   font-size: clamp(1.25rem, 1.9vw, 1.8rem);
   color: #0f172a;
   font-weight: 800;
-}
-
-.linear-bottom-panels {
-  display: grid;
-  gap: 0.9rem;
 }
 
 .linear-expression {

@@ -1,11 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   WidgetRenderer,
   AlgebraTiles,
   CollaborativeGeoGebra,
   GroupingDragDrop,
   HeroTitle,
+  SettingsAccordion,
+  CommonSessionSettings,
   InputGrid,
   SharedCommonZoneLayout,
   StudentScoresAccordion,
@@ -65,6 +68,7 @@ function ResourceContent({ activity }) {
 }
 
 export default function ActivityRunner({ role = 'student', activity: suppliedActivity = null }) {
+  const { t: tNav } = useTranslation('navigation');
   const [activity, setActivity] = React.useState(suppliedActivity);
 
   React.useEffect(() => {
@@ -90,10 +94,13 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
 
   if (!activity) {
     return (
-      <section className="tool-page">
-        <HeroTitle title="Δραστηριότητες" />
-        {role === 'teacher' ? <p>Επιλέξτε δραστηριότητα από τις <Link to="/tools/activity-builder">Ρυθμίσεις δραστηριοτήτων</Link>.</p> : <p>Περιμένετε να ανοίξει ο/η εκπαιδευτικός μια δραστηριότητα.</p>}
-      </section>
+      <>
+        <HeroTitle title={tNav('items.activities')} />
+        <section className="common-zone lab-zone">
+          {role === 'teacher' ? <p>Επιλέξτε δραστηριότητα από τις <Link to="/tools/activity-builder">Ρυθμίσεις δραστηριοτήτων</Link>.</p> : <p>Περιμένετε να ανοίξει ο/η εκπαιδευτικός μια δραστηριότητα.</p>}
+        </section>
+        {role === 'teacher' ? <SettingsAccordion><CommonSessionSettings /></SettingsAccordion> : null}
+      </>
     );
   }
 
@@ -103,19 +110,20 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
   const resourceActivity = { ...activity, resource: activity.resource || config.resource };
 
   return (
-    <main className="tool-page activity-runner-page">
-      <HeroTitle title={activity.name || activity.title || 'Δραστηριότητα'} />
+    <>
+      <HeroTitle title={`${tNav('items.activities')} - ${activity.name || activity.title || tNav('items.activities')}`} />
       {role === 'teacher' && activity.notes ? <p className="activity-runner-notes">{activity.notes}</p> : null}
       <SharedCommonZoneLayout
-        className="activity-runner-layout"
+        className="common-zone lab-zone"
         leftPanel={widgetPanel('left')}
         centerPanel={(
-          <section className="common-zone activity-runner-resource">
+          <div className="activity-runner-resource">
             <ResourceContent activity={resourceActivity} />
-          </section>
+          </div>
         )}
         rightPanel={widgetPanel('right')}
       />
-    </main>
+      {role === 'teacher' ? <SettingsAccordion><CommonSessionSettings /></SettingsAccordion> : null}
+    </>
   );
 }

@@ -1,8 +1,10 @@
 const express = require('express');
 const sessionManager = require('../services/sessionManager');
+const { requireRole } = require('../middleware/checkRole');
 
 function createAdminRouter(options = {}) {
   const router = express.Router();
+  router.use(requireRole(['admin']));
   const getRealtimeStats = typeof options.getRealtimeStats === 'function'
     ? options.getRealtimeStats
     : () => ({ connectedSockets: 0, activeUserPoints: 0 });

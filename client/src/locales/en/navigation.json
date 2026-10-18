@@ -5,6 +5,7 @@
   "help": "Help",
   "sectionNavigation": "Sections",
   "items": {
+    "activities": "Activities",
     "buffon": "Buffon",
     "identities": "Identities",
     "linearSystems": "Linear Systems",

@@ -1,32 +1,52 @@
 const fs = require('fs');
 const path = require('path');
 
-function isTeacherSession(req) {
-  if (!req.session || req.session.role !== 'teacher') return false;
+const usersFile = path.join(__dirname, '..', 'data', 'users.json');
+
+function readUsers() {
   try {
-    const data = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'data', 'teachers.json'), 'utf8'));
-    return Array.isArray(data.users) && data.users.some((user) => user.username === req.session.teacherAccount && user.role === 'teacher');
+    const data = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+    return Array.isArray(data.users) ? data.users : [];
   } catch {
-    return false;
+    return [];
   }
 }
 
+function getAuthenticatedUser(req) {
+  const username = req.session?.teacherAccount;
+  const role = req.session?.role;
+  if (!username || !['teacher', 'admin'].includes(role)) return null;
+
+  const user = readUsers().find((entry) => entry.username === username);
+  const roles = Array.isArray(user?.roles) ? user.roles : [user?.role];
+  return roles.includes(role) ? { ...user, roles } : null;
+}
+
+function hasRole(req, requestedRole) {
+  const user = getAuthenticatedUser(req);
+  if (!user) return false;
+  if (requestedRole === 'teacher') return user.roles.includes('teacher') && ['teacher', 'admin'].includes(req.session.role);
+  return req.session.role === requestedRole && user.roles.includes(requestedRole);
+}
+
 function requireAuth(req, res, next) {
-  if (!isTeacherSession(req)) return res.status(401).json({ error: 'Teacher login required.' });
+  if (!hasRole(req, 'teacher')) return res.status(401).json({ error: 'Teacher login required.' });
   return next();
 }
 
 function requireRole(allowedRoles) {
+  const allowed = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
   return (req, res, next) => {
-    const allowed = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
-    if (allowed.includes('teacher') && !isTeacherSession(req)) {
-      return res.status(403).json({ error: 'This route requires a teacher account.' });
+    if (!allowed.some((role) => hasRole(req, role))) {
+      return res.status(403).json({ error: `This route requires one of these roles: ${allowed.join(', ')}.` });
     }
     return next();
   };
 }
 
 module.exports = {
+  getAuthenticatedUser,
+  hasRole,
   requireAuth,
   requireRole
 };

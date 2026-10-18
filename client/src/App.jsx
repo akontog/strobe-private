@@ -46,9 +46,10 @@ function App() {
   const currentSessionApp = routePath.startsWith('/workshops/activities/')
     ? 'activity-runner'
     : routePath === '/tools/geogebra-collab' ? 'geogebra-collab' : currentLabSlug;
-  const labHasOwnSettings = ['polynomial-lab', 'linear-systems-lab', 'neural-lab', 'identities-lab'].includes(currentLabSlug);
+  const labHasOwnSettings = pathname.startsWith('/workshops/activities/') || ['polynomial-lab', 'linear-systems-lab', 'neural-lab', 'identities-lab', 'buffon-needle', 'primes-lab'].includes(currentLabSlug);
   const labHasInlineChat = ['polynomial-lab', 'neural-lab', 'buffon-needle'].includes(currentLabSlug);
   const [role, setRole] = useState('student');
+  const [roles, setRoles] = useState([]);
   const [authReady, setAuthReady] = useState(false);
   const [teacherUsername, setTeacherUsername] = useState('');
   const [activeMenu, setActiveMenu] = useState('');
@@ -60,24 +61,50 @@ function App() {
   const [classroomRoomId, setClassroomRoomId] = useState('');
   const [classroomActivity, setClassroomActivity] = useState(null);
   const [classroomSelectionLoaded, setClassroomSelectionLoaded] = useState(false);
+  const hasTeacherAccess = ['teacher', 'admin'].includes(role) && roles.includes('teacher');
+  const hasAdminAccess = role === 'admin' && roles.includes('admin');
+  const appRole = hasTeacherAccess ? 'teacher' : 'student';
 
   useEffect(() => {
     fetch('/api/auth/session').then((response) => response.json()).then((session) => {
-      setRole(session.role === 'teacher' ? 'teacher' : 'student');
+      setRole(['teacher', 'admin'].includes(session.role) ? session.role : 'student');
+      setRoles(Array.isArray(session.roles) ? session.roles : []);
       setTeacherUsername(session.username || '');
       setAuthReady(true);
     }).catch(() => {
       setRole('student');
+      setRoles([]);
       setAuthReady(true);
     });
   }, []);
 
   useEffect(() => {
-    if (!authReady || role !== 'teacher') return undefined;
+    if (!authReady || !hasTeacherAccess) return undefined;
     const teacherLab = routePath === '/workshops/activities/teacher'
       ? 'activity-runner'
       : getAppSlug(pathname.match(/^\/workshops\/([^/]+)\/teacher$/)?.[1] || '')
       || (routePath === '/tools/geogebra-collab' ? 'geogebra-collab' : '');
+    const preserveSelection = [
+      '/instructions',
+      '/teacher',
+      '/apps-launcher',
+      '/tools',
+      '/tools/camera-speed-test',
+      '/tools/console',
+      '/tools/activity-builder',
+      '/tools/linear-separation',
+      '/tools/linear-seperation'
+    ].includes(routePath);
+    if (!teacherLab && preserveSelection) {
+      const preserveClassroomSelection = () => fetch('/teacher/classroom/selection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ preserve: true })
+      }).catch(() => {});
+      preserveClassroomSelection();
+      const timer = window.setInterval(preserveClassroomSelection, 5000);
+      return () => window.clearInterval(timer);
+    }
     const roomId = teacherLab === 'geogebra-collab'
       ? new URLSearchParams(location.search).get('room') || 'geogebra-default'
       : '';
@@ -90,7 +117,7 @@ function App() {
     if (!teacherLab) return undefined;
     const timer = window.setInterval(publishSelection, 5000);
     return () => window.clearInterval(timer);
-  }, [authReady, location.search, pathname, role, routePath]);
+  }, [authReady, hasTeacherAccess, location.search, pathname, routePath]);
 
   useEffect(() => {
     if (!authReady || role !== 'student') return undefined;
@@ -178,17 +205,19 @@ function App() {
     return () => window.removeEventListener('strobe:session-ended', handleSessionEnded);
   }, []);
 
-  async function loginTeacher(username, password) {
+  async function loginTeacher(username, password, requestedRole = 'teacher') {
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password, role: requestedRole })
       });
       const result = await response.json();
       if (!response.ok) return { error: tNav('loginFailed') };
-      setRole('teacher');
+      setRole(result.role === 'admin' ? 'admin' : 'teacher');
+      setRoles(Array.isArray(result.roles) ? result.roles : ['teacher']);
       setTeacherUsername(result.username);
+      navigate('/');
       return { ok: true };
     } catch {
       return { error: tNav('loginFailed') };
@@ -197,15 +226,34 @@ function App() {
 
   async function changeRole(nextRole) {
     if (nextRole === 'student') {
-      await fetch('/teacher/classroom/selection', {
+      if (hasTeacherAccess) {
+        await fetch('/teacher/classroom/selection', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ app: null })
+        }).catch(() => {});
+      }
+      await fetch('/api/auth/role', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ app: null })
+        body: JSON.stringify({ role: 'student' })
       }).catch(() => {});
-      await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
       setRole('student');
+      setRoles([]);
       setTeacherUsername('');
+      navigate('/');
+      return;
     }
+    const response = await fetch('/api/auth/role', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role: nextRole })
+    });
+    const result = await response.json();
+    if (!response.ok) return;
+    setRole(result.role);
+    setRoles(Array.isArray(result.roles) ? result.roles : []);
+    setTeacherUsername(result.username || '');
   }
 
   async function toggleTeacherSession() {
@@ -236,11 +284,14 @@ function App() {
   }
 
   const teacherOnly = (element) => authReady
-    ? (role === 'teacher' ? element : <Navigate to="/client" replace />)
+    ? (hasTeacherAccess ? element : <Navigate to="/client" replace />)
+    : null;
+  const adminOnly = (element) => authReady
+    ? (hasAdminAccess ? element : <Navigate to={hasTeacherAccess ? '/' : '/client'} replace />)
     : null;
   const studentLabOnly = (slug, element) => {
     if (!authReady) return null;
-    if (role === 'teacher') {
+    if (hasTeacherAccess) {
       const teacherPath = slug === 'activity-runner'
         ? '/workshops/activities/teacher'
         : getWorkshopPath(slug, 'teacher');
@@ -254,7 +305,7 @@ function App() {
   };
   const studentToolOnly = (selection, element) => {
     if (!authReady) return null;
-    if (role !== 'student') return element;
+    if (hasTeacherAccess) return element;
     if (!classroomSelectionLoaded) return null;
     if (classroomLab === selection) return element;
     return classroomLab
@@ -283,17 +334,19 @@ function App() {
       { label: tNav('items.instructions'), path: '/instructions' }
     ] }
   };
-  const clickedMenuGroup = role === 'teacher' ? menuGroups[clickedMenu] : null;
+  const clickedMenuGroup = hasTeacherAccess && (clickedMenu !== 'system' || hasAdminAccess)
+    ? menuGroups[clickedMenu]
+    : null;
 
   return (
-    <SessionLogProvider app={currentSessionApp} role={role} sessionId={teacherSession?.sessionId}>
+    <SessionLogProvider app={currentSessionApp} role={appRole} sessionId={teacherSession?.sessionId}>
     <div className="client-shell">
       <header className="client-topbar" onMouseLeave={() => setActiveMenu('')}>
         <Link className="client-home-link" to="/" aria-label="Strobe"><img src="/icons/strobelogo.svg" alt="Strobe" /></Link>
         <div className="client-topbar-main">
           <nav className="client-section-nav" aria-label={tNav('sectionNavigation')} onMouseLeave={() => setActiveMenu('')}>
             {Object.entries(menuGroups).map(([key, group]) => {
-              if (role !== 'teacher') return null;
+              if (!hasTeacherAccess || (key === 'system' && !hasAdminAccess)) return null;
               return (
                 <div
                   key={key}
@@ -318,7 +371,7 @@ function App() {
                         <Link
                           key={item.path}
                           className="client-submenu__item"
-                          to={item.path.startsWith('/workshops/') ? `${item.path}/${role === 'teacher' ? 'teacher' : 'student'}` : item.path}
+                          to={item.path.startsWith('/workshops/') ? `${item.path}/${hasTeacherAccess ? 'teacher' : 'student'}` : item.path}
                         >
                           {item.label}
                         </Link>
@@ -332,11 +385,11 @@ function App() {
         </div>
         <div className="client-topbar-controls">
           <StudentIdentityControl
-            roleLabel={role === 'teacher' ? t('teacher') : t('student')}
-            hideIdentityFields={role === 'teacher'}
-            roleControl={<RoleAccessControl role={role} username={teacherUsername} connected={serverConnected} onLogin={loginTeacher} onRoleChange={changeRole} labels={{ teacher: t('teacher'), student: t('student'), username: t('username'), password: tNav('password'), login: tNav('login'), connected: tNav('connected'), disconnected: tNav('disconnected') }} />}
+            roleLabel={hasAdminAccess ? t('admin') : hasTeacherAccess ? t('teacher') : t('student')}
+            hideIdentityFields={hasTeacherAccess}
+            roleControl={<RoleAccessControl role={role} roles={roles} username={teacherUsername} connected={serverConnected} onLogin={loginTeacher} onRoleChange={changeRole} labels={{ admin: t('admin'), teacher: t('teacher'), student: t('student'), username: t('username'), password: tNav('password'), login: tNav('login'), connected: tNav('connected'), disconnected: tNav('disconnected') }} />}
           />
-          <LanguageSwitcher sessionControl={role === 'teacher' ? (
+          <LanguageSwitcher sessionControl={hasTeacherAccess ? (
             <button
               type="button"
               className="locale-session-button"
@@ -348,14 +401,14 @@ function App() {
           ) : null} />
         </div>
       </header>
-      <div className="client-content">
-        {pathname.startsWith('/workshops/') && role === 'teacher' && !labHasOwnSettings ? <SettingsAccordion><CommonSessionSettings /></SettingsAccordion> : null}
+      <div className={pathname.startsWith('/workshops/') ? 'client-content workshop-content' : 'client-content'}>
+        {pathname.startsWith('/workshops/') && hasTeacherAccess && !labHasOwnSettings ? <SettingsAccordion><CommonSessionSettings /></SettingsAccordion> : null}
         {clickedMenuGroup ? (
           <section className="client-menu-cards" aria-label={clickedMenuGroup.label}>
             <div className="postit-grid">
               {clickedMenuGroup.items.map((item, index) => {
                 const to = item.path.startsWith('/workshops/')
-                  ? `${item.path}/${role === 'teacher' ? 'teacher' : 'student'}`
+                  ? `${item.path}/${hasTeacherAccess ? 'teacher' : 'student'}`
                   : item.path;
                 const colors = ['blue', 'violet', 'orange', 'green', 'amber', 'indigo'];
                 return (
@@ -379,13 +432,13 @@ function App() {
           <Route path="/student" element={<StudentWaitingPage />} />
           <Route path="/tools" element={teacherOnly(<ToolsPage />)} />
           <Route path="/tools/activity-builder" element={teacherOnly(<ActivityBuilder />)} />
-          <Route path="/tools/camera-speed-test" element={teacherOnly(<CameraSpeedTest />)} />
-          <Route path="/tools/geogebra-collab" element={studentToolOnly('geogebra-collab', <GeoGebraCollabTool canSelectRoom={role === 'teacher'} />)} />
-          <Route path="/tools/console" element={teacherOnly(<ConsoleTool />)} />
+          <Route path="/tools/camera-speed-test" element={adminOnly(<CameraSpeedTest />)} />
+          <Route path="/tools/geogebra-collab" element={studentToolOnly('geogebra-collab', <GeoGebraCollabTool canSelectRoom={hasTeacherAccess} />)} />
+          <Route path="/tools/console" element={adminOnly(<ConsoleTool />)} />
           <Route path="/tools/linear-separation" element={teacherOnly(<LinearSeparation />)} />
           <Route path="/tools/linear-seperation" element={teacherOnly(<LinearSeparation />)} />
           <Route path="/apps-launcher" element={teacherOnly(<AppsLauncherPage />)} />
-          <Route path="/workshops/:slug" element={<Navigate to={getWorkshopPath(getAppSlug(currentWorkshopSlug), role === 'teacher' ? 'teacher' : 'student')} replace />} />
+          <Route path="/workshops/:slug" element={<Navigate to={getWorkshopPath(getAppSlug(currentWorkshopSlug), hasTeacherAccess ? 'teacher' : 'student')} replace />} />
           <Route path="/workshops/activities/teacher" element={teacherOnly(<ActivityRunner role="teacher" />)} />
           <Route path="/workshops/activities/student" element={studentLabOnly('activity-runner', <ActivityRunner role="student" activity={classroomActivity} />)} />
           <Route path="/workshops/:slug/teacher" element={teacherOnly(<WorkshopView slug={currentWorkshopSlug} role="teacher" />)} />
@@ -393,7 +446,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes> : null}
         {pathname.startsWith('/workshops/') && !labHasInlineChat ? <ChatAccordion /> : null}
-        {!clickedMenuGroup && role === 'teacher' && pathname.startsWith('/workshops/') ? (
+        {!clickedMenuGroup && hasTeacherAccess && pathname.startsWith('/workshops/') ? (
           <StudentQrAccordion
             title={tInterface('studentConnection')}
             alt={tInterface('studentQrAlt')}

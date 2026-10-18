@@ -1,7 +1,7 @@
 import { mountAccordionInteractions } from '../../../shared/components/layouts/accordionDom';
 import { readIdentityName, writeIdentityName } from '../../../shared/components/menu/identityStorage';
 
-export function mountBuffonStudent(rootElement, t) {
+export function mountBuffonStudent(rootElement, t, { localOnly = false } = {}) {
 const cleanupAccordions = mountAccordionInteractions(rootElement, (accordionId, isOpen) => {
   if (accordionId === 'student-chart' && isOpen) drawChart();
 });
@@ -449,9 +449,9 @@ function changeStep(d){ setStep(stepN+d); }
 
 // β”€β”€ Init β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€β”€
 function initStudentApp() {
-  ensureRegisteredTeamName();
+  if (!localOnly) ensureRegisteredTeamName();
   setRoundBanner(t('student.freeExperiment'), 'waiting');
-  connectWS();
+  if (!localOnly) connectWS();
   updateConnDot();
   setStep(stepN);
   drawGrid();
@@ -465,7 +465,7 @@ const handleIdentityChange = (event) => {
   teamName = nextName;
   teamRegistered = false;
   roundControlEnabled = false;
-  if (classroomApi && classroomApi.isConnected()) registerTeam();
+  if (!localOnly && classroomApi && classroomApi.isConnected()) registerTeam();
   else updateConnDot();
 };
 window.addEventListener('strobe:identity-change', handleIdentityChange);

@@ -1,6 +1,7 @@
 const express = require('express');
 const sessionManager = require('../services/sessionManager');
 const { getAppData, saveAppData } = require('../middleware/sessionMiddleware');
+const { hasRole, requireRole } = require('../middleware/checkRole');
 
 const router = express.Router();
 
@@ -95,7 +96,7 @@ router.get('/api/session', (req, res) => {
  * Ανάκτηση στατιστικών του server
  * ⚠️ Απαιτεί ενδεχόμενη ταυτοποίηση (admin-only)
  */
-router.get('/api/admin/stats', (req, res) => {
+router.get('/api/admin/stats', requireRole(['admin']), (req, res) => {
   const stats = sessionManager.getStatistics();
 
   res.json({
@@ -116,7 +117,7 @@ router.delete('/api/session/:sessionId', (req, res) => {
   const { sessionId } = req.params;
 
   // Security: Allow only own session deletion (unless admin)
-  if (req.sessionId !== sessionId && req.session?.role !== 'admin') {
+  if (req.sessionId !== sessionId && !hasRole(req, 'admin')) {
     return res.status(403).json({
       error: 'Forbidden: Cannot delete other user sessions'
     });

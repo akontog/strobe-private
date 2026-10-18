@@ -1,0 +1,151 @@
+{
+  "activities": [
+    {
+      "id": "1",
+      "code": "1.",
+      "titleKey": "activity1Title",
+      "objectiveKey": "activity1Objective",
+      "resultMode": "identityPolynomial",
+      "widgets": [
+        { "type": "identity-expression", "region": "left", "card": true },
+        { "type": "identity-polynomial", "region": "center", "card": true }
+      ],
+      "scoreCorrect": 1,
+      "scoreIncorrect": -0.5,
+      "variants": [
+        {
+          "id": "sum-square",
+          "label": "(α+β)^2",
+          "expression": "(\\alpha+\\beta)^2",
+          "objectiveKey": "activity1Objective",
+          "terms": [
+            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }], "correctAnswers": { "coefficient": 1, "degreeA": 2 } },
+            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }, { "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": 2, "degreeA": 1, "degreeB": 1 } },
+            { "variables": [{ "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": 1, "degreeB": 2 } }
+          ]
+        },
+        {
+          "id": "difference-square",
+          "label": "(α-β)^2",
+          "expression": "(\\alpha-\\beta)^2",
+          "objectiveKey": "activity2Objective",
+          "terms": [
+            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }], "correctAnswers": { "coefficient": 1, "degreeA": 2 } },
+            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }, { "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": -2, "degreeA": 1, "degreeB": 1 } },
+            { "variables": [{ "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": 1, "degreeB": 2 } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "code": "2.",
+      "titleKey": "activity2Title",
+      "objectiveKey": "activity2Objective",
+      "resultMode": "identityPolynomial",
+      "widgets": [
+        { "type": "identity-expression", "region": "left", "card": true },
+        { "type": "identity-polynomial", "region": "center", "card": true }
+      ],
+      "scoreCorrect": 1,
+      "scoreIncorrect": -0.5,
+      "variants": [
+        {
+          "id": "sum-cube",
+          "label": "(α+β)^3",
+          "expression": "(\\alpha+\\beta)^3",
+          "objectiveKey": "activity2Objective",
+          "terms": [
+            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }], "correctAnswers": { "coefficient": 1, "degreeA": 3 } },
+            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }, { "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": 3, "degreeA": 2, "degreeB": 1 } },
+            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }, { "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": 3, "degreeA": 1, "degreeB": 2 } },
+            { "variables": [{ "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": 1, "degreeB": 3 } }
+          ]
+        },
+        {
+          "id": "difference-cube",
+          "label": "(α-β)^3",
+          "expression": "(\\alpha-\\beta)^3",
+          "objectiveKey": "activity2Objective",
+          "terms": [
+            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }], "correctAnswers": { "coefficient": 1, "degreeA": 3 } },
+            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }, { "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": -3, "degreeA": 2, "degreeB": 1 } },
+            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }, { "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": 3, "degreeA": 1, "degreeB": 2 } },
+            { "variables": [{ "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": -1, "degreeB": 3 } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "3",
+      "code": "3.",
+      "titleKey": "activity3Title",
+      "objectiveKey": "activity3Objective",
+      "expression": "(\\alpha+\\beta)(\\alpha-\\beta)",
+      "resultMode": "identityPolynomial",
+      "widgets": [
+        { "type": "identity-expression", "region": "left", "card": true },
+        { "type": "identity-polynomial", "region": "center", "card": true }
+      ],
+      "scoreCorrect": 1,
+      "scoreIncorrect": -0.5,
+      "terms": [
+        { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }], "correctAnswers": { "coefficient": 1, "degreeA": 2 } },
+        { "variables": [{ "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": -1, "degreeB": 2 } }
+      ]
+    },
+    {
+      "id": "4",
+      "code": "4.",
+      "titleKey": "activity4Title",
+      "objectiveKey": "activity4Objective",
+      "resultMode": "identityMatching",
+      "widgets": [
+        {
+          "type": "grouping-drag-drop",
+          "region": "center",
+          "card": false,
+          "instructionKey": "matchingInstruction",
+          "bankLabelKey": "matchingBankLabel"
+        }
+      ],
+      "scoreCorrect": 1,
+      "scoreIncorrect": -0.5,
+      "items": [
+        { "id": "sum-square-expansion", "formula": "\\alpha^2+2\\alpha\\beta+\\beta^2" },
+        { "id": "difference-square-expansion", "formula": "\\alpha^2-2\\alpha\\beta+\\beta^2" },
+        { "id": "sum-cube-expansion", "formula": "\\alpha^3+3\\alpha^2\\beta+3\\alpha\\beta^2+\\beta^3" },
+        { "id": "difference-cube-expansion", "formula": "\\alpha^3-3\\alpha^2\\beta+3\\alpha\\beta^2-\\beta^3" },
+        { "id": "squares-difference-expansion", "formula": "\\alpha^2-\\beta^2" }
+      ],
+      "groups": [
+        { "id": "sum-square", "formula": "(\\alpha+\\beta)^2" },
+        { "id": "difference-square", "formula": "(\\alpha-\\beta)^2" },
+        { "id": "sum-cube", "formula": "(\\alpha+\\beta)^3" },
+        { "id": "difference-cube", "formula": "(\\alpha-\\beta)^3" },
+        { "id": "squares-difference", "formula": "(\\alpha+\\beta)(\\alpha-\\beta)" }
+      ],
+      "correctAnswers": {
+        "sum-square-expansion": "sum-square",
+        "difference-square-expansion": "difference-square",
+        "sum-cube-expansion": "sum-cube",
+        "difference-cube-expansion": "difference-cube",
+        "squares-difference-expansion": "squares-difference"
+      }
+    },
+    {
+      "id": "5",
+      "code": "5.",
+      "titleKey": "activity5Title",
+      "objectiveKey": "activity5Objective",
+      "expression": "(x+1)(x+3)",
+      "resultMode": "algebraTiles",
+      "widgets": [
+        { "type": "identity-expression", "region": "left", "card": true },
+        { "type": "algebra-tiles", "region": "center", "card": false, "layout": "t-chart" }
+      ],
+      "scoreCorrect": 1,
+      "scoreIncorrect": -0.5
+    }
+  ]
+}

@@ -48,7 +48,7 @@ router.post('/api/session-logs/active/:app/chat', (req, res) => {
   if (!session || !session.metadata.chatEnabled) return res.status(403).json({ error: 'Chat is disabled.' });
   const message = String(req.body?.message || '').trim().slice(0, 1000);
   if (!message) return res.status(400).json({ error: 'Message is required.' });
-  const teacher = req.session?.role === 'teacher' && req.session?.teacherAccount;
+  const teacher = ['teacher', 'admin'].includes(req.session?.role) && req.session?.teacherAccount;
   const sender = String(teacher ? req.session.teacherAccount : req.body?.sender || '').trim().slice(0, 80);
   if (!sender) return res.status(400).json({ error: 'Sender is required.' });
   const record = appendRecord(sessionId, 'events.jsonl', {

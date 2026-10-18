@@ -20,6 +20,7 @@ const createActivitiesRouter = require('./routes/activities');
 const createAuthRouter = require('./routes/auth');
 const createScoresRouter = require('./routes/scores');
 const sessionLogsRouter = require('./routes/sessionLogs');
+const { requireRole } = require('./middleware/checkRole');
 
 /**** 3. Import helper functions, variables, and settings ****/
 const {
@@ -72,8 +73,6 @@ const httpServer = http.createServer(app);
 const io = createRealtimeTransport();
 const { router: activitiesRouter, getCurrentActivity, setCurrentActivity } = createActivitiesRouter({ io });
 
-app.use(activitiesRouter);
-
 app.use(express.json({ limit: '8mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -81,6 +80,7 @@ app.use(sessionMiddleware());
 app.use('/api/auth', createAuthRouter());
 app.use('/api/scores', createScoresRouter());
 app.use(sessionLogsRouter);
+app.use(activitiesRouter);
 
 // Session management middleware
 app.get('/health', (req, res) => {
@@ -213,8 +213,8 @@ app.use('/labs', createAppsRouter());
 
 
 
-app.get('/api/tools', (req, res) => {
-  res.json([
+app.get('/api/tools', requireRole(['teacher']), (req, res) => {
+  const tools = [
     {
       id: 'activity-builder',
       title: 'Activity Builder',
@@ -250,7 +250,10 @@ app.get('/api/tools', (req, res) => {
       path: '/tools/console/',
       available: true
     }
-  ]);
+  ];
+  res.json(req.session.role === 'admin'
+    ? tools
+    : tools.filter((tool) => !['camera-speed-test', 'console'].includes(tool.id)));
 });
 
 io.on('connection', (socket) => {

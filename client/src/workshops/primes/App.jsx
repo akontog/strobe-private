@@ -7,12 +7,11 @@ import TeacherPanel from './components/TeacherPanel';
 import {
   StudentTable,
   HeroTitle,
-  ConnectionNameControl,
+  SettingsAccordion,
+  CommonSessionSettings,
   randomIdentityColor,
   readIdentityColor,
-  readIdentityName,
-  writeIdentityColor,
-  writeIdentityName
+  readIdentityName
 } from '../../shared/components';
 import { INITIAL_PRIME, NUMBER_RANGE, PRIME_NUMBERS, SIEVE_STEPS } from './data/primes';
 import './App.css';
@@ -52,13 +51,14 @@ const isPrimeNumber = (number) => {
 
 const App = ({ role = 'teacher' }) => {
   const { t } = useTranslation('primes');
+  const { t: tNav } = useTranslation('navigation');
   const isTeacher = role === 'teacher';
   const wsRef = useRef(null);
   const reconnectTimerRef = useRef(null);
 
   const [currentPrime, setCurrentPrime] = useState(INITIAL_PRIME);
-  const [studentName, setStudentName] = useState(() => readIdentityName('Μαρία'));
-  const [studentColor, setStudentColor] = useState(() => readIdentityColor(randomColor()));
+  const [studentName] = useState(() => readIdentityName('Μαρία'));
+  const [studentColor] = useState(() => readIdentityColor(randomColor()));
   const [students, setStudents] = useState(() => createInitialStudents(studentName, studentColor));
   const [activeStudentId, setActiveStudentId] = useState(STUDENT_DEFS[0].id);
   const [localStudentId, setLocalStudentId] = useState(() => {
@@ -67,14 +67,11 @@ const App = ({ role = 'teacher' }) => {
     }
     return window.localStorage.getItem(PRIMES_STUDENT_ID_KEY) || STUDENT_DEFS[0].id;
   });
-  const [editingName, setEditingName] = useState(false);
-  const [studentNameInput, setStudentNameInput] = useState(studentName);
   const [message, setMessage] = useState(() => t('messages.chooseBase'));
 
   const effectiveStudentId = isTeacher ? activeStudentId : localStudentId;
   const activeStudent = students.find((student) => student.id === effectiveStudentId) || students[0];
   const viewerName = isTeacher ? activeStudent?.name || '—' : studentName;
-  const viewerColor = isTeacher ? activeStudent?.color || '#22c55e' : studentColor;
 
   const correctOwnerByNumber = useMemo(() => {
     const ownerMap = {};
@@ -150,59 +147,6 @@ const App = ({ role = 'teacher' }) => {
     }
     setCurrentPrime(prime);
     setMessage(t('messages.selectedBase', { prime }));
-  };
-
-  const handleSelectActiveStudent = (studentId) => {
-    if (sendMessage({ type: 'select_active_student', studentId })) {
-      return;
-    }
-    setActiveStudentId(studentId);
-  };
-
-  const saveStudentName = () => {
-    const nextName = studentNameInput.trim();
-    if (!nextName) {
-      setStudentNameInput(studentName);
-      setEditingName(false);
-      return;
-    }
-
-    writeIdentityName(nextName);
-    setStudentName(nextName);
-    setStudentNameInput(nextName);
-
-    if (sendMessage({
-      type: 'register_student',
-      studentId: localStudentId,
-      name: nextName,
-      color: studentColor
-    })) {
-      setEditingName(false);
-      return;
-    }
-
-    setStudents((previousStudents) =>
-      previousStudents.map((student) => (student.id === effectiveStudentId ? { ...student, name: nextName } : student))
-    );
-    setEditingName(false);
-  };
-
-  const saveStudentColor = (nextColor) => {
-    setStudentColor(nextColor);
-    writeIdentityColor(nextColor);
-
-    if (sendMessage({
-      type: 'register_student',
-      studentId: localStudentId,
-      name: studentName,
-      color: nextColor
-    })) {
-      return;
-    }
-
-    setStudents((previousStudents) =>
-      previousStudents.map((student) => (student.id === effectiveStudentId ? { ...student, color: nextColor } : student))
-    );
   };
 
   const updateStudent = (studentId, updater) => {
@@ -377,37 +321,10 @@ const App = ({ role = 'teacher' }) => {
     : students.filter((student) => student.id === effectiveStudentId);
 
   return (
-    <div className={isTeacher ? 'primes-app is-teacher' : 'primes-app is-student'}>
-      <div className="teacher-card primes-card">
-        <header className="primes-hero">
-          <div>
-            <p className="primes-kicker">{t('kicker')}</p>
-            <HeroTitle title={t('title')} subtitle={t('subtitle')} className="primes-title" />
-          </div>
-          <ConnectionNameControl
-            connected
-            name={viewerName}
-            editing={!isTeacher && editingName}
-            value={studentNameInput}
-            onChange={setStudentNameInput}
-            onStartEdit={() => !isTeacher && setEditingName(true)}
-            onCommit={saveStudentName}
-            onCancel={() => {
-              setStudentNameInput(studentName);
-              setEditingName(false);
-            }}
-            color={viewerColor}
-            showColorPicker={!isTeacher}
-            onColorChange={saveStudentColor}
-            connectedLabel={isTeacher ? t('connectedTeacher') : t('connectedStudent')}
-            disconnectedLabel={t('disconnected')}
-            namePrefix={t('namePrefix')}
-            showNameLabel={!isTeacher}
-            className="primes-identity"
-          />
-        </header>
+    <>
+      <HeroTitle title={`${tNav('items.primes')} - ${t('title')}`} subtitle={t('subtitle')} />
 
-        <section className="common-zone primes-board-zone primes-board-zone--compact">
+      <section className="common-zone lab-zone primes-board-zone">
           <FullScreenButton />
           <div className="primes-board-header">
             <div>
@@ -434,30 +351,27 @@ const App = ({ role = 'teacher' }) => {
             mode={isTeacher ? 'teacher' : 'student'}
             readonly={isTeacher}
           />
-        </section>
+      </section>
 
-        {isTeacher ? (
+      {isTeacher ? (
+        <>
+          <SettingsAccordion>
+            <CommonSessionSettings />
+          </SettingsAccordion>
+          <TeacherPanel
+            currentPrime={currentPrime}
+            primeNumbers={PRIME_NUMBERS}
+            onSelectPrime={handleSelectPrime}
+          />
+          <SelectionSummaryAccordion
+            currentPrime={currentPrime}
+            students={students}
+            claimedNumbers={claimedNumbers}
+            wrongSelectionsByNumber={wrongSelectionsByNumber}
+            targetNumbers={currentTargetNumbers}
+            remainingTargetNumbers={remainingTargetNumbers}
+          />
           <section className="primes-lower-grid">
-            <div className="primes-lower-column">
-              <TeacherPanel
-                currentPrime={currentPrime}
-                primeNumbers={PRIME_NUMBERS}
-                onSelectPrime={handleSelectPrime}
-                students={students}
-                activeStudentId={activeStudentId}
-                onSelectActiveStudent={handleSelectActiveStudent}
-              />
-
-              <SelectionSummaryAccordion
-                currentPrime={currentPrime}
-                students={students}
-                claimedNumbers={claimedNumbers}
-                wrongSelectionsByNumber={wrongSelectionsByNumber}
-                targetNumbers={currentTargetNumbers}
-                remainingTargetNumbers={remainingTargetNumbers}
-              />
-            </div>
-
             <div className="primes-lower-column">
               <StudentTable
                 title={t('table.title')}
@@ -519,9 +433,9 @@ const App = ({ role = 'teacher' }) => {
               </div>
             </div>
           </section>
-        ) : null}
-      </div>
-    </div>
+        </>
+      ) : null}
+    </>
   );
 };
 

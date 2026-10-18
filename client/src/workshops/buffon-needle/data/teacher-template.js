@@ -1,4 +1,4 @@
-export const teacherTemplate = String.raw`<div class="round-panel lab-card">
+export const teacherSettingsTemplate = String.raw`<div class="round-panel lab-card">
   <div class="round-grid">
     <div class="round-control">
       <div class="lbl">ΔΙΑΡΚΕΙΑ ΓΥΡΟΥ</div>
@@ -26,14 +26,4 @@ export const teacherTemplate = String.raw`<div class="round-panel lab-card">
 
   <div class="round-status" id="round-status">Πάτησε «Έναρξη γύρου» για νέο παιχνίδι.</div>
   <div class="round-status round-result" id="round-result">-</div>
-</div>
-
-<div class="accordion chart-wrap" data-accordion-id="teacher-chart">
-  <button type="button" class="accordion-btn chart-header" aria-expanded="true">
-    <span class="c-lbl">ΣΥΓΚΛΙΣΗ ΟΜΑΔΩΝ ΠΡΟΣ π</span>
-    <span class="accordion-icon" id="teacher-chart-arrow">⌄</span>
-  </button>
-  <div class="accordion-content chart-body open" id="teacher-chart-body">
-    <canvas id="teacher-chart-cv"></canvas>
-  </div>
 </div>`;

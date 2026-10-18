@@ -1,5 +1,5 @@
 .algebra-tiles {
-  --algebra-grid-unit: 40px;
+  --algebra-grid-unit: 20px;
   display: grid;
   gap: 1rem;
   width: 100%;
@@ -30,6 +30,47 @@
     linear-gradient(rgba(100, 116, 139, 0.14) 1px, transparent 1px),
     linear-gradient(90deg, rgba(100, 116, 139, 0.14) 1px, transparent 1px);
   background-size: var(--algebra-grid-unit) var(--algebra-grid-unit);
+}
+
+.algebra-tiles__placed.is-t-chart {
+  height: 34rem;
+  background-image:
+    linear-gradient(to right, transparent 159px, #475569 159px, #475569 161px, transparent 161px),
+    linear-gradient(to bottom, transparent 159px, #475569 159px, #475569 161px, transparent 161px),
+    linear-gradient(rgba(100, 116, 139, 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(100, 116, 139, 0.14) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, var(--algebra-grid-unit) var(--algebra-grid-unit), var(--algebra-grid-unit) var(--algebra-grid-unit);
+  background-repeat: no-repeat, no-repeat, repeat, repeat;
+}
+
+.algebra-tiles__factor,
+.algebra-tiles__product {
+  position: absolute;
+  z-index: 2;
+  padding: 0.25rem 0.45rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.4rem;
+  background: rgba(255, 255, 255, 0.96);
+  color: #0f172a;
+  font: 700 1rem/1.2 sans-serif;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.algebra-tiles__factor--horizontal {
+  transform: translateX(-50%);
+}
+
+.algebra-tiles__factor--vertical {
+  width: 132px;
+  box-sizing: border-box;
+  text-align: right;
+  transform: translateY(-50%);
+}
+
+.algebra-tiles__product {
+  right: 0.5rem;
+  bottom: 0.5rem;
 }
 
 .algebra-tiles__placed .algebra-tile {
@@ -135,18 +176,18 @@
 }
 
 .algebra-tile--unit {
-  width: var(--algebra-grid-unit);
-  height: var(--algebra-grid-unit);
+  width: calc(var(--algebra-grid-unit) * 2);
+  height: calc(var(--algebra-grid-unit) * 2);
 }
 
 .algebra-tile--x {
-  width: calc(var(--algebra-grid-unit) * 3);
-  height: var(--algebra-grid-unit);
+  width: calc(var(--algebra-grid-unit) * 6);
+  height: calc(var(--algebra-grid-unit) * 2);
 }
 
 .algebra-tile--y {
-  width: calc(var(--algebra-grid-unit) * 2);
-  height: var(--algebra-grid-unit);
+  width: calc(var(--algebra-grid-unit) * 4);
+  height: calc(var(--algebra-grid-unit) * 2);
 }
 
 .algebra-tile--x.is-vertical,
@@ -155,26 +196,26 @@
 }
 
 .algebra-tile--x.is-vertical {
-  height: calc(var(--algebra-grid-unit) * 3);
+  height: calc(var(--algebra-grid-unit) * 6);
 }
 
 .algebra-tile--y.is-vertical {
-  height: calc(var(--algebra-grid-unit) * 2);
+  height: calc(var(--algebra-grid-unit) * 4);
 }
 
 .algebra-tile--x2 {
-  width: calc(var(--algebra-grid-unit) * 3);
-  height: calc(var(--algebra-grid-unit) * 3);
+  width: calc(var(--algebra-grid-unit) * 6);
+  height: calc(var(--algebra-grid-unit) * 6);
 }
 
 .algebra-tile--xy {
-  width: calc(var(--algebra-grid-unit) * 3);
-  height: calc(var(--algebra-grid-unit) * 2);
+  width: calc(var(--algebra-grid-unit) * 6);
+  height: calc(var(--algebra-grid-unit) * 4);
 }
 
 .algebra-tile--y2 {
-  width: calc(var(--algebra-grid-unit) * 2);
-  height: calc(var(--algebra-grid-unit) * 2);
+  width: calc(var(--algebra-grid-unit) * 4);
+  height: calc(var(--algebra-grid-unit) * 4);
 }
 
 .algebra-tile.is-negative {

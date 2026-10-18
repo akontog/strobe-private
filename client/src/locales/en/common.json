@@ -6,6 +6,7 @@
   "loading": "Loading...",
   "home": "Home",
   "teacher": "Teacher",
+  "admin": "Admin",
   "student": "Student",
   "settings": "Settings",
   "enableChat": "Show chat to students",

@@ -1,33 +1,3 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  background: #f0f4f9;
-  font-family: 'Segoe UI', 'Roboto', 'Comic Neue', 'Fredoka One', sans-serif;
-  overflow-y: scroll;
-}
-
-body, #root {
-  display: flex;
-  align-items: stretch;
-  justify-content: flex-start;
-  min-height: 100vh;
-  padding: 2rem;
-}
-
-.teacher-card {
-  max-width: 1400px;
-  width: 100%;
-  background: #ffffff;
-  border-radius: 2rem;
-  padding: 1.5rem 2rem 2rem;
-  box-shadow: 0 20px 35px -12px rgba(0,0,0,0.1);
-  border: 2px solid #dce3ec;
-}
-
 /* ΚΟΙΝΟ INTERFACE */
 .demo-icon {
   background: #fef3c7;       /* απαλό κίτρινο φόντο για διάκριση */
@@ -730,21 +700,6 @@ select {
 
 /* Tablet: 481px – 900px */
 @media (max-width: 900px) {
-  body, #root {
-    padding: 1rem;
-    align-items: flex-start;
-  }
-
-  .teacher-card {
-    padding: 1.2rem 1.2rem 1.5rem;
-    border-radius: 1.5rem;
-  }
-
-  .hero-title {
-    font-size: 1.4rem;
-    padding: 0.5rem 1.2rem;
-  }
-
   /* vertical-products: icons πάνω, rows κάτω */
   .vertical-products {
     flex-direction: column;
@@ -842,20 +797,6 @@ select {
 
 /* Mobile: ≤ 480px */
 @media (max-width: 480px) {
-  body, #root {
-    padding: 0.5rem;
-  }
-
-  .teacher-card {
-    padding: 0.9rem 0.75rem 1.2rem;
-    border-radius: 1.2rem;
-  }
-
-  .hero-title {
-    font-size: 1.1rem;
-    padding: 0.4rem 0.9rem;
-  }
-
   .big-icon span,
   .demo-icon span {
     font-size: 2.8rem;

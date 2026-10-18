@@ -90,7 +90,12 @@ class SessionManager {
       }
  
       if (typeof patch.role === 'string' && patch.role.trim()) {
-        session.role = patch.role.trim();
+        const requestedRole = patch.role.trim();
+        const preserveAdminRole = requestedRole === 'teacher'
+          && session.role === 'admin'
+          && session.teacherAccount
+          && patch.source !== 'teacher-login';
+        session.role = preserveAdminRole ? 'admin' : requestedRole;
       }
 
       if (typeof patch.teacherAccount === 'string') {

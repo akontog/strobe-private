@@ -28,8 +28,6 @@ export default function GeoGebraCollabTool({ canSelectRoom = false }) {
       <div className="dashboard-shell geo-tool-page">
         <HeroTitle
           title={t('geoGebraCollaborative')}
-          subtitle={t('geoGebraCollaborativeDescriptionShort')}
-          className="geo-tool-page__hero"
         />
 
         <section className="common-zone lab-zone geo-common-zone">

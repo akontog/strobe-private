@@ -4,11 +4,13 @@ export { default as SharedCommonZoneLayout } from './layouts/SharedCommonZoneLay
 export { default as Toolbar } from './layouts/Toolbar';
 export { ActivitiesMenu, DEFAULT_ACTIVITY_OPTIONS } from './activities/ActivitiesMenu';
 export { default as GroupingDragDrop } from './resources/GroupingDragDrop';
+export { default as ButtonGrid } from './resources/ButtonGrid';
 export { default as HeroTitle } from './primitives/HeroTitle';
 export { default as MathFormula } from './primitives/MathFormula';
 export { StudentTable } from './services/StudentTable';
 export * from './services/studentTableColumnPresets.jsx';
 export { default as BlueNumberBox } from './primitives/BlueNumberBox';
+export { default as GridButton } from './primitives/GridButton';
 export { default as AlgebraTiles } from './resources/AlgebraTiles';
 export { default as InputGrid } from './resources/InputGrid';
 export { default as StudentScoresAccordion } from './services/StudentScoresAccordion';

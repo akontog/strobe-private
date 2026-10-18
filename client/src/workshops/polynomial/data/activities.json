@@ -1,0 +1,1064 @@
+{
+  "activities": [
+    {
+      "id": "1.1",
+      "code": "1.1",
+      "datasetKey": "monomials",
+      "title": "1.1 Βασικές έννοιες μονωνύμων",
+      "tasks": [
+        "Συντελεστής",
+        "Βαθμός ως προς x",
+        "Βαθμός ως προς y",
+        "Συνολικός βαθμός"
+      ]
+    },
+    {
+      "id": "1.2",
+      "code": "1.2",
+      "datasetKey": "monomialGrouping",
+      "title": "1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)",
+      "objective": "Ομαδοποίηση μονωνύμων με ίδιο μεταβλητό μέρος.",
+      "tasks": [
+        "Αναγνώριση όμοιων μονωνύμων",
+        "Ταξινόμηση με drag and drop"
+      ]
+    },
+    {
+      "id": "1.3",
+      "code": "1.3",
+      "datasetKey": "monomialOperations",
+      "title": "1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)",
+      "objective": "Πρόσθεση και αφαίρεση όμοιων μονωνύμων.",
+      "tasks": [
+        "Κοινός όρος",
+        "Συνδυασμός όρων",
+        "Αφαίρεση μονωνύμων"
+      ]
+    },
+    {
+      "id": "1.4",
+      "code": "1.4",
+      "datasetKey": "monomialMultiplications",
+      "title": "1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)",
+      "objective": "Πολλαπλασιασμός μονωνύμων με συντελεστές και εκθέτες.",
+      "tasks": [
+        "Πολλαπλασιασμός δύο μονωνύμων",
+        "Πολλαπλασιασμός τριών μονωνύμων"
+      ]
+    },
+    {
+      "id": "2.1",
+      "code": "2.1",
+      "datasetKey": "polynomialBasics",
+      "title": "2.1 Βασικές έννοιες πολυωνύμων",
+      "objective": "Εντοπισμός βαθμού ως προς x, βαθμού ως προς y και συνολικού βαθμού ενός πολυωνύμου.",
+      "tasks": [
+        "Βαθμός ως προς x",
+        "Βαθμός ως προς y",
+        "Συνολικός βαθμός"
+      ]
+    },
+    {
+      "id": "2.2",
+      "code": "2.2",
+      "datasetKey": "likeTermReduction",
+      "title": "2.2 Αναγωγή ομοίων όρων",
+      "objective": "Συνδυασμός όμοιων μονωνύμων σε ένα απλοποιημένο αποτέλεσμα.",
+      "tasks": [
+        "Όμοιοι όροι",
+        "Απλοποίηση",
+        "Αναγωγή"
+      ]
+    },
+    {
+      "id": "2.3",
+      "code": "2.3",
+      "datasetKey": "polynomialLikeTermGrouping",
+      "title": "2.3 Ομαδοποίηση όμοιων όρων δύο πολυωνύμων",
+      "objective": "Ομαδοποίηση όρων από δύο πολυώνυμα και αυτόματη πρόσθεση ανά ομάδα ομοίων όρων.",
+      "tasks": [
+        "Ταξινόμηση όρων",
+        "Έλεγχος ομοιότητας",
+        "Αυτόματο αποτέλεσμα"
+      ]
+    },
+    {
+      "id": "2.4",
+      "code": "2.4",
+      "datasetKey": "polynomialOperations",
+      "title": "2.4 Πράξεις με πολυώνυμα (πρόσθεση-αφαίρεση)",
+      "objective": "Πρόσθεση και αφαίρεση πολυωνύμων με αναγωγή όμοιων όρων.",
+      "tasks": [
+        "Άθροισμα",
+        "Διαφορά",
+        "Μικτό αποτέλεσμα"
+      ]
+    },
+    {
+      "id": "2.5",
+      "code": "2.5",
+      "datasetKey": "polynomialMultiplications",
+      "title": "2.5 Πράξεις με πολυώνυμα (πολλαπλασιασμός)",
+      "objective": "Πολλαπλασιασμός πολυωνύμων και αναγνώριση όρων του αποτελέσματος.",
+      "tasks": [
+        "Πολλαπλασιασμός δύο όρων",
+        "Πολλαπλασιασμός τριών όρων"
+      ]
+    },
+    {
+      "id": "2.6",
+      "code": "2.6",
+      "datasetKey": "polynomialAreaModel",
+      "title": "2.6 Πολλαπλασιασμός με εμβαδά ορθογωνίου",
+      "objective": "Οπτικοποίηση του (2x+4)(x+5) με ορθογώνιο και επιμέρους εμβαδά.",
+      "tasks": [
+        "Μετακίνηση σημείου x",
+        "Παρατήρηση 4 υπο-εμβαδών",
+        "Σύνδεση με ανάπτυγμα πολυωνύμου"
+      ]
+    },
+    {
+      "id": "2.7",
+      "code": "2.7",
+      "datasetKey": "algebraTiles",
+      "title": "2.7 Πλακίδια άλγεβρας: πολλαπλασιασμός και παραγοντοποίηση",
+      "objective": "Αναπαράσταση πολυωνύμων με θετικά και αρνητικά πλακίδια, μοντέλο εμβαδού και αντίστροφη παραγοντοποίηση.",
+      "tasks": [
+        "Σύνθεση πολυωνύμου με πλακίδια",
+        "Μοντέλο εμβαδού για γινόμενο",
+        "Παραγοντοποίηση τριωνύμου"
+      ]
+    }
+  ],
+  "datasets": {
+    "monomials": {
+      "label": "Μονώνυμα",
+      "items": [
+        {
+          "id": "m-1",
+          "expression": "3x^4y^2",
+          "coefficient": 3,
+          "degreeX": 4,
+          "degreeY": 2,
+          "totalDegree": 6,
+          "correctAnswers": {
+            "coefficient": 3,
+            "degreeX": 4,
+            "degreeY": 2,
+            "totalDegree": 6
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "m-2",
+          "expression": "-5x^2y^3",
+          "coefficient": -5,
+          "degreeX": 2,
+          "degreeY": 3,
+          "totalDegree": 5,
+          "correctAnswers": {
+            "coefficient": -5,
+            "degreeX": 2,
+            "degreeY": 3,
+            "totalDegree": 5
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "m-3",
+          "expression": "7x^3y",
+          "coefficient": 7,
+          "degreeX": 3,
+          "degreeY": 1,
+          "totalDegree": 4,
+          "correctAnswers": {
+            "coefficient": 7,
+            "degreeX": 3,
+            "degreeY": 1,
+            "totalDegree": 4
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        }
+      ]
+    },
+    "monomialGrouping": {
+      "label": "Ομαδοποίηση μονωνύμων",
+      "items": [
+        {
+          "id": "grouping-1",
+          "expression": "Ομαδοποίηση όμοιων μονωνύμων (Α)",
+          "resultMode": "grouping",
+          "groups": [
+            {
+              "id": "g1",
+              "title": "Ομάδα 1",
+              "hint": "3x^2y"
+            },
+            {
+              "id": "g2",
+              "title": "Ομάδα 2",
+              "hint": "5xy^2"
+            },
+            {
+              "id": "g3",
+              "title": "Ομάδα 3",
+              "hint": "7x^3y"
+            }
+          ],
+          "items": [
+            {
+              "id": "a1",
+              "label": "-2x^2y",
+              "correctGroupId": "g1"
+            },
+            {
+              "id": "a2",
+              "label": "8x^2y",
+              "correctGroupId": "g1"
+            },
+            {
+              "id": "b1",
+              "label": "4xy^2",
+              "correctGroupId": "g2"
+            },
+            {
+              "id": "b2",
+              "label": "3xy^2",
+              "correctGroupId": "g2"
+            },
+            {
+              "id": "c1",
+              "label": "6x^3y",
+              "correctGroupId": "g3"
+            },
+            {
+              "id": "c2",
+              "label": "-5x^3y",
+              "correctGroupId": "g3"
+            }
+          ],
+          "correctAnswers": {
+            "item-a1": "g1",
+            "item-a2": "g1",
+            "item-b1": "g2",
+            "item-b2": "g2",
+            "item-c1": "g3",
+            "item-c2": "g3"
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "grouping-2",
+          "expression": "Ομαδοποίηση όμοιων μονωνύμων (Β)",
+          "resultMode": "grouping",
+          "groups": [
+            {
+              "id": "g1",
+              "title": "Ομάδα 1",
+              "hint": "-2x^3y^2"
+            },
+            {
+              "id": "g2",
+              "title": "Ομάδα 2",
+              "hint": "4xy"
+            }
+          ],
+          "items": [
+            {
+              "id": "d1",
+              "label": "6x^3y^2",
+              "correctGroupId": "g1"
+            },
+            {
+              "id": "d2",
+              "label": "-9x^3y^2",
+              "correctGroupId": "g1"
+            },
+            {
+              "id": "e1",
+              "label": "7xy",
+              "correctGroupId": "g2"
+            },
+            {
+              "id": "e2",
+              "label": "-3xy",
+              "correctGroupId": "g2"
+            },
+            {
+              "id": "d3",
+              "label": "x^3y^2",
+              "correctGroupId": "g1"
+            },
+            {
+              "id": "e3",
+              "label": "12xy",
+              "correctGroupId": "g2"
+            }
+          ],
+          "correctAnswers": {
+            "item-d1": "g1",
+            "item-d2": "g1",
+            "item-e1": "g2",
+            "item-e2": "g2",
+            "item-d3": "g1",
+            "item-e3": "g2"
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        }
+      ]
+    },
+    "monomialOperations": {
+      "label": "Πράξεις με μονώνυμα",
+      "items": [
+        {
+          "id": "sum-1",
+          "expression": "2x^2y + 3x^2y",
+          "answerTemplate": "x^{}y^{}",
+          "resultMode": "monomial",
+          "parts": [
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            }
+          ],
+          "connector": " + ",
+          "correctAnswers": {
+            "coefficient": 5,
+            "degreeX": 2,
+            "degreeY": 1
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "sum-2",
+          "expression": "4xy^3 - 2xy^3",
+          "answerTemplate": "x^{}y^{}",
+          "resultMode": "monomial",
+          "parts": [
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            }
+          ],
+          "connector": " - ",
+          "correctAnswers": {
+            "coefficient": 2,
+            "degreeX": 1,
+            "degreeY": 3
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "sum-3",
+          "expression": "7x^3y^2 + 3x^3y^2 - x^3y^2",
+          "answerTemplate": "x^{}y^{}",
+          "resultMode": "monomial",
+          "parts": [
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            }
+          ],
+          "connector": " + ",
+          "correctAnswers": {
+            "coefficient": 9,
+            "degreeX": 3,
+            "degreeY": 2
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        }
+      ]
+    },
+    "monomialMultiplications": {
+      "label": "Πολλαπλασιασμός μονωνύμων",
+      "items": [
+        {
+          "id": "mul-1",
+          "expression": "3x^2y · 5x^3y^2",
+          "answerTemplate": "x^{}y^{}",
+          "resultMode": "monomial",
+          "parts": [
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            }
+          ],
+          "connector": " · ",
+          "correctAnswers": {
+            "coefficient": 15,
+            "degreeX": 5,
+            "degreeY": 3
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "mul-2",
+          "expression": "-2x^3y · 4xy",
+          "answerTemplate": "x^{}y^{}",
+          "resultMode": "monomial",
+          "parts": [
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            }
+          ],
+          "connector": " · ",
+          "correctAnswers": {
+            "coefficient": -8,
+            "degreeX": 4,
+            "degreeY": 2
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "mul-3",
+          "expression": "6x^2y^3 · 3x^4y",
+          "answerTemplate": "x^{}y^{}",
+          "resultMode": "monomial",
+          "parts": [
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            }
+          ],
+          "connector": " · ",
+          "correctAnswers": {
+            "coefficient": 18,
+            "degreeX": 6,
+            "degreeY": 4
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        }
+      ]
+    },
+    "polynomialBasics": {
+      "label": "Βασικές έννοιες πολυωνύμων",
+      "items": [
+        {
+          "id": "poly-basic-1",
+          "expression": "3x^2y + 5xy^3 - 7x^4 + 2y^2",
+          "degreeX": 4,
+          "degreeY": 3,
+          "totalDegree": 7,
+          "resultMode": "degreeOnly",
+          "parts": [
+            {
+              "degreeX": "",
+              "degreeY": "",
+              "totalDegree": ""
+            }
+          ],
+          "correctAnswers": {
+            "degreeX": 4,
+            "degreeY": 3,
+            "totalDegree": 7
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "poly-basic-2",
+          "expression": "2x^3y^2 - 4x^2y + 3x^5",
+          "degreeX": 5,
+          "degreeY": 2,
+          "totalDegree": 7,
+          "resultMode": "degreeOnly",
+          "parts": [
+            {
+              "degreeX": "",
+              "degreeY": "",
+              "totalDegree": ""
+            }
+          ],
+          "correctAnswers": {
+            "degreeX": 5,
+            "degreeY": 2,
+            "totalDegree": 7
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "poly-basic-3",
+          "expression": "x^4y - 5xy^2 + 3x^2y^3",
+          "degreeX": 4,
+          "degreeY": 3,
+          "totalDegree": 7,
+          "resultMode": "degreeOnly",
+          "parts": [
+            {
+              "degreeX": "",
+              "degreeY": "",
+              "totalDegree": ""
+            }
+          ],
+          "correctAnswers": {
+            "degreeX": 4,
+            "degreeY": 3,
+            "totalDegree": 7
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        }
+      ]
+    },
+    "likeTermReduction": {
+      "label": "Αναγωγή ομοίων όρων",
+      "items": [
+        {
+          "id": "reduce-1",
+          "expression": "3x^2y + 5x^2y - 2x^2y",
+          "answerTemplate": "x^{}y^{}",
+          "resultMode": "monomial",
+          "parts": [
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            }
+          ],
+          "connector": " + ",
+          "correctAnswers": {
+            "coefficient": 6,
+            "degreeX": 2,
+            "degreeY": 1
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "reduce-2",
+          "expression": "4xy^3 + 2xy^3 - 3xy^3",
+          "answerTemplate": "x^{}y^{}",
+          "resultMode": "monomial",
+          "parts": [
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            }
+          ],
+          "connector": " + ",
+          "correctAnswers": {
+            "coefficient": 3,
+            "degreeX": 1,
+            "degreeY": 3
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "reduce-3",
+          "expression": "7x^3y^2 - 2x^3y^2 + 4x^3y^2",
+          "answerTemplate": "x^{}y^{}",
+          "resultMode": "monomial",
+          "parts": [
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            }
+          ],
+          "connector": " + ",
+          "correctAnswers": {
+            "coefficient": 9,
+            "degreeX": 3,
+            "degreeY": 2
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        }
+      ]
+    },
+    "polynomialLikeTermGrouping": {
+      "label": "Ομαδοποίηση όμοιων όρων (δύο πολυώνυμα)",
+      "items": [
+        {
+          "id": "poly-group-1",
+          "expression": "(3x^2 + 5xy - 2y^2) + (4x^2 - 3xy + y^2)",
+          "resultMode": "grouping",
+          "leftPolynomial": "3x^2 + 5xy - 2y^2",
+          "rightPolynomial": "4x^2 - 3xy + y^2",
+          "operator": "+",
+          "groups": [
+            {
+              "id": "g-x2",
+              "title": "Όμοιοι όροι x^2",
+              "hint": "x^2",
+              "degreeX": 2,
+              "degreeY": 0
+            },
+            {
+              "id": "g-xy",
+              "title": "Όμοιοι όροι xy",
+              "hint": "xy",
+              "degreeX": 1,
+              "degreeY": 1
+            },
+            {
+              "id": "g-y2",
+              "title": "Όμοιοι όροι y^2",
+              "hint": "y^2",
+              "degreeX": 0,
+              "degreeY": 2
+            }
+          ],
+          "items": [
+            {
+              "id": "l1",
+              "label": "3x^2",
+              "coefficient": 3,
+              "degreeX": 2,
+              "degreeY": 0,
+              "source": "L",
+              "correctGroupId": "g-x2"
+            },
+            {
+              "id": "l2",
+              "label": "5xy",
+              "coefficient": 5,
+              "degreeX": 1,
+              "degreeY": 1,
+              "source": "L",
+              "correctGroupId": "g-xy"
+            },
+            {
+              "id": "l3",
+              "label": "-2y^2",
+              "coefficient": -2,
+              "degreeX": 0,
+              "degreeY": 2,
+              "source": "L",
+              "correctGroupId": "g-y2"
+            },
+            {
+              "id": "r1",
+              "label": "4x^2",
+              "coefficient": 4,
+              "degreeX": 2,
+              "degreeY": 0,
+              "source": "R",
+              "correctGroupId": "g-x2"
+            },
+            {
+              "id": "r2",
+              "label": "-3xy",
+              "coefficient": -3,
+              "degreeX": 1,
+              "degreeY": 1,
+              "source": "R",
+              "correctGroupId": "g-xy"
+            },
+            {
+              "id": "r3",
+              "label": "y^2",
+              "coefficient": 1,
+              "degreeX": 0,
+              "degreeY": 2,
+              "source": "R",
+              "correctGroupId": "g-y2"
+            }
+          ],
+          "resultOrder": [
+            "g-x2",
+            "g-xy",
+            "g-y2"
+          ],
+          "correctAnswers": {
+            "item-l1": "g-x2",
+            "item-l2": "g-xy",
+            "item-l3": "g-y2",
+            "item-r1": "g-x2",
+            "item-r2": "g-xy",
+            "item-r3": "g-y2"
+          },
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        }
+      ]
+    },
+    "polynomialOperations": {
+      "label": "Πράξεις με πολυώνυμα",
+      "items": [
+        {
+          "id": "poly-op-1",
+          "expression": "(3x^2y + 5xy^2) + (2x^2y - 3xy^2)",
+          "answerTemplate": "x^{}y^{} + x^{}y^{}",
+          "resultMode": "polynomial",
+          "parts": [
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            },
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            }
+          ],
+          "connector": " + ",
+          "correctAnswers": [
+            {
+              "coefficient": 5,
+              "degreeX": 2,
+              "degreeY": 1
+            },
+            {
+              "coefficient": 2,
+              "degreeX": 1,
+              "degreeY": 2
+            }
+          ],
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "poly-op-2",
+          "expression": "(7x^3 - 2x^2y) + (4x^3 + 5x^2y)",
+          "answerTemplate": "x^{}y^{} + x^{}y^{}",
+          "resultMode": "polynomial",
+          "parts": [
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            },
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            }
+          ],
+          "connector": " + ",
+          "correctAnswers": [
+            {
+              "coefficient": 11,
+              "degreeX": 3,
+              "degreeY": 0
+            },
+            {
+              "coefficient": 3,
+              "degreeX": 2,
+              "degreeY": 1
+            }
+          ],
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "poly-op-3",
+          "expression": "(6x^2y^2 - 3xy + 2x) - (2x^2y^2 - xy + x)",
+          "answerTemplate": "x^{}y^{} + x^{}y^{} + x^{}y^{}",
+          "resultMode": "polynomial",
+          "parts": [
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            },
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            },
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            }
+          ],
+          "connector": " + ",
+          "correctAnswers": [
+            {
+              "coefficient": 4,
+              "degreeX": 2,
+              "degreeY": 2
+            },
+            {
+              "coefficient": -2,
+              "degreeX": 1,
+              "degreeY": 1
+            },
+            {
+              "coefficient": 1,
+              "degreeX": 1,
+              "degreeY": 0
+            }
+          ],
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        }
+      ]
+    },
+    "polynomialMultiplications": {
+      "label": "Πολλαπλασιασμός πολυωνύμων",
+      "items": [
+        {
+          "id": "poly-mul-1",
+          "expression": "(2x + 3y)(x + y)",
+          "answerTemplate": "x^{}y^{} + x^{}y^{} + x^{}y^{}",
+          "resultMode": "polynomial",
+          "parts": [
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            },
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            },
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            }
+          ],
+          "connector": " + ",
+          "correctAnswers": [
+            {
+              "coefficient": 2,
+              "degreeX": 2,
+              "degreeY": 0
+            },
+            {
+              "coefficient": 5,
+              "degreeX": 1,
+              "degreeY": 1
+            },
+            {
+              "coefficient": 3,
+              "degreeX": 0,
+              "degreeY": 2
+            }
+          ],
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "poly-mul-2",
+          "expression": "(x + 2y)(3x - y)",
+          "answerTemplate": "x^{}y^{} + x^{}y^{} + x^{}y^{}",
+          "resultMode": "polynomial",
+          "parts": [
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            },
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            },
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            }
+          ],
+          "connector": " + ",
+          "correctAnswers": [
+            {
+              "coefficient": 3,
+              "degreeX": 2,
+              "degreeY": 0
+            },
+            {
+              "coefficient": 5,
+              "degreeX": 1,
+              "degreeY": 1
+            },
+            {
+              "coefficient": -2,
+              "degreeX": 0,
+              "degreeY": 2
+            }
+          ],
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "poly-mul-3",
+          "expression": "(2x - y)(x + 4y)",
+          "answerTemplate": "x^{}y^{} + x^{}y^{} + x^{}y^{}",
+          "resultMode": "polynomial",
+          "parts": [
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            },
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            },
+            {
+              "coefficient": "",
+              "degreeX": "",
+              "degreeY": ""
+            }
+          ],
+          "connector": " + ",
+          "correctAnswers": [
+            {
+              "coefficient": 2,
+              "degreeX": 2,
+              "degreeY": 0
+            },
+            {
+              "coefficient": 7,
+              "degreeX": 1,
+              "degreeY": 1
+            },
+            {
+              "coefficient": -4,
+              "degreeX": 0,
+              "degreeY": 2
+            }
+          ],
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        }
+      ]
+    },
+    "polynomialAreaModel": {
+      "label": "Εμβαδικό μοντέλο πολυωνύμου",
+      "items": [
+        {
+          "id": "poly-area-1",
+          "expression": "(x + 4)(x + 5)",
+          "geogebraRoomId": "polynomial-lab-2-6-area-x",
+          "resultMode": "geogebraArea",
+          "correctAnswers": [
+            { "coefficient": 1, "degreeX": 2, "degreeY": 0 },
+            { "coefficient": 9, "degreeX": 1, "degreeY": 0 },
+            { "coefficient": 20, "degreeX": 0, "degreeY": 0 }
+          ],
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "poly-area-2",
+          "expression": "(2x + 4)(x + 5)",
+          "geogebraRoomId": "polynomial-lab-2-6-area-2x",
+          "resultMode": "geogebraArea",
+          "correctAnswers": [
+            { "coefficient": 2, "degreeX": 2, "degreeY": 0 },
+            { "coefficient": 14, "degreeX": 1, "degreeY": 0 },
+            { "coefficient": 20, "degreeX": 0, "degreeY": 0 }
+          ],
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        }
+      ]
+    },
+    "algebraTiles": {
+      "label": "Πλακίδια άλγεβρας",
+      "items": [
+        {
+          "id": "algebra-tiles-linear",
+          "expression": "3x + 2",
+          "resultMode": "algebraTiles",
+          "correctAnswers": [
+            { "coefficient": 3, "degreeX": 1, "degreeY": 0 },
+            { "coefficient": 2, "degreeX": 0, "degreeY": 0 }
+          ],
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "algebra-tiles-quadratic",
+          "expression": "2x² − x + 4",
+          "resultMode": "algebraTiles",
+          "correctAnswers": [
+            { "coefficient": 2, "degreeX": 2, "degreeY": 0 },
+            { "coefficient": -1, "degreeX": 1, "degreeY": 0 },
+            { "coefficient": 4, "degreeX": 0, "degreeY": 0 }
+          ],
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "algebra-tiles-y-linear",
+          "expression": "3y + 2",
+          "resultMode": "algebraTiles",
+          "correctAnswers": [
+            { "coefficient": 3, "degreeX": 0, "degreeY": 1 },
+            { "coefficient": 2, "degreeX": 0, "degreeY": 0 }
+          ],
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "algebra-tiles-xy-linear",
+          "expression": "2x + 3y + 1",
+          "resultMode": "algebraTiles",
+          "correctAnswers": [
+            { "coefficient": 2, "degreeX": 1, "degreeY": 0 },
+            { "coefficient": 3, "degreeX": 0, "degreeY": 1 },
+            { "coefficient": 1, "degreeX": 0, "degreeY": 0 }
+          ],
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "algebra-tiles-perfect-square",
+          "expression": "x² + 2xy + y²",
+          "resultMode": "algebraTiles",
+          "correctAnswers": [
+            { "coefficient": 1, "degreeX": 2, "degreeY": 0 },
+            { "coefficient": 2, "degreeX": 1, "degreeY": 1 },
+            { "coefficient": 1, "degreeX": 0, "degreeY": 2 }
+          ],
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "algebra-tiles-difference-squares",
+          "expression": "x² − y²",
+          "resultMode": "algebraTiles",
+          "correctAnswers": [
+            { "coefficient": 1, "degreeX": 2, "degreeY": 0 },
+            { "coefficient": -1, "degreeX": 0, "degreeY": 2 }
+          ],
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        },
+        {
+          "id": "algebra-tiles-rectangle-factorization",
+          "expression": "xy + 2x + 3y + 6",
+          "resultMode": "algebraTiles",
+          "correctAnswers": [
+            { "coefficient": 1, "degreeX": 1, "degreeY": 1 },
+            { "coefficient": 2, "degreeX": 1, "degreeY": 0 },
+            { "coefficient": 3, "degreeX": 0, "degreeY": 1 },
+            { "coefficient": 6, "degreeX": 0, "degreeY": 0 }
+          ],
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5
+        }
+      ]
+    }
+  }
+}

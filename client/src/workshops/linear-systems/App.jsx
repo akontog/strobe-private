@@ -170,6 +170,7 @@ function extractSystemEquations(activeItem) {
 export default function App({ role = 'student' }) {
   const { t } = useTranslation('linearSystems');
   const { t: tScores } = useTranslation('scores');
+  const { t: tNav } = useTranslation('navigation');
   const sessionLogging = useSessionInputLogger();
   const isTeacher = role === 'teacher';
   const isStudent = !isTeacher;
@@ -831,15 +832,13 @@ export default function App({ role = 'student' }) {
   ) : null;
 
   return (
-    <div className="linear-lab-shell">
-      <header className="linear-lab-header">
-        <HeroTitle
-          title={`${activeActivity.code} ${t(activeActivity.titleKey)}`}
-          subtitle={t(activeActivity.objectiveKey)}
-        />
-      </header>
+    <>
+      <HeroTitle
+        title={`${tNav('items.linearSystems')} - ${activeActivity.code} ${t(activeActivity.titleKey)}`}
+        subtitle={t(activeActivity.objectiveKey)}
+      />
 
-      <section className="common-zone lab-zone linear-common-zone">
+      <section className="common-zone lab-zone">
         <FullScreenButton />
         <SharedCommonZoneLayout
           className="linear-neural-zone"
@@ -862,7 +861,7 @@ export default function App({ role = 'student' }) {
       ) : null}
 
       {isTeacher ? (
-        <div className="linear-bottom-panels">
+        <>
           <SettingsAccordion>
             <CommonSessionSettings />
             <div className="lab-data-section data-section">
@@ -912,9 +911,9 @@ export default function App({ role = 'student' }) {
             ]}
             emptyMessage={t('ui.noStudents')}
           />
-        </div>
+        </>
       ) : null}
-    </div>
+    </>
   );
 }
 

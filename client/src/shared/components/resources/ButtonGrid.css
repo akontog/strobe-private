@@ -1,0 +1,4 @@
+.shared-button-grid {
+	display: grid;
+	grid-template-columns: repeat(var(--button-grid-columns, 10), minmax(0, 1fr));
+}
