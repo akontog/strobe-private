@@ -79,6 +79,14 @@ const APP_DEFINITIONS = [
     kind: 'react'
   },
   {
+    slug: 'factorization-lab',
+    labId: 'factorization-lab',
+    title: 'Factorization',
+    description: 'Factor trinomials by arranging algebra tiles into rectangles.',
+    roles: ['teacher', 'student', 'client'],
+    kind: 'react'
+  },
+  {
     slug: 'activity-runner',
     labId: 'activity-runner',
     title: 'Shared Activities',

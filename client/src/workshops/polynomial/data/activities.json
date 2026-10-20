@@ -121,12 +121,38 @@
       "id": "2.7",
       "code": "2.7",
       "datasetKey": "algebraTiles",
-      "title": "2.7 Πλακίδια άλγεβρας: πολλαπλασιασμός και παραγοντοποίηση",
-      "objective": "Αναπαράσταση πολυωνύμων με θετικά και αρνητικά πλακίδια, μοντέλο εμβαδού και αντίστροφη παραγοντοποίηση.",
+      "title": "2.7 Πολλαπλασιασμός με πλακίδια άλγεβρας",
+      "objective": "Μοντελοποίησε τον πολλαπλασιασμό δύο πολυωνύμων πρώτου βαθμού με πλακίδια και διάβασε το γινόμενο.",
       "tasks": [
         "Σύνθεση πολυωνύμου με πλακίδια",
         "Μοντέλο εμβαδού για γινόμενο",
         "Παραγοντοποίηση τριωνύμου"
+      ],
+      "widgets": [
+        {
+          "type": "algebra-tiles",
+          "region": "center",
+          "card": false,
+          "mode": "area"
+        }
+      ]
+    },
+    {
+      "id": "2.8",
+      "code": "2.8",
+      "datasetKey": "polynomialProductDegrees",
+      "title": "2.8 Βαθμός γινομένων πολυωνύμων",
+      "objective": "Αντιστοίχισε κάθε γινόμενο πολυωνύμων μόνο με x στον βαθμό του γινομένου.",
+      "tasks": [
+        "Βαθμός γινομένου πολυωνύμων",
+        "Κανόνας βαθμού γινομένου"
+      ],
+      "widgets": [
+        {
+          "type": "grouping-drag-drop",
+          "region": "center",
+          "card": false
+        }
       ]
     }
   ],
@@ -951,9 +977,21 @@
           "geogebraRoomId": "polynomial-lab-2-6-area-x",
           "resultMode": "geogebraArea",
           "correctAnswers": [
-            { "coefficient": 1, "degreeX": 2, "degreeY": 0 },
-            { "coefficient": 9, "degreeX": 1, "degreeY": 0 },
-            { "coefficient": 20, "degreeX": 0, "degreeY": 0 }
+            {
+              "coefficient": 1,
+              "degreeX": 2,
+              "degreeY": 0
+            },
+            {
+              "coefficient": 9,
+              "degreeX": 1,
+              "degreeY": 0
+            },
+            {
+              "coefficient": 20,
+              "degreeX": 0,
+              "degreeY": 0
+            }
           ],
           "scoreCorrect": 1,
           "scoreIncorrect": -0.5
@@ -964,9 +1002,21 @@
           "geogebraRoomId": "polynomial-lab-2-6-area-2x",
           "resultMode": "geogebraArea",
           "correctAnswers": [
-            { "coefficient": 2, "degreeX": 2, "degreeY": 0 },
-            { "coefficient": 14, "degreeX": 1, "degreeY": 0 },
-            { "coefficient": 20, "degreeX": 0, "degreeY": 0 }
+            {
+              "coefficient": 2,
+              "degreeX": 2,
+              "degreeY": 0
+            },
+            {
+              "coefficient": 14,
+              "degreeX": 1,
+              "degreeY": 0
+            },
+            {
+              "coefficient": 20,
+              "degreeX": 0,
+              "degreeY": 0
+            }
           ],
           "scoreCorrect": 1,
           "scoreIncorrect": -0.5
@@ -977,84 +1027,213 @@
       "label": "Πλακίδια άλγεβρας",
       "items": [
         {
-          "id": "algebra-tiles-linear",
-          "expression": "3x + 2",
+          "id": "algebra-tiles-multiply-x-plus-1-x-plus-2",
+          "expression": "(x+1)(x+2)",
           "resultMode": "algebraTiles",
           "correctAnswers": [
-            { "coefficient": 3, "degreeX": 1, "degreeY": 0 },
-            { "coefficient": 2, "degreeX": 0, "degreeY": 0 }
+            {
+              "coefficient": 1,
+              "degreeX": 2,
+              "degreeY": 0
+            },
+            {
+              "coefficient": 3,
+              "degreeX": 1,
+              "degreeY": 0
+            },
+            {
+              "coefficient": 2,
+              "degreeX": 0,
+              "degreeY": 0
+            }
           ],
           "scoreCorrect": 1,
           "scoreIncorrect": -0.5
         },
         {
-          "id": "algebra-tiles-quadratic",
-          "expression": "2x² − x + 4",
+          "id": "algebra-tiles-multiply-x-plus-2-x-plus-3",
+          "expression": "(x+2)(x+3)",
           "resultMode": "algebraTiles",
           "correctAnswers": [
-            { "coefficient": 2, "degreeX": 2, "degreeY": 0 },
-            { "coefficient": -1, "degreeX": 1, "degreeY": 0 },
-            { "coefficient": 4, "degreeX": 0, "degreeY": 0 }
+            {
+              "coefficient": 1,
+              "degreeX": 2,
+              "degreeY": 0
+            },
+            {
+              "coefficient": 5,
+              "degreeX": 1,
+              "degreeY": 0
+            },
+            {
+              "coefficient": 6,
+              "degreeX": 0,
+              "degreeY": 0
+            }
           ],
           "scoreCorrect": 1,
           "scoreIncorrect": -0.5
         },
         {
-          "id": "algebra-tiles-y-linear",
-          "expression": "3y + 2",
+          "id": "algebra-tiles-multiply-2x-plus-1-x-plus-2",
+          "expression": "(2x+1)(x+2)",
           "resultMode": "algebraTiles",
           "correctAnswers": [
-            { "coefficient": 3, "degreeX": 0, "degreeY": 1 },
-            { "coefficient": 2, "degreeX": 0, "degreeY": 0 }
+            {
+              "coefficient": 2,
+              "degreeX": 2,
+              "degreeY": 0
+            },
+            {
+              "coefficient": 5,
+              "degreeX": 1,
+              "degreeY": 0
+            },
+            {
+              "coefficient": 2,
+              "degreeX": 0,
+              "degreeY": 0
+            }
           ],
           "scoreCorrect": 1,
           "scoreIncorrect": -0.5
         },
         {
-          "id": "algebra-tiles-xy-linear",
-          "expression": "2x + 3y + 1",
+          "id": "algebra-tiles-multiply-x-plus-y-x-plus-2y",
+          "expression": "(x+y)(x+2y)",
           "resultMode": "algebraTiles",
           "correctAnswers": [
-            { "coefficient": 2, "degreeX": 1, "degreeY": 0 },
-            { "coefficient": 3, "degreeX": 0, "degreeY": 1 },
-            { "coefficient": 1, "degreeX": 0, "degreeY": 0 }
+            {
+              "coefficient": 1,
+              "degreeX": 2,
+              "degreeY": 0
+            },
+            {
+              "coefficient": 3,
+              "degreeX": 1,
+              "degreeY": 1
+            },
+            {
+              "coefficient": 2,
+              "degreeX": 0,
+              "degreeY": 2
+            }
           ],
           "scoreCorrect": 1,
           "scoreIncorrect": -0.5
-        },
+        }
+      ]
+    },
+    "polynomialProductDegrees": {
+      "label": "Βαθμοί γινομένων πολυωνύμων",
+      "items": [
         {
-          "id": "algebra-tiles-perfect-square",
-          "expression": "x² + 2xy + y²",
-          "resultMode": "algebraTiles",
-          "correctAnswers": [
-            { "coefficient": 1, "degreeX": 2, "degreeY": 0 },
-            { "coefficient": 2, "degreeX": 1, "degreeY": 1 },
-            { "coefficient": 1, "degreeX": 0, "degreeY": 2 }
+          "id": "polynomial-product-degrees-1",
+          "expression": "Αντιστοίχιση γινομένων στον βαθμό τους",
+          "resultMode": "grouping",
+          "groups": [
+            {
+              "id": "degree-0",
+              "title": "Βαθμός 0"
+            },
+            {
+              "id": "degree-1",
+              "title": "Βαθμός 1"
+            },
+            {
+              "id": "degree-2",
+              "title": "Βαθμός 2"
+            },
+            {
+              "id": "degree-3",
+              "title": "Βαθμός 3"
+            },
+            {
+              "id": "degree-4",
+              "title": "Βαθμός 4"
+            }
           ],
-          "scoreCorrect": 1,
-          "scoreIncorrect": -0.5
-        },
-        {
-          "id": "algebra-tiles-difference-squares",
-          "expression": "x² − y²",
-          "resultMode": "algebraTiles",
-          "correctAnswers": [
-            { "coefficient": 1, "degreeX": 2, "degreeY": 0 },
-            { "coefficient": -1, "degreeX": 0, "degreeY": 2 }
+          "items": [
+            {
+              "id": "constant-1",
+              "label": "(2)(3)",
+              "degree": 0,
+              "correctGroupId": "degree-0"
+            },
+            {
+              "id": "constant-2",
+              "label": "(-2)(4)",
+              "degree": 0,
+              "correctGroupId": "degree-0"
+            },
+            {
+              "id": "linear-1",
+              "label": "2(x+3)",
+              "degree": 1,
+              "correctGroupId": "degree-1"
+            },
+            {
+              "id": "linear-2",
+              "label": "(x-2)(-3)",
+              "degree": 1,
+              "correctGroupId": "degree-1"
+            },
+            {
+              "id": "quadratic-1",
+              "label": "(x+1)(x-2)",
+              "degree": 2,
+              "correctGroupId": "degree-2"
+            },
+            {
+              "id": "quadratic-2",
+              "label": "x(x+3)",
+              "degree": 2,
+              "correctGroupId": "degree-2"
+            },
+            {
+              "id": "quadratic-3",
+              "label": "(2x-1)(x+4)",
+              "degree": 2,
+              "correctGroupId": "degree-2"
+            },
+            {
+              "id": "cubic-1",
+              "label": "x(x+1)(x-2)",
+              "degree": 3,
+              "correctGroupId": "degree-3"
+            },
+            {
+              "id": "cubic-2",
+              "label": "(x^2+1)(x-3)",
+              "degree": 3,
+              "correctGroupId": "degree-3"
+            },
+            {
+              "id": "quartic-1",
+              "label": "(x^2+1)(x^2-1)",
+              "degree": 4,
+              "correctGroupId": "degree-4"
+            },
+            {
+              "id": "quartic-2",
+              "label": "x^2(x+2)(x-1)",
+              "degree": 4,
+              "correctGroupId": "degree-4"
+            }
           ],
-          "scoreCorrect": 1,
-          "scoreIncorrect": -0.5
-        },
-        {
-          "id": "algebra-tiles-rectangle-factorization",
-          "expression": "xy + 2x + 3y + 6",
-          "resultMode": "algebraTiles",
-          "correctAnswers": [
-            { "coefficient": 1, "degreeX": 1, "degreeY": 1 },
-            { "coefficient": 2, "degreeX": 1, "degreeY": 0 },
-            { "coefficient": 3, "degreeX": 0, "degreeY": 1 },
-            { "coefficient": 6, "degreeX": 0, "degreeY": 0 }
-          ],
+          "correctAnswers": {
+            "item-constant-1": "degree-0",
+            "item-constant-2": "degree-0",
+            "item-linear-1": "degree-1",
+            "item-linear-2": "degree-1",
+            "item-quadratic-1": "degree-2",
+            "item-quadratic-2": "degree-2",
+            "item-quadratic-3": "degree-2",
+            "item-cubic-1": "degree-3",
+            "item-cubic-2": "degree-3",
+            "item-quartic-1": "degree-4",
+            "item-quartic-2": "degree-4"
+          },
           "scoreCorrect": 1,
           "scoreIncorrect": -0.5
         }

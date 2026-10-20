@@ -142,10 +142,43 @@
       "resultMode": "algebraTiles",
       "widgets": [
         { "type": "identity-expression", "region": "left", "card": true },
-        { "type": "algebra-tiles", "region": "center", "card": false, "layout": "t-chart" }
+        { "type": "algebra-tiles", "region": "center", "card": false, "mode": "area" }
       ],
       "scoreCorrect": 1,
       "scoreIncorrect": -0.5
+    },
+    {
+      "id": "6",
+      "code": "6.",
+      "titleKey": "activity6Title",
+      "objectiveKey": "activity6Objective",
+      "resultMode": "algebraTiles",
+      "widgets": [
+        { "type": "identity-expression", "region": "left", "card": true },
+        { "type": "algebra-tiles", "region": "center", "card": false, "mode": "area", "variables": ["α", "β"] }
+      ],
+      "scoreCorrect": 1,
+      "scoreIncorrect": -0.5,
+      "variants": [
+        {
+          "id": "sum-square-area",
+          "label": "(α+β)^2",
+          "expression": "(\\alpha+\\beta)^2",
+          "objectiveKey": "activity6Objective"
+        },
+        {
+          "id": "difference-square-area",
+          "label": "(α-β)^2",
+          "expression": "(\\alpha-\\beta)^2",
+          "objectiveKey": "activity6Objective"
+        },
+        {
+          "id": "squares-difference-area",
+          "label": "(α+β)(α-β)",
+          "expression": "(\\alpha+\\beta)(\\alpha-\\beta)",
+          "objectiveKey": "activity6Objective"
+        }
+      ]
     }
   ]
 }

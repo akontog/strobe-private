@@ -14,6 +14,7 @@ function createScoresRouter() {
     const sessionId = String(req.body?.sessionId || '').trim()
       || (activity.startsWith('polynomial:') ? getActiveSessionForApp('polynomial-lab') : '')
       || (activity.startsWith('equations:') ? getActiveSessionForApp('equations-lab') : '');
+    const resolvedSessionId = sessionId || (activity.startsWith('factorization:') ? getActiveSessionForApp('factorization-lab') : '');
     if (!name || !activity || !Number.isFinite(currentScore)) {
       return res.status(400).json({ error: 'Student name, activity and finite score are required.' });
     }
@@ -25,7 +26,7 @@ function createScoresRouter() {
     student.currentScore = currentScore;
     student.updatedAt = new Date().toISOString();
     studentsById.set(id, student);
-    if (sessionId) updateSessionStudentScore(sessionId, name, currentScore);
+    if (resolvedSessionId) updateSessionStudentScore(resolvedSessionId, name, currentScore);
     return res.json({ student });
   });
 

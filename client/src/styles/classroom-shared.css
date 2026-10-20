@@ -422,7 +422,7 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
 
-body.session-not-started .common-zone {
+body.session-not-started-student .common-zone {
   filter: grayscale(1);
   background-color: #e5e7eb;
   border-color: #9ca3af;

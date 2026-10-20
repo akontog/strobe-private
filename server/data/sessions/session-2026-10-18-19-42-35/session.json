@@ -1,0 +1,20 @@
+{
+  "sessionId": "session-2026-10-18-19-42-35",
+  "app": "equations-lab",
+  "startedAt": "2026-10-18T16:42:35.625Z",
+  "endedAt": null,
+  "teacherId": "antonis",
+  "students": [
+    "dd"
+  ],
+  "studentScores": [
+    {
+      "student": "dd",
+      "score": 0
+    }
+  ],
+  "activity": "1.1 Βασικές έννοιες μονωνύμων",
+  "chatEnabled": false,
+  "scoreVisible": true,
+  "feedbackEnabled": false
+}

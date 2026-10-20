@@ -9,7 +9,7 @@
   "activity_2_4": "2.4 Operations with polynomials (addition and subtraction)",
   "activity_2_5": "2.5 Operations with polynomials (multiplication)",
   "activity_2_6": "2.6 Multiplication with rectangle areas",
-  "activity_2_7": "2.7 Algebra tiles: multiplication and factorisation",
+  "activity_2_7": "2.7 Multiplication with algebra tiles",
   "expression": "Expression",
   "expressions": "Expressions",
   "expressionType": "Monomial or polynomial",
@@ -18,6 +18,7 @@
   "degreeX": "Degree with respect to x",
   "degreeY": "Degree with respect to y",
   "totalDegree": "Total degree",
+  "degreeXY": "Degree with respect to x and y",
   "termCoefficient": "Coefficient of term {{term}}",
   "termDegreeX": "Degree with respect to x (term {{term}})",
   "termDegreeY": "Degree with respect to y (term {{term}})",
@@ -34,5 +35,7 @@
   "studentTable": "Student table",
   "noStudents": "There are no students in this lab.",
   "studentQrAlt": "QR code for the Polynomial Lab student link",
-  "answerPrefix": "Answer"
+  "answerPrefix": "Answer",
+  "activity_2_8": "2.8 Degree of polynomial products",
+  "polynomialProductsToGroup": "Polynomial products to match"
 }

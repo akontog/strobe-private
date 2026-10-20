@@ -133,22 +133,22 @@ function objectExists(api, name) {
 }
 
 export default function CollaborativeGeoGebra({
-  roomId = 'geogebra-default',
-  sessionApp = 'geogebra-collab',
-  className = '',
-  showStatus = false,
-  editable = true,
-  showToolBar = true,
-  showAlgebraView = true,
-  showAlgebraInput = true,
-  showMenuBar = false,
-  showResetIcon = false,
-  showZoomButtons = false,
-  showFullscreenButton = false,
-  showSuggestionButtons = false,
-  onConnectionChange,
-  onObjectsChange,
-  onPermissionsChange
+  roomId = 'geogebra-default', // Shared GeoGebra room identifier.
+  sessionApp = 'geogebra-collab', // App identifier used for session permissions.
+  className = '', // Additional CSS classes for the board.
+  showStatus = false, // Shows the connection status indicator.
+  editable = true, // Allows local construction changes.
+  showToolBar = true, // Shows GeoGebra's toolbar.
+  showAlgebraView = true, // Shows GeoGebra's algebra panel.
+  showAlgebraInput = true, // Shows GeoGebra's algebra input.
+  showMenuBar = false, // Shows GeoGebra's menu bar.
+  showResetIcon = false, // Shows GeoGebra's reset control.
+  showZoomButtons = false, // Shows GeoGebra's zoom controls.
+  showFullscreenButton = false, // Shows GeoGebra's fullscreen control.
+  showSuggestionButtons = false, // Shows GeoGebra's suggestion controls.
+  onConnectionChange, // Receives connection status changes.
+  onObjectsChange, // Receives construction object changes.
+  onPermissionsChange // Receives permission changes.
 }) {
   const boardRef = useRef(null);
   const socketRef = useRef(null);

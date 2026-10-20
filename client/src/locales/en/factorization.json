@@ -1,0 +1,12 @@
+{
+  "activity1Title": "Factor trinomials with algebra tiles",
+  "activity1Objective": "Arrange the tiles into a rectangle and read the factors along its sides.",
+  "instruction": "Build the requested trinomial in the lower-right area. Then place x and y tiles in the top and left strips to make a rectangle.",
+  "target": "Factor",
+  "questions": "Expressions",
+  "chooseQuestion": "Choose an expression",
+  "studentTableTitle": "Student progress",
+  "noStudents": "No students are connected.",
+  "correct": "Correct! The tiles form the rectangle and its sides show the factors.",
+  "incomplete": "Keep arranging the tiles until they form the correct rectangle."
+}

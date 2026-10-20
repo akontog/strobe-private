@@ -51,9 +51,10 @@ export function SessionLogProvider({ app, role = 'student', sessionId: suppliedS
 
   useEffect(() => {
     if (typeof document === 'undefined') return undefined;
-    document.body.classList.toggle('session-not-started', Boolean(app && !activeSessionId));
-    return () => document.body.classList.remove('session-not-started');
-  }, [activeSessionId, app]);
+    const studentWaiting = role === 'student' && Boolean(app && !activeSessionId);
+    document.body.classList.toggle('session-not-started-student', studentWaiting);
+    return () => document.body.classList.remove('session-not-started-student');
+  }, [activeSessionId, app, role]);
 
   useEffect(() => {
     const handleSessionEnded = (event) => {

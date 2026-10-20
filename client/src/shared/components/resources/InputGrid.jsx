@@ -13,13 +13,13 @@ import { useSessionInputLogger } from '../activities/SessionLogContext';
  * @returns {JSX.Element} The input grid.
  */
 export default function InputGrid({
-  fields = [],
-  columns = 2,
-  rows,
-  activity = '',
-  className = '',
-  customLayout = false,
-  labelClassName = 'activity-input-grid__label'
+  fields = [], // Input, output, and token descriptions to render.
+  columns = 2, // Number of columns in the default grid layout.
+  rows, // Optional fixed row count for the default grid layout.
+  activity = '', // Activity identifier used in input logs.
+  className = '', // Additional CSS classes for the grid.
+  customLayout = false, // Leaves cell placement to the caller's CSS.
+  labelClassName = 'activity-input-grid__label' // CSS class applied to field labels.
 }) {
   const sessionLogging = useSessionInputLogger();
   const canEdit = sessionLogging?.canEdit ?? true;

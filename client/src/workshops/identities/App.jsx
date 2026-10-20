@@ -337,7 +337,8 @@ export default function App({ role = 'student' }) {
       ) : isAlgebraTilesActivity ? (
         <AlgebraTiles
           activity={`identities:${answerActivityKey}`}
-          layout={centerWidget.layout}
+          mode={centerWidget.mode || centerWidget.layout}
+          variables={centerWidget.variables}
           tiles={activeAnswers.tiles || []}
           onTilesChange={(tiles) => updateAnswer('tiles', tiles)}
         />

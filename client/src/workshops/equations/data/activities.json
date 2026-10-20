@@ -7,7 +7,7 @@
       "objectiveKey": "activity1Objective",
       "resultMode": "equationTiles",
       "widgets": [
-        { "type": "algebra-tiles", "region": "center", "card": false, "layout": "equation" },
+        { "type": "algebra-tiles", "region": "center", "card": false, "mode": "equation" },
         { "type": "equation-answer", "region": "center", "card": false }
       ],
       "scoreCorrect": 1,

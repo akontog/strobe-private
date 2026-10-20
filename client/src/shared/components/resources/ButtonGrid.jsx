@@ -5,14 +5,14 @@ import './ButtonGrid.css';
  * Places configurable interactive or display items in a responsive grid.
  */
 export default function ButtonGrid({
-  items = [],
-  columns = 10,
-  renderItem,
-  getItemKey,
-  className = '',
-  ariaLabel,
-  role = 'grid',
-  style = {}
+  items = [], // Items displayed as buttons in the grid.
+  columns = 10, // Number of columns in the grid.
+  renderItem, // Renders each item.
+  getItemKey, // Returns a stable key for an item.
+  className = '', // Additional CSS classes for the grid.
+  ariaLabel, // Accessible name for the grid.
+  role = 'grid', // ARIA role applied to the grid container.
+  style = {} // Inline styles applied to the grid container.
 }) {
   const safeColumns = Math.max(1, Number(columns) || 1);
 

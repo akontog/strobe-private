@@ -62,6 +62,7 @@ const initPolynomial = require('./services/polynomial');
 const initLinearSystems = require('./services/linearSystems');
 const initIdentities = require('./services/identities');
 const initEquations = require('./services/equations');
+const initFactorization = require('./services/factorization');
 const initGeogebraCollab = require('./services/geogebraCollab');
 const { createGeogebraLessonStore } = require('./utils/geogebraLessonStore');
 const wsRegistry = require('./services/websocketRegistry');
@@ -310,6 +311,12 @@ const { equationsWss } = initEquations({
   getWebSocketSessionInfo,
   sessionManager
 });
+const { factorizationWss } = initFactorization({
+  recordCommunication,
+  getUpgradeClientInfo,
+  getWebSocketSessionInfo,
+  sessionManager
+});
 
 wsRegistry.register(REALTIME_WS_PATH, (request, socket, head) => {
   io.handleUpgrade(request, socket, head);
@@ -350,6 +357,12 @@ wsRegistry.register('/ws/identities-lab', (request, socket, head) => {
 wsRegistry.register('/ws/equations-lab', (request, socket, head) => {
   equationsWss.handleUpgrade(request, socket, head, (ws) => {
     equationsWss.emit('connection', ws, request);
+  });
+});
+
+wsRegistry.register('/ws/factorization-lab', (request, socket, head) => {
+  factorizationWss.handleUpgrade(request, socket, head, (ws) => {
+    factorizationWss.emit('connection', ws, request);
   });
 });
 

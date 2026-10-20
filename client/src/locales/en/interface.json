@@ -97,15 +97,6 @@
     "streamingStarted": "Streaming test started",
     "cannotStart": "Could not start the test"
   },
-  "jpegQuality": "JPEG quality",
-  "cameraStatus": {
-    "idle": "Idle",
-    "stopped": "Stopped",
-    "realtimeConnected": "Connected to realtime server",
-    "realtimeDisconnected": "Disconnected from realtime server",
-    "streamingStarted": "Streaming test started",
-    "cannotStart": "Could not start the test"
-  },
   "linearSeparation": "Linear Separation Tool",
   "linearSeparationLead": "Provide JSON in the datasets.js format and find a hyperplane for target-versus-rest classification.",
   "linearSeparationInputTitle": "Enter Dataset JSON",
@@ -134,57 +125,6 @@
   "margin": "Margin",
   "runTests": "Run tests",
   "summary": "Summary",
-  "activityBuilder": "Activity Settings",
-  "currentApp": "Current app: {{title}}",
-  "noSavedActivities": "No saved activities for this app yet.",
-  "preview": "Preview",
-  "appsTitle": "Apps",
-  "toolsTitle": "Tools",
-  "users": "Users",
-  "labs": "Labs",
-  "messageTypes": "Message types",
-  "multiSelectHint": "Ctrl/⌘ + click to select multiple options",
-  "messageCount": "{{count}} messages",
-  "incomingServer": "→ server",
-  "serverOutgoing": "server →",
-  "failedTestsRun": "Failed to run tests.",
-  "running": "Running...",
-  "geoGebraMonitorIntro": "Manage connected rooms, object access, room contents, and the live activity feed.",
-  "notEnoughSeparationData": "Not enough data yet.",
-  "noSeparator": "No separator found.",
-  "separator": "A separator was found.",
-  "minimumMaxW": "Smallest max|w|",
-  "currentAppLabel": "Current app: {{title}}",
-  "apps": {
-    "buffon-needle": {
-      "title": "Buffon Lab",
-      "description": "Multiplayer Buffon experiment with rounds and scoreboards."
-    },
-    "neural-lab": {
-      "title": "Neural Lab",
-      "description": "Collaborative neural-network activity with live teacher and student sync."
-    },
-    "primes-lab": {
-      "title": "Primes Lab",
-      "description": "Sieve of Eratosthenes activity with teacher-controlled steps and a shared number grid."
-    },
-    "polynomial-lab": {
-      "title": "Polynomial Lab",
-      "description": "Collaborative polynomial practice with a shared workspace and teacher-led activities."
-    },
-    "linear-systems-lab": {
-      "title": "Linear Systems Lab",
-      "description": "Graphical and algebraic solving of linear systems with shared GeoGebra scenes."
-    },
-    "identities-lab": {
-      "title": "Identities Lab",
-      "description": "Algebraic identities with geometric proofs of fundamental identities."
-    },
-    "equations-lab": {
-      "title": "Equations Lab",
-      "description": "Solve simple equations with shared algebra tiles."
-    }
-  },
   "activityBuilder": {
     "title": "Activity Settings",
     "settingsTitle": "Activity Settings",
@@ -321,47 +261,200 @@
     "expressionPreviewEmpty": "Your equation preview will appear here",
     "remove": "Remove",
     "resources": {
-      "buffon-needle": [{ "value": "round", "label": "Buffon needle experiment" }],
+      "buffon-needle": [
+        {
+          "value": "round",
+          "label": "Buffon needle experiment"
+        }
+      ],
       "neural-lab": [
-        { "value": "1", "label": "1. Find the input" },
-        { "value": "2", "label": "2. Calculate the output" },
-        { "value": "3", "label": "3. Adjust the weights" },
-        { "value": "4", "label": "4. Compare" }
+        {
+          "value": "1",
+          "label": "1. Find the input"
+        },
+        {
+          "value": "2",
+          "label": "2. Calculate the output"
+        },
+        {
+          "value": "3",
+          "label": "3. Adjust the weights"
+        },
+        {
+          "value": "4",
+          "label": "4. Compare"
+        }
       ],
       "primes-lab": [
-        { "value": "sieve", "label": "Sieve of Eratosthenes" },
-        { "value": "number-grid", "label": "Prime number grid" }
+        {
+          "value": "sieve",
+          "label": "Sieve of Eratosthenes"
+        },
+        {
+          "value": "number-grid",
+          "label": "Prime number grid"
+        }
       ],
       "polynomial-lab": [
-        { "value": "1.1", "label": "1.1 Monomial concepts" },
-        { "value": "1.2", "label": "1.2 Identify like monomials" },
-        { "value": "1.3", "label": "1.3 Operations with monomials" },
-        { "value": "1.4", "label": "1.4 Multiplying monomials" },
-        { "value": "2.1", "label": "2.1 Polynomial basics" },
-        { "value": "2.2", "label": "2.2 Combine like terms" },
-        { "value": "2.3", "label": "2.3 Group terms in polynomials" },
-        { "value": "2.4", "label": "2.4 Add and subtract polynomials" },
-        { "value": "2.5", "label": "2.5 Multiply polynomials" },
-        { "value": "2.6", "label": "2.6 Area model multiplication" },
-        { "value": "2.7", "label": "2.7 Algebra tiles" }
+        {
+          "value": "1.1",
+          "label": "1.1 Monomial concepts"
+        },
+        {
+          "value": "1.2",
+          "label": "1.2 Identify like monomials"
+        },
+        {
+          "value": "1.3",
+          "label": "1.3 Operations with monomials"
+        },
+        {
+          "value": "1.4",
+          "label": "1.4 Multiplying monomials"
+        },
+        {
+          "value": "2.1",
+          "label": "2.1 Polynomial basics"
+        },
+        {
+          "value": "2.2",
+          "label": "2.2 Combine like terms"
+        },
+        {
+          "value": "2.3",
+          "label": "2.3 Group terms in polynomials"
+        },
+        {
+          "value": "2.4",
+          "label": "2.4 Add and subtract polynomials"
+        },
+        {
+          "value": "2.5",
+          "label": "2.5 Multiply polynomials"
+        },
+        {
+          "value": "2.6",
+          "label": "2.6 Area model multiplication"
+        },
+        {
+          "value": "2.7",
+          "label": "2.7 Algebra tiles"
+        },
+        {
+          "value": "2.8",
+          "label": "2.8 Degree of polynomial products"
+        }
       ],
       "linear-systems-lab": [
-        { "value": "1", "label": "1. Create a system graphically" },
-        { "value": "2", "label": "2. One, none, or infinitely many solutions" },
-        { "value": "3", "label": "3. Embodied activity" },
-        { "value": "4", "label": "4. Solve by elimination" },
-        { "value": "5", "label": "5. Verify the solution on the graph" },
-        { "value": "6", "label": "6. Embodied zone sorting" }
+        {
+          "value": "1",
+          "label": "1. Create a system graphically"
+        },
+        {
+          "value": "2",
+          "label": "2. One, none, or infinitely many solutions"
+        },
+        {
+          "value": "3",
+          "label": "3. Embodied activity"
+        },
+        {
+          "value": "4",
+          "label": "4. Solve by elimination"
+        },
+        {
+          "value": "5",
+          "label": "5. Verify the solution on the graph"
+        },
+        {
+          "value": "6",
+          "label": "6. Embodied zone sorting"
+        }
       ],
       "identities-lab": [
-        { "value": "1", "label": "1. Square of a sum" },
-        { "value": "2", "label": "2. Square of a difference" },
-        { "value": "3", "label": "3. Difference of squares" },
-        { "value": "4", "label": "4. Practice" }
+        {
+          "value": "1",
+          "label": "1. Square of a sum"
+        },
+        {
+          "value": "2",
+          "label": "2. Square of a difference"
+        },
+        {
+          "value": "3",
+          "label": "3. Difference of squares"
+        },
+        {
+          "value": "4",
+          "label": "4. Practice"
+        }
       ],
       "equations-lab": [
-        { "value": "1", "label": "1. Solve simple equations" }
+        {
+          "value": "1",
+          "label": "1. Solve simple equations"
+        }
+      ],
+      "factorization-lab": [
+        {
+          "value": "1",
+          "label": "1. Factor trinomials with algebra tiles"
+        }
       ]
+    }
+  },
+  "currentApp": "Current app: {{title}}",
+  "noSavedActivities": "No saved activities for this app yet.",
+  "preview": "Preview",
+  "appsTitle": "Apps",
+  "toolsTitle": "Tools",
+  "users": "Users",
+  "labs": "Labs",
+  "messageTypes": "Message types",
+  "multiSelectHint": "Ctrl/⌘ + click to select multiple options",
+  "messageCount": "{{count}} messages",
+  "incomingServer": "→ server",
+  "serverOutgoing": "server →",
+  "failedTestsRun": "Failed to run tests.",
+  "running": "Running...",
+  "geoGebraMonitorIntro": "Manage connected rooms, object access, room contents, and the live activity feed.",
+  "notEnoughSeparationData": "Not enough data yet.",
+  "noSeparator": "No separator found.",
+  "separator": "A separator was found.",
+  "minimumMaxW": "Smallest max|w|",
+  "currentAppLabel": "Current app: {{title}}",
+  "apps": {
+    "buffon-needle": {
+      "title": "Buffon Lab",
+      "description": "Multiplayer Buffon experiment with rounds and scoreboards."
+    },
+    "neural-lab": {
+      "title": "Neural Lab",
+      "description": "Collaborative neural-network activity with live teacher and student sync."
+    },
+    "primes-lab": {
+      "title": "Primes Lab",
+      "description": "Sieve of Eratosthenes activity with teacher-controlled steps and a shared number grid."
+    },
+    "polynomial-lab": {
+      "title": "Polynomial Lab",
+      "description": "Collaborative polynomial practice with a shared workspace and teacher-led activities."
+    },
+    "linear-systems-lab": {
+      "title": "Linear Systems Lab",
+      "description": "Graphical and algebraic solving of linear systems with shared GeoGebra scenes."
+    },
+    "identities-lab": {
+      "title": "Identities Lab",
+      "description": "Algebraic identities with geometric proofs of fundamental identities."
+    },
+    "equations-lab": {
+      "title": "Equations Lab",
+      "description": "Solve simple equations with shared algebra tiles."
+    },
+    "factorization-lab": {
+      "title": "Factorization Lab",
+      "description": "Factor trinomials with algebra tiles."
     }
   },
   "toolHelpers": {

@@ -8,6 +8,8 @@ const COMM_EVENT_CATALOG = Object.freeze([
   { app: 'polynomial-lab', direction: 'out', event: 'polynomial-lab:algebra_tiles_state', description: 'Server relays the validated Algebra Tiles canvas to participants.' },
   { app: 'equations-lab', direction: 'in', event: 'equations-lab:tiles_update', description: 'Participant updates the shared equation tile balance.' },
   { app: 'equations-lab', direction: 'out', event: 'equations-lab:tiles_update', description: 'Server relays the equation tile balance to participants.' },
+  { app: 'factorization-lab', direction: 'in', event: 'factorization-lab:tiles_update', description: 'Participant updates the shared factorization tile board.' },
+  { app: 'factorization-lab', direction: 'out', event: 'factorization-lab:tiles_update', description: 'Server relays the shared factorization tile board.' },
   { app: 'socket', direction: 'in', event: 'socket:connect', description: 'WebSocket transport connected to server.' },
   { app: 'socket', direction: 'in', event: 'socket:disconnect', description: 'WebSocket transport disconnected from server.' },
 

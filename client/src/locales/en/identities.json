@@ -33,5 +33,7 @@
   "matchingInstruction": "Drag each expansion to the identity it verifies.",
   "matchingBankLabel": "Expansions to match",
   "activity5Title": "Multiplication model with algebra tiles",
-  "activity5Objective": "Place the x+1 tiles horizontally and the x+3 tiles vertically in the T-chart. The factors and product update from the tiles you place."
+  "activity5Objective": "Place the x+1 tiles horizontally and the x+3 tiles vertically in the T-chart. The factors and product update from the tiles you place.",
+  "activity6Title": "Build identities with the area model",
+  "activity6Objective": "The teacher chooses an identity. Place the α and β tiles horizontally and vertically to represent its factors, then build the product in the area model."
 }

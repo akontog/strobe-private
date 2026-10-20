@@ -1,0 +1,7 @@
+{
+  "labId": "factorization-lab",
+  "slug": "factorization-lab",
+  "workshopSlug": "factorization-lab",
+  "name": "Factorization",
+  "entry": { "teacher": "TeacherView.jsx", "student": "StudentView.jsx" }
+}

@@ -10,15 +10,15 @@ const getPlacement = (placements, itemId, groupIds) => {
 };
 
 export default function GroupingDragDrop({
-  items = [],
-  groups = [],
-  placements = {},
-  activity = '',
-  onChange,
-  disabled = false,
-  invalidItemIds = [],
-  disabledItemIds = [],
-  bankLabel = 'Αντικείμενα προς ομαδοποίηση',
+  items = [], // Draggable items shown in the bank and groups.
+  groups = [], // Drop zones available to the items.
+  placements = {}, // Current item-to-group assignments.
+  activity = '', // Activity identifier used in input logs.
+  onChange, // Reports updated assignments to the parent.
+  disabled = false, // Disables all drag and drop interactions.
+  invalidItemIds = [], // Item IDs currently marked as incorrectly placed.
+  disabledItemIds = [], // Item IDs that cannot be moved.
+  bankLabel = 'Αντικείμενα προς ομαδοποίηση', // Label shown above the ungrouped items.
 }) {
   const sessionLogging = useSessionInputLogger();
   const canEdit = sessionLogging?.canEdit ?? true;

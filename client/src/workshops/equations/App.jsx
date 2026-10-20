@@ -193,7 +193,7 @@ export default function App({ role = 'student' }) {
               <p className="equations-instruction">{t('removeMatchingTiles')}</p>
               <AlgebraTiles
                 activity={`equations:${selectedQuestion.id}`}
-                layout={tileWidget.layout}
+                mode={tileWidget.mode || tileWidget.layout}
                 tiles={tiles}
                 onTilesChange={updateTiles}
               />
