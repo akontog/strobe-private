@@ -1,0 +1,12 @@
+{
+  "equations": [
+    { "id": "x-plus-2-equals-5", "label": "x + 2 = 5", "prompt": "x + 2 = 5" },
+    { "id": "x-minus-3-equals-4", "label": "x − 3 = 4", "prompt": "x − 3 = 4" },
+    { "id": "2x-plus-1-equals-7", "label": "2x + 1 = 7", "prompt": "2x + 1 = 7" }
+  ],
+  "factorization": [
+    { "id": "x2-plus-5x-plus-6", "label": "x² + 5x + 6", "prompt": "x² + 5x + 6" },
+    { "id": "x2-plus-4x-plus-3", "label": "x² + 4x + 3", "prompt": "x² + 4x + 3" },
+    { "id": "x2-minus-x-minus-6", "label": "x² − x − 6", "prompt": "x² − x − 6" }
+  ]
+}

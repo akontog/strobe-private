@@ -17,9 +17,13 @@ function setActiveLab(slug, roomId = '') {
     return activeLabSlug;
   }
 
-  if (normalizedSlug === 'geogebra-collab' || normalizedSlug === 'algebra-tiles-collab') {
+  if (normalizedSlug === 'geogebra-collab' || normalizedSlug === 'algebra-tiles-collab' || normalizedSlug === 'number-line-collab') {
     activeLabSlug = normalizedSlug;
-    const fallbackRoom = normalizedSlug === 'geogebra-collab' ? 'geogebra-default' : 'algebra-tiles-default';
+    const fallbackRoom = {
+      'geogebra-collab': 'geogebra-default',
+      'algebra-tiles-collab': 'algebra-tiles-default',
+      'number-line-collab': 'number-line-default'
+    }[normalizedSlug];
     activeRoomId = String(roomId || fallbackRoom).trim().slice(0, 80) || fallbackRoom;
     activeLabUpdatedAt = Date.now();
     return activeLabSlug;
@@ -56,8 +60,12 @@ function getActiveSelection() {
   const app = getActiveLab();
   return {
     app,
-    roomId: app === 'geogebra-collab' || app === 'algebra-tiles-collab'
-      ? activeRoomId || (app === 'geogebra-collab' ? 'geogebra-default' : 'algebra-tiles-default')
+    roomId: ['geogebra-collab', 'algebra-tiles-collab', 'number-line-collab'].includes(app)
+      ? activeRoomId || ({
+        'geogebra-collab': 'geogebra-default',
+        'algebra-tiles-collab': 'algebra-tiles-default',
+        'number-line-collab': 'number-line-default'
+      }[app])
       : '',
     activity: app === 'activity-runner' ? activeActivity : null
   };

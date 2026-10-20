@@ -1,0 +1,80 @@
+.number-line-resource {
+  width: 100%;
+  padding: 0.75rem;
+}
+
+.number-line-resource__canvas {
+  display: block;
+  width: 100%;
+  min-height: 17rem;
+  overflow: visible;
+  touch-action: none;
+  cursor: crosshair;
+  user-select: none;
+}
+
+.number-line-resource__tick line {
+  stroke: #94a3b8;
+  stroke-width: 1;
+  stroke-opacity: 0.2;
+}
+
+.number-line-resource__tick text {
+  fill: #334155;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.number-line-resource__axis {
+  stroke: #1e293b;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.number-line-resource__stem {
+  stroke-width: 2;
+  stroke-opacity: 0.65;
+}
+
+.number-line-resource__mark circle {
+  stroke: #fff;
+  stroke-width: 3;
+  filter: drop-shadow(0 2px 2px rgb(15 23 42 / 25%));
+}
+
+.number-line-resource__mark.is-own circle {
+  stroke: #0f172a;
+}
+
+.number-line-resource__mark circle.is-open {
+  stroke-width: 3;
+}
+
+.number-line-resource__interval {
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+.number-line-resource__draft {
+  stroke: #334155;
+  stroke-width: 5;
+  stroke-dasharray: 8 6;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.number-line-resource__name {
+  fill: #0f172a;
+  stroke: #fff;
+  stroke-width: 5px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .number-line-resource__canvas {
+    min-height: 13rem;
+  }
+}

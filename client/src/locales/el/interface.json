@@ -62,6 +62,19 @@
   "joinRoom": "Σύνδεση στην αίθουσα",
   "geoGebraCollaborative": "Συνεργατικό GeoGebra",
   "algebraTilesCollaborative": "Συνεργατικά Πλακίδια Άλγεβρας",
+  "numberLine": {
+    "title": "Αριθμογραμμή",
+    "ariaLabel": "Κοινή αριθμογραμμή"
+  },
+  "algebraTiles": {
+    "settings": "Ρυθμίσεις πίνακα",
+    "activityType": "Τύπος δραστηριότητας",
+    "equations": "Εξισώσεις",
+    "factorization": "Παραγοντοποίηση",
+    "equation": "Εξίσωση",
+    "factorizationTask": "Πράξη παραγοντοποίησης",
+    "factorize": "Να παραγοντοποιήσεις"
+  },
   "geoGebraCollaborativeDescriptionShort": "Κοινόχρηστος πίνακας GeoGebra για συνεργατική εργασία.",
   "geoGebraMonitor": "Στοιχεία ελέγχου GeoGebra",
   "console": "Κονσόλα",

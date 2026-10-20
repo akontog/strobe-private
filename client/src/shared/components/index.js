@@ -13,6 +13,7 @@ export { default as BlueNumberBox } from './primitives/BlueNumberBox';
 export { default as GridButton } from './primitives/GridButton';
 export { default as AlgebraTiles } from './resources/AlgebraTiles';
 export { default as CollaborativeAlgebraTiles } from './resources/CollaborativeAlgebraTiles';
+export { default as NumberLine } from './resources/NumberLine';
 export { default as InputGrid } from './resources/InputGrid';
 export { default as StudentScoresAccordion } from './services/StudentScoresAccordion';
 export { useSessionInputLogger } from './activities/SessionLogContext';

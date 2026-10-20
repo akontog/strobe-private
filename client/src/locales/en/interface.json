@@ -62,6 +62,19 @@
   "joinRoom": "Join room",
   "geoGebraCollaborative": "Collaborative GeoGebra",
   "algebraTilesCollaborative": "Collaborative Algebra Tiles",
+  "numberLine": {
+    "title": "Number Line",
+    "ariaLabel": "Shared number line"
+  },
+  "algebraTiles": {
+    "settings": "Board settings",
+    "activityType": "Activity type",
+    "equations": "Equations",
+    "factorization": "Factorization",
+    "equation": "Equation",
+    "factorizationTask": "Factorization problem",
+    "factorize": "Factorize"
+  },
   "geoGebraCollaborativeDescriptionShort": "A shared GeoGebra board for collaborative work.",
   "geoGebraMonitor": "GeoGebra Controls",
   "console": "Console",
