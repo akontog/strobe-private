@@ -1,6 +1,9 @@
 import React from 'react';
 
-export default function BlueNumberBox({ value, label }) {
+export default function BlueNumberBox({
+  value, // Number or value displayed in the box.
+  label // Optional caption shown under the value.
+}) {
   return (
     <div style={{ background: '#1d78d6', color: '#fff', borderRadius: 10, padding: '8px 12px', minWidth: 80, textAlign: 'center' }}>
       <div style={{ fontSize: 20, fontWeight: 700 }}>{value}</div>

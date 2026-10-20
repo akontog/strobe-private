@@ -2,6 +2,7 @@
   "labs": "Workshops",
   "system": "System",
   "tools": "Tools",
+  "collaboration": "Collaboration",
   "help": "Help",
   "sectionNavigation": "Sections",
   "items": {
@@ -14,7 +15,8 @@
     "neural": "Neural",
     "polynomial": "Polynomial",
     "primes": "Primes",
-    "geogebra": "Collaborative GeoGebra",
+    "geogebra": "GeoGebra",
+    "algebraTiles": "Algebra Tiles",
     "camera": "Camera Speed Test",
     "console": "Console",
     "scores": "Student Scores",

@@ -41,7 +41,7 @@ function initFactorization({ recordCommunication, getUpgradeClientInfo, getWebSo
   function emitState(target) {
     const participants = [...studentsBySocket.values()].map((student) => ({
       id: student.id, name: student.name, username: student.name,
-      isCorrect: student.isCorrect, isConnected: true, connected: true
+      isCorrect: student.isCorrect, tiles: student.tiles || [], isConnected: true, connected: true
     }));
     const message = JSON.stringify({ type: 'factorization_state', questionId, tiles, participants, roster: participants });
     (target ? [target] : [...teachers, ...studentsBySocket.keys()]).forEach((socket) => {
@@ -70,7 +70,7 @@ function initFactorization({ recordCommunication, getUpgradeClientInfo, getWebSo
       } else if (type === 'register_student') {
         const previous = studentsBySocket.get(ws);
         const name = sanitizeString(message.name, 40) || previous?.name || `Student ${studentSeq + 1}`;
-        studentsBySocket.set(ws, { id: previous?.id || `student-${++studentSeq}`, name, isCorrect: previous?.isCorrect || false });
+        studentsBySocket.set(ws, { id: previous?.id || `student-${++studentSeq}`, name, isCorrect: previous?.isCorrect || false, tiles: previous?.tiles || [] });
         sessionManager?.update?.(sessionId, { username: name, role: 'student', source: 'factorization-lab' });
         emitState();
       } else if (type === 'request_state') {
@@ -80,12 +80,13 @@ function initFactorization({ recordCommunication, getUpgradeClientInfo, getWebSo
         if (!QUESTION_IDS.has(nextQuestionId)) return;
         questionId = nextQuestionId;
         tiles = cleanTiles(message.tiles);
-        studentsBySocket.forEach((student) => { student.isCorrect = false; });
+        studentsBySocket.forEach((student) => { student.isCorrect = false; student.tiles = tiles.map((tile) => ({ ...tile })); });
         emitState();
-      } else if (type === 'tiles_update' && (teachers.has(ws) || studentsBySocket.has(ws))) {
-        tiles = cleanTiles(message.tiles);
+      } else if (type === 'tiles_update' && studentsBySocket.has(ws)) {
+        const nextTiles = cleanTiles(message.tiles);
         const student = studentsBySocket.get(ws);
-        if (student) student.isCorrect = message.isCorrect === true;
+        student.tiles = nextTiles;
+        student.isCorrect = message.isCorrect === true;
         emitState();
       }
     });

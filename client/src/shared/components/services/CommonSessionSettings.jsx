@@ -3,7 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { useSessionInputLogger } from '../activities/SessionLogContext';
 import './common-session-settings.css';
 
-export default function CommonSessionSettings({ feedbackEnabled, onFeedbackChange, feedbackDescription = '' }) {
+export default function CommonSessionSettings({
+  feedbackEnabled, // Optional controlled feedback setting.
+  onFeedbackChange, // Reports feedback setting changes to the parent.
+  feedbackDescription = '' // Tooltip text for the feedback setting.
+}) {
   const { t } = useTranslation('common');
   const session = useSessionInputLogger();
   const [saving, setSaving] = useState(false);

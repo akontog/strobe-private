@@ -13,6 +13,7 @@ import ActivityBuilder from './tools/activity-builder/ActivityBuilder';
 import ActivityRunner from './workshops/activities/ActivityRunner';
 import CameraSpeedTest from './system/camera-speed-test/CameraSpeedTest';
 import GeoGebraCollabTool from './tools/geogebra-collab/GeoGebraCollabTool';
+import AlgebraTilesCollabTool from './tools/algebra-tiles-collab/AlgebraTilesCollabTool';
 import LinearSeparation from './tools/linear-separation/LinearSeparation';
 import ConsoleTool from './system/console/ConsoleTool';
 import StudentIdentityControl from './shared/components/menu/StudentIdentityControl';
@@ -47,7 +48,7 @@ function App() {
   const currentLabSlug = getAppSlug(currentWorkshopSlug);
   const currentSessionApp = routePath.startsWith('/workshops/activities/')
     ? 'activity-runner'
-    : routePath === '/tools/geogebra-collab' ? 'geogebra-collab' : currentLabSlug;
+    : ['/tools/geogebra-collab', '/tools/algebra-tiles-collab'].includes(routePath) ? 'geogebra-collab' : currentLabSlug;
   const labHasOwnSettings = pathname.startsWith('/workshops/activities/') || ['polynomial-lab', 'linear-systems-lab', 'neural-lab', 'identities-lab', 'equations-lab', 'factorization-lab', 'buffon-needle', 'primes-lab'].includes(currentLabSlug);
   const labHasInlineChat = ['polynomial-lab', 'neural-lab', 'buffon-needle'].includes(currentLabSlug);
   const [role, setRole] = useState('student');
@@ -85,7 +86,8 @@ function App() {
     const teacherLab = routePath === '/workshops/activities/teacher'
       ? 'activity-runner'
       : getAppSlug(pathname.match(/^\/workshops\/([^/]+)\/teacher$/)?.[1] || '')
-      || (routePath === '/tools/geogebra-collab' ? 'geogebra-collab' : '');
+      || (routePath === '/tools/geogebra-collab' ? 'geogebra-collab' : '')
+      || (routePath === '/tools/algebra-tiles-collab' ? 'algebra-tiles-collab' : '');
     const preserveSelection = [
       '/instructions',
       '/teacher',
@@ -107,8 +109,8 @@ function App() {
       const timer = window.setInterval(preserveClassroomSelection, 5000);
       return () => window.clearInterval(timer);
     }
-    const roomId = teacherLab === 'geogebra-collab'
-      ? new URLSearchParams(location.search).get('room') || 'geogebra-default'
+    const roomId = ['geogebra-collab', 'algebra-tiles-collab'].includes(teacherLab)
+      ? new URLSearchParams(location.search).get('room') || (teacherLab === 'geogebra-collab' ? 'geogebra-default' : 'algebra-tiles-default')
       : '';
     const publishSelection = () => fetch('/teacher/classroom/selection', {
         method: 'POST',
@@ -159,13 +161,15 @@ function App() {
     if (classroomLab) {
       const target = classroomLab === 'geogebra-collab'
         ? `/tools/geogebra-collab?room=${encodeURIComponent(classroomRoomId || 'geogebra-default')}`
-        : classroomLab === 'activity-runner'
+        : classroomLab === 'algebra-tiles-collab'
+          ? `/tools/algebra-tiles-collab?room=${encodeURIComponent(classroomRoomId || 'algebra-tiles-default')}`
+          : classroomLab === 'activity-runner'
           ? '/workshops/activities/student'
         : getWorkshopPath(classroomLab, 'student');
       if (`${pathname}${location.search}` !== target) navigate(target, { replace: true });
       return;
     }
-    if (labRoute || pathname === '/client' || pathname === '/student' || pathname === '/tools/geogebra-collab') {
+    if (labRoute || pathname === '/client' || pathname === '/student' || pathname === '/tools/geogebra-collab' || pathname === '/tools/algebra-tiles-collab') {
       navigate('/', { replace: true });
     }
   }, [authReady, classroomLab, classroomRoomId, classroomSelectionLoaded, location.search, navigate, pathname, role]);
@@ -302,7 +306,11 @@ function App() {
     if (!classroomSelectionLoaded) return null;
     if (classroomLab === slug) return element;
     return classroomLab
-      ? <Navigate to={classroomLab === 'geogebra-collab' ? '/tools/geogebra-collab' : getWorkshopPath(classroomLab, 'student')} replace />
+      ? <Navigate to={classroomLab === 'geogebra-collab'
+        ? `/tools/geogebra-collab?room=${encodeURIComponent(classroomRoomId || 'geogebra-default')}`
+        : classroomLab === 'algebra-tiles-collab'
+          ? `/tools/algebra-tiles-collab?room=${encodeURIComponent(classroomRoomId || 'algebra-tiles-default')}`
+          : getWorkshopPath(classroomLab, 'student')} replace />
       : <Navigate to="/" replace />;
   };
   const studentToolOnly = (selection, element) => {
@@ -311,7 +319,11 @@ function App() {
     if (!classroomSelectionLoaded) return null;
     if (classroomLab === selection) return element;
     return classroomLab
-      ? <Navigate to={classroomLab === 'geogebra-collab' ? '/tools/geogebra-collab' : getWorkshopPath(classroomLab, 'student')} replace />
+      ? <Navigate to={classroomLab === 'geogebra-collab'
+        ? `/tools/geogebra-collab?room=${encodeURIComponent(classroomRoomId || 'geogebra-default')}`
+        : classroomLab === 'algebra-tiles-collab'
+          ? `/tools/algebra-tiles-collab?room=${encodeURIComponent(classroomRoomId || 'algebra-tiles-default')}`
+          : getWorkshopPath(classroomLab, 'student')} replace />
       : <Navigate to="/" replace />;
   };
   const menuGroups = {
@@ -329,9 +341,12 @@ function App() {
       { label: tNav('items.camera'), path: '/tools/camera-speed-test' },
       { label: tNav('items.console'), path: '/tools/console' },
     ] },
+    collaboration: { label: tNav('collaboration'), items: [
+      { label: tNav('items.geogebra'), path: '/tools/geogebra-collab' },
+      { label: tNav('items.algebraTiles'), path: '/tools/algebra-tiles-collab' }
+    ] },
     tools: { label: tNav('tools'), items: [
       { label: tNav('items.separation'), path: '/tools/linear-separation' },
-      { label: tNav('items.geogebra'), path: '/tools/geogebra-collab' },
       { label: tNav('items.builder'), path: '/tools/activity-builder' }
     ] },
     help: { label: tNav('help'), items: [
@@ -438,6 +453,7 @@ function App() {
           <Route path="/tools/activity-builder" element={teacherOnly(<ActivityBuilder />)} />
           <Route path="/tools/camera-speed-test" element={adminOnly(<CameraSpeedTest />)} />
           <Route path="/tools/geogebra-collab" element={studentToolOnly('geogebra-collab', <GeoGebraCollabTool canSelectRoom={hasTeacherAccess} />)} />
+          <Route path="/tools/algebra-tiles-collab" element={studentToolOnly('algebra-tiles-collab', <AlgebraTilesCollabTool role={appRole} />)} />
           <Route path="/tools/console" element={adminOnly(<ConsoleTool />)} />
           <Route path="/tools/linear-separation" element={teacherOnly(<LinearSeparation />)} />
           <Route path="/tools/linear-seperation" element={teacherOnly(<LinearSeparation />)} />

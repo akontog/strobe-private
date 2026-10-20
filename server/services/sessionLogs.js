@@ -135,16 +135,26 @@ function getActiveSessionStudents(app, activityPrefix = '') {
   fs.readFileSync(filename, 'utf8').split(/\r?\n/).filter(Boolean).forEach((line) => {
     try {
       const record = JSON.parse(line);
-      if (record.event !== 'activity.input.changed' || !record.student) return;
+      if (!['activity.input.changed', 'activity.tiles.changed', 'grouping.item.moved'].includes(record.event) || !record.student) return;
       if (activityPrefix && !String(record.activity || '').startsWith(activityPrefix)) return;
 
       const student = students.get(record.student);
       if (!student) return;
       const activityId = String(record.activity || '').split(':')[1] || '';
       student.activityId = activityId;
-      const field = String(record.data?.field || '').trim();
-      if (!field || !activityId) return;
+      if (!activityId) return;
       student.answers[activityId] ||= {};
+      if (record.event === 'activity.tiles.changed') {
+        student.answers[activityId].tiles = Array.isArray(record.data?.tiles) ? record.data.tiles : [];
+        return;
+      }
+      if (record.event === 'grouping.item.moved') {
+        const itemId = String(record.data?.itemId || '').trim();
+        if (itemId) student.answers[activityId][itemId] = String(record.data?.to || '');
+        return;
+      }
+      const field = String(record.data?.field || '').trim();
+      if (!field) return;
       student.answers[activityId][field] = String(record.data?.value ?? '');
     } catch {
       // Ignore malformed event records and keep the remaining student data.

@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 
-export const Accordion = ({ title, subtitle = '', icon = null, open = false, defaultOpen = false, className = '', onToggle, children }) => {
+export const Accordion = ({
+  title, // Main heading displayed on the accordion button.
+  subtitle = '', // Optional secondary heading.
+  icon = null, // Optional icon shown before the heading.
+  open = false, // Controls the initial open state when true.
+  defaultOpen = false, // Opens the accordion initially when true.
+  className = '', // Additional CSS classes for the accordion.
+  onToggle, // Receives the new open state after a toggle.
+  children // Content shown inside the accordion.
+}) => {
   const [isOpen, setIsOpen] = useState(open || defaultOpen);
   const prefix = icon ? `${icon} ` : '';
 

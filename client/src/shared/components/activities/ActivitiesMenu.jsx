@@ -11,15 +11,15 @@ const DEFAULT_OPTIONS = [
 ];
 
 export const ActivitiesMenu = ({
-  title = 'Δραστηριότητες',
-  icon = '🔬',
-  label = 'Επιλογή δραστηριότητας',
-  value = '1',
-  options = DEFAULT_OPTIONS,
-  onChange,
-  open = false,
-  className = '',
-  preserveSession = false
+  title = 'Δραστηριότητες', // Accordion heading.
+  icon = '🔬', // Icon shown beside the heading.
+  label = 'Επιλογή δραστηριότητας', // Label for the activity selector.
+  value = '1', // Currently selected option value.
+  options = DEFAULT_OPTIONS, // Options available in the selector.
+  onChange, // Receives the selected option value.
+  open = false, // Opens the accordion initially when true.
+  className = '', // Additional CSS classes for the menu.
+  preserveSession = false // Keeps the current session open when changing options.
 }) => {
   const session = useSessionInputLogger();
   const selectedActivityName = (Array.isArray(options) ? options : [])

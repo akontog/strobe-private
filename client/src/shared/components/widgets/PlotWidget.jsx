@@ -37,17 +37,17 @@ export function parseLinearEquation(expression = '') {
 }
 
 export default function PlotWidget({
-  lines = [],
-  width = 360,
-  height = 300,
-  xMin = -10,
-  xMax = 10,
-  yMin = -10,
-  yMax = 10,
-  showLegend = true,
-  showGrid = true,
-  graphItems = [],
-  title = 'Οπτικοποίηση συστήματος'
+  lines = [], // Lines drawn on the coordinate system.
+  width = 360, // SVG width in pixels.
+  height = 300, // SVG height in pixels.
+  xMin = -10, // Minimum horizontal axis value.
+  xMax = 10, // Maximum horizontal axis value.
+  yMin = -10, // Minimum vertical axis value.
+  yMax = 10, // Maximum vertical axis value.
+  showLegend = true, // Shows the line legend when true.
+  showGrid = true, // Shows the coordinate grid when true.
+  graphItems = [], // Additional graph objects displayed on the plot.
+  title = 'Οπτικοποίηση συστήματος' // Accessible title for the plot.
 }) {
   const safeWidth = Math.max(220, Number(width) || 360);
   const safeHeight = Math.max(200, Number(height) || 300);

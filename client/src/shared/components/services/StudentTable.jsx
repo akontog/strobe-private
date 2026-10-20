@@ -11,16 +11,16 @@ const defaultGetIsConnected = (participant) => participant && typeof participant
     : true;
 
 export const StudentTable = ({
-  title = '',
-  participants = [],
-  columns = [],
-  headerGroups = [],
-  emptyMessage = '',
-  nameFallback = '',
-  getRowKey = defaultGetRowKey,
-  getDisplayName = defaultGetDisplayName,
-  getIsConnected = defaultGetIsConnected,
-  getRowStyle
+  title = '', // Heading shown above the student table.
+  participants = [], // Student records displayed as rows.
+  columns = [], // Additional columns shown for each student.
+  headerGroups = [], // Optional grouped table headers.
+  emptyMessage = '', // Message shown when there are no students.
+  nameFallback = '', // Fallback text for students without a name.
+  getRowKey = defaultGetRowKey, // Returns a stable key for a student row.
+  getDisplayName = defaultGetDisplayName, // Returns the displayed student name.
+  getIsConnected = defaultGetIsConnected, // Returns whether a student is connected.
+  getRowStyle // Returns custom inline styles for a student row.
 }) => {
   const { t } = useTranslation(['common', 'neural']);
   const rows = Array.isArray(participants) ? participants : [];

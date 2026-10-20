@@ -14,7 +14,9 @@ export function decodeUnicodeCode(code = '') {
   }
 }
 
-export default function IconWidget({ code = '' }) {
+export default function IconWidget({
+  code = '' // Unicode code point rendered as an icon.
+}) {
   const icon = decodeUnicodeCode(code);
   if (!icon) return null;
   return <span className="activity-icon-widget" aria-label={`Unicode ${code}`}>{icon}</span>;

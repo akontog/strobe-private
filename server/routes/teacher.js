@@ -13,7 +13,8 @@ const ACTIVITY_RESOURCES = [
   { slug: 'input-grid', title: 'Input Grid' },
   { slug: 'grouping-drag-drop', title: 'Grouping Drag & Drop' },
   { slug: 'algebra-tiles', title: 'Algebra Tiles' },
-  { slug: 'collaborative-geogebra', title: 'Collaborative GeoGebra' }
+  { slug: 'collaborative-geogebra', title: 'Collaborative GeoGebra' },
+  { slug: 'collaborative-algebra-tiles', title: 'Collaborative Algebra Tiles' }
 ];
 
 function resolveTeacherResource(req, res) {

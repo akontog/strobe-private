@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 
-export default function RoleAccessControl({ role, roles = [], username = '', connected, onLogin, onRoleChange, labels }) {
+export default function RoleAccessControl({
+  role, // Currently active user role.
+  roles = [], // Roles available to the current user.
+  username = '', // Current account username.
+  connected, // Whether the client is connected.
+  onLogin, // Authenticates the requested role.
+  onRoleChange, // Applies a selected role.
+  labels // Localized labels used in the control.
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [draftUsername, setDraftUsername] = useState('');

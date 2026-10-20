@@ -25,7 +25,6 @@ function initPolynomial({
     geogebraRoomId: '',
     feedbackEnabled: false
   };
-  const algebraTilesByExpression = {};
   const allowedAlgebraTileTypes = new Set(['one', 'x', 'y', 'x2', 'xy', 'y2']);
 
   function record(event, direction, from, to, payload) {
@@ -88,7 +87,10 @@ function initPolynomial({
             return memo;
           }, {})
         : {},
-      expressionId: student.expressionId || lessonState.expressionId
+      expressionId: student.expressionId || lessonState.expressionId,
+      algebraTiles: student.algebraTiles && student.algebraTiles[lessonState.expressionId]
+        ? student.algebraTiles[lessonState.expressionId]
+        : []
     }));
   }
 
@@ -98,8 +100,7 @@ function initPolynomial({
       type: 'polynomial_state',
       roster: participants,
       participants,
-      lesson: lessonState,
-      algebraTiles: algebraTilesByExpression
+      lesson: lessonState
     };
     const serialized = JSON.stringify(payload);
 
@@ -184,7 +185,8 @@ function initPolynomial({
           name,
           color,
           answers: previousAnswers,
-          expressionId: current?.expressionId || lessonState.expressionId
+          expressionId: current?.expressionId || lessonState.expressionId,
+          algebraTiles: current?.algebraTiles || {}
         });
 
         if (sessionManager && typeof sessionManager.update === 'function') {
@@ -238,7 +240,8 @@ function initPolynomial({
       }
 
       if (type === 'algebra_tiles_update') {
-        if ((!teachers.has(ws) && !studentsBySocket.has(ws)) || lessonState.activityId !== '2.7') {
+        const student = studentsBySocket.get(ws);
+        if (!student || lessonState.activityId !== '2.7') {
           return;
         }
 
@@ -268,7 +271,9 @@ function initPolynomial({
           return result;
         }, []);
 
-        algebraTilesByExpression[expressionId] = safeTiles;
+        student.algebraTiles = student.algebraTiles || {};
+        student.algebraTiles[expressionId] = safeTiles;
+        studentsBySocket.set(ws, student);
         record('polynomial-lab:algebra_tiles_state', 'out', 'server', 'polynomial-clients', {
           expressionId,
           tileCount: safeTiles.length

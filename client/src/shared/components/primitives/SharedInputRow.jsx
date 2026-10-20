@@ -3,8 +3,15 @@ import SharedInputBox from './SharedInputBox';
 import './SharedInputRow.css';
 
 export default function SharedInputRow({
-  rowLabel = '', boxes = [], tokens = [], className = '', rowLabelClassName = '',
-  defaultLabel = '', defaultPlaceholder = '', hideLabels = false, activity = ''
+  rowLabel = '', // Optional caption shown before the input row.
+  boxes = [], // Input definitions rendered in the row.
+  tokens = [], // Optional separators placed between inputs.
+  className = '', // Additional CSS classes for the row.
+  rowLabelClassName = '', // Additional CSS classes for the row caption.
+  defaultLabel = '', // Label used when an input has no label.
+  defaultPlaceholder = '', // Placeholder used when an input has none.
+  hideLabels = false, // Hides input labels unless explicitly overridden.
+  activity = '' // Activity identifier used in input logs.
 }) {
   const wrapperClassName = ['shared-input-row', className].filter(Boolean).join(' ');
   const rowLabelClasses = ['shared-input-row__label', rowLabelClassName].filter(Boolean).join(' ');

@@ -3,7 +3,12 @@ import { readIdentityName } from '../menu/identityStorage';
 
 const SessionLogContext = createContext(null);
 
-export function SessionLogProvider({ app, role = 'student', sessionId: suppliedSessionId = null, children }) {
+export function SessionLogProvider({
+  app, // App identifier used to load the active session.
+  role = 'student', // Current user role for session permissions.
+  sessionId: suppliedSessionId = null, // Optional session ID supplied by the parent.
+  children // Components that receive session context.
+}) {
   const [activeSessionId, setActiveSessionId] = useState(suppliedSessionId);
   const [chatEnabled, setChatEnabled] = useState(false);
   const [scoreVisible, setScoreVisible] = useState(true);

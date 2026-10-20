@@ -11,7 +11,12 @@ function clampName(value) {
   return String(value || '').trim().replace(/\s+/g, ' ').slice(0, 80);
 }
 
-export default function StudentIdentityControl({ className = '', roleLabel = 'Student', roleControl = null, hideIdentityFields = false }) {
+export default function StudentIdentityControl({
+  className = '', // Additional CSS classes for the identity control.
+  roleLabel = 'Student', // Fallback name used when no identity is saved.
+  roleControl = null, // Optional role selector shown with the identity fields.
+  hideIdentityFields = false // Hides the name and color controls when true.
+}) {
   const [snapshot, setSnapshot] = useState(() => readIdentitySnapshot({
     nameFallback: roleLabel,
     colorFallback: randomIdentityColor()

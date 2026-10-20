@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 
-export default function MathFormula({ formula = '' }) {
+export default function MathFormula({
+  formula = '' // MathJax-compatible formula rendered by the component.
+}) {
   const containerRef = useRef(null);
 
   useEffect(() => {

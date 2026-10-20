@@ -61,6 +61,7 @@
   "roomId": "Room ID",
   "joinRoom": "Join room",
   "geoGebraCollaborative": "Collaborative GeoGebra",
+  "algebraTilesCollaborative": "Collaborative Algebra Tiles",
   "geoGebraCollaborativeDescriptionShort": "A shared GeoGebra board for collaborative work.",
   "geoGebraMonitor": "GeoGebra Controls",
   "console": "Console",
@@ -171,7 +172,8 @@
       "input-grid": "Input Grid",
       "grouping-drag-drop": "Grouping Drag & Drop",
       "algebra-tiles": "Algebra Tiles",
-      "collaborative-geogebra": "Collaborative GeoGebra"
+      "collaborative-geogebra": "Collaborative GeoGebra",
+      "collaborative-algebra-tiles": "Collaborative Algebra Tiles"
     },
     "resourceSettings": "Resource settings",
     "columns": "Columns",

@@ -17,9 +17,10 @@ function setActiveLab(slug, roomId = '') {
     return activeLabSlug;
   }
 
-  if (normalizedSlug === 'geogebra-collab') {
+  if (normalizedSlug === 'geogebra-collab' || normalizedSlug === 'algebra-tiles-collab') {
     activeLabSlug = normalizedSlug;
-    activeRoomId = String(roomId || 'geogebra-default').trim().slice(0, 80) || 'geogebra-default';
+    const fallbackRoom = normalizedSlug === 'geogebra-collab' ? 'geogebra-default' : 'algebra-tiles-default';
+    activeRoomId = String(roomId || fallbackRoom).trim().slice(0, 80) || fallbackRoom;
     activeLabUpdatedAt = Date.now();
     return activeLabSlug;
   }
@@ -55,7 +56,9 @@ function getActiveSelection() {
   const app = getActiveLab();
   return {
     app,
-    roomId: app === 'geogebra-collab' ? activeRoomId || 'geogebra-default' : '',
+    roomId: app === 'geogebra-collab' || app === 'algebra-tiles-collab'
+      ? activeRoomId || (app === 'geogebra-collab' ? 'geogebra-default' : 'algebra-tiles-default')
+      : '',
     activity: app === 'activity-runner' ? activeActivity : null
   };
 }

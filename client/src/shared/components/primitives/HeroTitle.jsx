@@ -1,10 +1,10 @@
 import React from 'react';
 
 export default function HeroTitle({
-  children,
-  title = '',
-  subtitle = '',
-  className = ''
+  children, // Heading content when title is not set.
+  title = '', // Main heading text.
+  subtitle = '', // Optional supporting text.
+  className = '' // Additional CSS classes for the title block.
 }) {
   const resolvedTitle = title || children;
 

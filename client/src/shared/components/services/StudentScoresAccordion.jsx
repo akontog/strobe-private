@@ -1,7 +1,12 @@
 ﻿import React, { useEffect } from 'react';
 import { useSessionInputLogger } from '../activities/SessionLogContext';
 
-export default function StudentScoresAccordion({ role = 'student', studentName = '', activity = '', currentScore = 0 }) {
+export default function StudentScoresAccordion({
+  role = 'student', // Controls whether student score reporting is enabled.
+  studentName = '', // Student name associated with the score.
+  activity = '', // Activity identifier associated with the score.
+  currentScore = 0 // Current score reported to the server.
+}) {
   const isTeacher = role === 'teacher';
   const sessionLogging = useSessionInputLogger();
 

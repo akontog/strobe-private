@@ -2,12 +2,12 @@ import React from 'react';
 import './shared-common-zone-layout.css';
 
 export default function SharedCommonZoneLayout({
-  className = '',
-  isGroupingMode = false,
-  leftPanel = null,
-  centerPanel = null,
-  rightPanel = null,
-  children = null
+  className = '', // Additional classes for the shared workspace.
+  isGroupingMode = false, // Uses the compact grouping layout.
+  leftPanel = null, // Content for the left region.
+  centerPanel = null, // Content for the center region.
+  rightPanel = null, // Content for the right region.
+  children = null // Replaces the named panel regions when provided.
 }) {
   const layoutClassName = [
     'lab-workspace',

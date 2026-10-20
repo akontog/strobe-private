@@ -25,7 +25,7 @@ function ResourceMock({ resource, props, t }) {
       </div>
     );
   }
-  if (resource === 'algebra-tiles') {
+  if (resource === 'algebra-tiles' || resource === 'collaborative-algebra-tiles') {
     return <div className="activity-resource-mock-tiles" aria-hidden="true"><i /><i /><i /><i /></div>;
   }
   return <div className="activity-resource-mock-board">{t('activityBuilder.geoGebraPreview')}</div>;

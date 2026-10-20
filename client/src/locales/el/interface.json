@@ -61,6 +61,7 @@
   "roomId": "Κωδικός αίθουσας",
   "joinRoom": "Σύνδεση στην αίθουσα",
   "geoGebraCollaborative": "Συνεργατικό GeoGebra",
+  "algebraTilesCollaborative": "Συνεργατικά Πλακίδια Άλγεβρας",
   "geoGebraCollaborativeDescriptionShort": "Κοινόχρηστος πίνακας GeoGebra για συνεργατική εργασία.",
   "geoGebraMonitor": "Στοιχεία ελέγχου GeoGebra",
   "console": "Κονσόλα",
@@ -171,7 +172,8 @@
       "input-grid": "Πλέγμα εισόδων",
       "grouping-drag-drop": "Ομαδοποίηση με μεταφορά",
       "algebra-tiles": "Πλακίδια άλγεβρας",
-      "collaborative-geogebra": "Συνεργατικό GeoGebra"
+      "collaborative-geogebra": "Συνεργατικό GeoGebra",
+      "collaborative-algebra-tiles": "Συνεργατικά Πλακίδια Άλγεβρας"
     },
     "resourceSettings": "Ρυθμίσεις πόρου",
     "columns": "Στήλες",

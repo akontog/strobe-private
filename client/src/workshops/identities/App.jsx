@@ -418,6 +418,18 @@ export default function App({ role = 'student' }) {
               { key: 'term3', label: t('term3'), render: (student) => student.answers?.[student.activityId]?.term3 || '—' },
               { key: 'a', label: 'a', render: (student) => student.answers?.[student.activityId]?.a || '—' },
               { key: 'b', label: 'b', render: (student) => student.answers?.[student.activityId]?.b || '—' },
+              ...(isAlgebraTilesActivity ? [{
+                key: 'tiles',
+                label: 'Πλακίδια',
+                render: (student) => {
+                  const tiles = student.answers?.[student.activityId]?.tiles || [];
+                  const show = (subset) => subset.map((tile) => `${tile.sign < 0 ? '−' : '+'}${tile.type}`).join(' ') || '—';
+                  const mode = centerWidget.mode || (centerWidget.layout === 't-chart' ? 'area' : centerWidget.layout);
+                  if (mode === 'equation') return `Αριστερά: ${show(tiles.filter((tile) => tile.side !== 'right'))} · Δεξιά: ${show(tiles.filter((tile) => tile.side === 'right'))}`;
+                  if (mode === 'area') return `Πάνω: ${show(tiles.filter((tile) => (tile.y || 0) < 4 && (tile.x || 0) >= 6))} · Αριστερά: ${show(tiles.filter((tile) => (tile.y || 0) >= 4 && (tile.x || 0) < 6))} · Κέντρο: ${show(tiles.filter((tile) => (tile.y || 0) >= 4 && (tile.x || 0) >= 6))}`;
+                  return show(tiles);
+                }
+              }] : []),
               ...(sessionLogging?.scoreVisible ? [{
                 key: 'score',
                 label: t('score', { ns: 'scores' }),

@@ -42,5 +42,9 @@ export const RESOURCE_DEFAULTS = {
       showSuggestionButtons: false
     },
     widgets: []
+  },
+  'collaborative-algebra-tiles': {
+    props: { roomId: 'algebra-tiles-room', mode: 'simplified', variables: ['x', 'y'] },
+    widgets: []
   }
 };

@@ -151,8 +151,22 @@ const getStudentScoreForExpression = (student, fallbackExpression) => {
   });
 };
 
-const getAnswerColumnsForExpression = (expressionItem, t) => {
+const getAnswerColumnsForExpression = (expressionItem, t, activityId, tileMode) => {
+  if (expressionItem?.resultMode === 'geogebraArea') return [];
+  if (expressionItem?.resultMode === 'algebraTiles') {
+    const regions = tileMode === 'equation'
+      ? [{ id: 'left', label: 'Αριστερά' }, { id: 'right', label: 'Δεξιά' }]
+      : tileMode === 'area' || tileMode === 't-chart'
+        ? [{ id: 'top', label: 'Πάνω' }, { id: 'left', label: 'Αριστερά' }, { id: 'center', label: 'Κέντρο' }]
+        : [{ id: 'all', label: 'Παράσταση' }];
+    return regions.map((region) => ({
+      key: `algebraTiles-${region.id}`,
+      label: region.label,
+      render: (student) => summarizeAlgebraTiles(student.algebraTiles, tileMode, region.id)
+    }));
+  }
   const fields = getAnswerFieldDefinitions(expressionItem);
+  const groupingGroupTitleById = new Map((expressionItem?.groups || []).map((group) => [group.id, group.title || group.hint || group.id]));
   const groupingLabelByField = new Map(
     (expressionItem?.items || []).map((item) => [`item-${item.id}`, item.label])
   );
@@ -169,14 +183,16 @@ const getAnswerColumnsForExpression = (expressionItem, t) => {
           ? t('degreeX')
           : fieldName === 'degreeY'
             ? t('degreeY')
-            : t('totalDegree');
+            : fieldName === 'totalDegree' && activityId === '1.1'
+              ? t('degreeXY')
+              : t('totalDegree');
 
     return {
       key: fieldName,
       label,
       render: (student) => {
         const value = student?.answers?.[fieldName];
-        return value ?? '-';
+        return groupingGroupTitleById.get(value) || value || '-';
       }
     };
   });
@@ -200,6 +216,32 @@ const getAnswerHeaderGroupsForExpression = (expressionItem, t) => {
   });
 
   return Array.from(groups.values());
+};
+
+const summarizeAlgebraTiles = (tiles, mode, selectedRegion = '') => {
+  const labels = { one: '1', x: 'x', y: 'y', x2: 'x²', xy: 'xy', y2: 'y²' };
+  const format = (items) => {
+    const counts = new Map();
+    (items || []).forEach((tile) => counts.set(tile.type, (counts.get(tile.type) || 0) + (tile.sign < 0 ? -1 : 1)));
+    const parts = [...counts.entries()].filter(([, count]) => count).map(([type, count], index) => `${index === 0 ? count < 0 ? '−' : '' : count < 0 ? ' − ' : ' + '}${Math.abs(count) === 1 ? '' : Math.abs(count)}${labels[type] || type}`);
+    return parts.join(' ') || '—';
+  };
+  if (mode === 'equation') return format(selectedRegion === 'left' ? tiles?.filter((tile) => tile.side !== 'right') : tiles?.filter((tile) => tile.side === 'right'));
+  if (mode === 'area' || mode === 't-chart') {
+    const filtered = tiles?.filter((tile) => {
+      const spans = { one: [2, 2], x: [6, 2], y: [4, 2], x2: [6, 6], xy: [6, 4], y2: [4, 4] };
+      const [widthBase, heightBase] = spans[tile.type] || [1, 1];
+      const vertical = tile.orientation === 'vertical' && ['x', 'y', 'xy'].includes(tile.type);
+      const centerX = (tile.x || 0) + (vertical ? heightBase : widthBase) / 2;
+      const centerY = (tile.y || 0) + (vertical ? widthBase : heightBase) / 2;
+      if (selectedRegion === 'top') return centerY < 4 && centerX >= 6;
+      if (selectedRegion === 'left') return centerY >= 4 && centerX < 6;
+      if (selectedRegion === 'center') return centerY >= 4 && centerX >= 6;
+      return false;
+    });
+    return format(filtered);
+  }
+  return region('Πλακίδια', tiles);
 };
 
 export default function App({ role = 'teacher' }) {
@@ -610,8 +652,11 @@ export default function App({ role = 'teacher' }) {
 
   const updateAlgebraTiles = (tiles) => {
     setAlgebraTilesByExpression((current) => ({ ...current, [selectedExpressionId]: tiles }));
-    sendSocketMessage({ type: 'algebra_tiles_update', expressionId: selectedExpressionId, tiles });
+    if (isStudent) sendSocketMessage({ type: 'algebra_tiles_update', expressionId: selectedExpressionId, tiles });
   };
+
+  const ownParticipant = participants.find((participant) => String(participant.name || participant.username || '').trim().toLocaleLowerCase() === studentName.trim().toLocaleLowerCase());
+  const currentStudentTiles = ownParticipant?.algebraTiles || [];
 
   const sendSocketMessage = (payload) => {
     const ws = wsRef.current;
@@ -717,9 +762,6 @@ export default function App({ role = 'teacher' }) {
           setRoster(message.roster);
         }
 
-        if (message.algebraTiles && typeof message.algebraTiles === 'object') {
-          setAlgebraTilesByExpression(message.algebraTiles);
-        }
       });
 
       ws.addEventListener('close', () => {
@@ -955,7 +997,7 @@ export default function App({ role = 'teacher' }) {
                 activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
                 mode={algebraTilesWidget?.mode || algebraTilesWidget?.layout || 'simplified'}
                 key={selectedExpressionId}
-                tiles={algebraTilesByExpression[selectedExpressionId]}
+                tiles={isStudent ? currentStudentTiles : algebraTilesByExpression[selectedExpressionId]}
                 onTilesChange={updateAlgebraTiles}
               />
             ) : isGeogebraAreaActivity ? (
@@ -1073,7 +1115,7 @@ export default function App({ role = 'teacher' }) {
             title={t('studentTable')}
             participants={sortedParticipants}
             columns={[
-              ...getAnswerColumnsForExpression(activeExpression, t),
+              ...getAnswerColumnsForExpression(activeExpression, t, selectedActivityId, algebraTilesWidget?.mode || algebraTilesWidget?.layout || 'simplified'),
               ...(sessionLogging?.scoreVisible ? [
                 {
                   key: 'activityScore',

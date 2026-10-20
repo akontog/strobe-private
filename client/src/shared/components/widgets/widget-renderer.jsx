@@ -11,7 +11,10 @@ const WIDGET_COMPONENTS = {
   'simple-coordinate-system': PlotWidget
 };
 
-export default function WidgetRenderer({ widgets = [], position }) {
+export default function WidgetRenderer({
+  widgets = [], // Widget definitions rendered from the activity resource.
+  position // Optional position used to filter the widgets.
+}) {
   const visibleWidgets = (widgets || []).filter((widget) => !position || widget.position === position);
   if (!visibleWidgets.length) return null;
 

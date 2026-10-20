@@ -57,6 +57,7 @@ function initEquations({ recordCommunication, getUpgradeClientInfo, getWebSocket
       name: student.name,
       username: student.name,
       answer: student.answers[lesson.questionId] || '',
+      tiles: student.tiles || [],
       isConnected: true,
       connected: true
     }));
@@ -108,7 +109,7 @@ function initEquations({ recordCommunication, getUpgradeClientInfo, getWebSocket
         const previous = studentsBySocket.get(ws);
         const id = previous?.id || `student-${++studentSeq}`;
         const name = sanitizeString(message.name, 40) || previous?.name || `Student ${studentSeq}`;
-        studentsBySocket.set(ws, { id, name, answers: previous?.answers || {} });
+        studentsBySocket.set(ws, { id, name, answers: previous?.answers || {}, tiles: previous?.tiles || [] });
         sessionManager?.update?.(sessionId, { username: name, role: 'student', source: 'equations-lab' });
         emitState();
         return;
@@ -124,12 +125,13 @@ function initEquations({ recordCommunication, getUpgradeClientInfo, getWebSocket
         if (!QUESTION_IDS.has(questionId)) return;
         lesson = { activityId: '1', questionId };
         tiles = cleanTiles(message.tiles);
+        studentsBySocket.forEach((student) => { student.tiles = tiles.map((tile) => ({ ...tile })); });
         emitState();
         return;
       }
 
-      if (type === 'tiles_update' && (teachers.has(ws) || studentsBySocket.has(ws))) {
-        tiles = cleanTiles(message.tiles);
+      if (type === 'tiles_update' && studentsBySocket.has(ws)) {
+        studentsBySocket.get(ws).tiles = cleanTiles(message.tiles);
         emitState();
         return;
       }

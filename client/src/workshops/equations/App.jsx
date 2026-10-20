@@ -62,6 +62,7 @@ export default function App({ role = 'student' }) {
   const [connected, setConnected] = useState(false);
   const socketRef = useRef(null);
   const reconnectTimerRef = useRef(null);
+  const lessonQuestionRef = useRef('');
 
   const selectedQuestion = questions.find((item) => item.id === selectedQuestionId) || questions[0];
   const currentAnswer = answers[selectedQuestion.id] || '';
@@ -111,7 +112,14 @@ export default function App({ role = 'student' }) {
         if (message?.type !== 'equations_state') return;
         if (Array.isArray(message.participants)) setParticipants(message.participants);
         if (!isTeacher && message.lesson?.questionId) setSelectedQuestionId(message.lesson.questionId);
-        if (Array.isArray(message.tiles)) setTiles(message.tiles);
+        if (Array.isArray(message.tiles) && message.lesson?.questionId !== lessonQuestionRef.current) {
+          lessonQuestionRef.current = message.lesson?.questionId || '';
+          const ownTiles = message.participants?.find((participant) => participant.name?.trim().toLowerCase() === studentName.trim().toLowerCase())?.tiles;
+          setTiles(isTeacher || !Array.isArray(ownTiles) ? message.tiles : ownTiles);
+        } else if (!isTeacher && Array.isArray(message.participants)) {
+          const ownTiles = message.participants.find((participant) => participant.name?.trim().toLowerCase() === studentName.trim().toLowerCase())?.tiles;
+          if (Array.isArray(ownTiles)) setTiles(ownTiles);
+        }
       });
 
       socket.addEventListener('close', () => {
@@ -164,7 +172,7 @@ export default function App({ role = 'student' }) {
   const updateTiles = (nextTiles) => {
     setTiles(nextTiles);
     const socket = socketRef.current;
-    if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: 'tiles_update', tiles: nextTiles }));
+    if (!isTeacher && socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: 'tiles_update', tiles: nextTiles }));
   };
 
   const updateAnswer = (value) => {
@@ -232,7 +240,10 @@ export default function App({ role = 'student' }) {
           <StudentTable
             title={t('studentTableTitle')}
             participants={participants.filter((participant) => participant.isConnected !== false)}
-            columns={[{ key: 'answer', label: t('solutionLabel'), render: (participant) => participant.answer || '—' }]}
+            columns={[
+              { key: 'tiles', label: 'Πλακίδια (αριστερά / δεξιά)', render: (participant) => `Αριστερά: ${(participant.tiles || []).filter((tile) => tile.side !== 'right').map((tile) => `${tile.sign < 0 ? '−' : '+'}${tile.type}`).join(' ') || '—'} · Δεξιά: ${(participant.tiles || []).filter((tile) => tile.side === 'right').map((tile) => `${tile.sign < 0 ? '−' : '+'}${tile.type}`).join(' ') || '—'}` },
+              { key: 'answer', label: t('solutionLabel'), render: (participant) => participant.answer || '—' }
+            ]}
             emptyMessage={t('noStudents')}
           />
         </>

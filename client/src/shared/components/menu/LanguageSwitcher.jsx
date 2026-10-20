@@ -7,7 +7,9 @@ const OPTIONS = [
   { code: 'el', labelKey: 'greek', codeLabel: 'el' }
 ];
 
-export default function LanguageSwitcher({ sessionControl = null }) {
+export default function LanguageSwitcher({
+  sessionControl = null // Optional session control shown beside language choices.
+}) {
   const { t } = useTranslation('common');
   const activeLanguage = i18n.resolvedLanguage || i18n.language;
 

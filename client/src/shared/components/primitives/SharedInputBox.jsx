@@ -3,9 +3,19 @@ import { useSessionInputLogger } from '../activities/SessionLogContext';
 import './SharedInputBox.css';
 
 export default function SharedInputBox({
-  label = '', value, onChange, placeholder = '', showLabel = true,
-  type = 'text', className = 'lab-field poly-team-field', inputClassName = '',
-  labelClassName = '', disabled = false, activity = '', id, autoComplete = 'off'
+  label = '', // Text shown above the input.
+  value, // Current input value.
+  onChange, // Handles input changes.
+  placeholder = '', // Hint shown while the input is empty.
+  showLabel = true, // Controls whether the label is visible.
+  type = 'text', // Native input type.
+  className = 'lab-field poly-team-field', // CSS classes for the input wrapper.
+  inputClassName = '', // Additional CSS classes for the input.
+  labelClassName = '', // Additional CSS classes for the label.
+  disabled = false, // Disables input editing.
+  activity = '', // Activity identifier used in input logs.
+  id, // Input element identifier.
+  autoComplete = 'off' // Browser autocomplete setting.
 }) {
   const sessionLogging = useSessionInputLogger();
   const canEdit = sessionLogging?.canEdit ?? true;

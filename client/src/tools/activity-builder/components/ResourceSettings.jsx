@@ -217,6 +217,24 @@ export default function ResourceSettings({ resource, value, onChange, t }) {
         </>
       ) : null}
 
+      {resource === 'collaborative-algebra-tiles' ? (
+        <>
+          <TextField label={t('activityBuilder.roomId')} value={props.roomId} onChange={(roomId) => updateProps({ ...props, roomId })} />
+          <label>
+            {t('activityBuilder.resourceNames.algebra-tiles')}
+            <select value={props.mode || 'simplified'} onChange={(event) => updateProps({ ...props, mode: event.target.value })}>
+              <option value="equation">Equation</option>
+              <option value="area">Area</option>
+              <option value="simplified">Simplified</option>
+            </select>
+          </label>
+          <label>
+            Variables
+            <input value={(props.variables || ['x', 'y']).join(', ')} onChange={(event) => updateProps({ ...props, variables: event.target.value.split(',').map((value) => value.trim()).slice(0, 2) })} />
+          </label>
+        </>
+      ) : null}
+
     </section>
   );
 }

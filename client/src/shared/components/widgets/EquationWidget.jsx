@@ -13,7 +13,9 @@ export function formatEquation(expression = '') {
   return `\\(${latex}\\)`;
 }
 
-export default function EquationWidget({ expression = '' }) {
+export default function EquationWidget({
+  expression = '' // Equation string rendered as a math formula.
+}) {
   const formula = formatEquation(expression);
   if (!formula) return null;
   return <div className="activity-equation-widget"><MathFormula formula={formula} /></div>;

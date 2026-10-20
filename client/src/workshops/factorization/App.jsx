@@ -76,6 +76,7 @@ export default function App({ role = 'student' }) {
   const [connected, setConnected] = useState(false);
   const socketRef = useRef(null);
   const reconnectTimerRef = useRef(null);
+  const lessonQuestionRef = useRef('');
   const selectedQuestion = questions.find((item) => item.id === selectedQuestionId) || questions[0];
   const isCorrect = isCompleteRectangle(tiles, selectedQuestion);
 
@@ -109,7 +110,14 @@ export default function App({ role = 'student' }) {
         if (message?.type !== 'factorization_state') return;
         if (Array.isArray(message.participants)) setParticipants(message.participants);
         if (message.questionId && !isTeacher) setSelectedQuestionId(message.questionId);
-        if (Array.isArray(message.tiles)) setTiles(message.tiles);
+        if (Array.isArray(message.tiles) && message.questionId !== lessonQuestionRef.current) {
+          lessonQuestionRef.current = message.questionId || '';
+          const ownTiles = message.participants?.find((participant) => participant.name?.trim().toLowerCase() === studentName.trim().toLowerCase())?.tiles;
+          setTiles(isTeacher || !Array.isArray(ownTiles) ? message.tiles : ownTiles);
+        } else if (!isTeacher && Array.isArray(message.participants)) {
+          const ownTiles = message.participants.find((participant) => participant.name?.trim().toLowerCase() === studentName.trim().toLowerCase())?.tiles;
+          if (Array.isArray(ownTiles)) setTiles(ownTiles);
+        }
       });
       socket.addEventListener('close', () => {
         if (cancelled) return;
@@ -137,7 +145,7 @@ export default function App({ role = 'student' }) {
   const selectQuestion = (id) => setSelectedQuestionId(id);
   const updateTiles = (nextTiles) => {
     setTiles(nextTiles);
-    if (socketRef.current?.readyState === WebSocket.OPEN) {
+    if (!isTeacher && socketRef.current?.readyState === WebSocket.OPEN) {
       socketRef.current.send(JSON.stringify({ type: 'tiles_update', tiles: nextTiles, isCorrect: isCompleteRectangle(nextTiles, selectedQuestion) }));
     }
   };
@@ -162,7 +170,10 @@ export default function App({ role = 'student' }) {
           value={selectedQuestion.id} onChange={selectQuestion} />
         <SettingsAccordion><CommonSessionSettings /></SettingsAccordion>
         <StudentTable title={t('studentTableTitle')} participants={participants.filter((participant) => participant.isConnected !== false)}
-          columns={[{ key: 'progress', label: t('studentTableTitle'), render: (participant) => participant.isCorrect ? t('correct') : t('incomplete') }]}
+          columns={[
+            { key: 'tiles', label: 'Πλακίδια (πάνω / αριστερά / κέντρο)', render: (participant) => `Πάνω: ${(participant.tiles || []).filter((tile) => (tile.y || 0) < 4 && (tile.x || 0) >= 6).map((tile) => `${tile.sign < 0 ? '−' : '+'}${tile.type}`).join(' ') || '—'} · Αριστερά: ${(participant.tiles || []).filter((tile) => (tile.y || 0) >= 4 && (tile.x || 0) < 6).map((tile) => `${tile.sign < 0 ? '−' : '+'}${tile.type}`).join(' ') || '—'} · Κέντρο: ${(participant.tiles || []).filter((tile) => (tile.y || 0) >= 4 && (tile.x || 0) >= 6).map((tile) => `${tile.sign < 0 ? '−' : '+'}${tile.type}`).join(' ') || '—'}` },
+            { key: 'progress', label: t('studentTableTitle'), render: (participant) => participant.isCorrect ? t('correct') : t('incomplete') }
+          ]}
           emptyMessage={t('noStudents')} />
       </> : null}
       <StudentScoresAccordion role={role} studentName={studentName} activity={`factorization:${selectedQuestion.id}`} currentScore={isCorrect ? activity.scoreCorrect : activity.scoreIncorrect} />

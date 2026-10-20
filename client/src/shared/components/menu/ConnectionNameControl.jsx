@@ -1,23 +1,23 @@
 import React from 'react';
 
 export default function ConnectionNameControl({
-  connected = false,
-  name = '',
-  editing = false,
-  value = '',
-  onChange,
-  onStartEdit,
-  onCommit,
-  onCancel,
-  color = '#4ECDC4',
-  showColorPicker = false,
-  onColorChange,
-  infoText = '',
-  connectedLabel = 'Connected',
-  disconnectedLabel = 'Disconnected',
-  namePrefix = 'name',
-  showNameLabel = true,
-  className = ''
+  connected = false, // Shows the connected or disconnected state.
+  name = '', // Current displayed name.
+  editing = false, // Shows the name input when true.
+  value = '', // Draft name while editing.
+  onChange, // Handles draft name changes.
+  onStartEdit, // Starts editing the name.
+  onCommit, // Saves the edited name.
+  onCancel, // Cancels name editing.
+  color = '#4ECDC4', // Current identity color.
+  showColorPicker = false, // Shows the color picker when true.
+  onColorChange, // Handles identity color changes.
+  infoText = '', // Optional explanatory text.
+  connectedLabel = 'Connected', // Label shown when connected.
+  disconnectedLabel = 'Disconnected', // Label shown when disconnected.
+  namePrefix = 'name', // Prefix used for accessible name labels.
+  showNameLabel = true, // Shows the name label when true.
+  className = '' // Additional CSS classes for the control.
 }) {
   const statusLabel = connected ? connectedLabel : disconnectedLabel;
 

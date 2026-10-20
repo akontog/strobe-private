@@ -11,6 +11,50 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
   const socketSessionApps = new Map();
   const monitorSockets = new Set();
   const activityFeed = [];
+  const algebraTileRooms = new Map();
+
+  function getAlgebraTileRoom(roomId) {
+    const id = `algebra-tiles-${cleanRoomId(roomId)}`;
+    if (!algebraTileRooms.has(id)) algebraTileRooms.set(id, { id, mode: 'simplified', tiles: [] });
+    return algebraTileRooms.get(id);
+  }
+
+  function registerAlgebraTileHandlers(socket) {
+    socket.on('algebra-tiles:join', (data = {}) => {
+      const room = getAlgebraTileRoom(data.roomId);
+      socket.join(room.id);
+      socket.emit('algebra-tiles:state', { roomId: room.id, mode: room.mode, tiles: room.tiles });
+    });
+
+    socket.on('algebra-tiles:mode', (data = {}) => {
+      const user = getUserFromSocket(socket);
+      if (!isElevated(user)) return;
+      const room = getAlgebraTileRoom(data.roomId);
+      if (!socket.rooms.has(room.id)) return;
+      const mode = ['equation', 'area', 'simplified'].includes(data.mode) ? data.mode : null;
+      if (!mode) return;
+      room.mode = mode;
+      io.to(room.id).emit('algebra-tiles:state', { roomId: room.id, mode: room.mode, tiles: room.tiles });
+    });
+
+    socket.on('algebra-tiles:update', (data = {}) => {
+      const room = getAlgebraTileRoom(data.roomId);
+      if (!socket.rooms.has(room.id) || !Array.isArray(data.tiles)) return;
+      room.tiles = data.tiles.slice(0, 300).filter((tile) => tile && ['one', 'x', 'y', 'x2', 'xy', 'y2'].includes(tile.type)
+        && (Number(tile.sign) === 1 || Number(tile.sign) === -1)
+        && Number.isInteger(Number(tile.x)) && Number.isInteger(Number(tile.y)))
+        .map((tile, index) => ({
+          id: sanitizeString(tile.id, 80) || `tile-${index}`,
+          type: tile.type,
+          sign: Number(tile.sign),
+          orientation: tile.orientation === 'vertical' ? 'vertical' : 'horizontal',
+          x: Math.max(0, Math.min(500, Number(tile.x))),
+          y: Math.max(0, Math.min(500, Number(tile.y))),
+          side: tile.side === 'right' ? 'right' : 'left'
+        }));
+      socket.to(room.id).emit('algebra-tiles:state', { roomId: room.id, mode: room.mode, tiles: room.tiles });
+    });
+  }
 
   function cleanColor(value) {
     const normalized = String(value || '').trim();
@@ -849,6 +893,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
   }
 
   function registerSocketHandlers(socket) {
+    registerAlgebraTileHandlers(socket);
     socket.on(ROOM_EVENT, (data) => {
       handleJoin(socket, data || {});
     });
