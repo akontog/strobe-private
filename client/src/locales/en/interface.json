@@ -60,8 +60,8 @@
   "mainNavigation": "Main navigation",
   "roomId": "Room ID",
   "joinRoom": "Join room",
-  "geoGebraCollaborative": "Collaborative GeoGebra",
-  "algebraTilesCollaborative": "Collaborative Algebra Tiles",
+  "geoGebraCollaborative": "GeoGebra",
+  "algebraTilesCollaborative": "Algebra Tiles",
   "numberLine": {
     "title": "Number Line",
     "ariaLabel": "Shared number line"
@@ -73,7 +73,14 @@
     "factorization": "Factorization",
     "equation": "Equation",
     "factorizationTask": "Factorization problem",
-    "factorize": "Factorize"
+    "factorize": "Factorize",
+    "boardMode": "Board layout",
+    "modes": {
+      "equation": "Equation",
+      "area": "Area",
+      "simplified": "Simplified"
+    },
+    "promptExpression": "Expression / LaTeX"
   },
   "geoGebraCollaborativeDescriptionShort": "A shared GeoGebra board for collaborative work.",
   "geoGebraMonitor": "GeoGebra Controls",

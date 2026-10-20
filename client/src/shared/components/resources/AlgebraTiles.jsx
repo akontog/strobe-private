@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './AlgebraTiles.css';
 import { useSessionInputLogger } from '../activities/SessionLogContext';
+import MathJaxText from '../primitives/MathJaxText';
 
 const TILE_TYPES = [
   { id: 'one', label: '1', name: 'Μονάδα', className: 'unit' },
@@ -110,7 +111,8 @@ export default function AlgebraTiles({
   onTilesChange, // Reports tile updates to the parent.
   mode, // Selects equation, area, or simplified layout.
   layout, // Legacy layout option kept for existing callers.
-  variables: variableNames = ['x', 'y'] // Names shown for the two tile variables.
+  variables: variableNames = ['x', 'y'], // Names shown for the two tile variables.
+  equationSides: suppliedEquationSides = null // Optional equation text shown on each side of the equation board.
 }) {
   const sessionLogging = useSessionInputLogger();
   const canEdit = sessionLogging?.canEdit ?? true;
@@ -139,12 +141,13 @@ export default function AlgebraTiles({
       return groups;
     }, { horizontal: [], vertical: [], product: [] })
     : null;
-  const equationSides = activeMode === 'equation'
+  const tileEquationSides = activeMode === 'equation'
     ? {
       left: tiles.filter((tile) => tile.side === 'left'),
       right: tiles.filter((tile) => tile.side === 'right')
     }
     : null;
+  const equationDisplaySides = suppliedEquationSides || tileEquationSides;
   const horizontalBounds = areaTiles?.horizontal.reduce((bounds, tile) => {
     const orientation = tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal');
     const { width, height } = getTileDimensions(tile.type, orientation);
@@ -374,10 +377,14 @@ export default function AlgebraTiles({
   return (
     <div className={`algebra-tiles${isMerging ? ' has-merging-tiles' : ''}`}>
       <section className={`algebra-tiles__board${activeMode === 'equation' ? ' algebra-tiles__board--equation' : ''}`} aria-label="Πίνακας πλακιδίων">
-        {equationSides ? (
+        {equationDisplaySides ? (
           <div className="algebra-tiles__equation-header" aria-live="polite">
-            <output>{formatPolynomial(equationSides.left, variables)}</output>
-            <output>{formatPolynomial(equationSides.right, variables)}</output>
+            <output>{typeof equationDisplaySides.left === 'string'
+              ? <MathJaxText text={equationDisplaySides.left} />
+              : formatPolynomial(equationDisplaySides.left, variables)}</output>
+            <output>{typeof equationDisplaySides.right === 'string'
+              ? <MathJaxText text={equationDisplaySides.right} />
+              : formatPolynomial(equationDisplaySides.right, variables)}</output>
             <span aria-hidden="true">=</span>
           </div>
         ) : null}

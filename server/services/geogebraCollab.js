@@ -12,6 +12,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
   const monitorSockets = new Set();
   const activityFeed = [];
   const algebraTileRooms = new Map();
+  const algebraTileSocketRooms = new Map();
   const numberLineRooms = new Map();
   const numberLineSocketRooms = new Map();
 
@@ -84,44 +85,68 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
 
   function getAlgebraTileRoom(roomId) {
     const id = `algebra-tiles-${cleanRoomId(roomId)}`;
-    if (!algebraTileRooms.has(id)) algebraTileRooms.set(id, { id, mode: 'equation', exerciseId: 'x-plus-2-equals-5', tiles: [] });
+    if (!algebraTileRooms.has(id)) algebraTileRooms.set(id, {
+      id,
+      mode: 'equation',
+      exerciseId: 'x-plus-2-equals-5',
+      promptExpression: '',
+      tiles: []
+    });
     return algebraTileRooms.get(id);
   }
 
   function registerAlgebraTileHandlers(socket) {
     socket.on('algebra-tiles:join', (data = {}) => {
       const room = getAlgebraTileRoom(data.roomId);
+      const previousRoom = algebraTileSocketRooms.get(socket.id);
+      if (previousRoom && previousRoom.id !== room.id) socket.leave(previousRoom.id);
       socket.join(room.id);
-      socket.emit('algebra-tiles:state', { roomId: room.id, mode: room.mode, exerciseId: room.exerciseId, tiles: room.tiles });
+      algebraTileSocketRooms.set(socket.id, room);
+      socket.emit('algebra-tiles:state', { roomId: room.id, mode: room.mode, exerciseId: room.exerciseId, promptExpression: room.promptExpression, tiles: room.tiles });
     });
 
     socket.on('algebra-tiles:mode', (data = {}) => {
       const user = getUserFromSocket(socket);
       if (!isElevated(user)) return;
       const room = getAlgebraTileRoom(data.roomId);
-      if (!socket.rooms.has(room.id)) return;
+      if (algebraTileSocketRooms.get(socket.id) !== room) return;
       const mode = ['equation', 'area', 'simplified'].includes(data.mode) ? data.mode : null;
       if (!mode) return;
       room.mode = mode;
-      io.to(room.id).emit('algebra-tiles:state', { roomId: room.id, mode: room.mode, exerciseId: room.exerciseId, tiles: room.tiles });
+      io.to(room.id).emit('algebra-tiles:state', { roomId: room.id, mode: room.mode, exerciseId: room.exerciseId, promptExpression: room.promptExpression, tiles: room.tiles });
     });
 
     socket.on('algebra-tiles:exercise', (data = {}) => {
       const user = getUserFromSocket(socket);
       if (!isElevated(user)) return;
       const room = getAlgebraTileRoom(data.roomId);
-      if (!socket.rooms.has(room.id)) return;
+      if (algebraTileSocketRooms.get(socket.id) !== room) return;
       const exerciseId = sanitizeString(data.exerciseId, 100);
       if (!exerciseId) return;
       room.exerciseId = exerciseId;
       room.mode = data.mode === 'equation' ? 'equation' : 'area';
       room.tiles = [];
-      io.to(room.id).emit('algebra-tiles:state', { roomId: room.id, mode: room.mode, exerciseId: room.exerciseId, tiles: room.tiles });
+      io.to(room.id).emit('algebra-tiles:state', {
+        roomId: room.id,
+        mode: room.mode,
+        exerciseId: room.exerciseId,
+        promptExpression: room.promptExpression,
+        tiles: room.tiles
+      });
+    });
+
+    socket.on('algebra-tiles:prompt', (data = {}) => {
+      const user = getUserFromSocket(socket);
+      if (!isElevated(user)) return;
+      const room = getAlgebraTileRoom(data.roomId);
+      if (algebraTileSocketRooms.get(socket.id) !== room) return;
+      room.promptExpression = String(data.promptExpression || '').slice(0, 10000);
+      io.to(room.id).emit('algebra-tiles:state', { roomId: room.id, mode: room.mode, exerciseId: room.exerciseId, promptExpression: room.promptExpression, tiles: room.tiles });
     });
 
     socket.on('algebra-tiles:update', (data = {}) => {
       const room = getAlgebraTileRoom(data.roomId);
-      if (!socket.rooms.has(room.id) || !Array.isArray(data.tiles)) return;
+      if (algebraTileSocketRooms.get(socket.id) !== room || !Array.isArray(data.tiles)) return;
       room.tiles = data.tiles.slice(0, 300).filter((tile) => tile && ['one', 'x', 'y', 'x2', 'xy', 'y2'].includes(tile.type)
         && (Number(tile.sign) === 1 || Number(tile.sign) === -1)
         && Number.isInteger(Number(tile.x)) && Number.isInteger(Number(tile.y)))
@@ -134,7 +159,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
           y: Math.max(0, Math.min(500, Number(tile.y))),
           side: tile.side === 'right' ? 'right' : 'left'
         }));
-      socket.to(room.id).emit('algebra-tiles:state', { roomId: room.id, mode: room.mode, exerciseId: room.exerciseId, tiles: room.tiles });
+      io.to(room.id).emit('algebra-tiles:state', { roomId: room.id, mode: room.mode, exerciseId: room.exerciseId, promptExpression: room.promptExpression, tiles: room.tiles });
     });
   }
 
@@ -1031,6 +1056,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       const roomId = socketRoom.get(socket.id);
       socketRoom.delete(socket.id);
       socketSessionApps.delete(socket.id);
+      algebraTileSocketRooms.delete(socket.id);
       monitorSockets.delete(socket);
 
       if (!roomId) {

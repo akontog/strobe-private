@@ -17,7 +17,7 @@ export default function AlgebraTilesCollabTool({ role = 'student' }) {
           <FullScreenButton />
           <div className="lab-workspace">
             <div className="lab-card lab-card--panel">
-              <CollaborativeAlgebraTiles roomId={roomId} sessionApp="geogebra-collab" role={role} />
+              <CollaborativeAlgebraTiles roomId={roomId} sessionApp="geogebra-collab" role={role} promptMode="expression" />
             </div>
           </div>
         </section>

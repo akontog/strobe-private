@@ -60,8 +60,8 @@
   "mainNavigation": "Κύρια πλοήγηση",
   "roomId": "Κωδικός αίθουσας",
   "joinRoom": "Σύνδεση στην αίθουσα",
-  "geoGebraCollaborative": "Συνεργατικό GeoGebra",
-  "algebraTilesCollaborative": "Συνεργατικά Πλακίδια Άλγεβρας",
+  "geoGebraCollaborative": "GeoGebra",
+  "algebraTilesCollaborative": "Πλακίδια Άλγεβρας",
   "numberLine": {
     "title": "Αριθμογραμμή",
     "ariaLabel": "Κοινή αριθμογραμμή"
@@ -73,7 +73,14 @@
     "factorization": "Παραγοντοποίηση",
     "equation": "Εξίσωση",
     "factorizationTask": "Πράξη παραγοντοποίησης",
-    "factorize": "Να παραγοντοποιήσεις"
+    "factorize": "Να παραγοντοποιήσεις",
+    "boardMode": "Διάταξη πίνακα",
+    "modes": {
+      "equation": "Εξίσωση",
+      "area": "Εμβαδόν",
+      "simplified": "Απλοποιημένη"
+    },
+    "promptExpression": "Έκφραση / LaTeX"
   },
   "geoGebraCollaborativeDescriptionShort": "Κοινόχρηστος πίνακας GeoGebra για συνεργατική εργασία.",
   "geoGebraMonitor": "Στοιχεία ελέγχου GeoGebra",
