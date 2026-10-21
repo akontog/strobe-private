@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CollaborativeAlgebraTiles, FullScreenButton, HeroTitle } from '../../shared/components';
+import { AlgebraTiles, FullScreenButton, HeroTitle } from '../../shared/components';
 
 /** Opens the single AlgebraTiles board selected for the current class. */
 export default function AlgebraTilesCollabTool({ role = 'student' }) {
@@ -17,7 +17,7 @@ export default function AlgebraTilesCollabTool({ role = 'student' }) {
           <FullScreenButton />
           <div className="lab-workspace">
             <div className="lab-card lab-card--panel">
-              <CollaborativeAlgebraTiles roomId={roomId} sessionApp="geogebra-collab" role={role} promptMode="expression" />
+              <AlgebraTiles roomId={roomId} sessionApp="geogebra-collab" role={role} shared promptMode="expression" />
             </div>
           </div>
         </section>

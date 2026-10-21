@@ -35,6 +35,10 @@ export default function SharedInputRow({
             activity={activity}
             id={box.id}
             autoComplete={box.autoComplete || 'off'}
+            min={box.min}
+            max={box.max}
+            allowIntegers={box.allowIntegers ?? true}
+            allowDecimals={box.allowDecimals ?? true}
           />
           {tokens[index] ? <span className="shared-input-row__token">{tokens[index]}</span> : null}
         </React.Fragment>

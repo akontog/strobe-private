@@ -53,13 +53,14 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     socket.on('number-line:mark', (data = {}) => {
       const room = numberLineSocketRooms.get(socket.id);
       if (!room || getNumberLineRoom(data.roomId).id !== room.id) return;
+      const user = getUserFromSocket(socket);
+      if (!isElevated(user) && !getActiveSessionForApp(normalizeSessionApp(data.sessionApp))) return;
       const kind = data.kind === 'interval' ? 'interval' : 'point';
       const value = Number(data.value);
       const start = Number(data.start);
       const end = Number(data.end);
       if (kind === 'point' && !Number.isFinite(value)) return;
       if (kind === 'interval' && (!Number.isFinite(start) || !Number.isFinite(end) || end <= start)) return;
-      const user = getUserFromSocket(socket);
       room.marks.set(socket.id, {
         id: socket.id,
         kind,
@@ -78,8 +79,22 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     socket.on('number-line:clear', (data = {}) => {
       const room = numberLineSocketRooms.get(socket.id);
       if (!room || getNumberLineRoom(data.roomId).id !== room.id) return;
+      const user = getUserFromSocket(socket);
+      if (!isElevated(user) && !getActiveSessionForApp(normalizeSessionApp(data.sessionApp))) return;
       if (!room.marks.delete(socket.id)) return;
       sendNumberLineState(room);
+    });
+
+    socket.on('number-line:clear-room', (data = {}) => {
+      const room = numberLineSocketRooms.get(socket.id);
+      const user = getUserFromSocket(socket);
+      if (!room || getNumberLineRoom(data.roomId).id !== room.id || !isElevated(user)) {
+        socket.emit('number-line:clear-room:ack', { requestId: data.requestId, ok: false, message: 'Only a teacher can clear the number line.' });
+        return;
+      }
+      room.marks.clear();
+      sendNumberLineState(room);
+      socket.emit('number-line:clear-room:ack', { requestId: data.requestId, ok: true });
     });
   }
 
@@ -147,6 +162,8 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     socket.on('algebra-tiles:update', (data = {}) => {
       const room = getAlgebraTileRoom(data.roomId);
       if (algebraTileSocketRooms.get(socket.id) !== room || !Array.isArray(data.tiles)) return;
+      const user = getUserFromSocket(socket);
+      if (!isElevated(user) && !getActiveSessionForApp(normalizeSessionApp(data.sessionApp))) return;
       room.tiles = data.tiles.slice(0, 300).filter((tile) => tile && ['one', 'x', 'y', 'x2', 'xy', 'y2'].includes(tile.type)
         && (Number(tile.sign) === 1 || Number(tile.sign) === -1)
         && Number.isInteger(Number(tile.x)) && Number.isInteger(Number(tile.y)))
@@ -160,6 +177,18 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
           side: tile.side === 'right' ? 'right' : 'left'
         }));
       io.to(room.id).emit('algebra-tiles:state', { roomId: room.id, mode: room.mode, exerciseId: room.exerciseId, promptExpression: room.promptExpression, tiles: room.tiles });
+    });
+
+    socket.on('algebra-tiles:clear-room', (data = {}) => {
+      const room = getAlgebraTileRoom(data.roomId);
+      const user = getUserFromSocket(socket);
+      if (algebraTileSocketRooms.get(socket.id) !== room || !isElevated(user)) {
+        socket.emit('algebra-tiles:clear-room:ack', { requestId: data.requestId, ok: false, message: 'Only a teacher can clear the Algebra Tiles board.' });
+        return;
+      }
+      room.tiles = [];
+      io.to(room.id).emit('algebra-tiles:state', { roomId: room.id, mode: room.mode, exerciseId: room.exerciseId, promptExpression: room.promptExpression, tiles: room.tiles });
+      socket.emit('algebra-tiles:clear-room:ack', { requestId: data.requestId, ok: true });
     });
   }
 
@@ -416,6 +445,8 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       return false;
     }
 
+    if (!isElevated(user) && !getActiveSessionForApp(socketSessionApps.get(user.socketId))) return false;
+
     const perm = room.perms.get(objectName);
     if (!perm) {
       return true;
@@ -656,6 +687,8 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       return;
     }
 
+    if (!isElevated(user) && !getActiveSessionForApp(socketSessionApps.get(socket.id))) return;
+
     if (room.state.has(name)) {
       handleUpdate(room, socket, user, data);
       return;
@@ -829,6 +862,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     }
 
     if (removedNames.length === 0) {
+      socket.emit('geogebra:clear:ack', { requestId: data && data.requestId, ok: true });
       return;
     }
 
@@ -847,6 +881,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       cleared: removedNames,
       objects: removedObjects
     }, { socket, user });
+    socket.emit('geogebra:clear:ack', { requestId: data && data.requestId, ok: true });
   }
 
   function handleGrant(room, socket, user, data) {

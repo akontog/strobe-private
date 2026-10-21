@@ -25,7 +25,14 @@ function ResourceMock({ resource, props, t }) {
       </div>
     );
   }
-  if (resource === 'algebra-tiles' || resource === 'collaborative-algebra-tiles') {
+  if (resource === 'options-grid') {
+    return (
+      <div className="activity-resource-mock-groups">
+        {(props.items || []).slice(0, 6).map((item, index) => <span key={item.id || index}>{item.label || t('activityBuilder.optionLabel')}</span>)}
+      </div>
+    );
+  }
+  if (resource === 'algebra-tiles') {
     return <div className="activity-resource-mock-tiles" aria-hidden="true"><i /><i /><i /><i /></div>;
   }
   return <div className="activity-resource-mock-board">{t('activityBuilder.geoGebraPreview')}</div>;

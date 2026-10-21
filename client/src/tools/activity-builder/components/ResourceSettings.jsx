@@ -196,12 +196,32 @@ export default function ResourceSettings({ resource, value, onChange, t }) {
       {resource === 'algebra-tiles' ? (
         <>
           <TextField label={t('activityBuilder.activityId')} value={props.activity} onChange={(activity) => updateProps({ ...props, activity })} />
-          <JsonArrayField
-            label={t('activityBuilder.initialTiles')}
-            value={props.tiles}
-            onChange={(tiles) => updateProps({ ...props, tiles })}
-            invalidText={t('activityBuilder.invalidTilesJson')}
-          />
+          <CheckField label={t('activityBuilder.sharedBoard')} checked={props.shared} onChange={(shared) => updateProps({ ...props, shared })} />
+          {!props.shared ? (
+            <JsonArrayField label={t('activityBuilder.initialTiles')} value={props.tiles} onChange={(tiles) => updateProps({ ...props, tiles })} invalidText={t('activityBuilder.invalidTilesJson')} />
+          ) : null}
+          <TextField label={t('activityBuilder.roomId')} value={props.roomId} onChange={(roomId) => updateProps({ ...props, roomId })} />
+          <label>
+            {t('activityBuilder.resourceNames.algebra-tiles')}
+            <select value={props.mode || 'simplified'} onChange={(event) => updateProps({ ...props, mode: event.target.value })}>
+              <option value="equation">Equation</option>
+              <option value="area">Area</option>
+              <option value="simplified">Simplified</option>
+            </select>
+          </label>
+          <label>
+            Variables
+            <input value={(props.variables || ['x', 'y']).join(', ')} onChange={(event) => updateProps({ ...props, variables: event.target.value.split(',').map((value) => value.trim()).slice(0, 2) })} />
+          </label>
+          {props.shared ? (
+            <label>
+              {t('activityBuilder.promptMode')}
+              <select value={props.promptMode || 'expression'} onChange={(event) => updateProps({ ...props, promptMode: event.target.value })}>
+                <option value="expression">{t('activityBuilder.teacherExpression')}</option>
+                <option value="json">{t('activityBuilder.exerciseList')}</option>
+              </select>
+            </label>
+          ) : null}
         </>
       ) : null}
 
@@ -217,21 +237,20 @@ export default function ResourceSettings({ resource, value, onChange, t }) {
         </>
       ) : null}
 
-      {resource === 'collaborative-algebra-tiles' ? (
+      {resource === 'options-grid' ? (
         <>
-          <TextField label={t('activityBuilder.roomId')} value={props.roomId} onChange={(roomId) => updateProps({ ...props, roomId })} />
-          <label>
-            {t('activityBuilder.resourceNames.algebra-tiles')}
-            <select value={props.mode || 'simplified'} onChange={(event) => updateProps({ ...props, mode: event.target.value })}>
-              <option value="equation">Equation</option>
-              <option value="area">Area</option>
-              <option value="simplified">Simplified</option>
-            </select>
-          </label>
-          <label>
-            Variables
-            <input value={(props.variables || ['x', 'y']).join(', ')} onChange={(event) => updateProps({ ...props, variables: event.target.value.split(',').map((value) => value.trim()).slice(0, 2) })} />
-          </label>
+          <TextField
+            label={t('activityBuilder.columns')}
+            type="number"
+            value={props.columns}
+            onChange={(value) => updateProps({ ...props, columns: Math.max(1, Math.min(20, Number(value) || 1)) })}
+          />
+          <JsonArrayField
+            label={t('activityBuilder.options')}
+            value={props.items}
+            onChange={(items) => updateProps({ ...props, items })}
+            invalidText={t('activityBuilder.invalidOptionsJson')}
+          />
         </>
       ) : null}
 

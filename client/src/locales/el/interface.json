@@ -189,11 +189,12 @@
     "loadError": "Δεν είναι δυνατή η φόρτωση πόρων.",
     "loaded": "Φορτώθηκε το {{filename}}",
     "resourceNames": {
-      "input-grid": "Πλέγμα εισόδων",
-      "grouping-drag-drop": "Ομαδοποίηση με μεταφορά",
-      "algebra-tiles": "Πλακίδια άλγεβρας",
-      "collaborative-geogebra": "Συνεργατικό GeoGebra",
-      "collaborative-algebra-tiles": "Συνεργατικά Πλακίδια Άλγεβρας"
+      "input-grid": "Πλέγμα καταχώρισης",
+      "grouping-drag-drop": "Πίνακας τοποθέτησης",
+      "algebra-tiles": "Πλακίδια Άλγεβρας",
+      "collaborative-geogebra": "GeoGebra",
+      "collaborative-algebra-tiles": "Πλακίδια Άλγεβρας (κοινός καμβάς)",
+      "options-grid": "Πλέγμα επιλογών"
     },
     "resourceSettings": "Ρυθμίσεις πόρου",
     "columns": "Στήλες",
@@ -207,6 +208,10 @@
     "defaultGroup": "Ομάδα {{index}}",
     "defaultItem": "Αντικείμενο {{index}}",
     "defaultItemsBank": "Αντικείμενα προς ομαδοποίηση",
+    "defaultOption": "Επιλογή {{index}}",
+    "options": "Επιλογές (JSON)",
+    "optionLabel": "Επιλογή",
+    "invalidOptionsJson": "Οι επιλογές πρέπει να είναι έγκυρο JSON array.",
     "fieldId": "ID πεδίου",
     "fieldLabel": "Ετικέτα εισόδου",
     "fieldPlaceholder": "Κείμενο υπόδειξης",

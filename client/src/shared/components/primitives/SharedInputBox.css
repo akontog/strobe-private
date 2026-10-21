@@ -1,5 +1,6 @@
 .shared-input-box {
   margin: 0;
+  position: relative;
 }
 
 .poly-team-field {
@@ -11,7 +12,8 @@
   gap: 0.45rem;
 }
 
-.poly-team-field span {
+.poly-team-field > span,
+.poly-team-field > label {
   font-size: 0.78rem;
   color: #475569;
   font-weight: 700;
@@ -33,4 +35,42 @@
 
 .shared-input-box__input {
   width: 100%;
+}
+
+.shared-input-box__keypad {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  width: min(100%, 15rem);
+  padding: 0.55rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(2.5rem, 1fr));
+  gap: 0.35rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.85rem;
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgb(15 23 42 / 18%);
+}
+
+.shared-input-box__key {
+  min-height: 2.65rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.55rem;
+  background: #f8fafc;
+  color: #0f172a;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.shared-input-box__key:hover {
+  background: #e2e8f0;
+}
+
+.shared-input-box__key--done {
+  grid-column: span 3;
+  background: #dbeafe;
 }

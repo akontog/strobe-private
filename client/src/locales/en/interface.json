@@ -189,11 +189,12 @@
     "loadError": "Cannot load resources.",
     "loaded": "Loaded {{filename}}",
     "resourceNames": {
-      "input-grid": "Input Grid",
-      "grouping-drag-drop": "Grouping Drag & Drop",
+      "input-grid": "Entry Grid",
+      "grouping-drag-drop": "Placement Board",
       "algebra-tiles": "Algebra Tiles",
-      "collaborative-geogebra": "Collaborative GeoGebra",
-      "collaborative-algebra-tiles": "Collaborative Algebra Tiles"
+      "collaborative-geogebra": "GeoGebra",
+      "collaborative-algebra-tiles": "Algebra Tiles (shared board)",
+      "options-grid": "Options Grid"
     },
     "resourceSettings": "Resource settings",
     "columns": "Columns",
@@ -207,6 +208,10 @@
     "defaultGroup": "Group {{index}}",
     "defaultItem": "Item {{index}}",
     "defaultItemsBank": "Items to group",
+    "defaultOption": "Option {{index}}",
+    "options": "Options (JSON)",
+    "optionLabel": "Option",
+    "invalidOptionsJson": "Options must be a valid JSON array.",
     "fieldId": "Field ID",
     "fieldLabel": "Input label",
     "fieldPlaceholder": "Placeholder",

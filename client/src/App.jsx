@@ -61,6 +61,7 @@ function App() {
   const [serverConnected, setServerConnected] = useState(false);
   const [teacherSession, setTeacherSession] = useState(null);
   const [teacherSessionBusy, setTeacherSessionBusy] = useState(false);
+  const [clearActivityOnStart, setClearActivityOnStart] = useState(true);
   const [classroomLab, setClassroomLab] = useState('');
   const [classroomRoomId, setClassroomRoomId] = useState('');
   const [classroomActivity, setClassroomActivity] = useState(null);
@@ -274,6 +275,16 @@ function App() {
     setTeacherSessionBusy(true);
     try {
       const app = currentSessionApp || null;
+      if (!teacherSession && clearActivityOnStart) {
+        const resetTasks = [];
+        window.dispatchEvent(new CustomEvent('strobe:session-starting', {
+          detail: {
+            clear: true,
+            waitUntil: (task) => resetTasks.push(Promise.resolve(task))
+          }
+        }));
+        await Promise.all(resetTasks);
+      }
       const endpoint = teacherSession
         ? `/teacher/sessions/${encodeURIComponent(teacherSession.sessionId)}/end`
         : '/teacher/sessions';
@@ -422,14 +433,27 @@ function App() {
             roleControl={<RoleAccessControl role={role} roles={roles} username={teacherUsername} connected={serverConnected} onLogin={loginTeacher} onRoleChange={changeRole} labels={{ admin: t('admin'), teacher: t('teacher'), student: t('student'), username: t('username'), password: tNav('password'), login: tNav('login'), connected: tNav('connected'), disconnected: tNav('disconnected') }} />}
           />
           <LanguageSwitcher sessionControl={hasTeacherAccess ? (
-            <button
-              type="button"
-              className="locale-session-button"
-              onClick={toggleTeacherSession}
-              disabled={teacherSessionBusy || (!teacherSession && !SESSION_ENABLED_APPS.has(currentSessionApp))}
-            >
-              {teacherSessionBusy ? '…' : teacherSession ? t('common:endSession') : t('common:startSession')}
-            </button>
+            <div className="locale-session-controls">
+              {!teacherSession ? (
+                <label className="locale-session-clear-option" title={t('common:clearActivityOnStart')}>
+                  <input
+                    type="checkbox"
+                    checked={clearActivityOnStart}
+                    onChange={(event) => setClearActivityOnStart(event.target.checked)}
+                    disabled={teacherSessionBusy}
+                    aria-label={t('common:clearActivityOnStart')}
+                  />
+                </label>
+              ) : null}
+              <button
+                type="button"
+                className="locale-session-button"
+                onClick={toggleTeacherSession}
+                disabled={teacherSessionBusy || (!teacherSession && !SESSION_ENABLED_APPS.has(currentSessionApp))}
+              >
+                {teacherSessionBusy ? '…' : teacherSession ? t('common:endSession') : t('common:startSession')}
+              </button>
+            </div>
           ) : null} />
         </div>
       </header>

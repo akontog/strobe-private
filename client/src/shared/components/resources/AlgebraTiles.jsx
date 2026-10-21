@@ -1,7 +1,29 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import './AlgebraTiles.css';
+import { useTranslation } from 'react-i18next';
 import { useSessionInputLogger } from '../activities/SessionLogContext';
 import MathJaxText from '../primitives/MathJaxText';
+import { Accordion } from '../layouts/Accordion';
+import { requestRealtimeAck } from '../../utils/realtimeAck';
+import exercises from '../../data/algebraTilesExercises.json';
+
+function loadRealtimeSocket() {
+  if (typeof window.createRealtimeSocket === 'function') return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const existing = document.querySelector('script[data-tool="realtime-socket"]');
+    if (existing) {
+      existing.addEventListener('load', resolve, { once: true });
+      existing.addEventListener('error', reject, { once: true });
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = '/js/realtime-socket.js';
+    script.dataset.tool = 'realtime-socket';
+    script.onload = resolve;
+    script.onerror = reject;
+    document.body.appendChild(script);
+  });
+}
 
 const TILE_TYPES = [
   { id: 'one', label: '1', name: 'Μονάδα', className: 'unit' },
@@ -112,24 +134,87 @@ export default function AlgebraTiles({
   mode, // Selects equation, area, or simplified layout.
   layout, // Legacy layout option kept for existing callers.
   variables: variableNames = ['x', 'y'], // Names shown for the two tile variables.
-  equationSides: suppliedEquationSides = null // Optional equation text shown on each side of the equation board.
+  equationSides: suppliedEquationSides = null, // Optional equation text shown on each side of the equation board.
+  shared = false, // Shares the board state and teacher settings with the room.
+  roomId = 'algebra-tiles-default', // Shared board room identifier.
+  sessionApp = 'activity-runner', // Session app used to resolve the participant identity.
+  role: suppliedRole, // Optional role override for standalone resource hosts.
+  promptMode = 'json' // Uses exercise JSON or a teacher-authored expression on shared boards.
 }) {
+  const { t } = useTranslation('interface');
   const sessionLogging = useSessionInputLogger();
   const canEdit = sessionLogging?.canEdit ?? true;
+  const role = suppliedRole || sessionLogging?.role || 'student';
   const variables = normalizeVariables(variableNames);
   const activeMode = normalizeMode(mode, layout);
   const [localTiles, setLocalTiles] = useState([]);
+  const [roomTiles, setRoomTiles] = useState([]);
+  const [sharedMode, setSharedMode] = useState(mode || layout || 'equation');
+  const [promptExpression, setPromptExpression] = useState('');
+  const [exerciseId, setExerciseId] = useState('');
+  const socketRef = useRef(null);
+  const promptExpressionRef = useRef('');
+  const promptEditedRef = useRef(false);
+  const promptInputId = useId();
   const [sourceOrientations, setSourceOrientations] = useState({ x: 'horizontal', y: 'horizontal', xy: 'horizontal' });
   const [sourceSigns, setSourceSigns] = useState({ one: 1, x: 1, y: 1, x2: 1, xy: 1, y2: 1 });
   const [mergeAnimation, setMergeAnimation] = useState(null);
   const mergeTimerRef = useRef(null);
-  const tiles = Array.isArray(sharedTiles) ? sharedTiles : localTiles;
+  const tiles = shared ? roomTiles : Array.isArray(sharedTiles) ? sharedTiles : localTiles;
+  const boardMode = shared ? sharedMode : activeMode;
+  const category = sharedMode === 'equation' ? 'equations' : 'factorization';
+  const availableExercises = exercises[category];
+  const selectedExercise = availableExercises.find((item) => item.id === exerciseId) || availableExercises[0];
   const isMerging = Boolean(mergeAnimation);
+
+  useEffect(() => {
+    if (!shared) return undefined;
+    let cancelled = false;
+    let socket;
+    loadRealtimeSocket().then(() => {
+      if (cancelled) return;
+      socket = window.createRealtimeSocket({ path: '/ws/realtime' });
+      socketRef.current = socket;
+      socket.on('connect', () => {
+        socket.emit('algebra-tiles:join', { roomId, sessionApp });
+        if (role === 'teacher' && promptEditedRef.current) {
+          socket.emit('algebra-tiles:prompt', { roomId, sessionApp, promptExpression: promptExpressionRef.current });
+        }
+      });
+      socket.on('algebra-tiles:state', (state) => {
+        if (state?.roomId !== `algebra-tiles-${roomId}`) return;
+        setSharedMode(state.mode || 'simplified');
+        if (role !== 'teacher' || !promptEditedRef.current) {
+          promptExpressionRef.current = state.promptExpression || '';
+          setPromptExpression(state.promptExpression || '');
+        }
+        setExerciseId(state.exerciseId || '');
+        setRoomTiles(Array.isArray(state.tiles) ? state.tiles : []);
+      });
+      socket.connect();
+    }).catch(() => {});
+    return () => {
+      cancelled = true;
+      socket?.disconnect();
+      socketRef.current = null;
+    };
+  }, [shared, roomId, sessionApp, role]);
+
+  useEffect(() => {
+    if (!shared) return undefined;
+    const clearBeforeSession = (event) => {
+      if (!event.detail?.clear || role !== 'teacher') return;
+      setRoomTiles([]);
+      event.detail.waitUntil(requestRealtimeAck(socketRef.current, 'algebra-tiles:clear-room', 'algebra-tiles:clear-room:ack', { roomId, sessionApp }));
+    };
+    window.addEventListener('strobe:session-starting', clearBeforeSession);
+    return () => window.removeEventListener('strobe:session-starting', clearBeforeSession);
+  }, [shared, role, roomId, sessionApp]);
 
   useEffect(() => () => {
     if (mergeTimerRef.current) window.clearTimeout(mergeTimerRef.current);
   }, []);
-  const areaTiles = activeMode === 'area'
+  const areaTiles = boardMode === 'area'
     ? tiles.reduce((groups, tile) => {
       const orientation = tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal');
       const { width, height } = getTileDimensions(tile.type, orientation);
@@ -141,7 +226,7 @@ export default function AlgebraTiles({
       return groups;
     }, { horizontal: [], vertical: [], product: [] })
     : null;
-  const tileEquationSides = activeMode === 'equation'
+  const tileEquationSides = boardMode === 'equation'
     ? {
       left: tiles.filter((tile) => tile.side === 'left'),
       right: tiles.filter((tile) => tile.side === 'right')
@@ -175,7 +260,10 @@ export default function AlgebraTiles({
 
   const commitTiles = (nextTiles, logChange = true) => {
     if (!canEdit) return;
-    setLocalTiles(nextTiles);
+    if (shared) {
+      setRoomTiles(nextTiles);
+      socketRef.current?.emit('algebra-tiles:update', { roomId, sessionApp, tiles: nextTiles });
+    } else setLocalTiles(nextTiles);
     onTilesChange?.(nextTiles);
     if (logChange) {
       sessionLogging?.logEvent('activity.tiles.changed', activity, {
@@ -183,6 +271,47 @@ export default function AlgebraTiles({
       });
     }
   };
+
+  useEffect(() => {
+    if (shared) return undefined;
+    const clearOnSessionStart = (event) => {
+      if (event.detail?.clear && canEdit) commitTiles([]);
+    };
+    window.addEventListener('strobe:session-starting', clearOnSessionStart);
+    return () => window.removeEventListener('strobe:session-starting', clearOnSessionStart);
+  }, [shared, canEdit, onTilesChange, tiles]);
+
+  const updateMode = (nextMode) => {
+    if (role !== 'teacher') return;
+    setSharedMode(nextMode);
+    socketRef.current?.emit('algebra-tiles:mode', { roomId, sessionApp, mode: nextMode });
+  };
+
+  const updateExercise = (nextCategory, nextExerciseId) => {
+    if (role !== 'teacher') return;
+    const nextExercise = exercises[nextCategory].find((item) => item.id === nextExerciseId) || exercises[nextCategory][0];
+    const nextMode = nextCategory === 'equations' ? 'equation' : 'area';
+    setSharedMode(nextMode);
+    setExerciseId(nextExercise.id);
+    commitTiles([]);
+    socketRef.current?.emit('algebra-tiles:exercise', { roomId, sessionApp, mode: nextMode, exerciseId: nextExercise.id });
+  };
+
+  const updatePromptExpression = (event) => {
+    const nextExpression = event.target.value;
+    promptExpressionRef.current = nextExpression;
+    promptEditedRef.current = true;
+    setPromptExpression(nextExpression);
+    socketRef.current?.emit('algebra-tiles:prompt', { roomId, sessionApp, promptExpression: nextExpression });
+  };
+
+  const normalizedExpression = promptExpression.trim()
+    .replace(/^\\\((.*)\\\)$/s, '$1')
+    .replace(/^\$([\s\S]*)\$$/, '$1');
+  const equationSeparator = sharedMode === 'equation' ? normalizedExpression.indexOf('=') : -1;
+  const equationSides = equationSeparator >= 0
+    ? { left: normalizedExpression.slice(0, equationSeparator).trim(), right: normalizedExpression.slice(equationSeparator + 1).trim() }
+    : suppliedEquationSides;
 
   const beginTileDrag = (event, tile) => {
     event.dataTransfer.effectAllowed = tile.id ? 'move' : 'copy';
@@ -270,7 +399,7 @@ export default function AlgebraTiles({
       let orientation = dragged.orientation;
       let side;
 
-      if (activeMode === 'area') {
+      if (boardMode === 'area') {
         const isFactorTile = ['one', 'x', 'y'].includes(dragged.type);
         if (rawY < T_CHART_AXIS_Y && isFactorTile) {
           orientation = dragged.type === 'one' ? orientation : 'horizontal';
@@ -299,7 +428,7 @@ export default function AlgebraTiles({
         } else {
           return;
         }
-      } else if (activeMode === 'equation') {
+      } else if (boardMode === 'equation') {
         const midpoint = board.clientWidth / 2;
         side = rawX + tileWidth / 2 < midpoint ? 'left' : 'right';
         const sideOffset = side === 'right' ? midpoint : 0;
@@ -312,11 +441,11 @@ export default function AlgebraTiles({
       const dropY = event.clientY - bounds.top + board.scrollTop;
       const oppositeTile = tiles.find((tile) => {
         if (tile.id === id || tile.type !== dragged.type || (tile.sign < 0) === (dragged.sign < 0)) return false;
-        if (activeMode === 'equation' && tile.side !== side) return false;
+        if (boardMode === 'equation' && tile.side !== side) return false;
 
         const tileOrientation = tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal');
         const [existingWidth, existingHeight] = getTileSpans(tile.type, tileOrientation);
-        const tileLeft = activeMode === 'equation'
+        const tileLeft = boardMode === 'equation'
           ? (tile.side === 'right' ? board.clientWidth / 2 + 8 : 8) + (tile.x || 0) * GRID_UNIT
           : (tile.x || 0) * GRID_UNIT;
         const tileTop = (tile.y || 0) * GRID_UNIT;
@@ -328,8 +457,8 @@ export default function AlgebraTiles({
       const nextTiles = tiles.filter((tile) => tile.id !== id && tile.id !== oppositeTile?.id);
       const droppedTile = { id, type: dragged.type, sign: dragged.sign, orientation, x, y, ...(side ? { side } : {}) };
       if (oppositeTile) {
-        const existingPosition = getTileBoardPosition(oppositeTile, activeMode, board.clientWidth);
-        const droppedPosition = getTileBoardPosition(droppedTile, activeMode, board.clientWidth);
+        const existingPosition = getTileBoardPosition(oppositeTile, boardMode, board.clientWidth);
+        const droppedPosition = getTileBoardPosition(droppedTile, boardMode, board.clientWidth);
         const centerX = (existingPosition.centerX + droppedPosition.centerX) / 2;
         const centerY = (existingPosition.centerY + droppedPosition.centerY) / 2;
         const animation = {
@@ -362,7 +491,7 @@ export default function AlgebraTiles({
 
   const removeTile = (id) => {
     if (isMerging) return;
-    if (activeMode === 'equation') {
+    if (boardMode === 'equation') {
       const selectedTile = tiles.find((tile) => tile.id === id);
       if (!selectedTile) return;
       const matchingTile = tiles.find((tile) => tile.side !== selectedTile.side
@@ -375,8 +504,50 @@ export default function AlgebraTiles({
     commitTiles(tiles.filter((tile) => tile.id !== id));
   };
   return (
-    <div className={`algebra-tiles${isMerging ? ' has-merging-tiles' : ''}`}>
-      <section className={`algebra-tiles__board${activeMode === 'equation' ? ' algebra-tiles__board--equation' : ''}`} aria-label="Πίνακας πλακιδίων">
+    <div className={shared ? 'collaborative-algebra-tiles' : undefined}>
+      {shared && (promptMode === 'expression'
+        ? (promptExpression.trim() ? <div className="collaborative-algebra-tiles__prompt"><MathJaxText text={promptExpression} /></div> : null)
+        : (selectedExercise ? <p className="collaborative-algebra-tiles__prompt">
+          {category === 'factorization' ? `${t('algebraTiles.factorize')}: ` : ''}{selectedExercise.prompt}
+        </p> : null))}
+      {shared && role === 'teacher' ? (
+        <Accordion title={t('algebraTiles.settings')} className="collaborative-algebra-tiles__settings">
+          {promptMode === 'expression' ? (
+            <>
+              <div className="collaborative-algebra-tiles__modes" role="group" aria-label={t('algebraTiles.boardMode')}>
+                {['equation', 'area', 'simplified'].map((nextMode) => (
+                  <button key={nextMode} type="button" className={sharedMode === nextMode ? 'is-active' : ''} aria-pressed={sharedMode === nextMode} onClick={() => updateMode(nextMode)}>
+                    {t(`algebraTiles.modes.${nextMode}`)}
+                  </button>
+                ))}
+              </div>
+              <label className="collaborative-algebra-tiles__setting">
+                {t('algebraTiles.promptExpression')}
+                <input id={promptInputId} type="text" value={promptExpression} onChange={updatePromptExpression}
+                  placeholder={sharedMode === 'equation' ? '2x + 3 = 7' : 'x^2 + 5x + 6'} maxLength={10000} />
+              </label>
+            </>
+          ) : (
+            <>
+              <label className="collaborative-algebra-tiles__setting">
+                {t('algebraTiles.activityType')}
+                <select value={category} onChange={(event) => updateExercise(event.target.value, exercises[event.target.value][0].id)}>
+                  <option value="equations">{t('algebraTiles.equations')}</option>
+                  <option value="factorization">{t('algebraTiles.factorization')}</option>
+                </select>
+              </label>
+              <label className="collaborative-algebra-tiles__setting">
+                {t(category === 'equations' ? 'algebraTiles.equation' : 'algebraTiles.factorizationTask')}
+                <select value={selectedExercise?.id || ''} onChange={(event) => updateExercise(category, event.target.value)}>
+                  {availableExercises.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
+                </select>
+              </label>
+            </>
+          )}
+        </Accordion>
+      ) : null}
+      <div className={`algebra-tiles${isMerging ? ' has-merging-tiles' : ''}`}>
+      <section className={`algebra-tiles__board${boardMode === 'equation' ? ' algebra-tiles__board--equation' : ''}`} aria-label="Πίνακας πλακιδίων">
         {equationDisplaySides ? (
           <div className="algebra-tiles__equation-header" aria-live="polite">
             <output>{typeof equationDisplaySides.left === 'string'
@@ -388,7 +559,7 @@ export default function AlgebraTiles({
             <span aria-hidden="true">=</span>
           </div>
         ) : null}
-        <div className={`algebra-tiles__placed${activeMode === 'area' ? ' is-area' : ''}${activeMode === 'equation' ? ' is-equation' : ''}`}
+        <div className={`algebra-tiles__placed${boardMode === 'area' ? ' is-area' : ''}${boardMode === 'equation' ? ' is-equation' : ''}`}
           onDragOver={(event) => { if (canEdit) event.preventDefault(); }}
           onDrop={dropTile}>
           {areaTiles?.horizontal.length ? (
@@ -424,7 +595,7 @@ export default function AlgebraTiles({
                 onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') removeTile(tile.id); }}
                 className={`algebra-tile algebra-tile--${definition.className} is-${orientation} ${tile.sign < 0 ? 'is-negative' : ''}${mergeAnimation?.[tile.id] ? ' is-merging' : ''}`}
                 style={{
-                  left: activeMode === 'equation'
+                  left: boardMode === 'equation'
                     ? `calc(${tile.side === 'right' ? '50% + ' : ''}8px + ${(tile.x || 0) * GRID_UNIT}px)`
                     : `${(tile.x || 0) * GRID_UNIT}px`,
                   top: `${(tile.y || 0) * GRID_UNIT}px`,
@@ -437,7 +608,7 @@ export default function AlgebraTiles({
                   } : {})
                 }}
                 aria-label={`${tile.sign < 0 ? 'Αρνητικό' : 'Θετικό'} πλακίδιο ${definition.name}`}
-                title={`${definition.name}: ${activeMode === 'equation'
+                title={`${definition.name}: ${boardMode === 'equation'
                   ? 'Πάτησε για αφαίρεση ίσων πλακιδίων και από τις δύο πλευρές'
                   : 'Σύρε το πλακίδιο για μεταφορά ή πάτησε για αφαίρεση'}`}>
                 {definition.label}
@@ -461,6 +632,7 @@ export default function AlgebraTiles({
         {renderChoices('xy', 'xy', sourceOrientations.xy)}
         {renderChoices('y2', 'y2', 'horizontal')}
       </section>
+      </div>
     </div>
   );
 }

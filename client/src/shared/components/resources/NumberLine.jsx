@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { readIdentitySnapshot } from '../menu/identityStorage';
+import { useSessionInputLogger } from '../activities/SessionLogContext';
+import { requestRealtimeAck } from '../../utils/realtimeAck';
 import './NumberLine.css';
 
 function loadRealtimeSocket() {
@@ -32,6 +34,8 @@ export default function NumberLine({
   stackTolerance = 0.08 // Distance at which identical points or interval bounds share a vertical stack.
 }) {
   const { t } = useTranslation('interface');
+  const session = useSessionInputLogger();
+  const canEdit = session?.canEdit ?? true;
   const socketRef = useRef(null);
   const svgRef = useRef(null);
   const pointerRef = useRef(null);
@@ -85,6 +89,22 @@ export default function NumberLine({
     };
   }, [roomId, sessionApp]);
 
+  useEffect(() => {
+    const clearBeforeSession = (event) => {
+      if (!event.detail?.clear || !canEdit) return;
+      pointerRef.current = null;
+      setDraftInterval(null);
+      event.detail.waitUntil(requestRealtimeAck(
+        socketRef.current,
+        'number-line:clear-room',
+        'number-line:clear-room:ack',
+        { roomId, sessionApp }
+      ));
+    };
+    window.addEventListener('strobe:session-starting', clearBeforeSession);
+    return () => window.removeEventListener('strobe:session-starting', clearBeforeSession);
+  }, [canEdit, roomId, sessionApp]);
+
   function emitMark(mark) {
     socketRef.current?.emit('number-line:mark', { roomId, sessionApp, ...mark, ...identityRef.current });
   }
@@ -109,6 +129,11 @@ export default function NumberLine({
   function finishDrawing(event) {
     const activePointer = pointerRef.current;
     if (!activePointer || activePointer.id !== event.pointerId) return;
+    if (!canEdit) {
+      pointerRef.current = null;
+      setDraftInterval(null);
+      return;
+    }
     const end = valueFromEvent(event);
     if (activePointer.moved) {
       const start = Math.min(activePointer.start, end);
@@ -133,12 +158,13 @@ export default function NumberLine({
     <div className="number-line-resource">
       <svg
         ref={svgRef}
-        className="number-line-resource__canvas"
+        className={`number-line-resource__canvas${canEdit ? '' : ' is-locked'}`}
         viewBox={`0 0 ${width} ${height}`}
         preserveAspectRatio="none"
         role="application"
         aria-label={t('numberLine.ariaLabel')}
         onPointerDown={(event) => {
+          if (!canEdit) return;
           const targetMark = event.target.closest?.('[data-mark-id]');
           if (targetMark?.dataset.markId === socketRef.current?.id) {
             const ownMark = marks.find((mark) => mark.id === targetMark.dataset.markId);

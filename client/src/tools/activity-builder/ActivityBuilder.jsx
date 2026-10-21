@@ -24,6 +24,11 @@ function cloneResourceDefaults(resource, t) {
     });
     defaults.props.bankLabel = t('activityBuilder.defaultItemsBank');
   }
+  if (resource === 'options-grid') {
+    defaults.props.items.forEach((item, index) => {
+      item.label = t('activityBuilder.defaultOption', { index: index + 1 });
+    });
+  }
   return defaults;
 }
 

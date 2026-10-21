@@ -19,6 +19,7 @@
   "greek": "Greek",
   "english": "English",
   "startSession": "Start session",
+  "clearActivityOnStart": "Clear current work when the session starts",
   "endSession": "End session",
   "input": "Input",
   "notAvailable": "Not available",

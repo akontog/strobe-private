@@ -19,6 +19,7 @@
   "chatSend": "Αποστολή",
   "english": "English",
   "startSession": "Έναρξη συνεδρίας",
+  "clearActivityOnStart": "Καθαρισμός εργασίας κατά την έναρξη συνεδρίας",
   "endSession": "Ολοκλήρωση συνεδρίας",
   "input": "Είσοδος",
   "notAvailable": "Δεν είναι διαθέσιμο",

@@ -4,13 +4,14 @@ import { useTranslation } from 'react-i18next';
 import {
   WidgetRenderer,
   AlgebraTiles,
-  CollaborativeAlgebraTiles,
-  CollaborativeGeoGebra,
-  GroupingDragDrop,
+  GeoGebra,
+  PlacementBoard,
+  OptionsGrid,
+  GridButton,
   HeroTitle,
   SettingsAccordion,
   CommonSessionSettings,
-  InputGrid,
+  EntryGrid,
   SharedCommonZoneLayout,
   StudentScoresAccordion,
   StudentTable,
@@ -27,6 +28,7 @@ function ResourceContent({ activity, role, activityKey }) {
   const [answers, setAnswers] = React.useState(() => Object.fromEntries(fields.map((field) => [field.id, field.value || ''])));
   const [placements, setPlacements] = React.useState(props.placements || {});
   const [tiles, setTiles] = React.useState(props.tiles || []);
+  const [selectedOption, setSelectedOption] = React.useState('');
   const correctAnswers = config.grading?.answers || {};
   const inputFields = fields.map((field) => ({
     ...field,
@@ -42,12 +44,13 @@ function ResourceContent({ activity, role, activityKey }) {
     setAnswers(Object.fromEntries(fields.map((field) => [field.id, field.value || ''])));
     setPlacements(props.placements || {});
     setTiles(props.tiles || []);
+    setSelectedOption('');
   }, [activity]);
 
   if (activity.resource === 'input-grid') {
     return (
       <>
-        <InputGrid fields={inputFields} columns={props.columns || 2} rows={props.rows} activity={activityKey} />
+        <EntryGrid fields={inputFields} columns={props.columns || 2} rows={props.rows} activity={activityKey} />
         <StudentScoresAccordion
           role={session?.role || 'student'}
           studentName={readIdentityName('')}
@@ -58,16 +61,48 @@ function ResourceContent({ activity, role, activityKey }) {
     );
   }
   if (activity.resource === 'grouping-drag-drop') {
-    return <GroupingDragDrop {...props} placements={placements} onChange={setPlacements} activity={activityKey} />;
+    return <PlacementBoard {...props} placements={placements} onChange={setPlacements} activity={activityKey} />;
   }
   if (activity.resource === 'algebra-tiles') {
-    return <AlgebraTiles variables={props.variables} mode={props.mode || props.layout} tiles={tiles} onTilesChange={setTiles} activity={activityKey} />;
+    return <AlgebraTiles {...props} shared={Boolean(props.shared)} role={role} variables={props.variables} mode={props.mode || props.layout} tiles={tiles} onTilesChange={setTiles} activity={activityKey} />;
   }
   if (activity.resource === 'collaborative-geogebra') {
-    return <CollaborativeGeoGebra {...props} roomId={props.roomId || 'activity-runner'} sessionApp="activity-runner" editable={session?.canEdit} />;
+    return <GeoGebra {...props} roomId={props.roomId || 'activity-runner'} sessionApp="activity-runner" editable={session?.canEdit} />;
   }
   if (activity.resource === 'collaborative-algebra-tiles') {
-    return <CollaborativeAlgebraTiles {...props} role={role} activity={activityKey} />;
+    return <AlgebraTiles {...props} shared role={role} sessionApp="activity-runner" activity={activityKey} />;
+  }
+  if (activity.resource === 'options-grid') {
+    const items = Array.isArray(props.items) ? props.items : [];
+    const canEdit = session?.canEdit ?? true;
+    return (
+      <OptionsGrid
+        items={items}
+        columns={props.columns || 3}
+        ariaLabel="Επιλογές"
+        renderItem={(item, index) => {
+          const itemId = String(item.id || item.value || `option-${index + 1}`);
+          const isSelected = selectedOption === itemId;
+          return (
+            <GridButton
+              key={itemId}
+              pressed={isSelected}
+              disabled={!canEdit}
+              onClick={() => {
+                const nextOption = isSelected ? '' : itemId;
+                setSelectedOption(nextOption);
+                session?.logEvent('activity.input.changed', activityKey, {
+                  field: 'selectedOption',
+                  value: nextOption ? item.label || item.value || itemId : ''
+                });
+              }}
+            >
+              {item.label || item.value || itemId}
+            </GridButton>
+          );
+        }}
+      />
+    );
   }
   return <p>Unsupported activity resource: {activity.resource}</p>;
 }
@@ -121,6 +156,13 @@ function getStudentColumns(activity, activityKey) {
       label: typeof item.content === 'string' ? item.content : item.label || item.id || `Στοιχείο ${index + 1}`,
       render: (student) => groups.get(student.answers?.[activityKey]?.[item.id]) || '—'
     }));
+  }
+  if (resource === 'options-grid') {
+    return [{
+      key: 'selected-option',
+      label: 'Choice',
+      render: (student) => student.answers?.[activityKey]?.selectedOption || '—'
+    }];
   }
   if (resource === 'algebra-tiles' || resource === 'collaborative-algebra-tiles') {
     const mode = props.mode || props.layout || 'simplified';
@@ -230,7 +272,7 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
         rightPanel={widgetPanel('right')}
       />
       {role === 'teacher' ? <SettingsAccordion><CommonSessionSettings /></SettingsAccordion> : null}
-      {role === 'teacher' && ['input-grid', 'grouping-drag-drop', 'algebra-tiles', 'collaborative-algebra-tiles'].includes(resourceActivity.resource) ? (
+      {role === 'teacher' && ['input-grid', 'grouping-drag-drop', 'algebra-tiles', 'collaborative-algebra-tiles', 'options-grid'].includes(resourceActivity.resource) ? (
         <StudentTable
           title="Πίνακας μαθητών"
           participants={students}

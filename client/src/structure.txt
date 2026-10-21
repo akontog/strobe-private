@@ -86,12 +86,15 @@ C:.
 |   |   +---resources
 |   |   |       AlgebraTiles.css
 |   |   |       AlgebraTiles.jsx
-|   |   |       CollaborativeGeoGebra.css
-|   |   |       CollaborativeGeoGebra.jsx
-|   |   |       GroupingDragDrop.css
-|   |   |       GroupingDragDrop.jsx
-|   |   |       InputGrid.css
-|   |   |       InputGrid.jsx
+|   |   |       GeoGebra.css
+|   |   |       GeoGebra.jsx
+|   |   |       PlacementBoard.css
+|   |   |       PlacementBoard.jsx
+|   |   |       EntryGrid.css
+|   |   |       EntryGrid.jsx
+|   |   |       OptionsGrid.css
+|   |   |       OptionsGrid.jsx
+|   |   |       AlgebraTilesRoom.jsx
 |   |   |       
 |   |   +---services
 |   |   |       chat-accordion.css

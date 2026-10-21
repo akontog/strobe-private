@@ -24,7 +24,7 @@ export const RESOURCE_DEFAULTS = {
     widgets: []
   },
   'algebra-tiles': {
-    props: { activity: '', tiles: [] },
+    props: { activity: '', tiles: [], shared: false, roomId: 'algebra-tiles-room', mode: 'simplified', variables: ['x', 'y'], promptMode: 'expression' },
     widgets: []
   },
   'collaborative-geogebra': {
@@ -43,8 +43,15 @@ export const RESOURCE_DEFAULTS = {
     },
     widgets: []
   },
-  'collaborative-algebra-tiles': {
-    props: { roomId: 'algebra-tiles-room', mode: 'simplified', variables: ['x', 'y'] },
+  'options-grid': {
+    props: {
+      columns: 3,
+      items: [
+        { id: 'option-1', label: 'Option 1', value: 'option-1' },
+        { id: 'option-2', label: 'Option 2', value: 'option-2' },
+        { id: 'option-3', label: 'Option 3', value: 'option-3' }
+      ]
+    },
     widgets: []
   }
 };
