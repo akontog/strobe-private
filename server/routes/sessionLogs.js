@@ -11,7 +11,7 @@ router.get('/api/session-logs/active/:app', (req, res) => {
   const sessionId = getActiveSessionForApp(req.params.app);
   const session = sessionId ? getActiveSession(sessionId) : null;
   const settings = session?.metadata || getAppSettings(req.params.app);
-  return res.json({ sessionId, chatEnabled: Boolean(settings.chatEnabled), scoreVisible: settings.scoreVisible !== false, feedbackEnabled: Boolean(settings.feedbackEnabled) });
+  return res.json({ sessionId, activity: session?.metadata.activity || '', chatEnabled: Boolean(settings.chatEnabled), scoreVisible: settings.scoreVisible !== false, feedbackEnabled: Boolean(settings.feedbackEnabled) });
 });
 
 router.get('/api/session-logs/active/:app/chat', (req, res) => {

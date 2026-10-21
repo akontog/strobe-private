@@ -44,9 +44,18 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       const user = getUserFromSocket(socket);
       if (!isElevated(user) && !getActiveSessionForApp(normalizeSessionApp(data.sessionApp))) return;
       const allowedRegions = new Set(['left', 'intersection', 'right', 'outside']);
-      room.placements = Object.fromEntries(Object.entries(data.placements).flatMap(([itemId, region]) => (
-        /^([1-9]|1\d|20)$/.test(itemId) && (region === null || allowedRegions.has(region)) ? [[itemId, region]] : []
-      )));
+      room.placements = Object.fromEntries(Object.entries(data.placements).flatMap(([itemId, placement]) => {
+        if (!/^([1-9]|1\d|20)$/.test(itemId)) return [];
+        if (placement === null || allowedRegions.has(placement)) return [[itemId, placement]];
+        if (placement?.region === 'outside') {
+          const x = Number(placement.x);
+          const y = Number(placement.y);
+          if (Number.isFinite(x) && Number.isFinite(y)) {
+            return [[itemId, { region: 'outside', x: Math.max(2, Math.min(98, x)), y: Math.max(4, Math.min(96, y)) }]];
+          }
+        }
+        return [];
+      }));
       sendVennState(room);
     });
 

@@ -10,6 +10,7 @@ export function SessionLogProvider({
   children // Components that receive session context.
 }) {
   const [activeSessionId, setActiveSessionId] = useState(suppliedSessionId);
+  const [activeActivity, setActiveActivity] = useState('');
   const [chatEnabled, setChatEnabled] = useState(false);
   const [scoreVisible, setScoreVisible] = useState(true);
   const [feedbackEnabled, setFeedbackEnabled] = useState(false);
@@ -36,6 +37,7 @@ export function SessionLogProvider({
         const payload = response.ok ? await response.json() : null;
         if (!cancelled) {
           setActiveSessionId(payload?.sessionId || null);
+          setActiveActivity(String(payload?.activity || ''));
           setChatEnabled(Boolean(payload?.chatEnabled));
           setScoreVisible(payload?.scoreVisible !== false);
           setFeedbackEnabled(Boolean(payload?.feedbackEnabled));
@@ -110,6 +112,7 @@ export function SessionLogProvider({
       if (!response.ok && response.status !== 404) throw new Error('Could not end the current session.');
     }
     setActiveSessionId(null);
+    setActiveActivity('');
     window.dispatchEvent(new CustomEvent('strobe:session-ended', { detail: { sessionId } }));
   }, [activeSessionId, app, role]);
 
@@ -177,7 +180,7 @@ export function SessionLogProvider({
   }, [app, feedbackEnabled, role]);
 
   return (
-    <SessionLogContext.Provider value={{ logEvent, canEdit, app, role, activeSessionId, chatEnabled, scoreVisible, feedbackEnabled, endSession, updateActivity, updateChatEnabled, updateScoreVisible, updateFeedbackEnabled }}>
+    <SessionLogContext.Provider value={{ logEvent, canEdit, app, role, activeSessionId, activeActivity, chatEnabled, scoreVisible, feedbackEnabled, endSession, updateActivity, updateChatEnabled, updateScoreVisible, updateFeedbackEnabled }}>
       {children}
     </SessionLogContext.Provider>
   );

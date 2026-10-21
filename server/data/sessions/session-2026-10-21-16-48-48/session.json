@@ -1,0 +1,20 @@
+{
+  "sessionId": "session-2026-10-21-16-48-48",
+  "app": "probabilities-lab",
+  "startedAt": "2026-10-21T13:48:48.806Z",
+  "endedAt": "2026-10-21T13:49:00.142Z",
+  "teacherId": "antonis",
+  "students": [
+    "dd"
+  ],
+  "studentScores": [
+    {
+      "student": "dd",
+      "score": 4
+    }
+  ],
+  "activity": "probabilities-lab",
+  "chatEnabled": false,
+  "scoreVisible": true,
+  "feedbackEnabled": false
+}

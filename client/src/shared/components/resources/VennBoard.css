@@ -8,7 +8,7 @@
   position: relative;
   min-height: 23rem;
   overflow: hidden;
-  border: 2px solid #94a3b8;
+  border: 2px solid #3b82f6;
   border-radius: 1rem;
   background: #ffffff;
 }
@@ -27,15 +27,39 @@
   stroke-width: 0.7;
 }
 
+.venn-board__circles ellipse {
+  fill: rgb(219 234 254 / 30%);
+  stroke: #3b82f6;
+  stroke-width: 0.7;
+}
+
 .venn-board__circles circle + circle {
-  fill: rgb(253 230 138 / 22%);
-  stroke: #d97706;
+  fill: rgb(254 226 226 / 35%);
+  stroke: #dc2626;
+}
+
+.venn-board .grouping-dd-bank {
+  border-color: #3b82f6;
+}
+
+.venn-board .grouping-dd-item {
+  border-color: #3b82f6;
 }
 
 .venn-board__set-label {
   position: absolute;
   z-index: 1;
   top: 0.65rem;
+  font-weight: 800;
+  color: #334155;
+}
+
+.venn-board__universe-label {
+  position: absolute;
+  z-index: 2;
+  top: 0.65rem;
+  left: 0.7rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: #334155;
 }
@@ -48,12 +72,29 @@
   right: 19%;
 }
 
+.venn-board__set-label--single {
+  left: 50%;
+  top: 2.2rem;
+  transform: translateX(-50%);
+}
+
+.venn-board__diagram--nested .venn-board__set-label--nested-parent {
+  top: 19%;
+  left: 25%;
+}
+
+.venn-board__diagram--nested .venn-board__set-label--nested-child {
+  top: 38%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 .venn-board__regions {
   position: absolute;
-  inset: 2.6rem 1rem 0.8rem;
+  inset: 0;
   display: grid;
   grid-template-columns: 1fr 0.72fr 1fr;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(0, 1fr);
   pointer-events: none;
 }
 
@@ -73,39 +114,82 @@
 .venn-board__region--left {
   grid-column: 1;
   grid-row: 1;
-  margin: 2rem -0.25rem 0 1.5rem;
+  z-index: 1;
+  margin: 3rem -0.25rem 2.8rem 1.5rem;
+}
+
+.venn-board__region--inside {
+  position: absolute;
+  z-index: 1;
+  left: 27%;
+  top: 8%;
+  width: 46%;
+  height: 77%;
+  border-radius: 50%;
+}
+
+.venn-board__region--superset-only {
+  position: absolute;
+  z-index: 1;
+  left: 20%;
+  top: 5%;
+  width: 60%;
+  height: 78%;
+  border-radius: 50%;
+}
+
+.venn-board__region--superset-only .venn-board__region-items {
+  position: absolute;
+  left: 84%;
+  top: 50%;
+  width: max-content;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  transform: translate(-50%, -50%);
+}
+
+.venn-board__region--subset {
+  position: absolute;
+  z-index: 2;
+  left: 33%;
+  top: 22%;
+  width: 34%;
+  height: 46%;
+  border-radius: 50%;
 }
 
 .venn-board__region--intersection {
   grid-column: 2;
   grid-row: 1;
-  margin: 2rem -0.5rem 0;
+  z-index: 1;
+  margin: 3rem -0.5rem 2.8rem;
 }
 
 .venn-board__region--right {
   grid-column: 3;
   grid-row: 1;
-  margin: 2rem 1.5rem 0 -0.25rem;
+  z-index: 1;
+  margin: 3rem 1.5rem 2.8rem -0.25rem;
 }
 
 .venn-board__region--outside {
-  grid-column: 1 / 4;
-  grid-row: 2;
-  justify-content: flex-start;
-  min-height: 3.2rem;
-  border-top: 1px dashed #cbd5e1;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 0.75rem;
 }
 
-.venn-board__region.is-hovering {
+.venn-board__region.is-hovering:not(.venn-board__region--outside) {
   background: rgb(37 99 235 / 10%);
   box-shadow: inset 0 0 0 2px #2563eb;
 }
 
-.venn-board__region-label {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #475569;
-  text-align: center;
+.venn-board__diagram--nested .venn-board__region--subset.is-hovering {
+  background: rgb(220 38 38 / 10%);
+  box-shadow: inset 0 0 0 2px #dc2626;
 }
 
 .venn-board__region-items {
@@ -114,6 +198,19 @@
   justify-content: center;
   align-content: flex-start;
   gap: 0.35rem;
+}
+
+.venn-board__region--outside .venn-board__region-items {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+
+.venn-board__region--outside .grouping-dd-item {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
 }
 
 .venn-board .grouping-dd-ghost {
@@ -136,7 +233,7 @@
   }
 
   .venn-board__regions {
-    inset-inline: 0.25rem;
+    inset: 0;
   }
 
   .venn-board__region--left {

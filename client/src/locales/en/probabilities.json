@@ -1,0 +1,20 @@
+{
+  "activityTitle": "Single digit even numbers",
+  "activityObjective": "Drag the even numbers into the set and the odd numbers outside it.",
+  "evenNumbersSet": "Single digit even numbers",
+  "subsetActivityTitle": "A subset of the even numbers",
+  "subsetActivityObjective": "Set A contains the even numbers. B is a subset of A containing the multiples of 4. Place odd numbers outside A.",
+  "allEvenNumbersSet": "Even numbers",
+  "multiplesOfFourSet": "Multiples of 4",
+  "evenNumbersOutsideSubset": "Even numbers outside B",
+  "numberBank10": "Numbers from 1 to 10",
+  "numberBank20": "Numbers from 1 to 20",
+  "currentScore": "Score: {{score}} / {{maxScore}}",
+  "studentTableTitle": "Student table",
+  "insideSet": "Inside the set",
+  "outsideSet": "Outside the set",
+  "score": "Score",
+  "noStudents": "There are no students in the session yet.",
+  "activities": "Activities",
+  "chooseActivity": "Choose an activity"
+}

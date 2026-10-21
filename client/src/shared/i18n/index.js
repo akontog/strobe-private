@@ -17,6 +17,7 @@ import equationsEl from '../../locales/el/equations.json';
 import factorizationEl from '../../locales/el/factorization.json';
 import instructionsEl from '../../locales/el/instructions.json';
 import linearSystemsEl from '../../locales/el/linearSystems.json';
+import probabilitiesEl from '../../locales/el/probabilities.json';
 
 import commonEn from '../../locales/en/common.json';
 import menuEn from '../../locales/en/menu.json';
@@ -33,6 +34,7 @@ import equationsEn from '../../locales/en/equations.json';
 import factorizationEn from '../../locales/en/factorization.json';
 import instructionsEn from '../../locales/en/instructions.json';
 import linearSystemsEn from '../../locales/en/linearSystems.json';
+import probabilitiesEn from '../../locales/en/probabilities.json';
 
 export const preferredLanguageStorageKey = 'preferredLanguage';
 
@@ -52,7 +54,8 @@ const resources = {
     equations: equationsEl,
     factorization: factorizationEl,
     instructions: instructionsEl,
-    linearSystems: linearSystemsEl
+    linearSystems: linearSystemsEl,
+    probabilities: probabilitiesEl
   },
   en: {
     common: commonEn,
@@ -69,7 +72,8 @@ const resources = {
     equations: equationsEn,
     factorization: factorizationEn,
     instructions: instructionsEn,
-    linearSystems: linearSystemsEn
+    linearSystems: linearSystemsEn,
+    probabilities: probabilitiesEn
   }
 };
 
@@ -82,7 +86,7 @@ if (!i18n.isInitialized) {
       fallbackLng: 'el',
       supportedLngs: ['el', 'en'],
       defaultNS: 'common',
-      ns: ['common', 'menu', 'geometry', 'buffon', 'neural', 'interface', 'primes', 'navigation', 'scores', 'polynomial', 'identities', 'equations', 'factorization', 'instructions', 'linearSystems'],
+      ns: ['common', 'menu', 'geometry', 'buffon', 'neural', 'interface', 'primes', 'navigation', 'scores', 'polynomial', 'identities', 'equations', 'factorization', 'instructions', 'linearSystems', 'probabilities'],
       interpolation: {
         escapeValue: false
       },

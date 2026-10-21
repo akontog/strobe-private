@@ -1,0 +1,7 @@
+{
+  "labId": "probabilities-lab",
+  "slug": "probabilities-lab",
+  "workshopSlug": "probabilities-lab",
+  "name": "Probabilities",
+  "entry": { "teacher": "TeacherView.jsx", "student": "StudentView.jsx" }
+}

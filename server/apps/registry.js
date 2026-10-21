@@ -87,6 +87,14 @@ const APP_DEFINITIONS = [
     kind: 'react'
   },
   {
+    slug: 'probabilities-lab',
+    labId: 'probabilities-lab',
+    title: 'Probabilities',
+    description: 'Classify numbers in a one-set Venn diagram.',
+    roles: ['teacher', 'student', 'client'],
+    kind: 'react'
+  },
+  {
     slug: 'activity-runner',
     labId: 'activity-runner',
     title: 'Shared Activities',

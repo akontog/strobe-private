@@ -171,7 +171,11 @@ function getStudentColumns(activity, activityKey) {
     return (props.items || []).map((item, index) => ({
       key: item.id || `item-${index}`,
       label: typeof item.content === 'string' ? item.content : item.label || item.id || `Item ${index + 1}`,
-      render: (student) => regions.get(student.answers?.[activityKey]?.[item.id]) || '—'
+      render: (student) => {
+        const placement = student.answers?.[activityKey]?.[item.id];
+        const regionId = typeof placement === 'object' ? placement?.region : placement;
+        return regions.get(regionId) || '—';
+      }
     }));
   }
   if (resource === 'options-grid') {

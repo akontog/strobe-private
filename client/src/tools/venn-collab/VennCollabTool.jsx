@@ -29,7 +29,7 @@ const items = Array.from({ length: 20 }, (_, index) => ({
 
 /** Opens a live Venn board for the current classroom. */
 export default function VennCollabTool() {
-  const { t: tNav, i18n } = useTranslation('navigation');
+  const { t: tNav } = useTranslation('navigation');
   const [searchParams] = useSearchParams();
   const roomId = searchParams.get('room') || 'venn-default';
   const session = useSessionInputLogger();
@@ -91,7 +91,7 @@ export default function VennCollabTool() {
                   socketRef.current?.emit('venn:placements', { roomId, placements: nextPlacements, sessionApp: 'geogebra-collab' });
                 }}
                 activity="venn-board-collaboration"
-                bankLabel={i18n.language.startsWith('el') ? 'Αριθμοί προς τοποθέτηση' : 'Numbers to place'}
+                bankLabel=""
               />
             </div>
           </div>
