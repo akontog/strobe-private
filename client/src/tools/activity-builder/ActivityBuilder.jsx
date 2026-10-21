@@ -24,6 +24,12 @@ function cloneResourceDefaults(resource, t) {
     });
     defaults.props.bankLabel = t('activityBuilder.defaultItemsBank');
   }
+  if (resource === 'venn-board') {
+    defaults.props.items.forEach((item, index) => {
+      item.content = t('activityBuilder.defaultItem', { index: index + 1 });
+    });
+    defaults.props.bankLabel = t('activityBuilder.defaultItemsBank');
+  }
   if (resource === 'options-grid') {
     defaults.props.items.forEach((item, index) => {
       item.label = t('activityBuilder.defaultOption', { index: index + 1 });
@@ -58,6 +64,9 @@ function buildActivityConfig(resource, settings, title) {
       answers: Object.fromEntries((settings.props?.fields || []).map((field) => [field.id, field.correctAnswer ?? '']))
     };
   } else if (resource === 'grouping-drag-drop') {
+    config.props.activity = title;
+    config.grading = settings.grading || {};
+  } else if (resource === 'venn-board') {
     config.props.activity = title;
     config.grading = settings.grading || {};
   } else if (settings.grading) {

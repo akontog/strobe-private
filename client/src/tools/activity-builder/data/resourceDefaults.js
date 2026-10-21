@@ -23,6 +23,16 @@ export const RESOURCE_DEFAULTS = {
     grading: { correctGroupByItem: { 'item-1': 'group-1' } },
     widgets: []
   },
+  'venn-board': {
+    props: {
+      items: [{ id: 'item-1', content: 'Item 1' }],
+      sets: [{ id: 'set-a', title: 'A' }, { id: 'set-b', title: 'B' }],
+      placements: {},
+      bankLabel: 'Items to place'
+    },
+    grading: { correctPlacementByItem: { 'item-1': 'intersection' } },
+    widgets: []
+  },
   'algebra-tiles': {
     props: { activity: '', tiles: [], shared: false, roomId: 'algebra-tiles-room', mode: 'simplified', variables: ['x', 'y'], promptMode: 'expression' },
     widgets: []

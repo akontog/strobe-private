@@ -191,6 +191,7 @@
     "resourceNames": {
       "input-grid": "Entry Grid",
       "grouping-drag-drop": "Placement Board",
+      "venn-board": "Venn Board",
       "algebra-tiles": "Algebra Tiles",
       "collaborative-geogebra": "GeoGebra",
       "collaborative-algebra-tiles": "Algebra Tiles (shared board)",

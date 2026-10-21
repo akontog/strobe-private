@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useSessionInputLogger } from '../activities/SessionLogContext';
+import GroupingItemBank from '../primitives/GroupingItemBank';
 import './PlacementBoard.css';
 
 const BANK_ZONE_ID = '__bank__';
@@ -214,18 +215,13 @@ export default function PlacementBoard({
         })}
       </div>
 
-      <section
-        className={`grouping-dd-bank${hoverZoneId === BANK_ZONE_ID ? ' is-hovering' : ''}`}
-        data-group-bank="true"
+      <GroupingItemBank
+        items={groupedState[BANK_ZONE_ID]}
+        renderItem={renderItem}
+        label={bankLabel}
+        isHovering={hoverZoneId === BANK_ZONE_ID}
         onClick={() => handleZoneClick(BANK_ZONE_ID)}
-      >
-        <p className="grouping-dd-bank-title">{bankLabel}</p>
-        <div className="grouping-dd-bank-items">
-          {groupedState[BANK_ZONE_ID].length > 0
-            ? groupedState[BANK_ZONE_ID].map(renderItem)
-            : null}
-        </div>
-      </section>
+      />
 
       {draggingItem && (
         <div

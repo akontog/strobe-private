@@ -12,6 +12,7 @@ router.use(requireRole(['teacher']));
 const ACTIVITY_RESOURCES = [
   { slug: 'input-grid', title: 'Entry Grid' },
   { slug: 'grouping-drag-drop', title: 'Placement Board' },
+  { slug: 'venn-board', title: 'Venn Board' },
   { slug: 'algebra-tiles', title: 'Algebra Tiles' },
   { slug: 'collaborative-geogebra', title: 'GeoGebra' },
   { slug: 'options-grid', title: 'Options Grid' }

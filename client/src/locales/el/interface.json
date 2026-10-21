@@ -189,6 +189,7 @@
     "loadError": "Δεν είναι δυνατή η φόρτωση πόρων.",
     "loaded": "Φορτώθηκε το {{filename}}",
     "resourceNames": {
+      "venn-board": "Διάγραμμα Venn",
       "input-grid": "Πλέγμα καταχώρισης",
       "grouping-drag-drop": "Πίνακας τοποθέτησης",
       "algebra-tiles": "Πλακίδια Άλγεβρας",

@@ -25,6 +25,14 @@ function ResourceMock({ resource, props, t }) {
       </div>
     );
   }
+  if (resource === 'venn-board') {
+    return (
+      <div className="activity-resource-mock-venn" aria-hidden="true">
+        <i /><i />
+        <div>{(props.items || []).slice(0, 4).map((item, index) => <span key={item.id || index}>{item.content || item.label || 'Item'}</span>)}</div>
+      </div>
+    );
+  }
   if (resource === 'options-grid') {
     return (
       <div className="activity-resource-mock-groups">

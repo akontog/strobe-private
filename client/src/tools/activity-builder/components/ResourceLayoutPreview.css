@@ -250,6 +250,49 @@
   font-size: 0.8rem;
 }
 
+.activity-resource-mock-venn {
+  position: relative;
+  width: 150px;
+  height: 90px;
+  margin: 8px auto;
+}
+
+.activity-resource-mock-venn > i {
+  position: absolute;
+  top: 4px;
+  width: 82px;
+  height: 82px;
+  border: 2px solid #60a5fa;
+  border-radius: 50%;
+  background: rgb(219 234 254 / 30%);
+}
+
+.activity-resource-mock-venn > i:first-child {
+  left: 10px;
+}
+
+.activity-resource-mock-venn > i:nth-child(2) {
+  right: 10px;
+  border-color: #d97706;
+  background: rgb(253 230 138 / 22%);
+}
+
+.activity-resource-mock-venn > div {
+  position: absolute;
+  inset: 28px 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+}
+
+.activity-resource-mock-venn span {
+  max-width: 60px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: #ffffff;
+  font-size: 0.55rem;
+}
+
 .activity-resource-mock-tiles {
   display: grid;
   grid-template-columns: repeat(2, 30px);

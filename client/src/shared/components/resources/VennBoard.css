@@ -1,0 +1,149 @@
+.venn-board {
+  position: relative;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.venn-board__diagram {
+  position: relative;
+  min-height: 23rem;
+  overflow: hidden;
+  border: 2px solid #94a3b8;
+  border-radius: 1rem;
+  background: #ffffff;
+}
+
+.venn-board__circles {
+  position: absolute;
+  inset: 0 0 15% 0;
+  width: 100%;
+  height: 85%;
+  pointer-events: none;
+}
+
+.venn-board__circles circle {
+  fill: rgb(219 234 254 / 30%);
+  stroke: #3b82f6;
+  stroke-width: 0.7;
+}
+
+.venn-board__circles circle + circle {
+  fill: rgb(253 230 138 / 22%);
+  stroke: #d97706;
+}
+
+.venn-board__set-label {
+  position: absolute;
+  z-index: 1;
+  top: 0.65rem;
+  font-weight: 800;
+  color: #334155;
+}
+
+.venn-board__set-label--left {
+  left: 19%;
+}
+
+.venn-board__set-label--right {
+  right: 19%;
+}
+
+.venn-board__regions {
+  position: absolute;
+  inset: 2.6rem 1rem 0.8rem;
+  display: grid;
+  grid-template-columns: 1fr 0.72fr 1fr;
+  grid-template-rows: minmax(0, 1fr) auto;
+  pointer-events: none;
+}
+
+.venn-board__region {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.35rem;
+  border-radius: 0.75rem;
+  pointer-events: auto;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.venn-board__region--left {
+  grid-column: 1;
+  grid-row: 1;
+  margin: 2rem -0.25rem 0 1.5rem;
+}
+
+.venn-board__region--intersection {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 2rem -0.5rem 0;
+}
+
+.venn-board__region--right {
+  grid-column: 3;
+  grid-row: 1;
+  margin: 2rem 1.5rem 0 -0.25rem;
+}
+
+.venn-board__region--outside {
+  grid-column: 1 / 4;
+  grid-row: 2;
+  justify-content: flex-start;
+  min-height: 3.2rem;
+  border-top: 1px dashed #cbd5e1;
+}
+
+.venn-board__region.is-hovering {
+  background: rgb(37 99 235 / 10%);
+  box-shadow: inset 0 0 0 2px #2563eb;
+}
+
+.venn-board__region-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #475569;
+  text-align: center;
+}
+
+.venn-board__region-items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: flex-start;
+  gap: 0.35rem;
+}
+
+.venn-board .grouping-dd-ghost {
+  position: fixed;
+  transform: translate(-50%, -115%);
+  pointer-events: none;
+  z-index: 1200;
+  border: 1px solid #3b82f6;
+  background: #dbeafe;
+  border-radius: 0.7rem;
+  padding: 0.42rem 0.58rem;
+  font-weight: 700;
+  color: #1e3a8a;
+  box-shadow: 0 10px 20px rgba(30, 64, 175, 0.2);
+}
+
+@media (max-width: 600px) {
+  .venn-board__diagram {
+    min-height: 19rem;
+  }
+
+  .venn-board__regions {
+    inset-inline: 0.25rem;
+  }
+
+  .venn-board__region--left {
+    margin-left: 0.7rem;
+  }
+
+  .venn-board__region--right {
+    margin-right: 0.7rem;
+  }
+}

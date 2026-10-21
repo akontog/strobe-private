@@ -1,4 +1,0 @@
-{"seq":1,"t":1792568161280,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"student.joined","student":"dd","data":{}}
-{"seq":2,"t":1792568162312,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"dd","data":{"itemId":"c2","from":"__bank__","to":"g2"}}
-{"seq":3,"t":1792568163277,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"dd","data":{"itemId":"c1","from":"__bank__","to":"g1"}}
-{"seq":4,"t":1792568164839,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"dd","data":{"itemId":"b1","from":"__bank__","to":"g3"}}

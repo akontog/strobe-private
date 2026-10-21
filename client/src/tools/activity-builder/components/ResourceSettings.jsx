@@ -193,6 +193,46 @@ export default function ResourceSettings({ resource, value, onChange, t }) {
         </>
       ) : null}
 
+      {resource === 'venn-board' ? (
+        <>
+          <JsonArrayField label={t('activityBuilder.groups')} value={props.sets} onChange={(sets) => updateProps({ ...props, sets: sets.slice(0, 2) })} invalidText={t('activityBuilder.invalidOptionsJson')} />
+          <div className="activity-builder-rows">
+            <h4>{t('activityBuilder.items')}</h4>
+            {(props.items || []).map((item, index) => (
+              <div className="activity-builder-row" key={item.id || index}>
+                <TextField label={t('activityBuilder.itemId')} value={item.id} onChange={(id) => updateProps({ ...props, items: updateRow(props.items, index, 'id', id) })} />
+                <TextField label={t('activityBuilder.itemLabel')} value={item.content} onChange={(content) => updateProps({ ...props, items: updateRow(props.items, index, 'content', content) })} />
+                <label>
+                  {t('activityBuilder.correctGroup')}
+                  <select
+                    value={config.grading?.correctPlacementByItem?.[item.id] || ''}
+                    onChange={(event) => onChange({
+                      ...config,
+                      grading: {
+                        ...config.grading,
+                        correctPlacementByItem: { ...config.grading?.correctPlacementByItem, [item.id]: event.target.value }
+                      }
+                    })}
+                  >
+                    <option value="">{t('activityBuilder.chooseGroup')}</option>
+                    <option value="left">A only</option>
+                    <option value="intersection">A ∩ B</option>
+                    <option value="right">B only</option>
+                    <option value="outside">Neither set</option>
+                  </select>
+                </label>
+                <button type="button" onClick={() => updateProps({ ...props, items: removeRow(props.items, index) })}>{t('activityBuilder.remove')}</button>
+              </div>
+            ))}
+            <button type="button" onClick={() => updateProps({
+              ...props,
+              items: addRow(props.items || [], { id: `item-${(props.items || []).length + 1}`, content: `${t('activityBuilder.itemLabel')} ${(props.items || []).length + 1}` })
+            })}>{t('activityBuilder.addItem')}</button>
+          </div>
+          <TextField label={t('activityBuilder.bankLabel')} value={props.bankLabel} onChange={(bankLabel) => updateProps({ ...props, bankLabel })} />
+        </>
+      ) : null}
+
       {resource === 'algebra-tiles' ? (
         <>
           <TextField label={t('activityBuilder.activityId')} value={props.activity} onChange={(activity) => updateProps({ ...props, activity })} />

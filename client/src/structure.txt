@@ -76,6 +76,7 @@ C:.
 |   |   +---primitives
 |   |   |       BlueNumberBox.jsx
 |   |   |       FullScreenButton.jsx
+|   |   |       GroupingItemBank.jsx
 |   |   |       HeroTitle.jsx
 |   |   |       MathFormula.jsx
 |   |   |       SharedInputBox.css
@@ -90,6 +91,8 @@ C:.
 |   |   |       GeoGebra.jsx
 |   |   |       PlacementBoard.css
 |   |   |       PlacementBoard.jsx
+|   |   |       VennBoard.css
+|   |   |       VennBoard.jsx
 |   |   |       EntryGrid.css
 |   |   |       EntryGrid.jsx
 |   |   |       OptionsGrid.css

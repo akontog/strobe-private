@@ -6,6 +6,7 @@ import {
   AlgebraTiles,
   GeoGebra,
   PlacementBoard,
+  VennBoard,
   OptionsGrid,
   GridButton,
   HeroTitle,
@@ -62,6 +63,9 @@ function ResourceContent({ activity, role, activityKey }) {
   }
   if (activity.resource === 'grouping-drag-drop') {
     return <PlacementBoard {...props} placements={placements} onChange={setPlacements} activity={activityKey} />;
+  }
+  if (activity.resource === 'venn-board') {
+    return <VennBoard {...props} placements={placements} onChange={setPlacements} activity={activityKey} />;
   }
   if (activity.resource === 'algebra-tiles') {
     return <AlgebraTiles {...props} shared={Boolean(props.shared)} role={role} variables={props.variables} mode={props.mode || props.layout} tiles={tiles} onTilesChange={setTiles} activity={activityKey} />;
@@ -155,6 +159,19 @@ function getStudentColumns(activity, activityKey) {
       key: item.id || `item-${index}`,
       label: typeof item.content === 'string' ? item.content : item.label || item.id || `Στοιχείο ${index + 1}`,
       render: (student) => groups.get(student.answers?.[activityKey]?.[item.id]) || '—'
+    }));
+  }
+  if (resource === 'venn-board') {
+    const regions = new Map([
+      ['left', `${props.sets?.[0]?.title || 'A'} only`],
+      ['intersection', `${props.sets?.[0]?.title || 'A'} ∩ ${props.sets?.[1]?.title || 'B'}`],
+      ['right', `${props.sets?.[1]?.title || 'B'} only`],
+      ['outside', 'Neither set']
+    ]);
+    return (props.items || []).map((item, index) => ({
+      key: item.id || `item-${index}`,
+      label: typeof item.content === 'string' ? item.content : item.label || item.id || `Item ${index + 1}`,
+      render: (student) => regions.get(student.answers?.[activityKey]?.[item.id]) || '—'
     }));
   }
   if (resource === 'options-grid') {

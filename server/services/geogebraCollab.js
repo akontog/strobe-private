@@ -15,6 +15,53 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
   const algebraTileSocketRooms = new Map();
   const numberLineRooms = new Map();
   const numberLineSocketRooms = new Map();
+  const vennRooms = new Map();
+  const vennSocketRooms = new Map();
+
+  function getVennRoom(roomId) {
+    const id = `venn-${cleanRoomId(roomId || 'venn-default')}`;
+    if (!vennRooms.has(id)) vennRooms.set(id, { id, placements: {} });
+    return vennRooms.get(id);
+  }
+
+  function sendVennState(room) {
+    io.to(room.id).emit('venn:state', { roomId: room.id, placements: room.placements });
+  }
+
+  function registerVennHandlers(socket) {
+    socket.on('venn:join', (data = {}) => {
+      const room = getVennRoom(data.roomId);
+      const previousRoom = vennSocketRooms.get(socket.id);
+      if (previousRoom && previousRoom.id !== room.id) socket.leave(previousRoom.id);
+      socket.join(room.id);
+      vennSocketRooms.set(socket.id, room);
+      socket.emit('venn:state', { roomId: room.id, placements: room.placements });
+    });
+
+    socket.on('venn:placements', (data = {}) => {
+      const room = vennSocketRooms.get(socket.id);
+      if (!room || getVennRoom(data.roomId).id !== room.id || !data.placements || typeof data.placements !== 'object' || Array.isArray(data.placements)) return;
+      const user = getUserFromSocket(socket);
+      if (!isElevated(user) && !getActiveSessionForApp(normalizeSessionApp(data.sessionApp))) return;
+      const allowedRegions = new Set(['left', 'intersection', 'right', 'outside']);
+      room.placements = Object.fromEntries(Object.entries(data.placements).flatMap(([itemId, region]) => (
+        /^([1-9]|1\d|20)$/.test(itemId) && (region === null || allowedRegions.has(region)) ? [[itemId, region]] : []
+      )));
+      sendVennState(room);
+    });
+
+    socket.on('venn:clear-room', (data = {}) => {
+      const room = vennSocketRooms.get(socket.id);
+      const user = getUserFromSocket(socket);
+      if (!room || getVennRoom(data.roomId).id !== room.id || !isElevated(user)) {
+        socket.emit('venn:clear-room:ack', { requestId: data.requestId, ok: false });
+        return;
+      }
+      room.placements = {};
+      sendVennState(room);
+      socket.emit('venn:clear-room:ack', { requestId: data.requestId, ok: true });
+    });
+  }
 
   function getNumberLineRoom(roomId) {
     const cleanedRoomId = sanitizeString(roomId || 'number-line-default', 80) || 'number-line-default';
@@ -1037,6 +1084,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
   function registerSocketHandlers(socket) {
     registerAlgebraTileHandlers(socket);
     registerNumberLineHandlers(socket);
+    registerVennHandlers(socket);
     socket.on(ROOM_EVENT, (data) => {
       handleJoin(socket, data || {});
     });
@@ -1092,6 +1140,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       socketRoom.delete(socket.id);
       socketSessionApps.delete(socket.id);
       algebraTileSocketRooms.delete(socket.id);
+      vennSocketRooms.delete(socket.id);
       monitorSockets.delete(socket);
 
       if (!roomId) {

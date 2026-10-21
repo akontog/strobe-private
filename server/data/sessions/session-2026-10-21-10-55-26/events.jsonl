@@ -1,4 +1,0 @@
-{"seq":1,"t":1792569326722,"activity":"1.1 Βασικές έννοιες μονωνύμων","event":"student.joined","student":"dd","data":{}}
-{"seq":2,"t":1792569329482,"activity":"1.1 Βασικές έννοιες μονωνύμων","event":"student.joined","student":"dd","data":{}}
-{"seq":3,"t":1792569333563,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"dd","data":{"field":"coefficient","value":"6"}}
-{"seq":4,"t":1792569334141,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"dd","data":{"field":"degree-x","value":"7"}}

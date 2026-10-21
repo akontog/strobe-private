@@ -1,4 +1,0 @@
-{"seq":1,"t":1792569350655,"activity":"geogebra-collab","event":"student.joined","student":"dd","data":{}}
-{"seq":2,"t":1792569351294,"activity":"geogebra-collab","event":"activity.tiles.changed","student":"dd","data":{"tiles":[{"id":"1792569351292-0.3732244529285963","type":"xy","sign":1,"x":19,"y":14}]}}
-{"seq":3,"t":1792569352446,"activity":"geogebra-collab","event":"activity.tiles.changed","student":"dd","data":{"tiles":[{"id":"1792569351292-0.3732244529285963","type":"xy","sign":1,"x":19,"y":14},{"id":"1792569352444-0.9020720704985941","type":"y2","sign":1,"x":7,"y":13}]}}
-{"seq":4,"t":1792569355294,"activity":"geogebra-collab","event":"activity.tiles.changed","student":"dd","data":{"tiles":[{"id":"1792569351292-0.3732244529285963","type":"xy","sign":1,"x":19,"y":14},{"id":"1792569352444-0.9020720704985941","type":"y2","sign":1,"x":11,"y":6}]}}
