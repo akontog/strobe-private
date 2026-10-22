@@ -21,6 +21,10 @@
       "title": "Συνεργατικό GeoGebra",
       "description": "Κοινόχρηστος πίνακας GeoGebra με δικαιώματα ανά ρόλο."
     },
+    "vision-collab": {
+      "title": "Συνεργατική Ιχνηλάτηση Vision",
+      "description": "Λήψη κάμερας με WebRTC, αποστολή σε FastAPI + Python tracking και επιστροφή ζωντανών σημείων."
+    },
     "console": {
       "title": "Κονσόλα",
       "description": "Ζωντανή προβολή μηνυμάτων μεταξύ χρηστών και διακομιστή."
@@ -117,6 +121,24 @@
     "realtimeDisconnected": "Αποσυνδέθηκε από τον διακομιστή πραγματικού χρόνου",
     "streamingStarted": "Η δοκιμή μετάδοσης ξεκίνησε",
     "cannotStart": "Δεν ήταν δυνατή η έναρξη της δοκιμής"
+  },
+  "visionCollabTitle": "Συνεργατική Ιχνηλάτηση Vision",
+  "visionCollabDescription": "Συνδυάζει τα πρότυπα δραστηριοτήτων από το vision/temp με ζωντανό tracking από το vision/camera_server.py μέσω FastAPI.",
+  "visionCollabServerUrl": "URL διακομιστή Vision",
+  "visionCollabActivity": "Πρότυπο δραστηριότητας",
+  "visionCollabStart": "Έναρξη ροής συνεργασίας",
+  "visionCollabStop": "Διακοπή ροής συνεργασίας",
+  "visionCollabStatus": "Κατάσταση",
+  "visionCollabTrackedPoints": "Σημεία ιχνηλάτησης",
+  "visionCollabWebSocketError": "Σφάλμα επικοινωνίας Vision WebSocket.",
+  "visionCollabCannotStart": "Δεν ήταν δυνατή η έναρξη της συνεργατικής ιχνηλάτησης κάμερας.",
+  "visionCollabStatuses": {
+    "idle": "Ανενεργό",
+    "stopped": "Διακοπή",
+    "connected": "Συνδεδεμένο",
+    "disconnected": "Αποσυνδεδεμένο",
+    "error": "Σφάλμα",
+    "cannotStart": "Αδυναμία έναρξης"
   },
   "linearSeparation": "Εργαλείο γραμμικού διαχωρισμού",
   "linearSeparationLead": "Δώστε JSON στη μορφή του datasets.js και βρείτε υπερεπίπεδο για ταξινόμηση στόχου έναντι των υπολοίπων.",
@@ -488,6 +510,7 @@
   "toolHelpers": {
     "activityBuilder": "Σχεδιασμός μαθήματος και επεξεργασία JSON δραστηριοτήτων.",
     "cameraSpeedTest": "Μέτρηση χρόνου μετάδοσης καρέ για τη διαδικασία ανίχνευσης.",
+    "visionCollaboration": "Λήψη κάμερας με WebRTC, FastAPI/Python tracking και επικάλυψη δραστηριοτήτων.",
     "geoGebraCollaborative": "Κοινόχρηστος πίνακας GeoGebra με δικαιώματα ανά ρόλο.",
     "geoGebraMonitor": "Κεντρικός πίνακας συνεργατικών αιθουσών GeoGebra.",
     "console": "Ζωντανή προβολή μηνυμάτων μεταξύ χρηστών και διακομιστή.",

@@ -29,6 +29,13 @@ function setActiveLab(slug, roomId = '') {
     return activeLabSlug;
   }
 
+  if (normalizedSlug === 'vision-collab') {
+    activeLabSlug = normalizedSlug;
+    activeRoomId = '';
+    activeLabUpdatedAt = Date.now();
+    return activeLabSlug;
+  }
+
   const app = getAppBySlug(normalizedSlug);
   if (!app || !app.roles.includes('client')) {
     return null;

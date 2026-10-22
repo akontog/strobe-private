@@ -2,13 +2,13 @@
 // Web application framework
 const express = require('express');
 // Access to the file system
-//const fs = require('node:fs');
+const fs = require('node:fs');
 // File path management
 const path = require('node:path');
 // HTTP server for handling requests
 const http = require('node:http');
 // WebSocket for real-time communication
-//const { WebSocketServer } = require('ws');
+const { WebSocketServer } = require('ws');
 
 /**** 2. Import routers ****/
 const teacherRouter = require('./routes/teacher');
@@ -72,8 +72,10 @@ const wsRegistry = require('./services/websocketRegistry');
 const app = express();
 // Create HTTP server using the Express application
 const httpServer = http.createServer(app);
+const visionWss = new WebSocketServer({ noServer: true });
 const io = createRealtimeTransport();
 const { router: activitiesRouter, getCurrentActivity, setCurrentActivity } = createActivitiesRouter({ io });
+const VISION_ACTIVITIES_DIR = path.join(__dirname, '..', 'vision', 'temp', 'activities');
 
 app.use(express.json({ limit: '8mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -87,6 +89,149 @@ app.use(activitiesRouter);
 // Session management middleware
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
+});
+
+function resolveVisionConflictText(rawText) {
+  const keepLines = [];
+  let state = 'normal';
+
+  String(rawText || '').split(/\r?\n/g).forEach((line) => {
+    if (line.startsWith('<<<<<<<')) {
+      state = 'head';
+      return;
+    }
+    if (line.startsWith('=======') && state === 'head') {
+      state = 'other';
+      return;
+    }
+    if (line.startsWith('>>>>>>>') && (state === 'head' || state === 'other')) {
+      state = 'normal';
+      return;
+    }
+    if (state === 'normal' || state === 'head') {
+      keepLines.push(line);
+    }
+  });
+
+  return keepLines.join('\n');
+}
+
+function parseVisionActivityPayload(payload) {
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+    return null;
+  }
+
+  if (!payload.points || typeof payload.points !== 'object' || Array.isArray(payload.points)) {
+    return null;
+  }
+  if (!Array.isArray(payload.shapes)) {
+    return null;
+  }
+
+  const normalizedPoints = {};
+  Object.entries(payload.points).forEach(([pointId, point]) => {
+    if (!point || typeof point !== 'object' || Array.isArray(point)) {
+      return;
+    }
+    const x = Number(point.x);
+    const y = Number(point.y);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) {
+      return;
+    }
+    normalizedPoints[String(pointId)] = {
+      x,
+      y,
+      color: String(point.color || '#2563eb'),
+      width: Number.isFinite(Number(point.width)) ? Number(point.width) : 3
+    };
+  });
+
+  if (!Object.keys(normalizedPoints).length) {
+    return null;
+  }
+
+  const normalizedShapes = payload.shapes
+    .filter((shape) => shape && typeof shape === 'object' && !Array.isArray(shape) && Array.isArray(shape.points))
+    .map((shape) => ({
+      type: String(shape.type || 'line'),
+      points: shape.points.map((pointId) => String(pointId)),
+      color: String(shape.color || '#2563eb'),
+      width: Number.isFinite(Number(shape.width)) ? Number(shape.width) : 3
+    }));
+
+  return {
+    points: normalizedPoints,
+    shapes: normalizedShapes,
+    sourceWidth: Number.isFinite(Number(payload.sourceWidth)) ? Number(payload.sourceWidth) : 640,
+    sourceHeight: Number.isFinite(Number(payload.sourceHeight)) ? Number(payload.sourceHeight) : 480
+  };
+}
+
+function loadVisionActivities() {
+  if (!fs.existsSync(VISION_ACTIVITIES_DIR)) {
+    return [];
+  }
+
+  const files = fs.readdirSync(VISION_ACTIVITIES_DIR)
+    .filter((name) => name.toLowerCase().endsWith('.json'))
+    .sort();
+
+  const loaded = [];
+
+  files.forEach((fileName) => {
+    const filePath = path.join(VISION_ACTIVITIES_DIR, fileName);
+    let rawText;
+    try {
+      rawText = fs.readFileSync(filePath, 'utf8');
+    } catch (error) {
+      console.warn(`[vision-activities] failed to read ${fileName}:`, error && error.message ? error.message : error);
+      return;
+    }
+
+    const candidates = [rawText, resolveVisionConflictText(rawText)];
+    let parsed = null;
+
+    for (const candidate of candidates) {
+      try {
+        parsed = JSON.parse(candidate);
+        break;
+      } catch {
+        parsed = null;
+      }
+    }
+
+    if (!parsed) {
+      console.warn(`[vision-activities] failed to parse ${fileName}`);
+      return;
+    }
+
+    const normalized = parseVisionActivityPayload(parsed);
+    if (!normalized) {
+      console.warn(`[vision-activities] invalid payload in ${fileName}`);
+      return;
+    }
+
+    loaded.push({
+      id: path.basename(fileName, '.json'),
+      name: path.basename(fileName, '.json').replace(/[-_]/g, ' '),
+      ...normalized
+    });
+  });
+
+  return loaded;
+}
+
+app.get('/api/vision/health', (req, res) => {
+  res.json({
+    ok: true,
+    cameraWorkerEnabled: Boolean(CAMERA_WORKER_ENABLED)
+  });
+});
+
+app.get('/api/vision/activities', (req, res) => {
+  res.json({
+    activities: loadVisionActivities()
+  });
 });
 
 registerStaticFiles(app, {
@@ -246,6 +391,13 @@ app.get('/api/tools', requireRole(['teacher']), (req, res) => {
       available: true
     },
     {
+      id: 'vision-collab',
+      title: 'Vision Tracking Collaboration',
+      description: 'WebRTC camera capture streamed to the Node vision bridge and Python tracking with point overlays.',
+      path: '/tools/vision-collab/',
+      available: true
+    },
+    {
       id: 'console',
       title: 'Console',
       description: 'Live console for messages exchanged between users and the server.',
@@ -262,6 +414,37 @@ io.on('connection', (socket) => {
   registerGeometrySocketHandlers(socket);
 
   geogebraCollabService.registerSocketHandlers(socket);
+});
+
+visionWss.on('connection', (ws) => {
+  ws.on('message', async (rawData) => {
+    let message;
+    try {
+      message = JSON.parse(String(rawData || ''));
+    } catch {
+      ws.send(JSON.stringify({ id: null, points: [], boxes: [], tracking: 'invalid-json' }));
+      return;
+    }
+
+    const requestId = Number.parseInt(message && message.requestId, 10);
+    const imageBase64 = message && typeof message.image === 'string' ? message.image : '';
+    const includeAnnotatedImage = Boolean(message && message.includeAnnotatedImage);
+
+    if (!imageBase64.trim()) {
+      ws.send(JSON.stringify({ id: Number.isInteger(requestId) ? requestId : null, points: [], boxes: [], tracking: 'invalid-image' }));
+      return;
+    }
+
+    const startedAt = process.hrtime.bigint();
+    const detection = await requestCameraDetection(imageBase64, { includeAnnotatedImage });
+    const elapsedMs = Number(process.hrtime.bigint() - startedAt) / 1_000_000;
+
+    ws.send(JSON.stringify({
+      id: Number.isInteger(requestId) ? requestId : null,
+      ...detection,
+      serverElapsedMs: Math.max(0, Number(elapsedMs.toFixed(2)))
+    }));
+  });
 });
 
 const { handleUpgrade: neuralUpgrade } = initNeural({
@@ -363,6 +546,12 @@ wsRegistry.register('/ws/equations-lab', (request, socket, head) => {
 wsRegistry.register('/ws/factorization-lab', (request, socket, head) => {
   factorizationWss.handleUpgrade(request, socket, head, (ws) => {
     factorizationWss.emit('connection', ws, request);
+  });
+});
+
+wsRegistry.register('/ws/vision', (request, socket, head) => {
+  visionWss.handleUpgrade(request, socket, head, (ws) => {
+    visionWss.emit('connection', ws, request);
   });
 });
 

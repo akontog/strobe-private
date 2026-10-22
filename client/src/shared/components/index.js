@@ -25,6 +25,7 @@ export { default as GroupingItemBank } from './primitives/GroupingItemBank';
 export { default as SharedInputRow } from './primitives/SharedInputRow';
 export { default as GeoGebra } from './resources/GeoGebra';
 export { default as CollaborativeGeoGebra } from './resources/GeoGebra';
+export { default as VisionCollaborationBoard } from './resources/VisionCollaborationBoard';
 export { default as FullScreenButton } from './primitives/FullScreenButton';
 export { default as ConnectionNameControl } from './menu/ConnectionNameControl';
 export { default as LanguageSwitcher } from './menu/LanguageSwitcher';
@@ -38,5 +39,4 @@ export { default as EquationWidget } from './widgets/EquationWidget';
 export { default as SettingsAccordion } from './services/SettingsAccordion';
 export { default as ChatAccordion } from './services/ChatAccordion';
 export { default as CommonSessionSettings } from './services/CommonSessionSettings';
-
 

@@ -55,7 +55,7 @@ router.post('/classroom/selection', (req, res) => {
 router.post('/sessions', (req, res) => {
   const appSlug = String(req.body && req.body.app || '').trim();
   const app = getAppBySlug(appSlug);
-  if (appSlug !== 'geogebra-collab' && (!app || !app.roles.includes('teacher'))) {
+  if (appSlug !== 'geogebra-collab' && appSlug !== 'vision-collab' && (!app || !app.roles.includes('teacher'))) {
     return res.status(400).json({ error: 'Choose a valid teacher app.' });
   }
   const session = createSession({

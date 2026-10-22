@@ -28,6 +28,7 @@ Unified classroom platform with:
 	- camera_server.py
 	- camera_tracking.py
 	- models/yolov8n.pt
+	- [README-vision](./README-vision.md)
 
 ## Requirements
 - Node.js 18+

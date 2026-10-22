@@ -21,6 +21,10 @@
       "title": "GeoGebra Collaborative Component",
       "description": "Shared GeoGebra board with role-aware permissions."
     },
+    "vision-collab": {
+      "title": "Vision Tracking Collaboration",
+      "description": "WebRTC camera capture streamed to FastAPI + Python tracking and returned as live points."
+    },
     "console": {
       "title": "Console",
       "description": "Live view of messages exchanged between users and the server."
@@ -117,6 +121,24 @@
     "realtimeDisconnected": "Disconnected from realtime server",
     "streamingStarted": "Streaming test started",
     "cannotStart": "Could not start the test"
+  },
+  "visionCollabTitle": "Vision Tracking Collaboration",
+  "visionCollabDescription": "Combines activity templates from vision/temp with realtime tracking from vision/camera_server.py through FastAPI.",
+  "visionCollabServerUrl": "Vision server URL",
+  "visionCollabActivity": "Activity template",
+  "visionCollabStart": "Start collaboration stream",
+  "visionCollabStop": "Stop collaboration stream",
+  "visionCollabStatus": "Status",
+  "visionCollabTrackedPoints": "Tracked points",
+  "visionCollabWebSocketError": "Vision WebSocket communication error.",
+  "visionCollabCannotStart": "Could not start camera tracking collaboration.",
+  "visionCollabStatuses": {
+    "idle": "Idle",
+    "stopped": "Stopped",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "error": "Error",
+    "cannotStart": "Cannot start"
   },
   "linearSeparation": "Linear Separation Tool",
   "linearSeparationLead": "Provide JSON in the datasets.js format and find a hyperplane for target-versus-rest classification.",
@@ -488,6 +510,7 @@
   "toolHelpers": {
     "activityBuilder": "Teacher lesson designer and activity JSON editor.",
     "cameraSpeedTest": "Round-trip frame benchmark for the detection pipeline.",
+    "visionCollaboration": "WebRTC camera capture with FastAPI/Python tracking and activity overlays.",
     "geoGebraCollaborative": "Shared GeoGebra board with role-aware object locks.",
     "geoGebraMonitor": "Central dashboard for all connected collaborative GeoGebra rooms.",
     "console": "Live view of messages exchanged between users and the server.",

@@ -57,6 +57,11 @@ export default function ToolsPage() {
       tone: 'green',
       helper: 'toolHelpers.geoGebraCollaborative'
     },
+    'vision-collab': {
+      icon: '🧭',
+      tone: 'amber',
+      helper: 'toolHelpers.visionCollaboration'
+    },
     console: {
       icon: '⌁',
       tone: 'indigo',
