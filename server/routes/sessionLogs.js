@@ -60,15 +60,15 @@ router.post('/api/session-logs/active/:app/chat', (req, res) => {
 
 router.post('/api/session-logs/:sessionId/events', (req, res) => {
   const event = String(req.body && req.body.event || '');
-  if (!['activity.input.changed', 'grouping.item.moved', 'activity.tiles.changed', 'student.joined'].includes(event)) {
+  if (!['activity.input.changed', 'grouping.item.moved', 'activity.tiles.changed', 'student.joined', 'student.left'].includes(event)) {
     return res.status(400).json({ error: 'Unsupported event.' });
   }
   const student = String(req.body && req.body.student || '').trim().slice(0, 80);
   const activity = String(req.body && req.body.activity || '').trim().slice(0, 160);
   const data = req.body && req.body.data && typeof req.body.data === 'object' ? req.body.data : {};
-  if (!student || (!activity && event !== 'student.joined')) return res.status(400).json({ error: 'Student and activity are required.' });
+  if (!student || (!activity && !['student.joined', 'student.left'].includes(event))) return res.status(400).json({ error: 'Student and activity are required.' });
   let eventData;
-  if (event === 'student.joined') {
+  if (event === 'student.joined' || event === 'student.left') {
     eventData = {};
   } else if (event === 'activity.input.changed') {
     const field = String(data.field || '').trim().slice(0, 120);

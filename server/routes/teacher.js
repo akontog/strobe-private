@@ -3,7 +3,7 @@ const express = require('express');
 const { getAppBySlug, listAppsForRole, toPublicApp } = require('../apps/registry');
 const { saveActivity, listActivities, listAllActivities, getActivity } = require('../services/appActivities');
 const { requireRole } = require('../middleware/checkRole');
-const { createSession, appendRecord, endSession, updateSessionActivity } = require('../services/sessionLogs');
+const { createSession, appendRecord, endSession, getActiveSession, updateSessionActivity } = require('../services/sessionLogs');
 const { getActiveSelection, setActiveLab, setActiveActivity } = require('../services/classroomSelection');
 
 const router = express.Router();
@@ -67,6 +67,53 @@ router.post('/sessions', (req, res) => {
 });
 
 router.post('/sessions/:sessionId/state', (req, res) => {
+  const session = getActiveSession(req.params.sessionId);
+  if (!session) return res.status(404).json({ error: 'Active session not found.' });
+
+  if (session.metadata.app === 'vision-collab') {
+    const vision = req.body && req.body.vision;
+    if (!vision || typeof vision !== 'object' || Array.isArray(vision)) {
+      return res.status(400).json({ error: 'Vision state is required.' });
+    }
+    const normalizePoints = (points) => Array.isArray(points) ? points.slice(0, 500).flatMap((point) => {
+      if (!point || typeof point !== 'object') return [];
+      const x = Number(point && point.x);
+      const y = Number(point && point.y);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return [];
+      return [{
+        id: String(point && point.id || '').slice(0, 120),
+        x: Math.min(Math.max(x, 0), 1),
+        y: Math.min(Math.max(y, 0), 1),
+        label: String(point && point.label || '').slice(0, 80),
+        color: /^#[0-9a-f]{6}$/i.test(String(point.color || '')) ? String(point.color) : '#4ECDC4'
+      }];
+    }) : [];
+    const record = appendRecord(req.params.sessionId, 'state.jsonl', {
+      vision: {
+        capturedAt: Number.isFinite(Number(vision.capturedAt)) ? Number(vision.capturedAt) : Date.now(),
+        cameraPoints: normalizePoints(vision.cameraPoints),
+        studentPoints: normalizePoints(vision.studentPoints),
+        boxes: Array.isArray(vision.boxes) ? vision.boxes.slice(0, 200).flatMap((box) => {
+          if (!box || typeof box !== 'object') return [];
+          const x = Number(box && box.x);
+          const y = Number(box && box.y);
+          const w = Number(box && box.w);
+          const h = Number(box && box.h);
+          if (![x, y, w, h].every(Number.isFinite)) return [];
+          return [{
+            id: String(box && box.id || '').slice(0, 120),
+            label: String(box && box.label || '').slice(0, 80),
+            x: Math.min(Math.max(x, 0), 1),
+            y: Math.min(Math.max(y, 0), 1),
+            w: Math.min(Math.max(w, 0), 1),
+            h: Math.min(Math.max(h, 0), 1)
+          }];
+        }) : []
+      }
+    });
+    return res.status(201).json({ seq: record.seq, t: record.t });
+  }
+
   const state = req.body && req.body.students;
   if (!state || typeof state !== 'object' || Array.isArray(state)) return res.status(400).json({ error: 'State must contain a students object.' });
   const record = appendRecord(req.params.sessionId, 'state.jsonl', { students: state });

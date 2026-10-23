@@ -66,6 +66,7 @@ const initFactorization = require('./services/factorization');
 const initGeogebraCollab = require('./services/geogebraCollab');
 const { createGeogebraLessonStore } = require('./utils/geogebraLessonStore');
 const wsRegistry = require('./services/websocketRegistry');
+const { appendRecord, getActiveSessionForApp, getActiveSession } = require('./services/sessionLogs');
 
 /**** 5. Create Express application and HTTP server ****/
 // Create Express application instance
@@ -73,6 +74,10 @@ const app = express();
 // Create HTTP server using the Express application
 const httpServer = http.createServer(app);
 const visionWss = new WebSocketServer({ noServer: true });
+const visionClients = new Set();
+const visionLatestDetection = { points: [], boxes: [], tracking: 'idle' };
+const visionStudentPoints = new Map();
+const visionTrackNames = new Map();
 const io = createRealtimeTransport();
 const { router: activitiesRouter, getCurrentActivity, setCurrentActivity } = createActivitiesRouter({ io });
 const VISION_ACTIVITIES_DIR = path.join(__dirname, '..', 'vision', 'temp', 'activities');
@@ -416,13 +421,116 @@ io.on('connection', (socket) => {
   geogebraCollabService.registerSocketHandlers(socket);
 });
 
+function broadcastVisionState() {
+  const studentPoints = Array.from(visionStudentPoints.entries())
+    .filter(([, point]) => point && typeof point === 'object' && Number.isFinite(Number(point.x)) && Number.isFinite(Number(point.y)))
+    .map(([ws, point], index) => ({
+      id: `${ws._socket && ws._socket.remotePort ? ws._socket.remotePort : 'student'}-${index}`,
+      x: Number(point.x),
+      y: Number(point.y),
+      label: point.label || 'student',
+      color: point.color || '#4ECDC4'
+    }));
+
+  const payload = {
+    id: null,
+    points: getNamedVisionPoints(),
+    boxes: getNamedVisionBoxes(),
+    tracking: String(visionLatestDetection.tracking || 'idle'),
+    studentPoints
+  };
+
+  for (const client of Array.from(visionClients)) {
+    if (client.readyState !== 1) {
+      visionClients.delete(client);
+      visionStudentPoints.delete(client);
+      continue;
+    }
+    try {
+      client.send(JSON.stringify(payload));
+    } catch (error) {
+      console.warn('[vision-ws] failed to broadcast payload:', error && error.message ? error.message : error);
+      visionClients.delete(client);
+      visionStudentPoints.delete(client);
+    }
+  }
+}
+
+function getNamedVisionPoints(points = visionLatestDetection.points) {
+  return (Array.isArray(points) ? points : []).map((point) => {
+    const name = visionTrackNames.get(String(point.id));
+    return { ...point, label: name || `#${String(point.id)}`, ...(name ? { color: '#38bdf8' } : {}) };
+  });
+}
+
+function getNamedVisionBoxes(boxes = visionLatestDetection.boxes) {
+  return (Array.isArray(boxes) ? boxes : []).map((box) => {
+    const name = visionTrackNames.get(String(box.id));
+    return name ? { ...box, label: name } : box;
+  });
+}
+
+function recordVisionStudentExit(studentName) {
+  const name = String(studentName || '').trim().slice(0, 80);
+  const sessionId = getActiveSessionForApp('vision-collab');
+  if (!name || !sessionId || !getActiveSession(sessionId)) return;
+  appendRecord(sessionId, 'events.jsonl', {
+    event: 'student.left',
+    activity: 'vision-collab',
+    student: name
+  });
+}
+
 visionWss.on('connection', (ws) => {
+  visionClients.add(ws);
+
+  ws.on('close', () => {
+    const point = visionStudentPoints.get(ws);
+    if (point && point.studentName) recordVisionStudentExit(point.studentName);
+    visionClients.delete(ws);
+    visionStudentPoints.delete(ws);
+  });
+
   ws.on('message', async (rawData) => {
     let message;
     try {
       message = JSON.parse(String(rawData || ''));
     } catch {
-      ws.send(JSON.stringify({ id: null, points: [], boxes: [], tracking: 'invalid-json' }));
+      ws.send(JSON.stringify({ id: null, points: [], boxes: [], tracking: 'invalid-json', studentPoints: [] }));
+      return;
+    }
+
+    if (message && message.type === 'student-point') {
+      const point = message.point && typeof message.point === 'object' ? message.point : null;
+      if (!point || !Number.isFinite(Number(point.x)) || !Number.isFinite(Number(point.y))) {
+        ws.send(JSON.stringify({ id: null, points: [], boxes: [], tracking: 'invalid-point', studentPoints: [] }));
+        return;
+      }
+
+      const clampedX = Math.min(Math.max(Number(point.x), 0), 1);
+      const clampedY = Math.min(Math.max(Number(point.y), 0), 1);
+      const studentName = String(message.studentName || 'Student').trim().slice(0, 80) || 'Student';
+      const rawColor = String(message.studentColor || '').trim();
+      const color = /^#[0-9a-f]{6}$/i.test(rawColor) ? rawColor : '#4ECDC4';
+      visionStudentPoints.set(ws, { x: clampedX, y: clampedY, label: studentName, studentName, color });
+      broadcastVisionState();
+      return;
+    }
+
+    if (message && message.type === 'camera-track-name') {
+      const id = String(message.id || '').trim().slice(0, 120);
+      const name = String(message.name || '').trim().slice(0, 80);
+      if (!id || !name) return;
+      visionTrackNames.set(id, name);
+      broadcastVisionState();
+      return;
+    }
+
+    if (message && message.type === 'student-left') {
+      const point = visionStudentPoints.get(ws);
+      if (point && point.studentName) recordVisionStudentExit(point.studentName);
+      visionStudentPoints.delete(ws);
+      broadcastVisionState();
       return;
     }
 
@@ -431,19 +539,61 @@ visionWss.on('connection', (ws) => {
     const includeAnnotatedImage = Boolean(message && message.includeAnnotatedImage);
 
     if (!imageBase64.trim()) {
-      ws.send(JSON.stringify({ id: Number.isInteger(requestId) ? requestId : null, points: [], boxes: [], tracking: 'invalid-image' }));
+      ws.send(JSON.stringify({ id: Number.isInteger(requestId) ? requestId : null, points: [], boxes: [], tracking: 'invalid-image', studentPoints: [] }));
       return;
     }
 
     const startedAt = process.hrtime.bigint();
     const detection = await requestCameraDetection(imageBase64, { includeAnnotatedImage });
     const elapsedMs = Number(process.hrtime.bigint() - startedAt) / 1_000_000;
-
-    ws.send(JSON.stringify({
+    const payload = {
       id: Number.isInteger(requestId) ? requestId : null,
       ...detection,
+      points: getNamedVisionPoints(Array.isArray(detection.points) ? detection.points : []),
+      boxes: getNamedVisionBoxes(Array.isArray(detection.boxes) ? detection.boxes : []),
+      studentPoints: Array.from(visionStudentPoints.entries())
+        .filter(([, point]) => point && typeof point === 'object' && Number.isFinite(Number(point.x)) && Number.isFinite(Number(point.y)))
+        .map(([wsSocket, point], index) => ({
+          id: `${wsSocket._socket && wsSocket._socket.remotePort ? wsSocket._socket.remotePort : 'student'}-${index}`,
+          x: Number(point.x),
+          y: Number(point.y),
+          label: point.label || 'student',
+          color: point.color || '#4ECDC4'
+        })),
       serverElapsedMs: Math.max(0, Number(elapsedMs.toFixed(2)))
-    }));
+    };
+
+    visionLatestDetection.points = Array.isArray(payload.points) ? payload.points : [];
+    visionLatestDetection.boxes = Array.isArray(payload.boxes) ? payload.boxes : [];
+    visionLatestDetection.tracking = String(payload.tracking || 'idle');
+
+    for (const client of Array.from(visionClients)) {
+      if (client.readyState !== 1) {
+        visionClients.delete(client);
+        visionStudentPoints.delete(client);
+        continue;
+      }
+      try {
+        client.send(JSON.stringify({
+          ...payload,
+          points: getNamedVisionPoints(payload.points),
+          boxes: getNamedVisionBoxes(payload.boxes),
+          studentPoints: Array.from(visionStudentPoints.entries())
+            .filter(([, point]) => point && typeof point === 'object' && Number.isFinite(Number(point.x)) && Number.isFinite(Number(point.y)))
+            .map(([wsSocket, point], index) => ({
+              id: `${wsSocket._socket && wsSocket._socket.remotePort ? wsSocket._socket.remotePort : 'student'}-${index}`,
+              x: Number(point.x),
+              y: Number(point.y),
+              label: point.label || 'student',
+              color: point.color || '#4ECDC4'
+            }))
+        }));
+      } catch (error) {
+        console.warn('[vision-ws] failed to broadcast payload:', error && error.message ? error.message : error);
+        visionClients.delete(client);
+        visionStudentPoints.delete(client);
+      }
+    }
   });
 });
 

@@ -1,0 +1,39 @@
+.vision-common-zone .lab-workspace,
+.vision-common-zone .lab-card,
+.vision-common-zone .vision-collab-board {
+  width: 100%;
+  max-width: none;
+}
+
+.vision-common-zone .lab-card {
+  min-width: 0;
+}
+
+.vision-collab-settings {
+  margin-top: 0.65rem;
+}
+
+.vision-collab-settings__field {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  min-height: 2.4rem;
+  padding: 0 0.55rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.7rem;
+  background: #fff;
+  color: #334155;
+  font-size: 0.85rem;
+  font-weight: 650;
+}
+
+.vision-collab-settings__field select {
+  min-height: 2rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.45rem;
+  background: #fff;
+  color: #334155;
+  font: inherit;
+}

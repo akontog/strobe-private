@@ -509,7 +509,7 @@ function App() {
           <Route path="/tools/algebra-tiles-collab" element={studentToolOnly('algebra-tiles-collab', <AlgebraTilesCollabTool role={appRole} />)} />
           <Route path="/tools/number-line-collab" element={studentToolOnly('number-line-collab', <NumberLineCollabTool />)} />
           <Route path="/tools/venn-collab" element={studentToolOnly('geogebra-collab', <VennCollabTool />)} />
-          <Route path="/tools/vision-collab" element={studentToolOnly('vision-collab', <VisionCollabTool />)} />
+          <Route path="/tools/vision-collab" element={studentToolOnly('vision-collab', <VisionCollabTool role={appRole} />)} />
           <Route path="/tools/console" element={adminOnly(<ConsoleTool />)} />
           <Route path="/tools/linear-separation" element={teacherOnly(<LinearSeparation />)} />
           <Route path="/tools/linear-seperation" element={teacherOnly(<LinearSeparation />)} />

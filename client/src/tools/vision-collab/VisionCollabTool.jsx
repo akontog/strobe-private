@@ -1,20 +1,66 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { HeroTitle, VisionCollaborationBoard } from '../../shared/components';
+import { CommonSessionSettings, FullScreenButton, HeroTitle, SettingsAccordion, StudentTable, VisionCollaborationBoard } from '../../shared/components';
+import './VisionCollabTool.css';
 
-export default function VisionCollabTool() {
+export default function VisionCollabTool({ role = 'student' }) {
   const { t } = useTranslation('interface');
+  const isTeacher = String(role).toLowerCase() === 'teacher' || String(role).toLowerCase() === 'admin';
+  const [activeUsers, setActiveUsers] = useState([]);
+  const [teacherDisplayMode, setTeacherDisplayMode] = useState('camera');
 
   return (
     <section className="dashboard-page">
       <div className="dashboard-shell">
-        <HeroTitle
-          title={t('visionCollabTitle')}
-          subtitle={t('visionCollabDescription')}
-        />
-        <VisionCollaborationBoard />
+        <HeroTitle title={t('visionCollabTitle')} />
+
+        <section className="common-zone lab-zone vision-common-zone">
+          <FullScreenButton />
+          <div className="lab-workspace">
+            <div className="lab-card lab-card--panel">
+              <VisionCollaborationBoard
+                role={role}
+                onTrackedUsersChange={setActiveUsers}
+                showCameraFeed={isTeacher ? teacherDisplayMode === 'camera' : false}
+              />
+            </div>
+          </div>
+        </section>
+
+        {isTeacher ? (
+          <>
+            <SettingsAccordion>
+              <CommonSessionSettings />
+              <div className="vision-collab-settings">
+                <label className="vision-collab-settings__field">
+                  <span>{t('visionCollabDisplay')}</span>
+                  <select
+                    value={teacherDisplayMode}
+                    onChange={(event) => setTeacherDisplayMode(event.target.value)}
+                  >
+                    <option value="camera">{t('visionCollabCameraView')}</option>
+                    <option value="board">{t('visionCollabBoardView')}</option>
+                  </select>
+                </label>
+              </div>
+            </SettingsAccordion>
+
+            <StudentTable
+              title={t('visionCollabActiveUsers')}
+              participants={activeUsers}
+              columns={[
+                { key: 'source', label: t('visionCollabSource'), render: (user) => user.source === 'camera' ? t('visionCollabCameraSource') : t('visionCollabMouseSource') },
+                { key: 'x', label: t('visionCollabCoordinateX'), render: (user) => user.x.toFixed(3) },
+                { key: 'y', label: t('visionCollabCoordinateY'), render: (user) => user.y.toFixed(3) }
+              ]}
+              emptyMessage={t('visionCollabNoActiveUsers')}
+              nameFallback={t('visionCollabStudent')}
+            />
+          </>
+        ) : null}
       </div>
     </section>
   );
 }
+
 

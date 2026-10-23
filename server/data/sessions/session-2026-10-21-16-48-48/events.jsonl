@@ -1,2 +1,0 @@
-{"seq":1,"t":1792590529442,"activity":"probabilities-lab","event":"student.joined","student":"dd","data":{}}
-{"seq":2,"t":1792590532941,"activity":"probabilities:single-digit-even-numbers","event":"grouping.item.moved","student":"dd","data":{"itemId":"8","from":"__bank__","to":"inside"}}

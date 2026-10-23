@@ -22,8 +22,8 @@
       "description": "Shared GeoGebra board with role-aware permissions."
     },
     "vision-collab": {
-      "title": "Vision Tracking Collaboration",
-      "description": "WebRTC camera capture streamed to FastAPI + Python tracking and returned as live points."
+      "title": "Camera",
+      "description": "Live camera feed with shared tracking overlays for the classroom."
     },
     "console": {
       "title": "Console",
@@ -122,8 +122,21 @@
     "streamingStarted": "Streaming test started",
     "cannotStart": "Could not start the test"
   },
-  "visionCollabTitle": "Vision Tracking Collaboration",
-  "visionCollabDescription": "Combines activity templates from vision/temp with realtime tracking from vision/camera_server.py through FastAPI.",
+  "visionCollabTitle": "Camera",
+  "visionCollabDisplay": "Display",
+  "visionCollabCameraView": "Camera and board",
+  "visionCollabBoardView": "Board only",
+  "visionCollabActiveUsers": "Active users",
+  "visionCollabNoActiveUsers": "No active users are being tracked.",
+  "visionCollabSource": "Tracking",
+  "visionCollabCameraSource": "Camera",
+  "visionCollabMouseSource": "Mouse",
+  "visionCollabCoordinateX": "X",
+  "visionCollabCoordinateY": "Y",
+  "visionCollabStudent": "Student",
+  "visionCollabRenameTrackedPoint": "Name tracked person ({{name}}):",
+  "visionCollabSaveName": "Save name",
+  "visionCollabCancelName": "Cancel",
   "visionCollabServerUrl": "Vision server URL",
   "visionCollabActivity": "Activity template",
   "visionCollabStart": "Start collaboration stream",
@@ -519,3 +532,6 @@
   "studentConnection": "Connection (QR Code)",
   "studentQrAlt": "QR code for the student connection"
 }
+
+
+

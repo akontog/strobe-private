@@ -22,8 +22,8 @@
       "description": "Κοινόχρηστος πίνακας GeoGebra με δικαιώματα ανά ρόλο."
     },
     "vision-collab": {
-      "title": "Συνεργατική Ιχνηλάτηση Vision",
-      "description": "Λήψη κάμερας με WebRTC, αποστολή σε FastAPI + Python tracking και επιστροφή ζωντανών σημείων."
+      "title": "Κάμερα",
+      "description": "Ζωντανή κάμερα με κοινές επικαλύψεις ιχνηλάτησης για την τάξη."
     },
     "console": {
       "title": "Κονσόλα",
@@ -122,8 +122,21 @@
     "streamingStarted": "Η δοκιμή μετάδοσης ξεκίνησε",
     "cannotStart": "Δεν ήταν δυνατή η έναρξη της δοκιμής"
   },
-  "visionCollabTitle": "Συνεργατική Ιχνηλάτηση Vision",
-  "visionCollabDescription": "Συνδυάζει τα πρότυπα δραστηριοτήτων από το vision/temp με ζωντανό tracking από το vision/camera_server.py μέσω FastAPI.",
+  "visionCollabTitle": "Κάμερα",
+  "visionCollabDisplay": "Εμφάνιση",
+  "visionCollabCameraView": "Κάμερα και πίνακας",
+  "visionCollabBoardView": "Μόνο πίνακας",
+  "visionCollabActiveUsers": "Ενεργοί χρήστες",
+  "visionCollabNoActiveUsers": "Δεν παρακολουθούνται ενεργοί χρήστες.",
+  "visionCollabSource": "Τρόπος εντοπισμού",
+  "visionCollabCameraSource": "Κάμερα",
+  "visionCollabMouseSource": "Ποντίκι",
+  "visionCollabCoordinateX": "X",
+  "visionCollabCoordinateY": "Y",
+  "visionCollabStudent": "Μαθητής",
+  "visionCollabRenameTrackedPoint": "Όνομα για το άτομο που εντοπίστηκε ({{name}}):",
+  "visionCollabSaveName": "Αποθήκευση ονόματος",
+  "visionCollabCancelName": "Ακύρωση",
   "visionCollabServerUrl": "URL διακομιστή Vision",
   "visionCollabActivity": "Πρότυπο δραστηριότητας",
   "visionCollabStart": "Έναρξη ροής συνεργασίας",
@@ -519,3 +532,6 @@
   "studentConnection": "Σύνδεση (QR Code)",
   "studentQrAlt": "Κωδικός QR για σύνδεση μαθητών"
 }
+
+
+

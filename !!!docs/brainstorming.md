@@ -2,14 +2,11 @@
 
 ## Τεχνολογία
 
-### Υλοποίηση
 
-- Να υλοποιηθούν όλες οι εφαρμογές σε react
 
 ### Σελίδα
 
 - Σελίδα που υποστηρίζει όλες τις εφαρμογές με μέλη κτλ;; Βλέπε: [](https://simulations4all.com/)
-- Υποστήριξη Ελληνικών (για εφαρμογή/δοκιμές κοντά μας), Αγγλικών (για ευκολότερη δημοσίευση)
 
 # Πιθανότητες
 
@@ -269,3 +266,22 @@ OpenCV.js
 - [προσομοιώσεις - για ιδέες](https://phet.colorado.edu/) – προσομοιώσεις φυσικών επιστημών και μαθηματικών
 - [Mathigon](https://mathigon.org/) – διαδραστικά μαθηματικά με οπτικές προσεγγίσεις
 - [Graspable Math Activities](https://activities.graspablemath.com/) – διαδραστικές δραστηριότητες άλγεβρας
+
+# Διάφορα εργαλεία
+
+- [h5p](https://h5p.org/)
+- [](https://www.mathlearningcenter.org/apps)
+- [desmos](https://www.desmos.com/)
+- [polypad](https://polypad.amplify.com/)
+
+# Συνεργατικοί πίνακες
+
+- [για διδασκαλία μαθηματικών](https://www.mathwhiteboard.com/) 
+- [Γενικού σκοπού](https://miro.com/)
+
+
+
+## Algebra tiles
+
+- [Εχει και substitute - πώς δουλεύει;;](https://www.nctm.org/Classroom-Resources/Illuminations/Interactives/Algebra-Tiles/)
+- [Algebra tiles](https://mathsbot.com/manipulatives/tiles)

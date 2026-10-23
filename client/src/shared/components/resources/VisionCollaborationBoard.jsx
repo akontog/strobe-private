@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSessionInputLogger } from '../activities/SessionLogContext';
+import { readIdentitySnapshot } from '../menu/identityStorage';
 import './VisionCollaborationBoard.css';
 
 const DEFAULT_ACTIVITY = {
@@ -38,6 +40,30 @@ function toHttpVisionUrl(baseUrl, path) {
   url.search = '';
   url.hash = '';
   return url.toString();
+}
+
+function drawBoardBackground(ctx, width, height) {
+  if (!ctx || width <= 0 || height <= 0) {
+    return;
+  }
+
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(0, 0, width, height);
+
+  ctx.strokeStyle = 'rgba(148, 163, 184, 0.18)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x <= width; x += 40) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, height);
+    ctx.stroke();
+  }
+  for (let y = 0; y <= height; y += 40) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(width, y);
+    ctx.stroke();
+  }
 }
 
 function drawShapeOverlay(ctx, activity, width, height) {
@@ -114,17 +140,72 @@ function drawTrackingOverlay(ctx, points, boxes, width, height) {
     const px = Number(point.x || 0) * width;
     const py = Number(point.y || 0) * height;
     ctx.beginPath();
-    ctx.fillStyle = '#ef4444';
+    ctx.fillStyle = point.color || '#ef4444';
     ctx.arc(px, py, 7, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = '#ffffff';
     ctx.font = '12px sans-serif';
-    ctx.fillText(`#${Number(point.id || 0)}`, px + 9, py - 9);
+    ctx.fillText(String(point.label || `#${Number(point.id || 0)}`), px + 9, py - 9);
   });
 }
 
-export default function VisionCollaborationBoard() {
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function drawStudentPointsOverlay(ctx, points, width, height) {
+  if (!Array.isArray(points) || width <= 0 || height <= 0) {
+    return;
+  }
+
+  points.forEach((point) => {
+    if (!point || !Number.isFinite(Number(point.x)) || !Number.isFinite(Number(point.y))) {
+      return;
+    }
+
+    const px = clamp(Number(point.x), 0, 1) * width;
+    const py = clamp(Number(point.y), 0, 1) * height;
+    ctx.beginPath();
+    ctx.fillStyle = point.color || '#8b5cf6';
+    ctx.arc(px, py, 8, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.fillStyle = '#ffffff';
+    ctx.arc(px, py, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.font = '12px sans-serif';
+    ctx.fillStyle = '#e2e8f0';
+    ctx.fillText(String(point.label || 'student'), px + 12, py - 12);
+  });
+}
+
+function drawStudentPoint(ctx, point, width, height) {
+  if (!point || !Number.isFinite(point.x) || !Number.isFinite(point.y)) {
+    return;
+  }
+
+  const px = clamp(point.x, 0, 1) * width;
+  const py = clamp(point.y, 0, 1) * height;
+  ctx.beginPath();
+  ctx.fillStyle = point.color || '#8b5cf6';
+  ctx.arc(px, py, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.fillStyle = '#ffffff';
+  ctx.arc(px, py, 4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.font = '12px sans-serif';
+  ctx.fillStyle = '#e2e8f0';
+  ctx.fillText(String(point.label || 'you'), px + 12, py - 12);
+}
+
+export default function VisionCollaborationBoard({
+  role = 'student',
+  onTrackedUsersChange,
+  showCameraFeed = true
+}) {
   const { t } = useTranslation('interface');
+  const session = useSessionInputLogger();
   const videoRef = useRef(null);
   const captureCanvasRef = useRef(null);
   const overlayCanvasRef = useRef(null);
@@ -137,9 +218,9 @@ export default function VisionCollaborationBoard() {
     pendingPerfNow: new Map(),
     rttSamples: [],
     points: [],
-    boxes: []
+    boxes: [],
+    studentPoints: []
   });
-
   const [visionServerBaseUrl, setVisionServerBaseUrl] = useState(() => import.meta.env.VITE_VISION_SERVER_URL || getDefaultVisionServerBaseUrl());
   const [streaming, setStreaming] = useState(false);
   const [status, setStatus] = useState('idle');
@@ -150,11 +231,46 @@ export default function VisionCollaborationBoard() {
   const [pointsCount, setPointsCount] = useState(0);
   const [activities, setActivities] = useState([DEFAULT_ACTIVITY]);
   const [selectedActivityId, setSelectedActivityId] = useState(DEFAULT_ACTIVITY.id);
+  const [studentPoint, setStudentPoint] = useState({ x: 0.5, y: 0.5 });
+  const [studentIdentity, setStudentIdentity] = useState(() => readIdentitySnapshot({ nameFallback: 'Student' }));
+  const studentPointRef = useRef(studentPoint);
+  const studentIdentityRef = useRef(studentIdentity);
+  studentIdentityRef.current = studentIdentity;
+  const [studentDragging, setStudentDragging] = useState(false);
+  const [studentPointHovered, setStudentPointHovered] = useState(false);
+  const [editingTrackId, setEditingTrackId] = useState(null);
+  const [editingTrackName, setEditingTrackName] = useState('');
+  const isTeacher = String(role).toLowerCase() === 'teacher' || String(role).toLowerCase() === 'admin';
+  const shouldShowTeacherCamera = isTeacher && showCameraFeed !== false;
+  const cameraVisibleRef = useRef(shouldShowTeacherCamera);
+  cameraVisibleRef.current = shouldShowTeacherCamera;
 
   const selectedActivity = useMemo(
     () => activities.find((activity) => activity.id === selectedActivityId) || activities[0] || DEFAULT_ACTIVITY,
     [activities, selectedActivityId]
   );
+
+  useEffect(() => {
+    const updateIdentity = () => setStudentIdentity(readIdentitySnapshot({ nameFallback: 'Student' }));
+    window.addEventListener('strobe:identity-change', updateIdentity);
+    window.addEventListener('storage', updateIdentity);
+    return () => {
+      window.removeEventListener('strobe:identity-change', updateIdentity);
+      window.removeEventListener('storage', updateIdentity);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isTeacher) return;
+    const ws = runtimeRef.current.ws;
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    ws.send(JSON.stringify({
+      type: 'student-point',
+      point: studentPointRef.current,
+      studentName: studentIdentity.name,
+      studentColor: studentIdentity.color
+    }));
+  }, [isTeacher, studentIdentity]);
 
   function updateRtt(value) {
     const state = runtimeRef.current;
@@ -185,6 +301,44 @@ export default function VisionCollaborationBoard() {
     overlayCanvas.height = height;
   }
 
+  function ensureStudentCanvasSize() {
+    const overlayCanvas = overlayCanvasRef.current;
+    if (!overlayCanvas) {
+      return;
+    }
+
+    if (overlayCanvas.width <= 0 || overlayCanvas.height <= 0) {
+      overlayCanvas.width = 960;
+      overlayCanvas.height = 540;
+    }
+  }
+
+  function emitTrackedUsersUpdate(cameraPoints = runtimeRef.current.points, studentPoints = runtimeRef.current.studentPoints) {
+    if (typeof onTrackedUsersChange !== 'function') {
+      return;
+    }
+
+    const cameraUsers = (Array.isArray(cameraPoints) ? cameraPoints : []).map((point) => ({
+      id: `camera-${point.id}`,
+      username: point.label || `#${point.id}`,
+      x: Number(point.x),
+      y: Number(point.y),
+      source: 'camera',
+      color: point.color,
+      isConnected: true
+    }));
+    const mouseUsers = (Array.isArray(studentPoints) ? studentPoints : []).map((point) => ({
+      id: `mouse-${point.id}`,
+      username: point.label || 'Student',
+      x: Number(point.x),
+      y: Number(point.y),
+      source: 'mouse',
+      color: point.color,
+      isConnected: true
+    }));
+    onTrackedUsersChange([...mouseUsers, ...cameraUsers].filter((user) => Number.isFinite(user.x) && Number.isFinite(user.y)));
+  }
+
   function redrawOverlay() {
     const overlayCanvas = overlayCanvasRef.current;
     if (!overlayCanvas) {
@@ -192,8 +346,19 @@ export default function VisionCollaborationBoard() {
     }
 
     const ctx = overlayCanvas.getContext('2d');
+    if (!ctx) {
+      return;
+    }
+
     ctx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);
-    drawShapeOverlay(ctx, selectedActivity, overlayCanvas.width, overlayCanvas.height);
+    if (!cameraVisibleRef.current) {
+      drawBoardBackground(ctx, overlayCanvas.width, overlayCanvas.height);
+    }
+
+    if (selectedActivity && selectedActivity.points) {
+      drawShapeOverlay(ctx, selectedActivity, overlayCanvas.width, overlayCanvas.height);
+    }
+
     drawTrackingOverlay(
       ctx,
       runtimeRef.current.points,
@@ -201,6 +366,25 @@ export default function VisionCollaborationBoard() {
       overlayCanvas.width,
       overlayCanvas.height
     );
+    const ownName = studentIdentityRef.current.name;
+    const ownColor = studentIdentityRef.current.color;
+    const visibleStudentPoints = isTeacher
+      ? runtimeRef.current.studentPoints
+      : runtimeRef.current.studentPoints.filter((point) => {
+          const isSamePosition = Math.abs(Number(point.x) - studentPointRef.current.x) < 0.000001
+            && Math.abs(Number(point.y) - studentPointRef.current.y) < 0.000001;
+          const isOwnIdentity = point.label === ownName || point.color === ownColor || point.label === 'student';
+          return !(isSamePosition && isOwnIdentity);
+        });
+    drawStudentPointsOverlay(ctx, visibleStudentPoints, overlayCanvas.width, overlayCanvas.height);
+
+    if (!isTeacher) {
+      drawStudentPoint(ctx, {
+        ...studentPointRef.current,
+        label: studentIdentityRef.current.name,
+        color: studentIdentityRef.current.color
+      }, overlayCanvas.width, overlayCanvas.height);
+    }
   }
 
   async function loadActivities(baseUrl) {
@@ -256,7 +440,9 @@ export default function VisionCollaborationBoard() {
     }
 
     if (state.ws) {
-      state.ws.close();
+      if (state.ws.readyState === WebSocket.OPEN || state.ws.readyState === WebSocket.CONNECTING) {
+        state.ws.close();
+      }
       state.ws = null;
     }
 
@@ -276,6 +462,7 @@ export default function VisionCollaborationBoard() {
 
     runtimeRef.current.points = [];
     runtimeRef.current.boxes = [];
+    runtimeRef.current.studentPoints = [];
     setStreaming(false);
     setStatus(nextStatus);
   }
@@ -305,7 +492,7 @@ export default function VisionCollaborationBoard() {
   }
 
   async function startStreaming() {
-    if (streaming) {
+    if (!isTeacher || streaming) {
       return;
     }
 
@@ -338,6 +525,7 @@ export default function VisionCollaborationBoard() {
       runtimeRef.current.requestSeq = 0;
       runtimeRef.current.points = [];
       runtimeRef.current.boxes = [];
+      runtimeRef.current.studentPoints = [];
       setTrackingBackend('-');
       setRttAvg('-');
       setPointsCount(0);
@@ -377,8 +565,11 @@ export default function VisionCollaborationBoard() {
 
         const points = Array.isArray(payload && payload.points) ? payload.points : [];
         const boxes = Array.isArray(payload && payload.boxes) ? payload.boxes : [];
+        const studentPoints = Array.isArray(payload && payload.studentPoints) ? payload.studentPoints : [];
         runtimeRef.current.points = points;
         runtimeRef.current.boxes = boxes;
+        runtimeRef.current.studentPoints = studentPoints;
+        emitTrackedUsersUpdate(points, studentPoints);
         setTrackingBackend(String(payload && payload.tracking ? payload.tracking : '-'));
         setPointsCount(points.length);
         setBoxesCount(boxes.length);
@@ -391,62 +582,296 @@ export default function VisionCollaborationBoard() {
   }
 
   useEffect(() => {
+    if (!isTeacher) {
+      setStatus('student-view');
+      setStreaming(false);
+      setErrorText('');
+      setTrackingBackend('-');
+      setRttAvg('-');
+      setPointsCount(0);
+      setBoxesCount(0);
+      ensureStudentCanvasSize();
+
+      const ws = new WebSocket(toWsVisionUrl(visionServerBaseUrl));
+      runtimeRef.current.ws = ws;
+      runtimeRef.current.points = [];
+      runtimeRef.current.boxes = [];
+      runtimeRef.current.studentPoints = [];
+
+      ws.onopen = () => {
+        setStatus('connected');
+        setErrorText('');
+        if (runtimeRef.current.ws === ws) {
+          runtimeRef.current.ws.send(JSON.stringify({
+            type: 'student-point',
+            point: { x: studentPoint.x, y: studentPoint.y },
+            studentName: studentIdentityRef.current.name,
+            studentColor: studentIdentityRef.current.color
+          }));
+        }
+      };
+
+      ws.onclose = () => {
+        setStatus('disconnected');
+      };
+
+      ws.onerror = () => {
+        setStatus('error');
+        setErrorText(`${t('visionCollabWebSocketError')} (${toWsVisionUrl(visionServerBaseUrl)})`);
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const payload = JSON.parse(String(event.data || '{}'));
+          const points = Array.isArray(payload && payload.points) ? payload.points : [];
+          const boxes = Array.isArray(payload && payload.boxes) ? payload.boxes : [];
+          const studentPoints = Array.isArray(payload && payload.studentPoints) ? payload.studentPoints : [];
+
+          runtimeRef.current.points = points;
+          runtimeRef.current.boxes = boxes;
+          runtimeRef.current.studentPoints = studentPoints;
+          emitTrackedUsersUpdate(points, studentPoints);
+          setTrackingBackend(String(payload && payload.tracking ? payload.tracking : '-'));
+          setPointsCount(points.length);
+          setBoxesCount(boxes.length);
+          redrawOverlay();
+        } catch {
+          setErrorText(t('visionCollabWebSocketError'));
+        }
+      };
+
+      return () => {
+        if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+          ws.close();
+        }
+        runtimeRef.current.ws = null;
+      };
+    }
+
+    if (isTeacher) {
+      startStreaming();
+    }
+    return () => {
+      stopStreaming('stopped');
+    };
+  }, [isTeacher, visionServerBaseUrl]);
+
+  useEffect(() => {
     redrawOverlay();
-  }, [selectedActivity]);
+  }, [selectedActivity, studentPoint, studentIdentity, isTeacher, shouldShowTeacherCamera]);
+
+  useEffect(() => {
+    if (!isTeacher || typeof session?.logEvent !== 'function') {
+      return undefined;
+    }
+
+    const timer = window.setInterval(() => {
+      const state = runtimeRef.current;
+      if (!session.activeSessionId) {
+        return;
+      }
+
+      fetch(`/teacher/sessions/${encodeURIComponent(session.activeSessionId)}/state`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          vision: {
+            capturedAt: Date.now(),
+            cameraPoints: state.points,
+            studentPoints: state.studentPoints,
+            boxes: state.boxes
+          }
+        })
+      }).catch(() => {});
+    }, 100);
+
+    return () => window.clearInterval(timer);
+  }, [isTeacher, session?.activeSessionId]);
+
+  useEffect(() => {
+    emitTrackedUsersUpdate();
+  }, [isTeacher, onTrackedUsersChange, studentPoint.x, studentPoint.y, studentIdentity]);
+
+  useEffect(() => {
+    if (!isTeacher) {
+      ensureStudentCanvasSize();
+      redrawOverlay();
+    }
+  }, [isTeacher, selectedActivity]);
 
   useEffect(() => () => {
     stopStreaming('stopped');
   }, []);
 
+  function syncStudentPoint(nextPoint) {
+    if (isTeacher) {
+      return;
+    }
+
+    const rawX = nextPoint && Number.isFinite(nextPoint.x) ? nextPoint.x : 0.5;
+    const rawY = nextPoint && Number.isFinite(nextPoint.y) ? nextPoint.y : 0.5;
+    const safePoint = {
+      x: clamp(Number(rawX), 0, 1),
+      y: clamp(Number(rawY), 0, 1)
+    };
+
+    studentPointRef.current = safePoint;
+    setStudentPoint(safePoint);
+
+    const state = runtimeRef.current;
+    if (state.ws && state.ws.readyState === WebSocket.OPEN) {
+      state.ws.send(JSON.stringify({
+        type: 'student-point',
+        point: { x: safePoint.x, y: safePoint.y },
+        studentName: studentIdentityRef.current.name,
+        studentColor: studentIdentityRef.current.color
+      }));
+    }
+  }
+
+  function updateStudentPointFromPointer(event) {
+    if (isTeacher) {
+      return;
+    }
+
+    const overlayCanvas = overlayCanvasRef.current;
+    if (!overlayCanvas) {
+      return;
+    }
+
+    const rect = overlayCanvas.getBoundingClientRect();
+    const normalizedX = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+    const normalizedY = clamp((event.clientY - rect.top) / rect.height, 0, 1);
+    syncStudentPoint({ x: normalizedX, y: normalizedY });
+  }
+
+  function isPointerOverStudentPoint(event) {
+    const overlayCanvas = overlayCanvasRef.current;
+    if (!overlayCanvas) {
+      return false;
+    }
+
+    const rect = overlayCanvas.getBoundingClientRect();
+    const x = studentPointRef.current.x * rect.width;
+    const y = studentPointRef.current.y * rect.height;
+    const pointerX = event.clientX - rect.left;
+    const pointerY = event.clientY - rect.top;
+    return Math.hypot(pointerX - x, pointerY - y) <= 16;
+  }
+
+  function renameTrackedCameraPoint(event) {
+    if (!isTeacher) return;
+    const overlayCanvas = overlayCanvasRef.current;
+    if (!overlayCanvas) return;
+
+    const rect = overlayCanvas.getBoundingClientRect();
+    const pointerX = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+    const pointerY = clamp((event.clientY - rect.top) / rect.height, 0, 1);
+    const points = runtimeRef.current.points;
+    const hitBox = runtimeRef.current.boxes.find((box) => (
+      pointerX >= Number(box.x || 0)
+      && pointerX <= Number(box.x || 0) + Number(box.w || 0)
+      && pointerY >= Number(box.y || 0)
+      && pointerY <= Number(box.y || 0) + Number(box.h || 0)
+    ));
+    const point = (hitBox && points.find((item) => String(item.id) === String(hitBox.id)))
+      || points
+        .map((item) => ({
+          item,
+          distance: Math.hypot((Number(item.x) - pointerX) * rect.width, (Number(item.y) - pointerY) * rect.height)
+        }))
+        .filter(({ distance }) => distance <= 28)
+        .sort((a, b) => a.distance - b.distance)[0]?.item;
+    if (!point) return;
+
+    setEditingTrackId(String(point.id));
+    setEditingTrackName(String(point.label || `#${point.id}`));
+  }
+
+  function saveTrackedCameraName(event) {
+    event.preventDefault();
+    const name = editingTrackName.trim();
+    if (!name || editingTrackId === null) return;
+
+    const ws = runtimeRef.current.ws;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'camera-track-name', id: editingTrackId, name }));
+    }
+    runtimeRef.current.points = runtimeRef.current.points.map((item) => (
+      String(item.id) === String(editingTrackId) ? { ...item, label: name } : item
+    ));
+    runtimeRef.current.boxes = runtimeRef.current.boxes.map((box) => (
+      String(box.id) === String(editingTrackId) ? { ...box, label: name } : box
+    ));
+    setEditingTrackId(null);
+    redrawOverlay();
+  }
+
   return (
     <section className="vision-collab-board">
-      <div className="vision-collab-board__controls">
-        <label>
-          {t('visionCollabServerUrl')}
-          <input
-            type="text"
-            value={visionServerBaseUrl}
-            onChange={(event) => setVisionServerBaseUrl(event.target.value)}
-            disabled={streaming}
-          />
-        </label>
-
-        <label>
-          {t('visionCollabActivity')}
-          <select
-            value={selectedActivityId}
-            onChange={(event) => setSelectedActivityId(event.target.value)}
-          >
-            {activities.map((activity) => (
-              <option key={activity.id} value={activity.id}>{activity.name || activity.id}</option>
-            ))}
-          </select>
-        </label>
-
-        <button type="button" className="tool-btn tool-btn--primary" onClick={startStreaming} disabled={streaming}>
-          {t('visionCollabStart')}
-        </button>
-        <button type="button" className="tool-btn tool-btn--danger" onClick={stopStreaming} disabled={!streaming}>
-          {t('visionCollabStop')}
-        </button>
-      </div>
-
-      <div className="vision-collab-board__status">
-        <span>{t('visionCollabStatus')}: <strong>{t(`visionCollabStatuses.${status}`)}</strong></span>
-        <span>{t('trackingBackend')}: <strong>{trackingBackend}</strong></span>
-        <span>{t('roundTripAverage')}: <strong>{rttAvg}</strong></span>
-        <span>{t('trackedBoxes')}: <strong>{boxesCount}</strong></span>
-        <span>{t('visionCollabTrackedPoints')}: <strong>{pointsCount}</strong></span>
-      </div>
-
       {errorText ? <p className="vision-collab-board__error">{errorText}</p> : null}
 
-      <div className="vision-collab-board__stage">
-        <video ref={videoRef} autoPlay muted playsInline />
-        <canvas ref={overlayCanvasRef} />
-      </div>
+      <div
+        className={[
+          'vision-collab-board__stage',
+          !isTeacher && studentPointHovered ? 'vision-collab-board__stage--point-hovered' : '',
+          !isTeacher && studentDragging ? 'vision-collab-board__stage--point-dragging' : ''
+        ].filter(Boolean).join(' ')}
+        onPointerDown={!isTeacher ? (event) => {
+          event.currentTarget.setPointerCapture(event.pointerId);
+          setStudentDragging(true);
+          updateStudentPointFromPointer(event);
+        } : undefined}
+        onPointerMove={!isTeacher ? (event) => {
+          setStudentPointHovered(isPointerOverStudentPoint(event));
+          if (studentDragging) {
+            updateStudentPointFromPointer(event);
+          }
+        } : undefined}
+        onPointerUp={!isTeacher ? (event) => {
+          if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+          }
+          setStudentDragging(false);
+        } : undefined}
+        onPointerCancel={!isTeacher ? () => setStudentDragging(false) : undefined}
+        onPointerLeave={!isTeacher && !studentDragging ? () => setStudentPointHovered(false) : undefined}
+        onClick={isTeacher ? renameTrackedCameraPoint : undefined}
+      >
+        {isTeacher && editingTrackId !== null ? (
+          <form
+            className="vision-collab-board__rename"
+            onSubmit={saveTrackedCameraName}
+            onClick={(event) => event.stopPropagation()}
+            onPointerDown={(event) => event.stopPropagation()}
+          >
+            <label htmlFor="vision-track-name">
+              {t('visionCollabRenameTrackedPoint', { name: `#${editingTrackId}` })}
+            </label>
+            <input
+              id="vision-track-name"
+              autoFocus
+              value={editingTrackName}
+              onChange={(event) => setEditingTrackName(event.target.value)}
+              maxLength={80}
+            />
+            <button type="submit">{t('visionCollabSaveName')}</button>
+            <button type="button" onClick={() => setEditingTrackId(null)}>{t('visionCollabCancelName')}</button>
+          </form>
+        ) : null}
+        {isTeacher ? (
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            playsInline
+            className={!shouldShowTeacherCamera ? 'vision-collab-board__video--hidden' : ''}
+          />
+        ) : null}
+        <canvas ref={overlayCanvasRef} width={960} height={540} />
+    </div>
 
-      <canvas ref={captureCanvasRef} width={960} height={540} hidden />
-    </section>
+    {shouldShowTeacherCamera ? <canvas ref={captureCanvasRef} width={960} height={540} hidden /> : null}
+  </section>
   );
 }
