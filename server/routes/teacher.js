@@ -85,14 +85,23 @@ router.post('/sessions/:sessionId/state', (req, res) => {
         x: Math.min(Math.max(x, 0), 1),
         y: Math.min(Math.max(y, 0), 1),
         label: String(point && point.label || '').slice(0, 80),
-        color: /^#[0-9a-f]{6}$/i.test(String(point.color || '')) ? String(point.color) : '#4ECDC4'
+        source: point.source === 'pose' ? 'pose' : 'camera',
+        color: /^#[0-9a-f]{6}$/i.test(String(point.color || '')) ? String(point.color) : '#4ECDC4',
+        ...(Number.isFinite(Number(point.visibility)) ? { visibility: Number(point.visibility) } : {}),
+        ...(Number.isFinite(Number(point.presence)) ? { presence: Number(point.presence) } : {})
       }];
     }) : [];
     const record = appendRecord(req.params.sessionId, 'state.jsonl', {
       vision: {
         capturedAt: Number.isFinite(Number(vision.capturedAt)) ? Number(vision.capturedAt) : Date.now(),
+        trackingMode: vision.trackingMode === 'pose' ? 'pose' : 'point',
         cameraPoints: normalizePoints(vision.cameraPoints),
         studentPoints: normalizePoints(vision.studentPoints),
+        poseConnections: Array.isArray(vision.poseConnections) ? vision.poseConnections.slice(0, 64).flatMap((connection) => (
+          Array.isArray(connection) && connection.length === 2
+            ? [[String(connection[0]).slice(0, 40), String(connection[1]).slice(0, 40)]]
+            : []
+        )) : [],
         boxes: Array.isArray(vision.boxes) ? vision.boxes.slice(0, 200).flatMap((box) => {
           if (!box || typeof box !== 'object') return [];
           const x = Number(box && box.x);

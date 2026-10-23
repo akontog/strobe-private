@@ -8,6 +8,7 @@ export default function VisionCollabTool({ role = 'student' }) {
   const isTeacher = String(role).toLowerCase() === 'teacher' || String(role).toLowerCase() === 'admin';
   const [activeUsers, setActiveUsers] = useState([]);
   const [teacherDisplayMode, setTeacherDisplayMode] = useState('camera');
+  const [trackingMode, setTrackingMode] = useState('point');
 
   return (
     <section className="dashboard-page">
@@ -21,6 +22,7 @@ export default function VisionCollabTool({ role = 'student' }) {
               <VisionCollaborationBoard
                 role={role}
                 onTrackedUsersChange={setActiveUsers}
+                trackingMode={trackingMode}
                 showCameraFeed={isTeacher ? teacherDisplayMode === 'camera' : false}
               />
             </div>
@@ -42,14 +44,24 @@ export default function VisionCollabTool({ role = 'student' }) {
                     <option value="board">{t('visionCollabBoardView')}</option>
                   </select>
                 </label>
+                <label className="vision-collab-settings__field">
+                  <span>{t('visionCollabTrackingMode')}</span>
+                  <select value={trackingMode} onChange={(event) => setTrackingMode(event.target.value)}>
+                    <option value="point">{t('visionCollabSinglePoint')}</option>
+                    <option value="pose">{t('visionCollabPoseLandmarks')}</option>
+                  </select>
+                </label>
               </div>
             </SettingsAccordion>
 
             <StudentTable
               title={t('visionCollabActiveUsers')}
               participants={activeUsers}
+              getDisplayName={(user, fallback) => user.source === 'pose'
+                ? t(`visionCollabPoseLandmarkNames.${user.username}`)
+                : user.username || fallback}
               columns={[
-                { key: 'source', label: t('visionCollabSource'), render: (user) => user.source === 'camera' ? t('visionCollabCameraSource') : t('visionCollabMouseSource') },
+                { key: 'source', label: t('visionCollabSource'), render: (user) => user.source === 'pose' ? t('visionCollabPoseSource') : user.source === 'camera' ? t('visionCollabCameraSource') : t('visionCollabMouseSource') },
                 { key: 'x', label: t('visionCollabCoordinateX'), render: (user) => user.x.toFixed(3) },
                 { key: 'y', label: t('visionCollabCoordinateY'), render: (user) => user.y.toFixed(3) }
               ]}

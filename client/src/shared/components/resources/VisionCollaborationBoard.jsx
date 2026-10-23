@@ -15,6 +15,10 @@ const DEFAULT_ACTIVITY = {
     { type: 'line', points: ['p1', 'p2'], color: '#2563eb', width: 3 }
   ]
 };
+const POSE_SKELETON_EDGES = [
+  [11, 12], [11, 13], [13, 15], [12, 14], [14, 16], [11, 23], [12, 24], [23, 24],
+  [23, 25], [25, 27], [24, 26], [26, 28], [27, 29], [29, 31], [27, 31], [28, 30], [30, 32], [28, 32]
+];
 
 function getDefaultVisionServerBaseUrl() {
   if (typeof window === 'undefined' || !window.location) {
@@ -109,9 +113,40 @@ function drawShapeOverlay(ctx, activity, width, height) {
   });
 }
 
-function drawTrackingOverlay(ctx, points, boxes, width, height) {
+function drawTrackingOverlay(ctx, points, boxes, width, height, poseConnections = [], trackingMode = 'point') {
   if (!Array.isArray(boxes) || !Array.isArray(points) || width <= 0 || height <= 0) {
     return;
+  }
+
+  if (trackingMode === 'pose') {
+    const pointsById = new Map(points
+      .filter((point) => point && Number.isFinite(Number(point.x)) && Number.isFinite(Number(point.y)))
+      .map((point) => [String(point.id).startsWith('pose-') ? String(point.id) : `pose-${point.id}`, point]));
+    const connections = Array.isArray(poseConnections) && poseConnections.length
+      ? poseConnections
+      : POSE_SKELETON_EDGES.map(([start, end]) => [`pose-${start}`, `pose-${end}`]);
+    ctx.lineWidth = Math.max(2, width / 240);
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = 'rgba(144, 221, 176, 0.95)';
+    connections.forEach((connection) => {
+      if (!Array.isArray(connection) || connection.length !== 2) return;
+      const startId = String(connection[0]).startsWith('pose-') ? String(connection[0]) : `pose-${connection[0]}`;
+      const endId = String(connection[1]).startsWith('pose-') ? String(connection[1]) : `pose-${connection[1]}`;
+      const start = pointsById.get(startId);
+      const end = pointsById.get(endId);
+      if (!start || !end) return;
+      ctx.beginPath();
+      ctx.moveTo(clamp(Number(start.x), 0, 1) * width, clamp(Number(start.y), 0, 1) * height);
+      ctx.lineTo(clamp(Number(end.x), 0, 1) * width, clamp(Number(end.y), 0, 1) * height);
+      ctx.stroke();
+    });
+
+    pointsById.forEach((point) => {
+      ctx.beginPath();
+      ctx.fillStyle = point.color || '#f4f5ee';
+      ctx.arc(clamp(Number(point.x), 0, 1) * width, clamp(Number(point.y), 0, 1) * height, Math.max(3, width / 160), 0, Math.PI * 2);
+      ctx.fill();
+    });
   }
 
   boxes.forEach((box) => {
@@ -145,7 +180,9 @@ function drawTrackingOverlay(ctx, points, boxes, width, height) {
     ctx.fill();
     ctx.fillStyle = '#ffffff';
     ctx.font = '12px sans-serif';
-    ctx.fillText(String(point.label || `#${Number(point.id || 0)}`), px + 9, py - 9);
+    if (point.source !== 'pose') {
+      ctx.fillText(String(point.label || `#${Number(point.id || 0)}`), px + 9, py - 9);
+    }
   });
 }
 
@@ -202,6 +239,7 @@ function drawStudentPoint(ctx, point, width, height) {
 export default function VisionCollaborationBoard({
   role = 'student',
   onTrackedUsersChange,
+  trackingMode = 'point',
   showCameraFeed = true
 }) {
   const { t } = useTranslation('interface');
@@ -219,6 +257,8 @@ export default function VisionCollaborationBoard({
     rttSamples: [],
     points: [],
     boxes: [],
+    poseConnections: [],
+    trackingMode: 'point',
     studentPoints: []
   });
   const [visionServerBaseUrl, setVisionServerBaseUrl] = useState(() => import.meta.env.VITE_VISION_SERVER_URL || getDefaultVisionServerBaseUrl());
@@ -244,6 +284,8 @@ export default function VisionCollaborationBoard({
   const shouldShowTeacherCamera = isTeacher && showCameraFeed !== false;
   const cameraVisibleRef = useRef(shouldShowTeacherCamera);
   cameraVisibleRef.current = shouldShowTeacherCamera;
+  const trackingModeRef = useRef(trackingMode);
+  trackingModeRef.current = trackingMode;
 
   const selectedActivity = useMemo(
     () => activities.find((activity) => activity.id === selectedActivityId) || activities[0] || DEFAULT_ACTIVITY,
@@ -319,11 +361,11 @@ export default function VisionCollaborationBoard({
     }
 
     const cameraUsers = (Array.isArray(cameraPoints) ? cameraPoints : []).map((point) => ({
-      id: `camera-${point.id}`,
+      id: `${point.source === 'pose' ? 'pose' : 'camera'}-${point.id}`,
       username: point.label || `#${point.id}`,
       x: Number(point.x),
       y: Number(point.y),
-      source: 'camera',
+      source: point.source === 'pose' ? 'pose' : 'camera',
       color: point.color,
       isConnected: true
     }));
@@ -364,7 +406,9 @@ export default function VisionCollaborationBoard({
       runtimeRef.current.points,
       runtimeRef.current.boxes,
       overlayCanvas.width,
-      overlayCanvas.height
+      overlayCanvas.height,
+      runtimeRef.current.poseConnections,
+      runtimeRef.current.trackingMode
     );
     const ownName = studentIdentityRef.current.name;
     const ownColor = studentIdentityRef.current.color;
@@ -487,7 +531,8 @@ export default function VisionCollaborationBoard({
       requestId,
       image: imageBase64,
       includeAnnotatedImage: false,
-      activityId: selectedActivity && selectedActivity.id ? selectedActivity.id : null
+      activityId: selectedActivity && selectedActivity.id ? selectedActivity.id : null,
+      trackingMode: trackingModeRef.current
     }));
   }
 
@@ -568,6 +613,8 @@ export default function VisionCollaborationBoard({
         const studentPoints = Array.isArray(payload && payload.studentPoints) ? payload.studentPoints : [];
         runtimeRef.current.points = points;
         runtimeRef.current.boxes = boxes;
+        runtimeRef.current.poseConnections = Array.isArray(payload && payload.poseConnections) ? payload.poseConnections : [];
+        runtimeRef.current.trackingMode = payload && payload.trackingMode === 'pose' ? 'pose' : 'point';
         runtimeRef.current.studentPoints = studentPoints;
         emitTrackedUsersUpdate(points, studentPoints);
         setTrackingBackend(String(payload && payload.tracking ? payload.tracking : '-'));
@@ -629,6 +676,8 @@ export default function VisionCollaborationBoard({
 
           runtimeRef.current.points = points;
           runtimeRef.current.boxes = boxes;
+          runtimeRef.current.poseConnections = Array.isArray(payload && payload.poseConnections) ? payload.poseConnections : [];
+          runtimeRef.current.trackingMode = payload && payload.trackingMode === 'pose' ? 'pose' : 'point';
           runtimeRef.current.studentPoints = studentPoints;
           emitTrackedUsersUpdate(points, studentPoints);
           setTrackingBackend(String(payload && payload.tracking ? payload.tracking : '-'));
@@ -679,7 +728,9 @@ export default function VisionCollaborationBoard({
             capturedAt: Date.now(),
             cameraPoints: state.points,
             studentPoints: state.studentPoints,
-            boxes: state.boxes
+            boxes: state.boxes,
+            trackingMode: trackingModeRef.current,
+            poseConnections: state.poseConnections
           }
         })
       }).catch(() => {});
@@ -760,7 +811,7 @@ export default function VisionCollaborationBoard({
   }
 
   function renameTrackedCameraPoint(event) {
-    if (!isTeacher) return;
+    if (!isTeacher || trackingModeRef.current === 'pose') return;
     const overlayCanvas = overlayCanvasRef.current;
     if (!overlayCanvas) return;
 
@@ -810,6 +861,15 @@ export default function VisionCollaborationBoard({
   return (
     <section className="vision-collab-board">
       {errorText ? <p className="vision-collab-board__error">{errorText}</p> : null}
+      {isTeacher ? (
+        <p className="vision-collab-board__tracking-status" role="status">
+          {t('visionCollabTrackingStatus', {
+            mode: trackingMode === 'pose' ? t('visionCollabPoseLandmarks') : t('visionCollabSinglePoint'),
+            backend: trackingBackend,
+            points: pointsCount
+          })}
+        </p>
+      ) : null}
 
       <div
         className={[

@@ -5,6 +5,7 @@ Receives JSON lines via stdin and emits detection JSON lines via stdout.
 
 import json
 import base64
+import atexit
 import importlib.util
 import os
 import sys
@@ -27,6 +28,34 @@ try:
 except Exception:
     YOLO = None
     YOLO_AVAILABLE = False
+
+try:
+    from pose.model import MODEL_PATH as POSE_MODEL_PATH, ensure_model as ensure_pose_model
+    from pose.pose import PoseTracker
+    POSE_AVAILABLE = True
+    POSE_IMPORT_ERROR = ''
+except Exception as error:
+    POSE_MODEL_PATH = None
+    ensure_pose_model = None
+    PoseTracker = None
+    POSE_AVAILABLE = False
+    POSE_IMPORT_ERROR = str(error)
+
+
+POSE_LANDMARK_NAMES = (
+    'nose', 'left_eye_inner', 'left_eye', 'left_eye_outer', 'right_eye_inner', 'right_eye',
+    'right_eye_outer', 'left_ear', 'right_ear', 'mouth_left', 'mouth_right', 'left_shoulder',
+    'right_shoulder', 'left_elbow', 'right_elbow', 'left_wrist', 'right_wrist', 'left_pinky',
+    'right_pinky', 'left_index', 'right_index', 'left_thumb', 'right_thumb', 'left_hip',
+    'right_hip', 'left_knee', 'right_knee', 'left_ankle', 'right_ankle', 'left_heel',
+    'right_heel', 'left_foot_index', 'right_foot_index'
+)
+POSE_CONNECTIONS = (
+    (11, 12), (11, 13), (13, 15), (12, 14), (14, 16), (11, 23), (12, 24), (23, 24),
+    (23, 25), (25, 27), (24, 26), (26, 28), (27, 29), (29, 31), (27, 31), (28, 30), (30, 32), (28, 32)
+)
+POSE_TRACKER = None
+POSE_IMPORT_ERROR_REPORTED = False
 
 
 def log(message: str):
@@ -800,8 +829,87 @@ def build_empty_response(request_id=None, tracking=None):
         "id": request_id,
         "points": [],
         "boxes": [],
-        "tracking": tracking or ACTIVE_TRACKING_BACKEND
+        "tracking": tracking or ACTIVE_TRACKING_BACKEND,
+        "trackingMode": "point",
+        "poseConnections": []
     }
+
+
+def process_pose_request(request_id, image_b64):
+    global POSE_TRACKER, POSE_IMPORT_ERROR_REPORTED
+    if not POSE_AVAILABLE:
+        if not POSE_IMPORT_ERROR_REPORTED:
+            log(f"[camera] MediaPipe pose is unavailable: {POSE_IMPORT_ERROR}")
+            POSE_IMPORT_ERROR_REPORTED = True
+        return {
+            **build_empty_response(request_id=request_id, tracking="pose-unavailable"),
+            "trackingMode": "pose"
+        }
+
+    try:
+        if POSE_TRACKER is None:
+            model_path = ensure_pose_model(POSE_MODEL_PATH)
+            POSE_TRACKER = PoseTracker(model_path)
+        jpeg_bytes = base64.b64decode(image_b64, validate=True)
+        result = POSE_TRACKER.process(jpeg_bytes)
+    except Exception as error:
+        log(f"[camera] MediaPipe pose failed: {error}")
+        return {
+            **build_empty_response(request_id=request_id, tracking="pose-error"),
+            "trackingMode": "pose"
+        }
+
+    points = []
+    for index, landmark in enumerate(result.get("landmarks") or []):
+        if index >= len(POSE_LANDMARK_NAMES):
+            break
+        visibility = float(landmark.get("visibility") or 0)
+        presence = float(landmark.get("presence") or 0)
+        x = float(landmark.get("x"))
+        y = float(landmark.get("y"))
+        if visibility < 0.3 or presence < 0.3 or not (0 <= x <= 1 and 0 <= y <= 1):
+            continue
+        is_left = POSE_LANDMARK_NAMES[index].startswith('left_')
+        is_right = POSE_LANDMARK_NAMES[index].startswith('right_')
+        points.append({
+            "id": f"pose-{index}",
+            "x": x,
+            "y": y,
+            "label": POSE_LANDMARK_NAMES[index],
+            "source": "pose",
+            "color": "#90ddb0" if is_left else "#ead485" if is_right else "#f4f5ee",
+            "visibility": visibility,
+            "presence": presence
+        })
+
+    visible_ids = {point["id"] for point in points}
+    connections = [
+        [f"pose-{start}", f"pose-{end}"]
+        for start, end in POSE_CONNECTIONS
+        if f"pose-{start}" in visible_ids and f"pose-{end}" in visible_ids
+    ]
+    return {
+        "id": request_id,
+        "points": points,
+        "boxes": [],
+        "poseConnections": connections,
+        "tracking": "mediapipe-pose" if points else "pose-searching",
+        "trackingMode": "pose"
+    }
+
+
+def close_pose_tracker():
+    global POSE_TRACKER
+    if POSE_TRACKER is None:
+        return
+    try:
+        POSE_TRACKER.close()
+    except Exception:
+        pass
+    POSE_TRACKER = None
+
+
+atexit.register(close_pose_tracker)
 
 
 def process_request(payload):
@@ -811,20 +919,30 @@ def process_request(payload):
     request_id = payload.get("id")
     image_b64 = payload.get("image")
     include_annotated_image = bool(payload.get("includeAnnotatedImage"))
+    tracking_mode = "pose" if payload.get("trackingMode") == "pose" else "point"
 
     if not image_b64:
-        return build_empty_response(request_id=request_id)
+        response = build_empty_response(request_id=request_id)
+        response["trackingMode"] = tracking_mode
+        return response
 
     image = decode_image(image_b64)
     if image is None:
-        return build_empty_response(request_id=request_id, tracking="decode-error")
+        response = build_empty_response(request_id=request_id, tracking="decode-error")
+        response["trackingMode"] = tracking_mode
+        return response
+
+    if tracking_mode == "pose":
+        return process_pose_request(request_id, image_b64)
 
     result = detect_targets(image)
     response = {
         "id": request_id,
         "points": result.get("points", []),
         "boxes": result.get("boxes", []),
-        "tracking": ACTIVE_TRACKING_BACKEND
+        "tracking": ACTIVE_TRACKING_BACKEND,
+        "trackingMode": "point",
+        "poseConnections": []
     }
 
     if include_annotated_image:

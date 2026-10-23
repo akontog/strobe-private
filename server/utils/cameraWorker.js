@@ -56,6 +56,8 @@ function emptyCameraDetection(tracking = 'worker-offline') {
     points: [],
     boxes: [],
     tracking,
+    trackingMode: 'point',
+    poseConnections: [],
     annotatedImage: null
   };
 }
@@ -69,6 +71,8 @@ function normalizeCameraWorkerResponse(message) {
     points: Array.isArray(message && message.points) ? message.points : [],
     boxes: Array.isArray(message && message.boxes) ? message.boxes : [],
     tracking: message && typeof message.tracking === 'string' ? message.tracking : 'unknown',
+    trackingMode: message && message.trackingMode === 'pose' ? 'pose' : 'point',
+    poseConnections: Array.isArray(message && message.poseConnections) ? message.poseConnections : [],
     annotatedImage
   };
 }
@@ -250,16 +254,21 @@ function requestCameraDetection(imageBase64, options = {}) {
 
   const requestId = ++cameraWorkerSeq;
   const includeAnnotatedImage = Boolean(options && options.includeAnnotatedImage);
+  const trackingMode = options && options.trackingMode === 'pose' ? 'pose' : 'point';
+  const requestTimeoutMs = Number.isFinite(Number(options && options.timeoutMs))
+    ? Math.max(150, Math.min(Number(options.timeoutMs), 60000))
+    : CAMERA_WORKER_TIMEOUT_MS;
   const payload = JSON.stringify({
     id: requestId,
     image: imageBase64,
-    includeAnnotatedImage
+    includeAnnotatedImage,
+    trackingMode
   }) + '\n';
 
   return new Promise((resolve) => {
     const timer = setTimeout(() => {
       rejectCameraRequest(requestId, 'worker-timeout');
-    }, CAMERA_WORKER_TIMEOUT_MS);
+    }, requestTimeoutMs);
 
     cameraPendingRequests.set(requestId, {
       resolve,

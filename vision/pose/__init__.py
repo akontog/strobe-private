@@ -1,0 +1,1 @@
+"""MediaPipe pose support for the vision camera worker."""

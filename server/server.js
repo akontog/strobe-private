@@ -75,7 +75,7 @@ const app = express();
 const httpServer = http.createServer(app);
 const visionWss = new WebSocketServer({ noServer: true });
 const visionClients = new Set();
-const visionLatestDetection = { points: [], boxes: [], tracking: 'idle' };
+const visionLatestDetection = { points: [], boxes: [], poseConnections: [], tracking: 'idle', trackingMode: 'point' };
 const visionStudentPoints = new Map();
 const visionTrackNames = new Map();
 const io = createRealtimeTransport();
@@ -436,7 +436,9 @@ function broadcastVisionState() {
     id: null,
     points: getNamedVisionPoints(),
     boxes: getNamedVisionBoxes(),
+    poseConnections: Array.isArray(visionLatestDetection.poseConnections) ? visionLatestDetection.poseConnections : [],
     tracking: String(visionLatestDetection.tracking || 'idle'),
+    trackingMode: visionLatestDetection.trackingMode === 'pose' ? 'pose' : 'point',
     studentPoints
   };
 
@@ -458,6 +460,7 @@ function broadcastVisionState() {
 
 function getNamedVisionPoints(points = visionLatestDetection.points) {
   return (Array.isArray(points) ? points : []).map((point) => {
+    if (point && point.source === 'pose') return point;
     const name = visionTrackNames.get(String(point.id));
     return { ...point, label: name || `#${String(point.id)}`, ...(name ? { color: '#38bdf8' } : {}) };
   });
@@ -518,6 +521,7 @@ visionWss.on('connection', (ws) => {
     }
 
     if (message && message.type === 'camera-track-name') {
+      if (visionLatestDetection.trackingMode === 'pose') return;
       const id = String(message.id || '').trim().slice(0, 120);
       const name = String(message.name || '').trim().slice(0, 80);
       if (!id || !name) return;
@@ -544,13 +548,20 @@ visionWss.on('connection', (ws) => {
     }
 
     const startedAt = process.hrtime.bigint();
-    const detection = await requestCameraDetection(imageBase64, { includeAnnotatedImage });
+    const trackingMode = message && message.trackingMode === 'pose' ? 'pose' : 'point';
+    const detection = await requestCameraDetection(imageBase64, {
+      includeAnnotatedImage,
+      trackingMode,
+      ...(trackingMode === 'pose' ? { timeoutMs: 60000 } : {})
+    });
     const elapsedMs = Number(process.hrtime.bigint() - startedAt) / 1_000_000;
     const payload = {
       id: Number.isInteger(requestId) ? requestId : null,
       ...detection,
       points: getNamedVisionPoints(Array.isArray(detection.points) ? detection.points : []),
       boxes: getNamedVisionBoxes(Array.isArray(detection.boxes) ? detection.boxes : []),
+      poseConnections: Array.isArray(detection.poseConnections) ? detection.poseConnections : [],
+      trackingMode: detection.trackingMode === 'pose' ? 'pose' : 'point',
       studentPoints: Array.from(visionStudentPoints.entries())
         .filter(([, point]) => point && typeof point === 'object' && Number.isFinite(Number(point.x)) && Number.isFinite(Number(point.y)))
         .map(([wsSocket, point], index) => ({
@@ -565,7 +576,9 @@ visionWss.on('connection', (ws) => {
 
     visionLatestDetection.points = Array.isArray(payload.points) ? payload.points : [];
     visionLatestDetection.boxes = Array.isArray(payload.boxes) ? payload.boxes : [];
+    visionLatestDetection.poseConnections = Array.isArray(payload.poseConnections) ? payload.poseConnections : [];
     visionLatestDetection.tracking = String(payload.tracking || 'idle');
+    visionLatestDetection.trackingMode = payload.trackingMode;
 
     for (const client of Array.from(visionClients)) {
       if (client.readyState !== 1) {
@@ -578,6 +591,7 @@ visionWss.on('connection', (ws) => {
           ...payload,
           points: getNamedVisionPoints(payload.points),
           boxes: getNamedVisionBoxes(payload.boxes),
+          poseConnections: payload.poseConnections,
           studentPoints: Array.from(visionStudentPoints.entries())
             .filter(([, point]) => point && typeof point === 'object' && Number.isFinite(Number(point.x)) && Number.isFinite(Number(point.y)))
             .map(([wsSocket, point], index) => ({
