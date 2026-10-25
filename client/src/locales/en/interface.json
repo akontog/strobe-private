@@ -79,12 +79,20 @@
     "factorizationTask": "Factorization problem",
     "factorize": "Factorize",
     "boardMode": "Board layout",
+    "prompt": "Prompt",
     "modes": {
       "equation": "Equation",
       "area": "Area",
       "simplified": "Simplified"
     },
-    "promptExpression": "Expression / LaTeX"
+    "promptExpression": "Expression / LaTeX",
+    "sendToAll": "Send to everyone",
+    "sendStatus": {
+      "sending": "Sending…",
+      "sent": "Sent to everyone",
+      "disconnected": "Not connected to the classroom server",
+      "failed": "The server did not confirm the expression"
+    }
   },
   "geoGebraCollaborativeDescriptionShort": "A shared GeoGebra board for collaborative work.",
   "geoGebraMonitor": "GeoGebra Controls",

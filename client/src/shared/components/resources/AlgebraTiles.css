@@ -319,12 +319,12 @@
   font-weight: 800;
 }
 
-.algebra-tiles__equation-header output {
+.algebra-tiles__equation-side {
   min-width: 0;
   padding: 0.5rem;
 }
 
-.algebra-tiles__equation-header output:first-child {
+.algebra-tiles__equation-side:first-child {
   border-right: 1px solid #475569;
 }
 
@@ -363,6 +363,15 @@
   text-align: center;
 }
 
+.collaborative-algebra-tiles__prompt-label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
 .collaborative-algebra-tiles__settings {
   margin-top: 0.85rem;
 }
@@ -375,7 +384,8 @@
 }
 
 .collaborative-algebra-tiles__setting textarea,
-.collaborative-algebra-tiles__setting select {
+.collaborative-algebra-tiles__setting select,
+.collaborative-algebra-tiles__setting input {
   width: 100%;
   min-height: 2.5rem;
   padding: 0.65rem;
@@ -391,27 +401,49 @@
   resize: vertical;
 }
 
-.collaborative-algebra-tiles__modes {
+.collaborative-algebra-tiles__expression-entry {
   display: flex;
-  flex-wrap: wrap;
   gap: 0.5rem;
-  margin: 0.75rem 0;
 }
 
-.collaborative-algebra-tiles__modes button {
-  padding: 0.45rem 0.8rem;
-  border: 1px solid #94a3b8;
+.collaborative-algebra-tiles__expression-entry input {
+  flex: 1;
+  min-width: 0;
+}
+
+.collaborative-algebra-tiles__expression-entry button {
+  flex: 0 0 auto;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #1d4ed8;
   border-radius: 0.5rem;
-  background: #fff;
-  color: #334155;
+  background: #2563eb;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
   cursor: pointer;
 }
 
-.collaborative-algebra-tiles__modes button.is-active {
-  border-color: #2563eb;
-  background: #dbeafe;
-  color: #1e3a8a;
-  font-weight: 700;
+.collaborative-algebra-tiles__expression-entry button:hover {
+  background: #1d4ed8;
+}
+
+.collaborative-algebra-tiles__expression-entry button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.collaborative-algebra-tiles__send-status {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.collaborative-algebra-tiles__send-status.is-sent {
+  color: #15803d;
+}
+
+.collaborative-algebra-tiles__send-status.is-failed,
+.collaborative-algebra-tiles__send-status.is-disconnected {
+  color: #b91c1c;
 }
 
 @media (max-width: 480px) {

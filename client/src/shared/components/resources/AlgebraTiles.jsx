@@ -1,4 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import './AlgebraTiles.css';
 import { useTranslation } from 'react-i18next';
 import { useSessionInputLogger } from '../activities/SessionLogContext';
@@ -139,7 +140,9 @@ export default function AlgebraTiles({
   roomId = 'algebra-tiles-default', // Shared board room identifier.
   sessionApp = 'activity-runner', // Session app used to resolve the participant identity.
   role: suppliedRole, // Optional role override for standalone resource hosts.
-  promptMode = 'json' // Uses exercise JSON or a teacher-authored expression on shared boards.
+  promptMode = 'json', // Uses exercise JSON or a teacher-authored expression on shared boards.
+  settingsPortalTarget = null, // Optional DOM target for teacher settings outside the board zone.
+  settingsInPortal = false // Places teacher settings in the supplied portal target when true.
 }) {
   const { t } = useTranslation('interface');
   const sessionLogging = useSessionInputLogger();
@@ -151,10 +154,15 @@ export default function AlgebraTiles({
   const [roomTiles, setRoomTiles] = useState([]);
   const [sharedMode, setSharedMode] = useState(mode || layout || 'equation');
   const [promptExpression, setPromptExpression] = useState('');
+  const [promptExpressionDraft, setPromptExpressionDraft] = useState('');
+  const [promptSendStatus, setPromptSendStatus] = useState('');
   const [exerciseId, setExerciseId] = useState('');
   const socketRef = useRef(null);
   const promptExpressionRef = useRef('');
   const promptEditedRef = useRef(false);
+  const promptDraftEditedRef = useRef(false);
+  const pendingPromptExpressionRef = useRef(null);
+  const promptSendTimerRef = useRef(null);
   const promptInputId = useId();
   const [sourceOrientations, setSourceOrientations] = useState({ x: 'horizontal', y: 'horizontal', xy: 'horizontal' });
   const [sourceSigns, setSourceSigns] = useState({ one: 1, x: 1, y: 1, x2: 1, xy: 1, y2: 1 });
@@ -184,9 +192,23 @@ export default function AlgebraTiles({
       socket.on('algebra-tiles:state', (state) => {
         if (state?.roomId !== `algebra-tiles-${roomId}`) return;
         setSharedMode(state.mode || 'simplified');
-        if (role !== 'teacher' || !promptEditedRef.current) {
+        const echoedExpression = pendingPromptExpressionRef.current;
+        if (role === 'teacher' && echoedExpression !== null && state.promptExpression === echoedExpression) {
+          if (promptSendTimerRef.current) window.clearTimeout(promptSendTimerRef.current);
+          promptSendTimerRef.current = null;
+          pendingPromptExpressionRef.current = null;
+          promptExpressionRef.current = echoedExpression;
+          promptEditedRef.current = true;
+          promptDraftEditedRef.current = false;
+          setPromptExpression(echoedExpression);
+          setPromptExpressionDraft(echoedExpression);
+          setPromptSendStatus('sent');
+        } else if (role !== 'teacher' || !promptEditedRef.current) {
           promptExpressionRef.current = state.promptExpression || '';
           setPromptExpression(state.promptExpression || '');
+          if (role !== 'teacher' || !promptDraftEditedRef.current) {
+            setPromptExpressionDraft(state.promptExpression || '');
+          }
         }
         setExerciseId(state.exerciseId || '');
         setRoomTiles(Array.isArray(state.tiles) ? state.tiles : []);
@@ -197,6 +219,9 @@ export default function AlgebraTiles({
       cancelled = true;
       socket?.disconnect();
       socketRef.current = null;
+      if (promptSendTimerRef.current) window.clearTimeout(promptSendTimerRef.current);
+      promptSendTimerRef.current = null;
+      pendingPromptExpressionRef.current = null;
     };
   }, [shared, roomId, sessionApp, role]);
 
@@ -232,7 +257,23 @@ export default function AlgebraTiles({
       right: tiles.filter((tile) => tile.side === 'right')
     }
     : null;
-  const equationDisplaySides = suppliedEquationSides || tileEquationSides;
+  const normalizedExpression = promptExpression.trim()
+    .replace(/^\\\((.*)\\\)$/s, '$1')
+    .replace(/^\$([\s\S]*)\$$/, '$1');
+  const equationSeparator = normalizedExpression.indexOf('=');
+  const expressionIsEquation = promptMode === 'expression'
+    && boardMode === 'equation'
+    && equationSeparator >= 0;
+  const expressionEquationSides = expressionIsEquation
+    ? {
+      left: normalizedExpression.slice(0, equationSeparator).trim(),
+      right: normalizedExpression.slice(equationSeparator + 1).trim()
+    }
+    : null;
+  const expressionPrompt = promptMode === 'expression' && normalizedExpression && !expressionIsEquation
+    ? normalizedExpression
+    : '';
+  const equationDisplaySides = expressionEquationSides || suppliedEquationSides || tileEquationSides;
   const horizontalBounds = areaTiles?.horizontal.reduce((bounds, tile) => {
     const orientation = tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal');
     const { width, height } = getTileDimensions(tile.type, orientation);
@@ -297,21 +338,31 @@ export default function AlgebraTiles({
     socketRef.current?.emit('algebra-tiles:exercise', { roomId, sessionApp, mode: nextMode, exerciseId: nextExercise.id });
   };
 
-  const updatePromptExpression = (event) => {
-    const nextExpression = event.target.value;
-    promptExpressionRef.current = nextExpression;
-    promptEditedRef.current = true;
-    setPromptExpression(nextExpression);
-    socketRef.current?.emit('algebra-tiles:prompt', { roomId, sessionApp, promptExpression: nextExpression });
+  const updatePromptExpressionDraft = (event) => {
+    promptDraftEditedRef.current = true;
+    setPromptExpressionDraft(event.target.value);
+    setPromptSendStatus('');
   };
 
-  const normalizedExpression = promptExpression.trim()
-    .replace(/^\\\((.*)\\\)$/s, '$1')
-    .replace(/^\$([\s\S]*)\$$/, '$1');
-  const equationSeparator = sharedMode === 'equation' ? normalizedExpression.indexOf('=') : -1;
-  const equationSides = equationSeparator >= 0
-    ? { left: normalizedExpression.slice(0, equationSeparator).trim(), right: normalizedExpression.slice(equationSeparator + 1).trim() }
-    : suppliedEquationSides;
+  const sendPromptExpression = () => {
+    const nextExpression = promptExpressionDraft;
+    const socket = socketRef.current;
+    if (!socket?.connected) {
+      setPromptSendStatus('disconnected');
+      return;
+    }
+
+    if (promptSendTimerRef.current) window.clearTimeout(promptSendTimerRef.current);
+    pendingPromptExpressionRef.current = nextExpression;
+    setPromptSendStatus('sending');
+    socket.emit('algebra-tiles:prompt', { roomId, sessionApp, promptExpression: nextExpression });
+    promptSendTimerRef.current = window.setTimeout(() => {
+      if (pendingPromptExpressionRef.current !== nextExpression) return;
+      pendingPromptExpressionRef.current = null;
+      promptSendTimerRef.current = null;
+      setPromptSendStatus('failed');
+    }, 3000);
+  };
 
   const beginTileDrag = (event, tile) => {
     event.dataTransfer.effectAllowed = tile.id ? 'move' : 'copy';
@@ -503,59 +554,75 @@ export default function AlgebraTiles({
     }
     commitTiles(tiles.filter((tile) => tile.id !== id));
   };
+  const settingsAccordion = shared && role === 'teacher' ? (
+    <Accordion title={t('algebraTiles.settings')} className="collaborative-algebra-tiles__settings">
+      {promptMode === 'expression' ? (
+        <>
+          <label className="collaborative-algebra-tiles__setting">
+            {t('algebraTiles.boardMode')}
+            <select value={sharedMode} onChange={(event) => updateMode(event.target.value)}>
+              {['equation', 'area', 'simplified'].map((nextMode) => (
+                <option key={nextMode} value={nextMode}>{t(`algebraTiles.modes.${nextMode}`)}</option>
+              ))}
+            </select>
+          </label>
+          <div className="collaborative-algebra-tiles__setting">
+            <label htmlFor={promptInputId}>{t('algebraTiles.promptExpression')}</label>
+            <div className="collaborative-algebra-tiles__expression-entry">
+              <input id={promptInputId} type="text" value={promptExpressionDraft} onChange={updatePromptExpressionDraft}
+                placeholder={sharedMode === 'equation' ? '2x + 3 = 7' : 'x^2 + 5x + 6'} maxLength={10000} />
+              <button type="button" onClick={sendPromptExpression} disabled={promptSendStatus === 'sending'} aria-label={t('algebraTiles.sendToAll')} title={t('algebraTiles.sendToAll')}>
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
+            {promptSendStatus ? (
+              <span className={`collaborative-algebra-tiles__send-status is-${promptSendStatus}`} role="status">
+                {t(`algebraTiles.sendStatus.${promptSendStatus}`)}
+              </span>
+            ) : null}
+          </div>
+        </>
+      ) : (
+        <>
+          <label className="collaborative-algebra-tiles__setting">
+            {t('algebraTiles.activityType')}
+            <select value={category} onChange={(event) => updateExercise(event.target.value, exercises[event.target.value][0].id)}>
+              <option value="equations">{t('algebraTiles.equations')}</option>
+              <option value="factorization">{t('algebraTiles.factorization')}</option>
+            </select>
+          </label>
+          <label className="collaborative-algebra-tiles__setting">
+            {t(category === 'equations' ? 'algebraTiles.equation' : 'algebraTiles.factorizationTask')}
+            <select value={selectedExercise?.id || ''} onChange={(event) => updateExercise(category, event.target.value)}>
+              {availableExercises.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
+            </select>
+          </label>
+        </>
+      )}
+    </Accordion>
+  ) : null;
   return (
+    <>
     <div className={shared ? 'collaborative-algebra-tiles' : undefined}>
       {shared && (promptMode === 'expression'
-        ? (promptExpression.trim() ? <div className="collaborative-algebra-tiles__prompt"><MathJaxText text={promptExpression} /></div> : null)
+        ? (expressionPrompt ? <div className="collaborative-algebra-tiles__prompt">
+          <span className="collaborative-algebra-tiles__prompt-label">{t('algebraTiles.prompt')}</span>
+          <MathJaxText text={expressionPrompt} />
+        </div> : null)
         : (selectedExercise ? <p className="collaborative-algebra-tiles__prompt">
           {category === 'factorization' ? `${t('algebraTiles.factorize')}: ` : ''}{selectedExercise.prompt}
         </p> : null))}
-      {shared && role === 'teacher' ? (
-        <Accordion title={t('algebraTiles.settings')} className="collaborative-algebra-tiles__settings">
-          {promptMode === 'expression' ? (
-            <>
-              <div className="collaborative-algebra-tiles__modes" role="group" aria-label={t('algebraTiles.boardMode')}>
-                {['equation', 'area', 'simplified'].map((nextMode) => (
-                  <button key={nextMode} type="button" className={sharedMode === nextMode ? 'is-active' : ''} aria-pressed={sharedMode === nextMode} onClick={() => updateMode(nextMode)}>
-                    {t(`algebraTiles.modes.${nextMode}`)}
-                  </button>
-                ))}
-              </div>
-              <label className="collaborative-algebra-tiles__setting">
-                {t('algebraTiles.promptExpression')}
-                <input id={promptInputId} type="text" value={promptExpression} onChange={updatePromptExpression}
-                  placeholder={sharedMode === 'equation' ? '2x + 3 = 7' : 'x^2 + 5x + 6'} maxLength={10000} />
-              </label>
-            </>
-          ) : (
-            <>
-              <label className="collaborative-algebra-tiles__setting">
-                {t('algebraTiles.activityType')}
-                <select value={category} onChange={(event) => updateExercise(event.target.value, exercises[event.target.value][0].id)}>
-                  <option value="equations">{t('algebraTiles.equations')}</option>
-                  <option value="factorization">{t('algebraTiles.factorization')}</option>
-                </select>
-              </label>
-              <label className="collaborative-algebra-tiles__setting">
-                {t(category === 'equations' ? 'algebraTiles.equation' : 'algebraTiles.factorizationTask')}
-                <select value={selectedExercise?.id || ''} onChange={(event) => updateExercise(category, event.target.value)}>
-                  {availableExercises.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}
-                </select>
-              </label>
-            </>
-          )}
-        </Accordion>
-      ) : null}
+      {!settingsInPortal ? settingsAccordion : null}
       <div className={`algebra-tiles${isMerging ? ' has-merging-tiles' : ''}`}>
       <section className={`algebra-tiles__board${boardMode === 'equation' ? ' algebra-tiles__board--equation' : ''}`} aria-label="Πίνακας πλακιδίων">
         {equationDisplaySides ? (
           <div className="algebra-tiles__equation-header" aria-live="polite">
-            <output>{typeof equationDisplaySides.left === 'string'
+            <div className="algebra-tiles__equation-side">{typeof equationDisplaySides.left === 'string'
               ? <MathJaxText text={equationDisplaySides.left} />
-              : formatPolynomial(equationDisplaySides.left, variables)}</output>
-            <output>{typeof equationDisplaySides.right === 'string'
+              : formatPolynomial(equationDisplaySides.left, variables)}</div>
+            <div className="algebra-tiles__equation-side">{typeof equationDisplaySides.right === 'string'
               ? <MathJaxText text={equationDisplaySides.right} />
-              : formatPolynomial(equationDisplaySides.right, variables)}</output>
+              : formatPolynomial(equationDisplaySides.right, variables)}</div>
             <span aria-hidden="true">=</span>
           </div>
         ) : null}
@@ -634,5 +701,9 @@ export default function AlgebraTiles({
       </section>
       </div>
     </div>
+    {settingsInPortal && settingsPortalTarget && settingsAccordion
+      ? createPortal(settingsAccordion, settingsPortalTarget)
+      : null}
+    </>
   );
 }

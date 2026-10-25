@@ -13,7 +13,7 @@ function stripMathDelimiters(value) {
 /** Renders a TeX expression with MathJax and falls back to plain text on parse errors. */
 export default function MathJaxText({ text = '' }) {
   const outputRef = useRef(null);
-  const [isTypeset, setIsTypeset] = useState(false);
+  const [typesetText, setTypesetText] = useState(null);
 
   useEffect(() => {
     const output = outputRef.current;
@@ -21,12 +21,12 @@ export default function MathJaxText({ text = '' }) {
     let cancelled = false;
     let timerId = null;
     const source = stripMathDelimiters(text);
-    setIsTypeset(false);
-    output.textContent = source;
+    setTypesetText(null);
+    output.textContent = `\\(${source}\\)`;
 
     const typeset = async () => {
       const mathJax = window.MathJax;
-      if (!mathJax) {
+      if (!mathJax || typeof mathJax.typesetPromise !== 'function') {
         timerId = window.setTimeout(typeset, 120);
         return;
       }
@@ -34,28 +34,14 @@ export default function MathJaxText({ text = '' }) {
       try {
         if (mathJax.startup?.promise) await mathJax.startup.promise;
         if (cancelled) return;
-        if (typeof mathJax.tex2chtmlPromise === 'function') {
-          const rendered = await mathJax.tex2chtmlPromise(source);
-          if (!cancelled) {
-            output.replaceChildren(rendered);
-            setIsTypeset(true);
-          }
-          return;
-        }
-        output.textContent = `\\(${source}\\)`;
-        if (mathJax.Hub && typeof mathJax.Hub.Queue === 'function') {
-          mathJax.Hub.Queue(['Typeset', mathJax.Hub, output]);
-          setIsTypeset(true);
-          return;
-        }
-        if (typeof mathJax.typesetPromise === 'function') {
-          await mathJax.typesetPromise([output]);
-          if (!cancelled) setIsTypeset(true);
-          return;
-        }
-        timerId = window.setTimeout(typeset, 120);
+        mathJax.typesetClear?.([output]);
+        await mathJax.typesetPromise([output]);
+        if (!cancelled) setTypesetText(text);
       } catch {
-        if (!cancelled) output.textContent = source;
+        if (!cancelled) {
+          output.textContent = source;
+          setTypesetText(null);
+        }
       }
     };
 
@@ -67,7 +53,7 @@ export default function MathJaxText({ text = '' }) {
   }, [text]);
 
   return <>
-    <span ref={outputRef} aria-hidden={!isTypeset} style={!isTypeset ? { display: 'none' } : undefined} />
-    {!isTypeset ? <span>{stripMathDelimiters(text)}</span> : null}
+    <span ref={outputRef} aria-hidden={typesetText !== text} style={typesetText !== text ? { display: 'none' } : undefined} />
+    {typesetText !== text ? <span>{stripMathDelimiters(text)}</span> : null}
   </>;
 }

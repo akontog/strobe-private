@@ -79,12 +79,20 @@
     "factorizationTask": "Πράξη παραγοντοποίησης",
     "factorize": "Να παραγοντοποιήσεις",
     "boardMode": "Διάταξη πίνακα",
+    "prompt": "Εκφώνηση",
     "modes": {
       "equation": "Εξίσωση",
       "area": "Εμβαδόν",
       "simplified": "Απλοποιημένη"
     },
-    "promptExpression": "Έκφραση / LaTeX"
+    "promptExpression": "Έκφραση / LaTeX",
+    "sendToAll": "Αποστολή σε όλους",
+    "sendStatus": {
+      "sending": "Αποστολή…",
+      "sent": "Στάλθηκε σε όλους",
+      "disconnected": "Δεν υπάρχει σύνδεση με τον server της τάξης",
+      "failed": "Ο server δεν επιβεβαίωσε την έκφραση"
+    }
   },
   "geoGebraCollaborativeDescriptionShort": "Κοινόχρηστος πίνακας GeoGebra για συνεργατική εργασία.",
   "geoGebraMonitor": "Στοιχεία ελέγχου GeoGebra",
