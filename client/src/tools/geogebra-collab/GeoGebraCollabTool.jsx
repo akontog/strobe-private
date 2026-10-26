@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Accordion, GeoGebra, FullScreenButton, HeroTitle } from '../../shared/components';
+import { Accordion, ActivitySettingsAccordion, GeoGebra } from '../../shared/components';
 import GeogebraMonitorAccordion from './GeogebraMonitorAccordion';
 import './GeoGebraCollabTool.css';
 
@@ -26,18 +26,9 @@ export default function GeoGebraCollabTool({ canSelectRoom = false }) {
   return (
     <section className="dashboard-page">
       <div className="dashboard-shell geo-tool-page">
-        <HeroTitle
-          title={t('geoGebraCollaborative')}
-        />
-
-        <section className="common-zone lab-zone geo-common-zone">
-          <FullScreenButton />
-          <div className="lab-workspace">
-            <div className="lab-card lab-card--panel">
-              <GeoGebra roomId={activeRoomId} sessionApp="geogebra-collab" />
-            </div>
-          </div>
-        </section>
+        <ActivitySettingsAccordion resource="collaborative-geogebra" roomId={activeRoomId} role={canSelectRoom ? 'teacher' : 'student'} defaultTitle={t('geoGebraCollaborative')} config={{ roomId: activeRoomId }}>
+          <GeoGebra roomId={activeRoomId} sessionApp="geogebra-collab" />
+        </ActivitySettingsAccordion>
 
         {canSelectRoom ? (
           <Accordion title={t('geoGebraMonitor')} icon="📊">

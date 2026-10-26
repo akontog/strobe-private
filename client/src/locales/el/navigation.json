@@ -2,7 +2,7 @@
   "labs": "Εργαστήρια",
   "system": "Σύστημα",
   "tools": "Εργαλεία",
-  "collaboration": "Συνεργασία",
+  "activities": "Δραστηριότητες",
   "help": "Βοήθεια",
   "sectionNavigation": "Ενότητες",
   "items": {
@@ -20,6 +20,9 @@
     "geogebra": "GeoGebra",
     "algebraTiles": "Πλακίδια Άλγεβρας",
     "numberLine": "Αριθμογραμμή",
+    "optionsGrid": "Πλέγμα επιλογών",
+    "placementBoard": "Αντιστοίχιση",
+    "inputGrid": "Πλέγμα εισόδων",
     "vision": "Κάμερα",
     "camera": "Έλεγχος ταχύτητας κάμερας",
     "console": "Κονσόλα",

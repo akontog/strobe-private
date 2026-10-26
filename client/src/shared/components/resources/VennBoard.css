@@ -4,6 +4,38 @@
   gap: 0.9rem;
 }
 
+.venn-board__multi-diagram {
+  width: min(100%, 42rem);
+  height: auto;
+  display: block;
+  margin: 0 auto 0.75rem;
+}
+
+.venn-board__multi-diagram text {
+  fill: #24324a;
+  font-size: 5px;
+  font-weight: 700;
+}
+
+.venn-board__multi-regions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.5rem;
+}
+
+.venn-board__multi-region {
+  min-height: 6rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.65rem;
+  padding: 0.5rem;
+  background: #fff;
+}
+
+.venn-board__multi-region.is-hovering {
+  border-color: #4f46e5;
+  background: #eef2ff;
+}
+
 .venn-board__diagram {
   position: relative;
   min-height: 23rem;

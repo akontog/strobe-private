@@ -26,19 +26,41 @@ export default function VennBoard({
   const [hoverZoneId, setHoverZoneId] = useState(null);
   const [dragPoint, setDragPoint] = useState({ x: 0, y: 0 });
   const ignoreClickUntilRef = useRef(0);
-  const validSets = (diagram?.sets || sets).slice(0, 2);
-  const diagramType = diagram?.type || (validSets.length === 1 ? 'single' : 'overlap');
+  const validSets = (diagram?.sets || sets).slice(0, 4);
+  const primaryRelation = diagram?.relations?.[0]?.relation;
+  const diagramType = diagram?.type || (validSets.length === 1 ? 'single' : primaryRelation === 'subset' ? 'nested' : primaryRelation === 'disjoint' ? 'disjoint' : 'overlap');
   const isSingleSet = diagramType === 'single' || validSets.length === 1;
   const isNested = diagramType === 'nested' && validSets.length === 2;
-  const regions = useMemo(() => Array.isArray(diagram?.regions) ? diagram.regions : isSingleSet ? [
+  const isDisjoint = diagramType === 'disjoint' && validSets.length === 2;
+  const isMultiSet = validSets.length > 2;
+  const regions = useMemo(() => Array.isArray(diagram?.regions) ? diagram.regions : isMultiSet ? Array.from({ length: 2 ** validSets.length }, (_, mask) => {
+    const members = validSets.filter((set, index) => mask & (1 << index)).map((set) => set.id);
+    const invalid = (diagram?.relations || []).some((relation) => {
+      const firstInside = members.includes(relation.first);
+      const secondInside = members.includes(relation.second);
+      return (relation.relation === 'disjoint' && firstInside && secondInside)
+        || (relation.relation === 'subset' && firstInside && !secondInside);
+    });
+    if (invalid) return null;
+    const titles = validSets.filter((set, index) => mask & (1 << index)).map((set) => set.title || set.id);
+    return { id: members.length ? `region-${members.join('-')}` : 'outside', title: titles.length ? titles.join(' ∩ ') : 'Outside all sets', members };
+  }).filter(Boolean) : isSingleSet ? [
     { id: 'inside', title: validSets[0]?.title || validSets[0]?.id || 'A' },
     { id: 'outside', title: 'Outside the set' }
+  ] : isDisjoint ? [
+    { id: 'left', title: `${validSets[0]?.title || validSets[0]?.id || 'A'} only` },
+    { id: 'right', title: `${validSets[1]?.title || validSets[1]?.id || 'B'} only` },
+    { id: 'outside', title: 'Outside both sets' }
+  ] : isNested ? [
+    { id: 'superset-only', title: `${validSets[1]?.title || validSets[1]?.id || 'B'} only`, members: [validSets[1]?.id] },
+    { id: 'subset', title: `${validSets[0]?.title || validSets[0]?.id || 'A'} ⊆ ${validSets[1]?.title || validSets[1]?.id || 'B'}`, members: [validSets[0]?.id, validSets[1]?.id] },
+    { id: 'outside', title: 'Outside both sets', members: [] }
   ] : [
     { id: 'left', title: `${validSets[0]?.title || validSets[0]?.id || 'A'} only` },
     { id: 'intersection', title: `${validSets[0]?.title || validSets[0]?.id || 'A'} \u2229 ${validSets[1]?.title || validSets[1]?.id || 'B'}` },
     { id: 'right', title: `${validSets[1]?.title || validSets[1]?.id || 'B'} only` },
     { id: 'outside', title: 'Neither set' }
-  ], [diagram?.regions, isSingleSet, validSets]);
+  ], [diagram?.regions, diagram?.relations, isDisjoint, isMultiSet, isSingleSet, validSets]);
   const regionIds = useMemo(() => new Set(regions.map((region) => region.id)), [regions]);
   const invalidSet = useMemo(() => new Set(invalidItemIds), [invalidItemIds]);
   const disabledSet = useMemo(() => new Set(disabledItemIds), [disabledItemIds]);
@@ -67,6 +89,8 @@ export default function VennBoard({
     const element = document.elementFromPoint(clientX, clientY);
     if (!element) return null;
     if (element.closest('[data-group-bank="true"]')) return BANK_ZONE_ID;
+    const multiRegion = element.closest('[data-venn-region-id]');
+    if (multiRegion) return multiRegion.getAttribute('data-venn-region-id');
     const diagram = element.closest('.venn-board__diagram');
     if (diagram) {
       const bounds = diagram.getBoundingClientRect();
@@ -95,6 +119,17 @@ export default function VennBoard({
       if (isSingleSet) {
         const inSet = ((x - 50) / 23) ** 2 + ((y - 31) / 28) ** 2 <= 1;
         if (inSet) return 'inside';
+        return {
+          region: 'outside',
+          x: Math.max(2, Math.min(98, ((clientX - bounds.left) / bounds.width) * 100)),
+          y: Math.max(4, Math.min(96, ((clientY - bounds.top) / bounds.height) * 100))
+        };
+      }
+      if (isDisjoint) {
+        const inSetA = ((x - 30) / 20) ** 2 + ((y - 28) / 23) ** 2 <= 1;
+        const inSetB = ((x - 70) / 20) ** 2 + ((y - 28) / 23) ** 2 <= 1;
+        if (inSetA) return 'left';
+        if (inSetB) return 'right';
         return {
           region: 'outside',
           x: Math.max(2, Math.min(98, ((clientX - bounds.left) / bounds.width) * 100)),
@@ -198,10 +233,43 @@ export default function VennBoard({
 
   return (
     <div className="venn-board" role="application" aria-label="Venn diagram activity">
+      {isMultiSet ? (
+        <div className="venn-board__multi">
+          <svg className="venn-board__multi-diagram" viewBox="0 0 100 70" role="img" aria-label="Venn sets">
+            {validSets.map((set, index) => {
+              const points = validSets.length === 3
+                ? [[38, 31], [62, 31], [50, 49]]
+                : [[39, 29], [61, 29], [39, 49], [61, 49]];
+              const [cx, cy] = points[index];
+              const colors = ['#6374d5', '#e77852', '#38a98c', '#bb69b2'];
+              return (
+                <g key={set.id}>
+                  <circle cx={cx} cy={cy} r={validSets.length === 3 ? 23 : 22} fill={colors[index]} fillOpacity="0.12" stroke={colors[index]} strokeWidth="1.5" />
+                  <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">{set.title || set.id}</text>
+                </g>
+              );
+            })}
+          </svg>
+          <div className="venn-board__multi-regions">
+            {regions.map((region) => (
+              <section
+                key={region.id}
+                className={`venn-board__multi-region${hoverZoneId === region.id ? ' is-hovering' : ''}`}
+                data-venn-region-id={region.id}
+                onClick={() => handleRegionClick(region.id)}
+                aria-label={region.title}
+              >
+                <strong>{region.title}</strong>
+                <div>{groupedState[region.id].map((item) => renderItem(item))}</div>
+              </section>
+            ))}
+          </div>
+        </div>
+      ) : (
       <div className={`venn-board__diagram${isSingleSet ? ' venn-board__diagram--single' : ''}${isNested ? ' venn-board__diagram--nested' : ''}`} onClick={handleDiagramClick}>
         <span className="venn-board__universe-label" aria-label="Ω"><MathFormula formula={'\\(\\Omega\\)'} /></span>
         <svg className="venn-board__circles" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true">
-          {isSingleSet ? <ellipse cx="50" cy="31" rx="23" ry="28" /> : isNested ? <><circle cx="50" cy="32" r="29" /><circle cx="50" cy="32" r="17" /></> : <><circle cx="38" cy="28" r="25" /><circle cx="62" cy="28" r="25" /></>}
+          {isSingleSet ? <ellipse cx="50" cy="31" rx="23" ry="28" /> : isNested ? <><circle cx="50" cy="32" r="29" /><circle cx="50" cy="32" r="17" /></> : isDisjoint ? <><circle cx="30" cy="28" r="20" /><circle cx="70" cy="28" r="20" /></> : <><circle cx="38" cy="28" r="25" /><circle cx="62" cy="28" r="25" /></>}
         </svg>
         {validSets.map((set, index) => (
           <span key={set.id} className={`venn-board__set-label venn-board__set-label--${isSingleSet ? 'single' : isNested ? (set.subsetOf ? 'nested-child' : 'nested-parent') : index === 0 ? 'left' : 'right'}`}>
@@ -237,6 +305,7 @@ export default function VennBoard({
           ))}
         </div>
       </div>
+      )}
       <GroupingItemBank
         items={groupedState[BANK_ZONE_ID]}
         renderItem={renderItem}

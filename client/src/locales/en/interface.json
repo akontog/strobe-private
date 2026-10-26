@@ -1,4 +1,15 @@
 {
+  "activityWorkspace": {
+    "settings": "Activity settings",
+    "title": "Title",
+    "subtitle": "Subtitle",
+    "notes": "Notes",
+    "widgets": "Widgets (JSON, up to 2)",
+    "save": "Save activity",
+    "saved": "Activity saved.",
+    "saveError": "Saving failed.",
+    "json": "Activity JSON"
+  },
   "appsLauncher": "Apps Launcher",
   "studentLauncher": "Student Launcher",
   "studentWaitingTitle": "Welcome",
@@ -68,7 +79,40 @@
   "algebraTilesCollaborative": "Algebra Tiles",
   "numberLine": {
     "title": "Number Line",
-    "ariaLabel": "Shared number line"
+    "ariaLabel": "Shared number line",
+    "leftEnd": "Left end",
+    "rightEnd": "Right end",
+    "partitions": "Partitions"
+  },
+  "optionsGrid": {
+    "ariaLabel": "Shared options grid",
+    "apply": "Apply settings"
+  },
+  "vennCollab": {
+    "setCount": "Number of sets",
+    "setName": "Set {{number}} name",
+    "relationBetween": "Relation between {{first}} and {{second}}",
+    "elements": "Elements",
+    "relations": {
+      "disjoint": "Disjoint",
+      "intersecting": "Intersecting",
+      "subset": "Subset (first set inside second)"
+    }
+  },
+  "placementBoard": {
+    "items": "Items to place",
+    "elements": "Elements",
+    "groups": "Regions",
+    "groupsHelp": "Enter region names separated by commas."
+  },
+  "inputGrid": {
+    "fieldLabel": "Cell {{number}} label",
+    "minimum": "Minimum",
+    "maximum": "Maximum",
+    "step": "Step",
+    "applyToAll": "Apply numeric limits to every cell",
+    "responses": "Student responses",
+    "noResponses": "No responses yet."
   },
   "algebraTiles": {
     "settings": "Board settings",
@@ -293,7 +337,8 @@
     "defaultItem": "Item {{index}}",
     "defaultItemsBank": "Items to group",
     "defaultOption": "Option {{index}}",
-    "options": "Options (JSON)",
+    "options": "Options",
+    "optionsExpressionHelp": "Use 2:20:2, a:f, comma-separated values, or combine ranges such as 2:6,8:12.",
     "optionLabel": "Option",
     "invalidOptionsJson": "Options must be a valid JSON array.",
     "fieldId": "Field ID",

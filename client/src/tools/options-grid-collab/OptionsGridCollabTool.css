@@ -1,0 +1,17 @@
+.options-grid-collab {
+  gap: 0.6rem;
+}
+
+.options-grid-collab__settings {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.options-grid-collab__settings label {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.options-grid-collab__settings p {
+  margin: 0;
+}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { AlgebraTiles, FullScreenButton, HeroTitle } from '../../shared/components';
+import { ActivitySettingsAccordion, AlgebraTiles } from '../../shared/components';
 
 /** Opens the single AlgebraTiles board selected for the current class. */
 export default function AlgebraTilesCollabTool({ role = 'student' }) {
@@ -13,11 +13,7 @@ export default function AlgebraTilesCollabTool({ role = 'student' }) {
   return (
     <section className="dashboard-page">
       <div className="dashboard-shell">
-        <HeroTitle title={t('algebraTilesCollaborative')} />
-        <section className="common-zone lab-zone">
-          <FullScreenButton />
-          <div className="lab-workspace">
-            <div className="lab-card lab-card--panel">
+        <ActivitySettingsAccordion resource="algebra-tiles-collab" roomId={roomId} role={role} defaultTitle={t('algebraTilesCollaborative')} config={{ roomId, shared: true }}>
               <AlgebraTiles
                 roomId={roomId}
                 sessionApp="geogebra-collab"
@@ -27,9 +23,7 @@ export default function AlgebraTilesCollabTool({ role = 'student' }) {
                 settingsInPortal
                 settingsPortalTarget={settingsPortalTarget}
               />
-            </div>
-          </div>
-        </section>
+        </ActivitySettingsAccordion>
         <div className="algebra-tiles-settings-host" ref={setSettingsPortalTarget} />
       </div>
     </section>

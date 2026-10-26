@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CommonSessionSettings, FullScreenButton, HeroTitle, SettingsAccordion, StudentTable, VisionCollaborationBoard } from '../../shared/components';
+import { ActivitySettingsAccordion, CommonSessionSettings, SettingsAccordion, StudentTable, VisionCollaborationBoard } from '../../shared/components';
 import './VisionCollabTool.css';
 
 export default function VisionCollabTool({ role = 'student' }) {
@@ -13,25 +13,18 @@ export default function VisionCollabTool({ role = 'student' }) {
   return (
     <section className="dashboard-page">
       <div className="dashboard-shell">
-        <HeroTitle title={t('visionCollabTitle')} />
-
-        <section className="common-zone lab-zone vision-common-zone">
-          <FullScreenButton />
-          <div className="lab-workspace">
-            <div className="lab-card lab-card--panel">
+        <ActivitySettingsAccordion resource="vision-collab" role={role} defaultTitle={t('visionCollabTitle')} config={{ trackingMode, teacherDisplayMode }}>
               <VisionCollaborationBoard
                 role={role}
                 onTrackedUsersChange={setActiveUsers}
                 trackingMode={trackingMode}
                 showCameraFeed={isTeacher ? teacherDisplayMode === 'camera' : false}
               />
-            </div>
-          </div>
-        </section>
+        </ActivitySettingsAccordion>
 
         {isTeacher ? (
           <>
-            <SettingsAccordion>
+            <SettingsAccordion title="activityResourceSettings" icon="🎥">
               <CommonSessionSettings />
               <div className="vision-collab-settings">
                 <label className="vision-collab-settings__field">

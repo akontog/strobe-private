@@ -23,6 +23,7 @@ export default function SharedInputBox({
   autoComplete = 'off',
   min,
   max,
+  step,
   allowIntegers = true,
   allowDecimals = true
 }) {
@@ -112,6 +113,7 @@ export default function SharedInputBox({
         disabled={isDisabled}
         autoComplete={autoComplete}
         inputMode="decimal"
+        step={step}
         aria-haspopup="dialog"
         aria-expanded={isKeypadOpen}
       />

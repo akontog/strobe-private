@@ -15,7 +15,14 @@ const ACTIVITY_RESOURCES = [
   { slug: 'venn-board', title: 'Venn Board' },
   { slug: 'algebra-tiles', title: 'Algebra Tiles' },
   { slug: 'collaborative-geogebra', title: 'GeoGebra' },
-  { slug: 'options-grid', title: 'Options Grid' }
+  { slug: 'options-grid', title: 'Options Grid' },
+  { slug: 'input-grid-collab', title: 'Collaborative Input Grid' },
+  { slug: 'options-grid-collab', title: 'Collaborative Options Grid' },
+  { slug: 'placement-board-collab', title: 'Collaborative Placement Board' },
+  { slug: 'venn-collab', title: 'Collaborative Venn Board' },
+  { slug: 'number-line-collab', title: 'Collaborative Number Line' },
+  { slug: 'algebra-tiles-collab', title: 'Collaborative Algebra Tiles' },
+  { slug: 'vision-collab', title: 'Collaborative Vision Board' }
 ];
 
 function resolveTeacherResource(req, res) {
@@ -172,6 +179,7 @@ router.post('/activities/:slug', (req, res) => {
   const payload = {
     name: req.body.name,
     config: req.body.config,
+    subtitle: req.body.subtitle,
     notes: req.body.notes
   };
 

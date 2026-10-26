@@ -9,6 +9,8 @@
   "admin": "Admin",
   "student": "Student",
   "settings": "Settings",
+  "activityGeneralSettings": "General activity settings",
+  "activityResourceSettings": "Resource settings",
   "enableChat": "Show chat to students",
   "enableFeedback": "Enable feedback",
   "showScoreToStudents": "Show scores to students",

@@ -17,15 +17,224 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
   const numberLineSocketRooms = new Map();
   const vennRooms = new Map();
   const vennSocketRooms = new Map();
+  const optionsGridRooms = new Map();
+  const optionsGridSocketRooms = new Map();
+  const placementBoardRooms = new Map();
+  const placementBoardSocketRooms = new Map();
+  const inputGridRooms = new Map();
+  const inputGridSocketRooms = new Map();
+
+  function getInputGridRoom(roomId) {
+    const id = `input-grid-${cleanRoomId(roomId || 'input-grid-default')}`;
+    if (!inputGridRooms.has(id)) inputGridRooms.set(id, {
+      id,
+      settings: {
+        rows: 2,
+        columns: 2,
+        min: null,
+        max: null,
+        step: 1,
+        applyToAll: true,
+        fields: [1, 2, 3, 4].map((index) => ({ id: `cell-${index}`, label: `Input ${index}` }))
+      },
+      answers: {},
+      teacherSockets: new Set()
+    });
+    return inputGridRooms.get(id);
+  }
+
+  function sendInputGridState(room, clearAnswers = false) {
+    io.to(room.id).emit('input-grid:state', { roomId: room.id, settings: room.settings, clearAnswers });
+    room.teacherSockets.forEach((teacherSocket) => {
+      if (teacherSocket.connected) teacherSocket.emit('input-grid:responses', { roomId: room.id, answers: room.answers });
+      else room.teacherSockets.delete(teacherSocket);
+    });
+  }
+
+  function registerInputGridHandlers(socket) {
+    socket.on('input-grid:join', (data = {}) => {
+      const room = getInputGridRoom(data.roomId);
+      const previousRoom = inputGridSocketRooms.get(socket.id);
+      if (previousRoom && previousRoom.id !== room.id) {
+        previousRoom.teacherSockets.delete(socket);
+        delete previousRoom.answers[socket.id];
+        socket.leave(previousRoom.id);
+        sendInputGridState(previousRoom);
+      }
+      socket.join(room.id);
+      inputGridSocketRooms.set(socket.id, room);
+      const isTeacher = isElevated(getUserFromSocket(socket));
+      if (isTeacher) room.teacherSockets.add(socket);
+      socket.emit('input-grid:state', { roomId: room.id, settings: room.settings, ownAnswers: room.answers[socket.id]?.answers || {} });
+      if (isTeacher) socket.emit('input-grid:responses', { roomId: room.id, answers: room.answers });
+    });
+
+    socket.on('input-grid:settings', (data = {}) => {
+      const room = inputGridSocketRooms.get(socket.id);
+      if (!room || getInputGridRoom(data.roomId).id !== room.id || !isElevated(getUserFromSocket(socket))) return;
+      const settings = data.settings || {};
+      const rows = Math.max(1, Math.min(20, Number(settings.rows) || 1));
+      const columns = Math.max(1, Math.min(20, Number(settings.columns) || 1));
+      const fields = Array.from({ length: rows * columns }, (_, index) => ({
+        id: `cell-${index + 1}`,
+        label: sanitizeString(settings.fields?.[index]?.label, 100) || `Input ${index + 1}`
+      }));
+      const min = settings.min === '' || settings.min === null ? null : Number(settings.min);
+      const max = settings.max === '' || settings.max === null ? null : Number(settings.max);
+      const step = Number(settings.step);
+      room.settings = {
+        rows,
+        columns,
+        fields,
+        min: Number.isFinite(min) ? min : null,
+        max: Number.isFinite(max) ? max : null,
+        step: Number.isFinite(step) && step > 0 ? step : 1,
+        applyToAll: settings.applyToAll !== false
+      };
+      room.answers = {};
+      sendInputGridState(room, true);
+    });
+
+    socket.on('input-grid:answers', (data = {}) => {
+      const room = inputGridSocketRooms.get(socket.id);
+      if (!room || getInputGridRoom(data.roomId).id !== room.id) return;
+      const user = getUserFromSocket(socket);
+      if (!isElevated(user) && !getActiveSessionForApp(normalizeSessionApp(data.sessionApp))) return;
+      const allowedFields = new Set(room.settings.fields.map((field) => field.id));
+      const submittedAnswers = data.answers && typeof data.answers === 'object' && !Array.isArray(data.answers) ? data.answers : {};
+      const answers = Object.fromEntries(Object.entries(submittedAnswers).flatMap(([fieldId, value]) => (
+        allowedFields.has(fieldId) ? [[fieldId, sanitizeString(value, 500)]] : []
+      )));
+      room.answers[socket.id] = { name: sanitizeString(data.name, 80) || user.displayName || 'Student', answers };
+      socket.emit('input-grid:own-answer', { roomId: room.id, answers });
+      room.teacherSockets.forEach((teacherSocket) => {
+        if (teacherSocket.connected) teacherSocket.emit('input-grid:responses', { roomId: room.id, answers: room.answers });
+      });
+    });
+  }
+
+  function getPlacementBoardRoom(roomId) {
+    const id = `placement-board-${cleanRoomId(roomId || 'placement-board-default')}`;
+    if (!placementBoardRooms.has(id)) placementBoardRooms.set(id, {
+      id,
+      settings: { elements: '1:12', groups: 'A,B' },
+      placements: {}
+    });
+    return placementBoardRooms.get(id);
+  }
+
+  function sendPlacementBoardState(room) {
+    io.to(room.id).emit('placement-board:state', { roomId: room.id, settings: room.settings, placements: room.placements });
+  }
+
+  function registerPlacementBoardHandlers(socket) {
+    socket.on('placement-board:join', (data = {}) => {
+      const room = getPlacementBoardRoom(data.roomId);
+      const previousRoom = placementBoardSocketRooms.get(socket.id);
+      if (previousRoom && previousRoom.id !== room.id) socket.leave(previousRoom.id);
+      socket.join(room.id);
+      placementBoardSocketRooms.set(socket.id, room);
+      socket.emit('placement-board:state', { roomId: room.id, settings: room.settings, placements: room.placements });
+    });
+
+    socket.on('placement-board:settings', (data = {}) => {
+      const room = placementBoardSocketRooms.get(socket.id);
+      if (!room || getPlacementBoardRoom(data.roomId).id !== room.id || !isElevated(getUserFromSocket(socket))) return;
+      const settings = data.settings || {};
+      room.settings = {
+        elements: sanitizeString(settings.elements, 1000) || '1:12',
+        groups: sanitizeString(settings.groups, 500) || 'A,B'
+      };
+      room.placements = {};
+      sendPlacementBoardState(room);
+    });
+
+    socket.on('placement-board:placements', (data = {}) => {
+      const room = placementBoardSocketRooms.get(socket.id);
+      if (!room || getPlacementBoardRoom(data.roomId).id !== room.id || !data.placements || typeof data.placements !== 'object' || Array.isArray(data.placements)) return;
+      const user = getUserFromSocket(socket);
+      if (!isElevated(user) && !getActiveSessionForApp(normalizeSessionApp(data.sessionApp))) return;
+      const groupIds = new Set(room.settings.groups.split(',').map((group) => group.trim()).filter(Boolean).slice(0, 12).map((group, index) => `group-${index + 1}`));
+      room.placements = Object.fromEntries(Object.entries(data.placements).flatMap(([itemId, groupId]) => {
+        if (!/^option-([1-9]\d{0,2})$/.test(itemId)) return [];
+        if (groupId === null || groupIds.has(groupId)) return [[itemId, groupId]];
+        return [];
+      }));
+      sendPlacementBoardState(room);
+    });
+  }
+
+  function getOptionsGridRoom(roomId) {
+    const id = `options-grid-${cleanRoomId(roomId || 'options-grid-default')}`;
+    if (!optionsGridRooms.has(id)) optionsGridRooms.set(id, { id, settings: { options: '1:12', rows: 3, columns: 4 }, selections: {} });
+    return optionsGridRooms.get(id);
+  }
+
+  function sendOptionsGridState(room) {
+    io.to(room.id).emit('options-grid:state', { roomId: room.id, settings: room.settings, selections: room.selections });
+  }
+
+  function registerOptionsGridHandlers(socket) {
+    socket.on('options-grid:join', (data = {}) => {
+      const room = getOptionsGridRoom(data.roomId);
+      const previousRoom = optionsGridSocketRooms.get(socket.id);
+      if (previousRoom && previousRoom.id !== room.id) {
+        delete previousRoom.selections[socket.id];
+        socket.leave(previousRoom.id);
+        sendOptionsGridState(previousRoom);
+      }
+      socket.join(room.id);
+      optionsGridSocketRooms.set(socket.id, room);
+      socket.emit('options-grid:state', { roomId: room.id, settings: room.settings, selections: room.selections });
+    });
+
+    socket.on('options-grid:settings', (data = {}) => {
+      const room = optionsGridSocketRooms.get(socket.id);
+      if (!room || getOptionsGridRoom(data.roomId).id !== room.id || !isElevated(getUserFromSocket(socket))) return;
+      const settings = data.settings || {};
+      const rows = Math.max(1, Math.min(20, Number(settings.rows) || 1));
+      const columns = Math.max(1, Math.min(20, Number(settings.columns) || 1));
+      room.settings = { options: sanitizeString(settings.options, 2000) || '1:12', rows, columns };
+      room.selections = {};
+      sendOptionsGridState(room);
+    });
+
+    socket.on('options-grid:select', (data = {}) => {
+      const room = optionsGridSocketRooms.get(socket.id);
+      if (!room || getOptionsGridRoom(data.roomId).id !== room.id) return;
+      const user = getUserFromSocket(socket);
+      if (!isElevated(user) && !getActiveSessionForApp(normalizeSessionApp(data.sessionApp))) return;
+      const optionId = sanitizeString(data.optionId, 100);
+      const optionNumber = Number(optionId.match(/^option-(\d+)$/)?.[1]);
+      delete room.selections[socket.id];
+      if (optionId && optionNumber > 0 && optionNumber <= room.settings.rows * room.settings.columns) {
+        room.selections[socket.id] = {
+          optionId,
+          name: sanitizeString(data.name, 80) || user.displayName || 'Student',
+          color: cleanColor(data.color) || '#4ECDC4'
+        };
+      }
+      else delete room.selections[socket.id];
+      sendOptionsGridState(room);
+    });
+  }
 
   function getVennRoom(roomId) {
     const id = `venn-${cleanRoomId(roomId || 'venn-default')}`;
-    if (!vennRooms.has(id)) vennRooms.set(id, { id, placements: {} });
+    if (!vennRooms.has(id)) vennRooms.set(id, {
+      id,
+      placements: {},
+      settings: {
+        sets: [{ id: 'set-a', title: 'A' }, { id: 'set-b', title: 'B' }],
+        relations: [{ first: 'set-a', second: 'set-b', relation: 'intersecting' }],
+        elements: '1:20'
+      }
+    });
     return vennRooms.get(id);
   }
 
   function sendVennState(room) {
-    io.to(room.id).emit('venn:state', { roomId: room.id, placements: room.placements });
+    io.to(room.id).emit('venn:state', { roomId: room.id, placements: room.placements, settings: room.settings });
   }
 
   function registerVennHandlers(socket) {
@@ -35,7 +244,34 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       if (previousRoom && previousRoom.id !== room.id) socket.leave(previousRoom.id);
       socket.join(room.id);
       vennSocketRooms.set(socket.id, room);
-      socket.emit('venn:state', { roomId: room.id, placements: room.placements });
+      socket.emit('venn:state', { roomId: room.id, placements: room.placements, settings: room.settings });
+    });
+
+    socket.on('venn:settings', (data = {}) => {
+      const room = vennSocketRooms.get(socket.id);
+      if (!room || getVennRoom(data.roomId).id !== room.id || !isElevated(getUserFromSocket(socket))) return;
+      const settings = data.settings || {};
+      const sets = Array.isArray(settings.sets) ? settings.sets.slice(0, 4).map((set, index) => ({
+        id: `set-${String.fromCharCode(97 + index)}`,
+        title: sanitizeString(set?.title, 24) || String.fromCharCode(65 + index)
+      })) : room.settings.sets;
+      if (sets.length < 1) return;
+      const setIds = new Set(sets.map((set) => set.id));
+      const validRelations = new Set(['disjoint', 'intersecting', 'subset']);
+      const relations = Array.isArray(settings.relations) ? settings.relations.flatMap((relation) => {
+        const first = String(relation?.first || '');
+        const second = String(relation?.second || '');
+        return first !== second && setIds.has(first) && setIds.has(second) && validRelations.has(relation?.relation)
+          ? [{ first, second, relation: relation.relation }]
+          : [];
+      }) : room.settings.relations;
+      room.settings = {
+        sets,
+        relations,
+        elements: sanitizeString(settings.elements, 1000) || '1:20'
+      };
+      room.placements = {};
+      sendVennState(room);
     });
 
     socket.on('venn:placements', (data = {}) => {
@@ -43,10 +279,35 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       if (!room || getVennRoom(data.roomId).id !== room.id || !data.placements || typeof data.placements !== 'object' || Array.isArray(data.placements)) return;
       const user = getUserFromSocket(socket);
       if (!isElevated(user) && !getActiveSessionForApp(normalizeSessionApp(data.sessionApp))) return;
-      const allowedRegions = new Set(['left', 'intersection', 'right', 'outside']);
+      const sets = room.settings.sets;
+      const allowedRegions = new Set(sets.length === 1
+        ? ['inside', 'outside']
+        : sets.length === 2
+          ? (room.settings.relations[0]?.relation === 'disjoint'
+            ? ['left', 'right', 'outside']
+            : room.settings.relations[0]?.relation === 'subset'
+              ? ['superset-only', 'subset', 'outside']
+            : ['left', 'intersection', 'right', 'outside'])
+          : Array.from({ length: 2 ** sets.length }, (_, mask) => {
+            const members = sets.filter((set, index) => mask & (1 << index)).map((set) => set.id);
+            const invalid = room.settings.relations.some((relation) => {
+              const firstInside = members.includes(relation.first);
+              const secondInside = members.includes(relation.second);
+              return (relation.relation === 'disjoint' && firstInside && secondInside)
+                || (relation.relation === 'subset' && firstInside && !secondInside);
+            });
+            return invalid ? null : members.length ? `region-${members.join('-')}` : 'outside';
+          }).filter(Boolean));
       room.placements = Object.fromEntries(Object.entries(data.placements).flatMap(([itemId, placement]) => {
-        if (!/^([1-9]|1\d|20)$/.test(itemId)) return [];
+        if (!/^option-([1-9]\d{0,2})$/.test(itemId)) return [];
         if (placement === null || allowedRegions.has(placement)) return [[itemId, placement]];
+        if (placement?.region && allowedRegions.has(placement.region)) {
+          const x = Number(placement.x);
+          const y = Number(placement.y);
+          if (Number.isFinite(x) && Number.isFinite(y)) {
+            return [[itemId, { region: placement.region, x: Math.max(2, Math.min(98, x)), y: Math.max(4, Math.min(96, y)) }]];
+          }
+        }
         if (placement?.region === 'outside') {
           const x = Number(placement.x);
           const y = Number(placement.y);
@@ -1094,6 +1355,9 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
     registerAlgebraTileHandlers(socket);
     registerNumberLineHandlers(socket);
     registerVennHandlers(socket);
+    registerOptionsGridHandlers(socket);
+    registerPlacementBoardHandlers(socket);
+    registerInputGridHandlers(socket);
     socket.on(ROOM_EVENT, (data) => {
       handleJoin(socket, data || {});
     });
@@ -1150,6 +1414,20 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       socketSessionApps.delete(socket.id);
       algebraTileSocketRooms.delete(socket.id);
       vennSocketRooms.delete(socket.id);
+      const optionsRoom = optionsGridSocketRooms.get(socket.id);
+      optionsGridSocketRooms.delete(socket.id);
+      if (optionsRoom) {
+        delete optionsRoom.selections[socket.id];
+        sendOptionsGridState(optionsRoom);
+      }
+      placementBoardSocketRooms.delete(socket.id);
+      const inputGridRoom = inputGridSocketRooms.get(socket.id);
+      inputGridSocketRooms.delete(socket.id);
+      if (inputGridRoom) {
+        inputGridRoom.teacherSockets.delete(socket);
+        delete inputGridRoom.answers[socket.id];
+        sendInputGridState(inputGridRoom);
+      }
       monitorSockets.delete(socket);
 
       if (!roomId) {

@@ -145,6 +145,7 @@ export default function AlgebraTiles({
   settingsInPortal = false // Places teacher settings in the supplied portal target when true.
 }) {
   const { t } = useTranslation('interface');
+  const { t: tCommon } = useTranslation('common');
   const sessionLogging = useSessionInputLogger();
   const canEdit = sessionLogging?.canEdit ?? true;
   const role = suppliedRole || sessionLogging?.role || 'student';
@@ -555,7 +556,7 @@ export default function AlgebraTiles({
     commitTiles(tiles.filter((tile) => tile.id !== id));
   };
   const settingsAccordion = shared && role === 'teacher' ? (
-    <Accordion title={t('algebraTiles.settings')} className="collaborative-algebra-tiles__settings">
+    <Accordion title={tCommon('activityResourceSettings')} icon="🧩" className="collaborative-algebra-tiles__settings">
       {promptMode === 'expression' ? (
         <>
           <label className="collaborative-algebra-tiles__setting">

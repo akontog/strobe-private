@@ -9,13 +9,15 @@ import StudentWaitingPage from './pages/StudentWaitingPage';
 import TeacherPage from './pages/TeacherPage';
 import ToolsPage from './pages/ToolsPage';
 import InstructionsPage from './pages/InstructionsPage';
-import ActivityBuilder from './tools/activity-builder/ActivityBuilder';
 import ActivityRunner from './workshops/activities/ActivityRunner';
 import CameraSpeedTest from './system/camera-speed-test/CameraSpeedTest';
 import GeoGebraCollabTool from './tools/geogebra-collab/GeoGebraCollabTool';
 import AlgebraTilesCollabTool from './tools/algebra-tiles-collab/AlgebraTilesCollabTool';
 import NumberLineCollabTool from './tools/number-line-collab/NumberLineCollabTool';
 import VennCollabTool from './tools/venn-collab/VennCollabTool';
+import OptionsGridCollabTool from './tools/options-grid-collab/OptionsGridCollabTool';
+import PlacementBoardCollabTool from './tools/placement-board-collab/PlacementBoardCollabTool';
+import InputGridCollabTool from './tools/input-grid-collab/InputGridCollabTool';
 import VisionCollabTool from './tools/vision-collab/VisionCollabTool';
 import LinearSeparation from './tools/linear-separation/LinearSeparation';
 import ConsoleTool from './system/console/ConsoleTool';
@@ -29,6 +31,9 @@ import { getAppSlug, getWorkshopPath } from './shared/utils/workshopPaths';
 const SESSION_ENABLED_APPS = new Set([
   'activity-runner',
   'geogebra-collab',
+  'options-grid-collab',
+  'placement-board-collab',
+  'input-grid-collab',
   'vision-collab',
   'buffon-needle',
   'neural-lab',
@@ -54,6 +59,9 @@ function App() {
   const currentSessionApp = routePath.startsWith('/workshops/activities/')
     ? 'activity-runner'
     : ['/tools/geogebra-collab', '/tools/algebra-tiles-collab', '/tools/number-line-collab', '/tools/venn-collab'].includes(routePath) ? 'geogebra-collab'
+      : routePath === '/tools/options-grid-collab' ? 'options-grid-collab'
+      : routePath === '/tools/placement-board-collab' ? 'placement-board-collab'
+      : routePath === '/tools/input-grid-collab' ? 'input-grid-collab'
       : routePath === '/tools/vision-collab' ? 'vision-collab' : currentLabSlug;
   const labHasOwnSettings = pathname.startsWith('/workshops/activities/') || ['polynomial-lab', 'linear-systems-lab', 'neural-lab', 'identities-lab', 'equations-lab', 'factorization-lab', 'probabilities-lab', 'buffon-needle', 'primes-lab'].includes(currentLabSlug);
   const labHasInlineChat = ['polynomial-lab', 'neural-lab', 'buffon-needle'].includes(currentLabSlug);
@@ -96,6 +104,9 @@ function App() {
       || (routePath === '/tools/geogebra-collab' ? 'geogebra-collab' : '')
       || (routePath === '/tools/algebra-tiles-collab' ? 'algebra-tiles-collab' : '')
       || (routePath === '/tools/number-line-collab' ? 'number-line-collab' : '')
+      || (routePath === '/tools/options-grid-collab' ? 'options-grid-collab' : '')
+      || (routePath === '/tools/placement-board-collab' ? 'placement-board-collab' : '')
+      || (routePath === '/tools/input-grid-collab' ? 'input-grid-collab' : '')
       || (routePath === '/tools/vision-collab' ? 'vision-collab' : '');
     const activeTeacherLab = routePath === '/tools/venn-collab' ? 'geogebra-collab' : teacherLab;
     const preserveSelection = [
@@ -105,7 +116,6 @@ function App() {
       '/tools',
       '/tools/camera-speed-test',
       '/tools/console',
-      '/tools/activity-builder',
       '/tools/linear-separation',
       '/tools/linear-seperation'
     ].includes(routePath);
@@ -119,11 +129,14 @@ function App() {
       const timer = window.setInterval(preserveClassroomSelection, 5000);
       return () => window.clearInterval(timer);
     }
-    const roomId = ['geogebra-collab', 'algebra-tiles-collab', 'number-line-collab'].includes(activeTeacherLab)
+    const roomId = ['geogebra-collab', 'algebra-tiles-collab', 'number-line-collab', 'options-grid-collab', 'placement-board-collab', 'input-grid-collab'].includes(activeTeacherLab)
       ? new URLSearchParams(location.search).get('room') || (routePath === '/tools/venn-collab' ? 'venn-default' : ({
         'geogebra-collab': 'geogebra-default',
         'algebra-tiles-collab': 'algebra-tiles-default',
-        'number-line-collab': 'number-line-default'
+        'number-line-collab': 'number-line-default',
+        'options-grid-collab': 'options-grid-default',
+        'placement-board-collab': 'placement-board-default',
+        'input-grid-collab': 'input-grid-default'
       }[activeTeacherLab]))
       : '';
     const publishSelection = () => fetch('/teacher/classroom/selection', {
@@ -179,6 +192,12 @@ function App() {
           ? `/tools/algebra-tiles-collab?room=${encodeURIComponent(classroomRoomId || 'algebra-tiles-default')}`
           : classroomLab === 'number-line-collab'
             ? `/tools/number-line-collab?room=${encodeURIComponent(classroomRoomId || 'number-line-default')}`
+          : classroomLab === 'options-grid-collab'
+            ? `/tools/options-grid-collab?room=${encodeURIComponent(classroomRoomId || 'options-grid-default')}`
+          : classroomLab === 'placement-board-collab'
+            ? `/tools/placement-board-collab?room=${encodeURIComponent(classroomRoomId || 'placement-board-default')}`
+          : classroomLab === 'input-grid-collab'
+            ? `/tools/input-grid-collab?room=${encodeURIComponent(classroomRoomId || 'input-grid-default')}`
           : classroomLab === 'vision-collab'
             ? '/tools/vision-collab'
           : classroomLab === 'activity-runner'
@@ -187,7 +206,7 @@ function App() {
       if (`${pathname}${location.search}` !== target) navigate(target, { replace: true });
       return;
     }
-    if (labRoute || pathname === '/client' || pathname === '/student' || pathname === '/tools/geogebra-collab' || pathname === '/tools/algebra-tiles-collab' || pathname === '/tools/number-line-collab' || pathname === '/tools/venn-collab' || pathname === '/tools/vision-collab') {
+    if (labRoute || pathname === '/client' || pathname === '/student' || pathname === '/tools/geogebra-collab' || pathname === '/tools/algebra-tiles-collab' || pathname === '/tools/number-line-collab' || pathname === '/tools/venn-collab' || pathname === '/tools/options-grid-collab' || pathname === '/tools/placement-board-collab' || pathname === '/tools/input-grid-collab' || pathname === '/tools/vision-collab') {
       navigate('/', { replace: true });
     }
   }, [authReady, classroomLab, classroomRoomId, classroomSelectionLoaded, location.search, navigate, pathname, role]);
@@ -340,6 +359,12 @@ function App() {
           ? `/tools/algebra-tiles-collab?room=${encodeURIComponent(classroomRoomId || 'algebra-tiles-default')}`
           : classroomLab === 'number-line-collab'
             ? `/tools/number-line-collab?room=${encodeURIComponent(classroomRoomId || 'number-line-default')}`
+          : classroomLab === 'options-grid-collab'
+            ? `/tools/options-grid-collab?room=${encodeURIComponent(classroomRoomId || 'options-grid-default')}`
+          : classroomLab === 'placement-board-collab'
+            ? `/tools/placement-board-collab?room=${encodeURIComponent(classroomRoomId || 'placement-board-default')}`
+          : classroomLab === 'input-grid-collab'
+            ? `/tools/input-grid-collab?room=${encodeURIComponent(classroomRoomId || 'input-grid-default')}`
           : classroomLab === 'vision-collab'
             ? '/tools/vision-collab'
           : getWorkshopPath(classroomLab, 'student')} replace />
@@ -357,6 +382,12 @@ function App() {
           ? `/tools/algebra-tiles-collab?room=${encodeURIComponent(classroomRoomId || 'algebra-tiles-default')}`
           : classroomLab === 'number-line-collab'
             ? `/tools/number-line-collab?room=${encodeURIComponent(classroomRoomId || 'number-line-default')}`
+          : classroomLab === 'options-grid-collab'
+            ? `/tools/options-grid-collab?room=${encodeURIComponent(classroomRoomId || 'options-grid-default')}`
+          : classroomLab === 'placement-board-collab'
+            ? `/tools/placement-board-collab?room=${encodeURIComponent(classroomRoomId || 'placement-board-default')}`
+          : classroomLab === 'input-grid-collab'
+            ? `/tools/input-grid-collab?room=${encodeURIComponent(classroomRoomId || 'input-grid-default')}`
             : classroomLab === 'vision-collab'
               ? '/tools/vision-collab'
           : getWorkshopPath(classroomLab, 'student')} replace />
@@ -378,16 +409,18 @@ function App() {
       { label: tNav('items.camera'), path: '/tools/camera-speed-test' },
       { label: tNav('items.console'), path: '/tools/console' },
     ] },
-    collaboration: { label: tNav('collaboration'), items: [
-      { label: tNav('items.geogebra'), path: '/tools/geogebra-collab' },
+    activities: { label: tNav('activities'), items: [
+      { label: tNav('items.inputGrid'), path: '/tools/input-grid-collab' },
+      { label: tNav('items.optionsGrid'), path: '/tools/options-grid-collab' },
+      { label: tNav('items.placementBoard'), path: '/tools/placement-board-collab' },
+      { label: tNav('items.venn'), path: '/tools/venn-collab' },
       { label: tNav('items.algebraTiles'), path: '/tools/algebra-tiles-collab' },
       { label: tNav('items.numberLine'), path: '/tools/number-line-collab' },
-      { label: tNav('items.venn'), path: '/tools/venn-collab' },
+      { label: tNav('items.geogebra'), path: '/tools/geogebra-collab' },
       { label: tNav('items.vision'), path: '/tools/vision-collab' }
     ] },
     tools: { label: tNav('tools'), items: [
       { label: tNav('items.separation'), path: '/tools/linear-separation' },
-      { label: tNav('items.builder'), path: '/tools/activity-builder' }
     ] },
     help: { label: tNav('help'), items: [
       { label: tNav('items.instructions'), path: '/instructions' }
@@ -503,12 +536,14 @@ function App() {
           <Route path="/client" element={<StudentWaitingPage />} />
           <Route path="/student" element={<StudentWaitingPage />} />
           <Route path="/tools" element={teacherOnly(<ToolsPage />)} />
-          <Route path="/tools/activity-builder" element={teacherOnly(<ActivityBuilder />)} />
           <Route path="/tools/camera-speed-test" element={adminOnly(<CameraSpeedTest />)} />
           <Route path="/tools/geogebra-collab" element={studentToolOnly('geogebra-collab', <GeoGebraCollabTool canSelectRoom={hasTeacherAccess} />)} />
           <Route path="/tools/algebra-tiles-collab" element={studentToolOnly('algebra-tiles-collab', <AlgebraTilesCollabTool role={appRole} />)} />
-          <Route path="/tools/number-line-collab" element={studentToolOnly('number-line-collab', <NumberLineCollabTool />)} />
-          <Route path="/tools/venn-collab" element={studentToolOnly('geogebra-collab', <VennCollabTool />)} />
+          <Route path="/tools/number-line-collab" element={studentToolOnly('number-line-collab', <NumberLineCollabTool role={appRole} />)} />
+          <Route path="/tools/venn-collab" element={studentToolOnly('geogebra-collab', <VennCollabTool role={appRole} />)} />
+          <Route path="/tools/options-grid-collab" element={studentToolOnly('options-grid-collab', <OptionsGridCollabTool role={appRole} />)} />
+          <Route path="/tools/placement-board-collab" element={studentToolOnly('placement-board-collab', <PlacementBoardCollabTool role={appRole} />)} />
+          <Route path="/tools/input-grid-collab" element={studentToolOnly('input-grid-collab', <InputGridCollabTool role={appRole} />)} />
           <Route path="/tools/vision-collab" element={studentToolOnly('vision-collab', <VisionCollabTool role={appRole} />)} />
           <Route path="/tools/console" element={adminOnly(<ConsoleTool />)} />
           <Route path="/tools/linear-separation" element={teacherOnly(<LinearSeparation />)} />

@@ -2,7 +2,7 @@
   "labs": "Workshops",
   "system": "System",
   "tools": "Tools",
-  "collaboration": "Collaboration",
+  "activities": "Activities",
   "help": "Help",
   "sectionNavigation": "Sections",
   "items": {
@@ -20,6 +20,9 @@
     "geogebra": "GeoGebra",
     "algebraTiles": "Algebra Tiles",
     "numberLine": "Number Line",
+    "optionsGrid": "Options Grid",
+    "placementBoard": "Placement Board",
+    "inputGrid": "Input Grid",
     "vision": "Camera",
     "camera": "Camera Speed Test",
     "console": "Console",

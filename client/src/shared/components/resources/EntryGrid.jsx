@@ -75,6 +75,7 @@ export default function EntryGrid({
             labelClassName={labelClassName}
             disabled={Boolean(field.disabled)}
             activity={activity}
+            step={field.step}
             min={field.min}
             max={field.max}
             allowIntegers={field.allowIntegers ?? true}

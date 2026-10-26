@@ -29,6 +29,7 @@ export default function NumberLine({
   sessionApp = 'geogebra-collab', // Session app used to resolve the participant identity.
   min = -10, // Lowest integer shown on the number line.
   max = 10, // Highest integer shown on the number line.
+  partitions = 20, // Number of equal sections shown on the number line.
   linePosition = 0.72, // Vertical position of the number line as a fraction of the canvas height.
   snapThreshold = 0.16, // Distance from an integer at which a point snaps to that integer.
   stackTolerance = 0.08 // Distance at which identical points or interval bounds share a vertical stack.
@@ -46,10 +47,9 @@ export default function NumberLine({
   const height = 360;
   const padding = 48;
   const axisY = Math.max(0.55, Math.min(0.9, linePosition)) * height;
-  const firstInteger = Math.ceil(min);
-  const lastInteger = Math.floor(max);
   const range = Math.max(1, max - min);
   const valueToX = (value) => padding + ((value - min) / range) * (width - padding * 2);
+  const partitionCount = Math.max(1, Math.floor(Number(partitions) || 1));
 
   useEffect(() => {
     function syncIdentity() {
@@ -193,10 +193,10 @@ export default function NumberLine({
         onPointerUp={finishDrawing}
         onPointerCancel={() => { pointerRef.current = null; setDraftInterval(null); }}
       >
-        {Array.from({ length: Math.max(0, lastInteger - firstInteger + 1) }, (_, index) => firstInteger + index).map((value) => (
-          <g key={value} className="number-line-resource__tick">
+        {Array.from({ length: partitionCount + 1 }, (_, index) => min + (range * index) / partitionCount).map((value, index) => (
+          <g key={index} className="number-line-resource__tick">
             <line x1={valueToX(value)} x2={valueToX(value)} y1="35" y2={axisY + 32} />
-            <text x={valueToX(value)} y={axisY + 57} textAnchor="middle">{value}</text>
+            <text x={valueToX(value)} y={axisY + 57} textAnchor="middle">{Number(value.toFixed(2))}</text>
           </g>
         ))}
         <line className="number-line-resource__axis" x1={padding} x2={width - padding} y1={axisY} y2={axisY} />

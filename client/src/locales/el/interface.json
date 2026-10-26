@@ -1,4 +1,15 @@
 {
+  "activityWorkspace": {
+    "settings": "Ρυθμίσεις δραστηριότητας",
+    "title": "Τίτλος",
+    "subtitle": "Υπότιτλος",
+    "notes": "Σημειώσεις",
+    "widgets": "Widgets (JSON, έως 2)",
+    "save": "Αποθήκευση δραστηριότητας",
+    "saved": "Η δραστηριότητα αποθηκεύτηκε.",
+    "saveError": "Η αποθήκευση απέτυχε.",
+    "json": "JSON δραστηριότητας"
+  },
   "appsLauncher": "Εκκίνηση εφαρμογών",
   "studentLauncher": "Εκκίνηση μαθητή",
   "studentWaitingTitle": "Καλώς ήρθες",
@@ -68,7 +79,40 @@
   "algebraTilesCollaborative": "Πλακίδια Άλγεβρας",
   "numberLine": {
     "title": "Αριθμογραμμή",
-    "ariaLabel": "Κοινή αριθμογραμμή"
+    "ariaLabel": "Κοινή αριθμογραμμή",
+    "leftEnd": "Αριστερό άκρο",
+    "rightEnd": "Δεξί άκρο",
+    "partitions": "Διαμερίσεις"
+  },
+  "optionsGrid": {
+    "ariaLabel": "Κοινό πλέγμα επιλογών",
+    "apply": "Εφαρμογή ρυθμίσεων"
+  },
+  "vennCollab": {
+    "setCount": "Αριθμός συνόλων",
+    "setName": "Όνομα συνόλου {{number}}",
+    "relationBetween": "Σχέση μεταξύ {{first}} και {{second}}",
+    "elements": "Στοιχεία",
+    "relations": {
+      "disjoint": "Ανεξάρτητα",
+      "intersecting": "Τεμνόμενα",
+      "subset": "Υποσύνολο (το πρώτο σύνολο μέσα στο δεύτερο)"
+    }
+  },
+  "placementBoard": {
+    "items": "Αντικείμενα προς τοποθέτηση",
+    "elements": "Στοιχεία",
+    "groups": "Περιοχές",
+    "groupsHelp": "Γράψε τα ονόματα των περιοχών χωρισμένα με κόμμα."
+  },
+  "inputGrid": {
+    "fieldLabel": "Ετικέτα κελιού {{number}}",
+    "minimum": "Ελάχιστο",
+    "maximum": "Μέγιστο",
+    "step": "Βήμα",
+    "applyToAll": "Εφαρμογή ορίων σε όλα τα κελιά",
+    "responses": "Απαντήσεις μαθητών",
+    "noResponses": "Δεν υπάρχουν ακόμη απαντήσεις."
   },
   "algebraTiles": {
     "settings": "Ρυθμίσεις πίνακα",
@@ -293,7 +337,8 @@
     "defaultItem": "Αντικείμενο {{index}}",
     "defaultItemsBank": "Αντικείμενα προς ομαδοποίηση",
     "defaultOption": "Επιλογή {{index}}",
-    "options": "Επιλογές (JSON)",
+    "options": "Επιλογές",
+    "optionsExpressionHelp": "Χρησιμοποίησε 2:20:2, a:f, τιμές χωρισμένες με κόμμα ή συνδυασμούς όπως 2:6,8:12.",
     "optionLabel": "Επιλογή",
     "invalidOptionsJson": "Οι επιλογές πρέπει να είναι έγκυρο JSON array.",
     "fieldId": "ID πεδίου",

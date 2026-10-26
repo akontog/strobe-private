@@ -1,0 +1,82 @@
+.activity-common-zone .lab-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+}
+
+.activity-common-zone .activity-workspace--left-right {
+  grid-template-columns: minmax(120px, 1fr) minmax(0, 3fr) minmax(120px, 1fr);
+}
+
+.activity-common-zone .activity-workspace--left {
+  grid-template-columns: minmax(120px, 1fr) minmax(0, 3fr);
+}
+
+.activity-common-zone .activity-workspace--right {
+  grid-template-columns: minmax(0, 3fr) minmax(120px, 1fr);
+}
+
+.activity-common-zone .lab-card--panel {
+  min-width: 0;
+}
+
+.activity-workspace-heading {
+  margin: 12px 0;
+  text-align: center;
+}
+
+.activity-workspace-heading h1,
+.activity-workspace-heading p {
+  margin: 4px 0;
+}
+
+.activity-settings-accordion {
+  display: grid;
+  gap: 12px;
+}
+
+.activity-settings-accordion label {
+  display: grid;
+  gap: 5px;
+}
+
+.activity-settings-accordion input,
+.activity-settings-accordion textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font: inherit;
+}
+
+.activity-settings-accordion__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.activity-settings-accordion__actions button {
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 8px;
+  background: #1d4ed8;
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+.activity-settings-accordion pre {
+  max-height: 320px;
+  overflow: auto;
+  padding: 12px;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+@media (max-width: 760px) {
+  .activity-common-zone .lab-workspace {
+    grid-template-columns: 1fr;
+  }
+}

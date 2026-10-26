@@ -9,6 +9,8 @@
   "admin": "Διαχειριστής",
   "student": "Μαθητής",
   "settings": "Ρυθμίσεις",
+  "activityGeneralSettings": "Γενικές ρυθμίσεις δραστηριότητας",
+  "activityResourceSettings": "Ρυθμίσεις πόρου",
   "language": "Γλώσσα",
   "greek": "Ελληνικά",
   "enableChat": "Εμφάνιση συνομιλίας στους μαθητές",

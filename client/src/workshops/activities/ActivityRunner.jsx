@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   WidgetRenderer,
@@ -8,6 +7,7 @@ import {
   PlacementBoard,
   VennBoard,
   OptionsGrid,
+  parseOptionsExpression,
   GridButton,
   HeroTitle,
   SettingsAccordion,
@@ -77,12 +77,15 @@ function ResourceContent({ activity, role, activityKey }) {
     return <AlgebraTiles {...props} shared role={role} sessionApp="activity-runner" activity={activityKey} />;
   }
   if (activity.resource === 'options-grid') {
-    const items = Array.isArray(props.items) ? props.items : [];
+    const items = props.optionsExpression
+      ? parseOptionsExpression(props.optionsExpression)
+      : Array.isArray(props.items) ? props.items : [];
     const canEdit = session?.canEdit ?? true;
     return (
       <OptionsGrid
         items={items}
         columns={props.columns || 3}
+        rows={props.rows}
         ariaLabel="Επιλογές"
         renderItem={(item, index) => {
           const itemId = String(item.id || item.value || `option-${index + 1}`);
@@ -268,7 +271,7 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
       <>
         <HeroTitle title={tNav('items.activities')} />
         <section className="common-zone lab-zone">
-          {role === 'teacher' ? <p>Επιλέξτε δραστηριότητα από τις <Link to="/tools/activity-builder">Ρυθμίσεις δραστηριοτήτων</Link>.</p> : <p>Περιμένετε να ανοίξει ο/η εκπαιδευτικός μια δραστηριότητα.</p>}
+          {role === 'teacher' ? <p>Επιλέξτε μια δραστηριότητα από το μενού Δραστηριότητες.</p> : <p>Περιμένετε να ανοίξει ο/η εκπαιδευτικός μια δραστηριότητα.</p>}
         </section>
         {role === 'teacher' ? <SettingsAccordion><CommonSessionSettings /></SettingsAccordion> : null}
       </>

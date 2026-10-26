@@ -368,13 +368,6 @@ app.use('/labs', createAppsRouter());
 app.get('/api/tools', requireRole(['teacher']), (req, res) => {
   const tools = [
     {
-      id: 'activity-builder',
-      title: 'Activity Builder',
-      description: 'Build and inspect activity payloads for the classroom apps.',
-      path: '/tools/activity-builder/',
-      available: true
-    },
-    {
       id: 'camera-speed-test',
       title: 'Camera Speed Test',
       description: 'Benchmark the camera detection pipeline and annotated frame roundtrip.',
@@ -393,6 +386,13 @@ app.get('/api/tools', requireRole(['teacher']), (req, res) => {
       title: 'GeoGebra Collaborative Component',
       description: 'Shared GeoGebra board with server-authoritative permissions and realtime sync.',
       path: '/tools/geogebra-collab/',
+      available: true
+    },
+    {
+      id: 'options-grid-collab',
+      title: 'Options Grid',
+      description: 'Collaborative choice grid with teacher-controlled options and layout.',
+      path: '/tools/options-grid-collab/',
       available: true
     },
     {

@@ -49,6 +49,7 @@ function saveActivity(appSlug, data, author) {
   const activityRecord = {
     resource: safeSlug,
     name: data && data.name ? String(data.name) : 'Untitled activity',
+    subtitle: data && typeof data.subtitle === 'string' ? data.subtitle : '',
     config: data && data.config ? data.config : {},
     notes: data && typeof data.notes === 'string' ? data.notes : '',
     createdAt: new Date().toISOString(),

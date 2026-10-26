@@ -1,0 +1,38 @@
+{
+  "resource": "input-grid-collab",
+  "name": "Πλέγμα εισόδων",
+  "subtitle": "",
+  "config": {
+    "rows": 2,
+    "columns": 2,
+    "min": null,
+    "max": null,
+    "step": 1,
+    "applyToAll": true,
+    "fields": [
+      {
+        "id": "cell-1",
+        "label": "Input 1"
+      },
+      {
+        "id": "cell-2",
+        "label": "Input 2"
+      },
+      {
+        "id": "cell-3",
+        "label": "Input 3"
+      },
+      {
+        "id": "cell-4",
+        "label": "Input 4"
+      }
+    ],
+    "widgets": []
+  },
+  "notes": "",
+  "createdAt": "2026-10-26T14:38:30.861Z",
+  "author": {
+    "username": "activity-page",
+    "role": "teacher"
+  }
+}

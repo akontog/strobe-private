@@ -42,11 +42,6 @@ export default function ToolsPage() {
   }, []);
 
   const toolMeta = useMemo(() => ({
-    'activity-builder': {
-      icon: '🗂️',
-      tone: 'magenta',
-      helper: 'toolHelpers.activityBuilder'
-    },
     'camera-speed-test': {
       icon: '🎥',
       tone: 'blue',
@@ -56,6 +51,11 @@ export default function ToolsPage() {
       icon: '📐',
       tone: 'green',
       helper: 'toolHelpers.geoGebraCollaborative'
+    },
+    'options-grid-collab': {
+      icon: '▦',
+      tone: 'blue',
+      helper: ''
     },
     'vision-collab': {
       icon: '🧭',

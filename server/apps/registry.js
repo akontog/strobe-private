@@ -95,6 +95,30 @@ const APP_DEFINITIONS = [
     kind: 'react'
   },
   {
+    slug: 'options-grid-collab',
+    labId: 'options-grid-collab',
+    title: 'Options Grid',
+    description: 'Collaborative choice grid with teacher-controlled options and layout.',
+    roles: ['teacher', 'student', 'client'],
+    kind: 'react'
+  },
+  {
+    slug: 'placement-board-collab',
+    labId: 'placement-board-collab',
+    title: 'Placement Board',
+    description: 'Collaborative board for placing items into labelled regions.',
+    roles: ['teacher', 'student', 'client'],
+    kind: 'react'
+  },
+  {
+    slug: 'input-grid-collab',
+    labId: 'input-grid-collab',
+    title: 'Input Grid',
+    description: 'Collaborative input grid with teacher-controlled dimensions and numeric limits.',
+    roles: ['teacher', 'student', 'client'],
+    kind: 'react'
+  },
+  {
     slug: 'activity-runner',
     labId: 'activity-runner',
     title: 'Shared Activities',
