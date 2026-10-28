@@ -50,8 +50,9 @@ const isPrimeNumber = (number) => {
 };
 
 const App = ({ role = 'teacher' }) => {
-  const { t } = useTranslation('primes');
+  const { t: tInterface } = useTranslation('interface');
   const { t: tNav } = useTranslation('navigation');
+  const t = (key, options) => tInterface(`workshops.primes.${key}`, options);
   const isTeacher = role === 'teacher';
   const wsRef = useRef(null);
   const reconnectTimerRef = useRef(null);
@@ -440,4 +441,3 @@ const App = ({ role = 'teacher' }) => {
 };
 
 export default App;
-

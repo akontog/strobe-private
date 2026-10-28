@@ -25,9 +25,24 @@ function loadRealtimeSocket() {
 
 const createFields = (rows, columns) => Array.from({ length: rows * columns }, (_, index) => ({
   id: `cell-${index + 1}`,
-  label: `Input ${index + 1}`
+  label: `Input ${index + 1}`,
+  min: null,
+  max: null,
+  step: 1,
+  correctAnswerType: 'exact',
+  correctAnswer: '',
+  correctAnswers: [],
+  correctAnswerMin: '-inf',
+  correctAnswerMax: 'inf',
+  minInclusive: true,
+  maxInclusive: true
 }));
-const defaultSettings = { rows: 2, columns: 2, min: null, max: null, step: 1, applyToAll: true, fields: createFields(2, 2) };
+const defaultSettings = { rows: 2, columns: 2, applyToAll: false, applyProperties: ['min', 'max', 'step'], fields: createFields(2, 2) };
+
+function isUnbounded(value, side) {
+  const normalized = String(value || '').trim().toLowerCase().replace(/∞/g, 'inf').replace(/−/g, '-');
+  return side === 'lower' ? ['-inf', '-infinity'].includes(normalized) : ['inf', '+inf', 'infinity', '+infinity'].includes(normalized);
+}
 
 /** Opens a collaborative input grid with teacher-controlled classroom settings. */
 export default function InputGridCollabTool({ role = 'student' }) {
@@ -42,6 +57,7 @@ export default function InputGridCollabTool({ role = 'student' }) {
   const [draft, setDraft] = useState(defaultSettings);
   const [responses, setResponses] = useState({});
   const [myAnswers, setMyAnswers] = useState({});
+  const [activeFieldId, setActiveFieldId] = useState('cell-1');
 
   useEffect(() => {
     let cancelled = false;
@@ -57,8 +73,16 @@ export default function InputGridCollabTool({ role = 'student' }) {
         answersRef.current = ownAnswers;
         setMyAnswers(ownAnswers);
         if (state.settings) {
-          setSettings(state.settings);
-          setDraft(state.settings);
+          const fields = (state.settings.fields || []).map((field, index) => ({
+            ...createFields(1, 1)[0],
+            ...field,
+            correctAnswers: Array.isArray(field.correctAnswers) ? field.correctAnswers : [],
+            id: field.id || `cell-${index + 1}`
+          }));
+          const nextSettings = { ...defaultSettings, ...state.settings, fields };
+          setSettings(nextSettings);
+          setDraft(nextSettings);
+          setActiveFieldId((currentId) => fields.some((field) => field.id === currentId) ? currentId : fields[0]?.id || '');
         }
       });
       socket.on('input-grid:own-answer', (state) => {
@@ -82,10 +106,10 @@ export default function InputGridCollabTool({ role = 'student' }) {
   const fields = settings.fields.map((field) => ({
     ...field,
     value: myAnswers[field.id] || '',
-    type: settings.applyToAll ? 'number' : 'text',
-    min: settings.applyToAll ? settings.min ?? undefined : undefined,
-    max: settings.applyToAll ? settings.max ?? undefined : undefined,
-    step: settings.applyToAll ? settings.step : undefined,
+    type: 'number',
+    min: field.min ?? undefined,
+    max: field.max ?? undefined,
+    step: field.step || 1,
     onChange: (value) => updateAnswer(field.id, value)
   }));
 
@@ -105,12 +129,31 @@ export default function InputGridCollabTool({ role = 'student' }) {
     const rows = key === 'rows' ? Math.max(1, Math.min(20, Number(rawValue) || 1)) : draft.rows;
     const columns = key === 'columns' ? Math.max(1, Math.min(20, Number(rawValue) || 1)) : draft.columns;
     const previous = new Map(draft.fields.map((field) => [field.id, field]));
-    setDraft({ ...draft, rows, columns, fields: createFields(rows, columns).map((field) => previous.get(field.id) || field) });
+    const fields = createFields(rows, columns).map((field) => previous.get(field.id) || field);
+    setDraft({ ...draft, rows, columns, fields });
+    if (!fields.some((field) => field.id === activeFieldId)) setActiveFieldId(fields[0]?.id || '');
+  }
+
+  function updateField(fieldId, updates) {
+    setDraft((current) => ({
+      ...current,
+      fields: current.fields.map((field) => field.id === fieldId ? { ...field, ...updates } : field)
+    }));
   }
 
   function applySettings(event) {
     event.preventDefault();
-    socketRef.current?.emit('input-grid:settings', { roomId, settings: draft });
+    const sourceField = draft.fields.find((field) => field.id === activeFieldId);
+    const settingsToApply = draft.applyToAll && sourceField
+      ? {
+        ...draft,
+        fields: draft.fields.map((field) => field.id === activeFieldId ? field : {
+          ...field,
+        ...Object.fromEntries((draft.applyProperties || []).map((property) => [property, sourceField[property]]))
+        })
+      }
+      : draft;
+    socketRef.current?.emit('input-grid:settings', { roomId, settings: settingsToApply });
   }
 
   return (
@@ -130,18 +173,64 @@ export default function InputGridCollabTool({ role = 'student' }) {
               <form className="input-grid-collab__settings" onSubmit={applySettings}>
                 <label><span>{t('activityBuilder.rows')}</span><input type="number" min="1" max="20" value={draft.rows} onChange={(event) => updateDimensions('rows', event.target.value)} /></label>
                 <label><span>{t('activityBuilder.columns')}</span><input type="number" min="1" max="20" value={draft.columns} onChange={(event) => updateDimensions('columns', event.target.value)} /></label>
-                <div className="input-grid-collab__field-labels">
-                  {draft.fields.map((field, index) => (
-                    <label key={field.id}>
-                      <span>{t('inputGrid.fieldLabel', { number: index + 1 })}</span>
-                      <input type="text" value={field.label} onChange={(event) => setDraft({ ...draft, fields: draft.fields.map((item) => item.id === field.id ? { ...item, label: event.target.value } : item) })} />
-                    </label>
-                  ))}
+                <div className="input-grid-collab__field-tabs" role="tablist" aria-label={t('inputGrid.cells')}>
+                  {draft.fields.map((field, index) => {
+                    const row = Math.floor(index / draft.columns) + 1;
+                    const column = (index % draft.columns) + 1;
+                    const markerRow = Math.max(1, Math.min(3, Math.ceil((row / draft.rows) * 3)));
+                    const markerColumn = Math.max(1, Math.min(3, Math.ceil((column / draft.columns) * 3)));
+                    const exactMarker = draft.rows <= 3 && draft.columns <= 3;
+                    return <button key={field.id} type="button" role="tab" aria-selected={activeFieldId === field.id} className={activeFieldId === field.id ? 'is-active' : ''} onClick={() => setActiveFieldId(field.id)}>
+                      <span
+                        className={`input-grid-collab__tab-position ${exactMarker ? 'is-exact' : 'is-approximate'}`}
+                        aria-hidden="true"
+                        style={exactMarker ? { gridTemplateColumns: `repeat(${draft.columns}, 1fr)`, gridTemplateRows: `repeat(${draft.rows}, 1fr)` } : undefined}
+                      >
+                        {exactMarker
+                          ? draft.fields.map((cell, cellIndex) => <i key={cell.id} className={cellIndex === index ? 'is-selected' : ''} />)
+                          : <i style={{ gridRow: markerRow, gridColumn: markerColumn }} />}
+                      </span>
+                      <span className="input-grid-collab__tab-text">
+                        <strong>{field.label || t('inputGrid.fieldLabel', { number: index + 1 })}</strong>
+                        <small>{t('inputGrid.cellPosition', { row, column })}</small>
+                      </span>
+                    </button>
+                  })}
                 </div>
-                <label><span>{t('inputGrid.minimum')}</span><input type="number" value={draft.min ?? ''} onChange={(event) => setDraft({ ...draft, min: event.target.value === '' ? null : Number(event.target.value) })} /></label>
-                <label><span>{t('inputGrid.maximum')}</span><input type="number" value={draft.max ?? ''} onChange={(event) => setDraft({ ...draft, max: event.target.value === '' ? null : Number(event.target.value) })} /></label>
-                <label><span>{t('inputGrid.step')}</span><input type="number" min="0.000001" step="any" value={draft.step} onChange={(event) => setDraft({ ...draft, step: Number(event.target.value) || 1 })} /></label>
-                <label className="input-grid-collab__apply-all"><input type="checkbox" checked={draft.applyToAll} onChange={(event) => setDraft({ ...draft, applyToAll: event.target.checked })} />{t('inputGrid.applyToAll')}</label>
+                {draft.fields.filter((field) => field.id === activeFieldId).map((field) => (
+                  <section className="input-grid-collab__field-properties" key={field.id} role="tabpanel">
+                    <label><span>{t('inputGrid.fieldLabel', { number: draft.fields.findIndex((item) => item.id === field.id) + 1 })}</span><input type="text" value={field.label} onChange={(event) => updateField(field.id, { label: event.target.value })} /></label>
+                    <label><span>{t('inputGrid.minimum')}</span><input type="number" value={field.min ?? ''} onChange={(event) => updateField(field.id, { min: event.target.value === '' ? null : Number(event.target.value) })} /></label>
+                    <label><span>{t('inputGrid.maximum')}</span><input type="number" value={field.max ?? ''} onChange={(event) => updateField(field.id, { max: event.target.value === '' ? null : Number(event.target.value) })} /></label>
+                    <label><span>{t('inputGrid.step')}</span><input type="number" min="0.000001" step="any" value={field.step ?? 1} onChange={(event) => updateField(field.id, { step: Number(event.target.value) || 1 })} /></label>
+                    <label><span>{t('inputGrid.correctAnswer')}</span><select value={field.correctAnswerType || 'exact'} onChange={(event) => updateField(field.id, { correctAnswerType: event.target.value })}>
+                      <option value="exact">{t('inputGrid.answerExact')}</option>
+                      <option value="minimum">{t('inputGrid.answerMinimum')}</option>
+                      <option value="set">{t('inputGrid.answerSet')}</option>
+                      <option value="interval">{t('inputGrid.answerInterval')}</option>
+                    </select></label>
+                    {field.correctAnswerType === 'interval' ? <div className="input-grid-collab__interval">
+                      <label><span>{t('inputGrid.lowerBound')}</span><input type="text" value={field.correctAnswerMin ?? '-inf'} placeholder="-inf" onChange={(event) => updateField(field.id, { correctAnswerMin: event.target.value })} /></label>
+                      <label><span>{t('inputGrid.upperBound')}</span><input type="text" value={field.correctAnswerMax ?? 'inf'} placeholder="inf" onChange={(event) => updateField(field.id, { correctAnswerMax: event.target.value })} /></label>
+                      <label className="input-grid-collab__inclusive"><input type="checkbox" disabled={isUnbounded(field.correctAnswerMin, 'lower')} checked={!isUnbounded(field.correctAnswerMin, 'lower') && field.minInclusive !== false} onChange={(event) => updateField(field.id, { minInclusive: event.target.checked })} />{t('inputGrid.includeLowerBound')}</label>
+                      <label className="input-grid-collab__inclusive"><input type="checkbox" disabled={isUnbounded(field.correctAnswerMax, 'upper')} checked={!isUnbounded(field.correctAnswerMax, 'upper') && field.maxInclusive !== false} onChange={(event) => updateField(field.id, { maxInclusive: event.target.checked })} />{t('inputGrid.includeUpperBound')}</label>
+                      <p>{!isUnbounded(field.correctAnswerMin, 'lower') && field.minInclusive !== false ? '[' : '('}{field.correctAnswerMin || '-inf'}, {field.correctAnswerMax || 'inf'}{!isUnbounded(field.correctAnswerMax, 'upper') && field.maxInclusive !== false ? ']' : ')'}</p>
+                    </div> : field.correctAnswerType === 'set'
+                      ? <label className="input-grid-collab__answer-set"><span>{t('inputGrid.correctAnswers')}</span><input type="text" value={(field.correctAnswers || []).join(', ')} onChange={(event) => updateField(field.id, { correctAnswers: event.target.value.split(',').map((answer) => answer.trim()).filter(Boolean) })} /></label>
+                      : <label><span>{field.correctAnswerType === 'minimum' ? '≥' : '='}</span><input type="number" value={field.correctAnswer ?? ''} onChange={(event) => updateField(field.id, { correctAnswer: event.target.value === '' ? '' : Number(event.target.value) })} /></label>}
+                  </section>
+                ))}
+                <label className="input-grid-collab__apply-all">
+                  <input type="checkbox" checked={draft.applyToAll} onChange={(event) => setDraft({ ...draft, applyToAll: event.target.checked })} />
+                  <span className="input-grid-collab__switch" aria-hidden="true" />
+                  <span>{t('inputGrid.applyToAll')}</span>
+                </label>
+                {draft.applyToAll ? <fieldset className="input-grid-collab__apply-properties">
+                  <legend>{t('inputGrid.applyPropertiesLegend')}</legend>
+                  {['min', 'max', 'step', 'correctAnswerType', 'correctAnswer', 'correctAnswers', 'correctAnswerMin', 'correctAnswerMax', 'minInclusive', 'maxInclusive'].map((property) => (
+                    <label key={property}><input type="checkbox" checked={(draft.applyProperties || []).includes(property)} onChange={(event) => setDraft({ ...draft, applyProperties: event.target.checked ? [...(draft.applyProperties || []), property] : (draft.applyProperties || []).filter((item) => item !== property) })} />{t(`inputGrid.apply.${property}`)}</label>
+                  ))}
+                </fieldset> : null}
                 <button type="submit">{t('optionsGrid.apply')}</button>
               </form>
             </SettingsAccordion>

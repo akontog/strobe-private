@@ -113,8 +113,9 @@ const resolveSeparableBySelectedInputs = (separable, selectedInputs) => {
 
 
 const App = ({ role = 'teacher' }) => {
-  const { t, i18n } = useTranslation('neural');
+  const { t: tInterface, i18n } = useTranslation('interface');
   const { t: tNav } = useTranslation('navigation');
+  const t = (key, options) => tInterface(`workshops.neural.${key}`, options);
   // Σταθερές αναφορές (refs) για την αποθήκευση αντικειμένων που 
   // δεν προκαλούν επανασχεδιασμό όταν αλλάζουν.
 
@@ -957,4 +958,3 @@ const [studentColor, setStudentColor] = useState(() => {
 };
 
 export default App;
-

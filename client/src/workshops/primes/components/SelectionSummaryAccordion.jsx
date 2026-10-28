@@ -10,7 +10,8 @@ const SelectionSummaryAccordion = ({
   targetNumbers,
   remainingTargetNumbers
 }) => {
-  const { t } = useTranslation('primes');
+  const { t: tInterface } = useTranslation('interface');
+  const t = (key, options) => tInterface(`workshops.primes.${key}`, options);
   const correctEntries = students.flatMap((student) =>
     student.selectedCorrect
       .filter((number) => claimedNumbers.has(number))

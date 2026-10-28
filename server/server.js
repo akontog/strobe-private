@@ -385,21 +385,28 @@ app.get('/api/tools', requireRole(['teacher']), (req, res) => {
       id: 'geogebra-collab',
       title: 'GeoGebra Collaborative Component',
       description: 'Shared GeoGebra board with server-authoritative permissions and realtime sync.',
-      path: '/tools/geogebra-collab/',
+      path: '/tools/geogebra/',
       available: true
     },
     {
       id: 'options-grid-collab',
       title: 'Options Grid',
       description: 'Collaborative choice grid with teacher-controlled options and layout.',
-      path: '/tools/options-grid-collab/',
+      path: '/tools/options-grid/',
       available: true
     },
     {
       id: 'vision-collab',
       title: 'Vision Tracking Collaboration',
       description: 'WebRTC camera capture streamed to the Node vision bridge and Python tracking with point overlays.',
-      path: '/tools/vision-collab/',
+      path: '/tools/vision/',
+      available: true
+    },
+    {
+      id: 'workshop-json-validator',
+      title: 'Workshop JSON Validator',
+      description: 'Validate workshop JSON files against the shared JSON language.',
+      path: '/tools/workshop-json-validator/',
       available: true
     },
     {

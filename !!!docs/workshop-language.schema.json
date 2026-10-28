@@ -1,0 +1,230 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://strobe.local/schemas/workshop-language.schema.json",
+  "title": "Strobe Learning Content Language v1.0",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "documentType",
+    "resources"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "documentType": {
+      "type": "string",
+      "enum": [
+        "activity",
+        "sequence",
+        "workshop"
+      ]
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/resource"
+      }
+    },
+    "activity": {
+      "$ref": "#/$defs/activity"
+    },
+    "sequence": {
+      "$ref": "#/$defs/sequenceMeta"
+    },
+    "activities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/activity"
+      }
+    },
+    "workshop": {
+      "$ref": "#/$defs/workshopMeta"
+    },
+    "sequences": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sequence"
+      }
+    }
+  },
+  "$defs": {
+    "resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "config"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "config": {
+          "type": "object"
+        }
+      }
+    },
+    "activity": {
+      "type": "object",
+      "required": [
+        "id",
+        "code",
+        "title",
+        "objective",
+        "mode",
+        "usesResources"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "objective": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "usesResources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "items": {
+          "type": "array"
+        }
+      },
+      "additionalProperties": true
+    },
+    "workshopMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "sequenceMeta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "sequence": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/sequenceMeta"
+        },
+        {
+          "type": "object",
+          "required": [
+            "activityIds"
+          ],
+          "properties": {
+            "activityIds": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "documentType": {
+            "const": "activity"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "activity"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "documentType": {
+            "const": "sequence"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "sequence",
+          "activities"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "documentType": {
+            "const": "workshop"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "workshop"
+        ]
+      }
+    }
+  ]
+}

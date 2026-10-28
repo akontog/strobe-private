@@ -5,6 +5,15 @@ const { appendRecord, getActiveSession, getActiveSessionForApp } = require('./se
 const ROOM_EVENT = 'geogebra:join';
 const ELEVATED_ROLES = new Set(['teacher', 'admin']);
 
+function normalizeInputGridBound(value, side) {
+  const text = String(value ?? '').trim().toLowerCase().replace(/∞/g, 'inf').replace(/−/g, '-');
+  if (side === 'lower' && ['-inf', '-infinity'].includes(text)) return '-inf';
+  if (side === 'upper' && ['inf', '+inf', 'infinity', '+infinity'].includes(text)) return 'inf';
+  const number = Number(text);
+  if (text && Number.isFinite(number)) return String(number);
+  return side === 'lower' ? '-inf' : 'inf';
+}
+
 function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraLessonStore }) {
   const rooms = new Map();
   const socketRoom = new Map();
@@ -31,11 +40,9 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       settings: {
         rows: 2,
         columns: 2,
-        min: null,
-        max: null,
-        step: 1,
-        applyToAll: true,
-        fields: [1, 2, 3, 4].map((index) => ({ id: `cell-${index}`, label: `Input ${index}` }))
+        applyToAll: false,
+        applyProperties: ['min', 'max', 'step'],
+        fields: [1, 2, 3, 4].map((index) => ({ id: `cell-${index}`, label: `Input ${index}`, min: null, max: null, step: 1, correctAnswerType: 'exact', correctAnswer: '', correctAnswers: [], correctAnswerMin: '-inf', correctAnswerMax: 'inf', minInclusive: true, maxInclusive: true }))
       },
       answers: {},
       teacherSockets: new Set()
@@ -75,21 +82,32 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       const settings = data.settings || {};
       const rows = Math.max(1, Math.min(20, Number(settings.rows) || 1));
       const columns = Math.max(1, Math.min(20, Number(settings.columns) || 1));
-      const fields = Array.from({ length: rows * columns }, (_, index) => ({
-        id: `cell-${index + 1}`,
-        label: sanitizeString(settings.fields?.[index]?.label, 100) || `Input ${index + 1}`
-      }));
-      const min = settings.min === '' || settings.min === null ? null : Number(settings.min);
-      const max = settings.max === '' || settings.max === null ? null : Number(settings.max);
-      const step = Number(settings.step);
+      const fields = Array.from({ length: rows * columns }, (_, index) => {
+        const field = settings.fields?.[index] || {};
+        const min = field.min === '' || field.min === null || field.min === undefined ? null : Number(field.min);
+        const max = field.max === '' || field.max === null || field.max === undefined ? null : Number(field.max);
+        const correctAnswerType = ['exact', 'minimum', 'set', 'interval'].includes(field.correctAnswerType) ? field.correctAnswerType : 'exact';
+        return {
+          id: `cell-${index + 1}`,
+          label: sanitizeString(field.label, 100) || `Input ${index + 1}`,
+          min: Number.isFinite(min) ? min : null,
+          max: Number.isFinite(max) ? max : null,
+          step: Number.isFinite(Number(field.step)) && Number(field.step) > 0 ? Number(field.step) : 1,
+          correctAnswerType,
+          correctAnswer: field.correctAnswer === '' || field.correctAnswer === null || field.correctAnswer === undefined ? '' : sanitizeString(field.correctAnswer, 200),
+          correctAnswers: Array.isArray(field.correctAnswers) ? field.correctAnswers.slice(0, 100).map((answer) => sanitizeString(answer, 200)).filter(Boolean) : [],
+          correctAnswerMin: normalizeInputGridBound(field.correctAnswerMin, 'lower'),
+          correctAnswerMax: normalizeInputGridBound(field.correctAnswerMax, 'upper'),
+          minInclusive: field.minInclusive !== false,
+          maxInclusive: field.maxInclusive !== false
+        };
+      });
       room.settings = {
         rows,
         columns,
         fields,
-        min: Number.isFinite(min) ? min : null,
-        max: Number.isFinite(max) ? max : null,
-        step: Number.isFinite(step) && step > 0 ? step : 1,
-        applyToAll: settings.applyToAll !== false
+        applyToAll: settings.applyToAll === true,
+        applyProperties: Array.isArray(settings.applyProperties) ? settings.applyProperties.filter((property) => ['min', 'max', 'step', 'correctAnswerType', 'correctAnswer', 'correctAnswers', 'correctAnswerMin', 'correctAnswerMax', 'minInclusive', 'maxInclusive'].includes(property)) : []
       };
       room.answers = {};
       sendInputGridState(room, true);

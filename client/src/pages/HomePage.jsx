@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 
 export default function HomePage() {
   const { t: tMenu } = useTranslation('menu');
-  const { t: tNeural } = useTranslation('neural');
+  const { t: tInterface } = useTranslation('interface');
+  const tNeural = (key, options) => tInterface(`workshops.neural.${key}`, options);
   const entryCards = [
     {
       id: 'teacher',

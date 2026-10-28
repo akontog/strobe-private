@@ -9,8 +9,12 @@ import {
 import activityData from './data/activities.json';
 
 export default function App({ role = 'student' }) {
-  const { t } = useTranslation('probabilities');
   const { t: tNav } = useTranslation('navigation');
+  const labels = activityData.labels || {};
+  const t = (key, options = {}) => {
+    const template = labels[key] || key;
+    return String(template).replace(/\{\{(\w+)\}\}/g, (_, name) => (options?.[name] ?? ''));
+  };
   const [placements, setPlacements] = useState({});
   const [selectedActivityId, setSelectedActivityId] = useState(activityData.activities[0].id);
   const [participants, setParticipants] = useState([]);
@@ -20,10 +24,10 @@ export default function App({ role = 'student' }) {
   const activity = activityData.activities.find((entry) => entry.id === selectedActivityId) || activityData.activities[0];
   const diagram = {
     ...activity.diagram,
-    sets: activity.diagram.sets.map((set) => ({ ...set, title: t(set.titleKey) })),
-    regions: activity.diagram.regions.map((region) => ({ ...region, title: t(region.titleKey) }))
+    sets: activity.diagram.sets,
+    regions: activity.diagram.regions
   };
-  const activityOptions = activityData.activities.map((entry) => ({ value: entry.id, label: `${entry.code} ${t(entry.titleKey)}` }));
+  const activityOptions = activityData.activities.map((entry) => ({ value: entry.id, label: `${entry.code} ${entry.title}` }));
   const currentScore = useMemo(() => activity.items.reduce((score, item) => {
     const placement = placements[item.id];
     const region = typeof placement === 'object' ? placement?.region : placement;
@@ -88,20 +92,20 @@ export default function App({ role = 'student' }) {
   return (
     <>
       <HeroTitle
-        title={`${tNav('items.probabilities')} - ${activity.code} ${t(activity.titleKey)}`}
-        subtitle={t(activity.objectiveKey)}
+        title={`${tNav('items.probabilities')} - ${activity.code} ${activity.title}`}
+        subtitle={activity.objective}
       />
       <section className="common-zone lab-zone">
         <FullScreenButton />
         <SharedCommonZoneLayout isGroupingMode centerPanel={(
-          <div className="lab-card lab-card--panel probabilities-workspace" aria-label={t(activity.objectiveKey)}>
+          <div className="lab-card lab-card--panel probabilities-workspace" aria-label={activity.objective}>
             <VennBoard
               activity={`probabilities:${activity.id}`}
               items={activity.items}
               diagram={diagram}
               placements={placements}
               onChange={setPlacements}
-              bankLabel={t(activity.bankLabelKey)}
+              bankLabel={activity.bankLabel}
             />
           </div>
         )} />
@@ -130,7 +134,7 @@ export default function App({ role = 'student' }) {
           participants={participants}
           emptyMessage={t('noStudents')}
           columns={activity.diagram.regions.map((region) => (
-            { key: region.id, label: t(region.titleKey), render: (participant) => renderNumbersForRegion(participant, region.id) }
+            { key: region.id, label: region.title, render: (participant) => renderNumbersForRegion(participant, region.id) }
           )).concat([
             { key: 'score', label: t('score'), render: (participant) => `${getStudentScore(participant)} / ${activity.items.length * activity.scoreCorrect}` }
           ])}

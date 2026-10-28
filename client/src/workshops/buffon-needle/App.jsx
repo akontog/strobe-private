@@ -10,8 +10,9 @@ import './App.css';
 function App({ role = 'teacher' }) {
   const rootRef = useRef(null);
   const settingsHostRef = useRef(null);
-  const { t: tBuffon } = useTranslation('buffon');
+  const { t: tInterface } = useTranslation('interface');
   const { t: tNav } = useTranslation('navigation');
+  const tBuffon = (key, options) => tInterface(`workshops.buffon.${key}`, options);
   const [standings, setStandings] = React.useState([]);
 
   useEffect(() => {
@@ -160,8 +161,7 @@ function applyTemplateTranslations(rootElement, role, t, initialize = false, set
 }
 
 function translateBuffon(key, options = {}) {
-  return window.StrobeI18n.t(key, { ns: 'buffon', ...options });
+  return window.StrobeI18n.t(`workshops.buffon.${key}`, { ns: 'interface', ...options });
 }
 
 export default App;
-

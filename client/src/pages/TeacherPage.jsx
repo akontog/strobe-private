@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { getWorkshopPath } from '../shared/utils/workshopPaths';
 
+const WORKSHOP_PRIORITY = ['polynomial-lab', 'equations-lab', 'linear-systems-lab', 'probabilities-lab'];
+
 export default function TeacherPage() {
   const { t } = useTranslation('interface');
   const [apps, setApps] = useState([]);
@@ -58,6 +60,15 @@ export default function TeacherPage() {
     'identities-lab': '🧮'
   };
 
+  const sortedApps = [...apps].sort((left, right) => {
+    const leftPriority = WORKSHOP_PRIORITY.indexOf(left.slug);
+    const rightPriority = WORKSHOP_PRIORITY.indexOf(right.slug);
+    const leftRank = leftPriority === -1 ? Number.MAX_SAFE_INTEGER : leftPriority;
+    const rightRank = rightPriority === -1 ? Number.MAX_SAFE_INTEGER : rightPriority;
+    if (leftRank !== rightRank) return leftRank - rightRank;
+    return String(left.title || left.slug).localeCompare(String(right.title || right.slug), 'el');
+  });
+
   return (
     <section className="dashboard-page">
       <div className="dashboard-shell">
@@ -78,7 +89,7 @@ export default function TeacherPage() {
 
         {!loading && !error ? (
           <div className="postit-grid app-grid">
-            {apps.map((app) => (
+            {sortedApps.map((app) => (
               <article key={app.slug} className={`strobe-note strobe-note--${toneBySlug[app.slug] || 'indigo'}`}>
                 <div className="app-head">
                   <div>

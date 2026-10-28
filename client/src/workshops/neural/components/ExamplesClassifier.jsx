@@ -48,7 +48,8 @@ export const ExamplesClassifier = ({
   features,
   weights // { w1, w2 } -- τα τρέχοντα βάρη που έθεσε ο μαθητής/δάσκαλος
 }) => {
-  const { t } = useTranslation('neural');
+  const { t: tInterface } = useTranslation('interface');
+  const t = (key, options) => tInterface(`workshops.neural.${key}`, options);
   const activeInputs = {
     i1: selectedInputs?.i1 !== false,
     i2: Boolean(selectedInputs?.i2)

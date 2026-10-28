@@ -5,36 +5,16 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import commonEl from '../../locales/el/common.json';
 import menuEl from '../../locales/el/menu.json';
 import geometryEl from '../../locales/el/geometry.json';
-import buffonEl from '../../locales/el/buffon.json';
-import neuralEl from '../../locales/el/neural.json';
 import interfaceEl from '../../locales/el/interface.json';
-import primesEl from '../../locales/el/primes.json';
 import navigationEl from '../../locales/el/navigation.json';
-import scoresEl from '../../locales/el/scores.json';
-import polynomialEl from '../../locales/el/polynomial.json';
-import identitiesEl from '../../locales/el/identities.json';
-import equationsEl from '../../locales/el/equations.json';
-import factorizationEl from '../../locales/el/factorization.json';
 import instructionsEl from '../../locales/el/instructions.json';
-import linearSystemsEl from '../../locales/el/linearSystems.json';
-import probabilitiesEl from '../../locales/el/probabilities.json';
 
 import commonEn from '../../locales/en/common.json';
 import menuEn from '../../locales/en/menu.json';
 import geometryEn from '../../locales/en/geometry.json';
-import buffonEn from '../../locales/en/buffon.json';
-import neuralEn from '../../locales/en/neural.json';
 import interfaceEn from '../../locales/en/interface.json';
-import primesEn from '../../locales/en/primes.json';
 import navigationEn from '../../locales/en/navigation.json';
-import scoresEn from '../../locales/en/scores.json';
-import polynomialEn from '../../locales/en/polynomial.json';
-import identitiesEn from '../../locales/en/identities.json';
-import equationsEn from '../../locales/en/equations.json';
-import factorizationEn from '../../locales/en/factorization.json';
 import instructionsEn from '../../locales/en/instructions.json';
-import linearSystemsEn from '../../locales/en/linearSystems.json';
-import probabilitiesEn from '../../locales/en/probabilities.json';
 
 export const preferredLanguageStorageKey = 'preferredLanguage';
 
@@ -43,37 +23,17 @@ const resources = {
     common: commonEl,
     menu: menuEl,
     geometry: geometryEl,
-    buffon: buffonEl,
-    neural: neuralEl,
     interface: interfaceEl,
-    primes: primesEl,
     navigation: navigationEl,
-    scores: scoresEl,
-    polynomial: polynomialEl,
-    identities: identitiesEl,
-    equations: equationsEl,
-    factorization: factorizationEl,
-    instructions: instructionsEl,
-    linearSystems: linearSystemsEl,
-    probabilities: probabilitiesEl
+    instructions: instructionsEl
   },
   en: {
     common: commonEn,
     menu: menuEn,
     geometry: geometryEn,
-    buffon: buffonEn,
-    neural: neuralEn,
     interface: interfaceEn,
-    primes: primesEn,
     navigation: navigationEn,
-    scores: scoresEn,
-    polynomial: polynomialEn,
-    identities: identitiesEn,
-    equations: equationsEn,
-    factorization: factorizationEn,
-    instructions: instructionsEn,
-    linearSystems: linearSystemsEn,
-    probabilities: probabilitiesEn
+    instructions: instructionsEn
   }
 };
 
@@ -86,7 +46,7 @@ if (!i18n.isInitialized) {
       fallbackLng: 'el',
       supportedLngs: ['el', 'en'],
       defaultNS: 'common',
-      ns: ['common', 'menu', 'geometry', 'buffon', 'neural', 'interface', 'primes', 'navigation', 'scores', 'polynomial', 'identities', 'equations', 'factorization', 'instructions', 'linearSystems', 'probabilities'],
+      ns: ['common', 'menu', 'geometry', 'interface', 'navigation', 'instructions'],
       interpolation: {
         escapeValue: false
       },

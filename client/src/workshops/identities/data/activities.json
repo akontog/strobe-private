@@ -1,14 +1,50 @@
 {
+  "labels": {
+    "identityLabel": "Ταυτότητα",
+    "identityVariantTitle": "Επιλογή ταυτότητας",
+    "chooseIdentityVariant": "Επιλέξτε ταυτότητα",
+    "coefficientOfTerm": "Συντελεστής όρου",
+    "exponentOf": "Εκθέτης του",
+    "inTerm": "στον όρο",
+    "identityAriaLabel": "Αλγεβρική ταυτότητα",
+    "term1": "1ος όρος",
+    "term2": "2ος όρος",
+    "term3": "3ος όρος",
+    "termCoefficient": "Συντελεστής όρου {{term}}",
+    "termDegreeA": "Εκθέτης του a (όρος {{term}})",
+    "termDegreeB": "Εκθέτης του b (όρος {{term}})",
+    "enterIdentityTerms": "Συμπλήρωσε όλους τους συντελεστές και εκθέτες για να εμφανιστεί η ανάπτυξη.",
+    "answer": "Απάντηση",
+    "check": "Έλεγχος",
+    "correctFeedback": "Σωστά! Η ταυτότητα είναι πλήρης.",
+    "incorrectFeedback": "Έλεγξε ξανά τους όρους της ανάπτυξης.",
+    "completeRightSide": "Συμπλήρωσε το δεξί μέλος της ταυτότητας.",
+    "studentMode": "Λειτουργία μαθητή",
+    "teacherMode": "Λειτουργία καθηγητή",
+    "activities": "Δραστηριότητα",
+    "chooseActivity": "Επιλογή δραστηριότητας",
+    "matchingInstruction": "Σύρε κάθε ανάπτυξη στην ταυτότητα που επαληθεύει.",
+    "studentTableTitle": "Πίνακας μαθητών",
+    "noStudents": "Δεν υπάρχουν ακόμη μαθητές."
+  },
   "activities": [
     {
       "id": "1",
       "code": "1.",
-      "titleKey": "activity1Title",
-      "objectiveKey": "activity1Objective",
+      "title": "Τετράγωνο αθροίσματος και διαφοράς",
+      "objective": "Συμπλήρωσε τους συντελεστές και τους εκθέτες για την ανάπτυξη του τετραγώνου αθροίσματος ή διαφοράς.",
       "resultMode": "identityPolynomial",
       "widgets": [
-        { "type": "identity-expression", "region": "left", "card": true },
-        { "type": "identity-polynomial", "region": "center", "card": true }
+        {
+          "type": "identity-expression",
+          "region": "left",
+          "card": true
+        },
+        {
+          "type": "identity-polynomial",
+          "region": "center",
+          "card": true
+        }
       ],
       "scoreCorrect": 1,
       "scoreIncorrect": -0.5,
@@ -17,22 +53,106 @@
           "id": "sum-square",
           "label": "(α+β)^2",
           "expression": "(\\alpha+\\beta)^2",
-          "objectiveKey": "activity1Objective",
+          "objective": "Συμπλήρωσε τους συντελεστές και τους εκθέτες για την ανάπτυξη του τετραγώνου αθροίσματος ή διαφοράς.",
           "terms": [
-            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }], "correctAnswers": { "coefficient": 1, "degreeA": 2 } },
-            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }, { "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": 2, "degreeA": 1, "degreeB": 1 } },
-            { "variables": [{ "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": 1, "degreeB": 2 } }
+            {
+              "variables": [
+                {
+                  "key": "a",
+                  "symbol": "\\alpha",
+                  "label": "α"
+                }
+              ],
+              "correctAnswers": {
+                "coefficient": 1,
+                "degreeA": 2
+              }
+            },
+            {
+              "variables": [
+                {
+                  "key": "a",
+                  "symbol": "\\alpha",
+                  "label": "α"
+                },
+                {
+                  "key": "b",
+                  "symbol": "\\beta",
+                  "label": "β"
+                }
+              ],
+              "correctAnswers": {
+                "coefficient": 2,
+                "degreeA": 1,
+                "degreeB": 1
+              }
+            },
+            {
+              "variables": [
+                {
+                  "key": "b",
+                  "symbol": "\\beta",
+                  "label": "β"
+                }
+              ],
+              "correctAnswers": {
+                "coefficient": 1,
+                "degreeB": 2
+              }
+            }
           ]
         },
         {
           "id": "difference-square",
           "label": "(α-β)^2",
           "expression": "(\\alpha-\\beta)^2",
-          "objectiveKey": "activity2Objective",
+          "objective": "Συμπλήρωσε τους συντελεστές και τους εκθέτες για την ανάπτυξη του κύβου αθροίσματος ή διαφοράς.",
           "terms": [
-            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }], "correctAnswers": { "coefficient": 1, "degreeA": 2 } },
-            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }, { "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": -2, "degreeA": 1, "degreeB": 1 } },
-            { "variables": [{ "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": 1, "degreeB": 2 } }
+            {
+              "variables": [
+                {
+                  "key": "a",
+                  "symbol": "\\alpha",
+                  "label": "α"
+                }
+              ],
+              "correctAnswers": {
+                "coefficient": 1,
+                "degreeA": 2
+              }
+            },
+            {
+              "variables": [
+                {
+                  "key": "a",
+                  "symbol": "\\alpha",
+                  "label": "α"
+                },
+                {
+                  "key": "b",
+                  "symbol": "\\beta",
+                  "label": "β"
+                }
+              ],
+              "correctAnswers": {
+                "coefficient": -2,
+                "degreeA": 1,
+                "degreeB": 1
+              }
+            },
+            {
+              "variables": [
+                {
+                  "key": "b",
+                  "symbol": "\\beta",
+                  "label": "β"
+                }
+              ],
+              "correctAnswers": {
+                "coefficient": 1,
+                "degreeB": 2
+              }
+            }
           ]
         }
       ]
@@ -40,12 +160,20 @@
     {
       "id": "2",
       "code": "2.",
-      "titleKey": "activity2Title",
-      "objectiveKey": "activity2Objective",
+      "title": "Κύβος αθροίσματος και διαφοράς",
+      "objective": "Συμπλήρωσε τους συντελεστές και τους εκθέτες για την ανάπτυξη του κύβου αθροίσματος ή διαφοράς.",
       "resultMode": "identityPolynomial",
       "widgets": [
-        { "type": "identity-expression", "region": "left", "card": true },
-        { "type": "identity-polynomial", "region": "center", "card": true }
+        {
+          "type": "identity-expression",
+          "region": "left",
+          "card": true
+        },
+        {
+          "type": "identity-polynomial",
+          "region": "center",
+          "card": true
+        }
       ],
       "scoreCorrect": 1,
       "scoreIncorrect": -0.5,
@@ -54,24 +182,144 @@
           "id": "sum-cube",
           "label": "(α+β)^3",
           "expression": "(\\alpha+\\beta)^3",
-          "objectiveKey": "activity2Objective",
+          "objective": "Συμπλήρωσε τους συντελεστές και τους εκθέτες για την ανάπτυξη του κύβου αθροίσματος ή διαφοράς.",
           "terms": [
-            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }], "correctAnswers": { "coefficient": 1, "degreeA": 3 } },
-            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }, { "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": 3, "degreeA": 2, "degreeB": 1 } },
-            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }, { "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": 3, "degreeA": 1, "degreeB": 2 } },
-            { "variables": [{ "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": 1, "degreeB": 3 } }
+            {
+              "variables": [
+                {
+                  "key": "a",
+                  "symbol": "\\alpha",
+                  "label": "α"
+                }
+              ],
+              "correctAnswers": {
+                "coefficient": 1,
+                "degreeA": 3
+              }
+            },
+            {
+              "variables": [
+                {
+                  "key": "a",
+                  "symbol": "\\alpha",
+                  "label": "α"
+                },
+                {
+                  "key": "b",
+                  "symbol": "\\beta",
+                  "label": "β"
+                }
+              ],
+              "correctAnswers": {
+                "coefficient": 3,
+                "degreeA": 2,
+                "degreeB": 1
+              }
+            },
+            {
+              "variables": [
+                {
+                  "key": "a",
+                  "symbol": "\\alpha",
+                  "label": "α"
+                },
+                {
+                  "key": "b",
+                  "symbol": "\\beta",
+                  "label": "β"
+                }
+              ],
+              "correctAnswers": {
+                "coefficient": 3,
+                "degreeA": 1,
+                "degreeB": 2
+              }
+            },
+            {
+              "variables": [
+                {
+                  "key": "b",
+                  "symbol": "\\beta",
+                  "label": "β"
+                }
+              ],
+              "correctAnswers": {
+                "coefficient": 1,
+                "degreeB": 3
+              }
+            }
           ]
         },
         {
           "id": "difference-cube",
           "label": "(α-β)^3",
           "expression": "(\\alpha-\\beta)^3",
-          "objectiveKey": "activity2Objective",
+          "objective": "Συμπλήρωσε τους συντελεστές και τους εκθέτες για την ανάπτυξη του κύβου αθροίσματος ή διαφοράς.",
           "terms": [
-            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }], "correctAnswers": { "coefficient": 1, "degreeA": 3 } },
-            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }, { "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": -3, "degreeA": 2, "degreeB": 1 } },
-            { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }, { "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": 3, "degreeA": 1, "degreeB": 2 } },
-            { "variables": [{ "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": -1, "degreeB": 3 } }
+            {
+              "variables": [
+                {
+                  "key": "a",
+                  "symbol": "\\alpha",
+                  "label": "α"
+                }
+              ],
+              "correctAnswers": {
+                "coefficient": 1,
+                "degreeA": 3
+              }
+            },
+            {
+              "variables": [
+                {
+                  "key": "a",
+                  "symbol": "\\alpha",
+                  "label": "α"
+                },
+                {
+                  "key": "b",
+                  "symbol": "\\beta",
+                  "label": "β"
+                }
+              ],
+              "correctAnswers": {
+                "coefficient": -3,
+                "degreeA": 2,
+                "degreeB": 1
+              }
+            },
+            {
+              "variables": [
+                {
+                  "key": "a",
+                  "symbol": "\\alpha",
+                  "label": "α"
+                },
+                {
+                  "key": "b",
+                  "symbol": "\\beta",
+                  "label": "β"
+                }
+              ],
+              "correctAnswers": {
+                "coefficient": 3,
+                "degreeA": 1,
+                "degreeB": 2
+              }
+            },
+            {
+              "variables": [
+                {
+                  "key": "b",
+                  "symbol": "\\beta",
+                  "label": "β"
+                }
+              ],
+              "correctAnswers": {
+                "coefficient": -1,
+                "degreeB": 3
+              }
+            }
           ]
         }
       ]
@@ -79,51 +327,113 @@
     {
       "id": "3",
       "code": "3.",
-      "titleKey": "activity3Title",
-      "objectiveKey": "activity3Objective",
+      "title": "Διαφορά τετραγώνων",
+      "objective": "Συμπλήρωσε τα μέλη της ταυτότητας (a+b)(a-b) = a² - b².",
       "expression": "(\\alpha+\\beta)(\\alpha-\\beta)",
       "resultMode": "identityPolynomial",
       "widgets": [
-        { "type": "identity-expression", "region": "left", "card": true },
-        { "type": "identity-polynomial", "region": "center", "card": true }
+        {
+          "type": "identity-expression",
+          "region": "left",
+          "card": true
+        },
+        {
+          "type": "identity-polynomial",
+          "region": "center",
+          "card": true
+        }
       ],
       "scoreCorrect": 1,
       "scoreIncorrect": -0.5,
       "terms": [
-        { "variables": [{ "key": "a", "symbol": "\\alpha", "label": "α" }], "correctAnswers": { "coefficient": 1, "degreeA": 2 } },
-        { "variables": [{ "key": "b", "symbol": "\\beta", "label": "β" }], "correctAnswers": { "coefficient": -1, "degreeB": 2 } }
+        {
+          "variables": [
+            {
+              "key": "a",
+              "symbol": "\\alpha",
+              "label": "α"
+            }
+          ],
+          "correctAnswers": {
+            "coefficient": 1,
+            "degreeA": 2
+          }
+        },
+        {
+          "variables": [
+            {
+              "key": "b",
+              "symbol": "\\beta",
+              "label": "β"
+            }
+          ],
+          "correctAnswers": {
+            "coefficient": -1,
+            "degreeB": 2
+          }
+        }
       ]
     },
     {
       "id": "4",
       "code": "4.",
-      "titleKey": "activity4Title",
-      "objectiveKey": "activity4Objective",
+      "title": "Αντιστοίχιση ταυτοτήτων",
+      "objective": "Αντιστοίχισε κάθε ταυτότητα με τη σωστή ανάπτυξή της.",
       "resultMode": "identityMatching",
       "widgets": [
         {
           "type": "grouping-drag-drop",
           "region": "center",
           "card": false,
-          "instructionKey": "matchingInstruction",
-          "bankLabelKey": "matchingBankLabel"
+          "instruction": "Σύρε κάθε ανάπτυξη στην ταυτότητα που επαληθεύει.",
+          "bankLabel": "Αναπτύξεις προς αντιστοίχιση"
         }
       ],
       "scoreCorrect": 1,
       "scoreIncorrect": -0.5,
       "items": [
-        { "id": "sum-square-expansion", "formula": "\\alpha^2+2\\alpha\\beta+\\beta^2" },
-        { "id": "difference-square-expansion", "formula": "\\alpha^2-2\\alpha\\beta+\\beta^2" },
-        { "id": "sum-cube-expansion", "formula": "\\alpha^3+3\\alpha^2\\beta+3\\alpha\\beta^2+\\beta^3" },
-        { "id": "difference-cube-expansion", "formula": "\\alpha^3-3\\alpha^2\\beta+3\\alpha\\beta^2-\\beta^3" },
-        { "id": "squares-difference-expansion", "formula": "\\alpha^2-\\beta^2" }
+        {
+          "id": "sum-square-expansion",
+          "formula": "\\alpha^2+2\\alpha\\beta+\\beta^2"
+        },
+        {
+          "id": "difference-square-expansion",
+          "formula": "\\alpha^2-2\\alpha\\beta+\\beta^2"
+        },
+        {
+          "id": "sum-cube-expansion",
+          "formula": "\\alpha^3+3\\alpha^2\\beta+3\\alpha\\beta^2+\\beta^3"
+        },
+        {
+          "id": "difference-cube-expansion",
+          "formula": "\\alpha^3-3\\alpha^2\\beta+3\\alpha\\beta^2-\\beta^3"
+        },
+        {
+          "id": "squares-difference-expansion",
+          "formula": "\\alpha^2-\\beta^2"
+        }
       ],
       "groups": [
-        { "id": "sum-square", "formula": "(\\alpha+\\beta)^2" },
-        { "id": "difference-square", "formula": "(\\alpha-\\beta)^2" },
-        { "id": "sum-cube", "formula": "(\\alpha+\\beta)^3" },
-        { "id": "difference-cube", "formula": "(\\alpha-\\beta)^3" },
-        { "id": "squares-difference", "formula": "(\\alpha+\\beta)(\\alpha-\\beta)" }
+        {
+          "id": "sum-square",
+          "formula": "(\\alpha+\\beta)^2"
+        },
+        {
+          "id": "difference-square",
+          "formula": "(\\alpha-\\beta)^2"
+        },
+        {
+          "id": "sum-cube",
+          "formula": "(\\alpha+\\beta)^3"
+        },
+        {
+          "id": "difference-cube",
+          "formula": "(\\alpha-\\beta)^3"
+        },
+        {
+          "id": "squares-difference",
+          "formula": "(\\alpha+\\beta)(\\alpha-\\beta)"
+        }
       ],
       "correctAnswers": {
         "sum-square-expansion": "sum-square",
@@ -136,13 +446,22 @@
     {
       "id": "5",
       "code": "5.",
-      "titleKey": "activity5Title",
-      "objectiveKey": "activity5Objective",
+      "title": "Μοντέλο γινομένου με πλακίδια",
+      "objective": "Τοποθέτησε οριζόντια τα πλακίδια του x+1 και κατακόρυφα τα πλακίδια του x+3 στο T-chart. Οι παράγοντες και το γινόμενο ενημερώνονται από τα πλακίδια που τοποθετείς.",
       "expression": "(x+1)(x+3)",
       "resultMode": "algebraTiles",
       "widgets": [
-        { "type": "identity-expression", "region": "left", "card": true },
-        { "type": "algebra-tiles", "region": "center", "card": false, "mode": "area" }
+        {
+          "type": "identity-expression",
+          "region": "left",
+          "card": true
+        },
+        {
+          "type": "algebra-tiles",
+          "region": "center",
+          "card": false,
+          "mode": "area"
+        }
       ],
       "scoreCorrect": 1,
       "scoreIncorrect": -0.5
@@ -150,12 +469,25 @@
     {
       "id": "6",
       "code": "6.",
-      "titleKey": "activity6Title",
-      "objectiveKey": "activity6Objective",
+      "title": "Κατασκευή ταυτοτήτων με μοντέλο εμβαδού",
+      "objective": "Ο εκπαιδευτικός επιλέγει μία ταυτότητα. Τοποθέτησε οριζόντια και κατακόρυφα τα πλακίδια των παραγόντων α και β και κατασκεύασε το γινόμενο στο μοντέλο εμβαδού.",
       "resultMode": "algebraTiles",
       "widgets": [
-        { "type": "identity-expression", "region": "left", "card": true },
-        { "type": "algebra-tiles", "region": "center", "card": false, "mode": "area", "variables": ["α", "β"] }
+        {
+          "type": "identity-expression",
+          "region": "left",
+          "card": true
+        },
+        {
+          "type": "algebra-tiles",
+          "region": "center",
+          "card": false,
+          "mode": "area",
+          "variables": [
+            "α",
+            "β"
+          ]
+        }
       ],
       "scoreCorrect": 1,
       "scoreIncorrect": -0.5,
@@ -164,19 +496,19 @@
           "id": "sum-square-area",
           "label": "(α+β)^2",
           "expression": "(\\alpha+\\beta)^2",
-          "objectiveKey": "activity6Objective"
+          "objective": "Ο εκπαιδευτικός επιλέγει μία ταυτότητα. Τοποθέτησε οριζόντια και κατακόρυφα τα πλακίδια των παραγόντων α και β και κατασκεύασε το γινόμενο στο μοντέλο εμβαδού."
         },
         {
           "id": "difference-square-area",
           "label": "(α-β)^2",
           "expression": "(\\alpha-\\beta)^2",
-          "objectiveKey": "activity6Objective"
+          "objective": "Ο εκπαιδευτικός επιλέγει μία ταυτότητα. Τοποθέτησε οριζόντια και κατακόρυφα τα πλακίδια των παραγόντων α και β και κατασκεύασε το γινόμενο στο μοντέλο εμβαδού."
         },
         {
           "id": "squares-difference-area",
           "label": "(α+β)(α-β)",
           "expression": "(\\alpha+\\beta)(\\alpha-\\beta)",
-          "objectiveKey": "activity6Objective"
+          "objective": "Ο εκπαιδευτικός επιλέγει μία ταυτότητα. Τοποθέτησε οριζόντια και κατακόρυφα τα πλακίδια των παραγόντων α και β και κατασκεύασε το γινόμενο στο μοντέλο εμβαδού."
         }
       ]
     }

@@ -7,7 +7,8 @@ const TeacherPanel = ({
   primeNumbers,
   onSelectPrime
 }) => {
-  const { t } = useTranslation('primes');
+  const { t: tInterface } = useTranslation('interface');
+  const t = (key, options) => tInterface(`workshops.primes.${key}`, options);
 
   return (
     <>

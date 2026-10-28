@@ -14,7 +14,8 @@ const NumberGrid = ({
   onToggleNumber,
   readonly = false
 }) => {
-  const { t } = useTranslation('primes');
+  const { t: tInterface } = useTranslation('interface');
+  const t = (key, options) => tInterface(`workshops.primes.${key}`, options);
   const primeSet = primeNumbers instanceof Set ? primeNumbers : new Set(primeNumbers);
   const items = [null, ...numbers];
 

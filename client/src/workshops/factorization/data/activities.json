@@ -1,17 +1,108 @@
 {
-  "activities": [{
-    "id": "1",
-    "code": "1.",
-    "titleKey": "activity1Title",
-    "objectiveKey": "activity1Objective",
-    "widgets": [{ "type": "algebra-tiles", "region": "center", "card": false, "mode": "area" }],
-    "scoreCorrect": 1,
-    "scoreIncorrect": 0,
-    "questions": [
-      { "id": "perfect-square", "label": "x² + 2xy + y²", "terms": { "x2": 1, "xy": 2, "y2": 1 }, "factors": [[1, 1], [1, 1]] },
-      { "id": "x2-plus-3xy-plus-2y2", "label": "x² + 3xy + 2y²", "terms": { "x2": 1, "xy": 3, "y2": 2 }, "factors": [[1, 2], [1, 1]] },
-      { "id": "2x2-plus-5xy-plus-2y2", "label": "2x² + 5xy + 2y²", "terms": { "x2": 2, "xy": 5, "y2": 2 }, "factors": [[2, 1], [1, 2]] },
-      { "id": "3x2-plus-5xy-plus-2y2", "label": "3x² + 5xy + 2y²", "terms": { "x2": 3, "xy": 5, "y2": 2 }, "factors": [[3, 2], [1, 1]] }
-    ]
-  }]
+  "labels": {
+    "instruction": "Σχημάτισε το ζητούμενο τριώνυμο στο κάτω δεξί τμήμα. Έπειτα βάλε τις πλευρές των πλακιδίων x και y στις επάνω και αριστερές λωρίδες, ώστε να σχηματιστεί ορθογώνιο.",
+    "target": "Παραγοντοποίησε",
+    "questions": "Παραστάσεις",
+    "chooseQuestion": "Επίλεξε παράσταση",
+    "studentTableTitle": "Πρόοδος μαθητών",
+    "noStudents": "Δεν υπάρχουν συνδεδεμένοι μαθητές.",
+    "correct": "Σωστά! Τα πλακίδια σχηματίζουν το ορθογώνιο και οι πλευρές του είναι οι παράγοντες.",
+    "incomplete": "Συνέχισε να τοποθετείς τα πλακίδια μέχρι να σχηματιστεί το σωστό ορθογώνιο."
+  },
+  "activities": [
+    {
+      "id": "1",
+      "code": "1.",
+      "title": "Παραγοντοποίηση τριωνύμων με πλακίδια",
+      "objective": "Τοποθέτησε τα πλακίδια ώστε να σχηματίσουν ορθογώνιο και διάβασε τους παράγοντες από τις πλευρές.",
+      "widgets": [
+        {
+          "type": "algebra-tiles",
+          "region": "center",
+          "card": false,
+          "mode": "area"
+        }
+      ],
+      "scoreCorrect": 1,
+      "scoreIncorrect": 0,
+      "questions": [
+        {
+          "id": "perfect-square",
+          "label": "x² + 2xy + y²",
+          "terms": {
+            "x2": 1,
+            "xy": 2,
+            "y2": 1
+          },
+          "factors": [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "id": "x2-plus-3xy-plus-2y2",
+          "label": "x² + 3xy + 2y²",
+          "terms": {
+            "x2": 1,
+            "xy": 3,
+            "y2": 2
+          },
+          "factors": [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "id": "2x2-plus-5xy-plus-2y2",
+          "label": "2x² + 5xy + 2y²",
+          "terms": {
+            "x2": 2,
+            "xy": 5,
+            "y2": 2
+          },
+          "factors": [
+            [
+              2,
+              1
+            ],
+            [
+              1,
+              2
+            ]
+          ]
+        },
+        {
+          "id": "3x2-plus-5xy-plus-2y2",
+          "label": "3x² + 5xy + 2y²",
+          "terms": {
+            "x2": 3,
+            "xy": 5,
+            "y2": 2
+          },
+          "factors": [
+            [
+              3,
+              2
+            ],
+            [
+              1,
+              1
+            ]
+          ]
+        }
+      ]
+    }
+  ]
 }

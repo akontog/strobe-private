@@ -16,8 +16,10 @@ import {
   FullScreenButton,
   useSessionInputLogger
 } from '../../shared/components';
-import { ACTIVITY_LIBRARY, LESSON_DATA } from './data/activities';
+import activityData from './data/activities.json';
 import './App.css';
+
+const { activities: ACTIVITY_LIBRARY, lessons: LESSON_DATA } = activityData;
 
 const GRAPH_COLORS = ['#2563eb', '#dc2626'];
 const EMPTY_TOKEN = '□';
@@ -168,8 +170,7 @@ function extractSystemEquations(activeItem) {
 }
 
 export default function App({ role = 'student' }) {
-  const { t } = useTranslation('linearSystems');
-  const { t: tScores } = useTranslation('scores');
+  const { t } = useTranslation('interface');
   const { t: tNav } = useTranslation('navigation');
   const sessionLogging = useSessionInputLogger();
   const isTeacher = role === 'teacher';
@@ -238,8 +239,8 @@ export default function App({ role = 'student' }) {
   const groupingGroups = useMemo(
     () => ((LESSON_DATA[selectedActivityId] && LESSON_DATA[selectedActivityId].groups) || []).map((group) => ({
       ...group,
-      title: t(group.titleKey),
-      hint: t(group.hintKey)
+      title: group.title,
+      hint: group.hint
     })),
     [selectedActivityId, t]
   );
@@ -355,7 +356,7 @@ export default function App({ role = 'student' }) {
       const isComplete = Boolean(x1 && y1 && rhs1 && x2 && y2 && rhs2);
       return {
         ready: hasAnyInput,
-        feedback: isComplete ? t('ui.feedback.systemUpdated') : t('ui.feedback.enterCoefficients'),
+        feedback: isComplete ? t('linearSystemFeedbackSystemUpdated') : t('linearSystemFeedbackEnterCoefficients'),
         invalidIds: [],
         payload: {
           completed: isComplete ? '1' : '0',
@@ -386,8 +387,8 @@ export default function App({ role = 'student' }) {
       const correctCount = expectedItems.length - invalidIds.length;
       const score = invalidIds.length === 0 ? 10 : 0;
       const feedback = invalidIds.length === 0
-        ? t('ui.feedback.allGrouped')
-        : t('ui.feedback.groupingErrors');
+        ? t('linearSystemFeedbackAllGrouped')
+        : t('linearSystemFeedbackGroupingErrors');
 
       return {
         ready: true,
@@ -413,7 +414,7 @@ export default function App({ role = 'student' }) {
     }
 
     const score = (answerX === normalizeText(expected && expected.x) ? 5 : 0) + (answerY === normalizeText(expected && expected.y) ? 5 : 0);
-    const feedback = score === 10 ? t('ui.feedback.correct') : t('ui.feedback.partial', { score });
+    const feedback = score === 10 ? t('linearSystemFeedbackCorrect') : t('linearSystemFeedbackPartial', { score });
 
     return {
       ready: true,
@@ -671,10 +672,10 @@ export default function App({ role = 'student' }) {
   const isGroupingMode = activeActivity.mode === 'grouping';
 
   const leftPanel = (
-    <div className="lab-card lab-card--highlight poly-expression-card linear-expression-card" aria-label={t('ui.systemAria')}>
-      <p className="lab-mini-label poly-mini-label">{t('ui.system')}</p>
+    <div className="lab-card lab-card--highlight poly-expression-card linear-expression-card" aria-label={t('linearSystemAria')}>
+      <p className="lab-mini-label poly-mini-label">{t('linearSystem')}</p>
       {activeActivity.mode === 'graphing-input' ? (
-        <div className="linear-system-preview" aria-label={t('ui.systemPreview')}>
+        <div className="linear-system-preview" aria-label={t('linearSystemPreview')}>
           <p>{formatEquationFromRow(activeEquationInputs.equation1)}</p>
           <p>{formatEquationFromRow(activeEquationInputs.equation2)}</p>
         </div>
@@ -703,17 +704,17 @@ export default function App({ role = 'student' }) {
                   defaultPlaceholder=""
                   boxes={[
                     {
-                      label: t('ui.coefficientX'),
+                      label: t('linearSystemCoefficientX'),
                       value: activeEquationInputs.equation1.x,
                       onChange: (event) => updateEquationInput('equation1', 'x', event.target.value)
                     },
                     {
-                      label: t('ui.coefficientY'),
+                      label: t('linearSystemCoefficientY'),
                       value: activeEquationInputs.equation1.y,
                       onChange: (event) => updateEquationInput('equation1', 'y', event.target.value)
                     },
                     {
-                      label: t('ui.rightHandSide'),
+                      label: t('linearSystemRightHandSide'),
                       value: activeEquationInputs.equation1.rhs,
                       onChange: (event) => updateEquationInput('equation1', 'rhs', event.target.value)
                     }
@@ -728,17 +729,17 @@ export default function App({ role = 'student' }) {
                   defaultPlaceholder=""
                   boxes={[
                     {
-                      label: t('ui.coefficientX'),
+                      label: t('linearSystemCoefficientX'),
                       value: activeEquationInputs.equation2.x,
                       onChange: (event) => updateEquationInput('equation2', 'x', event.target.value)
                     },
                     {
-                      label: t('ui.coefficientY'),
+                      label: t('linearSystemCoefficientY'),
                       value: activeEquationInputs.equation2.y,
                       onChange: (event) => updateEquationInput('equation2', 'y', event.target.value)
                     },
                     {
-                      label: t('ui.rightHandSide'),
+                      label: t('linearSystemRightHandSide'),
                       value: activeEquationInputs.equation2.rhs,
                       onChange: (event) => updateEquationInput('equation2', 'rhs', event.target.value)
                     }
@@ -752,7 +753,7 @@ export default function App({ role = 'student' }) {
 
       {activeActivity.mode === 'grouping' ? (
         <>
-          <p className="linear-note">{t('ui.groupingInstruction')}</p>
+          <p className="linear-note">{t('linearSystemGroupingInstruction')}</p>
           <GroupingDragDrop
             activity={`linear-systems:${selectedActivityId}`}
             items={activeItems}
@@ -766,14 +767,14 @@ export default function App({ role = 'student' }) {
               setInvalidGroupingItemIds([]);
             }}
             invalidItemIds={invalidGroupingItemIds}
-            bankLabel={t('ui.groupingBank')}
+            bankLabel={t('linearSystemGroupingBank')}
           />
         </>
       ) : null}
 
       {activeActivity.mode === 'algebra' ? (
         <>
-          <p className="linear-note">{t('ui.solutionInstruction')}</p>
+          <p className="linear-note">{t('linearSystemSolutionInstruction')}</p>
           {activeItem && activeItem.eliminationLatex ? (
             <div className="linear-expression">
               <MathFormula formula={`\\(${activeItem.eliminationLatex}\\)`} />
@@ -788,7 +789,7 @@ export default function App({ role = 'student' }) {
                 id: 'x',
                 label: 'x',
                 value: answer.x,
-                placeholder: t('ui.example', { value: '3' }),
+                placeholder: t('linearSystemExample', { value: '3' }),
                 inputClassName: 'activity-input-grid__input',
                 onChange: (value) => setAnswer((prev) => ({ ...prev, x: value }))
               },
@@ -796,7 +797,7 @@ export default function App({ role = 'student' }) {
                 id: 'y',
                 label: 'y',
                 value: answer.y,
-                placeholder: t('ui.example', { value: '1' }),
+                placeholder: t('linearSystemExample', { value: '1' }),
                 inputClassName: 'activity-input-grid__input',
                 onChange: (value) => setAnswer((prev) => ({ ...prev, y: value }))
               }
@@ -807,9 +808,9 @@ export default function App({ role = 'student' }) {
 
       {activeActivity.mode === 'embodied' ? (
         <div className="linear-placeholder">
-          <strong>{t('ui.embodiedTitle')}</strong>
-          <p>{t('ui.embodiedDescription')}</p>
-          <p>{t('ui.embodiedZones')}</p>
+          <strong>{t('linearSystemEmbodiedTitle')}</strong>
+          <p>{t('linearSystemEmbodiedDescription')}</p>
+          <p>{t('linearSystemEmbodiedZones')}</p>
         </div>
       ) : null}
 
@@ -821,7 +822,7 @@ export default function App({ role = 'student' }) {
     <aside className="lab-card lab-card--panel poly-team-card linear-graph-card">
       <PlotWidget
         lines={coordinateLines}
-        title={t('ui.graph')}
+        title={t('linearSystemGraph')}
         showLegend
         xMin={-6}
         xMax={6}
@@ -834,8 +835,8 @@ export default function App({ role = 'student' }) {
   return (
     <>
       <HeroTitle
-        title={`${tNav('items.linearSystems')} - ${activeActivity.code} ${t(activeActivity.titleKey)}`}
-        subtitle={t(activeActivity.objectiveKey)}
+        title={`${tNav('items.linearSystems')} - ${activeActivity.code} ${activeActivity.title}`}
+        subtitle={activeActivity.objective}
       />
 
       <section className="common-zone lab-zone">
@@ -851,10 +852,10 @@ export default function App({ role = 'student' }) {
 
       {isTeacher ? (
         <ActivitiesMenu
-          title={t('ui.activity')}
+          title={t('activities')}
           icon="🎯"
-          label={t('ui.selectActivity')}
-          options={ACTIVITY_LIBRARY.map((activity) => ({ value: activity.id, label: `${activity.code} ${t(activity.titleKey)}` }))}
+          label={t('chooseActivity')}
+          options={ACTIVITY_LIBRARY.map((activity) => ({ value: activity.id, label: `${activity.code} ${activity.title}` }))}
           value={selectedActivityId}
           onChange={setActivity}
         />
@@ -865,14 +866,14 @@ export default function App({ role = 'student' }) {
           <SettingsAccordion>
             <CommonSessionSettings />
             <div className="lab-data-section data-section">
-              <label className="shared-activity-label" htmlFor="linear-expression">{t('ui.exercise')}</label>
+              <label className="shared-activity-label" htmlFor="linear-expression">{t('linearSystemExercise')}</label>
               <select
                 id="linear-expression"
                 className="shared-activity-select"
                 value={selectedItemId}
                 onChange={(event) => setLessonItem(event.target.value)}
               >
-                {activeItems.length === 0 ? <option value="">{t('ui.noExercises')}</option> : null}
+                {activeItems.length === 0 ? <option value="">{t('linearSystemNoExercises')}</option> : null}
                 {activeItems.map((item, index) => (
                   <option key={item.id} value={item.id}>{`${index + 1}.`}</option>
                 ))}
@@ -884,13 +885,13 @@ export default function App({ role = 'student' }) {
                   checked={showEquationGraph}
                   onChange={(event) => setGraphVisibility(event.target.checked)}
                 />
-                <span>{t('ui.showGraph')}</span>
+                <span>{t('linearSystemShowGraph')}</span>
               </label>
             </div>
           </SettingsAccordion>
 
           <StudentTable
-            title={t('ui.studentTable')}
+            title={t('studentTable')}
             participants={sortedParticipants}
             getRowStyle={(entry) => {
               const completed = String(entry?.answers?.completed || '') === '1';
@@ -902,18 +903,17 @@ export default function App({ role = 'student' }) {
                 : undefined;
             }}
             columns={[
-              { key: 'activityCode', label: t('ui.activity'), render: (entry) => entry.activityId || '-' },
-              { key: 'itemId', label: t('ui.exercise'), render: (entry) => entry.itemId || '-' },
-              { key: 'equation1', label: t('ui.equation', { number: 1 }), render: (entry) => entry.answers?.equation1 || '-' },
-              { key: 'equation2', label: t('ui.equation', { number: 2 }), render: (entry) => entry.answers?.equation2 || '-' },
-              { key: 'classification', label: t('ui.classification'), render: (entry) => entry.answers?.classification || '-' },
-              ...(sessionLogging?.scoreVisible ? [{ key: 'score', label: tScores('score'), render: (entry) => entry.answers?.score ?? '-' }] : [])
+              { key: 'activityCode', label: t('activities'), render: (entry) => entry.activityId || '-' },
+              { key: 'itemId', label: t('linearSystemExercise'), render: (entry) => entry.itemId || '-' },
+              { key: 'equation1', label: t('linearSystemEquation', { number: 1 }), render: (entry) => entry.answers?.equation1 || '-' },
+              { key: 'equation2', label: t('linearSystemEquation', { number: 2 }), render: (entry) => entry.answers?.equation2 || '-' },
+              { key: 'classification', label: t('linearSystemClassification'), render: (entry) => entry.answers?.classification || '-' },
+              ...(sessionLogging?.scoreVisible ? [{ key: 'score', label: t('score'), render: (entry) => entry.answers?.score ?? '-' }] : [])
             ]}
-            emptyMessage={t('ui.noStudents')}
+            emptyMessage={t('noStudents')}
           />
         </>
       ) : null}
     </>
   );
 }
-

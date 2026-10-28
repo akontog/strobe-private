@@ -41,7 +41,7 @@ export default function ActivitySettingsAccordion({
         ? 'activity-workspace--right'
         : 'activity-workspace--full';
   const payload = useMemo(() => ({
-    resource,
+    resource: resource.replace(/-collab$/, ''),
     title: metadata.title || defaultTitle,
     subtitle: metadata.subtitle || '',
     notes: metadata.notes || '',

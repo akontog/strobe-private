@@ -71,6 +71,11 @@ export default function ToolsPage() {
       icon: '🧠',
       tone: 'orange',
       helper: 'toolHelpers.linearSeparation'
+    },
+    'workshop-json-validator': {
+      icon: '🧪',
+      tone: 'indigo',
+      helper: 'toolHelpers.workshopJsonValidator'
     }
   }), []);
 

@@ -51,8 +51,13 @@ function computeActivityScore(activity, answers) {
 }
 
 export default function App({ role = 'student' }) {
-  const { t } = useTranslation('identities');
+  const { t: tUi } = useTranslation('interface');
   const { t: tNav } = useTranslation('navigation');
+  const labels = activityData.labels || {};
+  const t = (key, options = {}) => {
+    const template = labels[key] || key;
+    return String(template).replace(/\{\{(\w+)\}\}/g, (_, name) => (options?.[name] ?? ''));
+  };
   const isTeacher = role === 'teacher';
   const sessionLogging = useSessionInputLogger();
   const [studentName, setStudentName] = useState(() => readIdentityName('Student'));
@@ -344,7 +349,7 @@ export default function App({ role = 'student' }) {
         />
       ) : (
         <div className="identities-matching-panel">
-          <p className="identities-note">{t(centerWidget.instructionKey)}</p>
+          <p className="identities-note">{centerWidget.instruction || t('matchingInstruction')}</p>
           <GroupingDragDrop
             activity={`identities:${selectedActivityId}`}
             items={activeActivity.items.map((item) => ({
@@ -359,7 +364,7 @@ export default function App({ role = 'student' }) {
             onChange={(placements) => {
               setAnswersByActivity((current) => ({ ...current, [answerActivityKey]: placements }));
             }}
-            bankLabel={t(centerWidget.bankLabelKey)}
+            bankLabel={centerWidget.bankLabel}
           />
         </div>
       )}
@@ -372,8 +377,8 @@ export default function App({ role = 'student' }) {
   return (
     <>
       <HeroTitle
-        title={`${tNav('items.identities')} - ${activeActivity.code} ${t(activeActivity.titleKey)}`}
-        subtitle={t(activeExercise.objectiveKey || activeActivity.objectiveKey)}
+        title={`${tNav('items.identities')} - ${activeActivity.code} ${activeActivity.title}`}
+        subtitle={activeExercise.objective || activeActivity.objective}
       />
 
       <section className="common-zone lab-zone">
@@ -396,7 +401,7 @@ export default function App({ role = 'student' }) {
             label={t('chooseActivity')}
             options={ACTIVITY_LIBRARY.map((activity) => ({
               value: activity.id,
-              label: `${activity.code} ${t(activity.titleKey)}`
+              label: `${activity.code} ${activity.title}`
             }))}
             value={selectedActivityId}
             onChange={(nextId) => {
@@ -432,7 +437,7 @@ export default function App({ role = 'student' }) {
               }] : []),
               ...(sessionLogging?.scoreVisible ? [{
                 key: 'score',
-                label: t('score', { ns: 'scores' }),
+                label: tUi('score'),
                 render: (student) => {
                   const studentNameKey = String(student.name || '').trim().toLocaleLowerCase();
                   const scoreRecord = scoreRecords.find((record) => String(record.name || '').trim().toLocaleLowerCase() === studentNameKey);
@@ -465,4 +470,3 @@ export default function App({ role = 'student' }) {
     </>
   );
 }
-

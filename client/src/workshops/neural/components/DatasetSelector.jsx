@@ -15,7 +15,8 @@ export const DatasetSelector = ({
   isLinearDemoDisabled = false,
   demoIconWhenDisabled = '?'
 }) => {
-  const { t } = useTranslation('neural');
+  const { t: tInterface } = useTranslation('interface');
+  const t = (key, options) => tInterface(`workshops.neural.${key}`, options);
   // Παίρνουμε τα δεδομένα του τρέχοντος dataset
   const currentData = datasets[currentDataset];
   if (!currentData) {

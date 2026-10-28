@@ -22,12 +22,12 @@ export const StudentTable = ({
   getIsConnected = defaultGetIsConnected, // Returns whether a student is connected.
   getRowStyle // Returns custom inline styles for a student row.
 }) => {
-  const { t } = useTranslation(['common', 'neural']);
+  const { t } = useTranslation(['common', 'interface']);
   const rows = Array.isArray(participants) ? participants : [];
   const extraColumns = Array.isArray(columns) ? columns : [];
   const totalColumns = 1 + extraColumns.length;
   const groupedSpanTotal = Array.isArray(headerGroups) ? headerGroups.reduce((sum, group) => sum + (group.colSpan || 1), 0) : 0;
-  const resolvedTitle = title || t('studentTableTitle', { ns: 'neural' });
+  const resolvedTitle = title || t('studentTable', { ns: 'interface' });
   const resolvedEmptyMessage = emptyMessage || t('notAvailable');
   const resolvedFallback = nameFallback || t('student');
 
@@ -117,4 +117,3 @@ export const StudentTable = ({
     </Accordion>
   );
 };
-

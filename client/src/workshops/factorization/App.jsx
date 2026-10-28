@@ -66,8 +66,9 @@ function isCompleteRectangle(tiles, question) {
 }
 
 export default function App({ role = 'student' }) {
-  const { t } = useTranslation('factorization');
   const { t: tNav } = useTranslation('navigation');
+  const labels = activityData.labels || {};
+  const t = (key) => labels[key] || key;
   const isTeacher = role === 'teacher';
   const [studentName, setStudentName] = useState(() => readIdentityName('Student'));
   const [selectedQuestionId, setSelectedQuestionId] = useState(questions[0].id);
@@ -152,7 +153,7 @@ export default function App({ role = 'student' }) {
 
   return (
     <>
-      <HeroTitle title={`${tNav('items.factorization')} - ${activity.code} ${t(activity.titleKey)}`} subtitle={t(activity.objectiveKey)} />
+      <HeroTitle title={`${tNav('items.factorization')} - ${activity.code} ${activity.title}`} subtitle={activity.objective} />
       <section className="common-zone lab-zone">
         <FullScreenButton />
         <SharedCommonZoneLayout className="poly-neural-zone factorization-common-zone" leftPanel={null} rightPanel={null} centerPanel={(
