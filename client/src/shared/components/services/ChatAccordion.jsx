@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { readIdentityName } from '../menu/identityStorage';
 import { Accordion } from '../layouts/Accordion';
 import { useSessionInputLogger } from '../activities/SessionLogContext';
-import './chat-accordion.css';
+import './ChatAccordion.css';
 
 export default function ChatAccordion() {
   const { t } = useTranslation('common');

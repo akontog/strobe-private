@@ -1,5 +1,5 @@
 import React from 'react';
-import './shared-common-zone-layout.css';
+import './SharedCommonZoneLayout.css';
 
 export default function SharedCommonZoneLayout({
   className = '', // Additional classes for the shared workspace.

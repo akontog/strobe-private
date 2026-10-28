@@ -89,7 +89,6 @@
   "linearSystemCoefficientX": "συντελεστής x",
   "linearSystemCoefficientY": "συντελεστής y",
   "linearSystemRightHandSide": "δεξιά τιμή",
-  "linearSystemGroupingInstruction": "Ταξινόμησε κάθε σύστημα σε μία από τις 3 ομάδες: καμία, μία ή άπειρες λύσεις.",
   "linearSystemGroupingBank": "Συστήματα προς ταξινόμηση",
   "linearSystemSolutionInstruction": "Συμπλήρωσε τη λύση του συστήματος.",
   "linearSystemExample": "π.χ. {{value}}",

@@ -2,7 +2,7 @@ import React from 'react';
 import IconWidget from './IconWidget';
 import EquationWidget from './EquationWidget';
 import PlotWidget from './PlotWidget';
-import './widget-renderer.css';
+import './WidgetRenderer.css';
 
 const WIDGET_COMPONENTS = {
   icon: IconWidget,

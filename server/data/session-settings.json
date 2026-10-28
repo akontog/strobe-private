@@ -3,5 +3,10 @@
     "chatEnabled": true,
     "scoreVisible": true,
     "feedbackEnabled": false
+  },
+  "linear-systems-lab": {
+    "chatEnabled": false,
+    "scoreVisible": true,
+    "feedbackEnabled": true
   }
 }

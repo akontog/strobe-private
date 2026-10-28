@@ -5,7 +5,7 @@ import SharedCommonZoneLayout from '../layouts/SharedCommonZoneLayout';
 import WidgetRenderer from '../widgets/widget-renderer';
 import FullScreenButton from '../primitives/FullScreenButton';
 import ActivityResourcePreview from './ActivityResourcePreview';
-import './activity-settings-accordion.css';
+import './ActivitySettingsAccordion.css';
 
 const DEFAULT_WIDGETS = [];
 

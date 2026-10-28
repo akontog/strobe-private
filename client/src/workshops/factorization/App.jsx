@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import '../../shared/i18n';
 import {
   ActivitiesMenu, AlgebraTiles, CommonSessionSettings, FullScreenButton, HeroTitle,
-  SettingsAccordion, SharedCommonZoneLayout, StudentScoresAccordion, StudentTable, readIdentityName
+  SettingsAccordion, SharedCommonZoneLayout, StudentsAccordion, readIdentityName
 } from '../../shared/components';
 import activityData from './data/activities.json';
 import './App.css';
@@ -170,14 +170,14 @@ export default function App({ role = 'student' }) {
           options={questions.map((question) => ({ value: question.id, label: question.label }))}
           value={selectedQuestion.id} onChange={selectQuestion} />
         <SettingsAccordion><CommonSessionSettings /></SettingsAccordion>
-        <StudentTable title={t('studentTableTitle')} participants={participants.filter((participant) => participant.isConnected !== false)}
+        <StudentsAccordion title={t('studentTableTitle')} participants={participants.filter((participant) => participant.isConnected !== false)}
           columns={[
             { key: 'tiles', label: 'Πλακίδια (πάνω / αριστερά / κέντρο)', render: (participant) => `Πάνω: ${(participant.tiles || []).filter((tile) => (tile.y || 0) < 4 && (tile.x || 0) >= 6).map((tile) => `${tile.sign < 0 ? '−' : '+'}${tile.type}`).join(' ') || '—'} · Αριστερά: ${(participant.tiles || []).filter((tile) => (tile.y || 0) >= 4 && (tile.x || 0) < 6).map((tile) => `${tile.sign < 0 ? '−' : '+'}${tile.type}`).join(' ') || '—'} · Κέντρο: ${(participant.tiles || []).filter((tile) => (tile.y || 0) >= 4 && (tile.x || 0) >= 6).map((tile) => `${tile.sign < 0 ? '−' : '+'}${tile.type}`).join(' ') || '—'}` },
             { key: 'progress', label: t('studentTableTitle'), render: (participant) => participant.isCorrect ? t('correct') : t('incomplete') }
           ]}
           emptyMessage={t('noStudents')} />
       </> : null}
-      <StudentScoresAccordion role={role} studentName={studentName} activity={`factorization:${selectedQuestion.id}`} currentScore={isCorrect ? activity.scoreCorrect : activity.scoreIncorrect} />
+      <StudentsAccordion role={role} studentName={studentName} activity={`factorization:${selectedQuestion.id}`} currentScore={isCorrect ? activity.scoreCorrect : activity.scoreIncorrect} />
     </>
   );
 }

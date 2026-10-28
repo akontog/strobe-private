@@ -10,8 +10,7 @@ import {
   InputGrid,
   SettingsAccordion,
   SharedCommonZoneLayout,
-  StudentScoresAccordion,
-  StudentTable,
+  StudentsAccordion,
   readIdentityName
 } from '../../shared/components';
 import activityData from './data/activities.json';
@@ -238,7 +237,7 @@ export default function App({ role = 'student' }) {
           <SettingsAccordion>
             <CommonSessionSettings />
           </SettingsAccordion>
-          <StudentTable
+          <StudentsAccordion
             title={t('studentTableTitle')}
             participants={participants.filter((participant) => participant.isConnected !== false)}
             columns={[
@@ -250,7 +249,7 @@ export default function App({ role = 'student' }) {
         </>
       ) : null}
 
-      <StudentScoresAccordion
+      <StudentsAccordion
         role={role}
         studentName={studentName}
         activity={`equations:${selectedQuestion.id}`}

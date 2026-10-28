@@ -89,7 +89,6 @@
   "linearSystemCoefficientX": "x coefficient",
   "linearSystemCoefficientY": "y coefficient",
   "linearSystemRightHandSide": "right-hand side",
-  "linearSystemGroupingInstruction": "Sort each system into one of three groups: no, one, or infinitely many solutions.",
   "linearSystemGroupingBank": "Systems to classify",
   "linearSystemSolutionInstruction": "Enter the solution to the system.",
   "linearSystemExample": "e.g. {{value}}",

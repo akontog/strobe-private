@@ -5,13 +5,17 @@ import {
   CommonSessionSettings,
   ActivitiesMenu,
   GroupingDragDrop,
+  PlacementBoard,
   HeroTitle,
   MathFormula,
   SharedCommonZoneLayout,
   InputGrid,
   SharedInputRow,
   PlotWidget,
-  StudentTable,
+  EquationWidget,
+  ExpressionAccordion,
+  StudentsAccordion,
+  createPlacementGroupColumns,
   readIdentitySnapshot,
   FullScreenButton,
   useSessionInputLogger
@@ -21,11 +25,14 @@ import './App.css';
 
 const { activities: ACTIVITY_LIBRARY, lessons: LESSON_DATA } = activityData;
 
-const GRAPH_COLORS = ['#2563eb', '#dc2626'];
 const EMPTY_TOKEN = '□';
 
 function normalizeText(value) {
   return String(value || '').trim();
+}
+
+function formatWidgetLabel(template, values) {
+  return String(template || '').replace(/\{(\w+)\}/g, (match, key) => String(values[key] ?? match));
 }
 
 function getInitialItemId(activityId) {
@@ -68,9 +75,8 @@ function parseLineFromCoefficients(row) {
     return null;
   }
 
-  // Current shared plot supports y = mx + b, so vertical lines (b=0) are skipped.
   if (Math.abs(b) < 1e-9) {
-    return null;
+    return Math.abs(a) < 1e-9 ? null : { verticalX: c / a };
   }
 
   return {
@@ -131,8 +137,12 @@ function parseLinearEquationToSlopeIntercept(equation) {
   const b = left.y - right.y;
   const c = left.c - right.c;
 
-  if (!Number.isFinite(a) || !Number.isFinite(b) || !Number.isFinite(c) || Math.abs(b) < 1e-9) {
+  if (!Number.isFinite(a) || !Number.isFinite(b) || !Number.isFinite(c)) {
     return null;
+  }
+
+  if (Math.abs(b) < 1e-9) {
+    return Math.abs(a) < 1e-9 ? null : { verticalX: -c / a };
   }
 
   return {
@@ -182,13 +192,15 @@ export default function App({ role = 'student' }) {
 
   const [isSocketConnected, setIsSocketConnected] = useState(false);
   const [participants, setParticipants] = useState([]);
+  const [sessionLogParticipants, setSessionLogParticipants] = useState([]);
   const [selectedActivityId, setSelectedActivityId] = useState(ACTIVITY_LIBRARY[0].id);
   const [selectedItemId, setSelectedItemId] = useState(() => getInitialItemId(ACTIVITY_LIBRARY[0].id));
+  const [selectedExpressionId, setSelectedExpressionId] = useState('');
   const [answer, setAnswer] = useState({ x: '', y: '' });
-  const [feedbackText, setFeedbackText] = useState('');
   const [groupingPlacementsByActivity, setGroupingPlacementsByActivity] = useState({});
   const [invalidGroupingItemIds, setInvalidGroupingItemIds] = useState([]);
-  const [showEquationGraph, setShowEquationGraph] = useState(true);
+  const [showEquationGraph, setShowEquationGraph] = useState(() => ACTIVITY_LIBRARY[0]?.widgets?.right?.visibleByDefault !== false);
+  const [showPlacementAssessment, setShowPlacementAssessment] = useState(false);
   const [equationInputsByItem, setEquationInputsByItem] = useState({});
   const [lastSentState, setLastSentState] = useState('');
   const [identity, setIdentity] = useState(() => readIdentitySnapshot({ nameFallback: 'Student', colorFallback: '#4ECDC4' }));
@@ -245,7 +257,68 @@ export default function App({ role = 'student' }) {
     [selectedActivityId, t]
   );
 
-  const activeGroupingPlacements = useMemo(() => groupingPlacementsByActivity[selectedActivityId] || {}, [groupingPlacementsByActivity, selectedActivityId]);
+  const activeGroupingPlacements = useMemo(() => {
+    const byActivity = groupingPlacementsByActivity[selectedActivityId] || {};
+    return byActivity[selectedItemId] || {};
+  }, [groupingPlacementsByActivity, selectedActivityId, selectedItemId]);
+
+  const placementStateKey = activeActivity.mode === 'placement-board'
+    ? `${selectedItemId}:${selectedExpressionId}`
+    : selectedItemId;
+
+  const activePlacementGroups = useMemo(() => {
+    if (!activeItem || !Array.isArray(activeItem.groups)) {
+      return [];
+    }
+
+    return activeItem.groups;
+  }, [activeItem]);
+
+  const activePlacementGraphItems = useMemo(() => {
+    if (activeActivity.mode !== 'placement-board') {
+      return [];
+    }
+
+    return [];
+  }, [activeActivity.mode]);
+
+  const activeExpressionOptions = useMemo(() => {
+    if (!Array.isArray(activeItem?.expressions)) {
+      return [];
+    }
+
+    return activeItem.expressions.map((expression, index) => ({
+      value: expression.id || `expr-${index + 1}`,
+      label: expression.equation || `Εξίσωση ${index + 1}`
+    }));
+  }, [activeItem]);
+
+  const activeSelectedExpression = useMemo(
+    () => activeItem?.expressions?.find((expression) => expression.id === selectedExpressionId) || activeItem?.expressions?.[0] || null,
+    [activeItem, selectedExpressionId]
+  );
+
+  const activePlacementItems = useMemo(() => activeSelectedExpression?.items || [], [activeSelectedExpression]);
+
+  useEffect(() => {
+    if (!activeItem || !Array.isArray(activeItem.expressions) || !activeItem.expressions.length) {
+      return;
+    }
+
+    setSelectedExpressionId((current) => {
+      const nextValue = activeExpressionOptions.some((option) => option.value === current) ? current : activeExpressionOptions[0].value;
+      return nextValue;
+    });
+  }, [activeExpressionOptions, activeItem]);
+
+  const activeSelectedEquation = useMemo(() => {
+    return activeSelectedExpression?.equation || '';
+  }, [activeSelectedExpression]);
+
+  const activePlacementPlacements = useMemo(() => {
+    const byActivity = groupingPlacementsByActivity[selectedActivityId] || {};
+    return byActivity[placementStateKey] || {};
+  }, [groupingPlacementsByActivity, placementStateKey, selectedActivityId]);
 
   const activeEquationInputs = useMemo(() => {
     const raw = equationInputsByItem[selectedItemId];
@@ -271,24 +344,32 @@ export default function App({ role = 'student' }) {
   }, [equationInputsByItem, selectedItemId]);
 
   useEffect(() => {
-    if (activeActivity.mode !== 'grouping') {
+    if (!['grouping', 'placement-board'].includes(activeActivity.mode)) {
       setInvalidGroupingItemIds([]);
       return;
     }
 
     setGroupingPlacementsByActivity((current) => {
-      if (current[selectedActivityId]) {
+      const currentActivityMap = current[selectedActivityId] || {};
+      if (currentActivityMap[placementStateKey]) {
         return current;
       }
 
-      const initial = activeItems.reduce((placements, item) => {
+      const activityItems = activeActivity.mode === 'placement-board' ? activePlacementItems : activeItems;
+      const initial = activityItems.reduce((placements, item) => {
         placements[item.id] = null;
         return placements;
       }, {});
 
-      return { ...current, [selectedActivityId]: initial };
+      return {
+        ...current,
+        [selectedActivityId]: {
+          ...currentActivityMap,
+          [placementStateKey]: initial
+        }
+      };
     });
-  }, [activeActivity.mode, activeItems, selectedActivityId]);
+  }, [activeActivity.mode, activeItems, activePlacementItems, placementStateKey, selectedActivityId]);
 
   const systemEquations = useMemo(() => {
     if (activeActivity.mode === 'graphing-input') {
@@ -297,8 +378,17 @@ export default function App({ role = 'student' }) {
         formatEquationFromRow(activeEquationInputs.equation2)
       ];
     }
+
+    if (activeActivity.mode === 'placement-board') {
+      return activeSelectedEquation ? [activeSelectedEquation] : [];
+    }
+
     return extractSystemEquations(activeItem);
-  }, [activeActivity.mode, activeEquationInputs.equation1, activeEquationInputs.equation2, activeItem]);
+  }, [activeActivity.mode, activeEquationInputs.equation1, activeEquationInputs.equation2, activeItem, activeSelectedEquation]);
+
+  const graphWidgetSettings = activeActivity.widgets?.right?.settings || {};
+  const graphColors = graphWidgetSettings.lineColors || ['#2563eb', '#dc2626'];
+  const graphLineLabelTemplate = graphWidgetSettings.lineLabelTemplate || '{equation}';
 
   const coordinateLines = useMemo(() => {
     if (activeActivity.mode === 'graphing-input') {
@@ -311,10 +401,9 @@ export default function App({ role = 'student' }) {
 
           return {
             id: `line-${selectedActivityId}-${selectedItemId}-${index + 1}`,
-            m: parsed.m,
-            b: parsed.b,
-            color: GRAPH_COLORS[index] || '#2563eb',
-            label: `L${index + 1}: ${formatEquationFromRow(row)}`
+            ...parsed,
+            color: graphColors[index] || '#2563eb',
+            label: formatWidgetLabel(graphLineLabelTemplate, { index: index + 1, equation: formatEquationFromRow(row) })
           };
         })
         .filter(Boolean);
@@ -329,14 +418,13 @@ export default function App({ role = 'student' }) {
 
         return {
           id: `line-${selectedActivityId}-${selectedItemId}-${index + 1}`,
-          m: parsed.m,
-          b: parsed.b,
-          color: GRAPH_COLORS[index] || '#2563eb',
-          label: `L${index + 1}: ${String(equation || '').trim() || '?'}`
+          ...parsed,
+          color: graphColors[index] || '#2563eb',
+          label: formatWidgetLabel(graphLineLabelTemplate, { index: index + 1, equation: String(equation || '').trim() || '?' })
         };
       })
       .filter(Boolean);
-  }, [activeActivity.mode, activeEquationInputs.equation1, activeEquationInputs.equation2, selectedActivityId, selectedItemId, systemEquations]);
+  }, [activeActivity.mode, activeEquationInputs.equation1, activeEquationInputs.equation2, graphColors, graphLineLabelTemplate, selectedActivityId, selectedItemId, systemEquations]);
 
   const evaluation = useMemo(() => {
     if (!activeItem) {
@@ -374,14 +462,28 @@ export default function App({ role = 'student' }) {
     }
 
     if (activeActivity.mode === 'grouping') {
-      const expectedItems = Array.isArray(activeItems) ? activeItems : [];
-      const allPlaced = expectedItems.every((item) => Boolean(activeGroupingPlacements[item.id]));
+      const expectedItems = activeItems;
+      const placements = expectedItems.reduce((next, item) => {
+        next[item.id] = activeGroupingPlacements[item.id] || null;
+        return next;
+      }, {});
+      const allPlaced = expectedItems.every((item) => Boolean(placements[item.id]));
       if (!allPlaced) {
-        return { ready: false, feedback: '', invalidIds: [], payload: null };
+        return {
+          ready: false,
+          feedback: '',
+          invalidIds: [],
+          payload: {
+            completed: '0',
+            placements,
+            correctPlacements: Object.fromEntries(expectedItems.map((item) => [item.id, item.correctGroupId || null])),
+            classification: `${expectedItems.filter((item) => Boolean(placements[item.id])).length}/${expectedItems.length}`
+          }
+        };
       }
 
       const invalidIds = expectedItems
-        .filter((item) => (activeGroupingPlacements[item.id] || null) !== item.correctGroupId)
+        .filter((item) => (placements[item.id] || null) !== item.correctGroupId)
         .map((item) => item.id);
 
       const correctCount = expectedItems.length - invalidIds.length;
@@ -397,7 +499,60 @@ export default function App({ role = 'student' }) {
         payload: {
           score,
           completed: '1',
+          placements,
+          correctPlacements: Object.fromEntries(expectedItems.map((item) => [item.id, item.correctGroupId || null])),
           classification: `${correctCount}/${expectedItems.length}`
+        }
+      };
+    }
+
+    if (activeActivity.mode === 'placement-board') {
+      const pointEntries = activePlacementItems.map((point) => {
+        const actual = activePlacementPlacements[point.id] || null;
+        const expected = point.correctGroupId || null;
+        return {
+          id: point.id,
+          actual,
+          expected
+        };
+      });
+
+      const unansweredIds = pointEntries
+        .filter((entry) => !entry.actual)
+        .map((entry) => entry.id);
+      const invalidIds = pointEntries
+        .filter((entry) => entry.actual && entry.actual !== entry.expected)
+        .map((entry) => entry.id);
+
+      const allAnswered = pointEntries.length > 0 && unansweredIds.length === 0;
+      const correctCount = pointEntries.filter((entry) => entry.actual === entry.expected).length;
+      const score = pointEntries.length ? Math.round((correctCount / pointEntries.length) * 10) : 0;
+
+      if (!allAnswered) {
+        return {
+          ready: false,
+          feedback: pointEntries.length === 0 ? '' : 'Τοποθέτησε όλα τα σημεία σε μία ομάδα.',
+          invalidIds: [],
+          payload: {
+            completed: '0',
+            score,
+            placements: Object.fromEntries(pointEntries.map((entry) => [entry.id, entry.actual])),
+            correctPlacements: Object.fromEntries(pointEntries.map((entry) => [entry.id, entry.expected])),
+            classification: `${correctCount}/${pointEntries.length}`
+          }
+        };
+      }
+
+      return {
+        ready: true,
+        feedback: invalidIds.length === 0 ? 'Όλα τα σημεία επιλέχθηκαν σωστά.' : 'Υπάρχουν λάθη στη βαθμολόγηση.',
+        invalidIds,
+        payload: {
+          score,
+          completed: '1',
+          placements: Object.fromEntries(pointEntries.map((entry) => [entry.id, entry.actual])),
+          correctPlacements: Object.fromEntries(pointEntries.map((entry) => [entry.id, entry.expected])),
+          classification: `${correctCount}/${pointEntries.length}`
         }
       };
     }
@@ -427,12 +582,11 @@ export default function App({ role = 'student' }) {
         y: answerY
       }
     };
-  }, [activeActivity.mode, activeEquationInputs.equation1, activeEquationInputs.equation2, activeGroupingPlacements, activeItem, activeItems, answer.x, answer.y, coordinateLines.length, t]);
+  }, [activeActivity.mode, activeEquationInputs.equation1, activeEquationInputs.equation2, activeGroupingPlacements, activeItem, activeItems, activePlacementItems, activePlacementPlacements, answer.x, answer.y, coordinateLines.length, t]);
 
   useEffect(() => {
     setInvalidGroupingItemIds(evaluation.invalidIds);
-    setFeedbackText(evaluation.feedback);
-  }, [evaluation.feedback, evaluation.invalidIds]);
+  }, [evaluation.invalidIds]);
 
   useEffect(() => {
     let cancelled = false;
@@ -499,9 +653,13 @@ export default function App({ role = 'student' }) {
 
         const nextActivity = normalizeText(lesson.activityId);
         const nextItemId = normalizeText(lesson.itemId);
+        const nextExpressionId = normalizeText(lesson.expressionId);
 
         if (Object.prototype.hasOwnProperty.call(lesson, 'showEquationGraph')) {
           setShowEquationGraph(Boolean(lesson.showEquationGraph));
+        }
+        if (Object.prototype.hasOwnProperty.call(lesson, 'expressionId')) {
+          setSelectedExpressionId(nextExpressionId);
         }
 
         if (nextActivity && ACTIVITY_LIBRARY.some((activity) => activity.id === nextActivity)) {
@@ -559,6 +717,36 @@ export default function App({ role = 'student' }) {
   }, [identity.color, identity.name, isSocketConnected, isStudent]);
 
   useEffect(() => {
+    if (!isTeacher || !sessionLogging?.activeSessionId) {
+      setSessionLogParticipants([]);
+      return undefined;
+    }
+
+    let cancelled = false;
+    let requestInFlight = false;
+    const refreshParticipants = async () => {
+      if (requestInFlight) return;
+      requestInFlight = true;
+      try {
+        const response = await fetch('/api/session-logs/active/linear-systems-lab/students', { cache: 'no-store' });
+        const payload = response.ok ? await response.json() : null;
+        if (!cancelled) setSessionLogParticipants(Array.isArray(payload?.students) ? payload.students : []);
+      } catch {
+        if (!cancelled) setSessionLogParticipants([]);
+      } finally {
+        requestInFlight = false;
+      }
+    };
+
+    refreshParticipants();
+    const timer = window.setInterval(refreshParticipants, 750);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [isTeacher, sessionLogging?.activeSessionId]);
+
+  useEffect(() => {
     if (!isStudent || !isSocketConnected || !evaluation.ready || !evaluation.payload) {
       return;
     }
@@ -587,9 +775,14 @@ export default function App({ role = 'student' }) {
 
     const nextItems = (LESSON_DATA[activityId] && LESSON_DATA[activityId].items) || [];
     const nextItemId = nextItems[0] ? nextItems[0].id : '';
+    const nextExpressionId = nextItems[0]?.expressions?.[0]?.id || '';
+    const nextActivity = ACTIVITY_LIBRARY.find((activity) => activity.id === activityId);
+    const nextShowEquationGraph = nextActivity?.widgets?.right?.visibleByDefault !== false;
 
     setSelectedActivityId(activityId);
     setSelectedItemId(nextItemId);
+    setSelectedExpressionId(nextExpressionId);
+    setShowEquationGraph(nextShowEquationGraph);
     setAnswer({ x: '', y: '' });
     setFeedbackText('');
 
@@ -599,7 +792,8 @@ export default function App({ role = 'student' }) {
         lesson: {
           activityId,
           itemId: nextItemId,
-          showEquationGraph
+          expressionId: nextExpressionId,
+          showEquationGraph: nextShowEquationGraph
         }
       });
     }
@@ -611,7 +805,10 @@ export default function App({ role = 'student' }) {
       return;
     }
 
+    const nextItem = activeItems.find((item) => item.id === itemId);
+    const nextExpressionId = nextItem?.expressions?.[0]?.id || '';
     setSelectedItemId(itemId);
+    setSelectedExpressionId(nextExpressionId);
     setAnswer({ x: '', y: '' });
     setFeedbackText('');
 
@@ -621,6 +818,25 @@ export default function App({ role = 'student' }) {
         lesson: {
           activityId: selectedActivityId,
           itemId,
+          expressionId: nextExpressionId,
+          showEquationGraph
+        }
+      });
+    }
+  };
+
+  const setLessonExpression = (nextExpressionId) => {
+    const expressionId = normalizeText(nextExpressionId);
+    if (!expressionId || expressionId === selectedExpressionId) return;
+    setSelectedExpressionId(expressionId);
+    setInvalidGroupingItemIds([]);
+    if (isTeacher) {
+      sendSocketMessage({
+        type: 'teacher_lesson',
+        lesson: {
+          activityId: selectedActivityId,
+          itemId: selectedItemId,
+          expressionId,
           showEquationGraph
         }
       });
@@ -640,6 +856,7 @@ export default function App({ role = 'student' }) {
       lesson: {
         activityId: selectedActivityId,
         itemId: selectedItemId,
+        expressionId: selectedExpressionId,
         showEquationGraph: visible
       }
     });
@@ -665,19 +882,95 @@ export default function App({ role = 'student' }) {
 
   const sortedParticipants = useMemo(() => {
     const source = Array.isArray(participants) ? participants : [];
-    return [...source].sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
-  }, [participants]);
+    const mergedByName = new Map(source.map((participant) => [
+      String(participant.name || participant.username || '').trim().toLocaleLowerCase(),
+      participant
+    ]));
 
-  const graphPanelVisible = showEquationGraph && (activeActivity.mode === 'graphing-input' || coordinateLines.length > 0);
+    sessionLogParticipants.forEach((sessionParticipant) => {
+      const nameKey = String(sessionParticipant.name || sessionParticipant.username || '').trim().toLocaleLowerCase();
+      const current = mergedByName.get(nameKey) || {};
+      const livePlacements = sessionParticipant.answers?.[selectedActivityId] || {};
+      mergedByName.set(nameKey, {
+        ...current,
+        ...sessionParticipant,
+        answers: {
+          ...(current.answers || {}),
+          ...(sessionParticipant.answers || {}),
+          placements: {
+            ...(current.answers?.placements || {}),
+            ...(livePlacements || {})
+          }
+        }
+      });
+    });
+
+    const merged = [...mergedByName.values()];
+    const resolved = merged.map((participant) => {
+      const livePlacements = participant.answers?.[selectedActivityId] || {};
+      return {
+        ...participant,
+        answers: {
+          ...(participant.answers || {}),
+          placements: {
+            ...(participant.answers?.placements || {}),
+            ...(livePlacements || {})
+          }
+        }
+      };
+    });
+    return resolved.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+  }, [participants, selectedActivityId, sessionLogParticipants]);
+
+  const placementTableColumns = useMemo(() => {
+    if (activeActivity.mode !== 'placement-board') {
+      return [];
+    }
+
+    return [
+      ...createPlacementGroupColumns(
+        activePlacementGroups,
+        activePlacementItems,
+        (entry, item) => entry?.answers?.placements?.[item.id],
+        showPlacementAssessment
+      ),
+      ...(showPlacementAssessment ? [{
+        key: 'placement-score',
+        label: 'Σκορ',
+        render: (entry) => {
+          const placements = entry?.answers?.placements && typeof entry.answers.placements === 'object' ? entry.answers.placements : {};
+          const correctCount = activePlacementItems.filter((item) => placements[item.id] === item.correctGroupId).length;
+          const score = activePlacementItems.length ? Math.round((correctCount / activePlacementItems.length) * 10) : 0;
+          return `${score}/10`;
+        }
+      }] : [])
+    ];
+  }, [activeActivity.mode, activePlacementGroups, activePlacementItems, showPlacementAssessment]);
+
+  const graphPanelVisible = showEquationGraph && (activeActivity.mode === 'graphing-input' || activeActivity.mode === 'placement-board' || coordinateLines.length > 0);
   const isGroupingMode = activeActivity.mode === 'grouping';
+  const leftWidgetSettings = activeActivity.widgets?.left || {};
+  const leftWidgetContent = leftWidgetSettings.content || {};
+  const rightWidget = activeActivity.widgets?.right || {};
+  const rightWidgetSettings = rightWidget.settings || {};
 
   const leftPanel = (
-    <div className="lab-card lab-card--highlight poly-expression-card linear-expression-card" aria-label={t('linearSystemAria')}>
-      <p className="lab-mini-label poly-mini-label">{t('linearSystem')}</p>
+    <div className="lab-card lab-card--highlight poly-expression-card linear-expression-card" aria-label={leftWidgetSettings.ariaLabel || t('linearSystemAria')}>
+      <p className="lab-mini-label poly-mini-label">{leftWidgetSettings.miniLabel || t('linearSystem')}</p>
       {activeActivity.mode === 'graphing-input' ? (
-        <div className="linear-system-preview" aria-label={t('linearSystemPreview')}>
+        <div className="linear-system-preview" aria-label={leftWidgetSettings.previewAriaLabel || t('linearSystemPreview')}>
           <p>{formatEquationFromRow(activeEquationInputs.equation1)}</p>
           <p>{formatEquationFromRow(activeEquationInputs.equation2)}</p>
+        </div>
+      ) : activeActivity.mode === 'placement-board' ? (
+        <div className="linear-placement-equations" aria-label={leftWidgetContent.placementAriaLabel || leftWidgetSettings.ariaLabel || t('linearSystemAria')}>
+          {activeSelectedEquation ? (
+            <div key={`${activeItem.id}-selected-equation`} className="linear-placement-equation">
+              {leftWidgetContent.type === 'equation' ? (
+                <EquationWidget {...(leftWidgetContent.settings || {})} expression={activeSelectedEquation} />
+              ) : null}
+            </div>
+          ) : null}
         </div>
       ) : activeItem && activeItem.systemLatex ? (
         <div className="lab-math-box poly-expression-math">
@@ -753,7 +1046,6 @@ export default function App({ role = 'student' }) {
 
       {activeActivity.mode === 'grouping' ? (
         <>
-          <p className="linear-note">{t('linearSystemGroupingInstruction')}</p>
           <GroupingDragDrop
             activity={`linear-systems:${selectedActivityId}`}
             items={activeItems}
@@ -762,7 +1054,10 @@ export default function App({ role = 'student' }) {
             onChange={(nextPlacements) => {
               setGroupingPlacementsByActivity((current) => ({
                 ...current,
-                [selectedActivityId]: nextPlacements
+                [selectedActivityId]: {
+                  ...(current[selectedActivityId] || {}),
+                  [selectedItemId]: nextPlacements
+                }
               }));
               setInvalidGroupingItemIds([]);
             }}
@@ -770,6 +1065,28 @@ export default function App({ role = 'student' }) {
             bankLabel={t('linearSystemGroupingBank')}
           />
         </>
+      ) : null}
+
+      {activeActivity.mode === 'placement-board' ? (
+        <PlacementBoard
+          key={selectedExpressionId}
+          activity={`linear-systems:${selectedActivityId}`}
+          items={activePlacementItems}
+          groups={activePlacementGroups}
+          placements={activePlacementPlacements}
+          invalidItemIds={invalidGroupingItemIds}
+          onChange={(nextPlacements) => {
+            setGroupingPlacementsByActivity((current) => ({
+              ...current,
+              [selectedActivityId]: {
+                ...(current[selectedActivityId] || {}),
+                [placementStateKey]: nextPlacements
+              }
+            }));
+            setInvalidGroupingItemIds([]);
+          }}
+          bankLabel="Σημεία προς ταξινόμηση"
+        />
       ) : null}
 
       {activeActivity.mode === 'algebra' ? (
@@ -814,21 +1131,19 @@ export default function App({ role = 'student' }) {
         </div>
       ) : null}
 
-      {feedbackText ? <p className="linear-feedback">{feedbackText}</p> : null}
     </div>
   );
 
   const rightPanel = graphPanelVisible ? (
     <aside className="lab-card lab-card--panel poly-team-card linear-graph-card">
-      <PlotWidget
-        lines={coordinateLines}
-        title={t('linearSystemGraph')}
-        showLegend
-        xMin={-6}
-        xMax={6}
-        yMin={-6}
-        yMax={6}
-      />
+      {rightWidget.type === 'plot-widget' ? (
+        <PlotWidget
+          {...rightWidgetSettings}
+          lines={coordinateLines}
+          graphItems={activeActivity.mode === 'placement-board' ? activePlacementGraphItems : undefined}
+          title={rightWidgetSettings.title || t('linearSystemGraph')}
+        />
+      ) : null}
     </aside>
   ) : null;
 
@@ -866,18 +1181,22 @@ export default function App({ role = 'student' }) {
           <SettingsAccordion>
             <CommonSessionSettings />
             <div className="lab-data-section data-section">
-              <label className="shared-activity-label" htmlFor="linear-expression">{t('linearSystemExercise')}</label>
-              <select
-                id="linear-expression"
-                className="shared-activity-select"
-                value={selectedItemId}
-                onChange={(event) => setLessonItem(event.target.value)}
-              >
-                {activeItems.length === 0 ? <option value="">{t('linearSystemNoExercises')}</option> : null}
-                {activeItems.map((item, index) => (
-                  <option key={item.id} value={item.id}>{`${index + 1}.`}</option>
-                ))}
-              </select>
+              {activeActivity.mode !== 'placement-board' ? (
+                <>
+                  <label className="shared-activity-label" htmlFor="linear-expression">{t('linearSystemExercise')}</label>
+                  <select
+                    id="linear-expression"
+                    className="shared-activity-select"
+                    value={selectedItemId}
+                    onChange={(event) => setLessonItem(event.target.value)}
+                  >
+                    {activeItems.length === 0 ? <option value="">{t('linearSystemNoExercises')}</option> : null}
+                    {activeItems.map((item, index) => (
+                      <option key={item.id} value={item.id}>{`${index + 1}.`}</option>
+                    ))}
+                  </select>
+                </>
+              ) : null}
 
               <label className="linear-toggle">
                 <input
@@ -885,13 +1204,36 @@ export default function App({ role = 'student' }) {
                   checked={showEquationGraph}
                   onChange={(event) => setGraphVisibility(event.target.checked)}
                 />
-                <span>{t('linearSystemShowGraph')}</span>
+                <span>{rightWidget.visibilityLabel || t('linearSystemShowGraph')}</span>
               </label>
             </div>
           </SettingsAccordion>
 
-          <StudentTable
-            title={t('studentTable')}
+          {activeActivity.mode === 'placement-board' ? (
+            <ExpressionAccordion
+              title="Εξισώσεις"
+              label="Επιλογή εξίσωσης"
+              icon="📈"
+              value={selectedExpressionId}
+              options={activeExpressionOptions}
+              onChange={setLessonExpression}
+              selectId="linear-expression"
+            />
+          ) : null}
+
+          <StudentsAccordion
+            title={activeActivity.mode === 'placement-board' ? 'Πίνακας ομάδων / Groups' : t('studentTable')}
+            nameColumnLabel={activeActivity.mode === 'placement-board' ? 'Ομάδα / Group' : ''}
+            nameHeaderControl={activeActivity.mode === 'placement-board' ? (
+              <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.72rem', fontWeight: 600, whiteSpace: 'normal' }}>
+                <input
+                  type="checkbox"
+                  checked={showPlacementAssessment}
+                  onChange={(event) => setShowPlacementAssessment(event.target.checked)}
+                />
+                <span>Εμφάνιση σωστού/λάθους και σκορ</span>
+              </label>
+            ) : null}
             participants={sortedParticipants}
             getRowStyle={(entry) => {
               const completed = String(entry?.answers?.completed || '') === '1';
@@ -905,10 +1247,12 @@ export default function App({ role = 'student' }) {
             columns={[
               { key: 'activityCode', label: t('activities'), render: (entry) => entry.activityId || '-' },
               { key: 'itemId', label: t('linearSystemExercise'), render: (entry) => entry.itemId || '-' },
-              { key: 'equation1', label: t('linearSystemEquation', { number: 1 }), render: (entry) => entry.answers?.equation1 || '-' },
-              { key: 'equation2', label: t('linearSystemEquation', { number: 2 }), render: (entry) => entry.answers?.equation2 || '-' },
-              { key: 'classification', label: t('linearSystemClassification'), render: (entry) => entry.answers?.classification || '-' },
-              ...(sessionLogging?.scoreVisible ? [{ key: 'score', label: t('score'), render: (entry) => entry.answers?.score ?? '-' }] : [])
+              ...(activeActivity.mode === 'placement-board' ? placementTableColumns : [
+                { key: 'equation1', label: t('linearSystemEquation', { number: 1 }), render: (entry) => entry.answers?.equation1 || '-' },
+                { key: 'equation2', label: t('linearSystemEquation', { number: 2 }), render: (entry) => entry.answers?.equation2 || '-' },
+                { key: 'classification', label: t('linearSystemClassification'), render: (entry) => entry.answers?.classification || '-' }
+              ]),
+              ...(activeActivity.mode !== 'placement-board' && sessionLogging?.scoreVisible ? [{ key: 'score', label: t('score'), render: (entry) => entry.answers?.score ?? '-' }] : [])
             ]}
             emptyMessage={t('noStudents')}
           />

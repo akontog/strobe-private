@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSessionInputLogger } from '../activities/SessionLogContext';
-import './common-session-settings.css';
+import './CommonSessionSettings.css';
 
 export default function CommonSessionSettings({
   feedbackEnabled, // Optional controlled feedback setting.

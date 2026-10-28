@@ -26,7 +26,7 @@ import StudentIdentityControl from './shared/components/menu/StudentIdentityCont
 import LanguageSwitcher from './shared/components/menu/LanguageSwitcher';
 import RoleAccessControl from './shared/components/menu/RoleAccessControl';
 import { SessionLogProvider } from './shared/components/activities/SessionLogContext';
-import { SettingsAccordion, ChatAccordion, CommonSessionSettings, StudentQrAccordion } from './shared/components';
+import { SettingsAccordion, ChatAccordion, CommonSessionSettings, QrAccordion } from './shared/components';
 import { getAppSlug, getWorkshopPath } from './shared/utils/workshopPaths';
 
 const SESSION_ENABLED_APPS = new Set([
@@ -562,7 +562,7 @@ function App() {
         </Routes> : null}
         {pathname.startsWith('/workshops/') && !labHasInlineChat ? <ChatAccordion /> : null}
         {!clickedMenuGroup && hasTeacherAccess && pathname.startsWith('/workshops/') ? (
-          <StudentQrAccordion
+          <QrAccordion
             title={tInterface('studentConnection')}
             alt={tInterface('studentQrAlt')}
           />

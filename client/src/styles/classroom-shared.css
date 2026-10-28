@@ -546,41 +546,6 @@ body.session-not-started-student .common-zone {
   line-height: 1.2;
 }
 
-.accordion {
-  margin-top: 0.5rem;
-}
-
-.accordion-btn {
-  width: 100%;
-  background: #eef2ff;
-  border: 1px solid #cbd5e1;
-  border-radius: 2rem;
-  padding: 0.5rem 1rem;
-  font-size: 0.85rem;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-}
-
-.accordion-btn:hover {
-  background: #e0e7ff;
-}
-
-.accordion-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out;
-}
-
-.accordion-content.open {
-  max-height: 70vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  transition: max-height 0.4s ease-in;
-}
-
 .data-section {
   background: #f8fafc;
   border-radius: 1.2rem;
@@ -652,15 +617,6 @@ body.session-not-started-student .common-zone {
 }
 
 @media (max-width: 760px) {
-  .accordion-btn {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
-  }
-
-  .accordion-content.open {
-    max-height: 80vh;
-  }
-
   .data-table th,
   .data-table td {
     font-size: 0.8rem;

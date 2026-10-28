@@ -12,7 +12,7 @@ import {
   CommonSessionSettings,
   ChatAccordion,
   ActivitiesMenu,
-  StudentTable,
+  StudentsAccordion,
   randomIdentityColor,
   readIdentitySnapshot,
   readIdentityColor,
@@ -916,7 +916,7 @@ const [studentColor, setStudentColor] = useState(() => {
 
       {(isTeacher || isScreen) && (
         <div className="live-table-wrap">
-          <StudentTable
+          <StudentsAccordion
             title={t('studentTableTitle')}
             participants={sortedParticipants}
             emptyMessage={t('noStudents')}

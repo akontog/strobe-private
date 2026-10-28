@@ -1,5 +1,5 @@
 ﻿export { Accordion } from './layouts/Accordion';
-export { StudentQrAccordion } from './services/StudentQrAccordion';
+export { QrAccordion } from './services/QrAccordion';
 export { default as SharedCommonZoneLayout } from './layouts/SharedCommonZoneLayout';
 export { default as Toolbar } from './layouts/Toolbar';
 export { ActivitiesMenu, DEFAULT_ACTIVITY_OPTIONS } from './activities/ActivitiesMenu';
@@ -11,15 +11,19 @@ export { parseOptionsExpression } from './resources/OptionsGrid';
 export { default as ButtonGrid } from './resources/OptionsGrid';
 export { default as HeroTitle } from './primitives/HeroTitle';
 export { default as MathFormula } from './primitives/MathFormula';
-export { StudentTable } from './services/StudentTable';
-export * from './services/studentTableColumnPresets.jsx';
+export {
+  default as StudentsAccordion,
+  createPlacementGroupColumns,
+  createNeuralLabColumns,
+  createBuffonColumns,
+  createGeometryColumns
+} from './services/StudentsAccordion';
 export { default as BlueNumberBox } from './primitives/BlueNumberBox';
 export { default as GridButton } from './primitives/GridButton';
 export { default as AlgebraTiles } from './resources/AlgebraTiles';
 export { default as NumberLine } from './resources/NumberLine';
 export { default as EntryGrid } from './resources/EntryGrid';
 export { default as InputGrid } from './resources/EntryGrid';
-export { default as StudentScoresAccordion } from './services/StudentScoresAccordion';
 export { useSessionInputLogger } from './activities/SessionLogContext';
 export { default as ActivitySettingsAccordion } from './activities/ActivitySettingsAccordion';
 export { default as SharedInputBox } from './primitives/SharedInputBox';
@@ -41,4 +45,4 @@ export { default as EquationWidget } from './widgets/EquationWidget';
 export { default as SettingsAccordion } from './services/SettingsAccordion';
 export { default as ChatAccordion } from './services/ChatAccordion';
 export { default as CommonSessionSettings } from './services/CommonSessionSettings';
-
+export { default as ExpressionAccordion } from './services/ExpressionAccordion';

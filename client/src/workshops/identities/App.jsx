@@ -5,8 +5,7 @@ import FullScreenButton from '../../shared/components/primitives/FullScreenButto
 import {
   Accordion,
   ActivitiesMenu,
-  StudentTable,
-  StudentScoresAccordion,
+  StudentsAccordion,
   SettingsAccordion,
   CommonSessionSettings,
   HeroTitle,
@@ -413,7 +412,7 @@ export default function App({ role = 'student' }) {
             <CommonSessionSettings />
           </SettingsAccordion>
 
-          <StudentTable
+          <StudentsAccordion
             title={t('studentTableTitle', { defaultValue: 'Πίνακας μαθητών' })}
             participants={sortedStudents}
             columns={[
@@ -451,7 +450,7 @@ export default function App({ role = 'student' }) {
 
         </>
       ) : null}
-      <StudentScoresAccordion
+      <StudentsAccordion
         role={role}
         studentName={studentName}
         activity={`identities:${answerActivityKey}`}

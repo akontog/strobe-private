@@ -21,7 +21,8 @@ function initLinearSystems({
 
   const lessonState = {
     activityId: '1',
-    itemId: 'ls-1',
+    itemId: 'eq-1',
+    expressionId: 'expr-1',
     geogebraRoomId: 'linear-systems-lab-3-2-1',
     showEquationGraph: true
   };
@@ -203,6 +204,7 @@ function initLinearSystems({
         const next = message.lesson && typeof message.lesson === 'object' ? message.lesson : {};
         const activityId = sanitizeString(next.activityId, 64);
         const itemId = sanitizeString(next.itemId, 64);
+        const expressionId = sanitizeString(next.expressionId, 64);
         const geogebraRoomId = sanitizeString(next.geogebraRoomId, 80);
         const showEquationGraph = Boolean(next.showEquationGraph);
 
@@ -211,6 +213,9 @@ function initLinearSystems({
         }
         if (itemId) {
           lessonState.itemId = itemId;
+        }
+        if (Object.prototype.hasOwnProperty.call(next, 'expressionId')) {
+          lessonState.expressionId = expressionId;
         }
         if (Object.prototype.hasOwnProperty.call(next, 'geogebraRoomId')) {
           lessonState.geogebraRoomId = geogebraRoomId || '';

@@ -3,52 +3,745 @@
     {
       "id": "1",
       "code": "1.",
-      "title": "Γραφική δημιουργία συστήματος",
-      "objective": "Γράψε δύο εξισώσεις και δες τις αντίστοιχες ευθείες στο γράφημα.",
-      "mode": "graphing-input"
+      "title": "Επαλήθευση ζευγών σε εξίσωση",
+      "objective": "Ποια από τα επόμενα ζεύγη επαληθεύουν την σχέση",
+      "mode": "placement-board",
+      "widgets": {
+        "left": {
+          "ariaLabel": "Σύστημα",
+          "miniLabel": "Σύστημα",
+          "content": {
+            "type": "equation",
+            "placementAriaLabel": "Εξίσωση επιλεγμένης δραστηριότητας"
+          },
+          "previewAriaLabel": "Προεπισκόπηση συστήματος"
+        },
+        "right": {
+          "type": "plot-widget",
+          "visibleByDefault": true,
+          "settings": {
+            "width": 360,
+            "height": 300,
+            "showLegend": true,
+            "showGrid": true,
+            "xMin": -6,
+            "xMax": 6,
+            "yMin": -6,
+            "yMax": 6,
+            "lineColors": [
+              "#2563eb",
+              "#dc2626"
+            ],
+            "title": "Σύστημα Αξόνων",
+            "accessibleLabel": "Σύστημα Αξόνων",
+            "axisLabels": {
+              "x": "x",
+              "y": "y"
+            },
+            "lineLabelTemplate": "L{index}: {equation}"
+          },
+          "visibilityLabel": "Εμφάνιση γραφήματος δεξιά"
+        }
+      }
     },
     {
       "id": "2",
       "code": "2.",
       "title": "Μία, καμία ή άπειρες λύσεις",
       "objective": "Σύνδεσε τη γεωμετρική εικόνα με το πλήθος των λύσεων.",
-      "mode": "grouping"
+      "mode": "grouping",
+      "widgets": {
+        "left": {
+          "ariaLabel": "Σύστημα",
+          "miniLabel": "Σύστημα",
+          "content": {
+            "type": "equation",
+            "placementAriaLabel": "Εξίσωση επιλεγμένης δραστηριότητας"
+          },
+          "previewAriaLabel": "Προεπισκόπηση συστήματος"
+        },
+        "right": {
+          "type": "plot-widget",
+          "visibleByDefault": true,
+          "settings": {
+            "width": 360,
+            "height": 300,
+            "showLegend": true,
+            "showGrid": true,
+            "xMin": -6,
+            "xMax": 6,
+            "yMin": -6,
+            "yMax": 6,
+            "lineColors": [
+              "#2563eb",
+              "#dc2626"
+            ],
+            "title": "Σύστημα Αξόνων",
+            "accessibleLabel": "Σύστημα Αξόνων",
+            "axisLabels": {
+              "x": "x",
+              "y": "y"
+            },
+            "lineLabelTemplate": "L{index}: {equation}"
+          },
+          "visibilityLabel": "Εμφάνιση γραφήματος δεξιά"
+        }
+      }
     },
     {
       "id": "3",
       "code": "3.",
       "title": "Ενσώματη δραστηριότητα (προσεχώς)",
       "objective": "Η δραστηριότητα θα ενεργοποιηθεί σε επόμενη φάση με παρακολούθηση μέσω κάμερας.",
-      "mode": "embodied"
+      "mode": "embodied",
+      "widgets": {
+        "left": {
+          "ariaLabel": "Σύστημα",
+          "miniLabel": "Σύστημα",
+          "content": {
+            "type": "equation",
+            "placementAriaLabel": "Εξίσωση επιλεγμένης δραστηριότητας"
+          },
+          "previewAriaLabel": "Προεπισκόπηση συστήματος"
+        },
+        "right": {
+          "type": "plot-widget",
+          "visibleByDefault": true,
+          "settings": {
+            "width": 360,
+            "height": 300,
+            "showLegend": true,
+            "showGrid": true,
+            "xMin": -6,
+            "xMax": 6,
+            "yMin": -6,
+            "yMax": 6,
+            "lineColors": [
+              "#2563eb",
+              "#dc2626"
+            ],
+            "title": "Σύστημα Αξόνων",
+            "accessibleLabel": "Σύστημα Αξόνων",
+            "axisLabels": {
+              "x": "x",
+              "y": "y"
+            },
+            "lineLabelTemplate": "L{index}: {equation}"
+          },
+          "visibilityLabel": "Εμφάνιση γραφήματος δεξιά"
+        }
+      }
     },
     {
       "id": "4",
       "code": "4.",
       "title": "Αλγεβρική επίλυση με απαλοιφή",
       "objective": "Βρες τις τιμές των x και y και έλεγξε τη λύση.",
-      "mode": "algebra"
+      "mode": "algebra",
+      "widgets": {
+        "left": {
+          "ariaLabel": "Σύστημα",
+          "miniLabel": "Σύστημα",
+          "content": {
+            "type": "equation",
+            "placementAriaLabel": "Εξίσωση επιλεγμένης δραστηριότητας"
+          },
+          "previewAriaLabel": "Προεπισκόπηση συστήματος"
+        },
+        "right": {
+          "type": "plot-widget",
+          "visibleByDefault": true,
+          "settings": {
+            "width": 360,
+            "height": 300,
+            "showLegend": true,
+            "showGrid": true,
+            "xMin": -6,
+            "xMax": 6,
+            "yMin": -6,
+            "yMax": 6,
+            "lineColors": [
+              "#2563eb",
+              "#dc2626"
+            ],
+            "title": "Σύστημα Αξόνων",
+            "accessibleLabel": "Σύστημα Αξόνων",
+            "axisLabels": {
+              "x": "x",
+              "y": "y"
+            },
+            "lineLabelTemplate": "L{index}: {equation}"
+          },
+          "visibilityLabel": "Εμφάνιση γραφήματος δεξιά"
+        }
+      }
     },
     {
       "id": "5",
       "code": "5.",
-      "title": "Επαλήθευση αλγεβρικής λύσης στο γράφημα",
+      "title": "Επαλήθευση αλγεβρικής λύσης",
       "objective": "Σύνδεσε την αλγεβρική λύση με το σημείο τομής.",
-      "mode": "graphing-fixed"
+      "mode": "graphing-fixed",
+      "widgets": {
+        "left": {
+          "ariaLabel": "Σύστημα",
+          "miniLabel": "Σύστημα",
+          "content": {
+            "type": "equation",
+            "placementAriaLabel": "Εξίσωση επιλεγμένης δραστηριότητας"
+          },
+          "previewAriaLabel": "Προεπισκόπηση συστήματος"
+        },
+        "right": {
+          "type": "plot-widget",
+          "visibleByDefault": true,
+          "settings": {
+            "width": 360,
+            "height": 300,
+            "showLegend": true,
+            "showGrid": true,
+            "xMin": -6,
+            "xMax": 6,
+            "yMin": -6,
+            "yMax": 6,
+            "lineColors": [
+              "#2563eb",
+              "#dc2626"
+            ],
+            "title": "Σύστημα Αξόνων",
+            "accessibleLabel": "Σύστημα Αξόνων",
+            "axisLabels": {
+              "x": "x",
+              "y": "y"
+            },
+            "lineLabelTemplate": "L{index}: {equation}"
+          },
+          "visibilityLabel": "Εμφάνιση γραφήματος δεξιά"
+        }
+      }
     },
     {
       "id": "6",
       "code": "6.",
       "title": "Ενσώματη ταξινόμηση ζωνών (προσεχώς)",
       "objective": "Η δραστηριότητα θα ενεργοποιηθεί σε επόμενη φάση με ενσώματες ζώνες.",
-      "mode": "embodied"
+      "mode": "embodied",
+      "widgets": {
+        "left": {
+          "ariaLabel": "Σύστημα",
+          "miniLabel": "Σύστημα",
+          "content": {
+            "type": "equation",
+            "placementAriaLabel": "Εξίσωση επιλεγμένης δραστηριότητας"
+          },
+          "previewAriaLabel": "Προεπισκόπηση συστήματος"
+        },
+        "right": {
+          "type": "plot-widget",
+          "visibleByDefault": true,
+          "settings": {
+            "width": 360,
+            "height": 300,
+            "showLegend": true,
+            "showGrid": true,
+            "xMin": -6,
+            "xMax": 6,
+            "yMin": -6,
+            "yMax": 6,
+            "lineColors": [
+              "#2563eb",
+              "#dc2626"
+            ],
+            "title": "Σύστημα Αξόνων",
+            "accessibleLabel": "Σύστημα Αξόνων",
+            "axisLabels": {
+              "x": "x",
+              "y": "y"
+            },
+            "lineLabelTemplate": "L{index}: {equation}"
+          },
+          "visibilityLabel": "Εμφάνιση γραφήματος δεξιά"
+        }
+      }
     }
   ],
   "lessons": {
     "1": {
       "items": [
         {
-          "id": "ls-1",
-          "hint": "Γράψε 2 εξισώσεις 1ου βαθμού (π.χ. y=2x-1 και y=-x+5)."
+          "id": "eq-1",
+          "label": "Εξίσωση 1",
+          "title": "Επαλήθευση σημείου σε εξίσωση",
+          "groups": [
+            {
+              "id": "verifies",
+              "title": "Επαληθεύουν",
+              "hint": ""
+            },
+            {
+              "id": "does-not-verify",
+              "title": "Δεν επαληθεύουν",
+              "hint": ""
+            }
+          ],
+          "expressions": [
+            {
+              "id": "expr-1",
+              "equation": "y = 2x + 1",
+              "items": [
+                {
+                  "id": "expr-1-p-1",
+                  "content": "(0, 1)",
+                  "x": 0,
+                  "y": 1,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-1-p-2",
+                  "content": "(1, 3)",
+                  "x": 1,
+                  "y": 3,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-1-p-3",
+                  "content": "(2, 5)",
+                  "x": 2,
+                  "y": 5,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-1-p-4",
+                  "content": "(0, 4)",
+                  "x": 0,
+                  "y": 4,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-1-p-5",
+                  "content": "(2, 2)",
+                  "x": 2,
+                  "y": 2,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-1-p-6",
+                  "content": "(0, 3)",
+                  "x": 0,
+                  "y": 3,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-1-p-7",
+                  "content": "(-2, 0)",
+                  "x": -2,
+                  "y": 0,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-1-p-8",
+                  "content": "(-2, 5)",
+                  "x": -2,
+                  "y": 5,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-1-p-9",
+                  "content": "(1, 1)",
+                  "x": 1,
+                  "y": 1,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-1-p-10",
+                  "content": "(3, 5)",
+                  "x": 3,
+                  "y": 5,
+                  "correctGroupId": "does-not-verify"
+                }
+              ]
+            },
+            {
+              "id": "expr-2",
+              "equation": "y = -x + 4",
+              "items": [
+                {
+                  "id": "expr-2-p-1",
+                  "content": "(0, 1)",
+                  "x": 0,
+                  "y": 1,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-2-p-2",
+                  "content": "(1, 3)",
+                  "x": 1,
+                  "y": 3,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-2-p-3",
+                  "content": "(2, 5)",
+                  "x": 2,
+                  "y": 5,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-2-p-4",
+                  "content": "(0, 4)",
+                  "x": 0,
+                  "y": 4,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-2-p-5",
+                  "content": "(2, 2)",
+                  "x": 2,
+                  "y": 2,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-2-p-6",
+                  "content": "(0, 3)",
+                  "x": 0,
+                  "y": 3,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-2-p-7",
+                  "content": "(-2, 0)",
+                  "x": -2,
+                  "y": 0,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-2-p-8",
+                  "content": "(-2, 5)",
+                  "x": -2,
+                  "y": 5,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-2-p-9",
+                  "content": "(1, 1)",
+                  "x": 1,
+                  "y": 1,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-2-p-10",
+                  "content": "(3, 5)",
+                  "x": 3,
+                  "y": 5,
+                  "correctGroupId": "does-not-verify"
+                }
+              ]
+            },
+            {
+              "id": "expr-3",
+              "equation": "y = 3",
+              "items": [
+                {
+                  "id": "expr-3-p-1",
+                  "content": "(0, 1)",
+                  "x": 0,
+                  "y": 1,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-3-p-2",
+                  "content": "(1, 3)",
+                  "x": 1,
+                  "y": 3,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-3-p-3",
+                  "content": "(2, 5)",
+                  "x": 2,
+                  "y": 5,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-3-p-4",
+                  "content": "(0, 4)",
+                  "x": 0,
+                  "y": 4,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-3-p-5",
+                  "content": "(2, 2)",
+                  "x": 2,
+                  "y": 2,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-3-p-6",
+                  "content": "(0, 3)",
+                  "x": 0,
+                  "y": 3,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-3-p-7",
+                  "content": "(-2, 0)",
+                  "x": -2,
+                  "y": 0,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-3-p-8",
+                  "content": "(-2, 5)",
+                  "x": -2,
+                  "y": 5,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-3-p-9",
+                  "content": "(1, 1)",
+                  "x": 1,
+                  "y": 1,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-3-p-10",
+                  "content": "(3, 5)",
+                  "x": 3,
+                  "y": 5,
+                  "correctGroupId": "does-not-verify"
+                }
+              ]
+            },
+            {
+              "id": "expr-4",
+              "equation": "x = -2",
+              "items": [
+                {
+                  "id": "expr-4-p-1",
+                  "content": "(0, 1)",
+                  "x": 0,
+                  "y": 1,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-4-p-2",
+                  "content": "(1, 3)",
+                  "x": 1,
+                  "y": 3,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-4-p-3",
+                  "content": "(2, 5)",
+                  "x": 2,
+                  "y": 5,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-4-p-4",
+                  "content": "(0, 4)",
+                  "x": 0,
+                  "y": 4,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-4-p-5",
+                  "content": "(2, 2)",
+                  "x": 2,
+                  "y": 2,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-4-p-6",
+                  "content": "(0, 3)",
+                  "x": 0,
+                  "y": 3,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-4-p-7",
+                  "content": "(-2, 0)",
+                  "x": -2,
+                  "y": 0,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-4-p-8",
+                  "content": "(-2, 5)",
+                  "x": -2,
+                  "y": 5,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-4-p-9",
+                  "content": "(1, 1)",
+                  "x": 1,
+                  "y": 1,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-4-p-10",
+                  "content": "(3, 5)",
+                  "x": 3,
+                  "y": 5,
+                  "correctGroupId": "does-not-verify"
+                }
+              ]
+            },
+            {
+              "id": "expr-5",
+              "equation": "0x + 0y = 5",
+              "items": [
+                {
+                  "id": "expr-5-p-1",
+                  "content": "(0, 1)",
+                  "x": 0,
+                  "y": 1,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-5-p-2",
+                  "content": "(1, 3)",
+                  "x": 1,
+                  "y": 3,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-5-p-3",
+                  "content": "(2, 5)",
+                  "x": 2,
+                  "y": 5,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-5-p-4",
+                  "content": "(0, 4)",
+                  "x": 0,
+                  "y": 4,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-5-p-5",
+                  "content": "(2, 2)",
+                  "x": 2,
+                  "y": 2,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-5-p-6",
+                  "content": "(0, 3)",
+                  "x": 0,
+                  "y": 3,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-5-p-7",
+                  "content": "(-2, 0)",
+                  "x": -2,
+                  "y": 0,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-5-p-8",
+                  "content": "(-2, 5)",
+                  "x": -2,
+                  "y": 5,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-5-p-9",
+                  "content": "(1, 1)",
+                  "x": 1,
+                  "y": 1,
+                  "correctGroupId": "does-not-verify"
+                },
+                {
+                  "id": "expr-5-p-10",
+                  "content": "(3, 5)",
+                  "x": 3,
+                  "y": 5,
+                  "correctGroupId": "does-not-verify"
+                }
+              ]
+            },
+            {
+              "id": "expr-6",
+              "equation": "0x + 0y = 0",
+              "items": [
+                {
+                  "id": "expr-6-p-1",
+                  "content": "(0, 1)",
+                  "x": 0,
+                  "y": 1,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-6-p-2",
+                  "content": "(1, 3)",
+                  "x": 1,
+                  "y": 3,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-6-p-3",
+                  "content": "(2, 5)",
+                  "x": 2,
+                  "y": 5,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-6-p-4",
+                  "content": "(0, 4)",
+                  "x": 0,
+                  "y": 4,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-6-p-5",
+                  "content": "(2, 2)",
+                  "x": 2,
+                  "y": 2,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-6-p-6",
+                  "content": "(0, 3)",
+                  "x": 0,
+                  "y": 3,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-6-p-7",
+                  "content": "(-2, 0)",
+                  "x": -2,
+                  "y": 0,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-6-p-8",
+                  "content": "(-2, 5)",
+                  "x": -2,
+                  "y": 5,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-6-p-9",
+                  "content": "(1, 1)",
+                  "x": 1,
+                  "y": 1,
+                  "correctGroupId": "verifies"
+                },
+                {
+                  "id": "expr-6-p-10",
+                  "content": "(3, 5)",
+                  "x": 3,
+                  "y": 5,
+                  "correctGroupId": "verifies"
+                }
+              ]
+            }
+          ]
         }
       ]
     },

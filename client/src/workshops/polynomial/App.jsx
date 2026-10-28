@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   FullScreenButton,
-  Accordion,
   SettingsAccordion,
+  ExpressionAccordion,
   ActivitiesMenu,
   CollaborativeGeoGebra,
   GroupingDragDrop,
@@ -12,10 +12,9 @@ import {
   MathFormula,
   SharedCommonZoneLayout,
   InputGrid,
-  StudentScoresAccordion,
+  StudentsAccordion,
   CommonSessionSettings,
   ChatAccordion,
-  StudentTable,
   AlgebraTiles,
   randomIdentityColor,
   readIdentitySnapshot,
@@ -1104,25 +1103,20 @@ export default function App({ role = 'teacher' }) {
             />
           </SettingsAccordion>
 
-          <Accordion title={t('expression')} icon="🔢">
-            <div className="lab-data-section data-section poly-data-menu">
-              <div className="lab-select-group poly-select-group">
-                <label className="shared-activity-label" htmlFor="poly-expression">{t('expression')}</label>
-                <select
-                  id="poly-expression"
-                  className="shared-activity-select"
-                  value={selectedExpressionId}
-                  onChange={(event) => setExpression(event.target.value)}
-                >
-                  {activeItems.map((item) => (
-                    <option key={item.id} value={item.id}>{getExpressionOptionLabel(item)}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </Accordion>
+          <ExpressionAccordion
+            title={t('expression')}
+            label={t('expression')}
+            icon="🔢"
+            selectId="poly-expression"
+            value={selectedExpressionId}
+            options={activeItems}
+            onChange={setExpression}
+            wrapperClassName="lab-data-section data-section poly-data-menu"
+            groupClassName="lab-select-group poly-select-group"
+            getOptionLabel={getExpressionOptionLabel}
+          />
 
-          <StudentTable
+          <StudentsAccordion
             title={t('studentTable')}
             participants={sortedParticipants}
             columns={[
@@ -1147,7 +1141,7 @@ export default function App({ role = 'teacher' }) {
         </>
       )}
 
-      <StudentScoresAccordion
+      <StudentsAccordion
         role={role}
         studentName={studentName}
         activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}

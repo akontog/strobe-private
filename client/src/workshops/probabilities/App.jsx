@@ -4,7 +4,7 @@ import '../../shared/i18n';
 import './App.css';
 import {
   ActivitiesMenu, FullScreenButton, HeroTitle, readIdentityName, SharedCommonZoneLayout,
-  CommonSessionSettings, SettingsAccordion, StudentScoresAccordion, StudentTable, useSessionInputLogger, VennBoard
+  CommonSessionSettings, SettingsAccordion, StudentsAccordion, useSessionInputLogger, VennBoard
 } from '../../shared/components';
 import activityData from './data/activities.json';
 
@@ -129,7 +129,7 @@ export default function App({ role = 'student' }) {
         </SettingsAccordion>
       ) : null}
       {isTeacher ? (
-        <StudentTable
+        <StudentsAccordion
           title={t('studentTableTitle')}
           participants={participants}
           emptyMessage={t('noStudents')}
@@ -140,7 +140,7 @@ export default function App({ role = 'student' }) {
           ])}
         />
       ) : null}
-      <StudentScoresAccordion
+      <StudentsAccordion
         role={role}
         studentName={studentName}
         activity={`probabilities:${activity.id}`}

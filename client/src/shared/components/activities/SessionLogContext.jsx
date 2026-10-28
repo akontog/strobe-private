@@ -16,6 +16,32 @@ export function SessionLogProvider({
   const [feedbackEnabled, setFeedbackEnabled] = useState(false);
   const [studentName, setStudentName] = useState(() => readIdentityName(''));
   const joinedSessionRef = useRef('');
+  const previousAppRef = useRef(app);
+
+  useEffect(() => {
+    const previousApp = previousAppRef.current;
+    previousAppRef.current = app;
+    if (role !== 'teacher' || !previousApp || previousApp === app) return;
+
+    let cancelled = false;
+    const closePreviousSession = async () => {
+      try {
+        const activeResponse = await fetch(`/api/session-logs/active/${encodeURIComponent(previousApp)}`, { cache: 'no-store' });
+        const activePayload = activeResponse.ok ? await activeResponse.json() : null;
+        const sessionId = activePayload?.sessionId;
+        if (!sessionId || cancelled) return;
+
+        const response = await fetch(`/teacher/sessions/${encodeURIComponent(sessionId)}/end`, { method: 'POST' });
+        if (!response.ok && response.status !== 404) throw new Error('Could not end the previous session.');
+        window.dispatchEvent(new CustomEvent('strobe:session-ended', { detail: { sessionId } }));
+      } catch (error) {
+        console.error('Unable to end the previous workshop session:', error);
+      }
+    };
+
+    closePreviousSession();
+    return () => { cancelled = true; };
+  }, [app, role]);
 
   useEffect(() => {
     const refreshIdentity = (event) => setStudentName(String(event.detail?.name || readIdentityName('')).trim());

@@ -5,7 +5,7 @@ import NumberGrid from './components/NumberGrid';
 import SelectionSummaryAccordion from './components/SelectionSummaryAccordion';
 import TeacherPanel from './components/TeacherPanel';
 import {
-  StudentTable,
+  StudentsAccordion,
   HeroTitle,
   SettingsAccordion,
   CommonSessionSettings,
@@ -374,7 +374,7 @@ const App = ({ role = 'teacher' }) => {
           />
           <section className="primes-lower-grid">
             <div className="primes-lower-column">
-              <StudentTable
+              <StudentsAccordion
                 title={t('table.title')}
                 participants={visibleStudents}
                 nameFallback={t('table.student')}

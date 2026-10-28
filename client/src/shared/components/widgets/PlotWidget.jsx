@@ -46,6 +46,8 @@ export default function PlotWidget({
   yMax = 10, // Maximum vertical axis value.
   showLegend = true, // Shows the line legend when true.
   showGrid = true, // Shows the coordinate grid when true.
+  axisLabels = { x: 'x', y: 'y' }, // Text displayed beside each coordinate axis.
+  accessibleLabel = '', // Accessible description of the plot.
   graphItems = [], // Additional graph objects displayed on the plot.
   title = 'Οπτικοποίηση συστήματος' // Accessible title for the plot.
 }) {
@@ -55,9 +57,10 @@ export default function PlotWidget({
   const normalizedLines = useMemo(() => {
     return (Array.isArray(lines) ? lines : [])
       .map((line, index) => {
+        const verticalX = Number(line?.verticalX);
         const m = Number(line?.m);
         const b = Number(line?.b);
-        if (!Number.isFinite(m) || !Number.isFinite(b)) {
+        if (!Number.isFinite(verticalX) && (!Number.isFinite(m) || !Number.isFinite(b))) {
           return null;
         }
 
@@ -65,6 +68,7 @@ export default function PlotWidget({
           id: line?.id || `line-${index}`,
           m,
           b,
+          verticalX: Number.isFinite(verticalX) ? verticalX : null,
           color: line?.color || (index % 2 === 0 ? '#2563eb' : '#dc2626'),
           label: line?.label || `f${index + 1}`
         };
@@ -106,6 +110,14 @@ export default function PlotWidget({
       })
       .filter(Boolean);
     const linePaths = [...normalizedLines, ...equationLines].map((line) => {
+      if (Number.isFinite(line.verticalX)) {
+        const x = toX(line.verticalX);
+        return {
+          ...line,
+          points: `${x},${toY(yMin)} ${x},${toY(yMax)}`
+        };
+      }
+
       const points = [];
       const sampleCount = 60;
       for (let step = 0; step <= sampleCount; step += 1) {
@@ -139,14 +151,14 @@ export default function PlotWidget({
   }, [graphItems, normalizedLines, safeHeight, safeWidth, xMax, xMin, yMax, yMin]);
 
   return (
-    <section className="simple-coord" aria-label={title}>
+    <section className="simple-coord" aria-label={accessibleLabel || title}>
       {title ? (
         <header className="simple-coord__header">
           <h3>{title}</h3>
         </header>
       ) : null}
 
-      <svg className="simple-coord__svg" width={safeWidth} height={safeHeight} viewBox={`0 0 ${safeWidth} ${safeHeight}`} role="img" aria-label="Cartesian plot">
+      <svg className="simple-coord__svg" width={safeWidth} height={safeHeight} viewBox={`0 0 ${safeWidth} ${safeHeight}`} role="img" aria-label={accessibleLabel || title || 'Cartesian plot'}>
         <rect x="0" y="0" width={safeWidth} height={safeHeight} className="simple-coord__bg" />
 
         {showGrid ? draw.verticalGrid.map((column) => (
@@ -189,8 +201,8 @@ export default function PlotWidget({
           <text key={`ty-${y}`} x={8} y={draw.toY(y) + 4} className="simple-coord__tick">{formatNumber(y)}</text>
         ))}
 
-        <text x={safeWidth - 12} y={draw.axisY - 8} className="simple-coord__axis-label">x</text>
-        <text x={draw.axisX + 8} y={draw.padding.top + 12} className="simple-coord__axis-label">y</text>
+        <text x={safeWidth - 12} y={draw.axisY - 8} className="simple-coord__axis-label">{axisLabels?.x ?? ''}</text>
+        <text x={draw.axisX + 8} y={draw.padding.top + 12} className="simple-coord__axis-label">{axisLabels?.y ?? ''}</text>
       </svg>
 
       {showLegend ? (

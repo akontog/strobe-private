@@ -14,8 +14,8 @@ import {
   CommonSessionSettings,
   EntryGrid,
   SharedCommonZoneLayout,
-  StudentScoresAccordion,
-  StudentTable,
+  StudentsAccordion,
+  createPlacementGroupColumns,
   useSessionInputLogger
 } from '../../shared/components';
 import { readIdentityName } from '../../shared/components/menu/identityStorage';
@@ -52,7 +52,7 @@ function ResourceContent({ activity, role, activityKey }) {
     return (
       <>
         <EntryGrid fields={inputFields} columns={props.columns || 2} rows={props.rows} activity={activityKey} />
-        <StudentScoresAccordion
+        <StudentsAccordion
           role={session?.role || 'student'}
           studentName={readIdentityName('')}
           activity={activityKey}
@@ -61,7 +61,7 @@ function ResourceContent({ activity, role, activityKey }) {
       </>
     );
   }
-  if (activity.resource === 'grouping-drag-drop') {
+  if (activity.resource === 'grouping-drag-drop' || activity.resource === 'placement-board') {
     return <PlacementBoard {...props} placements={placements} onChange={setPlacements} activity={activityKey} />;
   }
   if (activity.resource === 'venn-board') {
@@ -156,13 +156,13 @@ function getStudentColumns(activity, activityKey) {
       render: (student) => student.answers?.[activityKey]?.[field.id || field.key || field.label || `field-${index}`] ?? '—'
     }));
   }
-  if (resource === 'grouping-drag-drop') {
-    const groups = new Map((props.groups || []).map((group) => [group.id, group.title || group.id]));
-    return (props.items || []).map((item, index) => ({
-      key: item.id || `item-${index}`,
-      label: typeof item.content === 'string' ? item.content : item.label || item.id || `Στοιχείο ${index + 1}`,
-      render: (student) => groups.get(student.answers?.[activityKey]?.[item.id]) || '—'
-    }));
+  if (resource === 'grouping-drag-drop' || resource === 'placement-board') {
+    const activityId = String(activityKey || '').split(':').slice(1).join(':');
+    return createPlacementGroupColumns(
+      props.groups,
+      props.items,
+      (student, item) => student.answers?.[activityId]?.[item.id]
+    );
   }
   if (resource === 'venn-board') {
     const regions = new Map([
@@ -296,8 +296,8 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
         rightPanel={widgetPanel('right')}
       />
       {role === 'teacher' ? <SettingsAccordion><CommonSessionSettings /></SettingsAccordion> : null}
-      {role === 'teacher' && ['input-grid', 'grouping-drag-drop', 'algebra-tiles', 'collaborative-algebra-tiles', 'options-grid'].includes(resourceActivity.resource) ? (
-        <StudentTable
+      {role === 'teacher' && ['input-grid', 'grouping-drag-drop', 'placement-board', 'algebra-tiles', 'collaborative-algebra-tiles', 'options-grid'].includes(resourceActivity.resource) ? (
+        <StudentsAccordion
           title="Πίνακας μαθητών"
           participants={students}
           columns={getStudentColumns(resourceActivity, selectedActivityKey)}

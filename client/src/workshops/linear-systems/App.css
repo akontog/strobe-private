@@ -136,12 +136,6 @@
   cursor: pointer;
 }
 
-.linear-feedback {
-  margin: 0.7rem 0 0;
-  color: #1d4ed8;
-  font-size: 0.88rem;
-}
-
 .linear-toggle {
   margin-top: 0.8rem;
   display: inline-flex;
@@ -163,6 +157,95 @@
   background: #f8fafc;
   padding: 0.8rem;
   color: #475569;
+}
+
+.linear-placement-equations {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.linear-placement-equation {
+  border-radius: 0.8rem;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  padding: 0.8rem;
+}
+
+.linear-point-membership {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.linear-point-membership__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: #0f172a;
+}
+
+.linear-point-membership__equation {
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.linear-point-membership__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.linear-point-membership__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid #dbeafe;
+  border-radius: 0.8rem;
+  background: #f8fafc;
+  padding: 0.7rem 0.8rem;
+}
+
+.linear-point-membership__label {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.linear-point-membership__buttons {
+  display: inline-flex;
+  gap: 0.5rem;
+}
+
+.linear-point-membership__buttons button {
+  border: 1px solid #cbd5e1;
+  border-radius: 0.6rem;
+  background: #fff;
+  color: #334155;
+  padding: 0.45rem 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.linear-point-membership__buttons button.is-selected {
+  border-color: #2563eb;
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.linear-point-membership__result {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.linear-point-membership__result.is-correct {
+  color: #15803d;
+}
+
+.linear-point-membership__result.is-wrong {
+  color: #b91c1c;
 }
 
 @media (max-width: 980px) {

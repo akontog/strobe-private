@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Accordion, FullScreenButton, HeroTitle, ChatAccordion, SettingsAccordion, StudentTable } from '../../shared/components';
+import { Accordion, FullScreenButton, HeroTitle, ChatAccordion, SettingsAccordion, StudentsAccordion } from '../../shared/components';
 import { studentTemplate } from './data/student-template';
 import { teacherSettingsTemplate } from './data/teacher-template';
 import { mountBuffonStudent } from './logic/student-logic';
@@ -77,7 +77,7 @@ function App({ role = 'teacher' }) {
           <SettingsAccordion>
             <div ref={settingsHostRef} className="buffon-settings-host buffon-content teacher" />
           </SettingsAccordion>
-          <StudentTable
+          <StudentsAccordion
             title={tBuffon('standings')}
             participants={standings}
             columns={[
