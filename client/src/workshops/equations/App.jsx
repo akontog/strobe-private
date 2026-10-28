@@ -1,14 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+﻿import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../../shared/i18n';
 import {
-  ActivitiesMenu,
+  ActivitiesAccordion,
   AlgebraTiles,
-  CommonSessionSettings,
   FullScreenButton,
   HeroTitle,
   InputGrid,
-  SettingsAccordion,
   SharedCommonZoneLayout,
   StudentsAccordion,
   readIdentityName
@@ -225,24 +223,21 @@ export default function App({ role = 'student' }) {
 
       {isTeacher ? (
         <>
-          <ActivitiesMenu
+          <ActivitiesAccordion
             title={t('questions')}
-            icon="⚖️"
+            icon="β–οΈ"
             label={t('chooseQuestion')}
             preserveSession
             options={questions.map((question) => ({ value: question.id, label: question.label }))}
             value={selectedQuestion.id}
             onChange={selectQuestion}
           />
-          <SettingsAccordion>
-            <CommonSessionSettings />
-          </SettingsAccordion>
           <StudentsAccordion
             title={t('studentTableTitle')}
             participants={participants.filter((participant) => participant.isConnected !== false)}
             columns={[
-              { key: 'tiles', label: 'Πλακίδια (αριστερά / δεξιά)', render: (participant) => `Αριστερά: ${(participant.tiles || []).filter((tile) => tile.side !== 'right').map((tile) => `${tile.sign < 0 ? '−' : '+'}${tile.type}`).join(' ') || '—'} · Δεξιά: ${(participant.tiles || []).filter((tile) => tile.side === 'right').map((tile) => `${tile.sign < 0 ? '−' : '+'}${tile.type}`).join(' ') || '—'}` },
-              { key: 'answer', label: t('solutionLabel'), render: (participant) => participant.answer || '—' }
+              { key: 'tiles', label: 'Ξ Ξ»Ξ±ΞΊΞ―Ξ΄ΞΉΞ± (Ξ±ΟΞΉΟƒΟ„ΞµΟΞ¬ / Ξ΄ΞµΞΎΞΉΞ¬)', render: (participant) => `Ξ‘ΟΞΉΟƒΟ„ΞµΟΞ¬: ${(participant.tiles || []).filter((tile) => tile.side !== 'right').map((tile) => `${tile.sign < 0 ? 'β’' : '+'}${tile.type}`).join(' ') || 'β€”'} Β· Ξ”ΞµΞΎΞΉΞ¬: ${(participant.tiles || []).filter((tile) => tile.side === 'right').map((tile) => `${tile.sign < 0 ? 'β’' : '+'}${tile.type}`).join(' ') || 'β€”'}` },
+              { key: 'answer', label: t('solutionLabel'), render: (participant) => participant.answer || 'β€”' }
             ]}
             emptyMessage={t('noStudents')}
           />

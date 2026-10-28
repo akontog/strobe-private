@@ -8,10 +8,7 @@ import {
   Accordion,
   HeroTitle,
   MathFormula,
-  SettingsAccordion,
-  CommonSessionSettings,
-  ChatAccordion,
-  ActivitiesMenu,
+  DataAccordion,
   StudentsAccordion,
   randomIdentityColor,
   readIdentitySnapshot,
@@ -858,7 +855,7 @@ const [studentColor, setStudentColor] = useState(() => {
       {isTeacher && (
         <>
 
-          <ActivitiesMenu
+          <DataAccordion
             title={t('activitiesTitle')}
             icon="🔬"
             label={t('chooseActivity')}
@@ -866,10 +863,6 @@ const [studentColor, setStudentColor] = useState(() => {
             value={selectedActivity}
             onChange={setSelectedActivity}
           />
-
-          <SettingsAccordion>
-            <CommonSessionSettings />
-          </SettingsAccordion>
 
           <DatasetSelector
             datasets={DATASETS}
@@ -950,7 +943,6 @@ const [studentColor, setStudentColor] = useState(() => {
         </div>
       )}
 
-      <ChatAccordion />
       
       
     </>

@@ -1,7 +1,8 @@
 ﻿import React from 'react';
 import { Accordion } from '../layouts/Accordion';
 import { useEffect } from 'react';
-import { useSessionInputLogger } from './SessionLogContext';
+import { useSessionInputLogger } from '../activities/SessionLogContext';
+import './ActivitiesAccordion.css';
 
 const DEFAULT_OPTIONS = [
   { value: '1', label: '1. Βρίσκω την είσοδο' },
@@ -10,7 +11,7 @@ const DEFAULT_OPTIONS = [
   { value: '4', label: '4. Συγκρίνω' }
 ];
 
-export const ActivitiesMenu = ({
+export const ActivitiesAccordion = ({
   title = 'Δραστηριότητες', // Accordion heading.
   icon = '🔬', // Icon shown beside the heading.
   label = 'Επιλογή δραστηριότητας', // Label for the activity selector.
@@ -44,11 +45,10 @@ export const ActivitiesMenu = ({
 
   return (
     <Accordion title={title} icon={icon} open={open}>
-      <div className={`data-section activities-menu ${className}`.trim()}>
+      <div className={`activities-accordion ${className}`.trim()}>
         <div className="select-group">
-          <label className="shared-activity-label">{label}</label>
+          <label>{label}</label>
           <select
-            className="shared-activity-select"
             value={value}
             onChange={(event) => handleChange(event.target.value)}
           >
@@ -69,3 +69,4 @@ export const ActivitiesMenu = ({
 };
 
 export const DEFAULT_ACTIVITY_OPTIONS = DEFAULT_OPTIONS;
+export default ActivitiesAccordion;

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ActivitySettingsAccordion, GridButton, OptionsGrid, parseOptionsExpression, SettingsAccordion } from '../../shared/components';
+import { Accordion, ActivitySettingsAccordion, GridButton, OptionsGrid, parseOptionsExpression } from '../../shared/components';
 import './OptionsGridCollabTool.css';
 import { readIdentitySnapshot } from '../../shared/components/menu/identityStorage';
 
@@ -114,7 +114,7 @@ export default function OptionsGridCollabTool({ role = 'student' }) {
               />
         </ActivitySettingsAccordion>
         {isTeacher ? (
-          <SettingsAccordion title="activityResourceSettings" icon="🔘">
+          <Accordion title={t('activityResourceSettings', { ns: 'common' })} icon="🔘">
             <form className="options-grid-collab__settings" onSubmit={applySettings}>
               <label>
                 <span>{t('activityBuilder.rows')}</span>
@@ -131,7 +131,7 @@ export default function OptionsGridCollabTool({ role = 'student' }) {
               <p>{t('activityBuilder.optionsExpressionHelp')}</p>
               <button type="submit">{t('optionsGrid.apply')}</button>
             </form>
-          </SettingsAccordion>
+          </Accordion>
         ) : null}
       </div>
     </section>

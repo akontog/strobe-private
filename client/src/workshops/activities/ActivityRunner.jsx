@@ -10,8 +10,6 @@ import {
   parseOptionsExpression,
   GridButton,
   HeroTitle,
-  SettingsAccordion,
-  CommonSessionSettings,
   EntryGrid,
   SharedCommonZoneLayout,
   StudentsAccordion,
@@ -273,7 +271,6 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
         <section className="common-zone lab-zone">
           {role === 'teacher' ? <p>Επιλέξτε μια δραστηριότητα από το μενού Δραστηριότητες.</p> : <p>Περιμένετε να ανοίξει ο/η εκπαιδευτικός μια δραστηριότητα.</p>}
         </section>
-        {role === 'teacher' ? <SettingsAccordion><CommonSessionSettings /></SettingsAccordion> : null}
       </>
     );
   }
@@ -295,7 +292,6 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
         )}
         rightPanel={widgetPanel('right')}
       />
-      {role === 'teacher' ? <SettingsAccordion><CommonSessionSettings /></SettingsAccordion> : null}
       {role === 'teacher' && ['input-grid', 'grouping-drag-drop', 'placement-board', 'algebra-tiles', 'collaborative-algebra-tiles', 'options-grid'].includes(resourceActivity.resource) ? (
         <StudentsAccordion
           title="Πίνακας μαθητών"

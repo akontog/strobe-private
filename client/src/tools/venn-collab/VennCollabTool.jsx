@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ActivitySettingsAccordion, parseOptionsExpression, SettingsAccordion, VennBoard, useSessionInputLogger } from '../../shared/components';
+import { Accordion, ActivitySettingsAccordion, parseOptionsExpression, VennBoard, useSessionInputLogger } from '../../shared/components';
 import { requestRealtimeAck } from '../../shared/utils/realtimeAck';
 import './VennCollabTool.css';
 
@@ -127,7 +127,7 @@ export default function VennCollabTool({ role = 'student' }) {
               />
         </ActivitySettingsAccordion>
         {isTeacher ? (
-          <SettingsAccordion title="activityResourceSettings" icon="⭕">
+          <Accordion title={t('activityResourceSettings', { ns: 'common' })} icon="⭕">
             <form className="venn-collab-settings" onSubmit={applySettings}>
               <label>
                 <span>{t('vennCollab.setCount')}</span>
@@ -169,7 +169,7 @@ export default function VennCollabTool({ role = 'student' }) {
               <p>{t('activityBuilder.optionsExpressionHelp')}</p>
               <button type="submit">{t('optionsGrid.apply')}</button>
             </form>
-          </SettingsAccordion>
+          </Accordion>
         ) : null}
       </div>
     </section>

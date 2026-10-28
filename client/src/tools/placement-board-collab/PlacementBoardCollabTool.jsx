@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ActivitySettingsAccordion, parseOptionsExpression, PlacementBoard, SettingsAccordion } from '../../shared/components';
+import { Accordion, ActivitySettingsAccordion, parseOptionsExpression, PlacementBoard } from '../../shared/components';
 import './PlacementBoardCollabTool.css';
 
 function loadRealtimeSocket() {
@@ -93,7 +93,7 @@ export default function PlacementBoardCollabTool({ role = 'student' }) {
               />
         </ActivitySettingsAccordion>
         {isTeacher ? (
-          <SettingsAccordion title="activityResourceSettings" icon="🧩">
+          <Accordion title={t('activityResourceSettings', { ns: 'common' })} icon="🧩">
             <form className="placement-board-collab__settings" onSubmit={applySettings}>
               <label>
                 <span>{t('placementBoard.elements')}</span>
@@ -107,7 +107,7 @@ export default function PlacementBoardCollabTool({ role = 'student' }) {
               <p>{t('placementBoard.groupsHelp')}</p>
               <button type="submit">{t('optionsGrid.apply')}</button>
             </form>
-          </SettingsAccordion>
+          </Accordion>
         ) : null}
       </div>
     </section>

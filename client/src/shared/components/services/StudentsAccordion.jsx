@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Accordion } from '../layouts/Accordion';
 import { useSessionInputLogger } from '../activities/SessionLogContext';
+import './StudentsAccordion.css';
 
 const defaultGetRowKey = (participant, index) => participant.id || participant.sessionId || participant.username || participant.name || index;
 const defaultGetDisplayName = (participant, fallbackName) => participant.username || participant.name || participant.displayName || fallbackName;
@@ -24,6 +25,7 @@ export default function StudentsAccordion({
   title = '',
   nameColumnLabel = '',
   nameHeaderControl = null,
+  onFeedbackChange,
   participants,
   columns,
   headerGroups,
@@ -40,7 +42,8 @@ export default function StudentsAccordion({
 }) {
   const { t } = useTranslation(['common', 'interface']);
   const sessionLogging = useSessionInputLogger();
-  const isTeacher = role === 'teacher';
+  const [settingsSaving, setSettingsSaving] = useState(false);
+  const isTeacher = role === 'teacher' || sessionLogging?.role === 'teacher';
   const resolvedRows = Array.isArray(participants) ? participants : [];
   const resolvedColumns = Array.isArray(columns) ? columns : [];
   const resolvedHeaderGroups = Array.isArray(headerGroups) ? headerGroups : [];
@@ -81,10 +84,35 @@ export default function StudentsAccordion({
   const resolvedEmptyMessage = emptyMessage || t('notAvailable');
   const resolvedFallback = nameFallback || t('student');
 
+  async function updateFeedback(event) {
+    const enabled = event.currentTarget.checked;
+    const previous = Boolean(sessionLogging?.feedbackEnabled);
+    setSettingsSaving(true);
+    onFeedbackChange?.(enabled);
+    try {
+      await sessionLogging?.updateFeedbackEnabled?.(enabled);
+    } catch {
+      onFeedbackChange?.(previous);
+    } finally {
+      setSettingsSaving(false);
+    }
+  }
+
+  async function updateScore(event) {
+    setSettingsSaving(true);
+    try {
+      await sessionLogging?.updateScoreVisible?.(event.currentTarget.checked);
+    } catch {
+      // The session context restores the previous value when saving fails.
+    } finally {
+      setSettingsSaving(false);
+    }
+  }
+
   return (
     <Accordion title={resolvedTitle} icon="🗄️" open={false}>
-      <div className="data-section">
-        <table className="data-table">
+      <div className="students-accordion__content">
+        <table className="students-accordion__table">
           <thead>
             {safeHeaderGroups.length > 0 && (
               <tr>
@@ -112,7 +140,21 @@ export default function StudentsAccordion({
               <th>
                 <div style={{ display: 'grid', justifyItems: 'start', gap: '0.35rem' }}>
                   <span>{nameColumnLabel || t('student')}</span>
-                  {nameHeaderControl}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.35rem 0.7rem' }}>
+                    {isTeacher ? (
+                      <>
+                        <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.72rem', fontWeight: 600, whiteSpace: 'normal' }}>
+                          <input type="checkbox" checked={sessionLogging?.scoreVisible !== false} disabled={settingsSaving} onChange={updateScore} />
+                          <span>{t('showScoreToStudents', { ns: 'common' })}</span>
+                        </label>
+                        <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.72rem', fontWeight: 600, whiteSpace: 'normal' }}>
+                          <input type="checkbox" checked={Boolean(sessionLogging?.feedbackEnabled)} disabled={settingsSaving} onChange={updateFeedback} />
+                          <span>{t('enableFeedback', { ns: 'common' })}</span>
+                        </label>
+                      </>
+                    ) : null}
+                    {nameHeaderControl}
+                  </div>
                 </div>
               </th>
               {extraColumns.map((column, index) => (

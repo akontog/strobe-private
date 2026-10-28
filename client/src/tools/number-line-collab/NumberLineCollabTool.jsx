@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ActivitySettingsAccordion, NumberLine, SettingsAccordion } from '../../shared/components';
+import { Accordion, ActivitySettingsAccordion, NumberLine } from '../../shared/components';
 
 /** Opens the shared number line selected for the current class. */
 export default function NumberLineCollabTool({ role = 'student' }) {
@@ -20,7 +20,7 @@ export default function NumberLineCollabTool({ role = 'student' }) {
           <NumberLine roomId={roomId} sessionApp="geogebra-collab" min={leftEnd} max={rightEnd} partitions={partitions} />
         </ActivitySettingsAccordion>
         {isTeacher ? (
-          <SettingsAccordion title="activityResourceSettings" icon="📏">
+          <Accordion title={t('activityResourceSettings', { ns: 'common' })} icon="📏">
             <div className="number-line-settings">
               <label>
                 <span>{t('numberLine.leftEnd')}</span>
@@ -35,7 +35,7 @@ export default function NumberLineCollabTool({ role = 'student' }) {
                 <input type="number" min="1" max="100" step="1" value={partitions} onChange={(event) => setPartitions(Math.max(1, Math.min(100, Number(event.target.value) || 1)))} />
               </label>
             </div>
-          </SettingsAccordion>
+          </Accordion>
         ) : null}
       </div>
     </section>

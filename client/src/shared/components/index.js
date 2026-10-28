@@ -1,8 +1,9 @@
 ﻿export { Accordion } from './layouts/Accordion';
 export { QrAccordion } from './services/QrAccordion';
+export { default as DataAccordion } from './services/DataAccordion';
 export { default as SharedCommonZoneLayout } from './layouts/SharedCommonZoneLayout';
 export { default as Toolbar } from './layouts/Toolbar';
-export { ActivitiesMenu, DEFAULT_ACTIVITY_OPTIONS } from './activities/ActivitiesMenu';
+export { default as ActivitiesAccordion, DEFAULT_ACTIVITY_OPTIONS } from './services/ActivitiesAccordion';
 export { default as PlacementBoard } from './resources/PlacementBoard';
 export { default as GroupingDragDrop } from './resources/PlacementBoard';
 export { default as VennBoard } from './resources/VennBoard';
@@ -42,7 +43,4 @@ export { default as PlotWidget } from './widgets/PlotWidget';
 export { default as WidgetRenderer } from './widgets/widget-renderer';
 export { default as IconWidget } from './widgets/IconWidget';
 export { default as EquationWidget } from './widgets/EquationWidget';
-export { default as SettingsAccordion } from './services/SettingsAccordion';
 export { default as ChatAccordion } from './services/ChatAccordion';
-export { default as CommonSessionSettings } from './services/CommonSessionSettings';
-export { default as ExpressionAccordion } from './services/ExpressionAccordion';

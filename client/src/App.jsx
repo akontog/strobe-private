@@ -26,7 +26,7 @@ import StudentIdentityControl from './shared/components/menu/StudentIdentityCont
 import LanguageSwitcher from './shared/components/menu/LanguageSwitcher';
 import RoleAccessControl from './shared/components/menu/RoleAccessControl';
 import { SessionLogProvider } from './shared/components/activities/SessionLogContext';
-import { SettingsAccordion, ChatAccordion, CommonSessionSettings, QrAccordion } from './shared/components';
+import { ChatAccordion, QrAccordion } from './shared/components';
 import { getAppSlug, getWorkshopPath } from './shared/utils/workshopPaths';
 
 const SESSION_ENABLED_APPS = new Set([
@@ -64,8 +64,6 @@ function App() {
       : routePath === '/tools/placement-board' ? 'placement-board-collab'
       : routePath === '/tools/input-grid' ? 'input-grid-collab'
       : routePath === '/tools/vision' ? 'vision-collab' : currentLabSlug;
-  const labHasOwnSettings = pathname.startsWith('/workshops/activities/') || ['polynomial-lab', 'linear-systems-lab', 'neural-lab', 'identities-lab', 'equations-lab', 'factorization-lab', 'probabilities-lab', 'buffon-needle', 'primes-lab'].includes(currentLabSlug);
-  const labHasInlineChat = ['polynomial-lab', 'neural-lab', 'buffon-needle'].includes(currentLabSlug);
   const [role, setRole] = useState('student');
   const [roles, setRoles] = useState([]);
   const [authReady, setAuthReady] = useState(false);
@@ -510,7 +508,6 @@ function App() {
         </div>
       </header>
       <div className={pathname.startsWith('/workshops/') ? 'client-content workshop-content' : 'client-content'}>
-        {pathname.startsWith('/workshops/') && hasTeacherAccess && !labHasOwnSettings ? <SettingsAccordion><CommonSessionSettings /></SettingsAccordion> : null}
         {clickedMenuGroup ? (
           <section className="client-menu-cards" aria-label={clickedMenuGroup.label}>
             <div className="postit-grid">
@@ -560,7 +557,7 @@ function App() {
           <Route path="/workshops/:slug/student" element={studentLabOnly(currentLabSlug, <WorkshopView slug={currentWorkshopSlug} role="student" />)} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes> : null}
-        {pathname.startsWith('/workshops/') && !labHasInlineChat ? <ChatAccordion /> : null}
+        {currentSessionApp ? <ChatAccordion /> : null}
         {!clickedMenuGroup && hasTeacherAccess && pathname.startsWith('/workshops/') ? (
           <QrAccordion
             title={tInterface('studentConnection')}

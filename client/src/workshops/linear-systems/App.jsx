@@ -1,9 +1,7 @@
 ﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  SettingsAccordion,
-  CommonSessionSettings,
-  ActivitiesMenu,
+  ActivitiesAccordion,
   GroupingDragDrop,
   PlacementBoard,
   HeroTitle,
@@ -13,7 +11,7 @@ import {
   SharedInputRow,
   PlotWidget,
   EquationWidget,
-  ExpressionAccordion,
+  DataAccordion,
   StudentsAccordion,
   createPlacementGroupColumns,
   readIdentitySnapshot,
@@ -200,7 +198,6 @@ export default function App({ role = 'student' }) {
   const [groupingPlacementsByActivity, setGroupingPlacementsByActivity] = useState({});
   const [invalidGroupingItemIds, setInvalidGroupingItemIds] = useState([]);
   const [showEquationGraph, setShowEquationGraph] = useState(() => ACTIVITY_LIBRARY[0]?.widgets?.right?.visibleByDefault !== false);
-  const [showPlacementAssessment, setShowPlacementAssessment] = useState(false);
   const [equationInputsByItem, setEquationInputsByItem] = useState({});
   const [lastSentState, setLastSentState] = useState('');
   const [identity, setIdentity] = useState(() => readIdentitySnapshot({ nameFallback: 'Student', colorFallback: '#4ECDC4' }));
@@ -784,7 +781,6 @@ export default function App({ role = 'student' }) {
     setSelectedExpressionId(nextExpressionId);
     setShowEquationGraph(nextShowEquationGraph);
     setAnswer({ x: '', y: '' });
-    setFeedbackText('');
 
     if (isTeacher) {
       sendSocketMessage({
@@ -810,7 +806,6 @@ export default function App({ role = 'student' }) {
     setSelectedItemId(itemId);
     setSelectedExpressionId(nextExpressionId);
     setAnswer({ x: '', y: '' });
-    setFeedbackText('');
 
     if (isTeacher) {
       sendSocketMessage({
@@ -932,9 +927,9 @@ export default function App({ role = 'student' }) {
         activePlacementGroups,
         activePlacementItems,
         (entry, item) => entry?.answers?.placements?.[item.id],
-        showPlacementAssessment
+        sessionLogging?.scoreVisible !== false
       ),
-      ...(showPlacementAssessment ? [{
+      ...(sessionLogging?.scoreVisible !== false ? [{
         key: 'placement-score',
         label: 'Σκορ',
         render: (entry) => {
@@ -945,7 +940,7 @@ export default function App({ role = 'student' }) {
         }
       }] : [])
     ];
-  }, [activeActivity.mode, activePlacementGroups, activePlacementItems, showPlacementAssessment]);
+  }, [activeActivity.mode, activePlacementGroups, activePlacementItems, sessionLogging?.scoreVisible]);
 
   const graphPanelVisible = showEquationGraph && (activeActivity.mode === 'graphing-input' || activeActivity.mode === 'placement-board' || coordinateLines.length > 0);
   const isGroupingMode = activeActivity.mode === 'grouping';
@@ -953,6 +948,16 @@ export default function App({ role = 'student' }) {
   const leftWidgetContent = leftWidgetSettings.content || {};
   const rightWidget = activeActivity.widgets?.right || {};
   const rightWidgetSettings = rightWidget.settings || {};
+  const graphVisibilityControl = (
+    <label className="linear-toggle">
+      <input
+        type="checkbox"
+        checked={showEquationGraph}
+        onChange={(event) => setGraphVisibility(event.target.checked)}
+      />
+      <span>{rightWidget.visibilityLabel || t('linearSystemShowGraph')}</span>
+    </label>
+  );
 
   const leftPanel = (
     <div className="lab-card lab-card--highlight poly-expression-card linear-expression-card" aria-label={leftWidgetSettings.ariaLabel || t('linearSystemAria')}>
@@ -1166,7 +1171,7 @@ export default function App({ role = 'student' }) {
       </section>
 
       {isTeacher ? (
-        <ActivitiesMenu
+        <ActivitiesAccordion
           title={t('activities')}
           icon="🎯"
           label={t('chooseActivity')}
@@ -1178,39 +1183,23 @@ export default function App({ role = 'student' }) {
 
       {isTeacher ? (
         <>
-          <SettingsAccordion>
-            <CommonSessionSettings />
-            <div className="lab-data-section data-section">
-              {activeActivity.mode !== 'placement-board' ? (
-                <>
-                  <label className="shared-activity-label" htmlFor="linear-expression">{t('linearSystemExercise')}</label>
-                  <select
-                    id="linear-expression"
-                    className="shared-activity-select"
-                    value={selectedItemId}
-                    onChange={(event) => setLessonItem(event.target.value)}
-                  >
-                    {activeItems.length === 0 ? <option value="">{t('linearSystemNoExercises')}</option> : null}
-                    {activeItems.map((item, index) => (
-                      <option key={item.id} value={item.id}>{`${index + 1}.`}</option>
-                    ))}
-                  </select>
-                </>
-              ) : null}
-
-              <label className="linear-toggle">
-                <input
-                  type="checkbox"
-                  checked={showEquationGraph}
-                  onChange={(event) => setGraphVisibility(event.target.checked)}
-                />
-                <span>{rightWidget.visibilityLabel || t('linearSystemShowGraph')}</span>
-              </label>
-            </div>
-          </SettingsAccordion>
+          {activeActivity.mode !== 'placement-board' ? (
+            <DataAccordion
+              title={t('linearSystemExercise')}
+              label={t('linearSystemExercise')}
+              icon="🧮"
+              value={selectedItemId}
+              options={activeItems.map((item, index) => ({ value: item.id, label: `${index + 1}.` }))}
+              onChange={setLessonItem}
+              emptyLabel={t('linearSystemNoExercises')}
+              selectId="linear-exercise"
+            >
+              {graphVisibilityControl}
+            </DataAccordion>
+          ) : null}
 
           {activeActivity.mode === 'placement-board' ? (
-            <ExpressionAccordion
+            <DataAccordion
               title="Εξισώσεις"
               label="Επιλογή εξίσωσης"
               icon="📈"
@@ -1218,22 +1207,14 @@ export default function App({ role = 'student' }) {
               options={activeExpressionOptions}
               onChange={setLessonExpression}
               selectId="linear-expression"
-            />
+            >
+              {graphVisibilityControl}
+            </DataAccordion>
           ) : null}
 
           <StudentsAccordion
             title={activeActivity.mode === 'placement-board' ? 'Πίνακας ομάδων / Groups' : t('studentTable')}
             nameColumnLabel={activeActivity.mode === 'placement-board' ? 'Ομάδα / Group' : ''}
-            nameHeaderControl={activeActivity.mode === 'placement-board' ? (
-              <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.72rem', fontWeight: 600, whiteSpace: 'normal' }}>
-                <input
-                  type="checkbox"
-                  checked={showPlacementAssessment}
-                  onChange={(event) => setShowPlacementAssessment(event.target.checked)}
-                />
-                <span>Εμφάνιση σωστού/λάθους και σκορ</span>
-              </label>
-            ) : null}
             participants={sortedParticipants}
             getRowStyle={(entry) => {
               const completed = String(entry?.answers?.completed || '') === '1';

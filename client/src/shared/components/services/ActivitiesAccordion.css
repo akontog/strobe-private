@@ -1,0 +1,30 @@
+.activities-accordion {
+  margin-top: 0.5rem;
+  padding: 0.9rem 1rem;
+  background: #f8fafc;
+  border-radius: 1.2rem;
+}
+
+.activities-accordion .select-group {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.activities-accordion label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.activities-accordion select {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  border-radius: 0.8rem;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.7rem 0.9rem;
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Accordion } from '../layouts/Accordion';
+import './QrAccordion.css';
 
 export const QrAccordion = ({
   title = 'Σύνδεση (QR Code)',
@@ -9,7 +10,7 @@ export const QrAccordion = ({
   alt = 'QR code',
   linkHref = '',
   linkLabel = '',
-  wrapperClassName = 'data-section student-qr-section',
+  wrapperClassName = 'student-qr-section',
   imageClassName = 'student-qr-image'
 }) => (
   <Accordion title={title} icon={icon} open={open}>

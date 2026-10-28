@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ActivitySettingsAccordion, EntryGrid, SettingsAccordion } from '../../shared/components';
+import { Accordion, ActivitySettingsAccordion, EntryGrid } from '../../shared/components';
 import { readIdentityName } from '../../shared/components/menu/identityStorage';
 import './InputGridCollabTool.css';
 
@@ -169,7 +169,7 @@ export default function InputGridCollabTool({ role = 'student' }) {
         </ActivitySettingsAccordion>
         {isTeacher ? (
           <>
-            <SettingsAccordion title="activityResourceSettings" icon="🔢">
+            <Accordion title={t('activityResourceSettings', { ns: 'common' })} icon="🔢">
               <form className="input-grid-collab__settings" onSubmit={applySettings}>
                 <label><span>{t('activityBuilder.rows')}</span><input type="number" min="1" max="20" value={draft.rows} onChange={(event) => updateDimensions('rows', event.target.value)} /></label>
                 <label><span>{t('activityBuilder.columns')}</span><input type="number" min="1" max="20" value={draft.columns} onChange={(event) => updateDimensions('columns', event.target.value)} /></label>
@@ -233,7 +233,7 @@ export default function InputGridCollabTool({ role = 'student' }) {
                 </fieldset> : null}
                 <button type="submit">{t('optionsGrid.apply')}</button>
               </form>
-            </SettingsAccordion>
+            </Accordion>
             <section className="input-grid-collab__responses">
               <h2>{t('inputGrid.responses')}</h2>
               {Object.values(responses).length ? Object.values(responses).map((response, index) => (

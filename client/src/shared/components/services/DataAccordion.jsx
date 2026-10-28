@@ -1,12 +1,14 @@
 import React from 'react';
 import { Accordion } from '../layouts/Accordion';
 import { useSessionInputLogger } from '../activities/SessionLogContext';
+import './DataAccordion.css';
 
 const normalizeOptions = (options, getOptionLabel) => (Array.isArray(options) ? options : []).map((option, index) => {
   if (typeof option === 'string' || typeof option === 'number') {
     const value = String(option);
     return { key: `${value}-${index}`, value, label: value };
   }
+
   const value = option?.value ?? option?.id ?? String(index);
   const fallbackLabel = option?.label ?? String(value);
   return {
@@ -16,20 +18,21 @@ const normalizeOptions = (options, getOptionLabel) => (Array.isArray(options) ? 
   };
 });
 
-export default function ExpressionAccordion({
+export default function DataAccordion({
   title,
   label,
   icon = '🔢',
   value = '',
   options = [],
   onChange,
-  selectId = 'expression-selector',
+  selectId = 'data-selector',
   emptyLabel = '',
-  wrapperClassName = 'lab-data-section data-section',
-  groupClassName = 'lab-select-group',
-  labelClassName = 'shared-activity-label',
-  selectClassName = 'shared-activity-select',
-  getOptionLabel
+  wrapperClassName = '',
+  groupClassName = '',
+  labelClassName = '',
+  selectClassName = '',
+  getOptionLabel,
+  children
 }) {
   const session = useSessionInputLogger();
   const normalizedOptions = normalizeOptions(options, getOptionLabel);
@@ -46,12 +49,12 @@ export default function ExpressionAccordion({
 
   return (
     <Accordion title={title} icon={icon}>
-      <div className={wrapperClassName}>
-        <div className={groupClassName}>
-          <label className={labelClassName} htmlFor={selectId}>{label}</label>
+      <div className={`data-accordion__wrapper ${wrapperClassName}`.trim()}>
+        <div className={`data-accordion__select-group ${groupClassName}`.trim()}>
+          <label className={`data-accordion__label ${labelClassName}`.trim()} htmlFor={selectId}>{label}</label>
           <select
             id={selectId}
-            className={selectClassName}
+            className={`data-accordion__select ${selectClassName}`.trim()}
             value={value}
             onChange={(event) => handleChange(event.target.value)}
           >
@@ -61,6 +64,7 @@ export default function ExpressionAccordion({
             ))}
           </select>
         </div>
+        {children}
       </div>
     </Accordion>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivitySettingsAccordion, CommonSessionSettings, SettingsAccordion, StudentsAccordion, VisionCollaborationBoard } from '../../shared/components';
+import { Accordion, ActivitySettingsAccordion, StudentsAccordion, VisionCollaborationBoard } from '../../shared/components';
 import './VisionCollabTool.css';
 
 export default function VisionCollabTool({ role = 'student' }) {
@@ -24,8 +24,7 @@ export default function VisionCollabTool({ role = 'student' }) {
 
         {isTeacher ? (
           <>
-            <SettingsAccordion title="activityResourceSettings" icon="🎥">
-              <CommonSessionSettings />
+            <Accordion title={t('activityResourceSettings', { ns: 'common' })} icon="🎥">
               <div className="vision-collab-settings">
                 <label className="vision-collab-settings__field">
                   <span>{t('visionCollabDisplay')}</span>
@@ -45,7 +44,7 @@ export default function VisionCollabTool({ role = 'student' }) {
                   </select>
                 </label>
               </div>
-            </SettingsAccordion>
+            </Accordion>
 
             <StudentsAccordion
               title={t('visionCollabActiveUsers')}

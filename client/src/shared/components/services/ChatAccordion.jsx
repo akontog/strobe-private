@@ -11,6 +11,8 @@ export default function ChatAccordion() {
   const [messages, setMessages] = useState([]);
   const [draft, setDraft] = useState('');
   const [busy, setBusy] = useState(false);
+  const [settingsBusy, setSettingsBusy] = useState(false);
+  const isTeacher = session?.role === 'teacher';
   const refresh = useCallback(async () => {
     if (!session?.app || !session.chatEnabled) { setMessages([]); return; }
     try {
@@ -45,22 +47,43 @@ export default function ChatAccordion() {
     } finally { setBusy(false); }
   }
 
-  if (!session?.chatEnabled || !session?.activeSessionId) return null;
   return (
     <Accordion title={t('chat')} icon="💬">
       <section className="chat-accordion">
-      <div className="chat-accordion__messages" aria-live="polite">
-        {messages.map((item) => (
-          <article className="chat-accordion__message" key={item.seq}>
-            <strong>{item.sender}</strong>: <em>{item.message}</em>
-            <time>{new Date(item.t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</time>
-          </article>
-        ))}
-      </div>
-      <form className="chat-accordion__composer" onSubmit={sendMessage}>
-        <input value={draft} onChange={(event) => setDraft(event.target.value)} maxLength={1000} aria-label={t('chatMessage')} placeholder={t('chatMessage')} />
-        <button type="submit" disabled={busy || !draft.trim()}>{t('chatSend')}</button>
-      </form>
+        {isTeacher ? (
+          <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.75rem' }}>
+            <input
+              type="checkbox"
+              checked={Boolean(session.chatEnabled)}
+              disabled={settingsBusy}
+              onChange={async (event) => {
+                setSettingsBusy(true);
+                try { await session.updateChatEnabled(event.currentTarget.checked); }
+                catch { /* The session context restores the previous value. */ }
+                finally { setSettingsBusy(false); }
+              }}
+            />
+            <span>{t('enableChat')}</span>
+          </label>
+        ) : null}
+        {session?.chatEnabled && session?.activeSessionId ? (
+          <>
+            <div className="chat-accordion__messages" aria-live="polite">
+              {messages.map((item) => (
+                <article className="chat-accordion__message" key={item.seq}>
+                  <strong>{item.sender}</strong>: <em>{item.message}</em>
+                  <time>{new Date(item.t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</time>
+                </article>
+              ))}
+            </div>
+            <form className="chat-accordion__composer" onSubmit={sendMessage}>
+              <input value={draft} onChange={(event) => setDraft(event.target.value)} maxLength={1000} aria-label={t('chatMessage')} placeholder={t('chatMessage')} />
+              <button type="submit" disabled={busy || !draft.trim()}>{t('chatSend')}</button>
+            </form>
+          </>
+        ) : (
+          <p>{session?.chatEnabled ? t('chatNeedsSession') : t('chatDisabled')}</p>
+        )}
       </section>
     </Accordion>
   );

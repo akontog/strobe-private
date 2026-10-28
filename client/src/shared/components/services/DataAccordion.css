@@ -1,0 +1,30 @@
+.data-accordion__wrapper {
+  margin-top: 0.5rem;
+  overflow-x: auto;
+  background: #f8fafc;
+  border-radius: 1.2rem;
+}
+
+.data-accordion__select-group {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.data-accordion__label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #334155;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.data-accordion__select {
+  width: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  border-radius: 0.8rem;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+  font-size: 0.9rem;
+  padding: 0.7rem 0.9rem;
+}

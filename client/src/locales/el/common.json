@@ -17,6 +17,8 @@
   "enableFeedback": "Ενεργοποίηση ανατροφοδότησης",
   "showScoreToStudents": "Εμφάνιση σκορ στους μαθητές",
   "chat": "Συνομιλία",
+  "chatDisabled": "Η συνομιλία είναι απενεργοποιημένη.",
+  "chatNeedsSession": "Η συνομιλία θα είναι διαθέσιμη όταν ξεκινήσει συνεδρία.",
   "chatMessage": "Γράψτε μήνυμα",
   "chatSend": "Αποστολή",
   "english": "English",

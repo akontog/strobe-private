@@ -7,8 +7,6 @@ import TeacherPanel from './components/TeacherPanel';
 import {
   StudentsAccordion,
   HeroTitle,
-  SettingsAccordion,
-  CommonSessionSettings,
   randomIdentityColor,
   readIdentityColor,
   readIdentityName
@@ -356,9 +354,6 @@ const App = ({ role = 'teacher' }) => {
 
       {isTeacher ? (
         <>
-          <SettingsAccordion>
-            <CommonSessionSettings />
-          </SettingsAccordion>
           <TeacherPanel
             currentPrime={currentPrime}
             primeNumbers={PRIME_NUMBERS}

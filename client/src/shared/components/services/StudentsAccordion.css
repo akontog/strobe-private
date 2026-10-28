@@ -1,0 +1,46 @@
+.students-accordion__content {
+  margin-top: 0.5rem;
+  overflow-x: auto;
+  background: #f8fafc;
+  border-radius: 1.2rem;
+}
+
+.students-accordion__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.students-accordion__table th,
+.students-accordion__table td {
+  color: #0f172a;
+}
+
+.students-accordion__table .green-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}
+
+.students-accordion__table th {
+  padding: 0.7rem;
+  background: #e2e8f0;
+}
+
+.students-accordion__table td {
+  padding: 0.6rem;
+  border-bottom: 1px solid #cbd5e1;
+  background: #ffffff;
+}
+
+@media (max-width: 760px) {
+  .students-accordion__table th,
+  .students-accordion__table td {
+    font-size: 0.8rem;
+    padding: 0.55rem 0.45rem;
+  }
+}

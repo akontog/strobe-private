@@ -29,10 +29,10 @@
     ]
   },
   "settings": {
-    "title": "Settings and scores",
+    "title": "Feedback and scores",
     "description": "Available options depend on the lab.",
     "steps": [
-      "The teacher can enable Feedback, Score, and Chat in Settings.",
+      "The teacher can enable Score and Feedback with the checkboxes in the student table. Chat can be enabled in the Chat accordion.",
       "When Score is enabled, relevant scores are shown to students and in the student table where supported.",
       "The student table indicates which participants are connected."
     ]

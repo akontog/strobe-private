@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import SettingsAccordion from '../services/SettingsAccordion';
+import { Accordion } from '../layouts/Accordion';
 import SharedCommonZoneLayout from '../layouts/SharedCommonZoneLayout';
 import WidgetRenderer from '../widgets/widget-renderer';
 import FullScreenButton from '../primitives/FullScreenButton';
@@ -80,7 +80,7 @@ export default function ActivitySettingsAccordion({
         rightPanel={hasRightWidget ? <div className="activity-common-zone__widget-column"><WidgetRenderer widgets={metadata.widgets} position="right" /></div> : null}
       />
     </section>
-    {isTeacher ? <SettingsAccordion title="activityGeneralSettings" icon="📝">
+    {isTeacher ? <Accordion title={t('activityGeneralSettings', { ns: 'common' })} icon="📝">
       <div className="activity-settings-accordion">
         <label><span>{t('activityWorkspace.title')}</span><input value={metadata.title} onChange={(event) => setMetadata({ ...metadata, title: event.target.value })} /></label>
         <label><span>{t('activityWorkspace.subtitle')}</span><input value={metadata.subtitle} onChange={(event) => setMetadata({ ...metadata, subtitle: event.target.value })} /></label>
@@ -89,6 +89,6 @@ export default function ActivitySettingsAccordion({
         <div className="activity-settings-accordion__actions"><button type="button" onClick={saveActivity}>{t('activityWorkspace.save')}</button><span role="status">{saveStatus}</span></div>
         <details><summary>{t('activityWorkspace.json')}</summary><pre>{JSON.stringify(payload, null, 2)}</pre></details>
       </div>
-    </SettingsAccordion> : null}
+    </Accordion> : null}
   </>;
 }

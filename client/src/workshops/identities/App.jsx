@@ -4,10 +4,8 @@ import '../../shared/i18n';
 import FullScreenButton from '../../shared/components/primitives/FullScreenButton';
 import {
   Accordion,
-  ActivitiesMenu,
+  ActivitiesAccordion,
   StudentsAccordion,
-  SettingsAccordion,
-  CommonSessionSettings,
   HeroTitle,
   MathFormula,
   GroupingDragDrop,
@@ -394,7 +392,7 @@ export default function App({ role = 'student' }) {
 
       {isTeacher ? (
         <>
-          <ActivitiesMenu
+          <ActivitiesAccordion
             title={t('activities')}
             icon="🎯"
             label={t('chooseActivity')}
@@ -408,9 +406,6 @@ export default function App({ role = 'student' }) {
             }}
           />
 
-          <SettingsAccordion>
-            <CommonSessionSettings />
-          </SettingsAccordion>
 
           <StudentsAccordion
             title={t('studentTableTitle', { defaultValue: 'Πίνακας μαθητών' })}
@@ -457,7 +452,7 @@ export default function App({ role = 'student' }) {
         currentScore={computeActivityScore(isGroupingActivity ? activeActivity : activeExercise, activeAnswers)}
       />
       {isTeacher && activeActivity.variants ? (
-        <ActivitiesMenu
+        <ActivitiesAccordion
           title={t('identityVariantTitle')}
           icon="🧮"
           label={t('chooseIdentityVariant')}

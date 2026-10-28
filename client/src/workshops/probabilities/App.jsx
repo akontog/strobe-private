@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+﻿import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../../shared/i18n';
 import './App.css';
 import {
-  ActivitiesMenu, FullScreenButton, HeroTitle, readIdentityName, SharedCommonZoneLayout,
-  CommonSessionSettings, SettingsAccordion, StudentsAccordion, useSessionInputLogger, VennBoard
+  ActivitiesAccordion, FullScreenButton, HeroTitle, readIdentityName, SharedCommonZoneLayout,
+  StudentsAccordion, useSessionInputLogger, VennBoard
 } from '../../shared/components';
 import activityData from './data/activities.json';
 
@@ -86,7 +86,7 @@ export default function App({ role = 'student' }) {
       .filter(([, region]) => region === regionId)
       .map(([itemId]) => itemId)
       .sort((left, right) => Number(left) - Number(right));
-    return numbers.length ? numbers.join(', ') : '—';
+    return numbers.length ? numbers.join(', ') : 'β€”';
   };
 
   return (
@@ -111,7 +111,7 @@ export default function App({ role = 'student' }) {
         )} />
       </section>
       {isTeacher ? (
-        <ActivitiesMenu
+        <ActivitiesAccordion
           title={t('activities')}
           label={t('chooseActivity')}
           options={activityOptions}
@@ -122,11 +122,6 @@ export default function App({ role = 'student' }) {
           }}
           preserveSession
         />
-      ) : null}
-      {isTeacher ? (
-        <SettingsAccordion>
-          <CommonSessionSettings />
-        </SettingsAccordion>
       ) : null}
       {isTeacher ? (
         <StudentsAccordion

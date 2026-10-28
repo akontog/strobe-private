@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Accordion } from '../../../shared/components';
+import { DataAccordion } from '../../../shared/components';
 export const DatasetSelector = ({
   datasets,
   currentDataset,
@@ -69,25 +69,19 @@ export const DatasetSelector = ({
   };
   
   return (
-    <Accordion title={t('datasetsTitle')} 
-      icon= "🗄️"
-      open={false}  
+    <DataAccordion
+      title={t('datasetsTitle')}
+      label={t('chooseDataset')}
+      icon="🗄️"
+      selectId="neural-dataset"
+      value={currentDataset}
+      options={Object.entries(datasets).map(([key, dataset]) => ({
+        value: key,
+        label: `${dataset.emoji} ${t(`datasetLabels.${key}`, { defaultValue: dataset.label })}`
+      }))}
+      onChange={onDatasetChange}
     >
     <div className="control-bar">
-      <div className="select-group">
-        <label>{t('chooseDataset')}</label>
-        <select
-          value={currentDataset}
-          onChange={(e) => onDatasetChange(e.target.value)}
-        >
-          {Object.entries(datasets).map(([key, val]) => (
-            <option key={key} value={key}>
-              {val.emoji} {t(`datasetLabels.${key}`, { defaultValue: val.label })}
-            </option>
-          ))}
-        </select>
-      </div>
-
       <div className="select-group">
         <label>{t('chooseExample')}</label>
 
@@ -160,6 +154,6 @@ export const DatasetSelector = ({
           </select>
         </div>
     </div>
-  </Accordion>
+  </DataAccordion>
   );
 };

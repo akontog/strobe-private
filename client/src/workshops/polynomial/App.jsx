@@ -1,11 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   FullScreenButton,
-  SettingsAccordion,
-  ExpressionAccordion,
-  ActivitiesMenu,
+  DataAccordion,
+  ActivitiesAccordion,
   CollaborativeGeoGebra,
   GroupingDragDrop,
   HeroTitle,
@@ -13,8 +12,6 @@ import {
   SharedCommonZoneLayout,
   InputGrid,
   StudentsAccordion,
-  CommonSessionSettings,
-  ChatAccordion,
   AlgebraTiles,
   randomIdentityColor,
   readIdentitySnapshot,
@@ -155,10 +152,10 @@ const getAnswerColumnsForExpression = (expressionItem, t, labels, activityId, ti
   if (expressionItem?.resultMode === 'geogebraArea') return [];
   if (expressionItem?.resultMode === 'algebraTiles') {
     const regions = tileMode === 'equation'
-      ? [{ id: 'left', label: 'Αριστερά' }, { id: 'right', label: 'Δεξιά' }]
+      ? [{ id: 'left', label: 'Ξ‘ΟΞΉΟƒΟ„ΞµΟΞ¬' }, { id: 'right', label: 'Ξ”ΞµΞΎΞΉΞ¬' }]
       : tileMode === 'area' || tileMode === 't-chart'
-        ? [{ id: 'top', label: 'Πάνω' }, { id: 'left', label: 'Αριστερά' }, { id: 'center', label: 'Κέντρο' }]
-        : [{ id: 'all', label: 'Παράσταση' }];
+        ? [{ id: 'top', label: 'Ξ Ξ¬Ξ½Ο‰' }, { id: 'left', label: 'Ξ‘ΟΞΉΟƒΟ„ΞµΟΞ¬' }, { id: 'center', label: 'ΞΞ­Ξ½Ο„ΟΞΏ' }]
+        : [{ id: 'all', label: 'Ξ Ξ±ΟΞ¬ΟƒΟ„Ξ±ΟƒΞ·' }];
     return regions.map((region) => ({
       key: `algebraTiles-${region.id}`,
       label: region.label,
@@ -219,12 +216,12 @@ const getAnswerHeaderGroupsForExpression = (expressionItem, labels) => {
 };
 
 const summarizeAlgebraTiles = (tiles, mode, selectedRegion = '') => {
-  const labels = { one: '1', x: 'x', y: 'y', x2: 'x²', xy: 'xy', y2: 'y²' };
+  const labels = { one: '1', x: 'x', y: 'y', x2: 'xΒ²', xy: 'xy', y2: 'yΒ²' };
   const format = (items) => {
     const counts = new Map();
     (items || []).forEach((tile) => counts.set(tile.type, (counts.get(tile.type) || 0) + (tile.sign < 0 ? -1 : 1)));
-    const parts = [...counts.entries()].filter(([, count]) => count).map(([type, count], index) => `${index === 0 ? count < 0 ? '−' : '' : count < 0 ? ' − ' : ' + '}${Math.abs(count) === 1 ? '' : Math.abs(count)}${labels[type] || type}`);
-    return parts.join(' ') || '—';
+    const parts = [...counts.entries()].filter(([, count]) => count).map(([type, count], index) => `${index === 0 ? count < 0 ? 'β’' : '' : count < 0 ? ' β’ ' : ' + '}${Math.abs(count) === 1 ? '' : Math.abs(count)}${labels[type] || type}`);
+    return parts.join(' ') || 'β€”';
   };
   if (mode === 'equation') return format(selectedRegion === 'left' ? tiles?.filter((tile) => tile.side !== 'right') : tiles?.filter((tile) => tile.side === 'right'));
   if (mode === 'area' || mode === 't-chart') {
@@ -241,7 +238,7 @@ const summarizeAlgebraTiles = (tiles, mode, selectedRegion = '') => {
     });
     return format(filtered);
   }
-  return region('Πλακίδια', tiles);
+  return region('Ξ Ξ»Ξ±ΞΊΞ―Ξ΄ΞΉΞ±', tiles);
 };
 
 export default function App({ role = 'teacher' }) {
@@ -1080,7 +1077,7 @@ export default function App({ role = 'teacher' }) {
 
       {isTeacher && (
         <>
-          <ActivitiesMenu
+          <ActivitiesAccordion
             title={t('activities')}
             icon="🎯"
             label={t('chooseActivity')}
@@ -1095,18 +1092,10 @@ export default function App({ role = 'teacher' }) {
             onChange={setActivity}
           />
 
-          <SettingsAccordion>
-            <CommonSessionSettings
-              feedbackEnabled={feedbackEnabled}
-              onFeedbackChange={setFeedbackOption}
-              feedbackDescription={t('feedbackToggle')}
-            />
-          </SettingsAccordion>
-
-          <ExpressionAccordion
+          <DataAccordion
             title={t('expression')}
             label={t('expression')}
-            icon="🔢"
+            icon="🧮"
             selectId="poly-expression"
             value={selectedExpressionId}
             options={activeItems}
@@ -1119,6 +1108,7 @@ export default function App({ role = 'teacher' }) {
           <StudentsAccordion
             title={t('studentTable')}
             participants={sortedParticipants}
+            onFeedbackChange={setFeedbackOption}
             columns={[
               ...getAnswerColumnsForExpression(activeExpression, t, labels, selectedActivityId, algebraTilesWidget?.mode || algebraTilesWidget?.layout || 'simplified'),
               ...(sessionLogging?.scoreVisible ? [
@@ -1148,7 +1138,6 @@ export default function App({ role = 'teacher' }) {
         currentScore={currentStudentScore}
         hidePanel
       />
-      <ChatAccordion />
     </>
   );
 }
