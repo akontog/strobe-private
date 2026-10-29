@@ -50,7 +50,6 @@ const SESSION_ENABLED_APPS = new Set([
 function App() {
   const { t } = useTranslation(['common', 'menu']);
   const { t: tNav } = useTranslation('navigation');
-  const { t: tInterface } = useTranslation('interface');
   const location = useLocation();
   const navigate = useNavigate();
   const pathname = String(location?.pathname || '').toLowerCase();
@@ -559,10 +558,7 @@ function App() {
         </Routes> : null}
         {currentSessionApp ? <ChatAccordion /> : null}
         {!clickedMenuGroup && hasTeacherAccess && pathname.startsWith('/workshops/') ? (
-          <QrAccordion
-            title={tInterface('studentConnection')}
-            alt={tInterface('studentQrAlt')}
-          />
+          <QrAccordion />
         ) : null}
       </div>
     </div>

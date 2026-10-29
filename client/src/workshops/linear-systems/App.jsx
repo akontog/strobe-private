@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   ActivitiesAccordion,
@@ -12,7 +12,7 @@ import {
   PlotWidget,
   EquationWidget,
   DataAccordion,
-  StudentsAccordion,
+  GroupsAccordion,
   GridButton,
   createPlacementGroupColumns,
   OptionsGrid,
@@ -40,7 +40,7 @@ const FEEDBACK_COPY = PRESENTATION.feedback;
 const SERVICE_COPY = PRESENTATION.services;
 const TABLE_COPY = PRESENTATION.tables;
 
-const EMPTY_TOKEN = '□';
+const EMPTY_TOKEN = '?';
 const POINT_GRID_ACTIVITY = ACTIVITY_LIBRARY.find((activity) => activity.mode === 'point-grid');
 const POINT_GRID_ACTIVITY_ID = POINT_GRID_ACTIVITY?.id;
 const POINT_GRID_SETTINGS = POINT_GRID_ACTIVITY?.resourceSettings?.pointGrid || {};
@@ -1380,9 +1380,6 @@ export default function App({ role = 'student' }) {
 
       {isTeacher ? (
         <ActivitiesAccordion
-          title={SERVICE_COPY.activityTitle}
-          icon="🎯"
-          label={SERVICE_COPY.activityLabel}
           options={ACTIVITY_LIBRARY.map((activity) => ({ value: activity.id, label: `${activity.code} ${activity.title}` }))}
           value={selectedActivityId}
           onChange={setActivity}
@@ -1395,7 +1392,7 @@ export default function App({ role = 'student' }) {
             <DataAccordion
               title={SERVICE_COPY.exerciseTitle}
               label={SERVICE_COPY.exerciseTitle}
-              icon="🧮"
+              icon="??"
               value={selectedItemId}
               options={activeItems.map((item, index) => ({ value: item.id, label: `${index + 1}.` }))}
               onChange={setLessonItem}
@@ -1410,7 +1407,7 @@ export default function App({ role = 'student' }) {
             <DataAccordion
               title={SERVICE_COPY.equationsTitle}
               label={SERVICE_COPY.equationLabel}
-              icon="📈"
+              icon="??"
               value={selectedExpressionId}
               options={activeExpressionOptions}
               onChange={setLessonExpression}
@@ -1420,8 +1417,7 @@ export default function App({ role = 'student' }) {
             </DataAccordion>
           ) : null}
 
-          <StudentsAccordion
-            title={activeActivity.mode === 'placement-board' ? TABLE_COPY.groupTitle : activeActivity.mode === 'point-grid' ? POINT_GRID_COPY.studentsTitle : activeActivity.mode === 'number-line' ? NUMBER_LINE_COPY.studentsTitle : t('studentTable')}
+          <GroupsAccordion
             open={['point-grid', 'number-line'].includes(activeActivity.mode)}
             nameColumnLabel={['placement-board', 'point-grid', 'number-line'].includes(activeActivity.mode) ? TABLE_COPY.groupColumn : ''}
             participants={sortedParticipants}
@@ -1489,3 +1485,4 @@ export default function App({ role = 'student' }) {
     </>
   );
 }
+

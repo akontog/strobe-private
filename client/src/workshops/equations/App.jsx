@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import '../../shared/i18n';
 import {
   ActivitiesAccordion,
@@ -7,7 +7,7 @@ import {
   HeroTitle,
   InputGrid,
   SharedCommonZoneLayout,
-  StudentsAccordion,
+  GroupsAccordion,
   readIdentityName
 } from '../../shared/components';
 import storedActivityData from './data/activities.json';
@@ -224,27 +224,23 @@ export default function App({ role = 'student' }) {
       {isTeacher ? (
         <>
           <ActivitiesAccordion
-            title={t('questions')}
-            icon="β–οΈ"
-            label={t('chooseQuestion')}
             preserveSession
             options={questions.map((question) => ({ value: question.id, label: question.label }))}
             value={selectedQuestion.id}
             onChange={selectQuestion}
           />
-          <StudentsAccordion
-            title={t('studentTableTitle')}
+          <GroupsAccordion
             participants={participants.filter((participant) => participant.isConnected !== false)}
             columns={[
               { key: 'tiles', label: activityData.labels.resourceTable.tilesColumn, render: (participant) => `${activityData.labels.resourceTable.leftRegion}: ${(participant.tiles || []).filter((tile) => tile.side !== 'right').map((tile) => `${tile.sign < 0 ? activityData.labels.resourceTable.negativeSign : activityData.labels.resourceTable.positiveSign}${tile.type}`).join(' ') || activityData.labels.resourceTable.emptyValue}${activityData.labels.resourceTable.regionSeparator}${activityData.labels.resourceTable.rightRegion}: ${(participant.tiles || []).filter((tile) => tile.side === 'right').map((tile) => `${tile.sign < 0 ? activityData.labels.resourceTable.negativeSign : activityData.labels.resourceTable.positiveSign}${tile.type}`).join(' ') || activityData.labels.resourceTable.emptyValue}` },
-              { key: 'answer', label: t('solutionLabel'), render: (participant) => participant.answer || 'β€”' }
+              { key: 'answer', label: t('solutionLabel'), render: (participant) => participant.answer || '—' }
             ]}
             emptyMessage={t('noStudents')}
           />
         </>
       ) : null}
 
-      <StudentsAccordion
+      <GroupsAccordion
         role={role}
         studentName={studentName}
         activity={`equations:${selectedQuestion.id}`}
@@ -253,3 +249,4 @@ export default function App({ role = 'student' }) {
     </>
   );
 }
+

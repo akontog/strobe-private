@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -11,7 +11,7 @@ import {
   MathFormula,
   SharedCommonZoneLayout,
   InputGrid,
-  StudentsAccordion,
+  GroupsAccordion,
   AlgebraTiles,
   randomIdentityColor,
   readIdentitySnapshot,
@@ -1077,9 +1077,6 @@ export default function App({ role = 'teacher' }) {
       {isTeacher && (
         <>
           <ActivitiesAccordion
-            title={t('activities')}
-            icon="🎯"
-            label={t('chooseActivity')}
             options={ACTIVITY_LIBRARY.map((activity) => ({
               value: activity.id,
               label: activity.title
@@ -1094,7 +1091,7 @@ export default function App({ role = 'teacher' }) {
           <DataAccordion
             title={t('expression')}
             label={t('expression')}
-            icon="🧮"
+            icon="??"
             selectId="poly-expression"
             value={selectedExpressionId}
             options={activeItems}
@@ -1104,8 +1101,7 @@ export default function App({ role = 'teacher' }) {
             getOptionLabel={getExpressionOptionLabel}
           />
 
-          <StudentsAccordion
-            title={t('studentTable')}
+          <GroupsAccordion
             participants={sortedParticipants}
             onFeedbackChange={setFeedbackOption}
             columns={[
@@ -1130,7 +1126,7 @@ export default function App({ role = 'teacher' }) {
         </>
       )}
 
-      <StudentsAccordion
+      <GroupsAccordion
         role={role}
         studentName={studentName}
         activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
@@ -1140,3 +1136,4 @@ export default function App({ role = 'teacher' }) {
     </>
   );
 }
+

@@ -1,8 +1,8 @@
-﻿import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import '../../shared/i18n';
 import {
   ActivitiesAccordion, AlgebraTiles, FullScreenButton, HeroTitle,
-  SharedCommonZoneLayout, StudentsAccordion, readIdentityName
+  SharedCommonZoneLayout, GroupsAccordion, readIdentityName
 } from '../../shared/components';
 import storedActivityData from './data/activities.json';
 import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
@@ -166,17 +166,18 @@ export default function App({ role = 'student' }) {
         )} />
       </section>
       {isTeacher ? <>
-        <ActivitiesAccordion title={t('questions')} icon="β" label={t('chooseQuestion')} preserveSession
+        <ActivitiesAccordion preserveSession
           options={questions.map((question) => ({ value: question.id, label: question.label }))}
           value={selectedQuestion.id} onChange={selectQuestion} />
-        <StudentsAccordion title={t('studentTableTitle')} participants={participants.filter((participant) => participant.isConnected !== false)}
+        <GroupsAccordion participants={participants.filter((participant) => participant.isConnected !== false)}
           columns={[
             { key: 'tiles', label: activityData.labels.resourceTable.tilesColumn, render: (participant) => `${activityData.labels.resourceTable.topRegion}: ${(participant.tiles || []).filter((tile) => (tile.y || 0) < 4 && (tile.x || 0) >= 6).map((tile) => `${tile.sign < 0 ? activityData.labels.resourceTable.negativeSign : activityData.labels.resourceTable.positiveSign}${tile.type}`).join(' ') || activityData.labels.resourceTable.emptyValue}${activityData.labels.resourceTable.regionSeparator}${activityData.labels.resourceTable.leftRegion}: ${(participant.tiles || []).filter((tile) => (tile.y || 0) >= 4 && (tile.x || 0) < 6).map((tile) => `${tile.sign < 0 ? activityData.labels.resourceTable.negativeSign : activityData.labels.resourceTable.positiveSign}${tile.type}`).join(' ') || activityData.labels.resourceTable.emptyValue}${activityData.labels.resourceTable.regionSeparator}${activityData.labels.resourceTable.centerRegion}: ${(participant.tiles || []).filter((tile) => (tile.y || 0) >= 4 && (tile.x || 0) >= 6).map((tile) => `${tile.sign < 0 ? activityData.labels.resourceTable.negativeSign : activityData.labels.resourceTable.positiveSign}${tile.type}`).join(' ') || activityData.labels.resourceTable.emptyValue}` },
             { key: 'progress', label: t('studentTableTitle'), render: (participant) => participant.isCorrect ? t('correct') : t('incomplete') }
           ]}
           emptyMessage={t('noStudents')} />
       </> : null}
-      <StudentsAccordion role={role} studentName={studentName} activity={`factorization:${selectedQuestion.id}`} currentScore={isCorrect ? activity.scoreCorrect : activity.scoreIncorrect} />
+      <GroupsAccordion role={role} studentName={studentName} activity={`factorization:${selectedQuestion.id}`} currentScore={isCorrect ? activity.scoreCorrect : activity.scoreIncorrect} />
     </>
   );
 }
+

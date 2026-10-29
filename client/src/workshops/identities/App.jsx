@@ -1,11 +1,11 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../../shared/i18n';
 import FullScreenButton from '../../shared/components/primitives/FullScreenButton';
 import {
   Accordion,
   ActivitiesAccordion,
-  StudentsAccordion,
+  GroupsAccordion,
   HeroTitle,
   MathFormula,
   GroupingDragDrop,
@@ -395,9 +395,6 @@ export default function App({ role = 'student' }) {
       {isTeacher ? (
         <>
           <ActivitiesAccordion
-            title={t('activities')}
-            icon="🎯"
-            label={t('chooseActivity')}
             options={ACTIVITY_LIBRARY.map((activity) => ({
               value: activity.id,
               label: `${activity.code} ${activity.title}`
@@ -409,14 +406,13 @@ export default function App({ role = 'student' }) {
           />
 
 
-          <StudentsAccordion
-            title={t('studentTableTitle')}
+          <GroupsAccordion
             participants={sortedStudents}
             columns={[
-              { key: 'activity', label: t('activities'), render: (student) => student.activityId || '—' },
-              { key: 'term1', label: t('term1'), render: (student) => student.answers?.[student.activityId]?.term1 || '—' },
-              { key: 'term2', label: t('term2'), render: (student) => student.answers?.[student.activityId]?.term2 || '—' },
-              { key: 'term3', label: t('term3'), render: (student) => student.answers?.[student.activityId]?.term3 || '—' },
+              { key: 'activity', label: t('activities'), render: (student) => student.activityId || '�' },
+              { key: 'term1', label: t('term1'), render: (student) => student.answers?.[student.activityId]?.term1 || '�' },
+              { key: 'term2', label: t('term2'), render: (student) => student.answers?.[student.activityId]?.term2 || '�' },
+              { key: 'term3', label: t('term3'), render: (student) => student.answers?.[student.activityId]?.term3 || '�' },
               { key: 'a', label: activityData.labels.resourceTable.variableA, render: (student) => student.answers?.[student.activityId]?.a || activityData.labels.resourceTable.emptyValue },
               { key: 'b', label: activityData.labels.resourceTable.variableB, render: (student) => student.answers?.[student.activityId]?.b || activityData.labels.resourceTable.emptyValue },
               ...(isAlgebraTilesActivity ? [{
@@ -439,7 +435,7 @@ export default function App({ role = 'student' }) {
                   const studentNameKey = String(student.name || '').trim().toLocaleLowerCase();
                   const scoreRecord = scoreRecords.find((record) => String(record.name || '').trim().toLocaleLowerCase() === studentNameKey);
                   const score = scoreRecord?.activities?.[`identities:${student.activityId}`];
-                  return Number.isFinite(Number(score)) ? Number(Number(score).toFixed(2)) : '—';
+                  return Number.isFinite(Number(score)) ? Number(Number(score).toFixed(2)) : '�';
                 }
               }] : [])
             ]}
@@ -448,7 +444,7 @@ export default function App({ role = 'student' }) {
 
         </>
       ) : null}
-      <StudentsAccordion
+      <GroupsAccordion
         role={role}
         studentName={studentName}
         activity={`identities:${answerActivityKey}`}
@@ -456,9 +452,6 @@ export default function App({ role = 'student' }) {
       />
       {isTeacher && activeActivity.variants ? (
         <ActivitiesAccordion
-          title={t('identityVariantTitle')}
-          icon="🧮"
-          label={t('chooseIdentityVariant')}
           options={activeActivity.variants.map((variant) => ({ value: variant.id, label: variant.label }))}
           value={activeIdentityVariant.id}
           onChange={setSelectedIdentityVariantId}
@@ -467,3 +460,4 @@ export default function App({ role = 'student' }) {
     </>
   );
 }
+

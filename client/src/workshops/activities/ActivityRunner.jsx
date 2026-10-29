@@ -14,7 +14,7 @@ import {
   HeroTitle,
   EntryGrid,
   SharedCommonZoneLayout,
-  StudentsAccordion,
+  GroupsAccordion,
   createPlacementGroupColumns,
   useSessionInputLogger
 } from '../../shared/components';
@@ -53,7 +53,7 @@ function ResourceContent({ activity, role, activityKey }) {
     return (
       <>
         <EntryGrid fields={inputFields} columns={props.columns || 2} rows={props.rows} activity={activityKey} />
-        <StudentsAccordion
+        <GroupsAccordion
           role={session?.role || 'student'}
           studentName={readIdentityName('')}
           activity={activityKey}
@@ -318,8 +318,7 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
         rightPanel={widgetPanel('right')}
       />
       {role === 'teacher' && ['input-grid', 'grouping-drag-drop', 'placement-board', 'algebra-tiles', 'collaborative-algebra-tiles', 'options-grid'].includes(resourceActivity.resource) ? (
-        <StudentsAccordion
-          title="Πίνακας μαθητών"
+        <GroupsAccordion
           participants={students}
           columns={getStudentColumns(resourceActivity, selectedActivityKey)}
           emptyMessage="Δεν υπάρχουν ακόμη απαντήσεις μαθητών."
@@ -328,3 +327,4 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
     </>
   );
 }
+

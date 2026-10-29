@@ -1,9 +1,9 @@
-﻿import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import '../../shared/i18n';
 import './App.css';
 import {
   ActivitiesAccordion, FullScreenButton, HeroTitle, readIdentityName, SharedCommonZoneLayout,
-  StudentsAccordion, useSessionInputLogger, VennBoard
+  GroupsAccordion, useSessionInputLogger, VennBoard
 } from '../../shared/components';
 import storedActivityData from './data/activities.json';
 import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
@@ -87,7 +87,7 @@ export default function App({ role = 'student' }) {
       .filter(([, region]) => region === regionId)
       .map(([itemId]) => itemId)
       .sort((left, right) => Number(left) - Number(right));
-    return numbers.length ? numbers.join(', ') : 'β€”';
+    return numbers.length ? numbers.join(', ') : '—';
   };
 
   return (
@@ -113,8 +113,6 @@ export default function App({ role = 'student' }) {
       </section>
       {isTeacher ? (
         <ActivitiesAccordion
-          title={t('activities')}
-          label={t('chooseActivity')}
           options={activityOptions}
           value={activity.id}
           onChange={(nextId) => {
@@ -125,8 +123,7 @@ export default function App({ role = 'student' }) {
         />
       ) : null}
       {isTeacher ? (
-        <StudentsAccordion
-          title={t('studentTableTitle')}
+        <GroupsAccordion
           participants={participants}
           emptyMessage={t('noStudents')}
           columns={activity.diagram.regions.map((region) => (
@@ -136,7 +133,7 @@ export default function App({ role = 'student' }) {
           ])}
         />
       ) : null}
-      <StudentsAccordion
+      <GroupsAccordion
         role={role}
         studentName={studentName}
         activity={`probabilities:${activity.id}`}
@@ -145,3 +142,4 @@ export default function App({ role = 'student' }) {
     </>
   );
 }
+

@@ -1,4 +1,4 @@
-﻿export { Accordion } from './layouts/Accordion';
+export { Accordion } from './layouts/Accordion';
 export { QrAccordion } from './services/QrAccordion';
 export { default as DataAccordion } from './services/DataAccordion';
 export { default as SharedCommonZoneLayout } from './layouts/SharedCommonZoneLayout';
@@ -13,12 +13,13 @@ export { default as ButtonGrid } from './resources/OptionsGrid';
 export { default as HeroTitle } from './primitives/HeroTitle';
 export { default as MathFormula } from './primitives/MathFormula';
 export {
-  default as StudentsAccordion,
+  default as GroupsAccordion,
   createPlacementGroupColumns,
   createNeuralLabColumns,
   createBuffonColumns,
   createGeometryColumns
-} from './services/StudentsAccordion';
+} from './services/GroupsAccordion';
+export { default as StudentsAccordion } from './services/StudentsAccordion';
 export { default as BlueNumberBox } from './primitives/BlueNumberBox';
 export { default as GridButton } from './primitives/GridButton';
 export { default as AlgebraTiles } from './resources/AlgebraTiles';
@@ -44,3 +45,4 @@ export { default as WidgetRenderer } from './widgets/widget-renderer';
 export { default as IconWidget } from './widgets/IconWidget';
 export { default as EquationWidget } from './widgets/EquationWidget';
 export { default as ChatAccordion } from './services/ChatAccordion';
+

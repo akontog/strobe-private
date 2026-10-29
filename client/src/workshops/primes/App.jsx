@@ -1,11 +1,11 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import FullScreenButton from '../../shared/components/primitives/FullScreenButton';
 import NumberGrid from './components/NumberGrid';
 import SelectionSummaryAccordion from './components/SelectionSummaryAccordion';
 import TeacherPanel from './components/TeacherPanel';
 import {
-  StudentsAccordion,
+  GroupsAccordion,
   HeroTitle,
   randomIdentityColor,
   readIdentityColor,
@@ -15,10 +15,10 @@ import { INITIAL_PRIME, NUMBER_RANGE, PRIME_NUMBERS, SIEVE_STEPS } from './data/
 import './App.css';
 
 const STUDENT_DEFS = [
-  { id: 'student-1', name: 'Μαρία' },
-  { id: 'student-2', name: 'Γιάννης' },
-  { id: 'student-3', name: 'Ελένη' },
-  { id: 'student-4', name: 'Νίκος' }
+  { id: 'student-1', name: '�����' },
+  { id: 'student-2', name: '�������' },
+  { id: 'student-3', name: '�����' },
+  { id: 'student-4', name: '�����' }
 ];
 
 const PRIMES_STUDENT_ID_KEY = 'strobePrimesStudentId';
@@ -56,7 +56,7 @@ const App = ({ role = 'teacher' }) => {
   const reconnectTimerRef = useRef(null);
 
   const [currentPrime, setCurrentPrime] = useState(INITIAL_PRIME);
-  const [studentName] = useState(() => readIdentityName('Μαρία'));
+  const [studentName] = useState(() => readIdentityName('�����'));
   const [studentColor] = useState(() => readIdentityColor(randomColor()));
   const [students, setStudents] = useState(() => createInitialStudents(studentName, studentColor));
   const [activeStudentId, setActiveStudentId] = useState(STUDENT_DEFS[0].id);
@@ -70,7 +70,7 @@ const App = ({ role = 'teacher' }) => {
 
   const effectiveStudentId = isTeacher ? activeStudentId : localStudentId;
   const activeStudent = students.find((student) => student.id === effectiveStudentId) || students[0];
-  const viewerName = isTeacher ? activeStudent?.name || '—' : studentName;
+  const viewerName = isTeacher ? activeStudent?.name || '�' : studentName;
 
   const correctOwnerByNumber = useMemo(() => {
     const ownerMap = {};
@@ -369,8 +369,7 @@ const App = ({ role = 'teacher' }) => {
           />
           <section className="primes-lower-grid">
             <div className="primes-lower-column">
-              <StudentsAccordion
-                title={t('table.title')}
+              <GroupsAccordion
                 participants={visibleStudents}
                 nameFallback={t('table.student')}
                 getRowKey={(student) => student.id}
@@ -390,7 +389,7 @@ const App = ({ role = 'teacher' }) => {
                     label: t('table.correct'),
                     render: (student) => {
                       const selected = student.selectedCorrect.filter((number) => claimedNumbers.has(number));
-                      return <div className="number-chips number-chips--success">{selected.length ? selected.join(', ') : '—'}</div>;
+                      return <div className="number-chips number-chips--success">{selected.length ? selected.join(', ') : '�'}</div>;
                     }
                   },
                   {
@@ -398,7 +397,7 @@ const App = ({ role = 'teacher' }) => {
                     label: t('table.wrong'),
                     render: (student) => {
                       const selected = student.selectedWrong.filter((number) => (wrongSelectionsByNumber[number] || []).includes(student.id));
-                      return <div className="number-chips number-chips--danger">{selected.length ? selected.join(', ') : '—'}</div>;
+                      return <div className="number-chips number-chips--danger">{selected.length ? selected.join(', ') : '�'}</div>;
                     }
                   },
                   {
@@ -423,7 +422,7 @@ const App = ({ role = 'teacher' }) => {
                   </div>
                   <div>
                     <span>{t('activeStudent')}</span>
-                    <strong>{activeStudent?.name || '—'}</strong>
+                    <strong>{activeStudent?.name || '�'}</strong>
                   </div>
                 </div>
               </div>
@@ -436,3 +435,4 @@ const App = ({ role = 'teacher' }) => {
 };
 
 export default App;
+

@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import FullScreenButton from '../../shared/components/primitives/FullScreenButton';
 import { DatasetSelector } from './components/DatasetSelector';
@@ -9,7 +9,7 @@ import {
   HeroTitle,
   MathFormula,
   DataAccordion,
-  StudentsAccordion,
+  GroupsAccordion,
   randomIdentityColor,
   readIdentitySnapshot,
   readIdentityColor,
@@ -113,42 +113,42 @@ const App = ({ role = 'teacher' }) => {
   const { t: tInterface, i18n } = useTranslation('interface');
   const { t: tNav } = useTranslation('navigation');
   const t = (key, options) => tInterface(`workshops.neural.${key}`, options);
-  // Σταθερές αναφορές (refs) για την αποθήκευση αντικειμένων που 
-  // δεν προκαλούν επανασχεδιασμό όταν αλλάζουν.
+  // �������� �������� (refs) ��� ��� ���������� ������������ ��� 
+  // ��� ��������� �������������� ���� ��������.
 
-  // Αναφορά στο αντικείμενο WebSocket για την επικοινωνία με τον server.
+  // ������� ��� ����������� WebSocket ��� ��� ����������� �� ��� server.
   const wsRef = useRef(null);
-  // Αναφορά για τον χρονοδιακόπτη επανασύνδεσης
+  // ������� ��� ��� ������������� �������������
   const reconnectTimerRef = useRef(null);
-  // Αναφορά για να ελέγχει αν έχει γίνει ήδη η εγγραφή του ρόλου 
-  // (teacher/student/screen) στον server.
+  // ������� ��� �� ������� �� ���� ����� ��� � ������� ��� ����� 
+  // (teacher/student/screen) ���� server.
   const hasRegisteredRef = useRef(false);
-  // Αναφορά για να καταστείλει την αποστολή κατάστασης του μαθητή στον server, 
-  // όταν η κατάσταση έχει ενημερωθεί από τον server.
+  // ������� ��� �� ����������� ��� �������� ���������� ��� ������ ���� server, 
+  // ���� � ��������� ���� ���������� ��� ��� server.
   const suppressNextStudentStateSendRef = useRef(false);
-  // Αναφορά για να αποθηκεύει την τελευταία κατάσταση του μαθητή που στάλθηκε στον server.
-  // αποφεύγει την αποστολή της ίδιας κατάστασης πολλές φορές.
+  // ������� ��� �� ���������� ��� ��������� ��������� ��� ������ ��� �������� ���� server.
+  // ��������� ��� �������� ��� ����� ���������� ������ �����.
   const lastSentStudentStateRef = useRef('');
   const prevTeacherActivityRef = useRef('1');
 
   // --- State Variables ---
-  // Δεδομένα που αλλάζουν δυναμικά, κατά τη διάρκεια ζωής της εφαρμογής, 
-  // επηρεάζοντας εμφάνιση και συμπεριφορά της εφαρμογής.
+  // �������� ��� �������� ��������, ���� �� �������� ���� ��� ���������, 
+  // ������������ �������� ��� ����������� ��� ���������.
   // const [state, setState] = useState(initialValue);
-  // σταθερά [τρέχουσα τιμή, συνάρτηση ενημέρωσης] = useState(αρχική τιμή);
-  // Αλλάζοντας το currentDataset αλλάζει το σύνολο δεδομένων
+  // ������� [�������� ����, ��������� ����������] = useState(������ ����);
+  // ���������� �� currentDataset ������� �� ������ ���������
   const [currentDataset, setCurrentDataset] = useState('vehicles');
-  // Δείκτης του παραδείγματος που εμφανίζεται από το τρέχον σύνολο δεδομένων.
+  // ������� ��� ������������� ��� ����������� ��� �� ������ ������ ���������.
   const [currentExample, setCurrentExample] = useState(0);
-  // Δείκτης του γραμμικού demo που εμφανίζεται από το τρέχον σύνολο δεδομένων (για τον δάσκαλο).
+  // ������� ��� ��������� demo ��� ����������� ��� �� ������ ������ ��������� (��� ��� �������).
   const [currentLinearDemoIndex, setCurrentLinearDemoIndex] = useState(undefined);
-  // Δείκτης του γραμμικού demo που εμφανίζεται από το τρέχον σύνολο δεδομένων (για τον μαθητή).
+  // ������� ��� ��������� demo ��� ����������� ��� �� ������ ������ ��������� (��� ��� ������).
   const [lessonLinearDemoIndex, setLessonLinearDemoIndex] = useState(undefined);
-  // Η τρέχουσα δραστηριότητα που έχει επιλέξει ο δάσκαλος.
+  // � �������� ������������� ��� ���� �������� � ��������.
   const [selectedActivity, setSelectedActivity] = useState('1');
-  // Η δραστηριότητα που έχει οριστεί από τον δάσκαλο και εμφανίζεται στους μαθητές.
+  // � ������������� ��� ���� ������� ��� ��� ������� ��� ����������� ����� �������.
   const [lessonActivity, setLessonActivity] = useState('1');
-  // Τα υπόλοιπα state variables αφορούν τις εισόδους, τα βάρη, τα προϊόντα και το συνολικό αποτέλεσμα για τον δάσκαλο και τους μαθητές.
+  // �� �������� state variables ������� ��� ��������, �� ����, �� �������� ��� �� �������� ���������� ��� ��� ������� ��� ���� �������.
   const [teacherInputs, setTeacherInputs] = useState({ i1: 4, i2: 1 });
   const [studentInputs, setStudentInputs] = useState({ i1: '', i2: '' });
   const [teacherProducts, setTeacherProducts] = useState({ p1: '', p2: '' });
@@ -157,9 +157,9 @@ const App = ({ role = 'teacher' }) => {
   const [studentTotal, setStudentTotal] = useState('');
   const [dynamicW1, setDynamicW1] = useState(2);
   const [dynamicW2, setDynamicW2] = useState(3);
-  // Το isSocketConnected δείχνει αν η σύνδεση WebSocket είναι ενεργή ή όχι.
+  // �� isSocketConnected ������� �� � ������� WebSocket ����� ������ � ���.
   const [isSocketConnected, setIsSocketConnected] = useState(false);
-  // Οι συμμετέχοντες εμφανίζονται στον κοινό πίνακα μαθητών.
+  // �� ������������� ������������ ���� ����� ������ �������.
   const [participants, setParticipants] = useState([]);
   const [roster, setRoster] = useState([]);
   const [lessonInputs, setLessonInputs] = useState({ i1: 4, i2: 1 });
@@ -171,8 +171,8 @@ const App = ({ role = 'teacher' }) => {
   const [lessonSelectedInputs, setLessonSelectedInputs] = useState(DEFAULT_SELECTED_INPUTS);
   const [lessonDataset, setLessonDataset] = useState('vehicles');
   const [lessonExampleIndex, setLessonExampleIndex] = useState(0);
-  const [lessonIcon, setLessonIcon] = useState('🚗');
-  const [lessonName, setLessonName] = useState('Αυτοκίνητο');
+  const [lessonIcon, setLessonIcon] = useState('??');
+  const [lessonName, setLessonName] = useState('����������');
   const NEURAL_ACTIVITY_OPTIONS = [
     { value: '1', label: t('activity1') },
     { value: '2', label: t('activity2') },
@@ -189,7 +189,7 @@ const App = ({ role = 'teacher' }) => {
   
 
 
-// Δημιουργεί ένα τυχαίο όνομα μαθητή αν δεν υπάρχει αποθηκευμένο στο localStorage.
+// ���������� ��� ������ ����� ������ �� ��� ������� ������������ ��� localStorage.
   const [studentName, setStudentName] = useState(() => {
   return readIdentityName(`Student-${Math.floor(Math.random() * 900 + 100)}`);
 });
@@ -216,7 +216,7 @@ const [studentColor, setStudentColor] = useState(() => {
     };
   }, []);
 
-  // Αναφορά για να αποθηκεύει την είσοδο του ονόματος του μαθητή.
+  // ������� ��� �� ���������� ��� ������ ��� �������� ��� ������.
   const [studentNameInput, setStudentNameInput] = useState(studentName);
   
   
@@ -375,12 +375,12 @@ const [studentColor, setStudentColor] = useState(() => {
     effectiveSelectedInputs
   );
   const separableLabel = effectiveSeparable === null
-    ? 'Διαχωρισμός: -'
+    ? '�����������: -'
     : effectiveSeparable
-      ? 'Διαχωρισμός: ✅'
-      : 'Διαχωρισμός: ❌';
+      ? '�����������: ?'
+      : '�����������: ?';
   const demoFooterText = activeActivity === '4'
-    ? `Όριο: ${thresholdDisplayText} | ${separableLabel}`
+    ? `����: ${thresholdDisplayText} | ${separableLabel}`
     : '';
 
   const handleWeightChange = (which, value) => {
@@ -441,14 +441,14 @@ const [studentColor, setStudentColor] = useState(() => {
       const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
       const ws = new WebSocket(`${protocol}://${window.location.host}/ws/neural-lab`);
       wsRef.current = ws;
-      // Όταν ανοίξει η σύνδεση WebSocket
+      // ���� ������� � ������� WebSocket
       ws.addEventListener('open', () => {
         if (cancelled) return;
         setIsSocketConnected(true);
         hasRegisteredRef.current = false;
         registerCurrentRole();
       });
-      // Όταν ληφθεί μήνυμα από τον server
+      // ���� ������ ������ ��� ��� server
       ws.addEventListener('message', (event) => {
         let message;
         try {
@@ -574,7 +574,7 @@ const [studentColor, setStudentColor] = useState(() => {
           }
         }
       });
-      // Όταν κλείσει η σύνδεση WebSocket
+      // ���� ������� � ������� WebSocket
       ws.addEventListener('close', () => {
         if (cancelled) return;
         setIsSocketConnected(false);
@@ -583,7 +583,7 @@ const [studentColor, setStudentColor] = useState(() => {
         reconnectTimerRef.current = setTimeout(connect, 1000);
       });
 
-      // Όταν παρουσιαστεί σφάλμα στη σύνδεση WebSocket
+      // ���� ������������ ������ ��� ������� WebSocket
       ws.addEventListener('error', () => {
         if (!cancelled) setIsSocketConnected(false);
       });
@@ -779,8 +779,8 @@ const [studentColor, setStudentColor] = useState(() => {
             </div>
             <div className="tree-connect"></div>
             <div className="tree-level tree-two">
-              <div className="tree-node">w1 Γ— i1 = {prod1}</div>
-              <div className="tree-node">w2 Γ— i2 = {prod2}</div>
+              <div className="tree-node">w1 × i1 = {prod1}</div>
+              <div className="tree-node">w2 × i2 = {prod2}</div>
             </div>
           </div>
         </>
@@ -857,7 +857,7 @@ const [studentColor, setStudentColor] = useState(() => {
 
           <DataAccordion
             title={t('activitiesTitle')}
-            icon="🔬"
+            icon="??"
             label={t('chooseActivity')}
             options={NEURAL_ACTIVITY_OPTIONS}
             value={selectedActivity}
@@ -909,8 +909,7 @@ const [studentColor, setStudentColor] = useState(() => {
 
       {(isTeacher || isScreen) && (
         <div className="live-table-wrap">
-          <StudentsAccordion
-            title={t('studentTableTitle')}
+          <GroupsAccordion
             participants={sortedParticipants}
             emptyMessage={t('noStudents')}
             nameFallback={t('studentName')}
@@ -919,15 +918,15 @@ const [studentColor, setStudentColor] = useState(() => {
             getIsConnected={(student) => student.isConnected ?? true}
             columns={[
               ...(lessonSelectedInputs?.i1 ? [
-                { key: 'i1', label: `i₁ (${localizedFeatures.i1.label})`, render: (student) => <>{student?.inputs?.i1 ?? lessonInputs.i1} <span className="icon-in-table">{localizedFeatures.i1.icon}</span></> },
+                { key: 'i1', label: `i? (${localizedFeatures.i1.label})`, render: (student) => <>{student?.inputs?.i1 ?? lessonInputs.i1} <span className="icon-in-table">{localizedFeatures.i1.icon}</span></> },
                 { key: 'w1', label: 'w1', className: 'weight-value', style: { background: '#ef4444', color: 'white' }, render: (student) => student.weights?.w1 ?? (lessonActivity !== '3' && lessonActivity !== '4' ? 2 : '-') }
               ] : []),
               ...(lessonSelectedInputs?.i2 ? [
-                { key: 'i2', label: `i₂ (${localizedFeatures.i2.label})`, render: (student) => <>{student?.inputs?.i2 ?? lessonInputs.i2} <span className="icon-in-table">{localizedFeatures.i2.icon}</span></> },
+                { key: 'i2', label: `i? (${localizedFeatures.i2.label})`, render: (student) => <>{student?.inputs?.i2 ?? lessonInputs.i2} <span className="icon-in-table">{localizedFeatures.i2.icon}</span></> },
                 { key: 'w2', label: 'w2', className: 'weight-value', style: { background: '#ef4444', color: 'white' }, render: (student) => student.weights?.w2 ?? (lessonActivity !== '3' && lessonActivity !== '4' ? 3 : '-') }
               ] : []),
-              ...(['2', '3', '4'].includes(lessonActivity) && lessonSelectedInputs?.i1 ? [{ key: 'p1', label: 'w1 × i1', render: (student) => student?.products?.p1 ?? '-' }] : []),
-              ...(['2', '3', '4'].includes(lessonActivity) && lessonSelectedInputs?.i2 ? [{ key: 'p2', label: 'w2 × i2', render: (student) => student?.products?.p2 ?? '-' }] : []),
+              ...(['2', '3', '4'].includes(lessonActivity) && lessonSelectedInputs?.i1 ? [{ key: 'p1', label: 'w1 ? i1', render: (student) => student?.products?.p1 ?? '-' }] : []),
+              ...(['2', '3', '4'].includes(lessonActivity) && lessonSelectedInputs?.i2 ? [{ key: 'p2', label: 'w2 ? i2', render: (student) => student?.products?.p2 ?? '-' }] : []),
               {
                 key: 'result',
                 label: `${t('result')} o`,
@@ -950,3 +949,4 @@ const [studentColor, setStudentColor] = useState(() => {
 };
 
 export default App;
+

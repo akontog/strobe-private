@@ -5,7 +5,7 @@ import { Accordion } from '../layouts/Accordion';
 import { useSessionInputLogger } from '../activities/SessionLogContext';
 import './ChatAccordion.css';
 
-export default function ChatAccordion() {
+export default function ChatAccordion({ title = '', icon = '' }) {
   const { t } = useTranslation('common');
   const session = useSessionInputLogger();
   const [messages, setMessages] = useState([]);
@@ -47,8 +47,11 @@ export default function ChatAccordion() {
     } finally { setBusy(false); }
   }
 
+  const resolvedTitle = title || t('chat');
+  const resolvedIcon = icon || '💬';
+
   return (
-    <Accordion title={t('chat')} icon="💬">
+    <Accordion title={resolvedTitle} icon={resolvedIcon}>
       <section className="chat-accordion">
         {isTeacher ? (
           <label style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', marginBottom: '0.75rem' }}>

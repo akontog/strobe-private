@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Accordion, ActivitySettingsAccordion, StudentsAccordion, VisionCollaborationBoard } from '../../shared/components';
+import { Accordion, ActivitySettingsAccordion, GroupsAccordion, VisionCollaborationBoard } from '../../shared/components';
 import './VisionCollabTool.css';
 
 export default function VisionCollabTool({ role = 'student' }) {
@@ -46,8 +46,7 @@ export default function VisionCollabTool({ role = 'student' }) {
               </div>
             </Accordion>
 
-            <StudentsAccordion
-              title={t('visionCollabActiveUsers')}
+            <GroupsAccordion
               participants={activeUsers}
               getDisplayName={(user, fallback) => user.source === 'pose'
                 ? t(`visionCollabPoseLandmarkNames.${user.username}`)
@@ -66,4 +65,5 @@ export default function VisionCollabTool({ role = 'student' }) {
     </section>
   );
 }
+
 

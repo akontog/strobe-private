@@ -1,4 +1,5 @@
 ﻿import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Accordion } from '../layouts/Accordion';
 import { useEffect } from 'react';
 import { useSessionInputLogger } from '../activities/SessionLogContext';
@@ -12,9 +13,9 @@ const DEFAULT_OPTIONS = [
 ];
 
 export const ActivitiesAccordion = ({
-  title = 'Δραστηριότητες', // Accordion heading.
-  icon = '🔬', // Icon shown beside the heading.
-  label = 'Επιλογή δραστηριότητας', // Label for the activity selector.
+  title = '', // Accordion heading.
+  icon = '', // Icon shown beside the heading.
+  label = '', // Label for the activity selector.
   value = '1', // Currently selected option value.
   options = DEFAULT_OPTIONS, // Options available in the selector.
   onChange, // Receives the selected option value.
@@ -22,6 +23,7 @@ export const ActivitiesAccordion = ({
   className = '', // Additional CSS classes for the menu.
   preserveSession = false // Keeps the current session open when changing options.
 }) => {
+  const { t } = useTranslation('interface');
   const session = useSessionInputLogger();
   const selectedActivityName = (Array.isArray(options) ? options : [])
     .find((option) => String(option.value) === String(value))?.label || String(value || '');
@@ -43,11 +45,15 @@ export const ActivitiesAccordion = ({
     }
   };
 
+  const resolvedTitle = title || t('activities');
+  const resolvedIcon = icon || '🎯';
+  const resolvedLabel = label || t('chooseActivity');
+
   return (
-    <Accordion title={title} icon={icon} open={open}>
+    <Accordion title={resolvedTitle} icon={resolvedIcon} open={open}>
       <div className={`activities-accordion ${className}`.trim()}>
         <div className="select-group">
-          <label>{label}</label>
+          <label>{resolvedLabel}</label>
           <select
             value={value}
             onChange={(event) => handleChange(event.target.value)}
@@ -59,7 +65,7 @@ export const ActivitiesAccordion = ({
                 </option>
               ))
             ) : (
-              <option value="">Δεν υπάρχουν διαθέσιμες δραστηριότητες</option>
+              <option value="">{t('noAvailableActivities')}</option>
             )}
           </select>
         </div>
