@@ -1,3 +1,27 @@
 .widget-renderer {
-  display: contents;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.activity-widget {
+  border: 1px solid #dbe5f3;
+  border-radius: 0.95rem;
+  background: #f8fbff;
+  padding: 0.65rem;
+}
+
+.activity-widget__header {
+  margin: 0 0 0.45rem;
+}
+
+.activity-widget__title {
+  margin: 0;
+  color: #1e3a8a;
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.activity-widget__body {
+  display: grid;
 }

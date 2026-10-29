@@ -5,6 +5,7 @@ import SharedCommonZoneLayout from '../layouts/SharedCommonZoneLayout';
 import WidgetRenderer from '../widgets/widget-renderer';
 import FullScreenButton from '../primitives/FullScreenButton';
 import ActivityResourcePreview from './ActivityResourcePreview';
+import { createActivityDocument } from './activityDocument';
 import './ActivitySettingsAccordion.css';
 
 const DEFAULT_WIDGETS = [];
@@ -18,7 +19,7 @@ export default function ActivitySettingsAccordion({
   children,
   defaultTitle = ''
 }) {
-  const { t } = useTranslation('interface');
+  const { t, i18n } = useTranslation('interface');
   const isTeacher = ['teacher', 'admin'].includes(String(role).toLowerCase());
   const storageKey = `strobe:activity:${resource}:${roomId || 'default'}`;
   const [metadata, setMetadata] = useState(() => {
@@ -29,7 +30,7 @@ export default function ActivitySettingsAccordion({
     }
   });
   const [saveStatus, setSaveStatus] = useState('');
-  const activityConfig = useMemo(() => ({ ...config, widgets: metadata.widgets || [] }), [config, metadata.widgets]);
+  const activityConfig = useMemo(() => config || {}, [config]);
   const widgetPositions = new Set((metadata.widgets || []).map((widget) => widget.position));
   const hasLeftWidget = widgetPositions.has('left');
   const hasRightWidget = widgetPositions.has('right');
@@ -40,13 +41,15 @@ export default function ActivitySettingsAccordion({
       : hasRightWidget
         ? 'activity-workspace--right'
         : 'activity-workspace--full';
-  const payload = useMemo(() => ({
-    resource: resource.replace(/-collab$/, ''),
+  const payload = useMemo(() => createActivityDocument({
+    resource,
+    language: i18n.resolvedLanguage || i18n.language,
     title: metadata.title || defaultTitle,
-    subtitle: metadata.subtitle || '',
+    objective: metadata.subtitle || '',
     notes: metadata.notes || '',
-    config: activityConfig
-  }), [resource, metadata, defaultTitle, activityConfig]);
+    config: activityConfig,
+    widgets: metadata.widgets || []
+  }), [resource, metadata, defaultTitle, activityConfig, i18n.language, i18n.resolvedLanguage]);
 
   useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify({ ...metadata, config }));
@@ -57,7 +60,7 @@ export default function ActivitySettingsAccordion({
       const response = await fetch(`/teacher/activities/${encodeURIComponent(resource)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: payload.title || defaultTitle, subtitle: payload.subtitle, notes: payload.notes, config: activityConfig, authorName: 'activity-page' })
+        body: JSON.stringify({ document: payload, authorName: 'activity-page' })
       });
       if (!response.ok) throw new Error('save-failed');
       setSaveStatus(t('activityWorkspace.saved'));

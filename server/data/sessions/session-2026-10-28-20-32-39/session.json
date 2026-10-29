@@ -1,0 +1,15 @@
+{
+  "sessionId": "session-2026-10-28-20-32-39",
+  "app": "linear-systems-lab",
+  "startedAt": "2026-10-28T18:32:39.625Z",
+  "endedAt": "2026-10-28T18:34:08.293Z",
+  "teacherId": "antonis",
+  "students": [
+    "pp"
+  ],
+  "studentScores": [],
+  "activity": "2. Επιλογή σημείου σε ευθεία",
+  "chatEnabled": false,
+  "scoreVisible": true,
+  "feedbackEnabled": true
+}

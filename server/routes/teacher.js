@@ -177,6 +177,7 @@ router.post('/activities/:slug', (req, res) => {
   if (!resource) return;
 
   const payload = {
+    document: req.body.document,
     name: req.body.name,
     config: req.body.config,
     subtitle: req.body.subtitle,

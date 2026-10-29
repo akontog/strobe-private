@@ -29,6 +29,11 @@
   min-width: 0;
 }
 
+.linear-team-card--full {
+  flex: 1 1 100%;
+  max-width: 100%;
+}
+
 .linear-graph-card {
   flex: 0 0 27%;
   max-width: 27%;
@@ -246,6 +251,178 @@
 
 .linear-point-membership__result.is-wrong {
   color: #b91c1c;
+}
+
+.linear-point-grid-equation {
+  display: grid;
+  min-height: 7rem;
+  place-items: center;
+  text-align: center;
+}
+
+.linear-point-grid-equation p {
+  margin: 0;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.linear-point-grid-panel {
+  width: 100%;
+}
+
+.linear-point-grid-panel__instruction {
+  margin: 0 0 0.9rem;
+  color: #475569;
+  text-align: center;
+}
+
+.resource-panel {
+  width: 100%;
+}
+
+.resource-panel__heading {
+  margin-bottom: 0.75rem;
+  color: #0f172a;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.resource-panel__heading p {
+  margin: 0;
+}
+
+.resource-panel__instruction {
+  margin: 0 0 0.9rem;
+  color: #475569;
+  text-align: center;
+}
+
+.linear-point-grid-panel__scroll {
+  overflow-x: auto;
+  padding: 0.5rem;
+}
+
+.linear-point-grid.shared-button-grid {
+  grid-template-columns: 2rem repeat(var(--point-grid-columns, 11), minmax(3.1rem, 1fr));
+  gap: 0;
+  min-width: 34rem;
+  max-width: 42rem;
+  margin: 0 auto;
+  border-top: 1px solid #cbd5e1;
+  border-left: 1px solid #cbd5e1;
+  background: #fff;
+}
+
+.linear-point-grid__corner,
+.linear-point-grid__axis-label,
+.linear-point-grid__point {
+  display: grid;
+  min-width: 0;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 0;
+  border-right: 1px solid #cbd5e1;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.linear-point-grid__corner,
+.linear-point-grid__axis-label {
+  color: #475569;
+  background: #f1f5f9;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.linear-point-grid__point {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.12rem;
+  padding: 0;
+  background: #fff;
+  cursor: pointer;
+}
+
+.linear-point-grid__point.is-y-axis {
+  background-image: linear-gradient(to right, transparent calc(50% - 1px), #64748b calc(50% - 1px), #64748b calc(50% + 1px), transparent calc(50% + 1px));
+}
+
+.linear-point-grid__point.is-x-axis {
+  background-image: linear-gradient(to bottom, transparent calc(50% - 1px), #64748b calc(50% - 1px), #64748b calc(50% + 1px), transparent calc(50% + 1px));
+}
+
+.linear-point-grid__point.is-y-axis.is-x-axis {
+  background-image:
+    linear-gradient(to right, transparent calc(50% - 1px), #64748b calc(50% - 1px), #64748b calc(50% + 1px), transparent calc(50% + 1px)),
+    linear-gradient(to bottom, transparent calc(50% - 1px), #64748b calc(50% - 1px), #64748b calc(50% + 1px), transparent calc(50% + 1px));
+}
+
+.linear-point-grid__point:disabled {
+  cursor: default;
+}
+
+.linear-point-grid__coordinates {
+  z-index: 1;
+  color: inherit;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.linear-point-grid__point:focus-visible {
+  z-index: 2;
+  outline: 3px solid #2563eb;
+  outline-offset: -3px;
+}
+
+.linear-point-grid__point.is-selected {
+  background: #eff6ff;
+}
+
+.linear-point-grid__markers {
+  position: absolute;
+  right: 1px;
+  bottom: 1px;
+  left: 1px;
+  min-height: 0.35rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.linear-point-grid__marker {
+  width: 0.45rem;
+  height: 0.45rem;
+  border: 1px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.45);
+}
+
+.linear-point-grid-student-selections {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.3rem 0.6rem;
+}
+
+.linear-point-grid-student-selections__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.linear-point-grid-student-selections__item > span {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
 }
 
 @media (max-width: 980px) {

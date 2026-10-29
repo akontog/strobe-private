@@ -23,6 +23,7 @@ const hasTableConfiguration = ({ title, columns, headerGroups, emptyMessage, nam
 
 export default function StudentsAccordion({
   title = '',
+  open = false,
   nameColumnLabel = '',
   nameHeaderControl = null,
   onFeedbackChange,
@@ -110,7 +111,7 @@ export default function StudentsAccordion({
   }
 
   return (
-    <Accordion title={resolvedTitle} icon="🗄️" open={false}>
+    <Accordion title={resolvedTitle} icon="🗄️" open={open}>
       <div className="students-accordion__content">
         <table className="students-accordion__table">
           <thead>

@@ -32,12 +32,19 @@ export default function NumberLine({
   partitions = 20, // Number of equal sections shown on the number line.
   linePosition = 0.72, // Vertical position of the number line as a fraction of the canvas height.
   snapThreshold = 0.16, // Distance from an integer at which a point snaps to that integer.
-  stackTolerance = 0.08 // Distance at which identical points or interval bounds share a vertical stack.
+  stackTolerance = 0.08, // Distance at which identical points or interval bounds share a vertical stack.
+  integerOnly = false, // Snaps every point mark to an integer.
+  pointOnly = false, // Disables interval drawing and keeps one point per participant.
+  canEdit: canEditOverride,
+  onMarksChange
 }) {
   const { t } = useTranslation('interface');
   const session = useSessionInputLogger();
-  const canEdit = session?.canEdit ?? true;
+  const canEdit = typeof canEditOverride === 'boolean' ? canEditOverride : session?.canEdit ?? true;
+  const canClearRoom = ['teacher', 'admin'].includes(String(session?.role || '').toLowerCase());
   const socketRef = useRef(null);
+  const onMarksChangeRef = useRef(onMarksChange);
+  onMarksChangeRef.current = onMarksChange;
   const svgRef = useRef(null);
   const pointerRef = useRef(null);
   const identityRef = useRef(readIdentitySnapshot({ nameFallback: 'Student', colorFallback: '#4ECDC4' }));
@@ -78,7 +85,9 @@ export default function NumberLine({
       });
       socket.on('number-line:state', (state) => {
         if (state?.roomId !== `number-line-${roomId}`) return;
-        setMarks((state.marks || []).map((mark) => ({ ...mark, own: mark.id === socket.id })));
+        const nextMarks = (state.marks || []).map((mark) => ({ ...mark, own: mark.id === socket.id }));
+        setMarks(nextMarks);
+        onMarksChangeRef.current?.(nextMarks);
       });
       socket.connect();
     }).catch(() => {});
@@ -91,7 +100,7 @@ export default function NumberLine({
 
   useEffect(() => {
     const clearBeforeSession = (event) => {
-      if (!event.detail?.clear || !canEdit) return;
+      if (!event.detail?.clear || !canClearRoom) return;
       pointerRef.current = null;
       setDraftInterval(null);
       event.detail.waitUntil(requestRealtimeAck(
@@ -103,7 +112,7 @@ export default function NumberLine({
     };
     window.addEventListener('strobe:session-starting', clearBeforeSession);
     return () => window.removeEventListener('strobe:session-starting', clearBeforeSession);
-  }, [canEdit, roomId, sessionApp]);
+  }, [canClearRoom, roomId, sessionApp]);
 
   function emitMark(mark) {
     socketRef.current?.emit('number-line:mark', { roomId, sessionApp, ...mark, ...identityRef.current });
@@ -114,7 +123,10 @@ export default function NumberLine({
     if (!svg) return min;
     const bounds = svg.getBoundingClientRect();
     const rawValue = min + ((event.clientX - bounds.left) / bounds.width) * range;
-    return Math.max(min, Math.min(max, Math.abs(rawValue - Math.round(rawValue)) <= snapThreshold ? Math.round(rawValue) : rawValue));
+    const bounded = Math.max(min, Math.min(max, rawValue));
+    return integerOnly
+      ? Math.max(min, Math.min(max, Math.round(bounded)))
+      : Math.abs(bounded - Math.round(bounded)) <= snapThreshold ? Math.round(bounded) : bounded;
   }
 
   function stackIndex(mark) {
@@ -135,7 +147,7 @@ export default function NumberLine({
       return;
     }
     const end = valueFromEvent(event);
-    if (activePointer.moved) {
+    if (activePointer.moved && !pointOnly) {
       const start = Math.min(activePointer.start, end);
       const finish = Math.max(activePointer.start, end);
       if (finish - start < 0.01) emitMark({ kind: 'point', value: start });
@@ -188,13 +200,13 @@ export default function NumberLine({
           if (!activePointer || activePointer.id !== event.pointerId) return;
           if (!activePointer.moved && Math.abs(event.clientX - activePointer.clientX) < 5) return;
           activePointer.moved = true;
-          setDraftInterval({ start: activePointer.start, end: valueFromEvent(event) });
+          if (!pointOnly) setDraftInterval({ start: activePointer.start, end: valueFromEvent(event) });
         }}
         onPointerUp={finishDrawing}
         onPointerCancel={() => { pointerRef.current = null; setDraftInterval(null); }}
       >
         {Array.from({ length: partitionCount + 1 }, (_, index) => min + (range * index) / partitionCount).map((value, index) => (
-          <g key={index} className="number-line-resource__tick">
+          <g key={index} className={`number-line-resource__tick${Math.abs(value) <= 1e-9 ? ' is-zero' : ''}`}>
             <line x1={valueToX(value)} x2={valueToX(value)} y1="35" y2={axisY + 32} />
             <text x={valueToX(value)} y={axisY + 57} textAnchor="middle">{Number(value.toFixed(2))}</text>
           </g>

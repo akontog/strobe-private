@@ -7,8 +7,10 @@ import {
   PlacementBoard,
   VennBoard,
   OptionsGrid,
+  NumberLine,
   parseOptionsExpression,
   GridButton,
+  VisionCollaborationBoard,
   HeroTitle,
   EntryGrid,
   SharedCommonZoneLayout,
@@ -17,12 +19,13 @@ import {
   useSessionInputLogger
 } from '../../shared/components';
 import { readIdentityName } from '../../shared/components/menu/identityStorage';
+import { resolveActivityDocument } from '../../shared/components/activities/activityDocument';
 import './ActivityRunner.css';
 
 function ResourceContent({ activity, role, activityKey }) {
   const session = useSessionInputLogger();
   const config = activity.config || {};
-  const props = config.props || {};
+  const props = config.props || config;
   const fields = Array.isArray(props.fields) ? props.fields : [];
   const [answers, setAnswers] = React.useState(() => Object.fromEntries(fields.map((field) => [field.id, field.value || ''])));
   const [placements, setPlacements] = React.useState(props.placements || {});
@@ -71,8 +74,29 @@ function ResourceContent({ activity, role, activityKey }) {
   if (activity.resource === 'collaborative-geogebra') {
     return <GeoGebra {...props} roomId={props.roomId || 'activity-runner'} sessionApp="activity-runner" editable={session?.canEdit} />;
   }
+  if (activity.resource === 'number-line') {
+    return (
+      <NumberLine
+        {...props}
+        min={props.min ?? props.leftEnd ?? -10}
+        max={props.max ?? props.rightEnd ?? 10}
+        roomId={props.roomId || activityKey}
+        sessionApp="activity-runner"
+        canEdit={session?.canEdit}
+      />
+    );
+  }
   if (activity.resource === 'collaborative-algebra-tiles') {
     return <AlgebraTiles {...props} shared role={role} sessionApp="activity-runner" activity={activityKey} />;
+  }
+  if (activity.resource === 'vision-board') {
+    return (
+      <VisionCollaborationBoard
+        {...props}
+        role={role}
+        showCameraFeed={role === 'teacher' && props.teacherDisplayMode === 'camera'}
+      />
+    );
   }
   if (activity.resource === 'options-grid') {
     const items = props.optionsExpression
@@ -146,7 +170,7 @@ function getAreaRegions(tiles) {
 
 function getStudentColumns(activity, activityKey) {
   const resource = activity.resource || activity.config?.resource;
-  const props = activity.config?.props || {};
+  const props = activity.config?.props || activity.config || {};
   if (resource === 'input-grid') {
     return (props.fields || []).map((field, index) => ({
       key: field.id || field.key || field.label || `field-${index}`,
@@ -242,7 +266,7 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
     };
   }, [suppliedActivity]);
 
-  const selectedActivityKey = activity ? `activity-runner:${activity.filename || activity.id || activity.name || 'activity'}` : '';
+  const selectedActivityKey = activity ? `activity-runner:${activity.filename || activity.activity?.id || activity.id || activity.name || 'activity'}` : '';
 
   React.useEffect(() => {
     if (role !== 'teacher' || !activity) return undefined;
@@ -260,9 +284,10 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
   }, [activity, role]);
 
   const config = activity?.config || {};
-  const resourceActivity = React.useMemo(() => activity
-    ? { ...activity, resource: activity.resource || config.resource }
-    : null, [activity, config.resource]);
+  const resourceActivity = React.useMemo(() => {
+    const resolved = resolveActivityDocument(activity);
+    return resolved ? { ...resolved, resource: resolved.resource || config.resource } : null;
+  }, [activity, config.resource]);
 
   if (!activity) {
     return (
@@ -280,7 +305,7 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
 
   return (
     <>
-      <HeroTitle title={`${tNav('items.activities')} - ${activity.name || activity.title || tNav('items.activities')}`} />
+      <HeroTitle title={`${tNav('items.activities')} - ${resourceActivity.name || resourceActivity.title || tNav('items.activities')}`} />
       {role === 'teacher' && activity.notes ? <p className="activity-runner-notes">{activity.notes}</p> : null}
       <SharedCommonZoneLayout
         className="common-zone lab-zone"

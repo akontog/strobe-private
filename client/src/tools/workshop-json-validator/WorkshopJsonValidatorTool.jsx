@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HeroTitle } from '../../shared/components';
+import { isActivityResourceType } from '../../shared/components/activities/resourceRegistry';
 import './WorkshopJsonValidatorTool.css';
 
 const FORBIDDEN_KEY_SUFFIX = 'Key';
@@ -63,9 +64,16 @@ function validateResources(resources, issues) {
     }
     if (typeof resource.type !== 'string' || !resource.type.trim()) {
       issues.push(`${resourcePath}.type is required.`);
+    } else if (!isActivityResourceType(resource.type)) {
+      issues.push(`${resourcePath}.type "${resource.type}" is not registered as a shared resource.`);
     }
     if (!safeObject(resource.config)) {
       issues.push(`${resourcePath}.config must be an object.`);
+    } else if (!safeObject(resource.config.settings)) {
+      issues.push(`${resourcePath}.config.settings must be an object.`);
+    }
+    if (resource.region != null && !['left', 'center', 'right', 'top', 'bottom'].includes(resource.region)) {
+      issues.push(`${resourcePath}.region must be left, center, right, top, or bottom.`);
     }
   });
 }
@@ -77,13 +85,16 @@ function validateActivities(activities, issues) {
       issues.push(`${activityPath} must be an object.`);
       return;
     }
-    ['id', 'code', 'title', 'objective', 'mode'].forEach((field) => {
+    ['id', 'code', 'title', 'mode'].forEach((field) => {
       if (typeof activity[field] !== 'string' || !activity[field].trim()) {
         issues.push(`${activityPath}.${field} is required.`);
       }
     });
-    if (activity.usesResources != null && !Array.isArray(activity.usesResources)) {
-      issues.push(`${activityPath}.usesResources must be an array when present.`);
+    if (activity.objective != null && typeof activity.objective !== 'string') {
+      issues.push(`${activityPath}.objective must be a string when present.`);
+    }
+    if (!Array.isArray(activity.usesResources) || !activity.usesResources.length) {
+      issues.push(`${activityPath}.usesResources must be a non-empty array.`);
     }
   });
 }
@@ -123,6 +134,9 @@ function validateWorkshopDocument(rawText) {
   if (root.schemaVersion !== '1.0') {
     issues.push('schemaVersion must be "1.0".');
   }
+  if (typeof root.language !== 'string' || root.language.trim().length < 2) {
+    issues.push('language must be a language code such as "el" or "en".');
+  }
 
   const documentType = String(root.documentType || 'workshop').trim();
   if (!VALID_DOCUMENT_TYPES.includes(documentType)) {
@@ -147,15 +161,18 @@ function validateWorkshopDocument(rawText) {
     if (!activity) {
       issues.push('activity must exist and be an object when documentType is "activity".');
     } else {
-      ['id', 'code', 'title', 'objective', 'mode'].forEach((field) => {
+      ['id', 'code', 'title', 'mode'].forEach((field) => {
         if (typeof activity[field] !== 'string' || !activity[field].trim()) {
           issues.push(`activity.${field} is required.`);
         }
       });
+      if (activity.objective != null && typeof activity.objective !== 'string') {
+        issues.push('activity.objective must be a string when present.');
+      }
       if (!Array.isArray(activity.usesResources)) {
         issues.push('activity.usesResources must be an array.');
-      } else if (activity.usesResources.length !== 1) {
-        issues.push('activity.usesResources must contain exactly one resource id.');
+      } else if (!activity.usesResources.length) {
+        issues.push('activity.usesResources must contain at least one resource id.');
       }
       validateActivityResourceRefs([activity], resourceIds, issues);
     }
@@ -182,7 +199,19 @@ function validateWorkshopDocument(rawText) {
         issues.push(`Duplicate activity ids: ${duplicateActivityIds.join(', ')}`);
       }
       validateActivityResourceRefs(activities, resourceIds, issues);
+      const activityIds = new Set(activities.map((entry) => String(entry && entry.id || '').trim()).filter(Boolean));
+      if (Array.isArray(sequence?.activityIds)) {
+        sequence.activityIds.forEach((activityId) => {
+          const normalized = String(activityId || '').trim();
+          if (!normalized || !activityIds.has(normalized)) {
+            issues.push(`sequence.activityIds contains unknown activity id "${normalized}".`);
+          }
+        });
+      } else {
+        issues.push('sequence.activityIds must be an array of activity ids.');
+      }
     }
+
   } else {
     const workshop = safeObject(root.workshop);
     if (!workshop) {
@@ -254,6 +283,7 @@ function validateWorkshopDocument(rawText) {
 const SAMPLE_DOCUMENT = `{
   "schemaVersion": "1.0",
   "documentType": "workshop",
+  "language": "el",
   "workshop": {
     "id": "linear-systems",
     "title": "Γραμμικά Συστήματα",
@@ -261,13 +291,28 @@ const SAMPLE_DOCUMENT = `{
   },
   "resources": [
     {
+      "id": "answer-input",
+      "type": "input-grid",
+      "region": "center",
+      "config": {
+        "settings": {
+          "props": {
+            "fields": [{ "id": "x", "label": "Τιμή x" }]
+          }
+        }
+      }
+    },
+    {
       "id": "graph-main",
       "type": "plot-widget",
+      "region": "right",
       "config": {
-        "xMin": -10,
-        "xMax": 10,
-        "yMin": -10,
-        "yMax": 10
+        "settings": {
+          "xMin": -10,
+          "xMax": 10,
+          "yMin": -10,
+          "yMax": 10
+        }
       }
     }
   ],
@@ -277,8 +322,8 @@ const SAMPLE_DOCUMENT = `{
       "code": "1.",
       "title": "Γραφική δημιουργία συστήματος",
       "objective": "Συμπλήρωσε εξισώσεις και δες τις στο γράφημα.",
-      "mode": "graphing-input",
-      "usesResources": ["graph-main"]
+      "mode": "input-grid",
+      "usesResources": ["answer-input", "graph-main"]
     }
   ],
   "sequences": [

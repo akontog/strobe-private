@@ -267,4 +267,12 @@ Workshop, Activities και Sequences είναι τα τρία επίπεδα ο
 - Υλοποίηση: shared\components\services
 
 
-## 
+## ActivitiesAccordion
+
+## ChatAccordion
+
+## DataAccordion
+
+## QrAccordion
+
+## StudentsAccordion

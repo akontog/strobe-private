@@ -1,166 +1,157 @@
-# Περιγραφή
+# Γλώσσα JSON δραστηριοτήτων
 
-Κάθε resource έχει τη δική του γλώσσα JSON, με όσο το δυνατόν περισσότερα κοινά δομικά στοιχεία μεταξύ resources.
-Τα workshops και τα sequences συνδυάζουν πολλά resources.
-Ο κώδικας υλοποιεί μόνο rendering και interaction behavior των resources.
-Δεν κρατάμε δραστηριότητες, οδηγίες ή μαθησιακά δεδομένα σε JS/JSX constants.
+Το `workshop-language.schema.json` ορίζει τη μοναδική μορφή αποθήκευσης για δραστηριότητες, ακολουθίες και workshops. Κάθε αρχείο είναι αυτοτελές: περιέχει το μαθησιακό περιεχόμενο, τις ρυθμίσεις παρουσίασης και τους πόρους που συνθέτουν τη δραστηριότητα.
 
----
+Ο κώδικας περιέχει μόνο την υλοποίηση των πόρων και τον τρόπο απόδοσης της γλώσσας. Δεν περιέχει τίτλους μαθημάτων, οδηγίες, δεδομένα, απαντήσεις, ρυθμίσεις γραφημάτων ή επιλογές εμφάνισης συγκεκριμένης δραστηριότητας.
 
-## Επίπεδα οργάνωσης πάνω από τα resources
-
-Υπάρχουν τρία επίπεδα:
-
-- **activity**: ένα μεμονωμένο resource (ένα βήμα, χωρίς περαιτέρω πλοήγηση)
-- **sequence**: γραμμική σειρά από activities (π.χ. επόμενο/προηγούμενο)
-- **workshop**: ελεύθερη πλοήγηση σε activities/sequences με πιο πλούσιο μενού
-
-Το επίπεδο δηλώνεται με:
+## Κοινή μορφή
 
 ```json
-"documentType": "activity" | "sequence" | "workshop"
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [],
+  "activity": {}
+}
 ```
 
----
+Τα τέσσερα πεδία είναι υποχρεωτικά σε κάθε αρχείο. Το `language` δηλώνει τη γλώσσα όλου του περιεχομένου του αρχείου. Κάθε αρχείο έχει μία γλώσσα. Τα locales κρατούν μόνο γενικό κείμενο διεπαφής.
 
-## Βασικές αρχές
+## Πόροι
 
-1. Όλα τα content δεδομένα είναι JSON (όχι constants στον κώδικα).
-2. Δεν επιτρέπονται locale keys μέσα στα stored JSON:
-   - ❌ `titleKey`, `objectiveKey`, `hintKey`, γενικά `*Key`
-   - ✅ plain fields όπως `title`, `objective`, `hint`
-3. Τα orchestration documents συνδέουν resources με IDs.
-4. Η έκδοση format είναι υποχρεωτική:
-   - `schemaVersion: "1.0"`
+Κάθε διαδραστικό στοιχείο και widget δηλώνεται μία φορά στο `resources`:
 
-5. Τα locale αρχεία κρατούν μόνο γενικά UI labels.
-   - Workshop ειδικό μαθησιακό περιεχόμενο (τίτλοι δραστηριοτήτων, objectives, hints, datasets, grouping labels, σωστές απαντήσεις) μένει στα activity/sequence/workshop JSON.
+```json
+{
+  "id": "graph-main",
+  "type": "plot-widget",
+  "region": "right",
+  "config": {
+    "settings": {
+      "title": "Γράφημα",
+      "xMin": -5,
+      "xMax": 5,
+      "yMin": -5,
+      "yMax": 5
+    },
+    "display": {
+      "visibleByDefault": true
+    }
+  }
+}
+```
 
----
+Κοινά πεδία πόρου:
 
-## Επίσημο schema
+- `id`: μοναδικό αναγνωριστικό μέσα στο αρχείο.
+- `type`: τύπος υλοποιημένου shared resource ή widget, όπως `number-line`, `options-grid`, `placement-board`, `input-grid`, `plot-widget`, `equation` ή `icon`.
+- `region`: θέση παρουσίασης, όπως `left`, `center` ή `right`. Παραλείπεται όταν ο πόρος δεν τοποθετείται σε περιοχή.
+- `config.settings`: ρυθμίσεις του resource.
+- `config.data`: δραστηριότητες, items, ομάδες και απαντήσεις που χρειάζεται ο resource.
+- `config.presentation`: κείμενα και επιλογές παρουσίασης ειδικά για τον resource.
+- `config.display`: ορατότητα και κοινές επιλογές διάταξης.
 
-- [workshop-language.schema.json](./workshop-language.schema.json)
+Τα `settings`, `data`, `presentation` και `display` έχουν την ίδια σημασία για όλους τους τύπους. Κάθε resource χρησιμοποιεί όσα από αυτά χρειάζεται. Η ειδική σημασία των πεδίων μέσα σε `settings` και `data` ορίζεται από τον αντίστοιχο resource type.
 
-Το schema καλύπτει και τα 3 document types: activity, sequence, workshop.
+Οι βασικοί τύποι αντιστοιχούν στα shared components του `client/src/shared/components/resources` και `client/src/shared/components/widgets`. Νέος τύπος προστίθεται μόνο όταν υπάρχει renderer που τον υποστηρίζει.
 
----
+## Σύνδεση πόρων και δημιουργία δραστηριότητας
 
-## Root structure (v1.0)
+Η δραστηριότητα συνδέεται με πόρους μέσω `usesResources`. Το `region` κάθε πόρου ορίζει πού αποδίδεται, ενώ ο renderer του `type` ορίζει ποιο shared component χρησιμοποιείται. Τα IDs επιτρέπουν την επαναχρησιμοποίηση του ίδιου resource σε περισσότερες δραστηριότητες.
+
+```json
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "answers",
+      "type": "placement-board",
+      "region": "center",
+      "config": {
+        "settings": {},
+        "data": {
+          "groups": [{ "id": "yes", "title": "Επαληθεύουν" }],
+          "items": [{ "id": "p1", "content": "(1, 2)", "correctGroupId": "yes" }]
+        }
+      }
+    },
+    {
+      "id": "equation",
+      "type": "equation",
+      "region": "left",
+      "config": { "settings": { "expression": "y = 2x" } }
+    },
+    {
+      "id": "graph",
+      "type": "plot-widget",
+      "region": "right",
+      "config": { "settings": { "title": "Σύστημα αξόνων" } }
+    }
+  ],
+  "activity": {
+    "id": "verify-points",
+    "code": "1.",
+    "title": "Επαλήθευση σημείων",
+    "objective": "Ταξινόμησε τα σημεία.",
+    "mode": "placement-board",
+    "usesResources": ["answers", "equation", "graph"]
+  }
+}
+```
+
+Το `activity.mode` επιλέγει τη μαθησιακή ροή. Δεν αντιγράφει ρυθμίσεις πόρων. Τα δεδομένα που βαθμολογούνται, όπως `correctGroupId` ή `correctAnswers`, αποθηκεύονται στο `config.data` του αντίστοιχου resource.
+
+## Ακολουθίες και workshops
+
+Μια ακολουθία περιέχει δραστηριότητες και συνδέει τη σειρά τους με IDs:
+
+```json
+{
+  "schemaVersion": "1.0",
+  "documentType": "sequence",
+  "language": "el",
+  "resources": [
+    { "id": "r1", "type": "options-grid", "region": "center", "config": { "settings": {} } },
+    { "id": "r2", "type": "number-line", "region": "center", "config": { "settings": {} } }
+  ],
+  "sequence": { "id": "linear-basics", "title": "Βασική πορεία", "activityIds": ["a1", "a2"] },
+  "activities": [
+    { "id": "a1", "code": "1.", "title": "Επιλογή", "mode": "options-grid", "usesResources": ["r1"] },
+    { "id": "a2", "code": "2.", "title": "Τομή", "mode": "number-line", "usesResources": ["r2"] }
+  ]
+}
+```
+
+Ένα workshop ομαδοποιεί activities και sequences. Όλες οι αναφορές παραμένουν στο ίδιο αρχείο και λύνονται με IDs:
 
 ```json
 {
   "schemaVersion": "1.0",
   "documentType": "workshop",
-  "resources": [],
-  "workshop": {},
-  "activities": [],
-  "sequences": []
+  "language": "el",
+  "resources": [
+    { "id": "main", "type": "input-grid", "region": "center", "config": { "settings": {} } }
+  ],
+  "workshop": { "id": "linear-systems", "title": "Συστήματα", "presentation": {} },
+  "activities": [
+    { "id": "a1", "code": "1.", "title": "Εξισώσεις", "mode": "input-grid", "usesResources": ["main"] }
+  ],
+  "sequences": [{ "id": "seq1", "title": "Βασική πορεία", "activityIds": ["a1"] }]
 }
 ```
 
-Κοινό υποχρεωτικό root για όλα τα document types:
+Το `workshop.presentation` κρατά το hero, τα κοινά κείμενα και τις ρυθμίσεις εμφάνισης του συγκεκριμένου μαθήματος. Έτσι ο τίτλος hero, οι τίτλοι πινάκων, οι οδηγίες και οι ρυθμίσεις panel αποθηκεύονται στο ίδιο JSON με τις δραστηριότητες και τα resources.
 
-- `schemaVersion`
-- `documentType`
-- `resources[]`
+## Κανόνες εγκυρότητας
 
----
+- `schemaVersion` είναι `"1.0"` και `documentType` είναι `activity`, `sequence` ή `workshop`.
+- Όλα τα IDs είναι μοναδικά στην οντότητά τους.
+- Κάθε `usesResources` αναφέρεται σε υπάρχον resource ID.
+- Κάθε `sequence.activityIds` αναφέρεται σε υπάρχουσα activity ID.
+- Δεν χρησιμοποιούνται locale references, όπως `titleKey` ή οποιοδήποτε πεδίο που τελειώνει σε `Key`.
+- Οι resource types πρέπει να έχουν renderer στο project.
 
-## Ανά τύπο εγγράφου
-
-### 1) Activity document
-
-Υποχρεωτικά:
-
-- `activity` object
-
-Κανόνας:
-
-- `activity.usesResources` πρέπει να δείχνει σε resources IDs
-- η activity είναι ένα μεμονωμένο βήμα
-
-### 2) Sequence document
-
-Υποχρεωτικά:
-
-- `sequence` metadata object
-- `activities[]`
-
-Κανόνας:
-
-- κάθε activity της sequence αναφέρεται σε resources με `usesResources`
-
-### 3) Workshop document
-
-Υποχρεωτικά:
-
-- `workshop` metadata object
-
-Προαιρετικά (αλλά πρακτικά θέλουμε τουλάχιστον ένα):
-
-- `activities[]`
-- `sequences[]`
-
-Κανόνες:
-
-- `sequences[].activityIds` πρέπει να δείχνουν σε υπαρκτά `activities[].id`
-- `activities[].usesResources` πρέπει να δείχνουν σε υπαρκτά `resources[].id`
-
----
-
-## Validation κανόνες που πρέπει πάντα να περνάνε
-
-1. Valid JSON syntax
-2. `schemaVersion === "1.0"`
-3. Έγκυρο `documentType`
-4. Μοναδικά IDs ανά οντότητα (`resources`, `activities`, `sequences`)
-5. Όλα τα references να λύνουν (κανένα dangling id)
-6. Να μην υπάρχει κανένα key που τελειώνει σε `Key`
-
----
-
-## Forbidden patterns
-
-```json
-{
-  "titleKey": "activities.graphing.title"
-}
-```
-
-```json
-{
-  "groups": [{ "hintKey": "groups.none.hint" }]
-}
-```
-
----
-
-## Χρήση validator από το μενού
-
-1. Άνοιξε: **Εργαλεία → Έλεγχος JSON**
-2. Είτε:
-   - φόρτωσε `.json` από file picker, είτε
-   - σύρε και άφησε `.json` στο drop area, είτε
-   - κάνε επικόλληση JSON στο editor
-3. Πάτησε **Έλεγχος JSON**
-4. Διόρθωσε τα errors που επιστρέφονται
-
-Ο validator ελέγχει:
-
-- syntax
-- required structure
-- duplicate IDs
-- broken references
-- forbidden locale-style keys
-
----
-
-## Migration plan
-
-1. Μεταφορά content από JS constants σε JSON αρχεία
-2. Αντικατάσταση `*Key` πεδίων με plain text
-3. Προσθήκη `schemaVersion: "1.0"` και `documentType`
-4. Δήλωση resources στο `resources[]`
-5. Σύνδεση activities/resources και sequences/activities με IDs
-6. Έλεγχος στον UI validator πριν από build/release
+Έλεγχος γίνεται από **Εργαλεία → Έλεγχος JSON**. Η αποθήκευση από resource workspace γράφει το ίδιο format στον server.

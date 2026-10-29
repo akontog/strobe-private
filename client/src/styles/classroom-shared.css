@@ -302,7 +302,7 @@
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  text-transform: uppercase;
+  text-transform: none;
   color: #64748b;
   margin-bottom: 0.5rem;
 }

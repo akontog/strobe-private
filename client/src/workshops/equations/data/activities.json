@@ -1,12 +1,142 @@
 {
-  "labels": {
-    "removeMatchingTiles": "Πάτησε ένα πλακίδιο για να αφαιρέσεις το ίδιο πλακίδιο και από τις δύο πλευρές της εξίσωσης.",
-    "solutionPrompt": "Λύση",
-    "solutionLabel": "Τιμή του x",
-    "questions": "Εξισώσεις",
-    "chooseQuestion": "Επιλογή εξίσωσης",
-    "studentTableTitle": "Απαντήσεις μαθητών",
-    "noStudents": "Δεν υπάρχουν συνδεδεμένοι μαθητές."
+  "schemaVersion": "1.0",
+  "documentType": "workshop",
+  "language": "el",
+  "resources": [
+    {
+      "id": "activity-data-1",
+      "type": "activity-data",
+      "config": {
+        "settings": {},
+        "data": {
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5,
+          "questions": [
+            {
+              "id": "x-plus-2-equals-5",
+              "label": "x + 2 = 5",
+              "solution": 3,
+              "leftTerms": [
+                {
+                  "type": "x",
+                  "count": 1
+                },
+                {
+                  "type": "one",
+                  "count": 2
+                }
+              ],
+              "rightTerms": [
+                {
+                  "type": "one",
+                  "count": 5
+                }
+              ]
+            },
+            {
+              "id": "2x-plus-3-equals-x-plus-7",
+              "label": "2x + 3 = x + 7",
+              "solution": 4,
+              "leftTerms": [
+                {
+                  "type": "x",
+                  "count": 2
+                },
+                {
+                  "type": "one",
+                  "count": 3
+                }
+              ],
+              "rightTerms": [
+                {
+                  "type": "x",
+                  "count": 1
+                },
+                {
+                  "type": "one",
+                  "count": 7
+                }
+              ]
+            },
+            {
+              "id": "3x-plus-2-equals-2x-plus-6",
+              "label": "3x + 2 = 2x + 6",
+              "solution": 4,
+              "leftTerms": [
+                {
+                  "type": "x",
+                  "count": 3
+                },
+                {
+                  "type": "one",
+                  "count": 2
+                }
+              ],
+              "rightTerms": [
+                {
+                  "type": "x",
+                  "count": 2
+                },
+                {
+                  "type": "one",
+                  "count": 6
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "activity-1-resource-1",
+      "type": "algebra-tiles",
+      "region": "center",
+      "config": {
+        "settings": {
+          "card": false,
+          "mode": "equation"
+        }
+      }
+    },
+    {
+      "id": "activity-1-resource-2",
+      "type": "equation-answer",
+      "region": "center",
+      "config": {
+        "settings": {
+          "card": false
+        }
+      }
+    }
+  ],
+  "workshop": {
+    "id": "equations",
+    "title": "Εξισώσεις - Ανισώσεις",
+    "presentation": {
+      "hero": {
+        "titleTemplate": "{workshopTitle} - {code} {title}",
+        "workshopTitle": "Εξισώσεις - Ανισώσεις",
+        "subtitleTemplate": "{objective}"
+      },
+      "labels": {
+        "removeMatchingTiles": "Πάτησε ένα πλακίδιο για να αφαιρέσεις το ίδιο πλακίδιο και από τις δύο πλευρές της εξίσωσης.",
+        "solutionPrompt": "Λύση",
+        "solutionLabel": "Τιμή του x",
+        "questions": "Εξισώσεις",
+        "chooseQuestion": "Επιλογή εξίσωσης",
+        "studentTableTitle": "Απαντήσεις μαθητών",
+        "noStudents": "Δεν υπάρχουν συνδεδεμένοι μαθητές.",
+        "resourceTable": {
+          "tilesColumn": "Πλακίδια (αριστερά / δεξιά)",
+          "leftRegion": "Αριστερά",
+          "rightRegion": "Δεξιά",
+          "regionSeparator": " · ",
+          "emptyValue": "—",
+          "negativeSign": "−",
+          "positiveSign": "+"
+        }
+      }
+    }
   },
   "activities": [
     {
@@ -15,93 +145,20 @@
       "title": "Επίλυση απλών εξισώσεων",
       "objective": "Αφαίρεσε ίσα πλακίδια και από τις δύο πλευρές για να απομονώσεις το x.",
       "resultMode": "equationTiles",
-      "widgets": [
-        {
-          "type": "algebra-tiles",
-          "region": "center",
-          "card": false,
-          "mode": "equation"
-        },
-        {
-          "type": "equation-answer",
-          "region": "center",
-          "card": false
-        }
-      ],
-      "scoreCorrect": 1,
-      "scoreIncorrect": -0.5,
-      "questions": [
-        {
-          "id": "x-plus-2-equals-5",
-          "label": "x + 2 = 5",
-          "solution": 3,
-          "leftTerms": [
-            {
-              "type": "x",
-              "count": 1
-            },
-            {
-              "type": "one",
-              "count": 2
-            }
-          ],
-          "rightTerms": [
-            {
-              "type": "one",
-              "count": 5
-            }
-          ]
-        },
-        {
-          "id": "2x-plus-3-equals-x-plus-7",
-          "label": "2x + 3 = x + 7",
-          "solution": 4,
-          "leftTerms": [
-            {
-              "type": "x",
-              "count": 2
-            },
-            {
-              "type": "one",
-              "count": 3
-            }
-          ],
-          "rightTerms": [
-            {
-              "type": "x",
-              "count": 1
-            },
-            {
-              "type": "one",
-              "count": 7
-            }
-          ]
-        },
-        {
-          "id": "3x-plus-2-equals-2x-plus-6",
-          "label": "3x + 2 = 2x + 6",
-          "solution": 4,
-          "leftTerms": [
-            {
-              "type": "x",
-              "count": 3
-            },
-            {
-              "type": "one",
-              "count": 2
-            }
-          ],
-          "rightTerms": [
-            {
-              "type": "x",
-              "count": 2
-            },
-            {
-              "type": "one",
-              "count": 6
-            }
-          ]
-        }
+      "mode": "equationTiles",
+      "usesResources": [
+        "activity-data-1",
+        "activity-1-resource-1",
+        "activity-1-resource-2"
+      ]
+    }
+  ],
+  "sequences": [
+    {
+      "id": "equations-sequence",
+      "title": "Εξισώσεις - Ανισώσεις",
+      "activityIds": [
+        "1"
       ]
     }
   ]

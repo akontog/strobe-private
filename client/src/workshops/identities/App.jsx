@@ -15,8 +15,11 @@ import {
   InputGrid
 } from '../../shared/components';
 import { useSessionInputLogger } from '../../shared/components/activities/SessionLogContext';
-import activityData from './data/activities.json';
+import storedActivityData from './data/activities.json';
+import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
 import './App.css';
+
+const activityData = resolveWorkshopDocument(storedActivityData);
 
 const { activities: ACTIVITY_LIBRARY } = activityData;
 
@@ -49,7 +52,6 @@ function computeActivityScore(activity, answers) {
 
 export default function App({ role = 'student' }) {
   const { t: tUi } = useTranslation('interface');
-  const { t: tNav } = useTranslation('navigation');
   const labels = activityData.labels || {};
   const t = (key, options = {}) => {
     const template = labels[key] || key;
@@ -310,8 +312,8 @@ export default function App({ role = 'student' }) {
                 const termPattern = `\\square ${term.variables.map((variable) => `${variable.symbol}^{\\square}`).join(' ')}`;
                 return {
                   id: `part-${index}-coefficient`,
-                  label: <>{t('coefficientOfTerm')} <MathFormula formula={`\\(${termPattern}\\)`} /></>,
-                  ariaLabel: `${t('coefficientOfTerm')} ${term.variables.map((variable) => variable.label).join('')}`,
+                  label: <>{activityData.labels.coefficientOfTerm} <MathFormula formula={`\\(${termPattern}\\)`} /></>,
+                  ariaLabel: `${activityData.labels.coefficientOfTerm} ${term.variables.map((variable) => variable.label).join('')}`,
                   value: activeAnswers[`part-${index}-coefficient`] || '',
                   onChange: (value) => updateAnswer(`part-${index}-coefficient`, value)
                 };
@@ -321,8 +323,8 @@ export default function App({ role = 'student' }) {
                 const termPattern = `\\square ${term.variables.map((symbol) => `${symbol.symbol}^{\\square}`).join(' ')}`;
                 return {
                   id: key,
-                  label: <>{t('exponentOf')} <MathFormula formula={`\\(${variable.symbol}\\)`} /> {t('inTerm')} <MathFormula formula={`\\(${termPattern}\\)`} /></>,
-                  ariaLabel: `${t('exponentOf')} ${variable.label} ${t('inTerm')} ${term.variables.map((symbol) => symbol.label).join('')}`,
+                  label: <>{activityData.labels.exponentOf} <MathFormula formula={`\\(${variable.symbol}\\)`} /> {activityData.labels.inTerm} <MathFormula formula={`\\(${termPattern}\\)`} /></>,
+                  ariaLabel: `${activityData.labels.exponentOf} ${variable.label} ${activityData.labels.inTerm} ${term.variables.map((symbol) => symbol.label).join('')}`,
                   value: activeAnswers[key] || '',
                   onChange: (value) => updateAnswer(key, value)
                 };
@@ -374,7 +376,7 @@ export default function App({ role = 'student' }) {
   return (
     <>
       <HeroTitle
-        title={`${tNav('items.identities')} - ${activeActivity.code} ${activeActivity.title}`}
+        title={`${activityData.workshop.title} - ${activeActivity.code} ${activeActivity.title}`}
         subtitle={activeExercise.objective || activeActivity.objective}
       />
 
@@ -408,24 +410,25 @@ export default function App({ role = 'student' }) {
 
 
           <StudentsAccordion
-            title={t('studentTableTitle', { defaultValue: 'Πίνακας μαθητών' })}
+            title={t('studentTableTitle')}
             participants={sortedStudents}
             columns={[
               { key: 'activity', label: t('activities'), render: (student) => student.activityId || '—' },
               { key: 'term1', label: t('term1'), render: (student) => student.answers?.[student.activityId]?.term1 || '—' },
               { key: 'term2', label: t('term2'), render: (student) => student.answers?.[student.activityId]?.term2 || '—' },
               { key: 'term3', label: t('term3'), render: (student) => student.answers?.[student.activityId]?.term3 || '—' },
-              { key: 'a', label: 'a', render: (student) => student.answers?.[student.activityId]?.a || '—' },
-              { key: 'b', label: 'b', render: (student) => student.answers?.[student.activityId]?.b || '—' },
+              { key: 'a', label: activityData.labels.resourceTable.variableA, render: (student) => student.answers?.[student.activityId]?.a || activityData.labels.resourceTable.emptyValue },
+              { key: 'b', label: activityData.labels.resourceTable.variableB, render: (student) => student.answers?.[student.activityId]?.b || activityData.labels.resourceTable.emptyValue },
               ...(isAlgebraTilesActivity ? [{
                 key: 'tiles',
-                label: 'Πλακίδια',
+                label: activityData.labels.resourceTable.tilesColumn,
                 render: (student) => {
                   const tiles = student.answers?.[student.activityId]?.tiles || [];
-                  const show = (subset) => subset.map((tile) => `${tile.sign < 0 ? '−' : '+'}${tile.type}`).join(' ') || '—';
+                  const tableLabels = activityData.labels.resourceTable;
+                  const show = (subset) => subset.map((tile) => `${tile.sign < 0 ? tableLabels.negativeSign : tableLabels.positiveSign}${tile.type}`).join(' ') || tableLabels.emptyValue;
                   const mode = centerWidget.mode || (centerWidget.layout === 't-chart' ? 'area' : centerWidget.layout);
-                  if (mode === 'equation') return `Αριστερά: ${show(tiles.filter((tile) => tile.side !== 'right'))} · Δεξιά: ${show(tiles.filter((tile) => tile.side === 'right'))}`;
-                  if (mode === 'area') return `Πάνω: ${show(tiles.filter((tile) => (tile.y || 0) < 4 && (tile.x || 0) >= 6))} · Αριστερά: ${show(tiles.filter((tile) => (tile.y || 0) >= 4 && (tile.x || 0) < 6))} · Κέντρο: ${show(tiles.filter((tile) => (tile.y || 0) >= 4 && (tile.x || 0) >= 6))}`;
+                  if (mode === 'equation') return `${tableLabels.leftRegion}: ${show(tiles.filter((tile) => tile.side !== 'right'))}${tableLabels.regionSeparator}${tableLabels.rightRegion}: ${show(tiles.filter((tile) => tile.side === 'right'))}`;
+                  if (mode === 'area') return `${tableLabels.topRegion}: ${show(tiles.filter((tile) => (tile.y || 0) < 4 && (tile.x || 0) >= 6))}${tableLabels.regionSeparator}${tableLabels.leftRegion}: ${show(tiles.filter((tile) => (tile.y || 0) >= 4 && (tile.x || 0) < 6))}${tableLabels.regionSeparator}${tableLabels.centerRegion}: ${show(tiles.filter((tile) => (tile.y || 0) >= 4 && (tile.x || 0) >= 6))}`;
                   return show(tiles);
                 }
               }] : []),
@@ -440,7 +443,7 @@ export default function App({ role = 'student' }) {
                 }
               }] : [])
             ]}
-            emptyMessage={t('noStudents', { defaultValue: 'Δεν υπάρχουν ακόμη μαθητές.' })}
+            emptyMessage={t('noStudents')}
           />
 
         </>

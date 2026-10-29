@@ -22,9 +22,11 @@ import {
 } from '../../shared/components';
 import { useSessionInputLogger } from '../../shared/components/activities/SessionLogContext';
 import { SCORE_CORRECT, SCORE_INCORRECT, computeStudentScore, getAnswerFieldDefinitions } from './grading';
-import activityData from './data/activities.json';
+import storedActivityData from './data/activities.json';
+import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
 import './App.css';
 
+const activityData = resolveWorkshopDocument(storedActivityData);
 const { activities: ACTIVITY_LIBRARY, datasets: ALGEBRA_DATASETS, labels: POLYNOMIAL_LABELS = {} } = activityData;
 const getActivityDatasetId = (activityId) => ACTIVITY_LIBRARY.find((activity) => activity.id === activityId)?.datasetId;
 const formatLabelTemplate = (template, term) => String(template || '').replace('{{term}}', String(term));
@@ -151,11 +153,7 @@ const getStudentScoreForExpression = (student, fallbackExpression) => {
 const getAnswerColumnsForExpression = (expressionItem, t, labels, activityId, tileMode) => {
   if (expressionItem?.resultMode === 'geogebraArea') return [];
   if (expressionItem?.resultMode === 'algebraTiles') {
-    const regions = tileMode === 'equation'
-      ? [{ id: 'left', label: 'Ξ‘ΟΞΉΟƒΟ„ΞµΟΞ¬' }, { id: 'right', label: 'Ξ”ΞµΞΎΞΉΞ¬' }]
-      : tileMode === 'area' || tileMode === 't-chart'
-        ? [{ id: 'top', label: 'Ξ Ξ¬Ξ½Ο‰' }, { id: 'left', label: 'Ξ‘ΟΞΉΟƒΟ„ΞµΟΞ¬' }, { id: 'center', label: 'ΞΞ­Ξ½Ο„ΟΞΏ' }]
-        : [{ id: 'all', label: 'Ξ Ξ±ΟΞ¬ΟƒΟ„Ξ±ΟƒΞ·' }];
+    const regions = POLYNOMIAL_LABELS.resourceTable.tileRegions[tileMode === 'equation' ? 'equation' : tileMode === 'area' || tileMode === 't-chart' ? 'area' : 'all'];
     return regions.map((region) => ({
       key: `algebraTiles-${region.id}`,
       label: region.label,
@@ -171,11 +169,11 @@ const getAnswerColumnsForExpression = (expressionItem, t, labels, activityId, ti
   return fields.map((fieldName) => {
     const partMatch = fieldName.match(/^part-(\d+)-(coefficient|degreeX|degreeY)$/);
     const label = partMatch
-      ? partMatch[2] === 'coefficient' ? t('coefficient') : partMatch[2] === 'degreeX' ? 'x' : 'y'
+      ? partMatch[2] === 'coefficient' ? POLYNOMIAL_LABELS.coefficient : partMatch[2] === 'degreeX' ? POLYNOMIAL_LABELS.resourceTable.variableX : POLYNOMIAL_LABELS.resourceTable.variableY
       : groupingLabelByField.has(fieldName)
         ? groupingLabelByField.get(fieldName)
       : fieldName === 'coefficient'
-        ? t('coefficient')
+        ? POLYNOMIAL_LABELS.coefficient
         : fieldName === 'degreeX'
           ? labels.degreeX
           : fieldName === 'degreeY'
@@ -216,12 +214,13 @@ const getAnswerHeaderGroupsForExpression = (expressionItem, labels) => {
 };
 
 const summarizeAlgebraTiles = (tiles, mode, selectedRegion = '') => {
-  const labels = { one: '1', x: 'x', y: 'y', x2: 'xΒ²', xy: 'xy', y2: 'yΒ²' };
+  const labels = POLYNOMIAL_LABELS.resourceTable.tileLabels;
+  const tableLabels = POLYNOMIAL_LABELS.resourceTable;
   const format = (items) => {
     const counts = new Map();
     (items || []).forEach((tile) => counts.set(tile.type, (counts.get(tile.type) || 0) + (tile.sign < 0 ? -1 : 1)));
-    const parts = [...counts.entries()].filter(([, count]) => count).map(([type, count], index) => `${index === 0 ? count < 0 ? 'β’' : '' : count < 0 ? ' β’ ' : ' + '}${Math.abs(count) === 1 ? '' : Math.abs(count)}${labels[type] || type}`);
-    return parts.join(' ') || 'β€”';
+    const parts = [...counts.entries()].filter(([, count]) => count).map(([type, count], index) => `${index === 0 ? count < 0 ? tableLabels.negativeSign : '' : count < 0 ? ` ${tableLabels.negativeSign} ` : ` ${tableLabels.positiveSign} `}${Math.abs(count) === 1 ? '' : Math.abs(count)}${labels[type] || type}`);
+    return parts.join(tableLabels.termSeparator) || tableLabels.emptyValue;
   };
   if (mode === 'equation') return format(selectedRegion === 'left' ? tiles?.filter((tile) => tile.side !== 'right') : tiles?.filter((tile) => tile.side === 'right'));
   if (mode === 'area' || mode === 't-chart') {
@@ -238,12 +237,11 @@ const summarizeAlgebraTiles = (tiles, mode, selectedRegion = '') => {
     });
     return format(filtered);
   }
-  return region('Ξ Ξ»Ξ±ΞΊΞ―Ξ΄ΞΉΞ±', tiles);
+  return format(tiles);
 };
 
 export default function App({ role = 'teacher' }) {
   const { t } = useTranslation('interface');
-  const { t: tNav } = useTranslation('navigation');
   const navigate = useNavigate();
   const sessionLogging = useSessionInputLogger();
   const isTeacher = role === 'teacher';
@@ -312,14 +310,15 @@ export default function App({ role = 'teacher' }) {
 
   const activeActivity = ACTIVITY_LIBRARY.find((activity) => activity.id === selectedActivityId);
   const labels = {
-    degreeX: POLYNOMIAL_LABELS.degreeX || 'degreeX',
-    degreeY: POLYNOMIAL_LABELS.degreeY || 'degreeY',
-    totalDegree: POLYNOMIAL_LABELS.totalDegree || 'totalDegree',
-    degreeXY: POLYNOMIAL_LABELS.degreeXY || 'degreeXY',
-    termCoefficient: POLYNOMIAL_LABELS.termCoefficient || 'term {{term}} coefficient',
-    termDegreeX: POLYNOMIAL_LABELS.termDegreeX || 'term {{term}} degree x',
-    termDegreeY: POLYNOMIAL_LABELS.termDegreeY || 'term {{term}} degree y',
-    termHeader: POLYNOMIAL_LABELS.termHeader || 'Term {{term}}'
+    coefficient: POLYNOMIAL_LABELS.coefficient,
+    degreeX: POLYNOMIAL_LABELS.degreeX,
+    degreeY: POLYNOMIAL_LABELS.degreeY,
+    totalDegree: POLYNOMIAL_LABELS.totalDegree,
+    degreeXY: POLYNOMIAL_LABELS.degreeXY,
+    termCoefficient: POLYNOMIAL_LABELS.termCoefficient,
+    termDegreeX: POLYNOMIAL_LABELS.termDegreeX,
+    termDegreeY: POLYNOMIAL_LABELS.termDegreeY,
+    termHeader: POLYNOMIAL_LABELS.termHeader
   };
   const activityTitle = activeActivity?.title || '';
   const algebraTilesWidget = activeActivity?.widgets?.find((widget) => widget.type === 'algebra-tiles');
@@ -926,7 +925,7 @@ export default function App({ role = 'teacher' }) {
 
   return (
     <>
-      <HeroTitle>{`${tNav('items.polynomial')} - ${activityTitle}`}</HeroTitle>
+      <HeroTitle>{`${activityData.workshop.title} - ${activityTitle}`}</HeroTitle>
 
       <section className="common-zone lab-zone">
         <FullScreenButton />
@@ -936,7 +935,7 @@ export default function App({ role = 'teacher' }) {
         >
           {!isGeogebraAreaActivity ? (
             <div className="lab-card lab-card--highlight poly-expression-card" aria-label={t('expressionType')}>
-              <p className="lab-mini-label poly-mini-label">{t('expression')}</p>
+              <p className="lab-mini-label poly-mini-label">{activeActivity.presentation?.leftWidgetTitle || t('expression')}</p>
               {isGroupingActivity ? (
                 null
               ) : groupedPolynomialExpression ? (
@@ -981,7 +980,7 @@ export default function App({ role = 'teacher' }) {
                   onChange={setGroupingPlacements}
                   invalidItemIds={feedbackEnabled ? invalidGroupingItemIds : []}
                   disabledItemIds={groupingLockedItemIds}
-                  bankLabel={t(isPolynomialDegreeGroupingActivity ? 'polynomialProductsToGroup' : isPolynomialGroupingActivity ? 'polynomialTermsToGroup' : 'monomialsToGroup')}
+                  bankLabel={isMonomialGroupingActivity ? activeDataset.presentation?.groupingBankLabel : t(isPolynomialDegreeGroupingActivity ? 'polynomialProductsToGroup' : 'polynomialTermsToGroup')}
                 />
                 {(isPolynomialGroupingActivity || isPolynomialDegreeGroupingActivity) && (
                   <>
@@ -1042,7 +1041,7 @@ export default function App({ role = 'teacher' }) {
                     { id: `part-${index}-degree-x`, className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(index, 'degreeX', part.degreeX) ? ' poly-input--invalid' : ''}`, label: formatLabelTemplate(labels.termDegreeX, index + 1), value: part.degreeX || '', onChange: (value) => updateExpressionPart(index, 'degreeX', value) },
                     { id: `part-${index}-degree-y`, className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(index, 'degreeY', part.degreeY) ? ' poly-input--invalid' : ''}`, label: formatLabelTemplate(labels.termDegreeY, index + 1), value: part.degreeY || '', onChange: (value) => updateExpressionPart(index, 'degreeY', value) }
                   ])) : [
-                    { id: 'coefficient', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'coefficient', resultInputValues.coefficient) ? ' poly-input--invalid' : ''}`, label: t('coefficient'), value: resultInputValues.coefficient, onChange: (value) => updateExpressionPart(0, 'coefficient', value) },
+                    { id: 'coefficient', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'coefficient', resultInputValues.coefficient) ? ' poly-input--invalid' : ''}`, label: labels.coefficient, value: resultInputValues.coefficient, onChange: (value) => updateExpressionPart(0, 'coefficient', value) },
                     { id: 'degree-x', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'degreeX', resultInputValues.degreeX) ? ' poly-input--invalid' : ''}`, label: labels.degreeX, value: resultInputValues.degreeX, onChange: (value) => updateExpressionPart(0, 'degreeX', value) },
                     { id: 'degree-y', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'degreeY', resultInputValues.degreeY) ? ' poly-input--invalid' : ''}`, label: labels.degreeY, value: resultInputValues.degreeY, onChange: (value) => updateExpressionPart(0, 'degreeY', value) }
                   ]}
@@ -1064,7 +1063,7 @@ export default function App({ role = 'teacher' }) {
                 className="lab-input-grid poly-team-grid"
                 labelClassName="shared-input-box__label"
                 fields={[
-                  { id: 'coefficient', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'coefficient', teamAnswers.coefficient) ? ' poly-input--invalid' : ''}`, label: t('coefficient'), value: teamAnswers.coefficient, onChange: (value) => setTeamField('coefficient', value) },
+                  { id: 'coefficient', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'coefficient', teamAnswers.coefficient) ? ' poly-input--invalid' : ''}`, label: labels.coefficient, value: teamAnswers.coefficient, onChange: (value) => setTeamField('coefficient', value) },
                   { id: 'degree-x', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'degreeX', teamAnswers.degreeX) ? ' poly-input--invalid' : ''}`, label: labels.degreeX, value: teamAnswers.degreeX, onChange: (value) => setTeamField('degreeX', value) },
                   { id: 'degree-y', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'degreeY', teamAnswers.degreeY) ? ' poly-input--invalid' : ''}`, label: labels.degreeY, value: teamAnswers.degreeY, onChange: (value) => setTeamField('degreeY', value) },
                   { id: 'total-degree', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'totalDegree', teamAnswers.totalDegree) ? ' poly-input--invalid' : ''}`, label: selectedActivityId === '1.1' ? labels.degreeXY : labels.totalDegree, value: teamAnswers.totalDegree, onChange: (value) => setTeamField('totalDegree', value) }

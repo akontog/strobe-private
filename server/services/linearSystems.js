@@ -76,6 +76,7 @@ function initLinearSystems({
       name: student.name,
       username: student.name,
       color: student.color,
+      assignmentIndex: student.assignmentIndex,
       isConnected: true,
       connected: true,
       answers: student.answers && typeof student.answers === 'object' ? { ...student.answers } : {},
@@ -163,6 +164,9 @@ function initLinearSystems({
       if (type === 'register_student') {
         const current = studentsBySocket.get(ws);
         const id = current?.id || `student-${++studentSeq}`;
+        const assignmentIndex = Number.isInteger(current?.assignmentIndex)
+          ? current.assignmentIndex
+          : (studentSeq - 1) % 8;
         const fallbackName = `Student ${studentSeq}`;
         const name = sanitizeString(message.name, 40) || current?.name || fallbackName;
         const color = normalizeColor(message.color, current?.color || '#3b82f6');
@@ -172,10 +176,15 @@ function initLinearSystems({
           id,
           name,
           color,
+          assignmentIndex,
           answers: previousAnswers,
           activityId: current?.activityId || lessonState.activityId,
           itemId: current?.itemId || lessonState.itemId
         });
+
+        if (ws.readyState === 1) {
+          ws.send(JSON.stringify({ type: 'linear_systems_assignment', studentId: id, assignmentIndex }));
+        }
 
         if (sessionManager && typeof sessionManager.update === 'function') {
           sessionManager.update(sessionId, {
@@ -239,7 +248,8 @@ function initLinearSystems({
           const safeKey = sanitizeString(key, 48) || key;
           const safeValue = value === undefined || value === null ? '' : String(value).trim();
           if (safeValue !== '' || value === 0 || value === false) {
-            memo[safeKey] = sanitizeString(safeValue, 64) || '';
+            const maxValueLength = safeKey === 'selectedPoints' ? 4096 : 64;
+            memo[safeKey] = sanitizeString(safeValue, maxValueLength) || '';
           }
           return memo;
         }, {});

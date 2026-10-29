@@ -1,13 +1,14 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import '../../shared/i18n';
 import {
   ActivitiesAccordion, AlgebraTiles, FullScreenButton, HeroTitle,
   SharedCommonZoneLayout, StudentsAccordion, readIdentityName
 } from '../../shared/components';
-import activityData from './data/activities.json';
+import storedActivityData from './data/activities.json';
+import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
 import './App.css';
 
+const activityData = resolveWorkshopDocument(storedActivityData);
 const activity = activityData.activities[0];
 const questions = activity.questions;
 const tileWidget = activity.widgets.find((widget) => widget.type === 'algebra-tiles');
@@ -66,7 +67,6 @@ function isCompleteRectangle(tiles, question) {
 }
 
 export default function App({ role = 'student' }) {
-  const { t: tNav } = useTranslation('navigation');
   const labels = activityData.labels || {};
   const t = (key) => labels[key] || key;
   const isTeacher = role === 'teacher';
@@ -153,7 +153,7 @@ export default function App({ role = 'student' }) {
 
   return (
     <>
-      <HeroTitle title={`${tNav('items.factorization')} - ${activity.code} ${activity.title}`} subtitle={activity.objective} />
+      <HeroTitle title={`${activityData.workshop.title} - ${activity.code} ${activity.title}`} subtitle={activity.objective} />
       <section className="common-zone lab-zone">
         <FullScreenButton />
         <SharedCommonZoneLayout className="poly-neural-zone factorization-common-zone" leftPanel={null} rightPanel={null} centerPanel={(
@@ -171,7 +171,7 @@ export default function App({ role = 'student' }) {
           value={selectedQuestion.id} onChange={selectQuestion} />
         <StudentsAccordion title={t('studentTableTitle')} participants={participants.filter((participant) => participant.isConnected !== false)}
           columns={[
-            { key: 'tiles', label: 'Ξ Ξ»Ξ±ΞΊΞ―Ξ΄ΞΉΞ± (Ο€Ξ¬Ξ½Ο‰ / Ξ±ΟΞΉΟƒΟ„ΞµΟΞ¬ / ΞΊΞ­Ξ½Ο„ΟΞΏ)', render: (participant) => `Ξ Ξ¬Ξ½Ο‰: ${(participant.tiles || []).filter((tile) => (tile.y || 0) < 4 && (tile.x || 0) >= 6).map((tile) => `${tile.sign < 0 ? 'β’' : '+'}${tile.type}`).join(' ') || 'β€”'} Β· Ξ‘ΟΞΉΟƒΟ„ΞµΟΞ¬: ${(participant.tiles || []).filter((tile) => (tile.y || 0) >= 4 && (tile.x || 0) < 6).map((tile) => `${tile.sign < 0 ? 'β’' : '+'}${tile.type}`).join(' ') || 'β€”'} Β· ΞΞ­Ξ½Ο„ΟΞΏ: ${(participant.tiles || []).filter((tile) => (tile.y || 0) >= 4 && (tile.x || 0) >= 6).map((tile) => `${tile.sign < 0 ? 'β’' : '+'}${tile.type}`).join(' ') || 'β€”'}` },
+            { key: 'tiles', label: activityData.labels.resourceTable.tilesColumn, render: (participant) => `${activityData.labels.resourceTable.topRegion}: ${(participant.tiles || []).filter((tile) => (tile.y || 0) < 4 && (tile.x || 0) >= 6).map((tile) => `${tile.sign < 0 ? activityData.labels.resourceTable.negativeSign : activityData.labels.resourceTable.positiveSign}${tile.type}`).join(' ') || activityData.labels.resourceTable.emptyValue}${activityData.labels.resourceTable.regionSeparator}${activityData.labels.resourceTable.leftRegion}: ${(participant.tiles || []).filter((tile) => (tile.y || 0) >= 4 && (tile.x || 0) < 6).map((tile) => `${tile.sign < 0 ? activityData.labels.resourceTable.negativeSign : activityData.labels.resourceTable.positiveSign}${tile.type}`).join(' ') || activityData.labels.resourceTable.emptyValue}${activityData.labels.resourceTable.regionSeparator}${activityData.labels.resourceTable.centerRegion}: ${(participant.tiles || []).filter((tile) => (tile.y || 0) >= 4 && (tile.x || 0) >= 6).map((tile) => `${tile.sign < 0 ? activityData.labels.resourceTable.negativeSign : activityData.labels.resourceTable.positiveSign}${tile.type}`).join(' ') || activityData.labels.resourceTable.emptyValue}` },
             { key: 'progress', label: t('studentTableTitle'), render: (participant) => participant.isCorrect ? t('correct') : t('incomplete') }
           ]}
           emptyMessage={t('noStudents')} />

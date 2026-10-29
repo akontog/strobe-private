@@ -13,17 +13,86 @@ import {
   EquationWidget,
   DataAccordion,
   StudentsAccordion,
+  GridButton,
   createPlacementGroupColumns,
+  OptionsGrid,
+  NumberLine,
   readIdentitySnapshot,
   FullScreenButton,
   useSessionInputLogger
 } from '../../shared/components';
-import activityData from './data/activities.json';
+import storedActivityData from './data/activities.json';
+import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
 import './App.css';
 
-const { activities: ACTIVITY_LIBRARY, lessons: LESSON_DATA } = activityData;
+const activityData = resolveWorkshopDocument(storedActivityData);
+const { workshop: COURSE, activities: ACTIVITY_LIBRARY, lessons: LESSON_DATA } = activityData;
+const PRESENTATION = COURSE.presentation;
+const EQUATION_COPY = PRESENTATION.widgets.equation;
+const GRAPH_COPY = PRESENTATION.widgets.graph;
+const PLACEMENT_COPY = PRESENTATION.activities.placement;
+const POINT_GRID_COPY = PRESENTATION.activities.pointGrid;
+const NUMBER_LINE_COPY = PRESENTATION.activities.numberLine;
+const GRAPHING_INPUT_COPY = PRESENTATION.activities.graphingInput;
+const ALGEBRA_COPY = PRESENTATION.activities.algebra;
+const EMBODIED_COPY = PRESENTATION.activities.embodied;
+const FEEDBACK_COPY = PRESENTATION.feedback;
+const SERVICE_COPY = PRESENTATION.services;
+const TABLE_COPY = PRESENTATION.tables;
 
 const EMPTY_TOKEN = '□';
+const POINT_GRID_ACTIVITY = ACTIVITY_LIBRARY.find((activity) => activity.mode === 'point-grid');
+const POINT_GRID_ACTIVITY_ID = POINT_GRID_ACTIVITY?.id;
+const POINT_GRID_SETTINGS = POINT_GRID_ACTIVITY?.resourceSettings?.pointGrid || {};
+const POINT_GRID_EQUATIONS = LESSON_DATA[POINT_GRID_ACTIVITY_ID]?.equations || [];
+const NUMBER_LINE_ACTIVITY_ID = ACTIVITY_LIBRARY.find((activity) => activity.mode === 'number-line')?.id;
+const NUMBER_LINE_EQUATIONS = LESSON_DATA[NUMBER_LINE_ACTIVITY_ID]?.equations || [];
+const POINT_GRID_WIDTH = POINT_GRID_SETTINGS.maxX - POINT_GRID_SETTINGS.minX + 1;
+const POINT_GRID_HEIGHT = POINT_GRID_SETTINGS.maxY - POINT_GRID_SETTINGS.minY + 1;
+const POINT_GRID_AXIS_LABELS = POINT_GRID_SETTINGS.showAxisLabels !== false;
+const POINT_GRID_SPACERS = Array.from({ length: POINT_GRID_WIDTH + 1 }, (_, index) => ({ id: `grid-spacer-${index}`, kind: 'spacer' }));
+const POINT_GRID_CELLS = Array.from({ length: POINT_GRID_HEIGHT }, (_, rowIndex) => {
+  const y = POINT_GRID_SETTINGS.maxY - rowIndex;
+  return Array.from({ length: POINT_GRID_WIDTH }, (_, columnIndex) => ({
+    id: `point-${columnIndex + POINT_GRID_SETTINGS.minX}-${y}`,
+    kind: 'point',
+    x: columnIndex + POINT_GRID_SETTINGS.minX,
+    y
+  }));
+}).flat();
+function parseSelectedPoints(value) {
+  let parsed = value;
+  if (typeof value === 'string') {
+    try {
+      parsed = JSON.parse(value);
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(parsed)) return [];
+  const unique = new Map();
+  parsed.forEach((point) => {
+    const x = Number(point?.x);
+    const y = Number(point?.y);
+    if (!Number.isInteger(x) || !Number.isInteger(y)
+      || x < POINT_GRID_SETTINGS.minX || x > POINT_GRID_SETTINGS.maxX
+      || y < POINT_GRID_SETTINGS.minY || y > POINT_GRID_SETTINGS.maxY) return;
+    unique.set(`${x},${y}`, { x, y });
+  });
+  return [...unique.values()];
+}
+const POINT_GRID_ITEMS = [
+  ...(POINT_GRID_AXIS_LABELS
+    ? [{ id: 'point-grid-corner', kind: 'corner' }, ...Array.from({ length: POINT_GRID_WIDTH }, (_, index) => ({ id: `x-label-${index}`, kind: 'x-label', value: index + POINT_GRID_SETTINGS.minX }))]
+    : POINT_GRID_SPACERS),
+  ...Array.from({ length: POINT_GRID_HEIGHT }, (_, rowIndex) => [
+    POINT_GRID_AXIS_LABELS
+      ? { id: `y-label-${rowIndex}`, kind: 'y-label', value: POINT_GRID_SETTINGS.maxY - rowIndex }
+      : { id: `grid-row-spacer-${rowIndex}`, kind: 'spacer' },
+    ...POINT_GRID_CELLS.slice(rowIndex * POINT_GRID_WIDTH, (rowIndex + 1) * POINT_GRID_WIDTH)
+  ]).flat()
+];
 
 function normalizeText(value) {
   return String(value || '').trim();
@@ -179,12 +248,12 @@ function extractSystemEquations(activeItem) {
 
 export default function App({ role = 'student' }) {
   const { t } = useTranslation('interface');
-  const { t: tNav } = useTranslation('navigation');
   const sessionLogging = useSessionInputLogger();
   const isTeacher = role === 'teacher';
   const isStudent = !isTeacher;
 
   const wsRef = useRef(null);
+  const studentSocketIdRef = useRef('');
   const reconnectTimerRef = useRef(null);
   const hasRegisteredRef = useRef(false);
 
@@ -197,10 +266,13 @@ export default function App({ role = 'student' }) {
   const [answer, setAnswer] = useState({ x: '', y: '' });
   const [groupingPlacementsByActivity, setGroupingPlacementsByActivity] = useState({});
   const [invalidGroupingItemIds, setInvalidGroupingItemIds] = useState([]);
-  const [showEquationGraph, setShowEquationGraph] = useState(() => ACTIVITY_LIBRARY[0]?.widgets?.right?.visibleByDefault !== false);
+  const [showEquationGraph, setShowEquationGraph] = useState(() => ACTIVITY_LIBRARY[0]?.widgets?.find((widget) => widget.region === 'right')?.visibleByDefault !== false);
   const [equationInputsByItem, setEquationInputsByItem] = useState({});
   const [lastSentState, setLastSentState] = useState('');
   const [identity, setIdentity] = useState(() => readIdentitySnapshot({ nameFallback: 'Student', colorFallback: '#4ECDC4' }));
+  const [assignedEquationIndex, setAssignedEquationIndex] = useState(null);
+  const [selectedPoints, setSelectedPoints] = useState([]);
+  const [numberLineMarks, setNumberLineMarks] = useState([]);
 
   const sendSocketMessage = (payload) => {
     const ws = wsRef.current;
@@ -234,6 +306,7 @@ export default function App({ role = 'student' }) {
     () => ACTIVITY_LIBRARY.find((item) => item.id === selectedActivityId) || ACTIVITY_LIBRARY[0],
     [selectedActivityId]
   );
+  const numberLinePresentation = activeActivity.presentation;
 
   const activeItems = useMemo(
     () => (LESSON_DATA[selectedActivityId] && LESSON_DATA[selectedActivityId].items) || [],
@@ -286,7 +359,7 @@ export default function App({ role = 'student' }) {
 
     return activeItem.expressions.map((expression, index) => ({
       value: expression.id || `expr-${index + 1}`,
-      label: expression.equation || `Εξίσωση ${index + 1}`
+      label: expression.equation || formatWidgetLabel(TABLE_COPY.equationTemplate, { number: index + 1 })
     }));
   }, [activeItem]);
 
@@ -383,7 +456,7 @@ export default function App({ role = 'student' }) {
     return extractSystemEquations(activeItem);
   }, [activeActivity.mode, activeEquationInputs.equation1, activeEquationInputs.equation2, activeItem, activeSelectedEquation]);
 
-  const graphWidgetSettings = activeActivity.widgets?.right?.settings || {};
+  const graphWidgetSettings = activeActivity.widgets?.find((widget) => widget.region === 'right')?.settings || {};
   const graphColors = graphWidgetSettings.lineColors || ['#2563eb', '#dc2626'];
   const graphLineLabelTemplate = graphWidgetSettings.lineLabelTemplate || '{equation}';
 
@@ -424,6 +497,56 @@ export default function App({ role = 'student' }) {
   }, [activeActivity.mode, activeEquationInputs.equation1, activeEquationInputs.equation2, graphColors, graphLineLabelTemplate, selectedActivityId, selectedItemId, systemEquations]);
 
   const evaluation = useMemo(() => {
+    if (activeActivity.mode === 'number-line') {
+      const assignedEquation = Number.isInteger(assignedEquationIndex)
+        ? NUMBER_LINE_EQUATIONS[assignedEquationIndex % NUMBER_LINE_EQUATIONS.length]
+        : null;
+      if (!assignedEquation) return { ready: false, feedback: '', invalidIds: [], payload: null };
+      const ownMark = numberLineMarks.find((mark) => mark.own && mark.kind === 'point');
+      const selectedX = ownMark ? Math.round(Number(ownMark.value)) : null;
+      const expectedX = assignedEquation.rhs / assignedEquation.x;
+      const isCorrect = Number.isInteger(selectedX) && selectedX === expectedX;
+      return {
+        ready: true,
+        feedback: '',
+        invalidIds: [],
+        payload: {
+          completed: ownMark ? '1' : '0',
+          numberLineX: ownMark ? String(selectedX) : '',
+          score: ownMark && isCorrect ? 10 : 0
+        }
+      };
+    }
+
+    if (activeActivity.mode === 'point-grid') {
+      const assignedEquation = Number.isInteger(assignedEquationIndex)
+        ? POINT_GRID_EQUATIONS[assignedEquationIndex % POINT_GRID_EQUATIONS.length]
+        : null;
+      if (!assignedEquation) {
+        return { ready: false, feedback: '', invalidIds: [], payload: null };
+      }
+
+      const expectedPoints = POINT_GRID_CELLS.filter((point) => (
+        assignedEquation.x * point.x + assignedEquation.y * point.y === assignedEquation.rhs
+      ));
+      const expectedKeys = new Set(expectedPoints.map((point) => `${point.x},${point.y}`));
+      const selectedKeys = new Set(selectedPoints.map((point) => `${point.x},${point.y}`));
+      const correctCount = [...selectedKeys].filter((key) => expectedKeys.has(key)).length;
+      const unionCount = expectedKeys.size + selectedKeys.size - correctCount;
+      const score = unionCount ? Math.round((correctCount / unionCount) * 10) : 0;
+      return {
+        ready: true,
+        feedback: '',
+        invalidIds: [],
+        payload: {
+          completed: selectedPoints.length ? '1' : '0',
+          selectedPoints: JSON.stringify(selectedPoints),
+          selectedPointCount: selectedPoints.length,
+          score
+        }
+      };
+    }
+
     if (!activeItem) {
       return { ready: false, feedback: '', invalidIds: [], payload: null };
     }
@@ -441,7 +564,7 @@ export default function App({ role = 'student' }) {
       const isComplete = Boolean(x1 && y1 && rhs1 && x2 && y2 && rhs2);
       return {
         ready: hasAnyInput,
-        feedback: isComplete ? t('linearSystemFeedbackSystemUpdated') : t('linearSystemFeedbackEnterCoefficients'),
+        feedback: isComplete ? FEEDBACK_COPY.systemUpdated : FEEDBACK_COPY.enterCoefficients,
         invalidIds: [],
         payload: {
           completed: isComplete ? '1' : '0',
@@ -486,8 +609,8 @@ export default function App({ role = 'student' }) {
       const correctCount = expectedItems.length - invalidIds.length;
       const score = invalidIds.length === 0 ? 10 : 0;
       const feedback = invalidIds.length === 0
-        ? t('linearSystemFeedbackAllGrouped')
-        : t('linearSystemFeedbackGroupingErrors');
+        ? FEEDBACK_COPY.allGrouped
+        : FEEDBACK_COPY.groupingErrors;
 
       return {
         ready: true,
@@ -528,7 +651,7 @@ export default function App({ role = 'student' }) {
       if (!allAnswered) {
         return {
           ready: false,
-          feedback: pointEntries.length === 0 ? '' : 'Τοποθέτησε όλα τα σημεία σε μία ομάδα.',
+          feedback: pointEntries.length === 0 ? '' : PLACEMENT_COPY.incomplete,
           invalidIds: [],
           payload: {
             completed: '0',
@@ -542,7 +665,7 @@ export default function App({ role = 'student' }) {
 
       return {
         ready: true,
-        feedback: invalidIds.length === 0 ? 'Όλα τα σημεία επιλέχθηκαν σωστά.' : 'Υπάρχουν λάθη στη βαθμολόγηση.',
+        feedback: invalidIds.length === 0 ? PLACEMENT_COPY.correct : PLACEMENT_COPY.incorrect,
         invalidIds,
         payload: {
           score,
@@ -566,7 +689,7 @@ export default function App({ role = 'student' }) {
     }
 
     const score = (answerX === normalizeText(expected && expected.x) ? 5 : 0) + (answerY === normalizeText(expected && expected.y) ? 5 : 0);
-    const feedback = score === 10 ? t('linearSystemFeedbackCorrect') : t('linearSystemFeedbackPartial', { score });
+    const feedback = score === 10 ? FEEDBACK_COPY.correct : formatWidgetLabel(FEEDBACK_COPY.partial, { score });
 
     return {
       ready: true,
@@ -579,7 +702,7 @@ export default function App({ role = 'student' }) {
         y: answerY
       }
     };
-  }, [activeActivity.mode, activeEquationInputs.equation1, activeEquationInputs.equation2, activeGroupingPlacements, activeItem, activeItems, activePlacementItems, activePlacementPlacements, answer.x, answer.y, coordinateLines.length, t]);
+  }, [activeActivity.mode, activeEquationInputs.equation1, activeEquationInputs.equation2, activeGroupingPlacements, activeItem, activeItems, activePlacementItems, activePlacementPlacements, answer.x, answer.y, assignedEquationIndex, coordinateLines.length, numberLineMarks, selectedPoints, t]);
 
   useEffect(() => {
     setInvalidGroupingItemIds(evaluation.invalidIds);
@@ -635,12 +758,26 @@ export default function App({ role = 'student' }) {
           return;
         }
 
+        if (message?.type === 'linear_systems_assignment') {
+          studentSocketIdRef.current = String(message.studentId || '');
+          setAssignedEquationIndex(Number.isInteger(message.assignmentIndex) ? message.assignmentIndex : null);
+          return;
+        }
+
         if (message?.type !== 'linear_systems_state') {
           return;
         }
 
         if (Array.isArray(message.participants)) {
           setParticipants(message.participants);
+          const ownParticipant = message.participants.find((participant) => participant.id === studentSocketIdRef.current);
+          if (ownParticipant) {
+            setAssignedEquationIndex(Number.isInteger(ownParticipant.assignmentIndex) ? ownParticipant.assignmentIndex : null);
+            const nextPoints = parseSelectedPoints(ownParticipant.answers?.selectedPoints);
+            setSelectedPoints((current) => (
+              JSON.stringify(current) === JSON.stringify(nextPoints) ? current : nextPoints
+            ));
+          }
         }
 
         const lesson = message.lesson && typeof message.lesson === 'object' ? message.lesson : null;
@@ -774,7 +911,7 @@ export default function App({ role = 'student' }) {
     const nextItemId = nextItems[0] ? nextItems[0].id : '';
     const nextExpressionId = nextItems[0]?.expressions?.[0]?.id || '';
     const nextActivity = ACTIVITY_LIBRARY.find((activity) => activity.id === activityId);
-    const nextShowEquationGraph = nextActivity?.widgets?.right?.visibleByDefault !== false;
+    const nextShowEquationGraph = nextActivity?.widgets?.find((widget) => widget.region === 'right')?.visibleByDefault !== false;
 
     setSelectedActivityId(activityId);
     setSelectedItemId(nextItemId);
@@ -931,7 +1068,7 @@ export default function App({ role = 'student' }) {
       ),
       ...(sessionLogging?.scoreVisible !== false ? [{
         key: 'placement-score',
-        label: 'Σκορ',
+        label: t('score'),
         render: (entry) => {
           const placements = entry?.answers?.placements && typeof entry.answers.placements === 'object' ? entry.answers.placements : {};
           const correctCount = activePlacementItems.filter((item) => placements[item.id] === item.correctGroupId).length;
@@ -944,10 +1081,18 @@ export default function App({ role = 'student' }) {
 
   const graphPanelVisible = showEquationGraph && (activeActivity.mode === 'graphing-input' || activeActivity.mode === 'placement-board' || coordinateLines.length > 0);
   const isGroupingMode = activeActivity.mode === 'grouping';
-  const leftWidgetSettings = activeActivity.widgets?.left || {};
+  const leftWidget = activeActivity.widgets?.find((widget) => widget.region === 'left');
+  const leftWidgetSettings = { ...(leftWidget?.settings || leftWidget || {}), ...(leftWidget?.presentation || {}) };
   const leftWidgetContent = leftWidgetSettings.content || {};
-  const rightWidget = activeActivity.widgets?.right || {};
+  const rightWidget = activeActivity.widgets?.find((widget) => widget.region === 'right') || {};
   const rightWidgetSettings = rightWidget.settings || {};
+  const numberLineSettings = activeActivity.resourceSettings?.numberLine || {};
+  const assignedPointEquation = Number.isInteger(assignedEquationIndex)
+    ? POINT_GRID_EQUATIONS[assignedEquationIndex % POINT_GRID_EQUATIONS.length]
+    : null;
+  const assignedNumberLineEquation = Number.isInteger(assignedEquationIndex)
+    ? NUMBER_LINE_EQUATIONS[assignedEquationIndex % NUMBER_LINE_EQUATIONS.length]
+    : null;
   const graphVisibilityControl = (
     <label className="linear-toggle">
       <input
@@ -955,20 +1100,30 @@ export default function App({ role = 'student' }) {
         checked={showEquationGraph}
         onChange={(event) => setGraphVisibility(event.target.checked)}
       />
-      <span>{rightWidget.visibilityLabel || t('linearSystemShowGraph')}</span>
+      <span>{rightWidget.visibilityLabel || GRAPH_COPY.showGraph}</span>
     </label>
   );
 
-  const leftPanel = (
-    <div className="lab-card lab-card--highlight poly-expression-card linear-expression-card" aria-label={leftWidgetSettings.ariaLabel || t('linearSystemAria')}>
-      <p className="lab-mini-label poly-mini-label">{leftWidgetSettings.miniLabel || t('linearSystem')}</p>
+  const leftPanel = activeActivity.mode === 'number-line' ? null : (
+    <div className="lab-card lab-card--highlight poly-expression-card linear-expression-card" aria-label={leftWidgetSettings.ariaLabel || EQUATION_COPY.ariaLabel}>
+      <p className="lab-mini-label poly-mini-label">{leftWidgetSettings.miniLabel || EQUATION_COPY.label}</p>
       {activeActivity.mode === 'graphing-input' ? (
-        <div className="linear-system-preview" aria-label={leftWidgetSettings.previewAriaLabel || t('linearSystemPreview')}>
+        <div className="linear-system-preview" aria-label={leftWidgetSettings.previewAriaLabel || EQUATION_COPY.previewAriaLabel}>
           <p>{formatEquationFromRow(activeEquationInputs.equation1)}</p>
           <p>{formatEquationFromRow(activeEquationInputs.equation2)}</p>
         </div>
+      ) : activeActivity.mode === 'point-grid' ? (
+        <div className="linear-point-grid-equation">
+          {isStudent ? (
+            assignedPointEquation ? (
+              <EquationWidget expression={assignedPointEquation.equation} />
+            ) : <p>{POINT_GRID_COPY.waiting}</p>
+          ) : (
+            <p>{POINT_GRID_COPY.teacherInfo}</p>
+          )}
+        </div>
       ) : activeActivity.mode === 'placement-board' ? (
-        <div className="linear-placement-equations" aria-label={leftWidgetContent.placementAriaLabel || leftWidgetSettings.ariaLabel || t('linearSystemAria')}>
+        <div className="linear-placement-equations" aria-label={leftWidgetContent.placementAriaLabel || leftWidgetSettings.ariaLabel || EQUATION_COPY.ariaLabel}>
           {activeSelectedEquation ? (
             <div key={`${activeItem.id}-selected-equation`} className="linear-placement-equation">
               {leftWidgetContent.type === 'equation' ? (
@@ -988,65 +1143,126 @@ export default function App({ role = 'student' }) {
   );
 
   const centerPanel = (
-    <div className="lab-card lab-card--panel poly-team-card linear-team-card">
+    <div className={`lab-card lab-card--panel poly-team-card linear-team-card${activeActivity.mode === 'number-line' ? ' linear-team-card--full' : ''}`}>
       {activeActivity.mode === 'graphing-input' ? (
         <div className="poly-template-answer-panel">
           <div className="poly-team-grid poly-team-grid--full">
             <div className="poly-term-block poly-term-block--result">
               <div className="poly-term-inputs poly-term-inputs--result">
-                <SharedInputRow
-                  activity={`linear-systems:${selectedActivityId}`}
-                  rowLabel="1."
-                  tokens={['x +', 'y =', '']}
-                  hideLabels
-                  defaultPlaceholder=""
-                  boxes={[
-                    {
-                      label: t('linearSystemCoefficientX'),
-                      value: activeEquationInputs.equation1.x,
-                      onChange: (event) => updateEquationInput('equation1', 'x', event.target.value)
-                    },
-                    {
-                      label: t('linearSystemCoefficientY'),
-                      value: activeEquationInputs.equation1.y,
-                      onChange: (event) => updateEquationInput('equation1', 'y', event.target.value)
-                    },
-                    {
-                      label: t('linearSystemRightHandSide'),
-                      value: activeEquationInputs.equation1.rhs,
-                      onChange: (event) => updateEquationInput('equation1', 'rhs', event.target.value)
-                    }
-                  ]}
-                />
-
-                <SharedInputRow
-                  activity={`linear-systems:${selectedActivityId}`}
-                  rowLabel="2."
-                  tokens={['x +', 'y =', '']}
-                  hideLabels
-                  defaultPlaceholder=""
-                  boxes={[
-                    {
-                      label: t('linearSystemCoefficientX'),
-                      value: activeEquationInputs.equation2.x,
-                      onChange: (event) => updateEquationInput('equation2', 'x', event.target.value)
-                    },
-                    {
-                      label: t('linearSystemCoefficientY'),
-                      value: activeEquationInputs.equation2.y,
-                      onChange: (event) => updateEquationInput('equation2', 'y', event.target.value)
-                    },
-                    {
-                      label: t('linearSystemRightHandSide'),
-                      value: activeEquationInputs.equation2.rhs,
-                      onChange: (event) => updateEquationInput('equation2', 'rhs', event.target.value)
-                    }
-                  ]}
-                />
+                {GRAPHING_INPUT_COPY.equations.map((equation) => (
+                  <SharedInputRow
+                    key={equation.id}
+                    activity={`linear-systems:${selectedActivityId}`}
+                    rowLabel={equation.rowLabel}
+                    tokens={equation.tokens}
+                    hideLabels
+                    defaultPlaceholder=""
+                    boxes={[
+                      {
+                        label: EQUATION_COPY.coefficientX,
+                        value: activeEquationInputs[equation.id].x,
+                        onChange: (event) => updateEquationInput(equation.id, 'x', event.target.value)
+                      },
+                      {
+                        label: EQUATION_COPY.coefficientY,
+                        value: activeEquationInputs[equation.id].y,
+                        onChange: (event) => updateEquationInput(equation.id, 'y', event.target.value)
+                      },
+                      {
+                        label: EQUATION_COPY.rightHandSide,
+                        value: activeEquationInputs[equation.id].rhs,
+                        onChange: (event) => updateEquationInput(equation.id, 'rhs', event.target.value)
+                      }
+                    ]}
+                  />
+                ))}
               </div>
             </div>
           </div>
         </div>
+      ) : null}
+
+      {activeActivity.mode === 'number-line' ? (
+        <section className={numberLinePresentation.panel.className} style={{ width: numberLinePresentation.layout.width }}>
+          <div className={numberLinePresentation.panel.equationClassName}>
+            {isStudent ? (
+              assignedNumberLineEquation ? (
+                <p><strong>{formatWidgetLabel(numberLinePresentation.panel.equationHeading, { equation: assignedNumberLineEquation.equation })}</strong></p>
+              ) : <p>{formatWidgetLabel(numberLinePresentation.panel.waitingText, { waiting: POINT_GRID_COPY.waiting })}</p>
+            ) : <p>{formatWidgetLabel(numberLinePresentation.panel.teacherText, { teacherInfo: NUMBER_LINE_COPY.teacherInfo })}</p>}
+          </div>
+          <p className={numberLinePresentation.panel.instructionClassName}>
+            {isStudent ? NUMBER_LINE_COPY.instruction : NUMBER_LINE_COPY.teacherInstruction}
+          </p>
+          <NumberLine
+            {...numberLineSettings}
+            roomId="linear-systems-x-intercepts"
+            sessionApp="linear-systems-lab"
+            canEdit={isStudent}
+            onMarksChange={setNumberLineMarks}
+          />
+        </section>
+      ) : null}
+
+      {activeActivity.mode === 'point-grid' ? (
+        <section className="linear-point-grid-panel">
+          <p className="linear-point-grid-panel__instruction">
+            {isStudent ? POINT_GRID_COPY.instruction : POINT_GRID_COPY.teacherInstruction}
+          </p>
+          <div className="linear-point-grid-panel__scroll">
+            <OptionsGrid
+              items={POINT_GRID_ITEMS}
+              columns={POINT_GRID_WIDTH + 1}
+              className="linear-point-grid"
+              style={{ '--point-grid-columns': POINT_GRID_WIDTH }}
+              ariaLabel={POINT_GRID_COPY.ariaLabel}
+              renderItem={(item) => {
+                if (item.kind === 'corner') return <span className="linear-point-grid__corner" key={item.id}>{POINT_GRID_COPY.axisCorner}</span>;
+                if (item.kind === 'spacer') return <span aria-hidden="true" key={item.id} />;
+                if (item.kind === 'x-label') return <span className="linear-point-grid__axis-label" key={item.id}>{item.value}</span>;
+                if (item.kind === 'y-label') return <span className="linear-point-grid__axis-label" key={item.id}>{item.value}</span>;
+
+                const isSelected = selectedPoints.some((point) => point.x === item.x && point.y === item.y);
+                const markers = participants
+                  .filter((participant) => participant.id !== studentSocketIdRef.current
+                    && parseSelectedPoints(participant.answers?.selectedPoints).some((point) => point.x === item.x && point.y === item.y))
+                  .map((participant) => ({ id: participant.id, name: participant.name, color: participant.color }));
+                if (isSelected && isStudent) {
+                  markers.push({ id: 'current-student', name: identity.name, color: identity.color });
+                }
+
+                return (
+                  <GridButton
+                    className={`linear-point-grid__point${item.x === 0 ? ' is-y-axis' : ''}${item.y === 0 ? ' is-x-axis' : ''}${isSelected ? ' is-selected' : ''}`}
+                    aria-label={formatWidgetLabel(POINT_GRID_COPY.point, { x: item.x, y: item.y })}
+                    pressed={isSelected}
+                    title={markers.map((marker) => marker.name).filter(Boolean).join(', ')}
+                    style={isSelected && isStudent ? { backgroundColor: identity.color, color: '#fff' } : undefined}
+                    disabled={!isStudent}
+                    onClick={() => setSelectedPoints((current) => (
+                      current.some((point) => point.x === item.x && point.y === item.y)
+                        ? current.filter((point) => point.x !== item.x || point.y !== item.y)
+                        : [...current, { x: item.x, y: item.y }]
+                    ))}
+                  >
+                    <span className="linear-point-grid__coordinates">{formatWidgetLabel(TABLE_COPY.pointCoordinates, item)}</span>
+                    {markers.length > 0 ? (
+                      <span className="linear-point-grid__markers" aria-hidden="true">
+                        {markers.map((marker) => (
+                          <span
+                            key={marker.id}
+                            className="linear-point-grid__marker"
+                            style={{ backgroundColor: marker.color }}
+                          />
+                        ))}
+                      </span>
+                    ) : null}
+                  </GridButton>
+                );
+              }}
+            />
+          </div>
+        </section>
       ) : null}
 
       {activeActivity.mode === 'grouping' ? (
@@ -1067,7 +1283,7 @@ export default function App({ role = 'student' }) {
               setInvalidGroupingItemIds([]);
             }}
             invalidItemIds={invalidGroupingItemIds}
-            bankLabel={t('linearSystemGroupingBank')}
+            bankLabel={PLACEMENT_COPY.groupingBank}
           />
         </>
       ) : null}
@@ -1090,13 +1306,13 @@ export default function App({ role = 'student' }) {
             }));
             setInvalidGroupingItemIds([]);
           }}
-          bankLabel="Σημεία προς ταξινόμηση"
+          bankLabel={TABLE_COPY.placementBank}
         />
       ) : null}
 
       {activeActivity.mode === 'algebra' ? (
         <>
-          <p className="linear-note">{t('linearSystemSolutionInstruction')}</p>
+          <p className="linear-note">{ALGEBRA_COPY.solutionInstruction}</p>
           {activeItem && activeItem.eliminationLatex ? (
             <div className="linear-expression">
               <MathFormula formula={`\\(${activeItem.eliminationLatex}\\)`} />
@@ -1104,35 +1320,25 @@ export default function App({ role = 'student' }) {
           ) : null}
           <InputGrid
             activity={`linear-systems:${selectedActivityId}`}
-            columns={2}
+            columns={ALGEBRA_COPY.columns}
             labelClassName="activity-input-grid__label"
-            fields={[
-              {
-                id: 'x',
-                label: 'x',
-                value: answer.x,
-                placeholder: t('linearSystemExample', { value: '3' }),
-                inputClassName: 'activity-input-grid__input',
-                onChange: (value) => setAnswer((prev) => ({ ...prev, x: value }))
-              },
-              {
-                id: 'y',
-                label: 'y',
-                value: answer.y,
-                placeholder: t('linearSystemExample', { value: '1' }),
-                inputClassName: 'activity-input-grid__input',
-                onChange: (value) => setAnswer((prev) => ({ ...prev, y: value }))
-              }
-            ]}
+            fields={ALGEBRA_COPY.fields.map((field) => ({
+              id: field.id,
+              label: field.label,
+              value: answer[field.id],
+              placeholder: formatWidgetLabel(ALGEBRA_COPY.example, { value: field.example }),
+              inputClassName: 'activity-input-grid__input',
+              onChange: (value) => setAnswer((prev) => ({ ...prev, [field.id]: value }))
+            }))}
           />
         </>
       ) : null}
 
       {activeActivity.mode === 'embodied' ? (
         <div className="linear-placeholder">
-          <strong>{t('linearSystemEmbodiedTitle')}</strong>
-          <p>{t('linearSystemEmbodiedDescription')}</p>
-          <p>{t('linearSystemEmbodiedZones')}</p>
+          <strong>{EMBODIED_COPY.title}</strong>
+          <p>{EMBODIED_COPY.description}</p>
+          <p>{EMBODIED_COPY.zones}</p>
         </div>
       ) : null}
 
@@ -1141,12 +1347,14 @@ export default function App({ role = 'student' }) {
 
   const rightPanel = graphPanelVisible ? (
     <aside className="lab-card lab-card--panel poly-team-card linear-graph-card">
+      <p className="lab-mini-label poly-mini-label">{rightWidgetSettings.miniLabel || rightWidgetSettings.title || GRAPH_COPY.title}</p>
       {rightWidget.type === 'plot-widget' ? (
         <PlotWidget
           {...rightWidgetSettings}
           lines={coordinateLines}
           graphItems={activeActivity.mode === 'placement-board' ? activePlacementGraphItems : undefined}
-          title={rightWidgetSettings.title || t('linearSystemGraph')}
+          title=""
+          accessibleLabel={rightWidgetSettings.ariaLabel || rightWidgetSettings.title || GRAPH_COPY.title}
         />
       ) : null}
     </aside>
@@ -1155,8 +1363,8 @@ export default function App({ role = 'student' }) {
   return (
     <>
       <HeroTitle
-        title={`${tNav('items.linearSystems')} - ${activeActivity.code} ${activeActivity.title}`}
-        subtitle={activeActivity.objective}
+        title={formatWidgetLabel(PRESENTATION.hero.titleTemplate, { ...PRESENTATION.hero, ...activeActivity })}
+        subtitle={formatWidgetLabel(PRESENTATION.hero.subtitleTemplate, { ...PRESENTATION.hero, ...activeActivity })}
       />
 
       <section className="common-zone lab-zone">
@@ -1172,9 +1380,9 @@ export default function App({ role = 'student' }) {
 
       {isTeacher ? (
         <ActivitiesAccordion
-          title={t('activities')}
+          title={SERVICE_COPY.activityTitle}
           icon="🎯"
-          label={t('chooseActivity')}
+          label={SERVICE_COPY.activityLabel}
           options={ACTIVITY_LIBRARY.map((activity) => ({ value: activity.id, label: `${activity.code} ${activity.title}` }))}
           value={selectedActivityId}
           onChange={setActivity}
@@ -1183,15 +1391,15 @@ export default function App({ role = 'student' }) {
 
       {isTeacher ? (
         <>
-          {activeActivity.mode !== 'placement-board' ? (
+          {activeActivity.mode !== 'placement-board' && activeActivity.mode !== 'point-grid' && activeActivity.mode !== 'number-line' ? (
             <DataAccordion
-              title={t('linearSystemExercise')}
-              label={t('linearSystemExercise')}
+              title={SERVICE_COPY.exerciseTitle}
+              label={SERVICE_COPY.exerciseTitle}
               icon="🧮"
               value={selectedItemId}
               options={activeItems.map((item, index) => ({ value: item.id, label: `${index + 1}.` }))}
               onChange={setLessonItem}
-              emptyLabel={t('linearSystemNoExercises')}
+              emptyLabel={SERVICE_COPY.noExercises}
               selectId="linear-exercise"
             >
               {graphVisibilityControl}
@@ -1200,8 +1408,8 @@ export default function App({ role = 'student' }) {
 
           {activeActivity.mode === 'placement-board' ? (
             <DataAccordion
-              title="Εξισώσεις"
-              label="Επιλογή εξίσωσης"
+              title={SERVICE_COPY.equationsTitle}
+              label={SERVICE_COPY.equationLabel}
               icon="📈"
               value={selectedExpressionId}
               options={activeExpressionOptions}
@@ -1213,8 +1421,9 @@ export default function App({ role = 'student' }) {
           ) : null}
 
           <StudentsAccordion
-            title={activeActivity.mode === 'placement-board' ? 'Πίνακας ομάδων / Groups' : t('studentTable')}
-            nameColumnLabel={activeActivity.mode === 'placement-board' ? 'Ομάδα / Group' : ''}
+            title={activeActivity.mode === 'placement-board' ? TABLE_COPY.groupTitle : activeActivity.mode === 'point-grid' ? POINT_GRID_COPY.studentsTitle : activeActivity.mode === 'number-line' ? NUMBER_LINE_COPY.studentsTitle : t('studentTable')}
+            open={['point-grid', 'number-line'].includes(activeActivity.mode)}
+            nameColumnLabel={['placement-board', 'point-grid', 'number-line'].includes(activeActivity.mode) ? TABLE_COPY.groupColumn : ''}
             participants={sortedParticipants}
             getRowStyle={(entry) => {
               const completed = String(entry?.answers?.completed || '') === '1';
@@ -1227,13 +1436,51 @@ export default function App({ role = 'student' }) {
             }}
             columns={[
               { key: 'activityCode', label: t('activities'), render: (entry) => entry.activityId || '-' },
-              { key: 'itemId', label: t('linearSystemExercise'), render: (entry) => entry.itemId || '-' },
+              ...(!['point-grid', 'number-line'].includes(activeActivity.mode) ? [{ key: 'itemId', label: TABLE_COPY.exerciseColumn, render: (entry) => entry.itemId || '-' }] : []),
               ...(activeActivity.mode === 'placement-board' ? placementTableColumns : [
-                { key: 'equation1', label: t('linearSystemEquation', { number: 1 }), render: (entry) => entry.answers?.equation1 || '-' },
-                { key: 'equation2', label: t('linearSystemEquation', { number: 2 }), render: (entry) => entry.answers?.equation2 || '-' },
-                { key: 'classification', label: t('linearSystemClassification'), render: (entry) => entry.answers?.classification || '-' }
+                ...(activeActivity.mode === 'point-grid' ? [
+                  {
+                    key: 'assigned-equation',
+                    label: POINT_GRID_COPY.equationColumn,
+                    render: (entry) => POINT_GRID_EQUATIONS[entry.assignmentIndex % POINT_GRID_EQUATIONS.length]?.equation || '-'
+                  },
+                  {
+                    key: 'selected-point',
+                    label: POINT_GRID_COPY.pointColumn,
+                    render: (entry) => {
+                      const points = parseSelectedPoints(entry.answers?.selectedPoints);
+                      return points.length ? (
+                        <span className="linear-point-grid-student-selections">
+                          {points.map((point) => (
+                            <span className="linear-point-grid-student-selections__item" key={`${point.x},${point.y}`}>
+                              <span aria-hidden="true" style={{ backgroundColor: entry.color || '#3b82f6' }} />
+              {formatWidgetLabel(TABLE_COPY.pointCoordinates, point)}
+                            </span>
+                          ))}
+                        </span>
+                      ) : '-';
+                    }
+                  }
+                ] : [
+                  ...(activeActivity.mode === 'number-line' ? [
+                    {
+                      key: 'assigned-number-line-equation',
+                      label: POINT_GRID_COPY.equationColumn,
+                      render: (entry) => NUMBER_LINE_EQUATIONS[entry.assignmentIndex % NUMBER_LINE_EQUATIONS.length]?.equation || '-'
+                    },
+                    {
+                      key: 'number-line-x',
+                      label: NUMBER_LINE_COPY.valueColumn,
+                      render: (entry) => entry.answers?.numberLineX !== undefined ? formatWidgetLabel(TABLE_COPY.numberLineAnswer, { value: entry.answers.numberLineX }) : '-'
+                    }
+                  ] : [
+                    { key: 'equation1', label: formatWidgetLabel(TABLE_COPY.equationTemplate, { number: 1 }), render: (entry) => entry.answers?.equation1 || '-' },
+                    { key: 'equation2', label: formatWidgetLabel(TABLE_COPY.equationTemplate, { number: 2 }), render: (entry) => entry.answers?.equation2 || '-' },
+                    { key: 'classification', label: TABLE_COPY.classification, render: (entry) => entry.answers?.classification || '-' }
+                  ])
+                ])
               ]),
-              ...(activeActivity.mode !== 'placement-board' && sessionLogging?.scoreVisible ? [{ key: 'score', label: t('score'), render: (entry) => entry.answers?.score ?? '-' }] : [])
+              ...(activeActivity.mode !== 'placement-board' && sessionLogging?.scoreVisible !== false ? [{ key: 'score', label: t('score'), render: (entry) => entry.answers?.score ?? '-' }] : [])
             ]}
             emptyMessage={t('noStudents')}
           />

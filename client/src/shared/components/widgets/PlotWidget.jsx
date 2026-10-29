@@ -49,7 +49,7 @@ export default function PlotWidget({
   axisLabels = { x: 'x', y: 'y' }, // Text displayed beside each coordinate axis.
   accessibleLabel = '', // Accessible description of the plot.
   graphItems = [], // Additional graph objects displayed on the plot.
-  title = 'Οπτικοποίηση συστήματος' // Accessible title for the plot.
+  title = '' // Optional visible title. Use outer widget wrapper titles for consistency.
 }) {
   const safeWidth = Math.max(220, Number(width) || 360);
   const safeHeight = Math.max(200, Number(height) || 300);

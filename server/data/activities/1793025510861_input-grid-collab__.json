@@ -1,38 +1,58 @@
 {
-  "resource": "input-grid-collab",
-  "name": "Πλέγμα εισόδων",
-  "subtitle": "",
-  "config": {
-    "rows": 2,
-    "columns": 2,
-    "min": null,
-    "max": null,
-    "step": 1,
-    "applyToAll": true,
-    "fields": [
-      {
-        "id": "cell-1",
-        "label": "Input 1"
-      },
-      {
-        "id": "cell-2",
-        "label": "Input 2"
-      },
-      {
-        "id": "cell-3",
-        "label": "Input 3"
-      },
-      {
-        "id": "cell-4",
-        "label": "Input 4"
-      }
-    ],
-    "widgets": []
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "metadata": {
+    "createdAt": "2026-10-26T14:38:30.861Z",
+    "author": {
+      "username": "activity-page",
+      "role": "teacher"
+    }
   },
-  "notes": "",
-  "createdAt": "2026-10-26T14:38:30.861Z",
-  "author": {
-    "username": "activity-page",
-    "role": "teacher"
+  "resources": [
+    {
+      "id": "input-grid-main",
+      "type": "input-grid",
+      "region": "center",
+      "config": {
+        "settings": {
+          "rows": 2,
+          "columns": 2,
+          "min": null,
+          "max": null,
+          "step": 1,
+          "applyToAll": true,
+          "fields": [
+            {
+              "id": "cell-1",
+              "label": "Πεδίο 1"
+            },
+            {
+              "id": "cell-2",
+              "label": "Πεδίο 2"
+            },
+            {
+              "id": "cell-3",
+              "label": "Πεδίο 3"
+            },
+            {
+              "id": "cell-4",
+              "label": "Πεδίο 4"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "activity": {
+    "id": "input-grid-activity",
+    "code": "1.",
+    "title": "Πλέγμα εισόδων",
+    "objective": "",
+    "notes": "",
+    "mode": "input-grid",
+    "usesResources": [
+      "input-grid-main"
+    ]
   }
 }

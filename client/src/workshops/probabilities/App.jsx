@@ -1,15 +1,16 @@
 ﻿import React, { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import '../../shared/i18n';
 import './App.css';
 import {
   ActivitiesAccordion, FullScreenButton, HeroTitle, readIdentityName, SharedCommonZoneLayout,
   StudentsAccordion, useSessionInputLogger, VennBoard
 } from '../../shared/components';
-import activityData from './data/activities.json';
+import storedActivityData from './data/activities.json';
+import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
+
+const activityData = resolveWorkshopDocument(storedActivityData);
 
 export default function App({ role = 'student' }) {
-  const { t: tNav } = useTranslation('navigation');
   const labels = activityData.labels || {};
   const t = (key, options = {}) => {
     const template = labels[key] || key;
@@ -92,7 +93,7 @@ export default function App({ role = 'student' }) {
   return (
     <>
       <HeroTitle
-        title={`${tNav('items.probabilities')} - ${activity.code} ${activity.title}`}
+        title={`${activityData.workshop.title} - ${activity.code} ${activity.title}`}
         subtitle={activity.objective}
       />
       <section className="common-zone lab-zone">
