@@ -367,6 +367,8 @@ export default function App({ role = 'teacher' }) {
   );
   const activeExpressionParts = expressionDrafts[selectedExpressionId] || activeExpression?.parts || [];
   const activeGroupingPlacements = groupingPlacementsByExpression[selectedExpressionId] || {};
+  const leftWidgetLabel = activeActivity.presentation?.leftWidgetTitle || POLYNOMIAL_LABELS.expression || t('expression');
+  const answerPreviewLabel = activeActivity.presentation?.answerLabel || POLYNOMIAL_LABELS.answer || t('answer');
 
   const getExpressionPreview = (expressionItem, partsOverride = expressionItem?.parts) => {
     if (!expressionItem) {
@@ -935,7 +937,7 @@ export default function App({ role = 'teacher' }) {
         >
           {!isGeogebraAreaActivity ? (
             <div className="lab-card lab-card--highlight poly-expression-card" aria-label={t('expressionType')}>
-              <p className="lab-mini-label poly-mini-label">{activeActivity.presentation?.leftWidgetTitle || t('expression')}</p>
+              <p className="lab-mini-label poly-mini-label">{leftWidgetLabel}</p>
               {isGroupingActivity ? (
                 null
               ) : groupedPolynomialExpression ? (
@@ -1049,7 +1051,7 @@ export default function App({ role = 'teacher' }) {
 
                 {!isDegreeOnlyActivity && (
                   <div className="lab-preview poly-preview-panel">
-                    <p className="lab-mini-label poly-mini-label">{t('answer')}</p>
+                    <p className="lab-mini-label poly-mini-label">{answerPreviewLabel}</p>
                     <div className="lab-math-box lab-math-box--compact poly-expression-math poly-expression-math--small">
                       {renderWrappedExpression(rightPreviewText)}
                     </div>

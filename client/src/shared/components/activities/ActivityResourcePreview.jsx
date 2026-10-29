@@ -9,6 +9,7 @@ const RESOURCE_PREVIEW_TYPES = {
   'placement-board-collab': 'grouping-drag-drop',
   'venn-collab': 'venn-board',
   'number-line-collab': 'number-line',
+  'cartesian-plane-collab': 'cartesian-plane',
   'algebra-tiles-collab': 'algebra-tiles',
   'collaborative-geogebra': 'collaborative-geogebra',
   'vision-collab': 'vision'
@@ -21,6 +22,7 @@ function ResourceMock({ resource }) {
   if (type === 'placement-board' || type === 'grouping-drag-drop') return <div className="activity-resource-preview__placement"><i /><i /><i /><i /></div>;
   if (type === 'venn-board') return <div className="activity-resource-preview__venn"><i /><i /></div>;
   if (type === 'number-line') return <div className="activity-resource-preview__number-line"><i /><i /><i /><i /><i /></div>;
+  if (type === 'cartesian-plane') return <div className="activity-resource-preview__cartesian-plane"><i /><i /><i /><i /><i /></div>;
   if (type === 'algebra-tiles') return <div className="activity-resource-preview__tiles"><i /><i /><i /></div>;
   if (type === 'collaborative-geogebra') return <div className="activity-resource-preview__graph"><i /></div>;
   return <div className="activity-resource-preview__camera">◉</div>;

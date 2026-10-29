@@ -102,6 +102,20 @@
     "rightEnd": "Δεξί άκρο",
     "partitions": "Διαμερίσεις"
   },
+  "cartesianPlane": {
+    "title": "Καρτεσιανό επίπεδο",
+    "ariaLabel": "Διαδραστικό καρτεσιανό επίπεδο",
+    "minX": "Ελάχιστο x",
+    "maxX": "Μέγιστο x",
+    "minY": "Ελάχιστο y",
+    "maxY": "Μέγιστο y",
+    "maxPoints": "Μέγιστος αριθμός σημείων",
+    "targets": "Σημεία στόχοι",
+    "targetsHelp": "Γράψε ζεύγη x,y χωρισμένα με ελληνικό ερωτηματικό (;).",
+    "pointCount": "Τα σημεία σου: {{count}}",
+    "pointCountLimit": "Τα σημεία σου: {{count}} / {{max}}",
+    "meanDistance": "Μέση απόσταση από τον κοντινότερο στόχο: {{distance}}"
+  },
   "optionsGrid": {
     "ariaLabel": "Κοινό πλέγμα επιλογών",
     "apply": "Εφαρμογή ρυθμίσεων"
@@ -365,7 +379,8 @@
       "algebra-tiles": "Πλακίδια Άλγεβρας",
       "collaborative-geogebra": "GeoGebra",
       "collaborative-algebra-tiles": "Πλακίδια Άλγεβρας (κοινός καμβάς)",
-      "options-grid": "Πλέγμα επιλογών"
+      "options-grid": "Πλέγμα επιλογών",
+      "cartesian-plane": "Καρτεσιανό επίπεδο"
     },
     "resourceSettings": "Ρυθμίσεις πόρου",
     "columns": "Στήλες",

@@ -8,6 +8,7 @@ import {
   VennBoard,
   OptionsGrid,
   NumberLine,
+  CartesianPlane,
   parseOptionsExpression,
   GridButton,
   VisionCollaborationBoard,
@@ -83,6 +84,15 @@ function ResourceContent({ activity, role, activityKey }) {
         roomId={props.roomId || activityKey}
         sessionApp="activity-runner"
         canEdit={session?.canEdit}
+      />
+    );
+  }
+  if (activity.resource === 'cartesian-plane') {
+    return (
+      <CartesianPlane
+        {...props}
+        roomId={props.roomId || activityKey}
+        sessionApp="activity-runner"
       />
     );
   }

@@ -80,6 +80,23 @@
   cursor: pointer;
 }
 
+.cartesian-plane-settings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.cartesian-plane-settings label {
+  display: grid;
+  gap: 5px;
+}
+
+.cartesian-plane-settings p,
+.cartesian-plane-settings output {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
 .activity-resource-preview {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(220px, 1.35fr) minmax(0, 1fr);
@@ -240,6 +257,7 @@
 }
 
 .activity-resource-preview__number-line,
+.activity-resource-preview__cartesian-plane,
 .activity-resource-preview__graph {
   position: relative;
   width: 88%;
@@ -247,6 +265,29 @@
   margin: auto;
   border-bottom: 2px solid #334155;
   background: repeating-linear-gradient(90deg, transparent 0 19%, #cbd5e1 20%);
+}
+
+.activity-resource-preview__cartesian-plane {
+  height: 110px;
+  border: 1px solid #cbd5e1;
+  background-image: linear-gradient(#e2e8f0 1px, transparent 1px), linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+.activity-resource-preview__cartesian-plane i {
+  position: absolute;
+  top: 50%;
+  left: 5%;
+  width: 90%;
+  height: 2px;
+  background: #334155;
+}
+
+.activity-resource-preview__cartesian-plane i + i {
+  top: 5%;
+  left: 50%;
+  width: 2px;
+  height: 90%;
 }
 
 .activity-resource-preview__graph {

@@ -21,6 +21,7 @@ const ACTIVITY_RESOURCES = [
   { slug: 'placement-board-collab', title: 'Collaborative Placement Board' },
   { slug: 'venn-collab', title: 'Collaborative Venn Board' },
   { slug: 'number-line-collab', title: 'Collaborative Number Line' },
+  { slug: 'cartesian-plane-collab', title: 'Collaborative Cartesian Plane' },
   { slug: 'algebra-tiles-collab', title: 'Collaborative Algebra Tiles' },
   { slug: 'vision-collab', title: 'Collaborative Vision Board' }
 ];

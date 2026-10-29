@@ -24,6 +24,8 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
   const algebraTileSocketRooms = new Map();
   const numberLineRooms = new Map();
   const numberLineSocketRooms = new Map();
+  const cartesianPlaneRooms = new Map();
+  const cartesianPlaneSocketRooms = new Map();
   const vennRooms = new Map();
   const vennSocketRooms = new Map();
   const optionsGridRooms = new Map();
@@ -430,6 +432,152 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       room.marks.clear();
       sendNumberLineState(room);
       socket.emit('number-line:clear-room:ack', { requestId: data.requestId, ok: true });
+    });
+  }
+
+  function getCartesianPlaneRoom(roomId) {
+    const cleanedRoomId = sanitizeString(roomId || 'cartesian-plane-default', 80) || 'cartesian-plane-default';
+    const id = `cartesian-plane-${cleanedRoomId}`;
+    if (!cartesianPlaneRooms.has(id)) cartesianPlaneRooms.set(id, { id, participants: new Map(), settings: null });
+    return cartesianPlaneRooms.get(id);
+  }
+
+  function normalizeCartesianPlaneSettings(settings = {}) {
+    const minX = Number(settings.minX);
+    const maxX = Number(settings.maxX);
+    const minY = Number(settings.minY);
+    const maxY = Number(settings.maxY);
+    if (![minX, maxX, minY, maxY].every(Number.isFinite) || maxX <= minX || maxY <= minY) return null;
+    const parseLimit = (value) => {
+      if (value === null || value === undefined || value === '') return null;
+      const parsed = Number(value);
+      return Number.isInteger(parsed) && parsed >= 0 ? parsed : null;
+    };
+    const mode = settings.mode === 'lines' ? 'lines' : 'points';
+    const maxPoints = parseLimit(settings.maxPoints);
+    const maxLines = parseLimit(settings.maxLines);
+    const targets = Array.isArray(settings.targets) ? settings.targets.slice(0, 100).map((point) => ({
+      x: Number(point?.x),
+      y: Number(point?.y)
+    })).filter((point) => Number.isFinite(point.x) && Number.isFinite(point.y)) : [];
+    return { minX, maxX, minY, maxY, mode, targets, maxPoints, maxLines };
+  }
+
+  function sendCartesianPlaneState(room) {
+    io.to(room.id).emit('cartesian-plane:state', { roomId: room.id, participants: [...room.participants.values()], settings: room.settings });
+  }
+
+  function registerCartesianPlaneHandlers(socket) {
+    socket.on('cartesian-plane:join', (data = {}) => {
+      const room = getCartesianPlaneRoom(data.roomId);
+      const previousRoom = cartesianPlaneSocketRooms.get(socket.id);
+      if (previousRoom && previousRoom.id !== room.id) {
+        previousRoom.participants.delete(socket.id);
+        socket.leave(previousRoom.id);
+        sendCartesianPlaneState(previousRoom);
+      }
+      socket.join(room.id);
+      cartesianPlaneSocketRooms.set(socket.id, room);
+      const user = getUserFromSocket(socket);
+      if (isElevated(user)) room.settings = normalizeCartesianPlaneSettings(data.settings) || room.settings;
+      const existing = room.participants.get(socket.id);
+      if (existing) room.participants.set(socket.id, {
+        ...existing,
+        name: sanitizeString(data.name, 80) || user.displayName || 'Student',
+        color: cleanColor(data.color) || '#4ECDC4'
+      });
+      socketSessionApps.set(socket.id, normalizeSessionApp(data.sessionApp));
+      socket.emit('cartesian-plane:state', { roomId: room.id, participants: [...room.participants.values()], settings: room.settings });
+      sendCartesianPlaneState(room);
+    });
+
+    socket.on('cartesian-plane:settings', (data = {}) => {
+      const room = cartesianPlaneSocketRooms.get(socket.id);
+      const user = getUserFromSocket(socket);
+      const settings = normalizeCartesianPlaneSettings(data.settings);
+      if (!room || getCartesianPlaneRoom(data.roomId).id !== room.id || !isElevated(user) || !settings) return;
+      room.settings = settings;
+      sendCartesianPlaneState(room);
+    });
+
+    socket.on('cartesian-plane:point', (data = {}) => {
+      const room = cartesianPlaneSocketRooms.get(socket.id);
+      if (!room || getCartesianPlaneRoom(data.roomId).id !== room.id) return;
+      const user = getUserFromSocket(socket);
+      if (room.settings?.mode === 'lines') return;
+      const x = Number(data.point?.x);
+      const y = Number(data.point?.y);
+      if (!Number.isFinite(x) || !Number.isFinite(y) || Math.abs(x) > 1000000 || Math.abs(y) > 1000000) return;
+      const existing = room.participants.get(socket.id) || { id: socket.id, points: [] };
+      if (existing.points.length >= 200
+        || (Number.isInteger(room.settings?.maxPoints) && existing.points.length >= room.settings.maxPoints)) return;
+      existing.points.push({ id: `${socket.id}-${Date.now()}-${existing.points.length}`, x: Number(x.toFixed(4)), y: Number(y.toFixed(4)) });
+      existing.name = sanitizeString(data.name, 80) || user.displayName || 'Student';
+      existing.color = cleanColor(data.color) || '#4ECDC4';
+      room.participants.set(socket.id, existing);
+      sendCartesianPlaneState(room);
+    });
+
+    socket.on('cartesian-plane:line', (data = {}) => {
+      const room = cartesianPlaneSocketRooms.get(socket.id);
+      if (!room || getCartesianPlaneRoom(data.roomId).id !== room.id || room.settings?.mode !== 'lines') return;
+      const user = getUserFromSocket(socket);
+      const start = { x: Number(data.line?.start?.x), y: Number(data.line?.start?.y) };
+      const end = { x: Number(data.line?.end?.x), y: Number(data.line?.end?.y) };
+      const values = [start.x, start.y, end.x, end.y];
+      if (!values.every(Number.isFinite)
+        || values.some((value) => Math.abs(value) > 1000000)
+        || Math.hypot(end.x - start.x, end.y - start.y) < 0.01) return;
+      const existing = room.participants.get(socket.id) || { id: socket.id, points: [], lines: [] };
+      existing.lines = Array.isArray(existing.lines) ? existing.lines : [];
+      if (existing.lines.length >= 200
+        || (Number.isInteger(room.settings.maxLines) && existing.lines.length >= room.settings.maxLines)) return;
+      existing.lines.push({
+        id: `${socket.id}-line-${Date.now()}-${existing.lines.length}`,
+        start: { x: Number(start.x.toFixed(4)), y: Number(start.y.toFixed(4)) },
+        end: { x: Number(end.x.toFixed(4)), y: Number(end.y.toFixed(4)) }
+      });
+      existing.name = sanitizeString(data.name, 80) || user.displayName || 'Student';
+      existing.color = cleanColor(data.color) || '#4ECDC4';
+      room.participants.set(socket.id, existing);
+      sendCartesianPlaneState(room);
+    });
+
+    socket.on('cartesian-plane:remove-line', (data = {}) => {
+      const room = cartesianPlaneSocketRooms.get(socket.id);
+      if (!room || getCartesianPlaneRoom(data.roomId).id !== room.id || room.settings?.mode !== 'lines') return;
+      const participant = room.participants.get(socket.id);
+      if (!participant || !Array.isArray(participant.lines)) return;
+      const index = participant.lines.findIndex((line) => line.id === data.lineId);
+      if (index < 0) return;
+      participant.lines.splice(index, 1);
+      if (!participant.lines.length && !participant.points?.length) room.participants.delete(socket.id);
+      else room.participants.set(socket.id, participant);
+      sendCartesianPlaneState(room);
+    });
+
+    socket.on('cartesian-plane:remove-point', (data = {}) => {
+      const room = cartesianPlaneSocketRooms.get(socket.id);
+      if (!room || getCartesianPlaneRoom(data.roomId).id !== room.id) return;
+      const participant = room.participants.get(socket.id);
+      if (!participant) return;
+      const index = participant.points.findIndex((point, pointIndex) => data.pointId
+        ? point.id === data.pointId
+        : pointIndex === Number(data.pointIndex));
+      if (index < 0) return;
+      participant.points.splice(index, 1);
+      if (!participant.points.length) room.participants.delete(socket.id);
+      else room.participants.set(socket.id, participant);
+      sendCartesianPlaneState(room);
+    });
+
+    socket.on('cartesian-plane:clear', (data = {}) => {
+      const room = cartesianPlaneSocketRooms.get(socket.id);
+      if (!room || getCartesianPlaneRoom(data.roomId).id !== room.id) return;
+      const user = getUserFromSocket(socket);
+      if (!isElevated(user) && !getActiveSessionForApp(normalizeSessionApp(data.sessionApp || socketSessionApps.get(socket.id)))) return;
+      room.participants.delete(socket.id);
+      sendCartesianPlaneState(room);
     });
   }
 
@@ -1372,6 +1520,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
   function registerSocketHandlers(socket) {
     registerAlgebraTileHandlers(socket);
     registerNumberLineHandlers(socket);
+    registerCartesianPlaneHandlers(socket);
     registerVennHandlers(socket);
     registerOptionsGridHandlers(socket);
     registerPlacementBoardHandlers(socket);
@@ -1455,6 +1604,12 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
           numberLineSocketRooms.delete(socket.id);
           sendNumberLineState(numberLineRoom);
         }
+        const cartesianPlaneRoom = cartesianPlaneSocketRooms.get(socket.id);
+        if (cartesianPlaneRoom) {
+          cartesianPlaneRoom.participants.delete(socket.id);
+          cartesianPlaneSocketRooms.delete(socket.id);
+          sendCartesianPlaneState(cartesianPlaneRoom);
+        }
         return;
       }
 
@@ -1467,6 +1622,12 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
         numberLineRoom.marks.delete(socket.id);
         numberLineSocketRooms.delete(socket.id);
         sendNumberLineState(numberLineRoom);
+      }
+      const cartesianPlaneRoom = cartesianPlaneSocketRooms.get(socket.id);
+      if (cartesianPlaneRoom) {
+        cartesianPlaneRoom.participants.delete(socket.id);
+        cartesianPlaneSocketRooms.delete(socket.id);
+        sendCartesianPlaneState(cartesianPlaneRoom);
       }
     });
   }

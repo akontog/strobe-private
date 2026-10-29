@@ -11,12 +11,13 @@ import {
   SharedInputRow,
   PlotWidget,
   EquationWidget,
+  AlgebraTiles,
   DataAccordion,
   GroupsAccordion,
-  GridButton,
   createPlacementGroupColumns,
-  OptionsGrid,
+  VennBoard,
   NumberLine,
+  CartesianPlane,
   readIdentitySnapshot,
   FullScreenButton,
   useSessionInputLogger
@@ -41,26 +42,9 @@ const SERVICE_COPY = PRESENTATION.services;
 const TABLE_COPY = PRESENTATION.tables;
 
 const EMPTY_TOKEN = '?';
-const POINT_GRID_ACTIVITY = ACTIVITY_LIBRARY.find((activity) => activity.mode === 'point-grid');
-const POINT_GRID_ACTIVITY_ID = POINT_GRID_ACTIVITY?.id;
-const POINT_GRID_SETTINGS = POINT_GRID_ACTIVITY?.resourceSettings?.pointGrid || {};
-const POINT_GRID_EQUATIONS = LESSON_DATA[POINT_GRID_ACTIVITY_ID]?.equations || [];
 const NUMBER_LINE_ACTIVITY_ID = ACTIVITY_LIBRARY.find((activity) => activity.mode === 'number-line')?.id;
 const NUMBER_LINE_EQUATIONS = LESSON_DATA[NUMBER_LINE_ACTIVITY_ID]?.equations || [];
-const POINT_GRID_WIDTH = POINT_GRID_SETTINGS.maxX - POINT_GRID_SETTINGS.minX + 1;
-const POINT_GRID_HEIGHT = POINT_GRID_SETTINGS.maxY - POINT_GRID_SETTINGS.minY + 1;
-const POINT_GRID_AXIS_LABELS = POINT_GRID_SETTINGS.showAxisLabels !== false;
-const POINT_GRID_SPACERS = Array.from({ length: POINT_GRID_WIDTH + 1 }, (_, index) => ({ id: `grid-spacer-${index}`, kind: 'spacer' }));
-const POINT_GRID_CELLS = Array.from({ length: POINT_GRID_HEIGHT }, (_, rowIndex) => {
-  const y = POINT_GRID_SETTINGS.maxY - rowIndex;
-  return Array.from({ length: POINT_GRID_WIDTH }, (_, columnIndex) => ({
-    id: `point-${columnIndex + POINT_GRID_SETTINGS.minX}-${y}`,
-    kind: 'point',
-    x: columnIndex + POINT_GRID_SETTINGS.minX,
-    y
-  }));
-}).flat();
-function parseSelectedPoints(value) {
+function parseSelectedPoints(value, settings = {}) {
   let parsed = value;
   if (typeof value === 'string') {
     try {
@@ -71,29 +55,49 @@ function parseSelectedPoints(value) {
   }
 
   if (!Array.isArray(parsed)) return [];
+  const minX = Number.isFinite(Number(settings?.minX)) ? Number(settings.minX) : null;
+  const maxX = Number.isFinite(Number(settings?.maxX)) ? Number(settings.maxX) : null;
+  const minY = Number.isFinite(Number(settings?.minY)) ? Number(settings.minY) : null;
+  const maxY = Number.isFinite(Number(settings?.maxY)) ? Number(settings.maxY) : null;
   const unique = new Map();
   parsed.forEach((point) => {
     const x = Number(point?.x);
     const y = Number(point?.y);
-    if (!Number.isInteger(x) || !Number.isInteger(y)
-      || x < POINT_GRID_SETTINGS.minX || x > POINT_GRID_SETTINGS.maxX
-      || y < POINT_GRID_SETTINGS.minY || y > POINT_GRID_SETTINGS.maxY) return;
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return;
+    if (minX !== null && x < minX) return;
+    if (maxX !== null && x > maxX) return;
+    if (minY !== null && y < minY) return;
+    if (maxY !== null && y > maxY) return;
     unique.set(`${x},${y}`, { x, y });
   });
   return [...unique.values()];
 }
-const POINT_GRID_ITEMS = [
-  ...(POINT_GRID_AXIS_LABELS
-    ? [{ id: 'point-grid-corner', kind: 'corner' }, ...Array.from({ length: POINT_GRID_WIDTH }, (_, index) => ({ id: `x-label-${index}`, kind: 'x-label', value: index + POINT_GRID_SETTINGS.minX }))]
-    : POINT_GRID_SPACERS),
-  ...Array.from({ length: POINT_GRID_HEIGHT }, (_, rowIndex) => [
-    POINT_GRID_AXIS_LABELS
-      ? { id: `y-label-${rowIndex}`, kind: 'y-label', value: POINT_GRID_SETTINGS.maxY - rowIndex }
-      : { id: `grid-row-spacer-${rowIndex}`, kind: 'spacer' },
-    ...POINT_GRID_CELLS.slice(rowIndex * POINT_GRID_WIDTH, (rowIndex + 1) * POINT_GRID_WIDTH)
-  ]).flat()
-];
 
+function parseSelectedLines(value) {
+  let parsed = value;
+  if (typeof value === 'string') {
+    try {
+      parsed = JSON.parse(value);
+    } catch {
+      return [];
+    }
+  }
+
+  if (!Array.isArray(parsed)) return [];
+  return parsed
+    .map((line) => {
+      const startX = Number(line?.start?.x);
+      const startY = Number(line?.start?.y);
+      const endX = Number(line?.end?.x);
+      const endY = Number(line?.end?.y);
+      if (![startX, startY, endX, endY].every(Number.isFinite)) return null;
+      return {
+        start: { x: startX, y: startY },
+        end: { x: endX, y: endY }
+      };
+    })
+    .filter(Boolean);
+}
 function normalizeText(value) {
   return String(value || '').trim();
 }
@@ -253,6 +257,7 @@ export default function App({ role = 'student' }) {
   const isStudent = !isTeacher;
 
   const wsRef = useRef(null);
+  const pendingEquationSessionCommandRef = useRef('');
   const studentSocketIdRef = useRef('');
   const reconnectTimerRef = useRef(null);
   const hasRegisteredRef = useRef(false);
@@ -272,6 +277,9 @@ export default function App({ role = 'student' }) {
   const [identity, setIdentity] = useState(() => readIdentitySnapshot({ nameFallback: 'Student', colorFallback: '#4ECDC4' }));
   const [assignedEquationIndex, setAssignedEquationIndex] = useState(null);
   const [selectedPoints, setSelectedPoints] = useState([]);
+  const [selectedLines, setSelectedLines] = useState([]);
+  const [selectedLineSystemIndex, setSelectedLineSystemIndex] = useState(0);
+  const [algebraTilesByItem, setAlgebraTilesByItem] = useState({});
   const [numberLineMarks, setNumberLineMarks] = useState([]);
 
   const sendSocketMessage = (payload) => {
@@ -299,6 +307,29 @@ export default function App({ role = 'student' }) {
     return () => {
       window.removeEventListener('strobe:identity-change', handleIdentityChange);
       window.removeEventListener('storage', handleIdentityChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    const requestAssignments = (event) => {
+      if (event.detail?.app !== 'linear-systems-lab') return;
+      pendingEquationSessionCommandRef.current = 'start';
+      if (sendSocketMessage({ type: 'assign_equations' })) {
+        pendingEquationSessionCommandRef.current = '';
+      }
+    };
+    const endAssignments = (event) => {
+      if (event.detail?.app !== 'linear-systems-lab') return;
+      pendingEquationSessionCommandRef.current = 'end';
+      if (sendSocketMessage({ type: 'end_equation_session' })) {
+        pendingEquationSessionCommandRef.current = '';
+      }
+    };
+    window.addEventListener('strobe:session-started', requestAssignments);
+    window.addEventListener('strobe:session-ended', endAssignments);
+    return () => {
+      window.removeEventListener('strobe:session-started', requestAssignments);
+      window.removeEventListener('strobe:session-ended', endAssignments);
     };
   }, []);
 
@@ -414,7 +445,7 @@ export default function App({ role = 'student' }) {
   }, [equationInputsByItem, selectedItemId]);
 
   useEffect(() => {
-    if (!['grouping', 'placement-board'].includes(activeActivity.mode)) {
+    if (!['grouping', 'placement-board', 'venn-board'].includes(activeActivity.mode)) {
       setInvalidGroupingItemIds([]);
       return;
     }
@@ -425,7 +456,11 @@ export default function App({ role = 'student' }) {
         return current;
       }
 
-      const activityItems = activeActivity.mode === 'placement-board' ? activePlacementItems : activeItems;
+      const activityItems = activeActivity.mode === 'placement-board'
+        ? activePlacementItems
+        : activeActivity.mode === 'venn-board'
+          ? activeItem?.points || []
+          : activeItems;
       const initial = activityItems.reduce((placements, item) => {
         placements[item.id] = null;
         return placements;
@@ -439,7 +474,7 @@ export default function App({ role = 'student' }) {
         }
       };
     });
-  }, [activeActivity.mode, activeItems, activePlacementItems, placementStateKey, selectedActivityId]);
+  }, [activeActivity.mode, activeItem, activeItems, activePlacementItems, placementStateKey, selectedActivityId]);
 
   const systemEquations = useMemo(() => {
     if (activeActivity.mode === 'graphing-input') {
@@ -459,6 +494,29 @@ export default function App({ role = 'student' }) {
   const graphWidgetSettings = activeActivity.widgets?.find((widget) => widget.region === 'right')?.settings || {};
   const graphColors = graphWidgetSettings.lineColors || ['#2563eb', '#dc2626'];
   const graphLineLabelTemplate = graphWidgetSettings.lineLabelTemplate || '{equation}';
+  const activeCartesianSettings = activeActivity.mode === 'cartesian-plane'
+    ? (activeActivity.widgets?.find((widget) => widget.type === 'cartesian-plane')?.settings || activeActivity.resourceSettings || {})
+    : {};
+  const activeCartesianEquations = activeActivity.mode === 'cartesian-plane'
+    ? (LESSON_DATA[selectedActivityId]?.equations || [])
+    : [];
+  const activeCartesianSystems = activeActivity.mode === 'cartesian-plane'
+    ? (LESSON_DATA[selectedActivityId]?.systems || [])
+    : [];
+  const isCartesianLineMode = activeCartesianSettings.mode === 'lines';
+  const resolvedLineSystemIndex = activeCartesianSystems.length
+    ? Math.max(0, Math.min(activeCartesianSystems.length - 1, Number(selectedLineSystemIndex) || 0))
+    : 0;
+  const teacherLineSystemIndex = activeCartesianSystems.length > 1
+    ? (resolvedLineSystemIndex + 1) % activeCartesianSystems.length
+    : resolvedLineSystemIndex;
+  const lineSystemOptions = activeCartesianSystems.map((system, index) => ({
+    value: String(index),
+    label: `${index + 1}. ${(system.equations || []).slice(0, 2).join(' | ')}`
+  }));
+  const cartesianLineLimit = Number.isInteger(Number(activeCartesianSettings.maxLines)) && Number(activeCartesianSettings.maxLines) >= 0
+    ? Number(activeCartesianSettings.maxLines)
+    : null;
 
   const coordinateLines = useMemo(() => {
     if (activeActivity.mode === 'graphing-input') {
@@ -518,22 +576,38 @@ export default function App({ role = 'student' }) {
       };
     }
 
-    if (activeActivity.mode === 'point-grid') {
-      const assignedEquation = Number.isInteger(assignedEquationIndex)
-        ? POINT_GRID_EQUATIONS[assignedEquationIndex % POINT_GRID_EQUATIONS.length]
+    if (activeActivity.mode === 'cartesian-plane') {
+      if (isCartesianLineMode) {
+        const lineCount = selectedLines.length;
+        const completed = cartesianLineLimit === null ? lineCount > 0 : lineCount >= cartesianLineLimit;
+        return {
+          ready: lineCount > 0,
+          feedback: '',
+          invalidIds: [],
+          payload: {
+            completed: completed ? '1' : '0',
+            selectedLines: JSON.stringify(selectedLines),
+            selectedLineCount: lineCount,
+            score: completed ? 10 : 0
+          }
+        };
+      }
+
+      const assignedEquation = Number.isInteger(assignedEquationIndex) && activeCartesianEquations.length
+        ? activeCartesianEquations[assignedEquationIndex % activeCartesianEquations.length]
         : null;
       if (!assignedEquation) {
         return { ready: false, feedback: '', invalidIds: [], payload: null };
       }
 
-      const expectedPoints = POINT_GRID_CELLS.filter((point) => (
-        assignedEquation.x * point.x + assignedEquation.y * point.y === assignedEquation.rhs
-      ));
-      const expectedKeys = new Set(expectedPoints.map((point) => `${point.x},${point.y}`));
-      const selectedKeys = new Set(selectedPoints.map((point) => `${point.x},${point.y}`));
-      const correctCount = [...selectedKeys].filter((key) => expectedKeys.has(key)).length;
-      const unionCount = expectedKeys.size + selectedKeys.size - correctCount;
-      const score = unionCount ? Math.round((correctCount / unionCount) * 10) : 0;
+      const coefficientLength = Math.hypot(assignedEquation.x, assignedEquation.y);
+      const tolerance = Number(activeCartesianSettings.distanceTolerance) || 0.5;
+      const closePointCount = coefficientLength > 0
+        ? selectedPoints.filter((point) => (
+          Math.abs(assignedEquation.x * point.x + assignedEquation.y * point.y - assignedEquation.rhs) / coefficientLength <= tolerance
+        )).length
+        : 0;
+      const score = selectedPoints.length ? Math.round((closePointCount / selectedPoints.length) * 10) : 0;
       return {
         ready: true,
         feedback: '',
@@ -542,7 +616,35 @@ export default function App({ role = 'student' }) {
           completed: selectedPoints.length ? '1' : '0',
           selectedPoints: JSON.stringify(selectedPoints),
           selectedPointCount: selectedPoints.length,
+          closePointCount,
           score
+        }
+      };
+    }
+
+    if (activeActivity.mode === 'venn-board') {
+      const expectedItems = activeItem?.points || [];
+      const placements = expectedItems.reduce((next, item) => {
+        const placement = activeGroupingPlacements[item.id];
+        next[item.id] = placement && typeof placement === 'object' ? placement.region : placement || null;
+        return next;
+      }, {});
+      const allPlaced = expectedItems.length > 0 && expectedItems.every((item) => Boolean(placements[item.id]));
+      const invalidIds = expectedItems
+        .filter((item) => placements[item.id] && placements[item.id] !== item.correctRegionId)
+        .map((item) => item.id);
+      const correctCount = expectedItems.filter((item) => placements[item.id] === item.correctRegionId).length;
+      const score = expectedItems.length ? Math.round((correctCount / expectedItems.length) * 10) : 0;
+      return {
+        ready: allPlaced,
+        feedback: allPlaced ? (invalidIds.length ? PLACEMENT_COPY.incorrect : PLACEMENT_COPY.correct) : '',
+        invalidIds,
+        payload: {
+          completed: allPlaced ? '1' : '0',
+          score,
+          placements,
+          correctPlacements: Object.fromEntries(expectedItems.map((item) => [item.id, item.correctRegionId || null])),
+          classification: `${correctCount}/${expectedItems.length}`
         }
       };
     }
@@ -702,7 +804,7 @@ export default function App({ role = 'student' }) {
         y: answerY
       }
     };
-  }, [activeActivity.mode, activeEquationInputs.equation1, activeEquationInputs.equation2, activeGroupingPlacements, activeItem, activeItems, activePlacementItems, activePlacementPlacements, answer.x, answer.y, assignedEquationIndex, coordinateLines.length, numberLineMarks, selectedPoints, t]);
+  }, [activeActivity.mode, activeCartesianEquations, activeCartesianSettings.distanceTolerance, activeEquationInputs.equation1, activeEquationInputs.equation2, activeGroupingPlacements, activeItem, activeItems, activePlacementItems, activePlacementPlacements, answer.x, answer.y, assignedEquationIndex, cartesianLineLimit, coordinateLines.length, isCartesianLineMode, numberLineMarks, selectedLines, selectedPoints, t]);
 
   useEffect(() => {
     setInvalidGroupingItemIds(evaluation.invalidIds);
@@ -748,6 +850,11 @@ export default function App({ role = 'student' }) {
         setIsSocketConnected(true);
         hasRegisteredRef.current = false;
         registerCurrentRole();
+        const pendingSessionCommand = pendingEquationSessionCommandRef.current;
+        if (!isStudent && pendingSessionCommand) {
+          const messageType = pendingSessionCommand === 'start' ? 'assign_equations' : 'end_equation_session';
+          if (sendSocketMessage({ type: messageType })) pendingEquationSessionCommandRef.current = '';
+        }
       });
 
       ws.addEventListener('message', (event) => {
@@ -761,6 +868,8 @@ export default function App({ role = 'student' }) {
         if (message?.type === 'linear_systems_assignment') {
           studentSocketIdRef.current = String(message.studentId || '');
           setAssignedEquationIndex(Number.isInteger(message.assignmentIndex) ? message.assignmentIndex : null);
+          setSelectedPoints([]);
+          setLastSentState('');
           return;
         }
 
@@ -774,8 +883,12 @@ export default function App({ role = 'student' }) {
           if (ownParticipant) {
             setAssignedEquationIndex(Number.isInteger(ownParticipant.assignmentIndex) ? ownParticipant.assignmentIndex : null);
             const nextPoints = parseSelectedPoints(ownParticipant.answers?.selectedPoints);
+            const nextLines = parseSelectedLines(ownParticipant.answers?.selectedLines);
             setSelectedPoints((current) => (
               JSON.stringify(current) === JSON.stringify(nextPoints) ? current : nextPoints
+            ));
+            setSelectedLines((current) => (
+              JSON.stringify(current) === JSON.stringify(nextLines) ? current : nextLines
             ));
           }
         }
@@ -788,12 +901,16 @@ export default function App({ role = 'student' }) {
         const nextActivity = normalizeText(lesson.activityId);
         const nextItemId = normalizeText(lesson.itemId);
         const nextExpressionId = normalizeText(lesson.expressionId);
+        const nextLineSystemIndex = Number(lesson.lineSystemIndex);
 
         if (Object.prototype.hasOwnProperty.call(lesson, 'showEquationGraph')) {
           setShowEquationGraph(Boolean(lesson.showEquationGraph));
         }
         if (Object.prototype.hasOwnProperty.call(lesson, 'expressionId')) {
           setSelectedExpressionId(nextExpressionId);
+        }
+        if (Object.prototype.hasOwnProperty.call(lesson, 'lineSystemIndex') && Number.isInteger(nextLineSystemIndex)) {
+          setSelectedLineSystemIndex(nextLineSystemIndex);
         }
 
         if (nextActivity && ACTIVITY_LIBRARY.some((activity) => activity.id === nextActivity)) {
@@ -926,7 +1043,8 @@ export default function App({ role = 'student' }) {
           activityId,
           itemId: nextItemId,
           expressionId: nextExpressionId,
-          showEquationGraph: nextShowEquationGraph
+          showEquationGraph: nextShowEquationGraph,
+          lineSystemIndex: selectedLineSystemIndex
         }
       });
     }
@@ -951,7 +1069,8 @@ export default function App({ role = 'student' }) {
           activityId: selectedActivityId,
           itemId,
           expressionId: nextExpressionId,
-          showEquationGraph
+          showEquationGraph,
+          lineSystemIndex: selectedLineSystemIndex
         }
       });
     }
@@ -969,10 +1088,34 @@ export default function App({ role = 'student' }) {
           activityId: selectedActivityId,
           itemId: selectedItemId,
           expressionId,
-          showEquationGraph
+          showEquationGraph,
+          lineSystemIndex: selectedLineSystemIndex
         }
       });
     }
+  };
+
+  const setLessonLineSystem = (nextSystemIndexValue) => {
+    const nextSystemIndex = Number(nextSystemIndexValue);
+    if (!Number.isInteger(nextSystemIndex) || nextSystemIndex === selectedLineSystemIndex) {
+      return;
+    }
+
+    setSelectedLineSystemIndex(nextSystemIndex);
+    if (!isTeacher) {
+      return;
+    }
+
+    sendSocketMessage({
+      type: 'teacher_lesson',
+      lesson: {
+        activityId: selectedActivityId,
+        itemId: selectedItemId,
+        expressionId: selectedExpressionId,
+        showEquationGraph,
+        lineSystemIndex: nextSystemIndex
+      }
+    });
   };
 
   const setGraphVisibility = (nextVisible) => {
@@ -989,10 +1132,24 @@ export default function App({ role = 'student' }) {
         activityId: selectedActivityId,
         itemId: selectedItemId,
         expressionId: selectedExpressionId,
-        showEquationGraph: visible
+        showEquationGraph: visible,
+        lineSystemIndex: selectedLineSystemIndex
       }
     });
   };
+
+  useEffect(() => {
+    if (!activeCartesianSystems.length) {
+      return;
+    }
+
+    setSelectedLineSystemIndex((current) => {
+      if (Number.isInteger(current) && current >= 0 && current < activeCartesianSystems.length) {
+        return current;
+      }
+      return 0;
+    });
+  }, [activeCartesianSystems.length]);
 
   const updateEquationInput = (equationKey, fieldKey, value) => {
     setEquationInputsByItem((current) => {
@@ -1080,16 +1237,26 @@ export default function App({ role = 'student' }) {
   }, [activeActivity.mode, activePlacementGroups, activePlacementItems, sessionLogging?.scoreVisible]);
 
   const graphPanelVisible = showEquationGraph && (activeActivity.mode === 'graphing-input' || activeActivity.mode === 'placement-board' || coordinateLines.length > 0);
-  const isGroupingMode = activeActivity.mode === 'grouping';
+  const isGroupingMode = ['grouping', 'venn-board'].includes(activeActivity.mode);
   const leftWidget = activeActivity.widgets?.find((widget) => widget.region === 'left');
   const leftWidgetSettings = { ...(leftWidget?.settings || leftWidget || {}), ...(leftWidget?.presentation || {}) };
   const leftWidgetContent = leftWidgetSettings.content || {};
   const rightWidget = activeActivity.widgets?.find((widget) => widget.region === 'right') || {};
   const rightWidgetSettings = rightWidget.settings || {};
+  const centerWidget = activeActivity.widgets?.find((widget) => widget.region === 'center') || {};
+  const centerWidgetSettings = centerWidget.settings || {};
+  const usesAlgebraTiles = activeActivity.mode === 'algebra' && centerWidget.type === 'algebra-tiles';
+  const activeAlgebraTiles = Array.isArray(algebraTilesByItem[selectedItemId]) ? algebraTilesByItem[selectedItemId] : [];
   const numberLineSettings = activeActivity.resourceSettings?.numberLine || {};
   const assignedPointEquation = Number.isInteger(assignedEquationIndex)
-    ? POINT_GRID_EQUATIONS[assignedEquationIndex % POINT_GRID_EQUATIONS.length]
+    && activeCartesianEquations.length
+    ? activeCartesianEquations[assignedEquationIndex % activeCartesianEquations.length]
     : null;
+  const assignedLineSystem = isTeacher
+    ? activeCartesianSystems[teacherLineSystemIndex] || null
+    : (Number.isInteger(assignedEquationIndex) && activeCartesianSystems.length
+      ? activeCartesianSystems[assignedEquationIndex % activeCartesianSystems.length]
+      : null);
   const assignedNumberLineEquation = Number.isInteger(assignedEquationIndex)
     ? NUMBER_LINE_EQUATIONS[assignedEquationIndex % NUMBER_LINE_EQUATIONS.length]
     : null;
@@ -1104,7 +1271,7 @@ export default function App({ role = 'student' }) {
     </label>
   );
 
-  const leftPanel = activeActivity.mode === 'number-line' ? null : (
+  const leftPanel = ['number-line', 'venn-board'].includes(activeActivity.mode) ? null : (
     <div className="lab-card lab-card--highlight poly-expression-card linear-expression-card" aria-label={leftWidgetSettings.ariaLabel || EQUATION_COPY.ariaLabel}>
       <p className="lab-mini-label poly-mini-label">{leftWidgetSettings.miniLabel || EQUATION_COPY.label}</p>
       {activeActivity.mode === 'graphing-input' ? (
@@ -1112,15 +1279,17 @@ export default function App({ role = 'student' }) {
           <p>{formatEquationFromRow(activeEquationInputs.equation1)}</p>
           <p>{formatEquationFromRow(activeEquationInputs.equation2)}</p>
         </div>
-      ) : activeActivity.mode === 'point-grid' ? (
+      ) : activeActivity.mode === 'cartesian-plane' ? (
         <div className="linear-point-grid-equation">
-          {isStudent ? (
-            assignedPointEquation ? (
-              <EquationWidget expression={assignedPointEquation.equation} />
-            ) : <p>{POINT_GRID_COPY.waiting}</p>
-          ) : (
-            <p>{POINT_GRID_COPY.teacherInfo}</p>
-          )}
+          {isCartesianLineMode
+            ? (assignedLineSystem?.equations?.length ? (
+              <>
+                {assignedLineSystem.equations.slice(0, 2).map((equation, index) => (
+                  <EquationWidget key={`assigned-line-system-${assignedLineSystem.id || 'system'}-${index + 1}`} expression={equation} />
+                ))}
+              </>
+            ) : <p>{POINT_GRID_COPY.waiting}</p>)
+            : (assignedPointEquation ? <EquationWidget expression={assignedPointEquation.equation} /> : <p>{POINT_GRID_COPY.waiting}</p>)}
         </div>
       ) : activeActivity.mode === 'placement-board' ? (
         <div className="linear-placement-equations" aria-label={leftWidgetContent.placementAriaLabel || leftWidgetSettings.ariaLabel || EQUATION_COPY.ariaLabel}>
@@ -1143,7 +1312,7 @@ export default function App({ role = 'student' }) {
   );
 
   const centerPanel = (
-    <div className={`lab-card lab-card--panel poly-team-card linear-team-card${activeActivity.mode === 'number-line' ? ' linear-team-card--full' : ''}`}>
+    <div className={`lab-card lab-card--panel poly-team-card linear-team-card${['number-line', 'venn-board'].includes(activeActivity.mode) ? ' linear-team-card--full' : ''}`}>
       {activeActivity.mode === 'graphing-input' ? (
         <div className="poly-template-answer-panel">
           <div className="poly-team-grid poly-team-grid--full">
@@ -1185,15 +1354,10 @@ export default function App({ role = 'student' }) {
       {activeActivity.mode === 'number-line' ? (
         <section className={numberLinePresentation.panel.className} style={{ width: numberLinePresentation.layout.width }}>
           <div className={numberLinePresentation.panel.equationClassName}>
-            {isStudent ? (
-              assignedNumberLineEquation ? (
-                <p><strong>{formatWidgetLabel(numberLinePresentation.panel.equationHeading, { equation: assignedNumberLineEquation.equation })}</strong></p>
-              ) : <p>{formatWidgetLabel(numberLinePresentation.panel.waitingText, { waiting: POINT_GRID_COPY.waiting })}</p>
-            ) : <p>{formatWidgetLabel(numberLinePresentation.panel.teacherText, { teacherInfo: NUMBER_LINE_COPY.teacherInfo })}</p>}
+            {assignedNumberLineEquation ? (
+              <p><strong>{formatWidgetLabel(numberLinePresentation.panel.equationHeading, { equation: assignedNumberLineEquation.equation })}</strong></p>
+            ) : <p>{formatWidgetLabel(numberLinePresentation.panel.waitingText, { waiting: POINT_GRID_COPY.waiting })}</p>}
           </div>
-          <p className={numberLinePresentation.panel.instructionClassName}>
-            {isStudent ? NUMBER_LINE_COPY.instruction : NUMBER_LINE_COPY.teacherInstruction}
-          </p>
           <NumberLine
             {...numberLineSettings}
             roomId="linear-systems-x-intercepts"
@@ -1204,65 +1368,37 @@ export default function App({ role = 'student' }) {
         </section>
       ) : null}
 
-      {activeActivity.mode === 'point-grid' ? (
-        <section className="linear-point-grid-panel">
-          <p className="linear-point-grid-panel__instruction">
-            {isStudent ? POINT_GRID_COPY.instruction : POINT_GRID_COPY.teacherInstruction}
-          </p>
-          <div className="linear-point-grid-panel__scroll">
-            <OptionsGrid
-              items={POINT_GRID_ITEMS}
-              columns={POINT_GRID_WIDTH + 1}
-              className="linear-point-grid"
-              style={{ '--point-grid-columns': POINT_GRID_WIDTH }}
-              ariaLabel={POINT_GRID_COPY.ariaLabel}
-              renderItem={(item) => {
-                if (item.kind === 'corner') return <span className="linear-point-grid__corner" key={item.id}>{POINT_GRID_COPY.axisCorner}</span>;
-                if (item.kind === 'spacer') return <span aria-hidden="true" key={item.id} />;
-                if (item.kind === 'x-label') return <span className="linear-point-grid__axis-label" key={item.id}>{item.value}</span>;
-                if (item.kind === 'y-label') return <span className="linear-point-grid__axis-label" key={item.id}>{item.value}</span>;
+      {activeActivity.mode === 'cartesian-plane' ? (
+        <CartesianPlane
+          key={`linear-systems-${selectedActivityId}-${assignedEquationIndex}`}
+          {...activeCartesianSettings}
+          roomId={`linear-systems-${selectedActivityId}`}
+          sessionApp="linear-systems-lab"
+          canEdit
+          onPointsChange={setSelectedPoints}
+          onLinesChange={setSelectedLines}
+        />
+      ) : null}
 
-                const isSelected = selectedPoints.some((point) => point.x === item.x && point.y === item.y);
-                const markers = participants
-                  .filter((participant) => participant.id !== studentSocketIdRef.current
-                    && parseSelectedPoints(participant.answers?.selectedPoints).some((point) => point.x === item.x && point.y === item.y))
-                  .map((participant) => ({ id: participant.id, name: participant.name, color: participant.color }));
-                if (isSelected && isStudent) {
-                  markers.push({ id: 'current-student', name: identity.name, color: identity.color });
-                }
-
-                return (
-                  <GridButton
-                    className={`linear-point-grid__point${item.x === 0 ? ' is-y-axis' : ''}${item.y === 0 ? ' is-x-axis' : ''}${isSelected ? ' is-selected' : ''}`}
-                    aria-label={formatWidgetLabel(POINT_GRID_COPY.point, { x: item.x, y: item.y })}
-                    pressed={isSelected}
-                    title={markers.map((marker) => marker.name).filter(Boolean).join(', ')}
-                    style={isSelected && isStudent ? { backgroundColor: identity.color, color: '#fff' } : undefined}
-                    disabled={!isStudent}
-                    onClick={() => setSelectedPoints((current) => (
-                      current.some((point) => point.x === item.x && point.y === item.y)
-                        ? current.filter((point) => point.x !== item.x || point.y !== item.y)
-                        : [...current, { x: item.x, y: item.y }]
-                    ))}
-                  >
-                    <span className="linear-point-grid__coordinates">{formatWidgetLabel(TABLE_COPY.pointCoordinates, item)}</span>
-                    {markers.length > 0 ? (
-                      <span className="linear-point-grid__markers" aria-hidden="true">
-                        {markers.map((marker) => (
-                          <span
-                            key={marker.id}
-                            className="linear-point-grid__marker"
-                            style={{ backgroundColor: marker.color }}
-                          />
-                        ))}
-                      </span>
-                    ) : null}
-                  </GridButton>
-                );
-              }}
-            />
-          </div>
-        </section>
+      {activeActivity.mode === 'venn-board' && activeItem ? (
+        <VennBoard
+          key={selectedItemId}
+          items={activeItem.points || []}
+          diagram={activeItem.diagram}
+          placements={activeGroupingPlacements}
+          invalidItemIds={evaluation.invalidIds}
+          activity={`linear-systems:${selectedActivityId}:${selectedItemId}`}
+          bankLabel={activeItem.bankLabel || PLACEMENT_COPY.groupingBank}
+          onChange={(nextPlacements) => {
+            setGroupingPlacementsByActivity((current) => ({
+              ...current,
+              [selectedActivityId]: {
+                ...(current[selectedActivityId] || {}),
+                [selectedItemId]: nextPlacements
+              }
+            }));
+          }}
+        />
       ) : null}
 
       {activeActivity.mode === 'grouping' ? (
@@ -1313,24 +1449,40 @@ export default function App({ role = 'student' }) {
       {activeActivity.mode === 'algebra' ? (
         <>
           <p className="linear-note">{ALGEBRA_COPY.solutionInstruction}</p>
-          {activeItem && activeItem.eliminationLatex ? (
+          {usesAlgebraTiles ? (
+            <AlgebraTiles
+              activity={`linear-systems:${selectedActivityId}:${selectedItemId}:substitution`}
+              mode={centerWidgetSettings.mode || 'equation'}
+              variables={centerWidgetSettings.variables || ['x', 'y']}
+              tiles={activeAlgebraTiles}
+              onTilesChange={(nextTiles) => {
+                setAlgebraTilesByItem((current) => ({
+                  ...current,
+                  [selectedItemId]: nextTiles
+                }));
+              }}
+            />
+          ) : null}
+          {!usesAlgebraTiles && activeItem && activeItem.eliminationLatex ? (
             <div className="linear-expression">
               <MathFormula formula={`\\(${activeItem.eliminationLatex}\\)`} />
             </div>
           ) : null}
-          <InputGrid
-            activity={`linear-systems:${selectedActivityId}`}
-            columns={ALGEBRA_COPY.columns}
-            labelClassName="activity-input-grid__label"
-            fields={ALGEBRA_COPY.fields.map((field) => ({
-              id: field.id,
-              label: field.label,
-              value: answer[field.id],
-              placeholder: formatWidgetLabel(ALGEBRA_COPY.example, { value: field.example }),
-              inputClassName: 'activity-input-grid__input',
-              onChange: (value) => setAnswer((prev) => ({ ...prev, [field.id]: value }))
-            }))}
-          />
+          {!usesAlgebraTiles ? (
+            <InputGrid
+              activity={`linear-systems:${selectedActivityId}`}
+              columns={ALGEBRA_COPY.columns}
+              labelClassName="activity-input-grid__label"
+              fields={ALGEBRA_COPY.fields.map((field) => ({
+                id: field.id,
+                label: field.label,
+                value: answer[field.id],
+                placeholder: formatWidgetLabel(ALGEBRA_COPY.example, { value: field.example }),
+                inputClassName: 'activity-input-grid__input',
+                onChange: (value) => setAnswer((prev) => ({ ...prev, [field.id]: value }))
+              }))}
+            />
+          ) : null}
         </>
       ) : null}
 
@@ -1388,7 +1540,7 @@ export default function App({ role = 'student' }) {
 
       {isTeacher ? (
         <>
-          {activeActivity.mode !== 'placement-board' && activeActivity.mode !== 'point-grid' && activeActivity.mode !== 'number-line' ? (
+          {activeActivity.mode !== 'placement-board' && activeActivity.mode !== 'cartesian-plane' && activeActivity.mode !== 'number-line' ? (
             <DataAccordion
               title={SERVICE_COPY.exerciseTitle}
               label={SERVICE_COPY.exerciseTitle}
@@ -1417,9 +1569,23 @@ export default function App({ role = 'student' }) {
             </DataAccordion>
           ) : null}
 
+          {activeActivity.mode === 'cartesian-plane' && isCartesianLineMode ? (
+            <DataAccordion
+              title={SERVICE_COPY.systemsTitle || SERVICE_COPY.equationsTitle}
+              label={SERVICE_COPY.systemLabel || SERVICE_COPY.equationLabel}
+              icon="??"
+              value={String(resolvedLineSystemIndex)}
+              options={lineSystemOptions}
+              onChange={setLessonLineSystem}
+              selectId="linear-system"
+            >
+              {graphVisibilityControl}
+            </DataAccordion>
+          ) : null}
+
           <GroupsAccordion
-            open={['point-grid', 'number-line'].includes(activeActivity.mode)}
-            nameColumnLabel={['placement-board', 'point-grid', 'number-line'].includes(activeActivity.mode) ? TABLE_COPY.groupColumn : ''}
+            open={['cartesian-plane', 'number-line'].includes(activeActivity.mode)}
+            nameColumnLabel={['placement-board', 'cartesian-plane', 'number-line'].includes(activeActivity.mode) ? TABLE_COPY.groupColumn : ''}
             participants={sortedParticipants}
             getRowStyle={(entry) => {
               const completed = String(entry?.answers?.completed || '') === '1';
@@ -1432,31 +1598,52 @@ export default function App({ role = 'student' }) {
             }}
             columns={[
               { key: 'activityCode', label: t('activities'), render: (entry) => entry.activityId || '-' },
-              ...(!['point-grid', 'number-line'].includes(activeActivity.mode) ? [{ key: 'itemId', label: TABLE_COPY.exerciseColumn, render: (entry) => entry.itemId || '-' }] : []),
+              ...(!['cartesian-plane', 'number-line'].includes(activeActivity.mode) ? [{ key: 'itemId', label: TABLE_COPY.exerciseColumn, render: (entry) => entry.itemId || '-' }] : []),
               ...(activeActivity.mode === 'placement-board' ? placementTableColumns : [
-                ...(activeActivity.mode === 'point-grid' ? [
-                  {
-                    key: 'assigned-equation',
-                    label: POINT_GRID_COPY.equationColumn,
-                    render: (entry) => POINT_GRID_EQUATIONS[entry.assignmentIndex % POINT_GRID_EQUATIONS.length]?.equation || '-'
-                  },
-                  {
-                    key: 'selected-point',
-                    label: POINT_GRID_COPY.pointColumn,
-                    render: (entry) => {
-                      const points = parseSelectedPoints(entry.answers?.selectedPoints);
-                      return points.length ? (
-                        <span className="linear-point-grid-student-selections">
-                          {points.map((point) => (
-                            <span className="linear-point-grid-student-selections__item" key={`${point.x},${point.y}`}>
-                              <span aria-hidden="true" style={{ backgroundColor: entry.color || '#3b82f6' }} />
-              {formatWidgetLabel(TABLE_COPY.pointCoordinates, point)}
-                            </span>
-                          ))}
-                        </span>
-                      ) : '-';
+                ...(activeActivity.mode === 'cartesian-plane' ? [
+                  ...(isCartesianLineMode ? [
+                    {
+                      key: 'assigned-system',
+                      label: POINT_GRID_COPY.equationColumn,
+                      render: (entry) => {
+                        if (!Number.isInteger(entry.assignmentIndex)) return '-';
+                        if (!activeCartesianSystems.length) return '-';
+                        const system = activeCartesianSystems[entry.assignmentIndex % activeCartesianSystems.length];
+                        if (!system?.equations?.length) return '-';
+                        return system.equations.join(' | ');
+                      }
+                    },
+                    {
+                      key: 'selected-lines',
+                      label: 'Ευθείες',
+                      render: (entry) => String(parseSelectedLines(entry.answers?.selectedLines).length || 0)
                     }
-                  }
+                  ] : [
+                    {
+                      key: 'assigned-equation',
+                      label: POINT_GRID_COPY.equationColumn,
+                      render: (entry) => activeCartesianEquations.length
+                        ? activeCartesianEquations[entry.assignmentIndex % activeCartesianEquations.length]?.equation || '-'
+                        : '-'
+                    },
+                    {
+                      key: 'selected-point',
+                      label: POINT_GRID_COPY.pointColumn,
+                      render: (entry) => {
+                        const points = parseSelectedPoints(entry.answers?.selectedPoints, activeCartesianSettings);
+                        return points.length ? (
+                          <span className="linear-point-grid-student-selections">
+                            {points.map((point) => (
+                              <span className="linear-point-grid-student-selections__item" key={`${point.x},${point.y}`}>
+                                <span aria-hidden="true" style={{ backgroundColor: entry.color || '#3b82f6' }} />
+                {formatWidgetLabel(TABLE_COPY.pointCoordinates, point)}
+                              </span>
+                            ))}
+                          </span>
+                        ) : '-';
+                      }
+                    }
+                  ])
                 ] : [
                   ...(activeActivity.mode === 'number-line' ? [
                     {

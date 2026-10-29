@@ -281,6 +281,10 @@
       "type": "activity-data",
       "config": {
         "settings": {},
+        "presentation": {
+          "leftWidgetTitle": "Έκφραση",
+          "answerLabel": "Απάντηση"
+        },
         "data": {
           "label": "Πολλαπλασιασμός μονωνύμων",
           "items": [
@@ -1382,6 +1386,8 @@
         "subtitleTemplate": "{objective}"
       },
       "labels": {
+        "expression": "Έκφραση",
+        "answer": "Απάντηση",
         "coefficient": "Συντελεστής",
         "degreeX": "Βαθμός ως προς x",
         "degreeY": "Βαθμός ως προς y",

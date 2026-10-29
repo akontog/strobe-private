@@ -103,6 +103,14 @@ const APP_DEFINITIONS = [
     kind: 'react'
   },
   {
+    slug: 'cartesian-plane-collab',
+    labId: 'cartesian-plane-collab',
+    title: 'Cartesian Plane',
+    description: 'Collaborative Cartesian plane with selectable points and distance feedback.',
+    roles: ['teacher', 'student', 'client'],
+    kind: 'react'
+  },
+  {
     slug: 'placement-board-collab',
     labId: 'placement-board-collab',
     title: 'Placement Board',

@@ -24,6 +24,7 @@ export { default as BlueNumberBox } from './primitives/BlueNumberBox';
 export { default as GridButton } from './primitives/GridButton';
 export { default as AlgebraTiles } from './resources/AlgebraTiles';
 export { default as NumberLine } from './resources/NumberLine';
+export { default as CartesianPlane, calculateCartesianDistances } from './resources/CartesianPlane';
 export { default as EntryGrid } from './resources/EntryGrid';
 export { default as InputGrid } from './resources/EntryGrid';
 export { useSessionInputLogger } from './activities/SessionLogContext';

@@ -84,7 +84,7 @@ export function SessionLogProvider({
 
   useEffect(() => {
     if (typeof document === 'undefined') return undefined;
-    const studentWaiting = role === 'student' && Boolean(app && !activeSessionId);
+    const studentWaiting = role === 'student' && Boolean(app && !activeSessionId) && app !== 'cartesian-plane-collab';
     document.body.classList.toggle('session-not-started-student', studentWaiting);
     return () => document.body.classList.remove('session-not-started-student');
   }, [activeSessionId, app, role]);

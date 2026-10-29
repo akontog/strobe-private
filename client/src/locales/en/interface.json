@@ -106,6 +106,20 @@
     "ariaLabel": "Shared options grid",
     "apply": "Apply settings"
   },
+  "cartesianPlane": {
+    "title": "Cartesian Plane",
+    "ariaLabel": "Interactive Cartesian plane",
+    "minX": "Minimum x",
+    "maxX": "Maximum x",
+    "minY": "Minimum y",
+    "maxY": "Maximum y",
+    "maxPoints": "Maximum number of points",
+    "targets": "Target points",
+    "targetsHelp": "Enter points as x,y pairs separated by semicolons.",
+    "pointCount": "Your points: {{count}}",
+    "pointCountLimit": "Your points: {{count}} / {{max}}",
+    "meanDistance": "Average distance to nearest target: {{distance}}"
+  },
   "vennCollab": {
     "setCount": "Number of sets",
     "setName": "Set {{number}} name",
@@ -365,7 +379,8 @@
       "algebra-tiles": "Algebra Tiles",
       "collaborative-geogebra": "GeoGebra",
       "collaborative-algebra-tiles": "Algebra Tiles (shared board)",
-      "options-grid": "Options Grid"
+      "options-grid": "Options Grid",
+      "cartesian-plane": "Cartesian Plane"
     },
     "resourceSettings": "Resource settings",
     "columns": "Columns",

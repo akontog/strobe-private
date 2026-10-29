@@ -269,10 +269,20 @@ Workshop, Activities και Sequences είναι τα τρία επίπεδα ο
 
 ## ActivitiesAccordion
 
+### Περιγραφή
+
+Επιλογή δραστηριότητας για workshops
+
 ## ChatAccordion
+
+### Περιγραφή
+
+Chat μεταξύ teacher και groups
 
 ## DataAccordion
 
 ## QrAccordion
 
-## StudentsAccordion
+## GroupsAccordion
+
+Συνδεδεμένοι μαθητές, ανάλογα με το resource και τις ιδιότητές του άλλη εικόνα στηλών

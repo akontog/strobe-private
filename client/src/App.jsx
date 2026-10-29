@@ -14,6 +14,7 @@ import CameraSpeedTest from './system/camera-speed-test/CameraSpeedTest';
 import GeoGebraCollabTool from './tools/geogebra-collab/GeoGebraCollabTool';
 import AlgebraTilesCollabTool from './tools/algebra-tiles-collab/AlgebraTilesCollabTool';
 import NumberLineCollabTool from './tools/number-line-collab/NumberLineCollabTool';
+import CartesianPlaneTool from './tools/cartesian-plane/CartesianPlaneTool';
 import VennCollabTool from './tools/venn-collab/VennCollabTool';
 import OptionsGridCollabTool from './tools/options-grid-collab/OptionsGridCollabTool';
 import PlacementBoardCollabTool from './tools/placement-board-collab/PlacementBoardCollabTool';
@@ -32,6 +33,7 @@ import { getAppSlug, getWorkshopPath } from './shared/utils/workshopPaths';
 const SESSION_ENABLED_APPS = new Set([
   'activity-runner',
   'geogebra-collab',
+  'cartesian-plane-collab',
   'options-grid-collab',
   'placement-board-collab',
   'input-grid-collab',
@@ -59,6 +61,7 @@ function App() {
   const currentSessionApp = routePath.startsWith('/workshops/activities/')
     ? 'activity-runner'
     : ['/tools/geogebra', '/tools/algebra-tiles', '/tools/number-line', '/tools/venn'].includes(routePath) ? 'geogebra-collab'
+      : routePath === '/tools/cartesian-plane' ? 'cartesian-plane-collab'
       : routePath === '/tools/options-grid' ? 'options-grid-collab'
       : routePath === '/tools/placement-board' ? 'placement-board-collab'
       : routePath === '/tools/input-grid' ? 'input-grid-collab'
@@ -102,6 +105,7 @@ function App() {
       || (routePath === '/tools/geogebra' ? 'geogebra-collab' : '')
       || (routePath === '/tools/algebra-tiles' ? 'algebra-tiles-collab' : '')
       || (routePath === '/tools/number-line' ? 'number-line-collab' : '')
+      || (routePath === '/tools/cartesian-plane' ? 'cartesian-plane-collab' : '')
       || (routePath === '/tools/options-grid' ? 'options-grid-collab' : '')
       || (routePath === '/tools/placement-board' ? 'placement-board-collab' : '')
       || (routePath === '/tools/input-grid' ? 'input-grid-collab' : '')
@@ -128,11 +132,12 @@ function App() {
       const timer = window.setInterval(preserveClassroomSelection, 5000);
       return () => window.clearInterval(timer);
     }
-    const roomId = ['geogebra-collab', 'algebra-tiles-collab', 'number-line-collab', 'options-grid-collab', 'placement-board-collab', 'input-grid-collab'].includes(activeTeacherLab)
+    const roomId = ['geogebra-collab', 'algebra-tiles-collab', 'number-line-collab', 'cartesian-plane-collab', 'options-grid-collab', 'placement-board-collab', 'input-grid-collab'].includes(activeTeacherLab)
       ? new URLSearchParams(location.search).get('room') || (routePath === '/tools/venn' ? 'venn-default' : ({
         'geogebra-collab': 'geogebra-default',
         'algebra-tiles-collab': 'algebra-tiles-default',
         'number-line-collab': 'number-line-default',
+        'cartesian-plane-collab': 'cartesian-plane-default',
         'options-grid-collab': 'options-grid-default',
         'placement-board-collab': 'placement-board-default',
         'input-grid-collab': 'input-grid-default'
@@ -191,6 +196,8 @@ function App() {
           ? `/tools/algebra-tiles?room=${encodeURIComponent(classroomRoomId || 'algebra-tiles-default')}`
           : classroomLab === 'number-line-collab'
             ? `/tools/number-line?room=${encodeURIComponent(classroomRoomId || 'number-line-default')}`
+          : classroomLab === 'cartesian-plane-collab'
+            ? `/tools/cartesian-plane?room=${encodeURIComponent(classroomRoomId || 'cartesian-plane-default')}`
           : classroomLab === 'options-grid-collab'
             ? `/tools/options-grid?room=${encodeURIComponent(classroomRoomId || 'options-grid-default')}`
           : classroomLab === 'placement-board-collab'
@@ -205,7 +212,7 @@ function App() {
       if (`${pathname}${location.search}` !== target) navigate(target, { replace: true });
       return;
     }
-    if (labRoute || pathname === '/client' || pathname === '/student' || pathname === '/tools/geogebra' || pathname === '/tools/algebra-tiles' || pathname === '/tools/number-line' || pathname === '/tools/venn' || pathname === '/tools/options-grid' || pathname === '/tools/placement-board' || pathname === '/tools/input-grid' || pathname === '/tools/vision') {
+    if (labRoute || pathname === '/client' || pathname === '/student' || pathname === '/tools/geogebra' || pathname === '/tools/algebra-tiles' || pathname === '/tools/number-line' || pathname === '/tools/cartesian-plane' || pathname === '/tools/venn' || pathname === '/tools/options-grid' || pathname === '/tools/placement-board' || pathname === '/tools/input-grid' || pathname === '/tools/vision') {
       navigate('/', { replace: true });
     }
   }, [authReady, classroomLab, classroomRoomId, classroomSelectionLoaded, location.search, navigate, pathname, role]);
@@ -323,9 +330,12 @@ function App() {
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || 'Η ενέργεια συνεδρίας απέτυχε.');
       setTeacherSession(teacherSession ? null : payload);
+      if (!teacherSession) {
+        window.dispatchEvent(new CustomEvent('strobe:session-started', { detail: { app } }));
+      }
       if (teacherSession) {
         window.dispatchEvent(new CustomEvent('strobe:session-ended', {
-          detail: { sessionId: teacherSession.sessionId }
+          detail: { sessionId: teacherSession.sessionId, app }
         }));
       }
     } catch (sessionError) {
@@ -358,6 +368,8 @@ function App() {
           ? `/tools/algebra-tiles?room=${encodeURIComponent(classroomRoomId || 'algebra-tiles-default')}`
           : classroomLab === 'number-line-collab'
             ? `/tools/number-line?room=${encodeURIComponent(classroomRoomId || 'number-line-default')}`
+          : classroomLab === 'cartesian-plane-collab'
+            ? `/tools/cartesian-plane?room=${encodeURIComponent(classroomRoomId || 'cartesian-plane-default')}`
           : classroomLab === 'options-grid-collab'
             ? `/tools/options-grid?room=${encodeURIComponent(classroomRoomId || 'options-grid-default')}`
           : classroomLab === 'placement-board-collab'
@@ -381,6 +393,8 @@ function App() {
           ? `/tools/algebra-tiles?room=${encodeURIComponent(classroomRoomId || 'algebra-tiles-default')}`
           : classroomLab === 'number-line-collab'
             ? `/tools/number-line?room=${encodeURIComponent(classroomRoomId || 'number-line-default')}`
+        : classroomLab === 'cartesian-plane-collab'
+          ? `/tools/cartesian-plane?room=${encodeURIComponent(classroomRoomId || 'cartesian-plane-default')}`
           : classroomLab === 'options-grid-collab'
             ? `/tools/options-grid?room=${encodeURIComponent(classroomRoomId || 'options-grid-default')}`
           : classroomLab === 'placement-board-collab'
@@ -415,6 +429,7 @@ function App() {
       { label: tNav('items.venn'), path: '/tools/venn' },
       { label: tNav('items.algebraTiles'), path: '/tools/algebra-tiles' },
       { label: tNav('items.numberLine'), path: '/tools/number-line' },
+      { label: tNav('items.cartesianPlane'), path: '/tools/cartesian-plane' },
       { label: tNav('items.geogebra'), path: '/tools/geogebra' },
       { label: tNav('items.vision'), path: '/tools/vision' }
     ] },
@@ -479,7 +494,7 @@ function App() {
           <StudentIdentityControl
             roleLabel={hasAdminAccess ? t('admin') : hasTeacherAccess ? t('teacher') : t('student')}
             hideIdentityFields={hasTeacherAccess}
-            roleControl={<RoleAccessControl role={role} roles={roles} username={teacherUsername} connected={serverConnected} onLogin={loginTeacher} onRoleChange={changeRole} labels={{ admin: t('admin'), teacher: t('teacher'), student: t('student'), username: t('username'), password: tNav('password'), login: tNav('login'), connected: tNav('connected'), disconnected: tNav('disconnected') }} />}
+            roleControl={<RoleAccessControl role={role} roles={roles} username={teacherUsername} connected={serverConnected} onLogin={loginTeacher} onRoleChange={changeRole} labels={{ admin: t('admin'), teacher: t('teacher'), student: t('group'), username: t('username'), password: tNav('password'), login: tNav('login'), connected: tNav('connected'), disconnected: tNav('disconnected') }} />}
           />
           <LanguageSwitcher sessionControl={hasTeacherAccess ? (
             <div className="locale-session-controls">
@@ -539,6 +554,7 @@ function App() {
           <Route path="/tools/geogebra" element={studentToolOnly('geogebra-collab', <GeoGebraCollabTool canSelectRoom={hasTeacherAccess} />)} />
           <Route path="/tools/algebra-tiles" element={studentToolOnly('algebra-tiles-collab', <AlgebraTilesCollabTool role={appRole} />)} />
           <Route path="/tools/number-line" element={studentToolOnly('number-line-collab', <NumberLineCollabTool role={appRole} />)} />
+          <Route path="/tools/cartesian-plane" element={studentToolOnly('cartesian-plane-collab', <CartesianPlaneTool role={appRole} />)} />
           <Route path="/tools/venn" element={studentToolOnly('geogebra-collab', <VennCollabTool role={appRole} />)} />
           <Route path="/tools/options-grid" element={studentToolOnly('options-grid-collab', <OptionsGridCollabTool role={appRole} />)} />
           <Route path="/tools/placement-board" element={studentToolOnly('placement-board-collab', <PlacementBoardCollabTool role={appRole} />)} />

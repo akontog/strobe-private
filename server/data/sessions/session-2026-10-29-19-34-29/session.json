@@ -1,0 +1,15 @@
+{
+  "sessionId": "session-2026-10-29-19-34-29",
+  "app": "linear-systems-lab",
+  "startedAt": "2026-10-29T17:34:29.744Z",
+  "endedAt": null,
+  "teacherId": "antonis",
+  "students": [
+    "pp"
+  ],
+  "studentScores": [],
+  "activity": "7. Αλγεβρική επίλυση με αντικατάσταση (Algebra Tiles)",
+  "chatEnabled": false,
+  "scoreVisible": true,
+  "feedbackEnabled": true
+}

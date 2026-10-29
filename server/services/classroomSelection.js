@@ -17,12 +17,13 @@ function setActiveLab(slug, roomId = '') {
     return activeLabSlug;
   }
 
-  if (normalizedSlug === 'geogebra-collab' || normalizedSlug === 'algebra-tiles-collab' || normalizedSlug === 'number-line-collab' || normalizedSlug === 'options-grid-collab' || normalizedSlug === 'placement-board-collab' || normalizedSlug === 'input-grid-collab') {
+  if (normalizedSlug === 'geogebra-collab' || normalizedSlug === 'algebra-tiles-collab' || normalizedSlug === 'number-line-collab' || normalizedSlug === 'cartesian-plane-collab' || normalizedSlug === 'options-grid-collab' || normalizedSlug === 'placement-board-collab' || normalizedSlug === 'input-grid-collab') {
     activeLabSlug = normalizedSlug;
     const fallbackRoom = {
       'geogebra-collab': 'geogebra-default',
       'algebra-tiles-collab': 'algebra-tiles-default',
       'number-line-collab': 'number-line-default',
+      'cartesian-plane-collab': 'cartesian-plane-default',
       'options-grid-collab': 'options-grid-default',
       'placement-board-collab': 'placement-board-default',
       'input-grid-collab': 'input-grid-default'
@@ -70,11 +71,12 @@ function getActiveSelection() {
   const app = getActiveLab();
   return {
     app,
-    roomId: ['geogebra-collab', 'algebra-tiles-collab', 'number-line-collab', 'options-grid-collab', 'placement-board-collab', 'input-grid-collab'].includes(app)
+    roomId: ['geogebra-collab', 'algebra-tiles-collab', 'number-line-collab', 'cartesian-plane-collab', 'options-grid-collab', 'placement-board-collab', 'input-grid-collab'].includes(app)
       ? activeRoomId || ({
         'geogebra-collab': 'geogebra-default',
         'algebra-tiles-collab': 'algebra-tiles-default',
         'number-line-collab': 'number-line-default',
+        'cartesian-plane-collab': 'cartesian-plane-default',
         'options-grid-collab': 'options-grid-default',
         'placement-board-collab': 'placement-board-default',
         'input-grid-collab': 'input-grid-default'

@@ -8,6 +8,7 @@
   "teacher": "Teacher",
   "admin": "Admin",
   "student": "Student",
+  "group": "Group",
   "settings": "Settings",
   "activityGeneralSettings": "General activity settings",
   "activityResourceSettings": "Resource settings",
