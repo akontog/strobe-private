@@ -250,6 +250,19 @@ function extractSystemEquations(activeItem) {
   return [];
 }
 
+function toEquationSides(equation) {
+  const source = String(equation || '');
+  const separator = source.indexOf('=');
+  if (separator < 0) {
+    return null;
+  }
+
+  return {
+    left: source.slice(0, separator).trim(),
+    right: source.slice(separator + 1).trim()
+  };
+}
+
 export default function App({ role = 'student' }) {
   const { t } = useTranslation('interface');
   const sessionLogging = useSessionInputLogger();
@@ -347,6 +360,14 @@ export default function App({ role = 'student' }) {
   const activeItem = useMemo(
     () => activeItems.find((item) => item.id === selectedItemId) || activeItems[0] || null,
     [activeItems, selectedItemId]
+  );
+  const activeAlgebraTiles = Array.isArray(algebraTilesByItem[selectedItemId]) ? algebraTilesByItem[selectedItemId] : [];
+  const activeSystemEquationSides = useMemo(
+    () => extractSystemEquations(activeItem)
+      .map(toEquationSides)
+      .filter(Boolean)
+      .slice(0, 2),
+    [activeItem]
   );
 
   const groupingGroups = useMemo(
@@ -783,6 +804,38 @@ export default function App({ role = 'student' }) {
       return { ready: false, feedback: '', invalidIds: [], payload: null };
     }
 
+    const algebraTilesWidget = activeActivity.widgets?.find((widget) => widget.region === 'center' && widget.type === 'algebra-tiles');
+    const tileScoring = algebraTilesWidget?.settings?.tileScoring;
+    if (activeActivity.mode === 'algebra' && Array.isArray(tileScoring?.rows) && activeItem) {
+      const rows = tileScoring.rows.map((row) => {
+        const equationTiles = activeAlgebraTiles.filter((tile) => (Number.isInteger(tile.equationIndex) ? tile.equationIndex : 0) === row.equationIndex);
+        const leftTiles = equationTiles.filter((tile) => tile.side === 'left');
+        const rightTiles = equationTiles.filter((tile) => tile.side === 'right');
+        const expectedValue = Number(activeItem.expected?.[row.expectedKey]);
+        const correctLeft = leftTiles.length === 1 && leftTiles[0].type === row.variable && leftTiles[0].sign === 1;
+        const correctRight = Number.isInteger(expectedValue)
+          && rightTiles.length === expectedValue
+          && rightTiles.every((tile) => tile.type === 'one' && tile.sign === 1);
+        return { ...row, expectedValue, correct: correctLeft && correctRight };
+      });
+      const correctCount = rows.filter((row) => row.correct).length;
+      const maxScore = rows.reduce((total, row) => total + (Number(row.points) || 0), 0);
+      const score = rows.reduce((total, row) => total + (row.correct ? Number(row.points) || 0 : 0), 0);
+      return {
+        ready: true,
+        feedback: '',
+        invalidIds: [],
+        payload: {
+          completed: correctCount === rows.length ? '1' : '0',
+          score,
+          maxScore,
+          correctRows: correctCount,
+          totalRows: rows.length,
+          tileSolution: rows.map(({ equationIndex, variable, expectedValue, correct }) => ({ equationIndex, variable, expectedValue, correct }))
+        }
+      };
+    }
+
     const expected = activeItem.expected || activeItem.correct;
     const answerX = normalizeText(answer.x);
     const answerY = normalizeText(answer.y);
@@ -804,7 +857,7 @@ export default function App({ role = 'student' }) {
         y: answerY
       }
     };
-  }, [activeActivity.mode, activeCartesianEquations, activeCartesianSettings.distanceTolerance, activeEquationInputs.equation1, activeEquationInputs.equation2, activeGroupingPlacements, activeItem, activeItems, activePlacementItems, activePlacementPlacements, answer.x, answer.y, assignedEquationIndex, cartesianLineLimit, coordinateLines.length, isCartesianLineMode, numberLineMarks, selectedLines, selectedPoints, t]);
+  }, [activeActivity.mode, activeActivity.widgets, activeAlgebraTiles, activeCartesianEquations, activeCartesianSettings.distanceTolerance, activeEquationInputs.equation1, activeEquationInputs.equation2, activeGroupingPlacements, activeItem, activeItems, activePlacementItems, activePlacementPlacements, answer.x, answer.y, assignedEquationIndex, cartesianLineLimit, coordinateLines.length, isCartesianLineMode, numberLineMarks, selectedLines, selectedPoints, t]);
 
   useEffect(() => {
     setInvalidGroupingItemIds(evaluation.invalidIds);
@@ -878,7 +931,11 @@ export default function App({ role = 'student' }) {
         }
 
         if (Array.isArray(message.participants)) {
-          setParticipants(message.participants);
+          setParticipants((current) => (
+            JSON.stringify(current) === JSON.stringify(message.participants)
+              ? current
+              : message.participants
+          ));
           const ownParticipant = message.participants.find((participant) => participant.id === studentSocketIdRef.current);
           if (ownParticipant) {
             setAssignedEquationIndex(Number.isInteger(ownParticipant.assignmentIndex) ? ownParticipant.assignmentIndex : null);
@@ -981,7 +1038,12 @@ export default function App({ role = 'student' }) {
       try {
         const response = await fetch('/api/session-logs/active/linear-systems-lab/students', { cache: 'no-store' });
         const payload = response.ok ? await response.json() : null;
-        if (!cancelled) setSessionLogParticipants(Array.isArray(payload?.students) ? payload.students : []);
+        if (!cancelled) {
+          const nextStudents = Array.isArray(payload?.students) ? payload.students : [];
+          setSessionLogParticipants((current) => (
+            JSON.stringify(current) === JSON.stringify(nextStudents) ? current : nextStudents
+          ));
+        }
       } catch {
         if (!cancelled) setSessionLogParticipants([]);
       } finally {
@@ -1246,7 +1308,6 @@ export default function App({ role = 'student' }) {
   const centerWidget = activeActivity.widgets?.find((widget) => widget.region === 'center') || {};
   const centerWidgetSettings = centerWidget.settings || {};
   const usesAlgebraTiles = activeActivity.mode === 'algebra' && centerWidget.type === 'algebra-tiles';
-  const activeAlgebraTiles = Array.isArray(algebraTilesByItem[selectedItemId]) ? algebraTilesByItem[selectedItemId] : [];
   const numberLineSettings = activeActivity.resourceSettings?.numberLine || {};
   const assignedPointEquation = Number.isInteger(assignedEquationIndex)
     && activeCartesianEquations.length
@@ -1362,7 +1423,7 @@ export default function App({ role = 'student' }) {
             {...numberLineSettings}
             roomId="linear-systems-x-intercepts"
             sessionApp="linear-systems-lab"
-            canEdit={isStudent}
+            canEdit={isTeacher || isStudent}
             onMarksChange={setNumberLineMarks}
           />
         </section>
@@ -1448,12 +1509,17 @@ export default function App({ role = 'student' }) {
 
       {activeActivity.mode === 'algebra' ? (
         <>
-          <p className="linear-note">{ALGEBRA_COPY.solutionInstruction}</p>
+          {!centerWidgetSettings.hideHints ? <p className="linear-note">{ALGEBRA_COPY.solutionInstruction}</p> : null}
           {usesAlgebraTiles ? (
             <AlgebraTiles
               activity={`linear-systems:${selectedActivityId}:${selectedItemId}:substitution`}
-              mode={centerWidgetSettings.mode || 'equation'}
+              mode={centerWidgetSettings.mode || (activeSystemEquationSides.length === 2 ? 'systems' : 'equation')}
               variables={centerWidgetSettings.variables || ['x', 'y']}
+              equationSides={Array.isArray(centerWidgetSettings.initialEquations)
+                ? centerWidgetSettings.initialEquations.map(toEquationSides).filter(Boolean)
+                : activeSystemEquationSides.length ? activeSystemEquationSides : undefined}
+              showSelectionHint={!centerWidgetSettings.hideHints}
+              equationsFromTiles={Boolean(centerWidgetSettings.equationsFromTiles)}
               tiles={activeAlgebraTiles}
               onTilesChange={(nextTiles) => {
                 setAlgebraTilesByItem((current) => ({
@@ -1546,7 +1612,11 @@ export default function App({ role = 'student' }) {
               label={SERVICE_COPY.exerciseTitle}
               icon="??"
               value={selectedItemId}
-              options={activeItems.map((item, index) => ({ value: item.id, label: `${index + 1}.` }))}
+              options={activeItems.map((item, index) => {
+                const equations = extractSystemEquations(item);
+                const systemLabel = equations.length ? ` ${equations.join(' | ')}` : '';
+                return { value: item.id, label: `${index + 1}.${systemLabel}` };
+              })}
               onChange={setLessonItem}
               emptyLabel={SERVICE_COPY.noExercises}
               selectId="linear-exercise"
@@ -1672,4 +1742,3 @@ export default function App({ role = 'student' }) {
     </>
   );
 }
-

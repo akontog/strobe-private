@@ -183,6 +183,7 @@
     "prompt": "Prompt",
     "modes": {
       "equation": "Equation",
+      "systems": "Systems",
       "area": "Area",
       "simplified": "Simplified"
     },

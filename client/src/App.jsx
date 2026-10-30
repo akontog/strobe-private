@@ -448,10 +448,10 @@ function App() {
   return (
     <SessionLogProvider app={currentSessionApp} role={appRole} sessionId={teacherSession?.sessionId}>
     <div className="client-shell">
-      <header className="client-topbar" onMouseLeave={() => setActiveMenu('')}>
+      <header className="client-topbar">
         <Link className="client-home-link" to="/" aria-label="Strobe"><img src="/icons/strobelogo.svg" alt="Strobe" /></Link>
         <div className="client-topbar-main">
-          <nav className="client-section-nav" aria-label={tNav('sectionNavigation')} onMouseLeave={() => setActiveMenu('')}>
+          <nav className="client-section-nav" aria-label={tNav('sectionNavigation')}>
             {Object.entries(menuGroups).map(([key, group]) => {
               if (!hasTeacherAccess || (key === 'system' && !hasAdminAccess)) return null;
               return (
@@ -459,6 +459,7 @@ function App() {
                   key={key}
                   className="client-section-nav-item"
                   onMouseEnter={() => setActiveMenu(key)}
+                  onMouseLeave={() => setActiveMenu((current) => current === key ? '' : current)}
                 >
                   <button
                     type="button"
@@ -479,6 +480,10 @@ function App() {
                           key={item.path}
                           className="client-submenu__item"
                           to={item.path.startsWith('/workshops/') ? `${item.path}/${hasTeacherAccess ? 'teacher' : 'student'}` : item.path}
+                          onClick={() => {
+                            setClickedMenu('');
+                            setActiveMenu('');
+                          }}
                         >
                           {item.label}
                         </Link>

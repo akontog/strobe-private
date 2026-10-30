@@ -5,7 +5,50 @@ const SESSIONS_DIR = path.join(__dirname, '..', 'data', 'sessions');
 const SETTINGS_FILE = path.join(__dirname, '..', 'data', 'session-settings.json');
 const activeSessions = new Map();
 const recentlyEndedSessions = new Map();
+const activeStudentSnapshots = new Map();
+const activeChatSnapshots = new Map();
 let sequence = 0;
+
+function readAppendedEvents(filename, cache) {
+  let stats;
+  try {
+    stats = fs.statSync(filename);
+  } catch {
+    return { records: [], reset: false };
+  }
+
+  const reset = cache.filename !== filename || stats.size < cache.offset;
+  if (reset) {
+    cache.filename = filename;
+    cache.offset = 0;
+    cache.pending = '';
+  }
+  if (stats.size === cache.offset) return { records: [], reset };
+
+  let descriptor;
+  try {
+    descriptor = fs.openSync(filename, 'r');
+    const chunk = Buffer.alloc(stats.size - cache.offset);
+    const bytesRead = fs.readSync(descriptor, chunk, 0, chunk.length, cache.offset);
+    cache.offset += bytesRead;
+    const lines = `${cache.pending}${chunk.subarray(0, bytesRead).toString('utf8')}`.split(/\r?\n/);
+    cache.pending = lines.pop() || '';
+    const records = [];
+    lines.forEach((line) => {
+      if (!line) return;
+      try {
+        records.push(JSON.parse(line));
+      } catch {
+        // Ignore malformed or incomplete event lines.
+      }
+    });
+    return { records, reset };
+  } catch {
+    return { records: [], reset };
+  } finally {
+    if (descriptor !== undefined) fs.closeSync(descriptor);
+  }
+}
 
 function readAppSettings() {
   try {
@@ -108,60 +151,61 @@ function getChatMessages(sessionId) {
   const session = getActiveSession(sessionId);
   if (!session) return [];
   const filename = path.join(session.directory, 'events.jsonl');
-  return fs.readFileSync(filename, 'utf8').split(/\r?\n/).filter(Boolean).flatMap((line) => {
-    try {
-      const record = JSON.parse(line);
-      if (record.event !== 'chat.message') return [];
-      return [{ seq: record.seq, t: record.t, sender: record.sender || '', message: record.data?.message || '' }];
-    } catch {
-      return [];
+  let cache = activeChatSnapshots.get(sessionId);
+  if (!cache) {
+    cache = { filename, offset: 0, pending: '', messages: [] };
+    activeChatSnapshots.set(sessionId, cache);
+  }
+  const result = readAppendedEvents(filename, cache);
+  if (result.reset) cache.messages = [];
+  result.records.forEach((record) => {
+    if (record.event === 'chat.message') {
+      cache.messages.push({ seq: record.seq, t: record.t, sender: record.sender || '', message: record.data?.message || '' });
     }
   });
+  return cache.messages;
 }
 
 function getActiveSessionStudents(app, activityPrefix = '') {
   const sessionId = getActiveSessionForApp(app);
   const session = sessionId ? getActiveSession(sessionId) : null;
   if (!session) return [];
-
-  const students = new Map((session.metadata.students || []).map((name) => [name, {
-    id: name,
-    name,
-    activityId: '',
-    answers: {}
-  }]));
   const filename = path.join(session.directory, 'events.jsonl');
-
-  fs.readFileSync(filename, 'utf8').split(/\r?\n/).filter(Boolean).forEach((line) => {
-    try {
-      const record = JSON.parse(line);
-      if (!['activity.input.changed', 'activity.tiles.changed', 'grouping.item.moved'].includes(record.event) || !record.student) return;
-      if (activityPrefix && !String(record.activity || '').startsWith(activityPrefix)) return;
-
-      const student = students.get(record.student);
-      if (!student) return;
-      const activityId = String(record.activity || '').split(':')[1] || '';
-      student.activityId = activityId;
-      if (!activityId) return;
-      student.answers[activityId] ||= {};
-      if (record.event === 'activity.tiles.changed') {
-        student.answers[activityId].tiles = Array.isArray(record.data?.tiles) ? record.data.tiles : [];
-        return;
-      }
-      if (record.event === 'grouping.item.moved') {
-        const itemId = String(record.data?.itemId || '').trim();
-        if (itemId) student.answers[activityId][itemId] = String(record.data?.to || '');
-        return;
-      }
-      const field = String(record.data?.field || '').trim();
-      if (!field) return;
-      student.answers[activityId][field] = String(record.data?.value ?? '');
-    } catch {
-      // Ignore malformed event records and keep the remaining student data.
-    }
+  const cacheKey = `${sessionId}:${activityPrefix}`;
+  let cache = activeStudentSnapshots.get(cacheKey);
+  if (!cache) {
+    cache = { filename, offset: 0, pending: '', students: new Map() };
+    activeStudentSnapshots.set(cacheKey, cache);
+  }
+  const result = readAppendedEvents(filename, cache);
+  if (result.reset) cache.students.clear();
+  (session.metadata.students || []).forEach((name) => {
+    if (!cache.students.has(name)) cache.students.set(name, { id: name, name, activityId: '', answers: {} });
   });
 
-  return [...students.values()];
+  result.records.forEach((record) => {
+    if (!['activity.input.changed', 'activity.tiles.changed', 'grouping.item.moved'].includes(record.event) || !record.student) return;
+    if (activityPrefix && !String(record.activity || '').startsWith(activityPrefix)) return;
+    const student = cache.students.get(record.student);
+    if (!student) return;
+    const activityId = String(record.activity || '').split(':')[1] || '';
+    student.activityId = activityId;
+    if (!activityId) return;
+    student.answers[activityId] ||= {};
+    if (record.event === 'activity.tiles.changed') {
+      student.answers[activityId].tiles = Array.isArray(record.data?.tiles) ? record.data.tiles : [];
+      return;
+    }
+    if (record.event === 'grouping.item.moved') {
+      const itemId = String(record.data?.itemId || '').trim();
+      if (itemId) student.answers[activityId][itemId] = String(record.data?.to || '');
+      return;
+    }
+    const field = String(record.data?.field || '').trim();
+    if (field) student.answers[activityId][field] = String(record.data?.value ?? '');
+  });
+
+  return [...cache.students.values()];
 }
 
 function appendRecord(sessionId, filename, record) {
@@ -189,6 +233,10 @@ function endSession(sessionId) {
   session.metadata.endedAt = new Date().toISOString();
   fs.writeFileSync(path.join(session.directory, 'session.json'), `${JSON.stringify(session.metadata, null, 2)}\n`);
   activeSessions.delete(sessionId);
+  activeChatSnapshots.delete(sessionId);
+  for (const key of activeStudentSnapshots.keys()) {
+    if (key.startsWith(`${sessionId}:`)) activeStudentSnapshots.delete(key);
+  }
   recentlyEndedSessions.set(sessionId, { session, expiresAt: Date.now() + 5 * 60 * 1000 });
   return session.metadata;
 }

@@ -89,6 +89,8 @@ export default function CartesianPlane({
   mode = 'points',
   maxPoints = null,
   maxLines = null,
+  showLineCount = true,
+  showLineDrawHelp = true,
   canEdit: canEditOverride,
   onPointsChange,
   onLinesChange,
@@ -413,8 +415,8 @@ export default function CartesianPlane({
       <div className="cartesian-plane-resource__legend" aria-live="polite">
         {activeMode === 'lines' ? (
           <>
-            <span>{t(lineLimit === null ? 'cartesianPlane.lineCount' : 'cartesianPlane.lineCountLimit', { count: ownLines.length, max: lineLimit })}</span>
-            <span>{t('cartesianPlane.lineDrawHelp')}</span>
+            {showLineCount ? <span>{t(lineLimit === null ? 'cartesianPlane.lineCount' : 'cartesianPlane.lineCountLimit', { count: ownLines.length, max: lineLimit })}</span> : null}
+            {showLineDrawHelp ? <span>{t('cartesianPlane.lineDrawHelp')}</span> : null}
           </>
         ) : <span>{t(pointLimit === null ? 'cartesianPlane.pointCount' : 'cartesianPlane.pointCountLimit', { count: ownPoints.length, max: pointLimit })}</span>}
         {distanceSummary.meanDistance !== null ? <span>{t('cartesianPlane.meanDistance', { distance: distanceSummary.meanDistance.toFixed(2) })}</span> : null}

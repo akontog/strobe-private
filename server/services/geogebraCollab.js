@@ -608,7 +608,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
       if (!isElevated(user)) return;
       const room = getAlgebraTileRoom(data.roomId);
       if (algebraTileSocketRooms.get(socket.id) !== room) return;
-      const mode = ['equation', 'area', 'simplified'].includes(data.mode) ? data.mode : null;
+      const mode = ['equation', 'systems', 'area', 'simplified'].includes(data.mode) ? data.mode : null;
       if (!mode) return;
       room.mode = mode;
       io.to(room.id).emit('algebra-tiles:state', { roomId: room.id, mode: room.mode, exerciseId: room.exerciseId, promptExpression: room.promptExpression, tiles: room.tiles });
@@ -657,6 +657,7 @@ function initGeogebraCollab({ io, recordCommunication, sessionManager, geogebraL
           orientation: tile.orientation === 'vertical' ? 'vertical' : 'horizontal',
           x: Math.max(0, Math.min(500, Number(tile.x))),
           y: Math.max(0, Math.min(500, Number(tile.y))),
+          ...(Number.isInteger(Number(tile.equationIndex)) ? { equationIndex: Math.max(0, Math.min(1, Number(tile.equationIndex))) } : {}),
           side: tile.side === 'right' ? 'right' : 'left'
         }));
       io.to(room.id).emit('algebra-tiles:state', { roomId: room.id, mode: room.mode, exerciseId: room.exerciseId, promptExpression: room.promptExpression, tiles: room.tiles });

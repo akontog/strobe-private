@@ -102,10 +102,11 @@
                   "correctGroupId": "g1"
                 },
                 {
-                  "id": "a2",
-                  "label": "8x^2y",
-                  "correctGroupId": "g1"
+                  "id": "c2",
+                  "label": "-5x^3y",
+                  "correctGroupId": "g3"
                 },
+                
                 {
                   "id": "b1",
                   "label": "4xy^2",
@@ -122,9 +123,9 @@
                   "correctGroupId": "g3"
                 },
                 {
-                  "id": "c2",
-                  "label": "-5x^3y",
-                  "correctGroupId": "g3"
+                  "id": "a2",
+                  "label": "8x^2y",
+                  "correctGroupId": "g1"
                 }
               ],
               "correctAnswers": {

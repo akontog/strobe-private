@@ -32,32 +32,18 @@
                   "equation": "y = 2x + 1",
                   "items": [
                     {
-                      "id": "expr-1-p-1",
-                      "content": "(0, 1)",
-                      "x": 0,
-                      "y": 1,
-                      "correctGroupId": "verifies"
-                    },
-                    {
-                      "id": "expr-1-p-2",
-                      "content": "(1, 3)",
-                      "x": 1,
-                      "y": 3,
-                      "correctGroupId": "verifies"
-                    },
-                    {
-                      "id": "expr-1-p-3",
-                      "content": "(2, 5)",
-                      "x": 2,
-                      "y": 5,
-                      "correctGroupId": "verifies"
-                    },
-                    {
                       "id": "expr-1-p-4",
                       "content": "(0, 4)",
                       "x": 0,
                       "y": 4,
                       "correctGroupId": "does-not-verify"
+                    },
+                    {
+                      "id": "expr-1-p-1",
+                      "content": "(0, 1)",
+                      "x": 0,
+                      "y": 1,
+                      "correctGroupId": "verifies"
                     },
                     {
                       "id": "expr-1-p-5",
@@ -67,11 +53,25 @@
                       "correctGroupId": "does-not-verify"
                     },
                     {
+                      "id": "expr-1-p-2",
+                      "content": "(1, 3)",
+                      "x": 1,
+                      "y": 3,
+                      "correctGroupId": "verifies"
+                    },
+                    {
                       "id": "expr-1-p-6",
                       "content": "(0, 3)",
                       "x": 0,
                       "y": 3,
                       "correctGroupId": "does-not-verify"
+                    },
+                    {
+                      "id": "expr-1-p-3",
+                      "content": "(2, 5)",
+                      "x": 2,
+                      "y": 5,
+                      "correctGroupId": "verifies"
                     },
                     {
                       "id": "expr-1-p-7",
@@ -115,20 +115,6 @@
                       "correctGroupId": "does-not-verify"
                     },
                     {
-                      "id": "expr-2-p-2",
-                      "content": "(1, 3)",
-                      "x": 1,
-                      "y": 3,
-                      "correctGroupId": "does-not-verify"
-                    },
-                    {
-                      "id": "expr-2-p-3",
-                      "content": "(2, 5)",
-                      "x": 2,
-                      "y": 5,
-                      "correctGroupId": "does-not-verify"
-                    },
-                    {
                       "id": "expr-2-p-4",
                       "content": "(0, 4)",
                       "x": 0,
@@ -136,11 +122,25 @@
                       "correctGroupId": "verifies"
                     },
                     {
+                      "id": "expr-2-p-2",
+                      "content": "(1, 3)",
+                      "x": 1,
+                      "y": 3,
+                      "correctGroupId": "does-not-verify"
+                    },
+                    {
                       "id": "expr-2-p-5",
                       "content": "(2, 2)",
                       "x": 2,
                       "y": 2,
                       "correctGroupId": "verifies"
+                    },
+                    {
+                      "id": "expr-2-p-3",
+                      "content": "(2, 5)",
+                      "x": 2,
+                      "y": 5,
+                      "correctGroupId": "does-not-verify"
                     },
                     {
                       "id": "expr-2-p-6",
@@ -191,6 +191,13 @@
                       "correctGroupId": "does-not-verify"
                     },
                     {
+                      "id": "expr-3-p-6",
+                      "content": "(0, 3)",
+                      "x": 0,
+                      "y": 3,
+                      "correctGroupId": "verifies"
+                    },
+                    {
                       "id": "expr-3-p-2",
                       "content": "(1, 3)",
                       "x": 1,
@@ -210,20 +217,6 @@
                       "x": 0,
                       "y": 4,
                       "correctGroupId": "does-not-verify"
-                    },
-                    {
-                      "id": "expr-3-p-5",
-                      "content": "(2, 2)",
-                      "x": 2,
-                      "y": 2,
-                      "correctGroupId": "does-not-verify"
-                    },
-                    {
-                      "id": "expr-3-p-6",
-                      "content": "(0, 3)",
-                      "x": 0,
-                      "y": 3,
-                      "correctGroupId": "verifies"
                     },
                     {
                       "id": "expr-3-p-7",
@@ -252,6 +245,13 @@
                       "x": 3,
                       "y": 5,
                       "correctGroupId": "does-not-verify"
+                    },
+                    {
+                      "id": "expr-3-p-5",
+                      "content": "(2, 2)",
+                      "x": 2,
+                      "y": 2,
+                      "correctGroupId": "does-not-verify"
                     }
                   ]
                 },
@@ -267,11 +267,25 @@
                       "correctGroupId": "does-not-verify"
                     },
                     {
+                      "id": "expr-4-p-7",
+                      "content": "(-2, 0)",
+                      "x": -2,
+                      "y": 0,
+                      "correctGroupId": "verifies"
+                    },
+                    {
                       "id": "expr-4-p-2",
                       "content": "(1, 3)",
                       "x": 1,
                       "y": 3,
                       "correctGroupId": "does-not-verify"
+                    },
+                    {
+                      "id": "expr-4-p-8",
+                      "content": "(-2, 5)",
+                      "x": -2,
+                      "y": 5,
+                      "correctGroupId": "verifies"
                     },
                     {
                       "id": "expr-4-p-3",
@@ -302,20 +316,6 @@
                       "correctGroupId": "does-not-verify"
                     },
                     {
-                      "id": "expr-4-p-7",
-                      "content": "(-2, 0)",
-                      "x": -2,
-                      "y": 0,
-                      "correctGroupId": "verifies"
-                    },
-                    {
-                      "id": "expr-4-p-8",
-                      "content": "(-2, 5)",
-                      "x": -2,
-                      "y": 5,
-                      "correctGroupId": "verifies"
-                    },
-                    {
                       "id": "expr-4-p-9",
                       "content": "(1, 1)",
                       "x": 1,
@@ -336,6 +336,20 @@
                   "equation": "0x + 0y = 5",
                   "items": [
                     {
+                      "id": "expr-5-p-3",
+                      "content": "(2, 5)",
+                      "x": 2,
+                      "y": 5,
+                      "correctGroupId": "does-not-verify"
+                    },
+                    {
+                      "id": "expr-5-p-8",
+                      "content": "(-2, 5)",
+                      "x": -2,
+                      "y": 5,
+                      "correctGroupId": "does-not-verify"
+                    },
+                    {
                       "id": "expr-5-p-1",
                       "content": "(0, 1)",
                       "x": 0,
@@ -343,16 +357,16 @@
                       "correctGroupId": "does-not-verify"
                     },
                     {
-                      "id": "expr-5-p-2",
-                      "content": "(1, 3)",
-                      "x": 1,
+                      "id": "expr-5-p-6",
+                      "content": "(0, 3)",
+                      "x": 0,
                       "y": 3,
                       "correctGroupId": "does-not-verify"
                     },
                     {
-                      "id": "expr-5-p-3",
-                      "content": "(2, 5)",
-                      "x": 2,
+                      "id": "expr-5-p-10",
+                      "content": "(3, 5)",
+                      "x": 3,
                       "y": 5,
                       "correctGroupId": "does-not-verify"
                     },
@@ -364,31 +378,10 @@
                       "correctGroupId": "does-not-verify"
                     },
                     {
-                      "id": "expr-5-p-5",
-                      "content": "(2, 2)",
-                      "x": 2,
-                      "y": 2,
-                      "correctGroupId": "does-not-verify"
-                    },
-                    {
-                      "id": "expr-5-p-6",
-                      "content": "(0, 3)",
-                      "x": 0,
+                      "id": "expr-5-p-2",
+                      "content": "(1, 3)",
+                      "x": 1,
                       "y": 3,
-                      "correctGroupId": "does-not-verify"
-                    },
-                    {
-                      "id": "expr-5-p-7",
-                      "content": "(-2, 0)",
-                      "x": -2,
-                      "y": 0,
-                      "correctGroupId": "does-not-verify"
-                    },
-                    {
-                      "id": "expr-5-p-8",
-                      "content": "(-2, 5)",
-                      "x": -2,
-                      "y": 5,
                       "correctGroupId": "does-not-verify"
                     },
                     {
@@ -399,10 +392,17 @@
                       "correctGroupId": "does-not-verify"
                     },
                     {
-                      "id": "expr-5-p-10",
-                      "content": "(3, 5)",
-                      "x": 3,
-                      "y": 5,
+                      "id": "expr-5-p-5",
+                      "content": "(2, 2)",
+                      "x": 2,
+                      "y": 2,
+                      "correctGroupId": "does-not-verify"
+                    },
+                    {
+                      "id": "expr-5-p-7",
+                      "content": "(-2, 0)",
+                      "x": -2,
+                      "y": 0,
                       "correctGroupId": "does-not-verify"
                     }
                   ]
@@ -412,27 +412,6 @@
                   "equation": "0x + 0y = 0",
                   "items": [
                     {
-                      "id": "expr-6-p-1",
-                      "content": "(0, 1)",
-                      "x": 0,
-                      "y": 1,
-                      "correctGroupId": "verifies"
-                    },
-                    {
-                      "id": "expr-6-p-2",
-                      "content": "(1, 3)",
-                      "x": 1,
-                      "y": 3,
-                      "correctGroupId": "verifies"
-                    },
-                    {
-                      "id": "expr-6-p-3",
-                      "content": "(2, 5)",
-                      "x": 2,
-                      "y": 5,
-                      "correctGroupId": "verifies"
-                    },
-                    {
                       "id": "expr-6-p-4",
                       "content": "(0, 4)",
                       "x": 0,
@@ -440,17 +419,10 @@
                       "correctGroupId": "verifies"
                     },
                     {
-                      "id": "expr-6-p-5",
-                      "content": "(2, 2)",
-                      "x": 2,
-                      "y": 2,
-                      "correctGroupId": "verifies"
-                    },
-                    {
-                      "id": "expr-6-p-6",
-                      "content": "(0, 3)",
+                      "id": "expr-6-p-1",
+                      "content": "(0, 1)",
                       "x": 0,
-                      "y": 3,
+                      "y": 1,
                       "correctGroupId": "verifies"
                     },
                     {
@@ -461,10 +433,10 @@
                       "correctGroupId": "verifies"
                     },
                     {
-                      "id": "expr-6-p-8",
-                      "content": "(-2, 5)",
-                      "x": -2,
-                      "y": 5,
+                      "id": "expr-6-p-2",
+                      "content": "(1, 3)",
+                      "x": 1,
+                      "y": 3,
                       "correctGroupId": "verifies"
                     },
                     {
@@ -472,6 +444,34 @@
                       "content": "(1, 1)",
                       "x": 1,
                       "y": 1,
+                      "correctGroupId": "verifies"
+                    },
+                    {
+                      "id": "expr-6-p-3",
+                      "content": "(2, 5)",
+                      "x": 2,
+                      "y": 5,
+                      "correctGroupId": "verifies"
+                    },
+                    {
+                      "id": "expr-6-p-5",
+                      "content": "(2, 2)",
+                      "x": 2,
+                      "y": 2,
+                      "correctGroupId": "verifies"
+                    },
+                    {
+                      "id": "expr-6-p-8",
+                      "content": "(-2, 5)",
+                      "x": -2,
+                      "y": 5,
+                      "correctGroupId": "verifies"
+                    },
+                    {
+                      "id": "expr-6-p-6",
+                      "content": "(0, 3)",
+                      "x": 0,
+                      "y": 3,
                       "correctGroupId": "verifies"
                     },
                     {
@@ -631,6 +631,8 @@
           "showAxisLabels": true,
           "mode": "lines",
           "maxLines": 2,
+          "showLineCount": false,
+          "showLineDrawHelp": false,
           "distanceTolerance": 0.5,
           "targets": []
         },
@@ -799,13 +801,13 @@
                 ]
               },
               "points": [
-                { "id": "pair-1-a1", "content": "(0, 1)", "correctRegionId": "left" },
-                { "id": "pair-1-a2", "content": "(2, 5)", "correctRegionId": "left" },
-                { "id": "pair-1-b1", "content": "(0, 4)", "correctRegionId": "right" },
-                { "id": "pair-1-b2", "content": "(2, 2)", "correctRegionId": "right" },
-                { "id": "pair-1-i1", "content": "(1, 3)", "correctRegionId": "intersection" },
                 { "id": "pair-1-n1", "content": "(3, 0)", "correctRegionId": "outside" },
-                { "id": "pair-1-n2", "content": "(-2, 1)", "correctRegionId": "outside" }
+                { "id": "pair-1-a1", "content": "(0, 1)", "correctRegionId": "left" },
+                { "id": "pair-1-b1", "content": "(0, 4)", "correctRegionId": "right" },
+                { "id": "pair-1-i1", "content": "(1, 3)", "correctRegionId": "intersection" },
+                { "id": "pair-1-a2", "content": "(2, 5)", "correctRegionId": "left" },
+                { "id": "pair-1-n2", "content": "(-2, 1)", "correctRegionId": "outside" },
+                { "id": "pair-1-b2", "content": "(2, 2)", "correctRegionId": "right" }
               ]
             },
             {
@@ -826,12 +828,12 @@
                 ]
               },
               "points": [
-                { "id": "pair-2-a1", "content": "(0, 1)", "correctRegionId": "left" },
-                { "id": "pair-2-a2", "content": "(2, 5)", "correctRegionId": "left" },
-                { "id": "pair-2-b1", "content": "(0, -3)", "correctRegionId": "right" },
-                { "id": "pair-2-b2", "content": "(2, 1)", "correctRegionId": "right" },
                 { "id": "pair-2-n1", "content": "(1, 0)", "correctRegionId": "outside" },
-                { "id": "pair-2-n2", "content": "(-2, 4)", "correctRegionId": "outside" }
+                { "id": "pair-2-a1", "content": "(0, 1)", "correctRegionId": "left" },
+                { "id": "pair-2-b1", "content": "(0, -3)", "correctRegionId": "right" },
+                { "id": "pair-2-n2", "content": "(-2, 4)", "correctRegionId": "outside" },
+                { "id": "pair-2-a2", "content": "(2, 5)", "correctRegionId": "left" },
+                { "id": "pair-2-b2", "content": "(2, 1)", "correctRegionId": "right" }
               ]
             },
             {
@@ -853,13 +855,13 @@
                 ]
               },
               "points": [
-                { "id": "pair-3-a1", "content": "(0, 6)", "correctRegionId": "left" },
-                { "id": "pair-3-a2", "content": "(6, 0)", "correctRegionId": "left" },
                 { "id": "pair-3-b1", "content": "(0, -2)", "correctRegionId": "right" },
-                { "id": "pair-3-b2", "content": "(2, 0)", "correctRegionId": "right" },
-                { "id": "pair-3-i1", "content": "(4, 2)", "correctRegionId": "intersection" },
+                { "id": "pair-3-a1", "content": "(0, 6)", "correctRegionId": "left" },
                 { "id": "pair-3-n1", "content": "(1, 1)", "correctRegionId": "outside" },
-                { "id": "pair-3-n2", "content": "(0, 0)", "correctRegionId": "outside" }
+                { "id": "pair-3-i1", "content": "(4, 2)", "correctRegionId": "intersection" },
+                { "id": "pair-3-b2", "content": "(2, 0)", "correctRegionId": "right" },
+                { "id": "pair-3-n2", "content": "(0, 0)", "correctRegionId": "outside" },
+                { "id": "pair-3-a2", "content": "(6, 0)", "correctRegionId": "left" }
               ]
             }
           ]
@@ -895,13 +897,8 @@
           ],
           "items": [
             {
-              "id": "c-1",
-              "content": "y = 2x + 1 | y = 2x - 3",
-              "correctGroupId": "none"
-            },
-            {
-              "id": "c-2",
-              "content": "y = x - 8 | y = x - 8",
+              "id": "c-5",
+              "content": "x - 2y = 4 | 2x - 4y = 8",
               "correctGroupId": "infinite"
             },
             {
@@ -915,9 +912,14 @@
               "correctGroupId": "none"
             },
             {
-              "id": "c-5",
-              "content": "x - 2y = 4 | 2x - 4y = 8",
+              "id": "c-2",
+              "content": "y = x - 8 | y = x - 8",
               "correctGroupId": "infinite"
+            },
+            {
+              "id": "c-1",
+              "content": "y = 2x + 1 | y = 2x - 3",
+              "correctGroupId": "none"
             },
             {
               "id": "c-6",
@@ -934,7 +936,19 @@
       "region": "center",
       "config": {
         "settings": {
-          "mode": "equation",
+          "mode": "systems",
+          "hideHints": true,
+          "equationsFromTiles": true,
+          "initialEquations": [
+            "0 = 0",
+            "0 = 0"
+          ],
+          "tileScoring": {
+            "rows": [
+              { "equationIndex": 0, "variable": "x", "expectedKey": "x", "points": 1 },
+              { "equationIndex": 1, "variable": "y", "expectedKey": "y", "points": 1 }
+            ]
+          },
           "variables": [
             "x",
             "y"
@@ -1160,12 +1174,11 @@
       "id": "7",
       "code": "7.",
       "title": "Αλγεβρική επίλυση με αντικατάσταση (Algebra Tiles)",
-      "objective": "Χρησιμοποίησε τα Algebra Tiles για αντικατάσταση και βρες τις τιμές των x και y.",
+      "objective": "Βρείτε τις τιμές των x και y.",
       "mode": "algebra",
       "usesResources": [
         "linear-systems-activity-6",
-        "linear-systems-left-1",
-        "linear-systems-right-1"
+        "linear-systems-left-1"
       ]
     }
   ],

@@ -64,12 +64,25 @@ const T_CHART_AXIS_X = 120;
 const T_CHART_AXIS_Y = 80;
 const T_CHART_HORIZONTAL_ROW_Y = 40;
 const T_CHART_VERTICAL_COLUMN_X = 80;
+const SYSTEMS_ROW_HEADER_HEIGHT = 56;
 
 function normalizeMode(mode, layout) {
   const selectedMode = mode || layout;
-  if (selectedMode === 'equation' || selectedMode === 'area' || selectedMode === 'simplified') return selectedMode;
+  if (selectedMode === 'equation' || selectedMode === 'systems' || selectedMode === 'area' || selectedMode === 'simplified') return selectedMode;
   if (selectedMode === 't-chart') return 'area';
   return 'simplified';
+}
+
+function isEquationLikeMode(mode) {
+  return mode === 'equation' || mode === 'systems';
+}
+
+function getSystemsEquationIndex(tile) {
+  return Math.max(0, Math.min(1, Number.isInteger(tile?.equationIndex) ? tile.equationIndex : 0));
+}
+
+function getSystemsRowTop(boardHeight, equationIndex) {
+  return equationIndex * (boardHeight / 2) + SYSTEMS_ROW_HEADER_HEIGHT;
 }
 
 function normalizeVariables(variables) {
@@ -116,13 +129,16 @@ function getTileSpans(type, orientation) {
   return [width, height];
 }
 
-function getTileBoardPosition(tile, mode, boardWidth) {
+function getTileBoardPosition(tile, mode, boardWidth, boardHeight = 0) {
   const orientation = tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal');
   const [spanX, spanY] = getTileSpans(tile.type, orientation);
-  const left = mode === 'equation'
+  const left = isEquationLikeMode(mode)
     ? (tile.side === 'right' ? boardWidth / 2 + 8 : 8) + (tile.x || 0) * GRID_UNIT
     : (tile.x || 0) * GRID_UNIT;
-  const top = (tile.y || 0) * GRID_UNIT;
+  const rowOffset = mode === 'systems'
+    ? getSystemsRowTop(boardHeight, getSystemsEquationIndex(tile))
+    : 0;
+  const top = rowOffset + (tile.y || 0) * GRID_UNIT;
   const width = spanX * GRID_UNIT;
   const height = spanY * GRID_UNIT;
   return { left, top, width, height, centerX: left + width / 2, centerY: top + height / 2 };
@@ -132,7 +148,7 @@ export default function AlgebraTiles({
   activity = '', // Resource activity identifier used in input logs.
   tiles: sharedTiles, // Controlled tiles supplied by the parent.
   onTilesChange, // Reports tile updates to the parent.
-  mode, // Selects equation, area, or simplified layout.
+  mode, // Selects equation, systems, area, or simplified layout.
   layout, // Legacy layout option kept for existing callers.
   variables: variableNames = ['x', 'y'], // Names shown for the two tile variables.
   equationSides: suppliedEquationSides = null, // Optional equation text shown on each side of the equation board.
@@ -141,6 +157,8 @@ export default function AlgebraTiles({
   sessionApp = 'activity-runner', // Session app used to resolve the participant identity.
   role: suppliedRole, // Optional role override for standalone resource hosts.
   promptMode = 'json', // Uses exercise JSON or a teacher-authored expression on shared boards.
+  showSelectionHint = true, // Shows the drag-selection hint when enabled.
+  equationsFromTiles = false, // Builds displayed equations from the placed tiles when enabled.
   settingsPortalTarget = null, // Optional DOM target for teacher settings outside the board zone.
   settingsInPortal = false // Places teacher settings in the supplied portal target when true.
 }) {
@@ -168,10 +186,19 @@ export default function AlgebraTiles({
   const [sourceOrientations, setSourceOrientations] = useState({ x: 'horizontal', y: 'horizontal', xy: 'horizontal' });
   const [sourceSigns, setSourceSigns] = useState({ one: 1, x: 1, y: 1, x2: 1, xy: 1, y2: 1 });
   const [mergeAnimation, setMergeAnimation] = useState(null);
+  const [selectedTileIds, setSelectedTileIds] = useState(() => new Set());
+  const [copiedTileCount, setCopiedTileCount] = useState(0);
+  const [selectionBox, setSelectionBox] = useState(null);
   const mergeTimerRef = useRef(null);
+  const placedBoardRef = useRef(null);
+  const selectionStartRef = useRef(null);
+  const copiedTilesRef = useRef([]);
   const tiles = shared ? roomTiles : Array.isArray(sharedTiles) ? sharedTiles : localTiles;
-  const boardMode = shared ? sharedMode : activeMode;
-  const category = sharedMode === 'equation' ? 'equations' : 'factorization';
+  const nonSharedMode = activeMode === 'equation' && Array.isArray(suppliedEquationSides) && suppliedEquationSides.length >= 2
+    ? 'systems'
+    : activeMode;
+  const boardMode = shared ? sharedMode : nonSharedMode;
+  const category = (sharedMode === 'equation' || sharedMode === 'systems') ? 'equations' : 'factorization';
   const availableExercises = exercises[category];
   const selectedExercise = availableExercises.find((item) => item.id === exerciseId) || availableExercises[0];
   const isMerging = Boolean(mergeAnimation);
@@ -252,29 +279,53 @@ export default function AlgebraTiles({
       return groups;
     }, { horizontal: [], vertical: [], product: [] })
     : null;
-  const tileEquationSides = boardMode === 'equation'
-    ? {
-      left: tiles.filter((tile) => tile.side === 'left'),
-      right: tiles.filter((tile) => tile.side === 'right')
-    }
+  const tileEquationSides = isEquationLikeMode(boardMode)
+    ? (boardMode === 'systems'
+      ? [0, 1].map((equationIndex) => ({
+        left: tiles.filter((tile) => tile.side === 'left' && (Number.isInteger(tile.equationIndex) ? tile.equationIndex : 0) === equationIndex),
+        right: tiles.filter((tile) => tile.side === 'right' && (Number.isInteger(tile.equationIndex) ? tile.equationIndex : 0) === equationIndex)
+      }))
+      : {
+        left: tiles.filter((tile) => tile.side === 'left'),
+        right: tiles.filter((tile) => tile.side === 'right')
+      })
     : null;
   const normalizedExpression = promptExpression.trim()
     .replace(/^\\\((.*)\\\)$/s, '$1')
     .replace(/^\$([\s\S]*)\$$/, '$1');
-  const equationSeparator = normalizedExpression.indexOf('=');
-  const expressionIsEquation = promptMode === 'expression'
-    && boardMode === 'equation'
-    && equationSeparator >= 0;
-  const expressionEquationSides = expressionIsEquation
-    ? {
-      left: normalizedExpression.slice(0, equationSeparator).trim(),
-      right: normalizedExpression.slice(equationSeparator + 1).trim()
+  const expressionEquationSides = (() => {
+    if (promptMode !== 'expression' || !isEquationLikeMode(boardMode)) return null;
+    if (boardMode === 'equation') {
+      const equationSeparator = normalizedExpression.indexOf('=');
+      if (equationSeparator < 0) return null;
+      return {
+        left: normalizedExpression.slice(0, equationSeparator).trim(),
+        right: normalizedExpression.slice(equationSeparator + 1).trim()
+      };
     }
-    : null;
-  const expressionPrompt = promptMode === 'expression' && normalizedExpression && !expressionIsEquation
+
+    const equations = normalizedExpression
+      .split(/\\\\|\||\n|;/)
+      .map((entry) => entry.trim())
+      .filter(Boolean);
+    if (equations.length < 2) return null;
+
+    const parsedEquations = equations.slice(0, 2).map((equation) => {
+      const separator = equation.indexOf('=');
+      if (separator < 0) return null;
+      return {
+        left: equation.slice(0, separator).trim(),
+        right: equation.slice(separator + 1).trim()
+      };
+    });
+    return parsedEquations.every(Boolean) ? parsedEquations : null;
+  })();
+  const expressionPrompt = promptMode === 'expression' && normalizedExpression && !expressionEquationSides
     ? normalizedExpression
     : '';
-  const equationDisplaySides = expressionEquationSides || suppliedEquationSides || tileEquationSides;
+  const equationDisplaySides = expressionEquationSides
+    || (equationsFromTiles ? tileEquationSides : suppliedEquationSides)
+    || tileEquationSides;
   const horizontalBounds = areaTiles?.horizontal.reduce((bounds, tile) => {
     const orientation = tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal');
     const { width, height } = getTileDimensions(tile.type, orientation);
@@ -309,8 +360,96 @@ export default function AlgebraTiles({
     onTilesChange?.(nextTiles);
     if (logChange) {
       sessionLogging?.logEvent('activity.tiles.changed', activity, {
-        tiles: nextTiles.map(({ id, type, sign, orientation, x, y, side }) => ({ id, type, sign, orientation, x, y, side }))
+        tiles: nextTiles.map(({ id, type, sign, orientation, x, y, side, equationIndex }) => ({ id, type, sign, orientation, x, y, side, equationIndex }))
       });
+    }
+  };
+
+  const copySelectedTiles = () => {
+    copiedTilesRef.current = tiles.filter((tile) => selectedTileIds.has(tile.id)).map((tile) => ({ ...tile }));
+    setCopiedTileCount(copiedTilesRef.current.length);
+  };
+
+  const pasteCopiedTiles = () => {
+    if (!canEdit || !copiedTilesRef.current.length) return;
+    const copies = copiedTilesRef.current.map((tile) => ({
+      ...tile,
+      id: `${Date.now()}-${Math.random()}`,
+      x: (tile.x || 0) + 1,
+      y: (tile.y || 0) + 1
+    }));
+    commitTiles([...tiles, ...copies]);
+    setSelectedTileIds(new Set(copies.map((tile) => tile.id)));
+  };
+
+  const getSelectionCoordinates = (event) => {
+    const board = placedBoardRef.current;
+    const bounds = board.getBoundingClientRect();
+    return {
+      x: event.clientX - bounds.left + board.scrollLeft,
+      y: event.clientY - bounds.top + board.scrollTop
+    };
+  };
+
+  const beginSelection = (event) => {
+    if (!canEdit || event.button !== 0 || event.target.closest('.algebra-tile')) return;
+    const point = getSelectionCoordinates(event);
+    selectionStartRef.current = { ...point, pointerId: event.pointerId };
+    if (!event.ctrlKey && !event.metaKey && !event.shiftKey) setSelectedTileIds(new Set());
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setSelectionBox({ left: point.x, top: point.y, width: 0, height: 0 });
+  };
+
+  const updateSelection = (event) => {
+    const start = selectionStartRef.current;
+    if (!start || start.pointerId !== event.pointerId) return;
+    const point = getSelectionCoordinates(event);
+    const rect = {
+      left: Math.min(start.x, point.x),
+      top: Math.min(start.y, point.y),
+      right: Math.max(start.x, point.x),
+      bottom: Math.max(start.y, point.y)
+    };
+    setSelectionBox({ left: rect.left, top: rect.top, width: rect.right - rect.left, height: rect.bottom - rect.top });
+    const board = placedBoardRef.current;
+    const hits = tiles.filter((tile) => {
+      const position = getTileBoardPosition(tile, boardMode, board.clientWidth, board.clientHeight);
+      return position.left < rect.right && position.left + position.width > rect.left
+        && position.top < rect.bottom && position.top + position.height > rect.top;
+    });
+    setSelectedTileIds((current) => {
+      const next = event.ctrlKey || event.metaKey || event.shiftKey ? new Set(current) : new Set();
+      hits.forEach((tile) => next.add(tile.id));
+      return next;
+    });
+  };
+
+  const endSelection = (event) => {
+    if (!selectionStartRef.current || selectionStartRef.current.pointerId !== event.pointerId) return;
+    selectionStartRef.current = null;
+    setSelectionBox(null);
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+  };
+
+  const endTileDrag = (event, tileId) => {
+    const board = placedBoardRef.current;
+    if (!board) return;
+    const bounds = board.getBoundingClientRect();
+    const { clientX, clientY } = event.nativeEvent;
+    if (clientX >= bounds.left && clientX <= bounds.right && clientY >= bounds.top && clientY <= bounds.bottom) return;
+    const ids = selectedTileIds.has(tileId) ? selectedTileIds : new Set([tileId]);
+    commitTiles(tiles.filter((tile) => !ids.has(tile.id)));
+    setSelectedTileIds(new Set());
+  };
+
+  const handleBoardShortcuts = (event) => {
+    if (!(event.ctrlKey || event.metaKey)) return;
+    if (event.key.toLowerCase() === 'c') {
+      event.preventDefault();
+      copySelectedTiles();
+    } else if (event.key.toLowerCase() === 'v') {
+      event.preventDefault();
+      pasteCopiedTiles();
     }
   };
 
@@ -366,6 +505,9 @@ export default function AlgebraTiles({
   };
 
   const beginTileDrag = (event, tile) => {
+    const groupedTiles = tile.id && selectedTileIds.has(tile.id)
+      ? tiles.filter((item) => selectedTileIds.has(item.id))
+      : [];
     event.dataTransfer.effectAllowed = tile.id ? 'move' : 'copy';
     const serialized = JSON.stringify({
       id: tile.id || '',
@@ -373,10 +515,11 @@ export default function AlgebraTiles({
       sign: tile.sign,
       orientation: tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal'),
       offsetX: event.nativeEvent.offsetX,
-      offsetY: event.nativeEvent.offsetY
+      offsetY: event.nativeEvent.offsetY,
+      ...(groupedTiles.length > 1 ? { tiles: groupedTiles } : {})
     });
     event.dataTransfer.setData('application/x-algebra-tile', serialized);
-    event.dataTransfer.setData('text/plain', serialized);
+    event.dataTransfer.setDragImage(event.currentTarget, event.nativeEvent.offsetX, event.nativeEvent.offsetY);
   };
 
   const rotateOrientation = (orientation) => orientation === 'vertical' ? 'horizontal' : 'vertical';
@@ -416,7 +559,7 @@ export default function AlgebraTiles({
             aria-disabled={!canEdit}
             draggable={canEdit}
             onDragStart={(event) => beginTileDrag(event, { type, sign, orientation })}>
-            {definition.label}
+            {sign < 0 ? `−${definition.label}` : definition.label}
             {renderSignButton(sign, definition.name, () => setSourceSigns((current) => ({ ...current, [type]: current[type] < 0 ? 1 : -1 })))}
             {canRotate ? <button type="button" className="algebra-tile__rotate" aria-label={`Περιστροφή πλακιδίου ${definition.name}`} disabled={!canEdit}
               draggable={false} onClick={(event) => {
@@ -450,6 +593,7 @@ export default function AlgebraTiles({
       let y = Math.max(0, Math.min(maxY, Math.round(rawY / GRID_UNIT)));
       let orientation = dragged.orientation;
       let side;
+      let equationIndex = 0;
 
       if (boardMode === 'area') {
         const isFactorTile = ['one', 'x', 'y'].includes(dragged.type);
@@ -480,37 +624,102 @@ export default function AlgebraTiles({
         } else {
           return;
         }
-      } else if (boardMode === 'equation') {
+      } else if (isEquationLikeMode(boardMode)) {
         const midpoint = board.clientWidth / 2;
         side = rawX + tileWidth / 2 < midpoint ? 'left' : 'right';
         const sideOffset = side === 'right' ? midpoint : 0;
         const sideWidth = board.clientWidth / 2 - GRID_UNIT;
         const maxSideX = Math.max(0, Math.floor((sideWidth - tileWidth) / GRID_UNIT));
         x = Math.max(0, Math.min(maxSideX, Math.round((rawX - sideOffset) / GRID_UNIT)));
+        if (boardMode === 'systems') {
+          const rowHeight = board.clientHeight / 2;
+          const rowUsableHeight = Math.max(GRID_UNIT, rowHeight - SYSTEMS_ROW_HEADER_HEIGHT);
+          equationIndex = rawY + tileHeight / 2 < rowHeight ? 0 : 1;
+          const rowOffset = getSystemsRowTop(board.clientHeight, equationIndex);
+          const maxRowY = Math.max(0, Math.floor((rowUsableHeight - tileHeight) / GRID_UNIT));
+          y = Math.max(0, Math.min(maxRowY, Math.round((rawY - rowOffset) / GRID_UNIT)));
+        }
       }
       const id = dragged.id || `${Date.now()}-${Math.random()}`;
       const dropX = event.clientX - bounds.left + board.scrollLeft;
       const dropY = event.clientY - bounds.top + board.scrollTop;
       const oppositeTile = tiles.find((tile) => {
         if (tile.id === id || tile.type !== dragged.type || (tile.sign < 0) === (dragged.sign < 0)) return false;
-        if (boardMode === 'equation' && tile.side !== side) return false;
+        if (isEquationLikeMode(boardMode) && tile.side !== side) return false;
+        if (boardMode === 'systems' && (Number.isInteger(tile.equationIndex) ? tile.equationIndex : 0) !== equationIndex) return false;
 
         const tileOrientation = tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal');
         const [existingWidth, existingHeight] = getTileSpans(tile.type, tileOrientation);
-        const tileLeft = boardMode === 'equation'
+        const tileLeft = isEquationLikeMode(boardMode)
           ? (tile.side === 'right' ? board.clientWidth / 2 + 8 : 8) + (tile.x || 0) * GRID_UNIT
           : (tile.x || 0) * GRID_UNIT;
-        const tileTop = (tile.y || 0) * GRID_UNIT;
+        const tileTop = (boardMode === 'systems'
+          ? getSystemsRowTop(board.clientHeight, getSystemsEquationIndex(tile))
+          : 0) + (tile.y || 0) * GRID_UNIT;
         return dropX >= tileLeft
           && dropX < tileLeft + existingWidth * GRID_UNIT
           && dropY >= tileTop
           && dropY < tileTop + existingHeight * GRID_UNIT;
       });
       const nextTiles = tiles.filter((tile) => tile.id !== id && tile.id !== oppositeTile?.id);
-      const droppedTile = { id, type: dragged.type, sign: dragged.sign, orientation, x, y, ...(side ? { side } : {}) };
+      const droppedTile = {
+        id,
+        type: dragged.type,
+        sign: dragged.sign,
+        orientation,
+        x,
+        y,
+        ...(side ? { side } : {}),
+        ...(boardMode === 'systems' ? { equationIndex: Number.isInteger(equationIndex) ? equationIndex : 0 } : {})
+      };
+      if (Array.isArray(dragged.tiles) && dragged.tiles.length > 1) {
+        const primary = dragged.tiles.find((tile) => tile.id === dragged.id);
+        if (!primary) return;
+        const primaryOrigin = getTileBoardPosition(primary, boardMode, board.clientWidth, board.clientHeight);
+        const primaryTarget = getTileBoardPosition(droppedTile, boardMode, board.clientWidth, board.clientHeight);
+        const deltaX = primaryTarget.left - primaryOrigin.left;
+        const deltaY = primaryTarget.top - primaryOrigin.top;
+        const movedIds = new Set(dragged.tiles.map((tile) => tile.id));
+        const movedTiles = dragged.tiles.map((tile) => {
+          const position = getTileBoardPosition(tile, boardMode, board.clientWidth, board.clientHeight);
+          const { width, height } = getTileDimensions(tile.type, tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal'));
+          let targetLeft = Math.max(0, Math.min(board.clientWidth - width, position.left + deltaX));
+          let targetTop = Math.max(0, Math.min(board.clientHeight - height, position.top + deltaY));
+          let targetSide = tile.side;
+          let targetEquationIndex = getSystemsEquationIndex(tile);
+          let nextX = Math.round(targetLeft / GRID_UNIT);
+          let nextY = Math.round(targetTop / GRID_UNIT);
+          if (isEquationLikeMode(boardMode)) {
+            targetSide = targetLeft + width / 2 < board.clientWidth / 2 ? 'left' : 'right';
+            const sideOffset = targetSide === 'right' ? board.clientWidth / 2 + 8 : 8;
+            const maxTileX = Math.max(0, Math.floor((board.clientWidth / 2 - GRID_UNIT - width) / GRID_UNIT));
+            nextX = Math.max(0, Math.min(maxTileX, Math.round((targetLeft - sideOffset) / GRID_UNIT)));
+            if (boardMode === 'systems') {
+              targetEquationIndex = targetTop + height / 2 < board.clientHeight / 2 ? 0 : 1;
+              const rowOffset = getSystemsRowTop(board.clientHeight, targetEquationIndex);
+              const maxTileY = Math.max(0, Math.floor((board.clientHeight / 2 - SYSTEMS_ROW_HEADER_HEIGHT - height) / GRID_UNIT));
+              nextY = Math.max(0, Math.min(maxTileY, Math.round((targetTop - rowOffset) / GRID_UNIT)));
+            }
+          } else {
+            nextX = Math.max(0, Math.min(Math.floor((board.clientWidth - width) / GRID_UNIT), nextX));
+            nextY = Math.max(0, Math.min(Math.floor((board.clientHeight - height) / GRID_UNIT), nextY));
+          }
+          return {
+            ...tile,
+            x: nextX,
+            y: nextY,
+            ...(isEquationLikeMode(boardMode) ? { side: targetSide } : {}),
+            ...(boardMode === 'systems' ? { equationIndex: targetEquationIndex } : {})
+          };
+        });
+        const movedById = new Map(movedTiles.map((tile) => [tile.id, tile]));
+        commitTiles(tiles.map((tile) => movedById.get(tile.id) || tile));
+        setSelectedTileIds(movedIds);
+        return;
+      }
       if (oppositeTile) {
-        const existingPosition = getTileBoardPosition(oppositeTile, boardMode, board.clientWidth);
-        const droppedPosition = getTileBoardPosition(droppedTile, boardMode, board.clientWidth);
+        const existingPosition = getTileBoardPosition(oppositeTile, boardMode, board.clientWidth, board.clientHeight);
+        const droppedPosition = getTileBoardPosition(droppedTile, boardMode, board.clientWidth, board.clientHeight);
         const centerX = (existingPosition.centerX + droppedPosition.centerX) / 2;
         const centerY = (existingPosition.centerY + droppedPosition.centerY) / 2;
         const animation = {
@@ -543,12 +752,14 @@ export default function AlgebraTiles({
 
   const removeTile = (id) => {
     if (isMerging) return;
-    if (boardMode === 'equation') {
+    if (isEquationLikeMode(boardMode)) {
       const selectedTile = tiles.find((tile) => tile.id === id);
       if (!selectedTile) return;
+      const selectedEquationIndex = Number.isInteger(selectedTile.equationIndex) ? selectedTile.equationIndex : 0;
       const matchingTile = tiles.find((tile) => tile.side !== selectedTile.side
         && tile.type === selectedTile.type
-        && (tile.sign < 0) === (selectedTile.sign < 0));
+        && (tile.sign < 0) === (selectedTile.sign < 0)
+        && (boardMode !== 'systems' || (Number.isInteger(tile.equationIndex) ? tile.equationIndex : 0) === selectedEquationIndex));
       if (!matchingTile) return;
       commitTiles(tiles.filter((tile) => tile.id !== id && tile.id !== matchingTile.id));
       return;
@@ -562,7 +773,7 @@ export default function AlgebraTiles({
           <label className="collaborative-algebra-tiles__setting">
             {t('algebraTiles.boardMode')}
             <select value={sharedMode} onChange={(event) => updateMode(event.target.value)}>
-              {['equation', 'area', 'simplified'].map((nextMode) => (
+              {['equation', 'systems', 'area', 'simplified'].map((nextMode) => (
                 <option key={nextMode} value={nextMode}>{t(`algebraTiles.modes.${nextMode}`)}</option>
               ))}
             </select>
@@ -571,7 +782,7 @@ export default function AlgebraTiles({
             <label htmlFor={promptInputId}>{t('algebraTiles.promptExpression')}</label>
             <div className="collaborative-algebra-tiles__expression-entry">
               <input id={promptInputId} type="text" value={promptExpressionDraft} onChange={updatePromptExpressionDraft}
-                placeholder={sharedMode === 'equation' ? '2x + 3 = 7' : 'x^2 + 5x + 6'} maxLength={10000} />
+                placeholder={isEquationLikeMode(sharedMode) ? (sharedMode === 'systems' ? '2x + y = 7 | x - y = 2' : '2x + 3 = 7') : 'x^2 + 5x + 6'} maxLength={10000} />
               <button type="button" onClick={sendPromptExpression} disabled={promptSendStatus === 'sending'} aria-label={t('algebraTiles.sendToAll')} title={t('algebraTiles.sendToAll')}>
                 <span aria-hidden="true">→</span>
               </button>
@@ -614,22 +825,47 @@ export default function AlgebraTiles({
           {category === 'factorization' ? `${t('algebraTiles.factorize')}: ` : ''}{selectedExercise.prompt}
         </p> : null))}
       {!settingsInPortal ? settingsAccordion : null}
-      <div className={`algebra-tiles${isMerging ? ' has-merging-tiles' : ''}`}>
-      <section className={`algebra-tiles__board${boardMode === 'equation' ? ' algebra-tiles__board--equation' : ''}`} aria-label="Πίνακας πλακιδίων">
-        {equationDisplaySides ? (
+      <div className={`algebra-tiles${isMerging ? ' has-merging-tiles' : ''}`} onKeyDown={handleBoardShortcuts}>
+      <div className="algebra-tiles__selection-tools">
+        {selectedTileIds.size ? <span aria-live="polite">{selectedTileIds.size} πλακίδια επιλεγμένα</span>
+          : (showSelectionHint ? <span>Σύρε το ποντίκι σε κενή περιοχή για επιλογή πλακιδίων</span> : null)}
+        <button type="button" onClick={copySelectedTiles} disabled={!selectedTileIds.size}>Αντιγραφή</button>
+        <button type="button" onClick={pasteCopiedTiles} disabled={!copiedTileCount}>Επικόλληση</button>
+      </div>
+      <section className={`algebra-tiles__board${isEquationLikeMode(boardMode) ? ' algebra-tiles__board--equation' : ''}`} aria-label="Πίνακας πλακιδίων">
+        {equationDisplaySides && !Array.isArray(equationDisplaySides) ? (
           <div className="algebra-tiles__equation-header" aria-live="polite">
             <div className="algebra-tiles__equation-side">{typeof equationDisplaySides.left === 'string'
               ? <MathJaxText text={equationDisplaySides.left} />
-              : formatPolynomial(equationDisplaySides.left, variables)}</div>
+              : formatPolynomial(Array.isArray(equationDisplaySides.left) ? equationDisplaySides.left : [], variables)}</div>
             <div className="algebra-tiles__equation-side">{typeof equationDisplaySides.right === 'string'
               ? <MathJaxText text={equationDisplaySides.right} />
-              : formatPolynomial(equationDisplaySides.right, variables)}</div>
+              : formatPolynomial(Array.isArray(equationDisplaySides.right) ? equationDisplaySides.right : [], variables)}</div>
             <span aria-hidden="true">=</span>
           </div>
         ) : null}
-        <div className={`algebra-tiles__placed${boardMode === 'area' ? ' is-area' : ''}${boardMode === 'equation' ? ' is-equation' : ''}`}
+        <div ref={placedBoardRef} className={`algebra-tiles__placed${boardMode === 'area' ? ' is-area' : ''}${isEquationLikeMode(boardMode) ? ' is-equation' : ''}${boardMode === 'systems' ? ' is-systems' : ''}`}
+          tabIndex={canEdit ? 0 : -1}
+          onPointerDown={beginSelection}
+          onPointerMove={updateSelection}
+          onPointerUp={endSelection}
+          onPointerCancel={endSelection}
           onDragOver={(event) => { if (canEdit) event.preventDefault(); }}
           onDrop={dropTile}>
+          {boardMode === 'systems' && Array.isArray(equationDisplaySides) ? (
+            equationDisplaySides.slice(0, 2).map((equation, equationIndex) => (
+              <div className={`algebra-tiles__equation-header algebra-tiles__equation-header--systems-row algebra-tiles__equation-header--systems-row-${equationIndex + 1}`}
+                aria-live="polite" key={`equation-row-${equationIndex}`}>
+                <div className="algebra-tiles__equation-side">{typeof equation?.left === 'string'
+                  ? <MathJaxText text={equation.left} />
+                  : formatPolynomial(Array.isArray(equation?.left) ? equation.left : [], variables)}</div>
+                <div className="algebra-tiles__equation-side">{typeof equation?.right === 'string'
+                  ? <MathJaxText text={equation.right} />
+                  : formatPolynomial(Array.isArray(equation?.right) ? equation.right : [], variables)}</div>
+                <span aria-hidden="true">=</span>
+              </div>
+            ))
+          ) : null}
           {areaTiles?.horizontal.length ? (
             <output className="algebra-tiles__factor algebra-tiles__factor--horizontal" style={{
               left: `${(horizontalBounds.left + horizontalBounds.right) / 2}px`,
@@ -659,14 +895,28 @@ export default function AlgebraTiles({
             return (
               <div key={tile.id} role="button" tabIndex={canEdit ? 0 : -1} draggable={canEdit} aria-disabled={!canEdit}
                 onDragStart={(event) => beginTileDrag(event, tile)}
-                onClick={() => removeTile(tile.id)}
+                onDragEnd={(event) => endTileDrag(event, tile.id)}
+                onClick={(event) => {
+                  if (event.ctrlKey || event.metaKey || event.shiftKey) {
+                    setSelectedTileIds((current) => {
+                      const next = new Set(current);
+                      if (next.has(tile.id)) next.delete(tile.id);
+                      else next.add(tile.id);
+                      return next;
+                    });
+                    return;
+                  }
+                  removeTile(tile.id);
+                }}
                 onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') removeTile(tile.id); }}
-                className={`algebra-tile algebra-tile--${definition.className} is-${orientation} ${tile.sign < 0 ? 'is-negative' : ''}${mergeAnimation?.[tile.id] ? ' is-merging' : ''}`}
+                className={`algebra-tile algebra-tile--${definition.className} is-${orientation} ${tile.sign < 0 ? 'is-negative' : ''}${selectedTileIds.has(tile.id) ? ' is-selected' : ''}${mergeAnimation?.[tile.id] ? ' is-merging' : ''}`}
                 style={{
-                  left: boardMode === 'equation'
+                  left: isEquationLikeMode(boardMode)
                     ? `calc(${tile.side === 'right' ? '50% + ' : ''}8px + ${(tile.x || 0) * GRID_UNIT}px)`
                     : `${(tile.x || 0) * GRID_UNIT}px`,
-                  top: `${(tile.y || 0) * GRID_UNIT}px`,
+                  top: boardMode === 'systems'
+                    ? `calc(${getSystemsEquationIndex(tile) === 1 ? '50% + ' : ''}${SYSTEMS_ROW_HEADER_HEIGHT + (tile.y || 0) * GRID_UNIT}px)`
+                    : `${(tile.y || 0) * GRID_UNIT}px`,
                   ...(orientation === 'vertical' && ['x', 'y', 'xy'].includes(tile.type)
                     ? { boxSizing: 'border-box', width: `${spanX * GRID_UNIT}px`, height: `${spanY * GRID_UNIT}px` }
                     : {}),
@@ -676,10 +926,10 @@ export default function AlgebraTiles({
                   } : {})
                 }}
                 aria-label={`${tile.sign < 0 ? 'Αρνητικό' : 'Θετικό'} πλακίδιο ${definition.name}`}
-                title={`${definition.name}: ${boardMode === 'equation'
+                title={`${definition.name}: ${isEquationLikeMode(boardMode)
                   ? 'Πάτησε για αφαίρεση ίσων πλακιδίων και από τις δύο πλευρές'
                   : 'Σύρε το πλακίδιο για μεταφορά ή πάτησε για αφαίρεση'}`}>
-                {definition.label}
+                {tile.sign < 0 ? `−${definition.label}` : definition.label}
                 {renderSignButton(tile.sign, definition.name, () => toggleTileSign(tile.id))}
                 {['x', 'y', 'xy'].includes(tile.type) ? <button type="button" className="algebra-tile__rotate" aria-label={`Περιστροφή πλακιδίου ${definition.name}`} disabled={!canEdit}
                   draggable={false} onClick={(event) => {
@@ -689,6 +939,10 @@ export default function AlgebraTiles({
               </div>
             );
           })}
+          {selectionBox ? <div className="algebra-tiles__selection-box" style={{
+            left: `${selectionBox.left}px`, top: `${selectionBox.top}px`,
+            width: `${selectionBox.width}px`, height: `${selectionBox.height}px`
+          }} aria-hidden="true" /> : null}
         </div>
       </section>
 
