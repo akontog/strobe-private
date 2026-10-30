@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -71,6 +71,7 @@ function App() {
   const [authReady, setAuthReady] = useState(false);
   const [teacherUsername, setTeacherUsername] = useState('');
   const [activeMenu, setActiveMenu] = useState('');
+  const menuCloseTimerRef = useRef(null);
   const [clickedMenu, setClickedMenu] = useState('');
   const [serverConnected, setServerConnected] = useState(false);
   const [teacherSession, setTeacherSession] = useState(null);
@@ -84,6 +85,20 @@ function App() {
   const hasAdminAccess = role === 'admin' && roles.includes('admin');
   const appRole = hasTeacherAccess ? 'teacher' : 'student';
 
+  const clearMenuCloseTimer = () => {
+    if (!menuCloseTimerRef.current) return;
+    window.clearTimeout(menuCloseTimerRef.current);
+    menuCloseTimerRef.current = null;
+  };
+
+  const scheduleMenuClose = (menuKey) => {
+    clearMenuCloseTimer();
+    menuCloseTimerRef.current = window.setTimeout(() => {
+      setActiveMenu((current) => (current === menuKey ? '' : current));
+      menuCloseTimerRef.current = null;
+    }, 140);
+  };
+
   useEffect(() => {
     fetch('/api/auth/session').then((response) => response.json()).then((session) => {
       setRole(['teacher', 'admin'].includes(session.role) ? session.role : 'student');
@@ -96,6 +111,16 @@ function App() {
       setAuthReady(true);
     });
   }, []);
+
+  useEffect(() => () => {
+    clearMenuCloseTimer();
+  }, []);
+
+  useEffect(() => {
+    clearMenuCloseTimer();
+    setClickedMenu('');
+    setActiveMenu('');
+  }, [location.pathname, location.search]);
 
   useEffect(() => {
     if (!authReady || !hasTeacherAccess) return undefined;
@@ -447,7 +472,7 @@ function App() {
 
   return (
     <SessionLogProvider app={currentSessionApp} role={appRole} sessionId={teacherSession?.sessionId}>
-    <div className="client-shell">
+    <div className={`client-shell${activeMenu ? ' is-topmenu-open' : ''}`}>
       <header className="client-topbar">
         <Link className="client-home-link" to="/" aria-label="Strobe"><img src="/icons/strobelogo.svg" alt="Strobe" /></Link>
         <div className="client-topbar-main">
@@ -458,8 +483,11 @@ function App() {
                 <div
                   key={key}
                   className="client-section-nav-item"
-                  onMouseEnter={() => setActiveMenu(key)}
-                  onMouseLeave={() => setActiveMenu((current) => current === key ? '' : current)}
+                  onMouseEnter={() => {
+                    clearMenuCloseTimer();
+                    setActiveMenu(key);
+                  }}
+                  onMouseLeave={() => scheduleMenuClose(key)}
                 >
                   <button
                     type="button"
@@ -475,11 +503,22 @@ function App() {
                   </button>
                   {activeMenu === key ? (
                     <nav className="client-submenu" aria-label={group.label}>
-                      {group.items.map((item) => (
+                      {group.items.map((item) => {
+                        const targetPath = item.path.startsWith('/workshops/')
+                          ? `${item.path}/${hasTeacherAccess ? 'teacher' : 'student'}`
+                          : item.path;
+                        return (
                         <Link
                           key={item.path}
                           className="client-submenu__item"
-                          to={item.path.startsWith('/workshops/') ? `${item.path}/${hasTeacherAccess ? 'teacher' : 'student'}` : item.path}
+                          to={targetPath}
+                          onMouseDown={(event) => {
+                            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+                            event.preventDefault();
+                            setClickedMenu('');
+                            setActiveMenu('');
+                            navigate(targetPath);
+                          }}
                           onClick={() => {
                             setClickedMenu('');
                             setActiveMenu('');
@@ -487,7 +526,8 @@ function App() {
                         >
                           {item.label}
                         </Link>
-                      ))}
+                        );
+                      })}
                     </nav>
                   ) : null}
                 </div>

@@ -860,7 +860,12 @@ export default function App({ role = 'student' }) {
   }, [activeActivity.mode, activeActivity.widgets, activeAlgebraTiles, activeCartesianEquations, activeCartesianSettings.distanceTolerance, activeEquationInputs.equation1, activeEquationInputs.equation2, activeGroupingPlacements, activeItem, activeItems, activePlacementItems, activePlacementPlacements, answer.x, answer.y, assignedEquationIndex, cartesianLineLimit, coordinateLines.length, isCartesianLineMode, numberLineMarks, selectedLines, selectedPoints, t]);
 
   useEffect(() => {
-    setInvalidGroupingItemIds(evaluation.invalidIds);
+    setInvalidGroupingItemIds((current) => {
+      const next = evaluation.invalidIds;
+      return current.length === next.length && current.every((itemId, index) => itemId === next[index])
+        ? current
+        : next;
+    });
   }, [evaluation.invalidIds]);
 
   useEffect(() => {

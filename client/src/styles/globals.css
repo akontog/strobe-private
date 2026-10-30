@@ -48,7 +48,7 @@ body {
   width: 100%;
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: 5000;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
@@ -148,7 +148,7 @@ body {
   position: absolute;
   top: 100%;
   left: 50%;
-  z-index: 30;
+  z-index: 5100;
   display: grid;
   gap: 2px;
   width: max-content;
@@ -208,7 +208,7 @@ body {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  z-index: 30;
+  z-index: 5100;
   display: grid;
   gap: 4px;
   min-width: 180px;
@@ -287,6 +287,7 @@ body {
   align-self: center;
   padding: 20px;
 }
+
 
 .client-menu-cards {
   margin-bottom: 24px;

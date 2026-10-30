@@ -1,0 +1,1 @@
+import{j as r}from"./index-CVL9_JgS.js";import{A as t}from"./App-K4ySgE4Y.js";import"./DataAccordion-DfRYZ81o.js";import"./ActivitiesAccordion-CWF8RulC.js";function m(){return r.jsx(t,{role:"teacher"})}export{m as TeacherView,m as default};
