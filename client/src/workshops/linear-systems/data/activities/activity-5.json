@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "linear-systems-activity-4",
+      "type": "grouping-drag-drop",
+      "region": "center",
+      "config": {
+        "settings": {},
+        "data": {
+          "groups": [
+            {
+              "id": "none",
+              "title": "Καμία λύση",
+              "hint": ""
+            },
+            {
+              "id": "one",
+              "title": "Μία λύση",
+              "hint": ""
+            },
+            {
+              "id": "infinite",
+              "title": "Άπειρες λύσεις",
+              "hint": ""
+            }
+          ],
+          "items": [
+            {
+              "id": "c-5",
+              "content": "x - 2y = 4 | 2x - 4y = 8",
+              "correctGroupId": "infinite"
+            },
+            {
+              "id": "c-3",
+              "content": "y = 3x - 2 | y = -x + 6",
+              "correctGroupId": "one"
+            },
+            {
+              "id": "c-4",
+              "content": "2x + y = 7 | 2x + y = 1",
+              "correctGroupId": "none"
+            },
+            {
+              "id": "c-2",
+              "content": "y = x - 8 | y = x - 8",
+              "correctGroupId": "infinite"
+            },
+            {
+              "id": "c-1",
+              "content": "y = 2x + 1 | y = 2x - 3",
+              "correctGroupId": "none"
+            },
+            {
+              "id": "c-6",
+              "content": "x + y = 6 | x - y = 2",
+              "correctGroupId": "one"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "linear-systems-left-1",
+      "type": "equation",
+      "region": "left",
+      "config": {
+        "settings": {
+          "ariaLabel": "Εξίσωση",
+          "content": {
+            "type": "equation",
+            "placementAriaLabel": "Εξίσωση επιλεγμένης δραστηριότητας"
+          },
+          "previewAriaLabel": "Προεπισκόπηση συστήματος"
+        },
+        "presentation": {
+          "miniLabel": "Εξίσωση"
+        },
+        "display": {}
+      }
+    },
+    {
+      "id": "linear-systems-right-1",
+      "type": "plot-widget",
+      "region": "right",
+      "config": {
+        "settings": {
+          "width": 360,
+          "height": 300,
+          "showLegend": true,
+          "showGrid": true,
+          "xMin": -6,
+          "xMax": 6,
+          "yMin": -6,
+          "yMax": 6,
+          "lineColors": [
+            "#2563eb",
+            "#dc2626"
+          ],
+          "title": "Σύστημα Αξόνων",
+          "accessibleLabel": "Σύστημα Αξόνων",
+          "axisLabels": {
+            "x": "x",
+            "y": "y"
+          },
+          "lineLabelTemplate": "L{index}: {equation}"
+        },
+        "display": {
+          "visibleByDefault": true,
+          "visibilityLabel": "Εμφάνιση γραφήματος δεξιά"
+        }
+      }
+    }
+  ],
+  "activity": {
+    "id": "5",
+    "code": "5.",
+    "title": "Μία, καμία ή άπειρες λύσεις",
+    "objective": "Αντιστοίχισε το σύστημα με τον αριθμό των λύσεων.",
+    "mode": "grouping",
+    "usesResources": [
+      "linear-systems-activity-4",
+      "linear-systems-left-1",
+      "linear-systems-right-1"
+    ]
+  }
+}

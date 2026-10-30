@@ -6,9 +6,10 @@ import {
   GroupsAccordion, useSessionInputLogger, VennBoard
 } from '../../shared/components';
 import storedActivityData from './data/activities.json';
+const standaloneActivityDocuments = Object.values(import.meta.glob('./data/activities/*.json', { eager: true, import: 'default' }));
 import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
 
-const activityData = resolveWorkshopDocument(storedActivityData);
+const activityData = resolveWorkshopDocument(storedActivityData, standaloneActivityDocuments);
 
 export default function App({ role = 'student' }) {
   const labels = activityData.labels || {};

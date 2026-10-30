@@ -1,0 +1,134 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "activity-data-4",
+      "type": "activity-data",
+      "config": {
+        "settings": {},
+        "data": {
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5,
+          "items": [
+            {
+              "id": "sum-square-expansion",
+              "formula": "\\alpha^2+2\\alpha\\beta+\\beta^2"
+            },
+            {
+              "id": "difference-square-expansion",
+              "formula": "\\alpha^2-2\\alpha\\beta+\\beta^2"
+            },
+            {
+              "id": "sum-cube-expansion",
+              "formula": "\\alpha^3+3\\alpha^2\\beta+3\\alpha\\beta^2+\\beta^3"
+            },
+            {
+              "id": "difference-cube-expansion",
+              "formula": "\\alpha^3-3\\alpha^2\\beta+3\\alpha\\beta^2-\\beta^3"
+            },
+            {
+              "id": "squares-difference-expansion",
+              "formula": "\\alpha^2-\\beta^2"
+            }
+          ],
+          "groups": [
+            {
+              "id": "sum-square",
+              "formula": "(\\alpha+\\beta)^2"
+            },
+            {
+              "id": "difference-square",
+              "formula": "(\\alpha-\\beta)^2"
+            },
+            {
+              "id": "sum-cube",
+              "formula": "(\\alpha+\\beta)^3"
+            },
+            {
+              "id": "difference-cube",
+              "formula": "(\\alpha-\\beta)^3"
+            },
+            {
+              "id": "squares-difference",
+              "formula": "(\\alpha+\\beta)(\\alpha-\\beta)"
+            }
+          ],
+          "correctAnswers": {
+            "sum-square-expansion": "sum-square",
+            "difference-square-expansion": "difference-square",
+            "sum-cube-expansion": "sum-cube",
+            "difference-cube-expansion": "difference-cube",
+            "squares-difference-expansion": "squares-difference"
+          }
+        }
+      }
+    },
+    {
+      "id": "activity-4-resource-1",
+      "type": "grouping-drag-drop",
+      "region": "center",
+      "config": {
+        "settings": {
+          "card": false,
+          "instruction": "Σύρε κάθε ανάπτυξη στην ταυτότητα που επαληθεύει.",
+          "bankLabel": "Αναπτύξεις προς αντιστοίχιση"
+        }
+      }
+    }
+  ],
+  "activity": {
+    "id": "4",
+    "code": "4.",
+    "title": "Αντιστοίχιση ταυτοτήτων",
+    "objective": "Αντιστοίχισε κάθε ταυτότητα με τη σωστή ανάπτυξή της.",
+    "resultMode": "identityMatching",
+    "mode": "identityMatching",
+    "usesResources": [
+      "activity-data-4",
+      "activity-4-resource-1"
+    ],
+    "labels": {
+      "identityLabel": "Ταυτότητα",
+      "identityVariantTitle": "Επιλογή ταυτότητας",
+      "chooseIdentityVariant": "Επιλέξτε ταυτότητα",
+      "coefficientOfTerm": "Συντελεστής όρου",
+      "exponentOf": "Εκθέτης του",
+      "inTerm": "στον όρο",
+      "identityAriaLabel": "Αλγεβρική ταυτότητα",
+      "term1": "1ος όρος",
+      "term2": "2ος όρος",
+      "term3": "3ος όρος",
+      "termCoefficient": "Συντελεστής όρου {{term}}",
+      "termDegreeA": "Εκθέτης του a (όρος {{term}})",
+      "termDegreeB": "Εκθέτης του b (όρος {{term}})",
+      "enterIdentityTerms": "Συμπλήρωσε όλους τους συντελεστές και εκθέτες για να εμφανιστεί η ανάπτυξη.",
+      "answer": "Απάντηση",
+      "check": "Έλεγχος",
+      "correctFeedback": "Σωστά! Η ταυτότητα είναι πλήρης.",
+      "incorrectFeedback": "Έλεγξε ξανά τους όρους της ανάπτυξης.",
+      "completeRightSide": "Συμπλήρωσε το δεξί μέλος της ταυτότητας.",
+      "studentMode": "Λειτουργία μαθητή",
+      "teacherMode": "Λειτουργία καθηγητή",
+      "activities": "Δραστηριότητα",
+      "chooseActivity": "Επιλογή δραστηριότητας",
+      "matchingInstruction": "Σύρε κάθε ανάπτυξη στην ταυτότητα που επαληθεύει.",
+      "studentTableTitle": "Πίνακας μαθητών",
+      "noStudents": "Δεν υπάρχουν ακόμη μαθητές.",
+      "resourceTable": {
+        "tilesColumn": "Πλακίδια",
+        "leftRegion": "Αριστερά",
+        "rightRegion": "Δεξιά",
+        "topRegion": "Πάνω",
+        "centerRegion": "Κέντρο",
+        "regionSeparator": " · ",
+        "emptyValue": "—",
+        "negativeSign": "−",
+        "positiveSign": "+",
+        "variableA": "a",
+        "variableB": "b"
+      }
+    }
+  }
+}

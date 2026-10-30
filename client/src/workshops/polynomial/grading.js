@@ -47,7 +47,16 @@ export function flattenCorrectAnswers(expressionItem = {}) {
     return {};
   }
 
-  const source = expressionItem.correctAnswers ?? {};
+  const source = expressionItem.correctAnswers ?? (Array.isArray(expressionItem.answerGroups)
+    ? expressionItem.answerGroups.reduce((answers, group) => {
+      (group.fields || []).forEach((field) => {
+        const value = field.correctAnswers ?? field.correctAnswer;
+        if (field.partIndex == null || !field.answerField || value === undefined) return;
+        answers[`part-${field.partIndex}-${field.answerField}`] = value;
+      });
+      return answers;
+    }, {})
+    : {});
 
   if (Array.isArray(source)) {
     return source.reduce((memo, part, index) => {
@@ -94,6 +103,9 @@ export function computeStudentScore(student = {}, expressionItem = {}, overrides
   return Object.entries(expectedAnswers).reduce((total, [fieldName, expectedValue]) => {
     const actualValue = normalizeAnswerValue(studentAnswers[fieldName]);
     if (actualValue === '') return total;
-    return total + (actualValue === normalizeAnswerValue(expectedValue) ? correctScore : incorrectScore);
+    const isCorrect = Array.isArray(expectedValue)
+      ? expectedValue.some((value) => actualValue === normalizeAnswerValue(value))
+      : actualValue === normalizeAnswerValue(expectedValue);
+    return total + (isCorrect ? correctScore : incorrectScore);
   }, 0);
 }

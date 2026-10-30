@@ -1,0 +1,654 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "dataset-polynomialOperations",
+      "type": "activity-data",
+      "config": {
+        "settings": {},
+        "data": {
+          "label": "Πράξεις με πολυώνυμα",
+          "items": [
+            {
+              "id": "poly-op-1",
+              "expression": "(3x^2y + 5xy^2) + (2x^2y - 3xy^2)",
+              "answerTemplate": "x^{}y^{} + x^{}y^{}",
+              "resultMode": "polynomial",
+              "parts": [
+                {
+                  "coefficient": "",
+                  "degreeX": "",
+                  "degreeY": ""
+                },
+                {
+                  "coefficient": "",
+                  "degreeX": "",
+                  "degreeY": ""
+                }
+              ],
+              "connector": " + ",
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5,
+              "answerGroups": [
+                {
+                  "id": "term-1",
+                  "legend": "\\(\\text{Όρος } x^{2}y\\)",
+                  "legendFormat": "mathjax",
+                  "fields": [
+                    {
+                      "id": "part-0-coefficient",
+                      "partIndex": 0,
+                      "answerField": "coefficient",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": -3,
+                      "max": 5,
+                      "step": 1,
+                      "optionLabels": [
+                        "-3",
+                        "-2",
+                        "-1",
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                      ],
+                      "correctAnswer": 5
+                    },
+                    {
+                      "id": "part-0-degreeX",
+                      "partIndex": 0,
+                      "answerField": "degreeX",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": 0,
+                      "max": 8,
+                      "step": 1,
+                      "optionLabels": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8"
+                      ],
+                      "correctAnswer": 2
+                    },
+                    {
+                      "id": "part-0-degreeY",
+                      "partIndex": 0,
+                      "answerField": "degreeY",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": 0,
+                      "max": 8,
+                      "step": 1,
+                      "optionLabels": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8"
+                      ],
+                      "correctAnswer": 1
+                    }
+                  ]
+                },
+                {
+                  "id": "term-2",
+                  "legend": "\\(\\text{Όρος } xy^{2}\\)",
+                  "legendFormat": "mathjax",
+                  "fields": [
+                    {
+                      "id": "part-1-coefficient",
+                      "partIndex": 1,
+                      "answerField": "coefficient",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": -3,
+                      "max": 5,
+                      "step": 1,
+                      "optionLabels": [
+                        "-3",
+                        "-2",
+                        "-1",
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                      ],
+                      "correctAnswer": 2
+                    },
+                    {
+                      "id": "part-1-degreeX",
+                      "partIndex": 1,
+                      "answerField": "degreeX",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": 0,
+                      "max": 8,
+                      "step": 1,
+                      "optionLabels": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8"
+                      ],
+                      "correctAnswer": 1
+                    },
+                    {
+                      "id": "part-1-degreeY",
+                      "partIndex": 1,
+                      "answerField": "degreeY",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": 0,
+                      "max": 8,
+                      "step": 1,
+                      "optionLabels": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8"
+                      ],
+                      "correctAnswer": 2
+                    }
+                  ]
+                }
+              ],
+              "answerLayout": {
+                "columns": 3,
+                "columnLabels": [
+                  "Συντελεστής",
+                  "Βαθμός x",
+                  "Βαθμός y"
+                ]
+              }
+            },
+            {
+              "id": "poly-op-2",
+              "expression": "(7x^3 - 2x^2y) + (4x^3 + 5x^2y)",
+              "answerTemplate": "x^{}y^{} + x^{}y^{}",
+              "resultMode": "polynomial",
+              "parts": [
+                {
+                  "coefficient": "",
+                  "degreeX": "",
+                  "degreeY": ""
+                },
+                {
+                  "coefficient": "",
+                  "degreeX": "",
+                  "degreeY": ""
+                }
+              ],
+              "connector": " + ",
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5,
+              "answerGroups": [
+                {
+                  "id": "term-1",
+                  "legend": "\\(\\text{Όρος } x^{3}\\)",
+                  "legendFormat": "mathjax",
+                  "fields": [
+                    {
+                      "id": "part-0-coefficient",
+                      "partIndex": 0,
+                      "answerField": "coefficient",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": 3,
+                      "max": 11,
+                      "step": 1,
+                      "optionLabels": [
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8",
+                        "9",
+                        "10",
+                        "11"
+                      ],
+                      "correctAnswer": 11
+                    },
+                    {
+                      "id": "part-0-degreeX",
+                      "partIndex": 0,
+                      "answerField": "degreeX",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": 0,
+                      "max": 8,
+                      "step": 1,
+                      "optionLabels": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8"
+                      ],
+                      "correctAnswer": 3
+                    },
+                    {
+                      "id": "part-0-degreeY",
+                      "partIndex": 0,
+                      "answerField": "degreeY",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": 0,
+                      "max": 8,
+                      "step": 1,
+                      "optionLabels": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8"
+                      ],
+                      "correctAnswer": 0
+                    }
+                  ]
+                },
+                {
+                  "id": "term-2",
+                  "legend": "\\(\\text{Όρος } x^{2}y\\)",
+                  "legendFormat": "mathjax",
+                  "fields": [
+                    {
+                      "id": "part-1-coefficient",
+                      "partIndex": 1,
+                      "answerField": "coefficient",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": 3,
+                      "max": 11,
+                      "step": 1,
+                      "optionLabels": [
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8",
+                        "9",
+                        "10",
+                        "11"
+                      ],
+                      "correctAnswer": 3
+                    },
+                    {
+                      "id": "part-1-degreeX",
+                      "partIndex": 1,
+                      "answerField": "degreeX",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": 0,
+                      "max": 8,
+                      "step": 1,
+                      "optionLabels": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8"
+                      ],
+                      "correctAnswer": 2
+                    },
+                    {
+                      "id": "part-1-degreeY",
+                      "partIndex": 1,
+                      "answerField": "degreeY",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": 0,
+                      "max": 8,
+                      "step": 1,
+                      "optionLabels": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8"
+                      ],
+                      "correctAnswer": 1
+                    }
+                  ]
+                }
+              ],
+              "answerLayout": {
+                "columns": 3,
+                "columnLabels": [
+                  "Συντελεστής",
+                  "Βαθμός x",
+                  "Βαθμός y"
+                ]
+              }
+            },
+            {
+              "id": "poly-op-3",
+              "expression": "(6x^2y^2 - 3xy + 2x) - (2x^2y^2 - xy + x)",
+              "answerTemplate": "x^{}y^{} + x^{}y^{} + x^{}y^{}",
+              "resultMode": "polynomial",
+              "parts": [
+                {
+                  "coefficient": "",
+                  "degreeX": "",
+                  "degreeY": ""
+                },
+                {
+                  "coefficient": "",
+                  "degreeX": "",
+                  "degreeY": ""
+                },
+                {
+                  "coefficient": "",
+                  "degreeX": "",
+                  "degreeY": ""
+                }
+              ],
+              "connector": " + ",
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5,
+              "answerGroups": [
+                {
+                  "id": "term-1",
+                  "legend": "\\(\\text{Όρος } x^{2}y^{2}\\)",
+                  "legendFormat": "mathjax",
+                  "fields": [
+                    {
+                      "id": "part-0-coefficient",
+                      "partIndex": 0,
+                      "answerField": "coefficient",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": -4,
+                      "max": 4,
+                      "step": 1,
+                      "optionLabels": [
+                        "-4",
+                        "-3",
+                        "-2",
+                        "-1",
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4"
+                      ],
+                      "correctAnswer": 4
+                    },
+                    {
+                      "id": "part-0-degreeX",
+                      "partIndex": 0,
+                      "answerField": "degreeX",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": 0,
+                      "max": 8,
+                      "step": 1,
+                      "optionLabels": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8"
+                      ],
+                      "correctAnswer": 2
+                    },
+                    {
+                      "id": "part-0-degreeY",
+                      "partIndex": 0,
+                      "answerField": "degreeY",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": 0,
+                      "max": 8,
+                      "step": 1,
+                      "optionLabels": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8"
+                      ],
+                      "correctAnswer": 2
+                    }
+                  ]
+                },
+                {
+                  "id": "term-2",
+                  "legend": "\\(\\text{Όρος } xy\\)",
+                  "legendFormat": "mathjax",
+                  "fields": [
+                    {
+                      "id": "part-1-coefficient",
+                      "partIndex": 1,
+                      "answerField": "coefficient",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": -4,
+                      "max": 4,
+                      "step": 1,
+                      "optionLabels": [
+                        "-4",
+                        "-3",
+                        "-2",
+                        "-1",
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4"
+                      ],
+                      "correctAnswer": -2
+                    },
+                    {
+                      "id": "part-1-degreeX",
+                      "partIndex": 1,
+                      "answerField": "degreeX",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": 0,
+                      "max": 8,
+                      "step": 1,
+                      "optionLabels": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8"
+                      ],
+                      "correctAnswer": 1
+                    },
+                    {
+                      "id": "part-1-degreeY",
+                      "partIndex": 1,
+                      "answerField": "degreeY",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": 0,
+                      "max": 8,
+                      "step": 1,
+                      "optionLabels": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8"
+                      ],
+                      "correctAnswer": 1
+                    }
+                  ]
+                },
+                {
+                  "id": "term-3",
+                  "legend": "\\(\\text{Όρος } x\\)",
+                  "legendFormat": "mathjax",
+                  "fields": [
+                    {
+                      "id": "part-2-coefficient",
+                      "partIndex": 2,
+                      "answerField": "coefficient",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": -4,
+                      "max": 4,
+                      "step": 1,
+                      "optionLabels": [
+                        "-4",
+                        "-3",
+                        "-2",
+                        "-1",
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4"
+                      ],
+                      "correctAnswer": 1
+                    },
+                    {
+                      "id": "part-2-degreeX",
+                      "partIndex": 2,
+                      "answerField": "degreeX",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": 0,
+                      "max": 8,
+                      "step": 1,
+                      "optionLabels": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8"
+                      ],
+                      "correctAnswer": 1
+                    },
+                    {
+                      "id": "part-2-degreeY",
+                      "partIndex": 2,
+                      "answerField": "degreeY",
+                      "rows": 3,
+                      "columns": 3,
+                      "min": 0,
+                      "max": 8,
+                      "step": 1,
+                      "optionLabels": [
+                        "0",
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5",
+                        "6",
+                        "7",
+                        "8"
+                      ],
+                      "correctAnswer": 0
+                    }
+                  ]
+                }
+              ],
+              "answerLayout": {
+                "columns": 3,
+                "columnLabels": [
+                  "Συντελεστής",
+                  "Βαθμός x",
+                  "Βαθμός y"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "activity-content-2.4",
+      "type": "activity-content",
+      "region": "center",
+      "config": {
+        "settings": {},
+        "data": {
+          "tasks": [
+            "Άθροισμα",
+            "Διαφορά",
+            "Μικτό αποτέλεσμα"
+          ]
+        }
+      }
+    }
+  ],
+  "activity": {
+    "id": "2.4",
+    "code": "2.4",
+    "title": "2.4 Πράξεις με πολυώνυμα (πρόσθεση-αφαίρεση)",
+    "objective": "Πρόσθεση και αφαίρεση πολυωνύμων με αναγωγή όμοιων όρων.",
+    "mode": "activity-content",
+    "usesResources": [
+      "dataset-polynomialOperations",
+      "activity-content-2.4"
+    ]
+  }
+}

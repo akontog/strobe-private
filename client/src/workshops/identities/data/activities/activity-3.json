@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "activity-data-3",
+      "type": "activity-data",
+      "config": {
+        "settings": {},
+        "data": {
+          "expression": "(\\alpha+\\beta)(\\alpha-\\beta)",
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5,
+          "terms": [
+            {
+              "variables": [
+                {
+                  "key": "a",
+                  "symbol": "\\alpha",
+                  "label": "α"
+                }
+              ],
+              "correctAnswers": {
+                "coefficient": 1,
+                "degreeA": 2
+              }
+            },
+            {
+              "variables": [
+                {
+                  "key": "b",
+                  "symbol": "\\beta",
+                  "label": "β"
+                }
+              ],
+              "correctAnswers": {
+                "coefficient": -1,
+                "degreeB": 2
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "activity-3-resource-1",
+      "type": "identity-expression",
+      "region": "left",
+      "config": {
+        "settings": {
+          "card": true
+        }
+      }
+    },
+    {
+      "id": "activity-3-resource-2",
+      "type": "identity-polynomial",
+      "region": "center",
+      "config": {
+        "settings": {
+          "card": true
+        }
+      }
+    }
+  ],
+  "activity": {
+    "id": "3",
+    "code": "3.",
+    "title": "Διαφορά τετραγώνων",
+    "objective": "Συμπλήρωσε τα μέλη της ταυτότητας (a+b)(a-b) = a² - b².",
+    "resultMode": "identityPolynomial",
+    "mode": "identityPolynomial",
+    "usesResources": [
+      "activity-data-3",
+      "activity-3-resource-1",
+      "activity-3-resource-2"
+    ],
+    "labels": {
+      "identityLabel": "Ταυτότητα",
+      "identityVariantTitle": "Επιλογή ταυτότητας",
+      "chooseIdentityVariant": "Επιλέξτε ταυτότητα",
+      "coefficientOfTerm": "Συντελεστής όρου",
+      "exponentOf": "Εκθέτης του",
+      "inTerm": "στον όρο",
+      "identityAriaLabel": "Αλγεβρική ταυτότητα",
+      "term1": "1ος όρος",
+      "term2": "2ος όρος",
+      "term3": "3ος όρος",
+      "termCoefficient": "Συντελεστής όρου {{term}}",
+      "termDegreeA": "Εκθέτης του a (όρος {{term}})",
+      "termDegreeB": "Εκθέτης του b (όρος {{term}})",
+      "enterIdentityTerms": "Συμπλήρωσε όλους τους συντελεστές και εκθέτες για να εμφανιστεί η ανάπτυξη.",
+      "answer": "Απάντηση",
+      "check": "Έλεγχος",
+      "correctFeedback": "Σωστά! Η ταυτότητα είναι πλήρης.",
+      "incorrectFeedback": "Έλεγξε ξανά τους όρους της ανάπτυξης.",
+      "completeRightSide": "Συμπλήρωσε το δεξί μέλος της ταυτότητας.",
+      "studentMode": "Λειτουργία μαθητή",
+      "teacherMode": "Λειτουργία καθηγητή",
+      "activities": "Δραστηριότητα",
+      "chooseActivity": "Επιλογή δραστηριότητας",
+      "matchingInstruction": "Σύρε κάθε ανάπτυξη στην ταυτότητα που επαληθεύει.",
+      "studentTableTitle": "Πίνακας μαθητών",
+      "noStudents": "Δεν υπάρχουν ακόμη μαθητές.",
+      "resourceTable": {
+        "tilesColumn": "Πλακίδια",
+        "leftRegion": "Αριστερά",
+        "rightRegion": "Δεξιά",
+        "topRegion": "Πάνω",
+        "centerRegion": "Κέντρο",
+        "regionSeparator": " · ",
+        "emptyValue": "—",
+        "negativeSign": "−",
+        "positiveSign": "+",
+        "variableA": "a",
+        "variableB": "b"
+      }
+    }
+  }
+}

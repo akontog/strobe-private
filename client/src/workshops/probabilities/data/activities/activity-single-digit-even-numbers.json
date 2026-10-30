@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "activity-content-single-digit-even-numbers",
+      "type": "activity-content",
+      "region": "center",
+      "config": {
+        "settings": {},
+        "data": {
+          "bankLabel": "Αριθμοί από το 1 έως το 10",
+          "scoreCorrect": 1,
+          "scoreIncorrect": 0,
+          "diagram": {
+            "type": "single",
+            "sets": [
+              {
+                "id": "even-single-digit",
+                "title": "Άρτιοι μονοψήφιοι αριθμοί"
+              }
+            ],
+            "regions": [
+              {
+                "id": "inside",
+                "title": "Άρτιοι μονοψήφιοι αριθμοί",
+                "members": [
+                  "even-single-digit"
+                ]
+              },
+              {
+                "id": "outside",
+                "title": "Έξω από το σύνολο",
+                "members": []
+              }
+            ]
+          },
+          "items": [
+            {
+              "id": "1",
+              "content": "1"
+            },
+            {
+              "id": "2",
+              "content": "2"
+            },
+            {
+              "id": "3",
+              "content": "3"
+            },
+            {
+              "id": "4",
+              "content": "4"
+            },
+            {
+              "id": "5",
+              "content": "5"
+            },
+            {
+              "id": "6",
+              "content": "6"
+            },
+            {
+              "id": "7",
+              "content": "7"
+            },
+            {
+              "id": "8",
+              "content": "8"
+            },
+            {
+              "id": "9",
+              "content": "9"
+            },
+            {
+              "id": "10",
+              "content": "10"
+            }
+          ],
+          "correctPlacementByItem": {
+            "1": "outside",
+            "2": "inside",
+            "3": "outside",
+            "4": "inside",
+            "5": "outside",
+            "6": "inside",
+            "7": "outside",
+            "8": "inside",
+            "9": "outside",
+            "10": "inside"
+          }
+        }
+      }
+    }
+  ],
+  "activity": {
+    "id": "single-digit-even-numbers",
+    "code": "1.",
+    "title": "Άρτιοι μονοψήφιοι αριθμοί",
+    "objective": "Σύρε τους άρτιους αριθμούς μέσα στο σύνολο και τους περιττούς έξω από αυτό.",
+    "mode": "activity-content",
+    "usesResources": [
+      "activity-content-single-digit-even-numbers"
+    ],
+    "labels": {
+      "currentScore": "Βαθμολογία: {{score}} / {{maxScore}}",
+      "studentTableTitle": "Πίνακας μαθητών",
+      "insideSet": "Μέσα στο σύνολο",
+      "score": "Βαθμολογία",
+      "noStudents": "Δεν υπάρχουν ακόμη μαθητές στη συνεδρία.",
+      "activities": "Δραστηριότητες",
+      "chooseActivity": "Επιλογή δραστηριότητας",
+      "resourceTable": {
+        "emptyValue": "—"
+      }
+    }
+  }
+}

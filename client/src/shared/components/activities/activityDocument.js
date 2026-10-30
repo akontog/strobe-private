@@ -77,12 +77,27 @@ export function resolveActivityDocument(document) {
 }
 
 /** Resolves a workshop document and its linked resources for existing renderers. */
-export function resolveWorkshopDocument(document) {
+export function resolveWorkshopDocument(document, standaloneDocuments = []) {
   if (document?.documentType !== 'workshop') return document;
 
-  const resourcesById = new Map((document.resources || []).map((resource) => [resource.id, resource]));
+  const standaloneByActivityId = new Map(standaloneDocuments
+    .filter((entry) => entry?.documentType === 'activity' && entry.activity?.id)
+    .map((entry) => [entry.activity.id, entry]));
+  const standaloneResources = [];
+  const catalogActivities = (document.activities || []).map((activity) => {
+    const standalone = standaloneByActivityId.get(activity.id);
+    if (!standalone) return activity;
+    standaloneResources.push(...(standalone.resources || []));
+    return {
+      ...activity,
+      ...standalone.activity,
+      labels: standalone.activity.labels || activity.labels
+    };
+  });
+  const allResources = [...(document.resources || []), ...standaloneResources];
+  const resourcesById = new Map(allResources.map((resource) => [resource.id, resource]));
   const datasets = {};
-  (document.resources || []).forEach((resource) => {
+  allResources.forEach((resource) => {
     if (resource.type === 'activity-data' && resource.id.startsWith('dataset-')) {
       datasets[resource.id.slice('dataset-'.length)] = {
         ...(resource.config?.data || {}),
@@ -92,7 +107,7 @@ export function resolveWorkshopDocument(document) {
   });
 
   const lessons = {};
-  const activities = (document.activities || []).map((activity) => {
+  const activities = catalogActivities.map((activity) => {
     const usedResources = (activity.usesResources || [])
       .map((id) => resourcesById.get(id))
       .filter(Boolean);
@@ -128,7 +143,7 @@ export function resolveWorkshopDocument(document) {
 
   return {
     ...document,
-    labels: document.workshop?.presentation?.labels || {},
+    labels: document.workshop?.presentation?.labels || document.labels || activities[0]?.labels || {},
     datasets,
     lessons,
     activities

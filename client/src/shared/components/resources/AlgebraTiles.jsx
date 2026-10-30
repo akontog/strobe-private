@@ -59,11 +59,11 @@ const TILE_SPANS = {
   xy: [6, 4],
   y2: [4, 4]
 };
-const GRID_UNIT = 20;
-const T_CHART_AXIS_X = 120;
-const T_CHART_AXIS_Y = 80;
-const T_CHART_HORIZONTAL_ROW_Y = 40;
-const T_CHART_VERTICAL_COLUMN_X = 80;
+const GRID_UNIT = 18;
+const T_CHART_AXIS_X = GRID_UNIT * 6;
+const T_CHART_AXIS_Y = GRID_UNIT * 4;
+const T_CHART_HORIZONTAL_ROW_Y = GRID_UNIT * 2;
+const T_CHART_VERTICAL_COLUMN_X = GRID_UNIT * 4;
 const SYSTEMS_ROW_HEADER_HEIGHT = 56;
 
 function normalizeMode(mode, layout) {
@@ -189,6 +189,10 @@ export default function AlgebraTiles({
   const [selectedTileIds, setSelectedTileIds] = useState(() => new Set());
   const [copiedTileCount, setCopiedTileCount] = useState(0);
   const [selectionBox, setSelectionBox] = useState(null);
+  const [touchMode, setTouchMode] = useState(false);
+  const [touchDrag, setTouchDrag] = useState(null);
+  const touchDragRef = useRef(null);
+  const suppressTouchClickRef = useRef(false);
   const mergeTimerRef = useRef(null);
   const placedBoardRef = useRef(null);
   const selectionStartRef = useRef(null);
@@ -522,6 +526,87 @@ export default function AlgebraTiles({
     event.dataTransfer.setDragImage(event.currentTarget, event.nativeEvent.offsetX, event.nativeEvent.offsetY);
   };
 
+  const startTouchTileDrag = (event, tile) => {
+    if (!canEdit || isMerging || event.pointerType === 'mouse' || event.target.closest('button')) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const groupedTiles = tile.id && selectedTileIds.has(tile.id)
+      ? tiles.filter((item) => selectedTileIds.has(item.id))
+      : [];
+    touchDragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      offsetX: event.nativeEvent.offsetX,
+      offsetY: event.nativeEvent.offsetY,
+      moved: false,
+      tile: {
+        id: tile.id || '',
+        type: tile.type,
+        sign: tile.sign,
+        orientation: tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal'),
+        ...(groupedTiles.length > 1 ? { tiles: groupedTiles } : {})
+      }
+    };
+    setTouchMode(true);
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
+
+  const moveTouchTileDrag = (event) => {
+    const drag = touchDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    if (!drag.moved && Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) < 4) return;
+    drag.moved = true;
+    setTouchDrag({
+      type: drag.tile.type,
+      sign: drag.tile.sign,
+      orientation: drag.tile.orientation,
+      x: event.clientX - drag.offsetX,
+      y: event.clientY - drag.offsetY
+    });
+  };
+
+  const finishTouchTileDrag = (event) => {
+    const drag = touchDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    touchDragRef.current = null;
+    setTouchDrag(null);
+    setTouchMode(false);
+    if (drag.moved && drag.tile.id) {
+      suppressTouchClickRef.current = true;
+      window.setTimeout(() => { suppressTouchClickRef.current = false; }, 500);
+    }
+    if (!drag.moved) {
+      if (drag.tile.id) removeTile(drag.tile.id);
+      return;
+    }
+    const board = placedBoardRef.current;
+    if (!board) return;
+    const bounds = board.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) {
+      if (drag.tile.id) {
+        const ids = new Set(drag.tile.tiles?.map((item) => item.id) || [drag.tile.id]);
+        commitTiles(tiles.filter((tile) => !ids.has(tile.id)));
+        setSelectedTileIds(new Set());
+      }
+      return;
+    }
+    dropTile({
+      preventDefault() {},
+      currentTarget: board,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      dataTransfer: { getData: () => JSON.stringify({ ...drag.tile, offsetX: drag.offsetX, offsetY: drag.offsetY }) }
+    });
+  };
+
+  const cancelTouchTileDrag = (event) => {
+    if (touchDragRef.current?.pointerId !== event.pointerId) return;
+    touchDragRef.current = null;
+    setTouchDrag(null);
+    setTouchMode(false);
+  };
+
   const rotateOrientation = (orientation) => orientation === 'vertical' ? 'horizontal' : 'vertical';
 
   const toggleTileSign = (tileId) => {
@@ -557,8 +642,12 @@ export default function AlgebraTiles({
             tabIndex={canEdit ? 0 : -1}
             aria-label={`${orientation === 'vertical' ? 'Κατακόρυφο' : 'Οριζόντιο'} ${sign < 0 ? 'αρνητικό' : 'θετικό'} πλακίδιο ${definition.name}`}
             aria-disabled={!canEdit}
-            draggable={canEdit}
-            onDragStart={(event) => beginTileDrag(event, { type, sign, orientation })}>
+            draggable={canEdit && !touchMode}
+            onDragStart={(event) => beginTileDrag(event, { type, sign, orientation })}
+            onPointerDown={(event) => startTouchTileDrag(event, { type, sign, orientation })}
+            onPointerMove={moveTouchTileDrag}
+            onPointerUp={finishTouchTileDrag}
+            onPointerCancel={cancelTouchTileDrag}>
             {sign < 0 ? `−${definition.label}` : definition.label}
             {renderSignButton(sign, definition.name, () => setSourceSigns((current) => ({ ...current, [type]: current[type] < 0 ? 1 : -1 })))}
             {canRotate ? <button type="button" className="algebra-tile__rotate" aria-label={`Περιστροφή πλακιδίου ${definition.name}`} disabled={!canEdit}
@@ -826,6 +915,10 @@ export default function AlgebraTiles({
         </p> : null))}
       {!settingsInPortal ? settingsAccordion : null}
       <div className={`algebra-tiles${isMerging ? ' has-merging-tiles' : ''}`} onKeyDown={handleBoardShortcuts}>
+      {touchDrag ? <div className={`algebra-tile algebra-tile--${getTileDefinition(touchDrag.type, variables)?.className || 'unit'} is-${touchDrag.orientation}${touchDrag.sign < 0 ? ' is-negative' : ''} algebra-tiles__touch-preview`}
+        style={{ left: `${touchDrag.x}px`, top: `${touchDrag.y}px`, width: `${getTileDimensions(touchDrag.type, touchDrag.orientation).width}px`, height: `${getTileDimensions(touchDrag.type, touchDrag.orientation).height}px` }} aria-hidden="true">
+        {touchDrag.sign < 0 ? '−' : ''}{getTileDefinition(touchDrag.type, variables)?.label}
+      </div> : null}
       <div className="algebra-tiles__selection-tools">
         {selectedTileIds.size ? <span aria-live="polite">{selectedTileIds.size} πλακίδια επιλεγμένα</span>
           : (showSelectionHint ? <span>Σύρε το ποντίκι σε κενή περιοχή για επιλογή πλακιδίων</span> : null)}
@@ -893,10 +986,20 @@ export default function AlgebraTiles({
             const orientation = tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal');
             const [spanX, spanY] = getTileSpans(tile.type, orientation);
             return (
-              <div key={tile.id} role="button" tabIndex={canEdit ? 0 : -1} draggable={canEdit} aria-disabled={!canEdit}
+              <div key={tile.id} role="button" tabIndex={canEdit ? 0 : -1} draggable={canEdit && !touchMode} aria-disabled={!canEdit}
                 onDragStart={(event) => beginTileDrag(event, tile)}
                 onDragEnd={(event) => endTileDrag(event, tile.id)}
+                onPointerDown={(event) => startTouchTileDrag(event, tile)}
+                onPointerMove={moveTouchTileDrag}
+                onPointerUp={finishTouchTileDrag}
+                onPointerCancel={cancelTouchTileDrag}
                 onClick={(event) => {
+                  if (suppressTouchClickRef.current) {
+                    suppressTouchClickRef.current = false;
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return;
+                  }
                   if (event.ctrlKey || event.metaKey || event.shiftKey) {
                     setSelectedTileIds((current) => {
                       const next = new Set(current);

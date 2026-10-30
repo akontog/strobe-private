@@ -1,0 +1,214 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "dataset-algebraTiles",
+      "type": "activity-data",
+      "config": {
+        "settings": {},
+        "data": {
+          "label": "Πλακίδια άλγεβρας",
+          "items": [
+            {
+              "id": "algebra-tiles-multiply-x-plus-1-x-plus-2",
+              "expression": "(x+1)(x+2)",
+              "resultMode": "algebraTiles",
+              "correctAnswers": [
+                {
+                  "coefficient": 1,
+                  "degreeX": 2,
+                  "degreeY": 0
+                },
+                {
+                  "coefficient": 3,
+                  "degreeX": 1,
+                  "degreeY": 0
+                },
+                {
+                  "coefficient": 2,
+                  "degreeX": 0,
+                  "degreeY": 0
+                }
+              ],
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5
+            },
+            {
+              "id": "algebra-tiles-multiply-x-plus-2-x-plus-3",
+              "expression": "(x+2)(x+3)",
+              "resultMode": "algebraTiles",
+              "correctAnswers": [
+                {
+                  "coefficient": 1,
+                  "degreeX": 2,
+                  "degreeY": 0
+                },
+                {
+                  "coefficient": 5,
+                  "degreeX": 1,
+                  "degreeY": 0
+                },
+                {
+                  "coefficient": 6,
+                  "degreeX": 0,
+                  "degreeY": 0
+                }
+              ],
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5
+            },
+            {
+              "id": "algebra-tiles-multiply-2x-plus-1-x-plus-2",
+              "expression": "(2x+1)(x+2)",
+              "resultMode": "algebraTiles",
+              "correctAnswers": [
+                {
+                  "coefficient": 2,
+                  "degreeX": 2,
+                  "degreeY": 0
+                },
+                {
+                  "coefficient": 5,
+                  "degreeX": 1,
+                  "degreeY": 0
+                },
+                {
+                  "coefficient": 2,
+                  "degreeX": 0,
+                  "degreeY": 0
+                }
+              ],
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5
+            },
+            {
+              "id": "algebra-tiles-multiply-x-plus-y-x-plus-2y",
+              "expression": "(x+y)(x+2y)",
+              "resultMode": "algebraTiles",
+              "correctAnswers": [
+                {
+                  "coefficient": 1,
+                  "degreeX": 2,
+                  "degreeY": 0
+                },
+                {
+                  "coefficient": 3,
+                  "degreeX": 1,
+                  "degreeY": 1
+                },
+                {
+                  "coefficient": 2,
+                  "degreeX": 0,
+                  "degreeY": 2
+                }
+              ],
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "activity-data-2.7",
+      "type": "activity-data",
+      "config": {
+        "settings": {},
+        "data": {
+          "tasks": [
+            "Σύνθεση πολυωνύμου με πλακίδια",
+            "Μοντέλο εμβαδού για γινόμενο",
+            "Παραγοντοποίηση τριωνύμου"
+          ]
+        }
+      }
+    },
+    {
+      "id": "activity-2.7-resource-1",
+      "type": "algebra-tiles",
+      "region": "center",
+      "config": {
+        "settings": {
+          "card": false,
+          "mode": "area"
+        }
+      }
+    }
+  ],
+  "activity": {
+    "id": "2.7",
+    "code": "2.7",
+    "title": "2.7 Πολλαπλασιασμός με πλακίδια άλγεβρας",
+    "objective": "Μοντελοποίησε τον πολλαπλασιασμό δύο πολυωνύμων πρώτου βαθμού με πλακίδια και διάβασε το γινόμενο.",
+    "mode": "activity-content",
+    "usesResources": [
+      "dataset-algebraTiles",
+      "activity-data-2.7",
+      "activity-2.7-resource-1"
+    ],
+    "labels": {
+      "expression": "Έκφραση",
+      "answer": "Απάντηση",
+      "coefficient": "Συντελεστής",
+      "degreeX": "Βαθμός ως προς x",
+      "degreeY": "Βαθμός ως προς y",
+      "totalDegree": "Συνολικός βαθμός",
+      "degreeXY": "Βαθμός ως προς x και y",
+      "termCoefficient": "Συντελεστής όρου {{term}}",
+      "termDegreeX": "Βαθμός ως προς x (όρος {{term}})",
+      "termDegreeY": "Βαθμός ως προς y (όρος {{term}})",
+      "termHeader": "Όρος {{term}}",
+      "resourceTable": {
+        "tilesColumn": "Πλακίδια",
+        "tileRegions": {
+          "equation": [
+            {
+              "id": "left",
+              "label": "Αριστερά"
+            },
+            {
+              "id": "right",
+              "label": "Δεξιά"
+            }
+          ],
+          "area": [
+            {
+              "id": "top",
+              "label": "Πάνω"
+            },
+            {
+              "id": "left",
+              "label": "Αριστερά"
+            },
+            {
+              "id": "center",
+              "label": "Κέντρο"
+            }
+          ],
+          "all": [
+            {
+              "id": "all",
+              "label": "Παράσταση"
+            }
+          ]
+        },
+        "tileLabels": {
+          "one": "1",
+          "x": "x",
+          "y": "y",
+          "x2": "x²",
+          "xy": "xy",
+          "y2": "y²"
+        },
+        "positiveSign": "+",
+        "negativeSign": "−",
+        "termSeparator": " ",
+        "emptyValue": "—",
+        "variableX": "x",
+        "variableY": "y"
+      }
+    }
+  }
+}

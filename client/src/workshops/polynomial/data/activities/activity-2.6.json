@@ -1,0 +1,157 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "dataset-polynomialAreaModel",
+      "type": "activity-data",
+      "config": {
+        "settings": {},
+        "data": {
+          "label": "Εμβαδικό μοντέλο πολυωνύμου",
+          "items": [
+            {
+              "id": "poly-area-1",
+              "expression": "(x + 4)(x + 5)",
+              "geogebraRoomId": "polynomial-lab-2-6-area-x",
+              "resultMode": "geogebraArea",
+              "correctAnswers": [
+                {
+                  "coefficient": 1,
+                  "degreeX": 2,
+                  "degreeY": 0
+                },
+                {
+                  "coefficient": 9,
+                  "degreeX": 1,
+                  "degreeY": 0
+                },
+                {
+                  "coefficient": 20,
+                  "degreeX": 0,
+                  "degreeY": 0
+                }
+              ],
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5
+            },
+            {
+              "id": "poly-area-2",
+              "expression": "(2x + 4)(x + 5)",
+              "geogebraRoomId": "polynomial-lab-2-6-area-2x",
+              "resultMode": "geogebraArea",
+              "correctAnswers": [
+                {
+                  "coefficient": 2,
+                  "degreeX": 2,
+                  "degreeY": 0
+                },
+                {
+                  "coefficient": 14,
+                  "degreeX": 1,
+                  "degreeY": 0
+                },
+                {
+                  "coefficient": 20,
+                  "degreeX": 0,
+                  "degreeY": 0
+                }
+              ],
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "activity-content-2.6",
+      "type": "activity-content",
+      "region": "center",
+      "config": {
+        "settings": {},
+        "data": {
+          "tasks": [
+            "Μετακίνηση σημείου x",
+            "Παρατήρηση 4 υπο-εμβαδών",
+            "Σύνδεση με ανάπτυγμα πολυωνύμου"
+          ]
+        }
+      }
+    }
+  ],
+  "activity": {
+    "id": "2.6",
+    "code": "2.6",
+    "title": "2.6 Πολλαπλασιασμός με εμβαδά ορθογωνίου",
+    "objective": "Οπτικοποίηση του (2x+4)(x+5) με ορθογώνιο και επιμέρους εμβαδά.",
+    "mode": "activity-content",
+    "usesResources": [
+      "dataset-polynomialAreaModel",
+      "activity-content-2.6"
+    ],
+    "labels": {
+      "expression": "Έκφραση",
+      "answer": "Απάντηση",
+      "coefficient": "Συντελεστής",
+      "degreeX": "Βαθμός ως προς x",
+      "degreeY": "Βαθμός ως προς y",
+      "totalDegree": "Συνολικός βαθμός",
+      "degreeXY": "Βαθμός ως προς x και y",
+      "termCoefficient": "Συντελεστής όρου {{term}}",
+      "termDegreeX": "Βαθμός ως προς x (όρος {{term}})",
+      "termDegreeY": "Βαθμός ως προς y (όρος {{term}})",
+      "termHeader": "Όρος {{term}}",
+      "resourceTable": {
+        "tilesColumn": "Πλακίδια",
+        "tileRegions": {
+          "equation": [
+            {
+              "id": "left",
+              "label": "Αριστερά"
+            },
+            {
+              "id": "right",
+              "label": "Δεξιά"
+            }
+          ],
+          "area": [
+            {
+              "id": "top",
+              "label": "Πάνω"
+            },
+            {
+              "id": "left",
+              "label": "Αριστερά"
+            },
+            {
+              "id": "center",
+              "label": "Κέντρο"
+            }
+          ],
+          "all": [
+            {
+              "id": "all",
+              "label": "Παράσταση"
+            }
+          ]
+        },
+        "tileLabels": {
+          "one": "1",
+          "x": "x",
+          "y": "y",
+          "x2": "x²",
+          "xy": "xy",
+          "y2": "y²"
+        },
+        "positiveSign": "+",
+        "negativeSign": "−",
+        "termSeparator": " ",
+        "emptyValue": "—",
+        "variableX": "x",
+        "variableY": "y"
+      }
+    }
+  }
+}

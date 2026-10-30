@@ -78,6 +78,55 @@ function validateResources(resources, issues) {
   });
 }
 
+function validateAnswerGridResources(resources, issues) {
+  resources.forEach((resource, resourceIndex) => {
+    if (resource?.type !== 'activity-data') return;
+    const items = resource.config?.data?.items;
+    if (!Array.isArray(items)) return;
+
+    items.forEach((item, itemIndex) => {
+      const itemPath = `resources[${resourceIndex}].config.data.items[${itemIndex}]`;
+      const layout = item.answerLayout;
+      if (layout) {
+        const columns = Number(layout.columns);
+        if (!Number.isInteger(columns) || columns < 1) {
+          issues.push(`${itemPath}.answerLayout.columns must be a positive integer.`);
+        }
+        if (!Array.isArray(layout.columnLabels) || layout.columnLabels.length !== columns) {
+          issues.push(`${itemPath}.answerLayout.columnLabels must contain one label per column.`);
+        }
+      }
+
+      (Array.isArray(item.answerGroups) ? item.answerGroups : []).forEach((group, groupIndex) => {
+        (Array.isArray(group.fields) ? group.fields : []).forEach((field, fieldIndex) => {
+          const fieldPath = `${itemPath}.answerGroups[${groupIndex}].fields[${fieldIndex}]`;
+          const rows = Number(field.rows);
+          const columns = Number(field.columns);
+          const min = Number(field.min);
+          const max = Number(field.max);
+          const step = Number(field.step);
+          const choiceCount = rows * columns;
+          const rangeCount = step > 0 ? Math.round((max - min) / step) + 1 : 0;
+          if (!Number.isInteger(rows) || rows < 1 || !Number.isInteger(columns) || columns < 1) {
+            issues.push(`${fieldPath} must define positive integer rows and columns.`);
+          }
+          if (!Number.isFinite(min) || !Number.isFinite(max) || max < min || !Number.isFinite(step) || step <= 0) {
+            issues.push(`${fieldPath} must define a valid min, max, and positive step.`);
+          } else if (rangeCount !== choiceCount || Math.abs((max - min) / step - (rangeCount - 1)) > 1e-9) {
+            issues.push(`${fieldPath} range must generate exactly rows × columns choices.`);
+          }
+          if (!Array.isArray(field.optionLabels) || field.optionLabels.length !== choiceCount) {
+            issues.push(`${fieldPath}.optionLabels must contain one label per choice.`);
+          }
+          if (field.correctAnswer === undefined && !Array.isArray(field.correctAnswers)) {
+            issues.push(`${fieldPath} must define correctAnswer or correctAnswers.`);
+          }
+        });
+      });
+    });
+  });
+}
+
 function validateActivities(activities, issues) {
   activities.forEach((activity, index) => {
     const activityPath = `activities[${index}]`;
@@ -93,8 +142,10 @@ function validateActivities(activities, issues) {
     if (activity.objective != null && typeof activity.objective !== 'string') {
       issues.push(`${activityPath}.objective must be a string when present.`);
     }
-    if (!Array.isArray(activity.usesResources) || !activity.usesResources.length) {
-      issues.push(`${activityPath}.usesResources must be a non-empty array.`);
+    const hasResourceReferences = Array.isArray(activity.usesResources) && activity.usesResources.length > 0;
+    const hasStandaloneFile = typeof activity.activityFile === 'string' && activity.activityFile.trim();
+    if (!hasResourceReferences && !hasStandaloneFile) {
+      issues.push(`${activityPath} must include usesResources or an activityFile reference.`);
     }
   });
 }
@@ -148,6 +199,7 @@ function validateWorkshopDocument(rawText) {
     issues.push('resources must be an array.');
   } else {
     validateResources(resources, issues);
+    validateAnswerGridResources(resources, issues);
     const duplicateResourceIds = findDuplicateIds(resources, 'resource');
     if (duplicateResourceIds.length) {
       issues.push(`Duplicate resource ids: ${duplicateResourceIds.join(', ')}`);

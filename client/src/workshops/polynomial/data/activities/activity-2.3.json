@@ -1,0 +1,209 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "dataset-polynomialLikeTermGrouping",
+      "type": "activity-data",
+      "config": {
+        "settings": {},
+        "data": {
+          "label": "Ομαδοποίηση όμοιων όρων (δύο πολυώνυμα)",
+          "items": [
+            {
+              "id": "poly-group-1",
+              "expression": "(3x^2 + 5xy - 2y^2) + (4x^2 - 3xy + y^2)",
+              "resultMode": "grouping",
+              "leftPolynomial": "3x^2 + 5xy - 2y^2",
+              "rightPolynomial": "4x^2 - 3xy + y^2",
+              "operator": "+",
+              "groups": [
+                {
+                  "id": "g-x2",
+                  "title": "Όμοιοι όροι x^2",
+                  "hint": "x^2",
+                  "degreeX": 2,
+                  "degreeY": 0
+                },
+                {
+                  "id": "g-xy",
+                  "title": "Όμοιοι όροι xy",
+                  "hint": "xy",
+                  "degreeX": 1,
+                  "degreeY": 1
+                },
+                {
+                  "id": "g-y2",
+                  "title": "Όμοιοι όροι y^2",
+                  "hint": "y^2",
+                  "degreeX": 0,
+                  "degreeY": 2
+                }
+              ],
+              "items": [
+                {
+                  "id": "l1",
+                  "label": "3x^2",
+                  "coefficient": 3,
+                  "degreeX": 2,
+                  "degreeY": 0,
+                  "source": "L",
+                  "correctGroupId": "g-x2"
+                },
+                {
+                  "id": "l2",
+                  "label": "5xy",
+                  "coefficient": 5,
+                  "degreeX": 1,
+                  "degreeY": 1,
+                  "source": "L",
+                  "correctGroupId": "g-xy"
+                },
+                {
+                  "id": "l3",
+                  "label": "-2y^2",
+                  "coefficient": -2,
+                  "degreeX": 0,
+                  "degreeY": 2,
+                  "source": "L",
+                  "correctGroupId": "g-y2"
+                },
+                {
+                  "id": "r1",
+                  "label": "4x^2",
+                  "coefficient": 4,
+                  "degreeX": 2,
+                  "degreeY": 0,
+                  "source": "R",
+                  "correctGroupId": "g-x2"
+                },
+                {
+                  "id": "r2",
+                  "label": "-3xy",
+                  "coefficient": -3,
+                  "degreeX": 1,
+                  "degreeY": 1,
+                  "source": "R",
+                  "correctGroupId": "g-xy"
+                },
+                {
+                  "id": "r3",
+                  "label": "y^2",
+                  "coefficient": 1,
+                  "degreeX": 0,
+                  "degreeY": 2,
+                  "source": "R",
+                  "correctGroupId": "g-y2"
+                }
+              ],
+              "resultOrder": [
+                "g-x2",
+                "g-xy",
+                "g-y2"
+              ],
+              "correctAnswers": {
+                "item-l1": "g-x2",
+                "item-l2": "g-xy",
+                "item-l3": "g-y2",
+                "item-r1": "g-x2",
+                "item-r2": "g-xy",
+                "item-r3": "g-y2"
+              },
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "activity-content-2.3",
+      "type": "activity-content",
+      "region": "center",
+      "config": {
+        "settings": {},
+        "data": {
+          "tasks": [
+            "Ταξινόμηση όρων",
+            "Έλεγχος ομοιότητας",
+            "Αυτόματο αποτέλεσμα"
+          ]
+        }
+      }
+    }
+  ],
+  "activity": {
+    "id": "2.3",
+    "code": "2.3",
+    "title": "2.3 Ομαδοποίηση όμοιων όρων δύο πολυωνύμων",
+    "objective": "Ομαδοποίηση όρων από δύο πολυώνυμα και αυτόματη πρόσθεση ανά ομάδα ομοίων όρων.",
+    "mode": "activity-content",
+    "usesResources": [
+      "dataset-polynomialLikeTermGrouping",
+      "activity-content-2.3"
+    ],
+    "labels": {
+      "expression": "Έκφραση",
+      "answer": "Απάντηση",
+      "coefficient": "Συντελεστής",
+      "degreeX": "Βαθμός ως προς x",
+      "degreeY": "Βαθμός ως προς y",
+      "totalDegree": "Συνολικός βαθμός",
+      "degreeXY": "Βαθμός ως προς x και y",
+      "termCoefficient": "Συντελεστής όρου {{term}}",
+      "termDegreeX": "Βαθμός ως προς x (όρος {{term}})",
+      "termDegreeY": "Βαθμός ως προς y (όρος {{term}})",
+      "termHeader": "Όρος {{term}}",
+      "resourceTable": {
+        "tilesColumn": "Πλακίδια",
+        "tileRegions": {
+          "equation": [
+            {
+              "id": "left",
+              "label": "Αριστερά"
+            },
+            {
+              "id": "right",
+              "label": "Δεξιά"
+            }
+          ],
+          "area": [
+            {
+              "id": "top",
+              "label": "Πάνω"
+            },
+            {
+              "id": "left",
+              "label": "Αριστερά"
+            },
+            {
+              "id": "center",
+              "label": "Κέντρο"
+            }
+          ],
+          "all": [
+            {
+              "id": "all",
+              "label": "Παράσταση"
+            }
+          ]
+        },
+        "tileLabels": {
+          "one": "1",
+          "x": "x",
+          "y": "y",
+          "x2": "x²",
+          "xy": "xy",
+          "y2": "y²"
+        },
+        "positiveSign": "+",
+        "negativeSign": "−",
+        "termSeparator": " ",
+        "emptyValue": "—",
+        "variableX": "x",
+        "variableY": "y"
+      }
+    }
+  }
+}

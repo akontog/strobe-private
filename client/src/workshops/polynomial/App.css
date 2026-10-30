@@ -265,6 +265,35 @@
   grid-template-columns: 1fr;
 }
 
+.poly-answer-groups {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 0.35rem;
+}
+
+.poly-answer-group {
+  min-width: 0;
+  margin: 0;
+  padding: 0.65rem 0.8rem 0.8rem;
+  border: 1px solid #dbeafe;
+  border-radius: 0.8rem;
+  background: #f8fbff;
+}
+
+.poly-answer-group legend {
+  padding: 0 0.35rem;
+  font-weight: 700;
+}
+
+.poly-answer-row .shared-input-row__field {
+  min-width: 0;
+}
+
+.poly-answer-row .shared-input-box__input {
+  box-sizing: border-box;
+  width: 100%;
+}
+
 .poly-term-block {
   border: 1px solid #dbeafe;
   background: #f8fbff;
@@ -366,6 +395,10 @@
 }
 
 @media (max-width: 640px) {
+  .poly-answer-group {
+    padding: 0.5rem;
+  }
+
   .poly-data-menu {
     grid-template-columns: minmax(0, 1fr);
   }

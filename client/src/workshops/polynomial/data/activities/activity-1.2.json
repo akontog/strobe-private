@@ -1,0 +1,232 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "dataset-monomialGrouping",
+      "type": "activity-data",
+      "config": {
+        "settings": {},
+        "presentation": {
+          "groupingBankLabel": "Μονώνυμα προς ομαδοποίηση"
+        },
+        "data": {
+          "label": "Ομαδοποίηση μονωνύμων",
+          "items": [
+            {
+              "id": "grouping-1",
+              "expression": "Ομαδοποίηση όμοιων μονωνύμων (Α)",
+              "resultMode": "grouping",
+              "groups": [
+                {
+                  "id": "g1",
+                  "title": "Ομάδα 1",
+                  "hint": "3x^2y"
+                },
+                {
+                  "id": "g2",
+                  "title": "Ομάδα 2",
+                  "hint": "5xy^2"
+                },
+                {
+                  "id": "g3",
+                  "title": "Ομάδα 3",
+                  "hint": "7x^3y"
+                }
+              ],
+              "items": [
+                {
+                  "id": "a1",
+                  "label": "-2x^2y",
+                  "correctGroupId": "g1"
+                },
+                {
+                  "id": "c2",
+                  "label": "-5x^3y",
+                  "correctGroupId": "g3"
+                },
+                {
+                  "id": "b1",
+                  "label": "4xy^2",
+                  "correctGroupId": "g2"
+                },
+                {
+                  "id": "b2",
+                  "label": "3xy^2",
+                  "correctGroupId": "g2"
+                },
+                {
+                  "id": "c1",
+                  "label": "6x^3y",
+                  "correctGroupId": "g3"
+                },
+                {
+                  "id": "a2",
+                  "label": "8x^2y",
+                  "correctGroupId": "g1"
+                }
+              ],
+              "correctAnswers": {
+                "item-a1": "g1",
+                "item-a2": "g1",
+                "item-b1": "g2",
+                "item-b2": "g2",
+                "item-c1": "g3",
+                "item-c2": "g3"
+              },
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5
+            },
+            {
+              "id": "grouping-2",
+              "expression": "Ομαδοποίηση όμοιων μονωνύμων (Β)",
+              "resultMode": "grouping",
+              "groups": [
+                {
+                  "id": "g1",
+                  "title": "Ομάδα 1",
+                  "hint": "-2x^3y^2"
+                },
+                {
+                  "id": "g2",
+                  "title": "Ομάδα 2",
+                  "hint": "4xy"
+                }
+              ],
+              "items": [
+                {
+                  "id": "d1",
+                  "label": "6x^3y^2",
+                  "correctGroupId": "g1"
+                },
+                {
+                  "id": "d2",
+                  "label": "-9x^3y^2",
+                  "correctGroupId": "g1"
+                },
+                {
+                  "id": "e1",
+                  "label": "7xy",
+                  "correctGroupId": "g2"
+                },
+                {
+                  "id": "e2",
+                  "label": "-3xy",
+                  "correctGroupId": "g2"
+                },
+                {
+                  "id": "d3",
+                  "label": "x^3y^2",
+                  "correctGroupId": "g1"
+                },
+                {
+                  "id": "e3",
+                  "label": "12xy",
+                  "correctGroupId": "g2"
+                }
+              ],
+              "correctAnswers": {
+                "item-d1": "g1",
+                "item-d2": "g1",
+                "item-e1": "g2",
+                "item-e2": "g2",
+                "item-d3": "g1",
+                "item-e3": "g2"
+              },
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "activity-content-1.2",
+      "type": "activity-content",
+      "region": "center",
+      "config": {
+        "settings": {},
+        "data": {
+          "tasks": [
+            "Αναγνώριση όμοιων μονωνύμων",
+            "Ταξινόμηση με drag and drop"
+          ]
+        }
+      }
+    }
+  ],
+  "activity": {
+    "id": "1.2",
+    "code": "1.2",
+    "title": "1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)",
+    "objective": "Ομαδοποίηση μονωνύμων με ίδιο μεταβλητό μέρος.",
+    "mode": "activity-content",
+    "usesResources": [
+      "dataset-monomialGrouping",
+      "activity-content-1.2"
+    ],
+    "labels": {
+      "expression": "Έκφραση",
+      "answer": "Απάντηση",
+      "coefficient": "Συντελεστής",
+      "degreeX": "Βαθμός ως προς x",
+      "degreeY": "Βαθμός ως προς y",
+      "totalDegree": "Συνολικός βαθμός",
+      "degreeXY": "Βαθμός ως προς x και y",
+      "termCoefficient": "Συντελεστής όρου {{term}}",
+      "termDegreeX": "Βαθμός ως προς x (όρος {{term}})",
+      "termDegreeY": "Βαθμός ως προς y (όρος {{term}})",
+      "termHeader": "Όρος {{term}}",
+      "resourceTable": {
+        "tilesColumn": "Πλακίδια",
+        "tileRegions": {
+          "equation": [
+            {
+              "id": "left",
+              "label": "Αριστερά"
+            },
+            {
+              "id": "right",
+              "label": "Δεξιά"
+            }
+          ],
+          "area": [
+            {
+              "id": "top",
+              "label": "Πάνω"
+            },
+            {
+              "id": "left",
+              "label": "Αριστερά"
+            },
+            {
+              "id": "center",
+              "label": "Κέντρο"
+            }
+          ],
+          "all": [
+            {
+              "id": "all",
+              "label": "Παράσταση"
+            }
+          ]
+        },
+        "tileLabels": {
+          "one": "1",
+          "x": "x",
+          "y": "y",
+          "x2": "x²",
+          "xy": "xy",
+          "y2": "y²"
+        },
+        "positiveSign": "+",
+        "negativeSign": "−",
+        "termSeparator": " ",
+        "emptyValue": "—",
+        "variableX": "x",
+        "variableY": "y"
+      }
+    }
+  }
+}

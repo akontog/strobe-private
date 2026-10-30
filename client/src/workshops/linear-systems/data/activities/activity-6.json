@@ -1,0 +1,124 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "linear-systems-activity-geometry-system",
+      "type": "cartesian-plane",
+      "region": "center",
+      "config": {
+        "settings": {
+          "minX": -6,
+          "maxX": 6,
+          "minY": -6,
+          "maxY": 6,
+          "showAxisLabels": true,
+          "mode": "lines",
+          "maxLines": 2,
+          "showLineCount": false,
+          "showLineDrawHelp": false,
+          "distanceTolerance": 0.5,
+          "targets": []
+        },
+        "data": {
+          "systems": [
+            {
+              "id": "geometry-system-1",
+              "equations": [
+                "y = x + 1",
+                "y = -x + 3"
+              ],
+              "solution": {
+                "x": 1,
+                "y": 2
+              }
+            },
+            {
+              "id": "geometry-system-2",
+              "equations": [
+                "y = 2x - 1",
+                "y = 2x + 1"
+              ],
+              "solution": null
+            },
+            {
+              "id": "geometry-system-3",
+              "equations": [
+                "y = -x + 2",
+                "y = -x + 2"
+              ],
+              "solution": {
+                "x": null,
+                "y": null
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "linear-systems-left-1",
+      "type": "equation",
+      "region": "left",
+      "config": {
+        "settings": {
+          "ariaLabel": "Εξίσωση",
+          "content": {
+            "type": "equation",
+            "placementAriaLabel": "Εξίσωση επιλεγμένης δραστηριότητας"
+          },
+          "previewAriaLabel": "Προεπισκόπηση συστήματος"
+        },
+        "presentation": {
+          "miniLabel": "Εξίσωση"
+        },
+        "display": {}
+      }
+    },
+    {
+      "id": "linear-systems-right-1",
+      "type": "plot-widget",
+      "region": "right",
+      "config": {
+        "settings": {
+          "width": 360,
+          "height": 300,
+          "showLegend": true,
+          "showGrid": true,
+          "xMin": -6,
+          "xMax": 6,
+          "yMin": -6,
+          "yMax": 6,
+          "lineColors": [
+            "#2563eb",
+            "#dc2626"
+          ],
+          "title": "Σύστημα Αξόνων",
+          "accessibleLabel": "Σύστημα Αξόνων",
+          "axisLabels": {
+            "x": "x",
+            "y": "y"
+          },
+          "lineLabelTemplate": "L{index}: {equation}"
+        },
+        "display": {
+          "visibleByDefault": true,
+          "visibilityLabel": "Εμφάνιση γραφήματος δεξιά"
+        }
+      }
+    }
+  ],
+  "activity": {
+    "id": "6",
+    "code": "6.",
+    "title": "Γεωμετρική επίλυση συστημάτων",
+    "objective": "Σχέδισε τις δύο ευθείες και βρες το σημείο τομής ή τον αριθμό των λύσεων του συστήματος.",
+    "mode": "cartesian-plane",
+    "usesResources": [
+      "linear-systems-activity-geometry-system",
+      "linear-systems-left-1",
+      "linear-systems-right-1"
+    ]
+  }
+}

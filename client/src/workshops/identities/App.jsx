@@ -16,10 +16,11 @@ import {
 } from '../../shared/components';
 import { useSessionInputLogger } from '../../shared/components/activities/SessionLogContext';
 import storedActivityData from './data/activities.json';
+const standaloneActivityDocuments = Object.values(import.meta.glob('./data/activities/*.json', { eager: true, import: 'default' }));
 import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
 import './App.css';
 
-const activityData = resolveWorkshopDocument(storedActivityData);
+const activityData = resolveWorkshopDocument(storedActivityData, standaloneActivityDocuments);
 
 const { activities: ACTIVITY_LIBRARY } = activityData;
 

@@ -23,10 +23,11 @@ import {
   useSessionInputLogger
 } from '../../shared/components';
 import storedActivityData from './data/activities.json';
+const standaloneActivityDocuments = Object.values(import.meta.glob('./data/activities/*.json', { eager: true, import: 'default' }));
 import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
 import './App.css';
 
-const activityData = resolveWorkshopDocument(storedActivityData);
+const activityData = resolveWorkshopDocument(storedActivityData, standaloneActivityDocuments);
 const { workshop: COURSE, activities: ACTIVITY_LIBRARY, lessons: LESSON_DATA } = activityData;
 const PRESENTATION = COURSE.presentation;
 const EQUATION_COPY = PRESENTATION.widgets.equation;

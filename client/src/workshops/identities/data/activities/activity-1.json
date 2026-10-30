@@ -1,0 +1,200 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "activity-data-1",
+      "type": "activity-data",
+      "config": {
+        "settings": {},
+        "data": {
+          "scoreCorrect": 1,
+          "scoreIncorrect": -0.5,
+          "variants": [
+            {
+              "id": "sum-square",
+              "label": "(α+β)^2",
+              "expression": "(\\alpha+\\beta)^2",
+              "objective": "Συμπλήρωσε τους συντελεστές και τους εκθέτες για την ανάπτυξη του τετραγώνου αθροίσματος ή διαφοράς.",
+              "terms": [
+                {
+                  "variables": [
+                    {
+                      "key": "a",
+                      "symbol": "\\alpha",
+                      "label": "α"
+                    }
+                  ],
+                  "correctAnswers": {
+                    "coefficient": 1,
+                    "degreeA": 2
+                  }
+                },
+                {
+                  "variables": [
+                    {
+                      "key": "a",
+                      "symbol": "\\alpha",
+                      "label": "α"
+                    },
+                    {
+                      "key": "b",
+                      "symbol": "\\beta",
+                      "label": "β"
+                    }
+                  ],
+                  "correctAnswers": {
+                    "coefficient": 2,
+                    "degreeA": 1,
+                    "degreeB": 1
+                  }
+                },
+                {
+                  "variables": [
+                    {
+                      "key": "b",
+                      "symbol": "\\beta",
+                      "label": "β"
+                    }
+                  ],
+                  "correctAnswers": {
+                    "coefficient": 1,
+                    "degreeB": 2
+                  }
+                }
+              ]
+            },
+            {
+              "id": "difference-square",
+              "label": "(α-β)^2",
+              "expression": "(\\alpha-\\beta)^2",
+              "objective": "Συμπλήρωσε τους συντελεστές και τους εκθέτες για την ανάπτυξη του κύβου αθροίσματος ή διαφοράς.",
+              "terms": [
+                {
+                  "variables": [
+                    {
+                      "key": "a",
+                      "symbol": "\\alpha",
+                      "label": "α"
+                    }
+                  ],
+                  "correctAnswers": {
+                    "coefficient": 1,
+                    "degreeA": 2
+                  }
+                },
+                {
+                  "variables": [
+                    {
+                      "key": "a",
+                      "symbol": "\\alpha",
+                      "label": "α"
+                    },
+                    {
+                      "key": "b",
+                      "symbol": "\\beta",
+                      "label": "β"
+                    }
+                  ],
+                  "correctAnswers": {
+                    "coefficient": -2,
+                    "degreeA": 1,
+                    "degreeB": 1
+                  }
+                },
+                {
+                  "variables": [
+                    {
+                      "key": "b",
+                      "symbol": "\\beta",
+                      "label": "β"
+                    }
+                  ],
+                  "correctAnswers": {
+                    "coefficient": 1,
+                    "degreeB": 2
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "activity-1-resource-1",
+      "type": "identity-expression",
+      "region": "left",
+      "config": {
+        "settings": {
+          "card": true
+        }
+      }
+    },
+    {
+      "id": "activity-1-resource-2",
+      "type": "identity-polynomial",
+      "region": "center",
+      "config": {
+        "settings": {
+          "card": true
+        }
+      }
+    }
+  ],
+  "activity": {
+    "id": "1",
+    "code": "1.",
+    "title": "Τετράγωνο αθροίσματος και διαφοράς",
+    "objective": "Συμπλήρωσε τους συντελεστές και τους εκθέτες για την ανάπτυξη του τετραγώνου αθροίσματος ή διαφοράς.",
+    "resultMode": "identityPolynomial",
+    "mode": "identityPolynomial",
+    "usesResources": [
+      "activity-data-1",
+      "activity-1-resource-1",
+      "activity-1-resource-2"
+    ],
+    "labels": {
+      "identityLabel": "Ταυτότητα",
+      "identityVariantTitle": "Επιλογή ταυτότητας",
+      "chooseIdentityVariant": "Επιλέξτε ταυτότητα",
+      "coefficientOfTerm": "Συντελεστής όρου",
+      "exponentOf": "Εκθέτης του",
+      "inTerm": "στον όρο",
+      "identityAriaLabel": "Αλγεβρική ταυτότητα",
+      "term1": "1ος όρος",
+      "term2": "2ος όρος",
+      "term3": "3ος όρος",
+      "termCoefficient": "Συντελεστής όρου {{term}}",
+      "termDegreeA": "Εκθέτης του a (όρος {{term}})",
+      "termDegreeB": "Εκθέτης του b (όρος {{term}})",
+      "enterIdentityTerms": "Συμπλήρωσε όλους τους συντελεστές και εκθέτες για να εμφανιστεί η ανάπτυξη.",
+      "answer": "Απάντηση",
+      "check": "Έλεγχος",
+      "correctFeedback": "Σωστά! Η ταυτότητα είναι πλήρης.",
+      "incorrectFeedback": "Έλεγξε ξανά τους όρους της ανάπτυξης.",
+      "completeRightSide": "Συμπλήρωσε το δεξί μέλος της ταυτότητας.",
+      "studentMode": "Λειτουργία μαθητή",
+      "teacherMode": "Λειτουργία καθηγητή",
+      "activities": "Δραστηριότητα",
+      "chooseActivity": "Επιλογή δραστηριότητας",
+      "matchingInstruction": "Σύρε κάθε ανάπτυξη στην ταυτότητα που επαληθεύει.",
+      "studentTableTitle": "Πίνακας μαθητών",
+      "noStudents": "Δεν υπάρχουν ακόμη μαθητές.",
+      "resourceTable": {
+        "tilesColumn": "Πλακίδια",
+        "leftRegion": "Αριστερά",
+        "rightRegion": "Δεξιά",
+        "topRegion": "Πάνω",
+        "centerRegion": "Κέντρο",
+        "regionSeparator": " · ",
+        "emptyValue": "—",
+        "negativeSign": "−",
+        "positiveSign": "+",
+        "variableA": "a",
+        "variableB": "b"
+      }
+    }
+  }
+}

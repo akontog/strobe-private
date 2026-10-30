@@ -11,10 +11,11 @@ import {
   readIdentityName
 } from '../../shared/components';
 import storedActivityData from './data/activities.json';
+const standaloneActivityDocuments = Object.values(import.meta.glob('./data/activities/*.json', { eager: true, import: 'default' }));
 import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
 import './App.css';
 
-const activityData = resolveWorkshopDocument(storedActivityData);
+const activityData = resolveWorkshopDocument(storedActivityData, standaloneActivityDocuments);
 const activity = activityData.activities[0];
 const questions = activity.questions;
 const tileWidget = activity.widgets.find((widget) => widget.type === 'algebra-tiles');

@@ -10,6 +10,7 @@ import {
   HeroTitle,
   MathFormula,
   SharedCommonZoneLayout,
+  SharedInputRow,
   InputGrid,
   GroupsAccordion,
   AlgebraTiles,
@@ -23,10 +24,14 @@ import {
 import { useSessionInputLogger } from '../../shared/components/activities/SessionLogContext';
 import { SCORE_CORRECT, SCORE_INCORRECT, computeStudentScore, getAnswerFieldDefinitions } from './grading';
 import storedActivityData from './data/activities.json';
+const standaloneActivityDocuments = Object.values(import.meta.glob('./data/activities/*.json', {
+  eager: true,
+  import: 'default'
+}));
 import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
 import './App.css';
 
-const activityData = resolveWorkshopDocument(storedActivityData);
+const activityData = resolveWorkshopDocument(storedActivityData, standaloneActivityDocuments);
 const { activities: ACTIVITY_LIBRARY, datasets: ALGEBRA_DATASETS, labels: POLYNOMIAL_LABELS = {} } = activityData;
 const getActivityDatasetId = (activityId) => ACTIVITY_LIBRARY.find((activity) => activity.id === activityId)?.datasetId;
 const formatLabelTemplate = (template, term) => String(template || '').replace('{{term}}', String(term));
@@ -153,11 +158,11 @@ const getStudentScoreForExpression = (student, fallbackExpression) => {
 const getAnswerColumnsForExpression = (expressionItem, t, labels, activityId, tileMode) => {
   if (expressionItem?.resultMode === 'geogebraArea') return [];
   if (expressionItem?.resultMode === 'algebraTiles') {
-    const regions = POLYNOMIAL_LABELS.resourceTable.tileRegions[tileMode === 'equation' ? 'equation' : tileMode === 'area' || tileMode === 't-chart' ? 'area' : 'all'];
+    const regions = labels.resourceTable.tileRegions[tileMode === 'equation' ? 'equation' : tileMode === 'area' || tileMode === 't-chart' ? 'area' : 'all'];
     return regions.map((region) => ({
       key: `algebraTiles-${region.id}`,
       label: region.label,
-      render: (student) => summarizeAlgebraTiles(student.algebraTiles, tileMode, region.id)
+      render: (student) => summarizeAlgebraTiles(student.algebraTiles, tileMode, region.id, labels)
     }));
   }
   const fields = getAnswerFieldDefinitions(expressionItem);
@@ -169,11 +174,11 @@ const getAnswerColumnsForExpression = (expressionItem, t, labels, activityId, ti
   return fields.map((fieldName) => {
     const partMatch = fieldName.match(/^part-(\d+)-(coefficient|degreeX|degreeY)$/);
     const label = partMatch
-      ? partMatch[2] === 'coefficient' ? POLYNOMIAL_LABELS.coefficient : partMatch[2] === 'degreeX' ? POLYNOMIAL_LABELS.resourceTable.variableX : POLYNOMIAL_LABELS.resourceTable.variableY
+      ? partMatch[2] === 'coefficient' ? labels.coefficient : partMatch[2] === 'degreeX' ? labels.resourceTable.variableX : labels.resourceTable.variableY
       : groupingLabelByField.has(fieldName)
         ? groupingLabelByField.get(fieldName)
       : fieldName === 'coefficient'
-        ? POLYNOMIAL_LABELS.coefficient
+        ? labels.coefficient
         : fieldName === 'degreeX'
           ? labels.degreeX
           : fieldName === 'degreeY'
@@ -213,9 +218,9 @@ const getAnswerHeaderGroupsForExpression = (expressionItem, labels) => {
   return Array.from(groups.values());
 };
 
-const summarizeAlgebraTiles = (tiles, mode, selectedRegion = '') => {
-  const labels = POLYNOMIAL_LABELS.resourceTable.tileLabels;
-  const tableLabels = POLYNOMIAL_LABELS.resourceTable;
+const summarizeAlgebraTiles = (tiles, mode, selectedRegion = '', activityLabels = POLYNOMIAL_LABELS) => {
+  const labels = activityLabels.resourceTable.tileLabels;
+  const tableLabels = activityLabels.resourceTable;
   const format = (items) => {
     const counts = new Map();
     (items || []).forEach((tile) => counts.set(tile.type, (counts.get(tile.type) || 0) + (tile.sign < 0 ? -1 : 1)));
@@ -309,17 +314,7 @@ export default function App({ role = 'teacher' }) {
   }, []);
 
   const activeActivity = ACTIVITY_LIBRARY.find((activity) => activity.id === selectedActivityId);
-  const labels = {
-    coefficient: POLYNOMIAL_LABELS.coefficient,
-    degreeX: POLYNOMIAL_LABELS.degreeX,
-    degreeY: POLYNOMIAL_LABELS.degreeY,
-    totalDegree: POLYNOMIAL_LABELS.totalDegree,
-    degreeXY: POLYNOMIAL_LABELS.degreeXY,
-    termCoefficient: POLYNOMIAL_LABELS.termCoefficient,
-    termDegreeX: POLYNOMIAL_LABELS.termDegreeX,
-    termDegreeY: POLYNOMIAL_LABELS.termDegreeY,
-    termHeader: POLYNOMIAL_LABELS.termHeader
-  };
+  const labels = { ...POLYNOMIAL_LABELS, ...(activeActivity?.labels || {}) };
   const activityTitle = activeActivity?.title || '';
   const algebraTilesWidget = activeActivity?.widgets?.find((widget) => widget.type === 'algebra-tiles');
 
@@ -367,8 +362,8 @@ export default function App({ role = 'teacher' }) {
   );
   const activeExpressionParts = expressionDrafts[selectedExpressionId] || activeExpression?.parts || [];
   const activeGroupingPlacements = groupingPlacementsByExpression[selectedExpressionId] || {};
-  const leftWidgetLabel = activeActivity.presentation?.leftWidgetTitle || POLYNOMIAL_LABELS.expression || t('expression');
-  const answerPreviewLabel = activeActivity.presentation?.answerLabel || POLYNOMIAL_LABELS.answer || t('answer');
+  const leftWidgetLabel = activeActivity.presentation?.leftWidgetTitle || labels.expression || t('expression');
+  const answerPreviewLabel = activeActivity.presentation?.answerLabel || labels.answer || t('answer');
 
   const getExpressionPreview = (expressionItem, partsOverride = expressionItem?.parts) => {
     if (!expressionItem) {
@@ -438,11 +433,15 @@ export default function App({ role = 'teacher' }) {
     if (!feedbackEnabled) {
       return false;
     }
+    const configuredField = activeExpression?.answerGroups?.flatMap((group) => group.fields || [])
+      .find((entry) => entry.partIndex === index && entry.answerField === field);
     const correctAnswers = activeExpression?.correctAnswers;
-    const expected = Array.isArray(correctAnswers)
-      ? correctAnswers[index]?.[field]
-      : correctAnswers?.[field];
-    return !isCorrectAnswer(value, expected);
+    const expected = configuredField
+      ? configuredField.correctAnswers ?? configuredField.correctAnswer
+      : Array.isArray(correctAnswers)
+        ? correctAnswers[index]?.[field]
+        : correctAnswers?.[field];
+    return !(Array.isArray(expected) ? expected : [expected]).some((answer) => isCorrectAnswer(value, answer));
   };
   const getExpressionOptionLabel = (item) => {
     if (isMonomialGroupingActivity && Array.isArray(item?.groups) && item.groups.length > 0) {
@@ -552,6 +551,25 @@ export default function App({ role = 'teacher' }) {
       };
     });
   };
+
+  const answerGroups = (activeExpression?.answerGroups || []).map((group) => ({
+    ...group,
+    columns: activeExpression.answerLayout?.columns || 3,
+    fields: (group.fields || []).map((field) => ({
+      ...field,
+      className: 'lab-field poly-team-field',
+      label: activeExpression.answerLayout?.columnLabels?.[field.answerField === 'coefficient' ? 0 : field.answerField === 'degreeX' ? 1 : 2] || '',
+      min: field.min,
+      max: field.max,
+      step: field.step,
+      type: 'text',
+      allowIntegers: true,
+      allowDecimals: false,
+      value: activeExpressionParts[field.partIndex]?.[field.answerField] ?? '',
+      invalid: isInputIncorrect(field.partIndex, field.answerField, activeExpressionParts[field.partIndex]?.[field.answerField]),
+      onChange: (value) => updateExpressionPart(field.partIndex, field.answerField, value)
+    }))
+  }));
 
   const setGroupingPlacements = (nextPlacements) => {
     if (isPolynomialGroupingActivity && invalidGroupingItemIds.length > 0) {
@@ -1029,7 +1047,22 @@ export default function App({ role = 'teacher' }) {
               </div>
             ) : isTemplateActivity ? (
               <div className="poly-template-answer-panel">
-                <InputGrid
+                {answerGroups.length ? <div className="poly-answer-groups">
+                  {answerGroups.map((group) => <fieldset key={group.id} className="poly-answer-group">
+                    {group.legend ? <legend><MathFormula formula={group.legend} /></legend> : null}
+                    <SharedInputRow
+                      boxes={group.fields.map((field) => ({
+                        ...field,
+                        id: field.id,
+                        inputClassName: `shared-input-box__input${field.invalid ? ' poly-input--invalid' : ''}`,
+                        onChange: (event) => field.onChange(event.target.value)
+                      }))}
+                      activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
+                      hideLabels={false}
+                      className="poly-answer-row"
+                    />
+                  </fieldset>)}
+                </div> : <InputGrid
                   activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
                   columns={2}
                   className="lab-input-grid poly-team-grid"
@@ -1047,7 +1080,7 @@ export default function App({ role = 'teacher' }) {
                     { id: 'degree-x', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'degreeX', resultInputValues.degreeX) ? ' poly-input--invalid' : ''}`, label: labels.degreeX, value: resultInputValues.degreeX, onChange: (value) => updateExpressionPart(0, 'degreeX', value) },
                     { id: 'degree-y', className: 'shared-input-box lab-field poly-team-field', inputClassName: `shared-input-box__input${isInputIncorrect(0, 'degreeY', resultInputValues.degreeY) ? ' poly-input--invalid' : ''}`, label: labels.degreeY, value: resultInputValues.degreeY, onChange: (value) => updateExpressionPart(0, 'degreeY', value) }
                   ]}
-                />
+                />}
 
                 {!isDegreeOnlyActivity && (
                   <div className="lab-preview poly-preview-panel">
@@ -1082,7 +1115,7 @@ export default function App({ role = 'teacher' }) {
             options={ACTIVITY_LIBRARY.map((activity) => ({
               value: activity.id,
               label: activity.title
-            })).concat(savedActivities.map((activity) => ({
+            })).concat(savedActivities.filter((activity) => !['input-grid', 'input-grid-collab'].includes(activity.resource)).map((activity) => ({
               value: `saved:${activity.resource}/${activity.filename}`,
               label: `${activity.name} (${t(`activityBuilder.resourceNames.${activity.resource}`, { ns: 'interface', defaultValue: activity.resource })})`
             })))}

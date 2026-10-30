@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "linear-systems-activity-2",
+      "type": "cartesian-plane",
+      "region": "center",
+      "config": {
+        "settings": {
+          "minX": -5,
+          "maxX": 5,
+          "minY": -5,
+          "maxY": 5,
+          "showAxisLabels": true,
+          "mode": "points",
+          "maxPoints": 3,
+          "distanceTolerance": 0.5,
+          "targets": []
+        },
+        "data": {
+          "equations": [
+            {
+              "id": "line-1",
+              "equation": "x - y = 0",
+              "x": 1,
+              "y": -1,
+              "rhs": 0
+            },
+            {
+              "id": "line-2",
+              "equation": "x + y = 0",
+              "x": 1,
+              "y": 1,
+              "rhs": 0
+            },
+            {
+              "id": "line-3",
+              "equation": "2x - y = 0",
+              "x": 2,
+              "y": -1,
+              "rhs": 0
+            },
+            {
+              "id": "line-4",
+              "equation": "2x + y = 0",
+              "x": 2,
+              "y": 1,
+              "rhs": 0
+            },
+            {
+              "id": "line-5",
+              "equation": "x = 2",
+              "x": 1,
+              "y": 0,
+              "rhs": 2
+            },
+            {
+              "id": "line-6",
+              "equation": "x = -2",
+              "x": 1,
+              "y": 0,
+              "rhs": -2
+            },
+            {
+              "id": "line-7",
+              "equation": "y = 3",
+              "x": 0,
+              "y": 1,
+              "rhs": 3
+            },
+            {
+              "id": "line-8",
+              "equation": "y = -3",
+              "x": 0,
+              "y": 1,
+              "rhs": -3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "linear-systems-left-2",
+      "type": "equation",
+      "region": "left",
+      "config": {
+        "settings": {
+          "ariaLabel": "Η εξίσωσή σου",
+          "miniLabel": "Η εξίσωσή σου",
+          "content": {
+            "type": "equation"
+          }
+        },
+        "display": {}
+      }
+    }
+  ],
+  "activity": {
+    "id": "2",
+    "code": "2.",
+    "title": "Επιλογή σημείου σε ευθεία",
+    "objective": "Για την εξίσωσή σου, επίλεξε έως 3 σημεία του πλέγματος που ανήκουν στην ευθεία.",
+    "mode": "cartesian-plane",
+    "usesResources": [
+      "linear-systems-activity-2",
+      "linear-systems-left-2"
+    ]
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "linear-systems-activity-6",
+      "type": "algebra-tiles",
+      "region": "center",
+      "config": {
+        "settings": {
+          "mode": "systems",
+          "hideHints": true,
+          "equationsFromTiles": true,
+          "initialEquations": [
+            "0 = 0",
+            "0 = 0"
+          ],
+          "tileScoring": {
+            "rows": [
+              {
+                "equationIndex": 0,
+                "variable": "x",
+                "expectedKey": "x",
+                "points": 1
+              },
+              {
+                "equationIndex": 1,
+                "variable": "y",
+                "expectedKey": "y",
+                "points": 1
+              }
+            ]
+          },
+          "variables": [
+            "x",
+            "y"
+          ]
+        },
+        "data": {
+          "items": [
+            {
+              "id": "a-1",
+              "systemLatex": "\\begin{cases} 2x+y=7 \\\\ x-y=2 \\end{cases}",
+              "expected": {
+                "x": "3",
+                "y": "1"
+              },
+              "substitutionLatex": "x=y+2 \\Rightarrow 2(y+2)+y=7 \\Rightarrow 3y=3 \\Rightarrow y=1, x=3"
+            },
+            {
+              "id": "a-2",
+              "systemLatex": "\\begin{cases} x+y=6 \\\\ x-y=2 \\end{cases}",
+              "expected": {
+                "x": "4",
+                "y": "2"
+              },
+              "substitutionLatex": "x=y+2 \\Rightarrow (y+2)+y=6 \\Rightarrow 2y=4 \\Rightarrow y=2, x=4"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "linear-systems-left-1",
+      "type": "equation",
+      "region": "left",
+      "config": {
+        "settings": {
+          "ariaLabel": "Εξίσωση",
+          "content": {
+            "type": "equation",
+            "placementAriaLabel": "Εξίσωση επιλεγμένης δραστηριότητας"
+          },
+          "previewAriaLabel": "Προεπισκόπηση συστήματος"
+        },
+        "presentation": {
+          "miniLabel": "Εξίσωση"
+        },
+        "display": {}
+      }
+    }
+  ],
+  "activity": {
+    "id": "7",
+    "code": "7.",
+    "title": "Αλγεβρική επίλυση με αντικατάσταση (Algebra Tiles)",
+    "objective": "Βρείτε τις τιμές των x και y.",
+    "mode": "algebra",
+    "usesResources": [
+      "linear-systems-activity-6",
+      "linear-systems-left-1"
+    ]
+  }
+}

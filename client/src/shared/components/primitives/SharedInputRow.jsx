@@ -17,7 +17,7 @@ export default function SharedInputRow({
   const rowLabelClasses = ['shared-input-row__label', rowLabelClassName].filter(Boolean).join(' ');
 
   return (
-    <div className={wrapperClassName}>
+    <div className={wrapperClassName} style={{ gridTemplateColumns: `repeat(${Math.max(1, boxes.length + tokens.filter(Boolean).length + (rowLabel ? 1 : 0))}, minmax(0, 1fr))` }}>
       {rowLabel ? <span className={rowLabelClasses}>{rowLabel}</span> : null}
       {boxes.map((box, index) => (
         <React.Fragment key={box.id || box.key || `box-${index}`}>
@@ -37,6 +37,7 @@ export default function SharedInputRow({
             autoComplete={box.autoComplete || 'off'}
             min={box.min}
             max={box.max}
+            step={box.step}
             allowIntegers={box.allowIntegers ?? true}
             allowDecimals={box.allowDecimals ?? true}
           />

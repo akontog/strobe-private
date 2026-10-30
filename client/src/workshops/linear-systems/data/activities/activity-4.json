@@ -1,0 +1,271 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "linear-systems-activity-venn",
+      "type": "venn-board",
+      "region": "center",
+      "config": {
+        "settings": {},
+        "data": {
+          "items": [
+            {
+              "id": "pair-1",
+              "equation1": "y = 2x + 1",
+              "equation2": "y = -x + 4",
+              "bankLabel": "Σημεία προς ταξινόμηση",
+              "diagram": {
+                "type": "overlap",
+                "sets": [
+                  {
+                    "id": "equation-a",
+                    "title": "y = 2x + 1"
+                  },
+                  {
+                    "id": "equation-b",
+                    "title": "y = -x + 4"
+                  }
+                ],
+                "regions": [
+                  {
+                    "id": "left",
+                    "title": "Μόνο: y = 2x + 1",
+                    "members": [
+                      "equation-a"
+                    ]
+                  },
+                  {
+                    "id": "intersection",
+                    "title": "Και στις δύο εξισώσεις",
+                    "members": [
+                      "equation-a",
+                      "equation-b"
+                    ]
+                  },
+                  {
+                    "id": "right",
+                    "title": "Μόνο: y = -x + 4",
+                    "members": [
+                      "equation-b"
+                    ]
+                  },
+                  {
+                    "id": "outside",
+                    "title": "Σε καμία εξίσωση",
+                    "members": []
+                  }
+                ]
+              },
+              "points": [
+                {
+                  "id": "pair-1-n1",
+                  "content": "(3, 0)",
+                  "correctRegionId": "outside"
+                },
+                {
+                  "id": "pair-1-a1",
+                  "content": "(0, 1)",
+                  "correctRegionId": "left"
+                },
+                {
+                  "id": "pair-1-b1",
+                  "content": "(0, 4)",
+                  "correctRegionId": "right"
+                },
+                {
+                  "id": "pair-1-i1",
+                  "content": "(1, 3)",
+                  "correctRegionId": "intersection"
+                },
+                {
+                  "id": "pair-1-a2",
+                  "content": "(2, 5)",
+                  "correctRegionId": "left"
+                },
+                {
+                  "id": "pair-1-n2",
+                  "content": "(-2, 1)",
+                  "correctRegionId": "outside"
+                },
+                {
+                  "id": "pair-1-b2",
+                  "content": "(2, 2)",
+                  "correctRegionId": "right"
+                }
+              ]
+            },
+            {
+              "id": "pair-2",
+              "equation1": "y = 2x + 1",
+              "equation2": "y = 2x - 3",
+              "bankLabel": "Σημεία προς ταξινόμηση",
+              "diagram": {
+                "type": "disjoint",
+                "sets": [
+                  {
+                    "id": "equation-a",
+                    "title": "y = 2x + 1"
+                  },
+                  {
+                    "id": "equation-b",
+                    "title": "y = 2x - 3"
+                  }
+                ],
+                "regions": [
+                  {
+                    "id": "left",
+                    "title": "Μόνο: y = 2x + 1",
+                    "members": [
+                      "equation-a"
+                    ]
+                  },
+                  {
+                    "id": "right",
+                    "title": "Μόνο: y = 2x - 3",
+                    "members": [
+                      "equation-b"
+                    ]
+                  },
+                  {
+                    "id": "outside",
+                    "title": "Σε καμία εξίσωση",
+                    "members": []
+                  }
+                ]
+              },
+              "points": [
+                {
+                  "id": "pair-2-n1",
+                  "content": "(1, 0)",
+                  "correctRegionId": "outside"
+                },
+                {
+                  "id": "pair-2-a1",
+                  "content": "(0, 1)",
+                  "correctRegionId": "left"
+                },
+                {
+                  "id": "pair-2-b1",
+                  "content": "(0, -3)",
+                  "correctRegionId": "right"
+                },
+                {
+                  "id": "pair-2-n2",
+                  "content": "(-2, 4)",
+                  "correctRegionId": "outside"
+                },
+                {
+                  "id": "pair-2-a2",
+                  "content": "(2, 5)",
+                  "correctRegionId": "left"
+                },
+                {
+                  "id": "pair-2-b2",
+                  "content": "(2, 1)",
+                  "correctRegionId": "right"
+                }
+              ]
+            },
+            {
+              "id": "pair-3",
+              "equation1": "x + y = 6",
+              "equation2": "x - y = 2",
+              "bankLabel": "Σημεία προς ταξινόμηση",
+              "diagram": {
+                "type": "overlap",
+                "sets": [
+                  {
+                    "id": "equation-a",
+                    "title": "x + y = 6"
+                  },
+                  {
+                    "id": "equation-b",
+                    "title": "x - y = 2"
+                  }
+                ],
+                "regions": [
+                  {
+                    "id": "left",
+                    "title": "Μόνο: x + y = 6",
+                    "members": [
+                      "equation-a"
+                    ]
+                  },
+                  {
+                    "id": "intersection",
+                    "title": "Και στις δύο εξισώσεις",
+                    "members": [
+                      "equation-a",
+                      "equation-b"
+                    ]
+                  },
+                  {
+                    "id": "right",
+                    "title": "Μόνο: x - y = 2",
+                    "members": [
+                      "equation-b"
+                    ]
+                  },
+                  {
+                    "id": "outside",
+                    "title": "Σε καμία εξίσωση",
+                    "members": []
+                  }
+                ]
+              },
+              "points": [
+                {
+                  "id": "pair-3-b1",
+                  "content": "(0, -2)",
+                  "correctRegionId": "right"
+                },
+                {
+                  "id": "pair-3-a1",
+                  "content": "(0, 6)",
+                  "correctRegionId": "left"
+                },
+                {
+                  "id": "pair-3-n1",
+                  "content": "(1, 1)",
+                  "correctRegionId": "outside"
+                },
+                {
+                  "id": "pair-3-i1",
+                  "content": "(4, 2)",
+                  "correctRegionId": "intersection"
+                },
+                {
+                  "id": "pair-3-b2",
+                  "content": "(2, 0)",
+                  "correctRegionId": "right"
+                },
+                {
+                  "id": "pair-3-n2",
+                  "content": "(0, 0)",
+                  "correctRegionId": "outside"
+                },
+                {
+                  "id": "pair-3-a2",
+                  "content": "(6, 0)",
+                  "correctRegionId": "left"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "activity": {
+    "id": "4",
+    "code": "4.",
+    "title": "Σημεία σε συστήματα εξισώσεων",
+    "objective": "Ταξινόμησε τα σημεία ανάλογα με το αν ικανοποιούν την πρώτη εξίσωση, τη δεύτερη, και τις δύο ή καμία.",
+    "mode": "venn-board",
+    "usesResources": [
+      "linear-systems-activity-venn"
+    ]
+  }
+}

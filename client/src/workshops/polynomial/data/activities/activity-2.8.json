@@ -1,0 +1,226 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "dataset-polynomialProductDegrees",
+      "type": "activity-data",
+      "config": {
+        "settings": {},
+        "data": {
+          "label": "Βαθμοί γινομένων πολυωνύμων",
+          "items": [
+            {
+              "id": "polynomial-product-degrees-1",
+              "expression": "Αντιστοίχιση γινομένων στον βαθμό τους",
+              "resultMode": "grouping",
+              "groups": [
+                {
+                  "id": "degree-0",
+                  "title": "Βαθμός 0"
+                },
+                {
+                  "id": "degree-1",
+                  "title": "Βαθμός 1"
+                },
+                {
+                  "id": "degree-2",
+                  "title": "Βαθμός 2"
+                },
+                {
+                  "id": "degree-3",
+                  "title": "Βαθμός 3"
+                },
+                {
+                  "id": "degree-4",
+                  "title": "Βαθμός 4"
+                }
+              ],
+              "items": [
+                {
+                  "id": "constant-1",
+                  "label": "(2)(3)",
+                  "degree": 0,
+                  "correctGroupId": "degree-0"
+                },
+                {
+                  "id": "constant-2",
+                  "label": "(-2)(4)",
+                  "degree": 0,
+                  "correctGroupId": "degree-0"
+                },
+                {
+                  "id": "linear-1",
+                  "label": "2(x+3)",
+                  "degree": 1,
+                  "correctGroupId": "degree-1"
+                },
+                {
+                  "id": "linear-2",
+                  "label": "(x-2)(-3)",
+                  "degree": 1,
+                  "correctGroupId": "degree-1"
+                },
+                {
+                  "id": "quadratic-1",
+                  "label": "(x+1)(x-2)",
+                  "degree": 2,
+                  "correctGroupId": "degree-2"
+                },
+                {
+                  "id": "quadratic-2",
+                  "label": "x(x+3)",
+                  "degree": 2,
+                  "correctGroupId": "degree-2"
+                },
+                {
+                  "id": "quadratic-3",
+                  "label": "(2x-1)(x+4)",
+                  "degree": 2,
+                  "correctGroupId": "degree-2"
+                },
+                {
+                  "id": "cubic-1",
+                  "label": "x(x+1)(x-2)",
+                  "degree": 3,
+                  "correctGroupId": "degree-3"
+                },
+                {
+                  "id": "cubic-2",
+                  "label": "(x^2+1)(x-3)",
+                  "degree": 3,
+                  "correctGroupId": "degree-3"
+                },
+                {
+                  "id": "quartic-1",
+                  "label": "(x^2+1)(x^2-1)",
+                  "degree": 4,
+                  "correctGroupId": "degree-4"
+                },
+                {
+                  "id": "quartic-2",
+                  "label": "x^2(x+2)(x-1)",
+                  "degree": 4,
+                  "correctGroupId": "degree-4"
+                }
+              ],
+              "correctAnswers": {
+                "item-constant-1": "degree-0",
+                "item-constant-2": "degree-0",
+                "item-linear-1": "degree-1",
+                "item-linear-2": "degree-1",
+                "item-quadratic-1": "degree-2",
+                "item-quadratic-2": "degree-2",
+                "item-quadratic-3": "degree-2",
+                "item-cubic-1": "degree-3",
+                "item-cubic-2": "degree-3",
+                "item-quartic-1": "degree-4",
+                "item-quartic-2": "degree-4"
+              },
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "activity-data-2.8",
+      "type": "activity-data",
+      "config": {
+        "settings": {},
+        "data": {
+          "tasks": [
+            "Βαθμός γινομένου πολυωνύμων",
+            "Κανόνας βαθμού γινομένου"
+          ]
+        }
+      }
+    },
+    {
+      "id": "activity-2.8-resource-1",
+      "type": "grouping-drag-drop",
+      "region": "center",
+      "config": {
+        "settings": {
+          "card": false
+        }
+      }
+    }
+  ],
+  "activity": {
+    "id": "2.8",
+    "code": "2.8",
+    "title": "2.8 Βαθμός γινομένων πολυωνύμων",
+    "objective": "Αντιστοίχισε κάθε γινόμενο πολυωνύμων μόνο με x στον βαθμό του γινομένου.",
+    "mode": "activity-content",
+    "usesResources": [
+      "dataset-polynomialProductDegrees",
+      "activity-data-2.8",
+      "activity-2.8-resource-1"
+    ],
+    "labels": {
+      "expression": "Έκφραση",
+      "answer": "Απάντηση",
+      "coefficient": "Συντελεστής",
+      "degreeX": "Βαθμός ως προς x",
+      "degreeY": "Βαθμός ως προς y",
+      "totalDegree": "Συνολικός βαθμός",
+      "degreeXY": "Βαθμός ως προς x και y",
+      "termCoefficient": "Συντελεστής όρου {{term}}",
+      "termDegreeX": "Βαθμός ως προς x (όρος {{term}})",
+      "termDegreeY": "Βαθμός ως προς y (όρος {{term}})",
+      "termHeader": "Όρος {{term}}",
+      "resourceTable": {
+        "tilesColumn": "Πλακίδια",
+        "tileRegions": {
+          "equation": [
+            {
+              "id": "left",
+              "label": "Αριστερά"
+            },
+            {
+              "id": "right",
+              "label": "Δεξιά"
+            }
+          ],
+          "area": [
+            {
+              "id": "top",
+              "label": "Πάνω"
+            },
+            {
+              "id": "left",
+              "label": "Αριστερά"
+            },
+            {
+              "id": "center",
+              "label": "Κέντρο"
+            }
+          ],
+          "all": [
+            {
+              "id": "all",
+              "label": "Παράσταση"
+            }
+          ]
+        },
+        "tileLabels": {
+          "one": "1",
+          "x": "x",
+          "y": "y",
+          "x2": "x²",
+          "xy": "xy",
+          "y2": "y²"
+        },
+        "positiveSign": "+",
+        "negativeSign": "−",
+        "termSeparator": " ",
+        "emptyValue": "—",
+        "variableX": "x",
+        "variableY": "y"
+      }
+    }
+  }
+}
