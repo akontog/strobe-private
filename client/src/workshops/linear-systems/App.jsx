@@ -269,6 +269,10 @@ export default function App({ role = 'student' }) {
   const sessionLogging = useSessionInputLogger();
   const isTeacher = role === 'teacher';
   const isStudent = !isTeacher;
+  const requestedActivityId = new URLSearchParams(window.location.search).get('activity') || '';
+  const initialActivityId = ACTIVITY_LIBRARY.some((activity) => activity.id === requestedActivityId)
+    ? requestedActivityId
+    : ACTIVITY_LIBRARY[0].id;
 
   const wsRef = useRef(null);
   const pendingEquationSessionCommandRef = useRef('');
@@ -279,8 +283,8 @@ export default function App({ role = 'student' }) {
   const [isSocketConnected, setIsSocketConnected] = useState(false);
   const [participants, setParticipants] = useState([]);
   const [sessionLogParticipants, setSessionLogParticipants] = useState([]);
-  const [selectedActivityId, setSelectedActivityId] = useState(ACTIVITY_LIBRARY[0].id);
-  const [selectedItemId, setSelectedItemId] = useState(() => getInitialItemId(ACTIVITY_LIBRARY[0].id));
+  const [selectedActivityId, setSelectedActivityId] = useState(initialActivityId);
+  const [selectedItemId, setSelectedItemId] = useState(() => getInitialItemId(initialActivityId));
   const [selectedExpressionId, setSelectedExpressionId] = useState('');
   const [answer, setAnswer] = useState({ x: '', y: '' });
   const [groupingPlacementsByActivity, setGroupingPlacementsByActivity] = useState({});
@@ -293,6 +297,7 @@ export default function App({ role = 'student' }) {
   const [selectedPoints, setSelectedPoints] = useState([]);
   const [selectedLines, setSelectedLines] = useState([]);
   const [selectedLineSystemIndex, setSelectedLineSystemIndex] = useState(0);
+  const requestedActivityRef = useRef(isTeacher && ACTIVITY_LIBRARY.some((activity) => activity.id === requestedActivityId) ? requestedActivityId : '');
   const [algebraTilesByItem, setAlgebraTilesByItem] = useState({});
   const [numberLineMarks, setNumberLineMarks] = useState([]);
 
@@ -309,6 +314,23 @@ export default function App({ role = 'student' }) {
       return false;
     }
   };
+
+  useEffect(() => {
+    const activityId = requestedActivityRef.current;
+    if (!isTeacher || !isSocketConnected || !activityId) return;
+    const firstItem = (LESSON_DATA[activityId]?.items || [])[0];
+    sendSocketMessage({
+      type: 'teacher_lesson',
+      lesson: {
+        activityId,
+        itemId: firstItem?.id || '',
+        expressionId: firstItem?.expressions?.[0]?.id || '',
+        showEquationGraph: ACTIVITY_LIBRARY.find((activity) => activity.id === activityId)?.widgets?.find((widget) => widget.region === 'right')?.visibleByDefault !== false,
+        lineSystemIndex: 0
+      }
+    });
+    requestedActivityRef.current = '';
+  }, [isTeacher, isSocketConnected]);
 
   useEffect(() => {
     function handleIdentityChange() {

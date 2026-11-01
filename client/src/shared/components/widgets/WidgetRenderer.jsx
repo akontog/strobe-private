@@ -2,11 +2,13 @@ import React from 'react';
 import IconWidget from './IconWidget';
 import EquationWidget from './EquationWidget';
 import PlotWidget from './PlotWidget';
+import MathPreviewWidget from './MathPreviewWidget';
 import './WidgetRenderer.css';
 
 const WIDGET_COMPONENTS = {
   icon: IconWidget,
   equation: EquationWidget,
+  'math-preview': MathPreviewWidget,
   'plot-widget': PlotWidget,
   'simple-coordinate-system': PlotWidget
 };
@@ -24,6 +26,10 @@ function getWidgetTitle(widget = {}) {
   const settingsTitle = String(widget?.settings?.title || '').trim();
   if (settingsTitle) {
     return settingsTitle;
+  }
+
+  if (widget?.type === 'math-preview') {
+    return String(widget?.settings?.label || '').trim();
   }
 
   return '';

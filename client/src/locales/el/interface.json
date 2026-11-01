@@ -443,8 +443,8 @@
     "unknownWidget": "Άγνωστο Widget",
     "layoutPreview": "Προσχέδιο διάταξης Resource",
     "emptyWidgetSlot": "Δεν υπάρχει ακόμη widget εδώ",
-    "widgetCount": "{{count}} από 2 widgets",
-    "widgetLimit": "Μπορούν να προστεθούν έως δύο widgets.",
+    "widgetCount": "{{count}} από 3 widgets",
+    "widgetLimit": "Μπορείτε να προσθέσετε έως τρία widgets, ένα σε κάθε θέση.",
     "geoGebraPreview": "Πίνακας GeoGebra",
     "moveToLeft": "Μετακίνηση αριστερά",
     "moveToRight": "Μετακίνηση δεξιά",
@@ -453,7 +453,8 @@
     "widgetNames": {
       "icon": "Εικονίδιο",
       "equation": "Εξίσωση",
-      "graph": "Γραφική παράσταση"
+      "graph": "Γραφική παράσταση",
+      "mathPreview": "Προεπισκόπηση μαθηματικής έκφρασης"
     },
     "graphTitle": "Τίτλος γραφήματος",
     "xMin": "Ελάχιστο x",
@@ -616,6 +617,13 @@
           "label": "1. Παραγοντοποίηση τριωνύμων με πλακίδια"
         }
       ]
+    },
+    "widgetPosition": "Θέση widget",
+    "previewLabel": "Ετικέτα προεπισκόπησης",
+    "widgetPositions": {
+      "left": "Αριστερά",
+      "right": "Δεξιά",
+      "bottom": "Κάτω"
     }
   },
   "currentApp": "Τρέχουσα εφαρμογή: {{title}}",
@@ -913,5 +921,31 @@
       "hits": "Τομές",
       "misses": "Χωρίς τομή"
     }
+  },
+  "activityLibrary": {
+    "title": "Βιβλιοθήκη δραστηριοτήτων",
+    "description": "Επίλεξε αποθηκευμένη δραστηριότητα από τον server ή άνοιξε αρχείο JSON από τον υπολογιστή και εφάρμοσέ την στην τάξη.",
+    "serverTitle": "Αποθηκευμένες στον server",
+    "serverFolder": "Τα αρχεία διαβάζονται από τον φάκελο δραστηριοτήτων του server.",
+    "chooseFile": "Επιλογή τοπικού αρχείου JSON",
+    "selectionTitle": "Επιλεγμένη δραστηριότητα",
+    "localFile": "Τοπικό αρχείο",
+    "loading": "Φόρτωση αποθηκευμένων δραστηριοτήτων…",
+    "empty": "Δεν βρέθηκαν αποθηκευμένες δραστηριότητες στον server.",
+    "selectHint": "Επίλεξε δραστηριότητα από τον server ή άνοιξε τοπικό αρχείο JSON.",
+    "noDescription": "Δεν έχει δοθεί περιγραφή.",
+    "apply": "Άνοιγμα στην τάξη",
+    "opening": "Άνοιγμα…",
+    "serverLoadError": "Δεν ήταν δυνατή η φόρτωση της βιβλιοθήκης δραστηριοτήτων του server.",
+    "activityLoadError": "Δεν ήταν δυνατή η φόρτωση της επιλεγμένης δραστηριότητας από τον server.",
+    "invalidJson": "Το επιλεγμένο αρχείο δεν είναι έγκυρο JSON.",
+    "invalidFile": "Το αρχείο δεν είναι υποστηριζόμενο JSON δραστηριότητας.",
+    "applyError": "Δεν ήταν δυνατή η εφαρμογή της δραστηριότητας στην τάξη.",
+    "systemsTitle": "Δραστηριότητες Συστημάτων",
+    "systemsFolder": "Οι δραστηριότητες φορτώνονται μόνο από τον φάκελο JSON των Συστημάτων.",
+    "serverSystemsTitle": "Αποθηκευμένες δραστηριότητες Συστημάτων",
+    "workshopActivitiesTitle": "Δραστηριότητες όλων των εργαστηρίων",
+    "workshopActivitiesFolder": "Τα αρχεία εμφανίζονται από τον φάκελο server/data/activities.",
+    "savedActivitiesTitle": "Αποθηκευμένες δραστηριότητες"
   }
 }

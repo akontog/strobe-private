@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Accordion } from '../layouts/Accordion';
 import SharedCommonZoneLayout from '../layouts/SharedCommonZoneLayout';
-import WidgetRenderer from '../widgets/widget-renderer';
+import WidgetRenderer from '../widgets/WidgetRenderer';
 import FullScreenButton from '../primitives/FullScreenButton';
 import ActivityResourcePreview from './ActivityResourcePreview';
 import { createActivityDocument } from './activityDocument';
@@ -34,6 +34,7 @@ export default function ActivitySettingsAccordion({
   const widgetPositions = new Set((metadata.widgets || []).map((widget) => widget.position));
   const hasLeftWidget = widgetPositions.has('left');
   const hasRightWidget = widgetPositions.has('right');
+  const hasBottomWidget = widgetPositions.has('bottom');
   const workspaceClass = hasLeftWidget && hasRightWidget
     ? 'activity-workspace--left-right'
     : hasLeftWidget
@@ -81,6 +82,7 @@ export default function ActivitySettingsAccordion({
         leftPanel={hasLeftWidget ? <div className="activity-common-zone__widget-column"><WidgetRenderer widgets={metadata.widgets} position="left" /></div> : null}
         centerPanel={<div className="lab-card lab-card--panel">{children}</div>}
         rightPanel={hasRightWidget ? <div className="activity-common-zone__widget-column"><WidgetRenderer widgets={metadata.widgets} position="right" /></div> : null}
+        bottomPanel={hasBottomWidget ? <div className="activity-common-zone__widget-bottom"><WidgetRenderer widgets={metadata.widgets} position="bottom" /></div> : null}
       />
     </section>
     {isTeacher ? <Accordion title={t('activityGeneralSettings', { ns: 'common' })} icon="📝">

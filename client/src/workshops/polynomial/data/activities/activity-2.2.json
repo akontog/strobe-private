@@ -92,6 +92,17 @@
           ]
         }
       }
+    },
+    {
+      "id": "activity-2.2-math-preview",
+      "type": "math-preview",
+      "region": "bottom",
+      "config": {
+        "settings": {
+          "label": "Απάντηση",
+          "answerMode": "monomial"
+        }
+      }
     }
   ],
   "activity": {
@@ -102,7 +113,8 @@
     "mode": "activity-content",
     "usesResources": [
       "dataset-likeTermReduction",
-      "activity-content-2.2"
+      "activity-content-2.2",
+      "activity-2.2-math-preview"
     ],
     "labels": {
       "expression": "Έκφραση",

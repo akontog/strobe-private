@@ -712,6 +712,17 @@
           ]
         }
       }
+    },
+    {
+      "id": "activity-2.5-math-preview",
+      "type": "math-preview",
+      "region": "bottom",
+      "config": {
+        "settings": {
+          "label": "Απάντηση",
+          "answerMode": "polynomial"
+        }
+      }
     }
   ],
   "activity": {
@@ -722,7 +733,8 @@
     "mode": "activity-content",
     "usesResources": [
       "dataset-polynomialMultiplications",
-      "activity-content-2.5"
+      "activity-content-2.5",
+      "activity-2.5-math-preview"
     ],
     "labels": {
       "expression": "Έκφραση",

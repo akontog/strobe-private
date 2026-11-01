@@ -21,6 +21,8 @@
   min-width: 0;
 }
 
+.activity-common-zone__widget-bottom { grid-column: 1 / -1; width: 100%; }
+
 .activity-common-zone__widget-column {
   display: flex;
   min-width: 0;
@@ -121,6 +123,8 @@
   background: #fff;
 }
 
+.activity-resource-preview__slot--bottom { grid-column: 1 / -1; }
+
 .activity-resource-preview__slot h4 {
   margin: 0;
 }
@@ -144,7 +148,8 @@
 }
 
 .activity-resource-preview__slot input,
-.activity-resource-preview__slot select {
+.activity-resource-preview__slot select,
+.activity-resource-preview__slot textarea {
   width: 100%;
   min-width: 0;
   padding: 6px;
@@ -152,6 +157,8 @@
   border-radius: 6px;
   font: inherit;
 }
+
+.activity-resource-preview__slot textarea { min-height: 64px; resize: vertical; }
 
 .activity-resource-preview__widget {
   display: grid;

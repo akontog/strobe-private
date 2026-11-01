@@ -18,6 +18,7 @@ import { useSessionInputLogger } from '../../shared/components/activities/Sessio
 import storedActivityData from './data/activities.json';
 const standaloneActivityDocuments = Object.values(import.meta.glob('./data/activities/*.json', { eager: true, import: 'default' }));
 import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
+import WidgetRenderer from '../../shared/components/widgets/WidgetRenderer';
 import './App.css';
 
 const activityData = resolveWorkshopDocument(storedActivityData, standaloneActivityDocuments);
@@ -60,10 +61,12 @@ export default function App({ role = 'student' }) {
   };
   const isTeacher = role === 'teacher';
   const sessionLogging = useSessionInputLogger();
+  const requestedActivityId = new URLSearchParams(window.location.search).get('activity') || '';
+  const initialActivity = ACTIVITY_LIBRARY.find((activity) => activity.id === requestedActivityId) || ACTIVITY_LIBRARY[0];
   const [studentName, setStudentName] = useState(() => readIdentityName('Student'));
   const studentNameRef = useRef(studentName);
-  const [selectedActivityId, setSelectedActivityId] = useState(ACTIVITY_LIBRARY[0].id);
-  const [selectedIdentityVariantId, setSelectedIdentityVariantId] = useState(ACTIVITY_LIBRARY[0].variants[0].id);
+  const [selectedActivityId, setSelectedActivityId] = useState(initialActivity.id);
+  const [selectedIdentityVariantId, setSelectedIdentityVariantId] = useState(initialActivity.variants[0].id);
   const [answersByActivity, setAnswersByActivity] = useState({});
   const [students, setStudents] = useState([]);
   const [participants, setParticipants] = useState([]);
@@ -224,6 +227,7 @@ export default function App({ role = 'student' }) {
   const activityWidgets = Array.isArray(activeActivity.widgets) ? activeActivity.widgets : [];
   const expressionWidget = activityWidgets.find((widget) => widget.type === 'identity-expression' && widget.region === 'left');
   const centerWidget = activityWidgets.find((widget) => widget.region === 'center');
+  const answerPreviewWidget = activityWidgets.find((widget) => widget.type === 'math-preview' && widget.region === 'bottom');
   const isPolynomialActivity = centerWidget?.type === 'identity-polynomial';
   const isGroupingActivity = centerWidget?.type === 'grouping-drag-drop';
   const isAlgebraTilesActivity = centerWidget?.type === 'algebra-tiles';
@@ -332,12 +336,10 @@ export default function App({ role = 'student' }) {
               })
             ]))}
           />
-          <div className="lab-preview poly-preview-panel">
+          {answerPreviewWidget ? <WidgetRenderer widgets={[{ ...answerPreviewWidget, position: 'bottom', settings: { ...answerPreviewWidget.settings, formula: identityPolynomialText } }]} position="bottom" /> : <div className="lab-preview poly-preview-panel">
             <p className="lab-mini-label poly-mini-label">{t('answer')}</p>
-            <div className="lab-math-box lab-math-box--compact poly-expression-math poly-expression-math--small">
-              <MathFormula formula={`\\(${identityPolynomialText}\\)`} />
-            </div>
-          </div>
+            <div className="lab-math-box lab-math-box--compact poly-expression-math poly-expression-math--small"><MathFormula formula={`\\(${identityPolynomialText}\\)`} /></div>
+          </div>}
         </div>
       ) : isAlgebraTilesActivity ? (
         <AlgebraTiles

@@ -6,6 +6,7 @@
   "help": "Help",
   "sectionNavigation": "Sections",
   "items": {
+    "activityLibrary": "Activity library",
     "venn": "Venn Diagram",
     "activities": "Activities",
     "buffon": "Buffon",

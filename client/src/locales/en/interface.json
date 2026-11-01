@@ -10,6 +10,32 @@
     "saveError": "Saving failed.",
     "json": "Activity JSON"
   },
+  "activityLibrary": {
+    "title": "Activity library",
+    "description": "Choose a saved activity from the server or open an activity JSON file from this device, then apply it to the classroom.",
+    "serverTitle": "Saved on the server",
+    "serverFolder": "Files are read from the server activity library.",
+    "systemsTitle": "Systems activities",
+    "systemsFolder": "Activities are loaded only from the Linear Systems JSON folder.",
+    "serverSystemsTitle": "Saved Linear Systems activities",
+    "chooseFile": "Choose a local JSON file",
+    "selectionTitle": "Selected activity",
+    "localFile": "Local file",
+    "loading": "Loading saved activities…",
+    "empty": "No saved activities were found on the server.",
+    "selectHint": "Choose a server activity or a local JSON file.",
+    "noDescription": "No description provided.",
+    "apply": "Open in classroom",
+    "opening": "Opening…",
+    "serverLoadError": "Could not load the server activity library.",
+    "activityLoadError": "Could not load the selected server activity.",
+    "invalidJson": "The selected file is not valid JSON.",
+    "invalidFile": "This file is not a supported activity JSON document.",
+    "applyError": "Could not apply the activity to the classroom.",
+    "workshopActivitiesTitle": "Activities from all workshops",
+    "workshopActivitiesFolder": "Files are listed from the server/data/activities folder.",
+    "savedActivitiesTitle": "Saved activities"
+  },
   "appsLauncher": "Apps Launcher",
   "studentLauncher": "Student Launcher",
   "studentWaitingTitle": "Welcome",
@@ -443,8 +469,8 @@
     "unknownWidget": "Unknown widget",
     "layoutPreview": "Resource layout preview",
     "emptyWidgetSlot": "No widget here yet",
-    "widgetCount": "{{count}} of 2 widgets",
-    "widgetLimit": "You can add up to two widgets.",
+    "widgetCount": "{{count}} of 3 widgets",
+    "widgetLimit": "You can add up to three widgets, one in each position.",
     "geoGebraPreview": "GeoGebra board",
     "moveToLeft": "Move left",
     "moveToRight": "Move right",
@@ -453,7 +479,8 @@
     "widgetNames": {
       "icon": "Icon",
       "equation": "Equation",
-      "graph": "Graph"
+      "graph": "Graph",
+      "mathPreview": "Math expression preview"
     },
     "graphTitle": "Graph title",
     "xMin": "Minimum x",
@@ -616,6 +643,13 @@
           "label": "1. Factor trinomials with algebra tiles"
         }
       ]
+    },
+    "widgetPosition": "Widget position",
+    "previewLabel": "Preview label",
+    "widgetPositions": {
+      "left": "Left",
+      "right": "Right",
+      "bottom": "Bottom"
     }
   },
   "currentApp": "Current app: {{title}}",

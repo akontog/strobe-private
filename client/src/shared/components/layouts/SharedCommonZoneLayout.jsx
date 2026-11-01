@@ -7,6 +7,7 @@ export default function SharedCommonZoneLayout({
   leftPanel = null, // Content for the left region.
   centerPanel = null, // Content for the center region.
   rightPanel = null, // Content for the right region.
+  bottomPanel = null, // Content spanning below the main workspace.
   children = null // Replaces the named panel regions when provided.
 }) {
   const layoutClassName = [
@@ -24,6 +25,7 @@ export default function SharedCommonZoneLayout({
           {!isGroupingMode ? leftPanel : null}
           {centerPanel}
           {!isGroupingMode ? rightPanel : null}
+          {bottomPanel}
         </>
       )}
     </div>

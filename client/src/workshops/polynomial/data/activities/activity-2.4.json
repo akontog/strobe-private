@@ -638,6 +638,17 @@
           ]
         }
       }
+    },
+    {
+      "id": "activity-2.4-math-preview",
+      "type": "math-preview",
+      "region": "bottom",
+      "config": {
+        "settings": {
+          "label": "Απάντηση",
+          "answerMode": "polynomial"
+        }
+      }
     }
   ],
   "activity": {
@@ -648,7 +659,8 @@
     "mode": "activity-content",
     "usesResources": [
       "dataset-polynomialOperations",
-      "activity-content-2.4"
+      "activity-content-2.4",
+      "activity-2.4-math-preview"
     ]
   }
 }

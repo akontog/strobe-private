@@ -52,13 +52,16 @@ export function resolveActivityDocument(document) {
   const mainResource = usedResources.find((resource) => resource.region === 'center') || usedResources[0];
   if (!mainResource) return null;
 
+  const getSettings = (resource) => ({ ...(resource.settings || {}), ...(resource.config?.settings || {}) });
+  const getData = (resource) => ({ ...(resource.data || {}), ...(resource.config?.data || {}) });
+
   const widgets = usedResources
-    .filter((resource) => resource !== mainResource && ['left', 'right'].includes(resource.region))
+    .filter((resource) => resource !== mainResource && ['left', 'right', 'bottom'].includes(resource.region))
     .map((resource) => ({
       id: resource.id,
       type: resource.type,
       position: resource.region,
-      settings: resource.config?.settings || {}
+      settings: { ...getSettings(resource), ...getData(resource) }
     }));
 
   return {
@@ -69,7 +72,8 @@ export function resolveActivityDocument(document) {
     notes: document.activity.notes || '',
     resource: mainResource.type,
     config: {
-      ...(mainResource.config?.settings || {}),
+      ...getSettings(mainResource),
+      ...getData(mainResource),
       resource: mainResource.type,
       widgets
     }
@@ -118,7 +122,7 @@ export function resolveWorkshopDocument(document, standaloneDocuments = []) {
 
     const dataset = usedResources.find((resource) => resource.type === 'activity-data' && resource.id.startsWith('dataset-'));
     const widgets = usedResources
-      .filter((resource) => ['left', 'center', 'right'].includes(resource.region)
+      .filter((resource) => ['left', 'center', 'right', 'bottom'].includes(resource.region)
         && resource.type !== 'activity-content'
         && resource.type !== 'activity-data')
       .map((resource) => ({

@@ -8,6 +8,9 @@
       "type": "activity-data",
       "config": {
         "settings": {},
+        "presentation": {
+          "groupingBankLabel": "Όροι πολυωνύμων προς ομαδοποίηση"
+        },
         "data": {
           "label": "Ομαδοποίηση όμοιων όρων (δύο πολυώνυμα)",
           "items": [
@@ -112,6 +115,106 @@
               },
               "scoreCorrect": 1,
               "scoreIncorrect": -0.5
+            },
+            {
+              "id": "poly-group-2",
+              "expression": "(2x^3 + 3x^3 - 4xy) + (5y^2 + 2x^2)",
+              "resultMode": "grouping",
+              "leftPolynomial": "2x^3 + 3x^3 - 4xy",
+              "rightPolynomial": "5y^2 + 2x^2",
+              "operator": "+",
+              "groups": [
+                {
+                  "id": "g-x3",
+                  "title": "Όμοιοι όροι x^3",
+                  "hint": "x^3",
+                  "degreeX": 3,
+                  "degreeY": 0
+                },
+                {
+                  "id": "g-x2",
+                  "title": "Όμοιοι όροι x^2",
+                  "hint": "x^2",
+                  "degreeX": 2,
+                  "degreeY": 0
+                },
+                {
+                  "id": "g-xy",
+                  "title": "Όμοιοι όροι xy",
+                  "hint": "xy",
+                  "degreeX": 1,
+                  "degreeY": 1
+                },
+                {
+                  "id": "g-y2",
+                  "title": "Όμοιοι όροι y^2",
+                  "hint": "y^2",
+                  "degreeX": 0,
+                  "degreeY": 2
+                }
+              ],
+              "items": [
+                {
+                  "id": "l1",
+                  "label": "2x^3",
+                  "coefficient": 2,
+                  "degreeX": 3,
+                  "degreeY": 0,
+                  "source": "L",
+                  "correctGroupId": "g-x3"
+                },
+                {
+                  "id": "l2",
+                  "label": "3x^3",
+                  "coefficient": 3,
+                  "degreeX": 3,
+                  "degreeY": 0,
+                  "source": "L",
+                  "correctGroupId": "g-x3"
+                },
+                {
+                  "id": "l3",
+                  "label": "-4xy",
+                  "coefficient": -4,
+                  "degreeX": 1,
+                  "degreeY": 1,
+                  "source": "L",
+                  "correctGroupId": "g-xy"
+                },
+                {
+                  "id": "r1",
+                  "label": "5y^2",
+                  "coefficient": 5,
+                  "degreeX": 0,
+                  "degreeY": 2,
+                  "source": "R",
+                  "correctGroupId": "g-y2"
+                },
+                {
+                  "id": "r2",
+                  "label": "2x^2",
+                  "coefficient": 2,
+                  "degreeX": 2,
+                  "degreeY": 0,
+                  "source": "R",
+                  "correctGroupId": "g-x2"
+                }
+              ],
+              "resultOrder": [
+                "g-x3",
+                "g-x2",
+                "g-xy",
+                "g-y2"
+              ],
+              "correctAnswers": {
+                "item-l1": "g-x3",
+                "item-l2": "g-x3",
+                "item-l3": "g-xy",
+                "item-r1": "g-y2",
+                "item-r2": "g-x2"
+              },
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5
             }
           ]
         }
@@ -127,8 +230,18 @@
           "tasks": [
             "Ταξινόμηση όρων",
             "Έλεγχος ομοιότητας",
-            "Αυτόματο αποτέλεσμα"
+            "Αποτέλεσμα"
           ]
+        }
+      }
+    },
+    {
+      "id": "activity-2.3-math-preview",
+      "type": "math-preview",
+      "region": "bottom",
+      "config": {
+        "settings": {
+          "label": "Αποτέλεσμα"
         }
       }
     }
@@ -136,12 +249,13 @@
   "activity": {
     "id": "2.3",
     "code": "2.3",
-    "title": "2.3 Ομαδοποίηση όμοιων όρων δύο πολυωνύμων",
+    "title": "2.3 Πράξεις με πολυώνυμα (πρόσθεση-αφαίρεση)",
     "objective": "Ομαδοποίηση όρων από δύο πολυώνυμα και αυτόματη πρόσθεση ανά ομάδα ομοίων όρων.",
     "mode": "activity-content",
     "usesResources": [
       "dataset-polynomialLikeTermGrouping",
-      "activity-content-2.3"
+      "activity-content-2.3",
+      "activity-2.3-math-preview"
     ],
     "labels": {
       "expression": "Έκφραση",

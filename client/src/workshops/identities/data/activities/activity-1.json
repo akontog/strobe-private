@@ -141,6 +141,16 @@
           "card": true
         }
       }
+    },
+    {
+      "id": "activity-1-math-preview",
+      "type": "math-preview",
+      "region": "bottom",
+      "config": {
+        "settings": {
+          "label": "Απάντηση"
+        }
+      }
     }
   ],
   "activity": {
@@ -153,7 +163,8 @@
     "usesResources": [
       "activity-data-1",
       "activity-1-resource-1",
-      "activity-1-resource-2"
+      "activity-1-resource-2",
+      "activity-1-math-preview"
     ],
     "labels": {
       "identityLabel": "Ταυτότητα",

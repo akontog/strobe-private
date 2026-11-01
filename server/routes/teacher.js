@@ -10,6 +10,12 @@ const router = express.Router();
 router.use(requireRole(['teacher']));
 
 const ACTIVITY_RESOURCES = [
+  { slug: 'equations-lab', title: 'Equations' },
+  { slug: 'factorization-lab', title: 'Factorization' },
+  { slug: 'identities-lab', title: 'Identities' },
+  { slug: 'linear-systems-lab', title: 'Linear Systems' },
+  { slug: 'polynomial-lab', title: 'Polynomial' },
+  { slug: 'probabilities-lab', title: 'Probabilities' },
   { slug: 'input-grid', title: 'Entry Grid' },
   { slug: 'grouping-drag-drop', title: 'Placement Board' },
   { slug: 'venn-board', title: 'Venn Board' },

@@ -38,7 +38,7 @@ export default function ActivityResourcePreview({ resource, widgets, onChange })
   const { t } = useTranslation('interface');
 
   function addWidget(position, type) {
-    if (!type || widgets.length >= 2) return;
+    if (!type || widgets.length >= 3 || widgets.some((widget) => widget.position === position)) return;
     const definition = ACTIVITY_WIDGETS.find((item) => item.type === type);
     onChange([...widgets, {
       id: `widget-${Date.now()}`,
@@ -55,6 +55,7 @@ export default function ActivityResourcePreview({ resource, widgets, onChange })
   }
 
   function moveWidget(id, position) {
+    if (widgets.some((widget) => widget.id !== id && widget.position === position)) return;
     onChange(widgets.map((widget) => widget.id === id ? { ...widget, position } : widget));
   }
 
@@ -64,9 +65,9 @@ export default function ActivityResourcePreview({ resource, widgets, onChange })
 
   function renderSlot(position) {
     const slotWidgets = widgets.filter((widget) => widget.position === position);
-    const otherPosition = position === 'left' ? 'right' : 'left';
+    const otherPosition = position === 'left' ? 'right' : position === 'right' ? 'bottom' : 'left';
     const moveLabel = t(position === 'left' ? 'activityBuilder.moveToRight' : 'activityBuilder.moveToLeft');
-    return <section className="activity-resource-preview__slot">
+    return <section className={`activity-resource-preview__slot activity-resource-preview__slot--${position}`}>
       {slotWidgets.map((widget) => <article className="activity-resource-preview__widget" key={widget.id}>
         <div className="activity-resource-preview__widget-heading">
           <strong>{widgetName(t, widget.type)}</strong>
@@ -76,6 +77,10 @@ export default function ActivityResourcePreview({ resource, widgets, onChange })
         </div>
         {widget.type === 'icon' ? <label>{t('activityBuilder.iconCode')}<input value={widget.settings.code || ''} onChange={(event) => updateWidget(widget.id, 'code', event.target.value)} /></label> : null}
         {widget.type === 'equation' ? <label>{t('activityBuilder.expression')}<input value={widget.settings.expression || ''} onChange={(event) => updateWidget(widget.id, 'expression', event.target.value)} /></label> : null}
+        {widget.type === 'math-preview' ? <>
+          <label>{t('activityBuilder.previewLabel')}<input value={widget.settings.label || ''} onChange={(event) => updateWidget(widget.id, 'label', event.target.value)} /></label>
+          <label>{t('activityBuilder.expression')}<textarea value={widget.settings.formula || ''} onChange={(event) => updateWidget(widget.id, 'formula', event.target.value)} /></label>
+        </> : null}
         {widget.type === 'plot-widget' ? <>
           <label>{t('activityBuilder.graphTitle')}<input value={widget.settings.title || ''} onChange={(event) => updateWidget(widget.id, 'title', event.target.value)} /></label>
           <label>{t('activityBuilder.expression')}<input value={widget.settings.graphItems?.[0]?.expression || ''} onChange={(event) => {
@@ -91,7 +96,7 @@ export default function ActivityResourcePreview({ resource, widgets, onChange })
           <button type="button" className="activity-resource-preview__icon-button activity-resource-preview__icon-button--delete" aria-label={t('activityBuilder.remove')} title={t('activityBuilder.remove')} onClick={() => removeWidget(widget.id)}>🗑️</button>
         </div>
       </article>)}
-      {widgets.length < 2 ? <div className="activity-resource-preview__add">
+      {widgets.length < 3 && !slotWidgets.length ? <div className="activity-resource-preview__add">
         <select aria-label={t('activityBuilder.widgetType')} defaultValue="" onChange={(event) => {
           addWidget(position, event.target.value);
           event.target.value = '';
@@ -100,7 +105,7 @@ export default function ActivityResourcePreview({ resource, widgets, onChange })
           {ACTIVITY_WIDGETS.map((widget) => <option key={widget.type} value={widget.type}>{t(widget.titleKey)}</option>)}
         </select>
       </div> : null}
-      {!slotWidgets.length && widgets.length >= 2 ? <p>{t('activityBuilder.widgetLimit')}</p> : null}
+      {!slotWidgets.length && widgets.length >= 3 ? <p>{t('activityBuilder.widgetLimit')}</p> : null}
     </section>;
   }
 
@@ -111,5 +116,6 @@ export default function ActivityResourcePreview({ resource, widgets, onChange })
       <ResourceMock resource={resource} />
     </div>
     {renderSlot('right')}
+    {renderSlot('bottom')}
   </section>;
 }

@@ -10,6 +10,11 @@ export const ACTIVITY_WIDGETS = [
     defaults: { expression: '' }
   },
   {
+    type: 'math-preview',
+    titleKey: 'activityBuilder.widgetNames.mathPreview',
+    defaults: { label: 'Απάντηση', formula: '' }
+  },
+  {
     type: 'plot-widget',
     titleKey: 'activityBuilder.widgetNames.graph',
     defaults: {

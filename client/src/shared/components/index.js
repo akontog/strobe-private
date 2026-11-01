@@ -42,7 +42,7 @@ export { default as StudentIdentityControl } from './menu/StudentIdentityControl
 export { default as RoleAccessControl } from './menu/RoleAccessControl';
 export * from './menu/identityStorage';
 export { default as PlotWidget } from './widgets/PlotWidget';
-export { default as WidgetRenderer } from './widgets/widget-renderer';
+export { default as WidgetRenderer } from './widgets/WidgetRenderer';
 export { default as IconWidget } from './widgets/IconWidget';
 export { default as EquationWidget } from './widgets/EquationWidget';
 export { default as ChatAccordion } from './services/ChatAccordion';

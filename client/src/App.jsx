@@ -10,6 +10,7 @@ import TeacherPage from './pages/TeacherPage';
 import ToolsPage from './pages/ToolsPage';
 import InstructionsPage from './pages/InstructionsPage';
 import ActivityRunner from './workshops/activities/ActivityRunner';
+import ActivityLibraryPage from './pages/ActivityLibraryPage';
 import CameraSpeedTest from './system/camera-speed-test/CameraSpeedTest';
 import GeoGebraCollabTool from './tools/geogebra-collab/GeoGebraCollabTool';
 import AlgebraTilesCollabTool from './tools/algebra-tiles-collab/AlgebraTilesCollabTool';
@@ -145,7 +146,8 @@ function App() {
       '/tools/console',
       '/tools/linear-separation',
       '/tools/linear-seperation',
-      '/tools/workshop-json-validator'
+      '/tools/workshop-json-validator',
+      '/activities/library'
     ].includes(routePath);
     if (!teacherLab && preserveSelection) {
       const preserveClassroomSelection = () => fetch('/teacher/classroom/selection', {
@@ -448,6 +450,7 @@ function App() {
       { label: tNav('items.console'), path: '/tools/console' },
     ] },
     activities: { label: tNav('activities'), items: [
+      { label: tNav('items.activityLibrary'), path: '/activities/library' },
       { label: tNav('items.inputGrid'), path: '/tools/input-grid' },
       { label: tNav('items.optionsGrid'), path: '/tools/options-grid' },
       { label: tNav('items.placementBoard'), path: '/tools/placement-board' },
@@ -610,6 +613,7 @@ function App() {
           <Route path="/tools/linear-seperation" element={teacherOnly(<LinearSeparation />)} />
           <Route path="/tools/workshop-json-validator" element={teacherOnly(<WorkshopJsonValidatorTool />)} />
           <Route path="/apps-launcher" element={teacherOnly(<AppsLauncherPage />)} />
+          <Route path="/activities/library" element={teacherOnly(<ActivityLibraryPage />)} />
           <Route path="/workshops/:slug" element={<Navigate to={getWorkshopPath(getAppSlug(currentWorkshopSlug), hasTeacherAccess ? 'teacher' : 'student')} replace />} />
           <Route path="/workshops/activities/teacher" element={teacherOnly(<ActivityRunner role="teacher" />)} />
           <Route path="/workshops/activities/student" element={studentLabOnly('activity-runner', <ActivityRunner role="student" activity={classroomActivity} />)} />

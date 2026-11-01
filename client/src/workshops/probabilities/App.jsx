@@ -18,7 +18,9 @@ export default function App({ role = 'student' }) {
     return String(template).replace(/\{\{(\w+)\}\}/g, (_, name) => (options?.[name] ?? ''));
   };
   const [placements, setPlacements] = useState({});
-  const [selectedActivityId, setSelectedActivityId] = useState(activityData.activities[0].id);
+  const requestedActivityId = new URLSearchParams(window.location.search).get('activity') || '';
+  const initialActivity = activityData.activities.find((entry) => entry.id === requestedActivityId) || activityData.activities[0];
+  const [selectedActivityId, setSelectedActivityId] = useState(initialActivity.id);
   const [participants, setParticipants] = useState([]);
   const [studentName, setStudentName] = useState(() => readIdentityName('Student'));
   const session = useSessionInputLogger();

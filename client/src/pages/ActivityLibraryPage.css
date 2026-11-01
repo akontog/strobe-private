@@ -1,0 +1,147 @@
+.activity-library-page .activity-library-lead {
+  margin: -0.5rem 0 1.25rem;
+  color: #475569;
+}
+
+.activity-library-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.8fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.activity-library-panel {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid #dbe3ef;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.activity-library-panel__heading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.activity-library-panel h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.activity-library-hint,
+.activity-library-empty,
+.activity-library-selection > p {
+  color: #64748b;
+}
+
+.activity-library-upload {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid #94a3b8;
+  border-radius: 0.6rem;
+  color: #1e3a8a;
+  background: #eff6ff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.activity-library-upload input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.activity-library-upload:focus-within {
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+.activity-library-list {
+  display: grid;
+  gap: 0.5rem;
+  max-height: min(60vh, 620px);
+  overflow-y: auto;
+}
+
+.activity-library-item {
+  display: grid;
+  gap: 0.25rem;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.65rem;
+  color: #172033;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.activity-library-item:hover,
+.activity-library-item.is-selected {
+  border-color: #3b82f6;
+  background: #eff6ff;
+}
+
+.activity-library-item__title {
+  font-weight: 700;
+}
+
+.activity-library-item__meta {
+  overflow-wrap: anywhere;
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+.activity-library-selection h3 {
+  margin: 1rem 0 0.5rem;
+}
+
+.activity-library-local-file {
+  overflow-wrap: anywhere;
+  font-size: 0.9rem;
+}
+
+.activity-library-apply {
+  min-height: 2.75rem;
+  margin-top: 0.5rem;
+  padding: 0.55rem 1rem;
+  border: 0;
+  border-radius: 0.65rem;
+  color: #fff;
+  background: #1d4ed8;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.activity-library-apply:hover:not(:disabled) {
+  background: #1e40af;
+}
+
+.activity-library-apply:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.activity-library-error {
+  color: #b91c1c !important;
+}
+
+@media (max-width: 760px) {
+  .activity-library-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .activity-library-list {
+    max-height: 42vh;
+  }
+}

@@ -29,10 +29,16 @@ const standaloneActivityDocuments = Object.values(import.meta.glob('./data/activ
   import: 'default'
 }));
 import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
+import WidgetRenderer from '../../shared/components/widgets/WidgetRenderer';
 import './App.css';
 
 const activityData = resolveWorkshopDocument(storedActivityData, standaloneActivityDocuments);
 const { activities: ACTIVITY_LIBRARY, datasets: ALGEBRA_DATASETS, labels: POLYNOMIAL_LABELS = {} } = activityData;
+const HIDDEN_SAVED_ACTIVITY_NAMES = new Set([
+  'Άρτιοι μονοψήφιοι αριθμοί',
+  'Επαλήθευση ζευγών σε εξίσωση',
+  '2.4 Πράξεις με πολυώνυμα (πρόσθεση-αφαίρεση)'
+]);
 const getActivityDatasetId = (activityId) => ACTIVITY_LIBRARY.find((activity) => activity.id === activityId)?.datasetId;
 const formatLabelTemplate = (template, term) => String(template || '').replace('{{term}}', String(term));
 
@@ -251,12 +257,16 @@ export default function App({ role = 'teacher' }) {
   const sessionLogging = useSessionInputLogger();
   const isTeacher = role === 'teacher';
   const isStudent = role === 'student';
+  const requestedActivityId = new URLSearchParams(window.location.search).get('activity') || '';
+  const initialActivityId = ACTIVITY_LIBRARY.some((activity) => activity.id === requestedActivityId)
+    ? requestedActivityId
+    : DEFAULT_ACTIVITY_ID;
   const wsRef = useRef(null);
   const reconnectTimerRef = useRef(null);
   const hasRegisteredRef = useRef(false);
 
-  const [selectedActivityId, setSelectedActivityId] = useState(DEFAULT_ACTIVITY_ID);
-  const [selectedExpressionId, setSelectedExpressionId] = useState(ALGEBRA_DATASETS[getActivityDatasetId(DEFAULT_ACTIVITY_ID)].items[0].id);
+  const [selectedActivityId, setSelectedActivityId] = useState(initialActivityId);
+  const [selectedExpressionId, setSelectedExpressionId] = useState(ALGEBRA_DATASETS[getActivityDatasetId(initialActivityId)].items[0].id);
   const [teamAnswers, setTeamAnswers] = useState({
     coefficient: '',
     degreeX: '',
@@ -364,6 +374,7 @@ export default function App({ role = 'teacher' }) {
   const activeGroupingPlacements = groupingPlacementsByExpression[selectedExpressionId] || {};
   const leftWidgetLabel = activeActivity.presentation?.leftWidgetTitle || labels.expression || t('expression');
   const answerPreviewLabel = activeActivity.presentation?.answerLabel || labels.answer || t('answer');
+  const answerPreviewWidget = activeActivity.widgets?.find((widget) => widget.type === 'math-preview' && widget.region === 'bottom');
 
   const getExpressionPreview = (expressionItem, partsOverride = expressionItem?.parts) => {
     if (!expressionItem) {
@@ -1000,20 +1011,25 @@ export default function App({ role = 'teacher' }) {
                   onChange={setGroupingPlacements}
                   invalidItemIds={feedbackEnabled ? invalidGroupingItemIds : []}
                   disabledItemIds={groupingLockedItemIds}
-                  bankLabel={isMonomialGroupingActivity ? activeDataset.presentation?.groupingBankLabel : t(isPolynomialDegreeGroupingActivity ? 'polynomialProductsToGroup' : 'polynomialTermsToGroup')}
+                  bankLabel={activeDataset.presentation?.groupingBankLabel || ''}
                 />
                 {(isPolynomialGroupingActivity || isPolynomialDegreeGroupingActivity) && (
                   <>
                     {invalidGroupingItemIds.length > 0 && (
                       <p className="poly-grouping-warning">{t('wrongPlacement')}</p>
                     )}
-                    {isPolynomialGroupingActivity && (
-                    <div className="lab-preview poly-preview-panel">
-                      <p className="lab-mini-label poly-mini-label">{t('automaticResult')}</p>
-                      <div className="lab-math-box lab-math-box--compact poly-expression-math poly-expression-math--small">
-                        {renderWrappedExpression(polynomialGroupingResult?.formula || '')}
-                      </div>
-                    </div>
+                    {isPolynomialGroupingActivity && answerPreviewWidget && (
+                      <WidgetRenderer
+                        widgets={[{
+                          ...answerPreviewWidget,
+                          position: 'bottom',
+                          settings: {
+                            ...answerPreviewWidget.settings,
+                            formula: polynomialGroupingResult?.formula || ''
+                          }
+                        }]}
+                        position="bottom"
+                      />
                     )}
                   </>
                 )}
@@ -1082,14 +1098,25 @@ export default function App({ role = 'teacher' }) {
                   ]}
                 />}
 
-                {!isDegreeOnlyActivity && (
+                {!isDegreeOnlyActivity && (answerPreviewWidget ? (
+                  <WidgetRenderer widgets={[{
+                    ...answerPreviewWidget,
+                    position: 'bottom',
+                    settings: {
+                      ...answerPreviewWidget.settings,
+                      formula: rightPreviewText,
+                      answerMode: answerPreviewWidget.settings.answerMode || activeExpression?.resultMode || '',
+                      answerParts: activeExpressionParts
+                    }
+                  }]} position="bottom" />
+                ) : (
                   <div className="lab-preview poly-preview-panel">
                     <p className="lab-mini-label poly-mini-label">{answerPreviewLabel}</p>
                     <div className="lab-math-box lab-math-box--compact poly-expression-math poly-expression-math--small">
                       {renderWrappedExpression(rightPreviewText)}
                     </div>
                   </div>
-                )}
+                ))}
               </div>
             ) : (
               <InputGrid
@@ -1115,7 +1142,10 @@ export default function App({ role = 'teacher' }) {
             options={ACTIVITY_LIBRARY.map((activity) => ({
               value: activity.id,
               label: activity.title
-            })).concat(savedActivities.filter((activity) => !['input-grid', 'input-grid-collab'].includes(activity.resource)).map((activity) => ({
+            })).concat(savedActivities.filter((activity) => (
+              !['input-grid', 'input-grid-collab'].includes(activity.resource)
+              && !HIDDEN_SAVED_ACTIVITY_NAMES.has(String(activity.name || '').trim())
+            )).map((activity) => ({
               value: `saved:${activity.resource}/${activity.filename}`,
               label: `${activity.name} (${t(`activityBuilder.resourceNames.${activity.resource}`, { ns: 'interface', defaultValue: activity.resource })})`
             })))}
