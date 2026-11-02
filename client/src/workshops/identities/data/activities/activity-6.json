@@ -14,18 +14,46 @@
           "variants": [
             {
               "id": "sum-square-area",
+              "tileScoring": {
+                "pointsPerRegion": 1,
+                "unorderedGroups": [["top", "left"]],
+                "regions": {
+                  "top": { "x": 1, "y": 1 },
+                  "left": { "x": 1, "y": 1 },
+                  "center": { "x2": 1, "xy": 2, "y2": 1 }
+                }
+              },
               "label": "(α+β)^2",
               "expression": "(\\alpha+\\beta)^2",
               "objective": "Ο εκπαιδευτικός επιλέγει μία ταυτότητα. Τοποθέτησε οριζόντια και κατακόρυφα τα πλακίδια των παραγόντων α και β και κατασκεύασε το γινόμενο στο μοντέλο εμβαδού."
             },
             {
               "id": "difference-square-area",
+              "tileScoring": {
+                "pointsPerRegion": 1,
+                "unorderedGroups": [["top", "left"]],
+                "regions": {
+                  "top": { "x": 1, "y": -1 },
+                  "left": { "x": 1, "y": -1 },
+                  "center": { "x2": 1, "xy": -2, "y2": 1 }
+                }
+              },
               "label": "(α-β)^2",
               "expression": "(\\alpha-\\beta)^2",
               "objective": "Ο εκπαιδευτικός επιλέγει μία ταυτότητα. Τοποθέτησε οριζόντια και κατακόρυφα τα πλακίδια των παραγόντων α και β και κατασκεύασε το γινόμενο στο μοντέλο εμβαδού."
             },
             {
               "id": "squares-difference-area",
+              "tileScoring": {
+                "pointsPerRegion": 1,
+                "unorderedGroups": [["top", "left"]],
+                "distinctGroups": [["top", "left"]],
+                "regions": {
+                  "top": [{ "x": 1, "y": 1 }, { "x": 1, "y": -1 }],
+                  "left": [{ "x": 1, "y": 1 }, { "x": 1, "y": -1 }],
+                  "center": { "x2": 1, "y2": -1 }
+                }
+              },
               "label": "(α+β)(α-β)",
               "expression": "(\\alpha+\\beta)(\\alpha-\\beta)",
               "objective": "Ο εκπαιδευτικός επιλέγει μία ταυτότητα. Τοποθέτησε οριζόντια και κατακόρυφα τα πλακίδια των παραγόντων α και β και κατασκεύασε το γινόμενο στο μοντέλο εμβαδού."

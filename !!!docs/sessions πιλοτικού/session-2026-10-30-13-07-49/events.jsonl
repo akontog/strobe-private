@@ -1,0 +1,137 @@
+{"seq":1,"t":1793358469252,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"student.joined","student":"Mx karvelas","data":{}}
+{"seq":2,"t":1793358469280,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"student.joined","student":"Φανου Σταμ","data":{}}
+{"seq":3,"t":1793358469285,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"student.joined","student":"SteVa","data":{}}
+{"seq":4,"t":1793358469405,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"student.joined","student":"Chriss","data":{}}
+{"seq":5,"t":1793358469418,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"student.joined","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{}}
+{"seq":6,"t":1793358469628,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"student.joined","student":"Giwrgos","data":{}}
+{"seq":7,"t":1793358469765,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"student.joined","student":"Ηρώ Μαρίσα","data":{}}
+{"seq":8,"t":1793358469932,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"student.joined","student":"Οι δύο μονάχοι","data":{}}
+{"seq":9,"t":1793358470086,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"student.joined","student":"ΔεΜα","data":{}}
+{"seq":10,"t":1793358470960,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Mx karvelas","data":{"itemId":"b2","from":"__bank__","to":"g2"}}
+{"seq":11,"t":1793358471183,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"itemId":"a1","from":"__bank__","to":"g1"}}
+{"seq":12,"t":1793358472515,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"SteVa","data":{"itemId":"a1","from":"__bank__","to":"g1"}}
+{"seq":13,"t":1793358474009,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Οι δύο μονάχοι","data":{"itemId":"c2","from":"__bank__","to":"g3"}}
+{"seq":14,"t":1793358474264,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Mx karvelas","data":{"itemId":"a2","from":"__bank__","to":"g2"}}
+{"seq":15,"t":1793358474607,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Ηρώ Μαρίσα","data":{"itemId":"a1","from":"__bank__","to":"g1"}}
+{"seq":16,"t":1793358475738,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"b2","from":"__bank__","to":"g1"}}
+{"seq":17,"t":1793358475921,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"SteVa","data":{"itemId":"a2","from":"__bank__","to":"g1"}}
+{"seq":18,"t":1793358476778,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"ΔεΜα","data":{"itemId":"a1","from":"__bank__","to":"g1"}}
+{"seq":19,"t":1793358476893,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"itemId":"c2","from":"__bank__","to":"g3"}}
+{"seq":20,"t":1793358476995,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"ΔεΜα","data":{"itemId":"a2","from":"__bank__","to":"g1"}}
+{"seq":21,"t":1793358477385,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"itemId":"b1","from":"__bank__","to":"g2"}}
+{"seq":22,"t":1793358477432,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Ηρώ Μαρίσα","data":{"itemId":"c2","from":"__bank__","to":"g3"}}
+{"seq":23,"t":1793358477730,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"ΔεΜα","data":{"itemId":"b1","from":"__bank__","to":"g3"}}
+{"seq":24,"t":1793358478729,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"student.joined","student":"Gio k🔴⚪","data":{}}
+{"seq":25,"t":1793358478910,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Ηρώ Μαρίσα","data":{"itemId":"b1","from":"__bank__","to":"g2"}}
+{"seq":26,"t":1793358479227,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Οι δύο μονάχοι","data":{"itemId":"c1","from":"__bank__","to":"g3"}}
+{"seq":27,"t":1793358479669,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Mx karvelas","data":{"itemId":"a2","from":"g2","to":"g1"}}
+{"seq":28,"t":1793358479827,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"ΔεΜα","data":{"itemId":"b1","from":"g3","to":"g2"}}
+{"seq":29,"t":1793358481032,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Ηρώ Μαρίσα","data":{"itemId":"b2","from":"__bank__","to":"g2"}}
+{"seq":30,"t":1793358481521,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Mx karvelas","data":{"itemId":"a1","from":"__bank__","to":"g1"}}
+{"seq":31,"t":1793358482338,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Gio k🔴⚪","data":{"itemId":"a2","from":"__bank__","to":"g1"}}
+{"seq":32,"t":1793358482944,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"ΔεΜα","data":{"itemId":"b2","from":"__bank__","to":"g2"}}
+{"seq":33,"t":1793358483156,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Ηρώ Μαρίσα","data":{"itemId":"a2","from":"__bank__","to":"g1"}}
+{"seq":34,"t":1793358483250,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"c2","from":"__bank__","to":"g2"}}
+{"seq":35,"t":1793358484731,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Mx karvelas","data":{"itemId":"c2","from":"__bank__","to":"g3"}}
+{"seq":36,"t":1793358485432,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"ΔεΜα","data":{"itemId":"c1","from":"__bank__","to":"g3"}}
+{"seq":37,"t":1793358485948,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Gio k🔴⚪","data":{"itemId":"c2","from":"__bank__","to":"g1"}}
+{"seq":38,"t":1793358486347,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Οι δύο μονάχοι","data":{"itemId":"b2","from":"__bank__","to":"g2"}}
+{"seq":39,"t":1793358486590,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Ηρώ Μαρίσα","data":{"itemId":"c1","from":"__bank__","to":"g3"}}
+{"seq":40,"t":1793358487351,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Mx karvelas","data":{"itemId":"c1","from":"__bank__","to":"g3"}}
+{"seq":41,"t":1793358488481,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Gio k🔴⚪","data":{"itemId":"a1","from":"__bank__","to":"g1"}}
+{"seq":42,"t":1793358488888,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"ΔεΜα","data":{"itemId":"c2","from":"__bank__","to":"g3"}}
+{"seq":43,"t":1793358491104,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Mx karvelas","data":{"itemId":"b1","from":"__bank__","to":"g2"}}
+{"seq":44,"t":1793358495305,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Gio k🔴⚪","data":{"itemId":"c2","from":"g1","to":"g3"}}
+{"seq":45,"t":1793358495362,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Οι δύο μονάχοι","data":{"itemId":"a1","from":"__bank__","to":"g1"}}
+{"seq":46,"t":1793358496891,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Gio k🔴⚪","data":{"itemId":"c1","from":"__bank__","to":"g3"}}
+{"seq":47,"t":1793358498714,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Gio k🔴⚪","data":{"itemId":"b2","from":"__bank__","to":"g2"}}
+{"seq":48,"t":1793358499659,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Gio k🔴⚪","data":{"itemId":"b1","from":"__bank__","to":"g2"}}
+{"seq":49,"t":1793358503918,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"chat.message","sender":"ΔεΜα","data":{"message":"Γεια"}}
+{"seq":50,"t":1793358504267,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Οι δύο μονάχοι","data":{"itemId":"b1","from":"__bank__","to":"g2"}}
+{"seq":51,"t":1793358505743,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Οι δύο μονάχοι","data":{"itemId":"a2","from":"__bank__","to":"g1"}}
+{"seq":52,"t":1793358506105,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"c2","from":"g2","to":"g3"}}
+{"seq":53,"t":1793358513125,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"SteVa","data":{"itemId":"c1","from":"__bank__","to":"g2"}}
+{"seq":54,"t":1793358514928,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"c1","from":"__bank__","to":"g2"}}
+{"seq":55,"t":1793358515131,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"SteVa","data":{"itemId":"b2","from":"__bank__","to":"g1"}}
+{"seq":56,"t":1793358520665,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"b2","from":"g1","to":"__bank__"}}
+{"seq":57,"t":1793358523087,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"student.joined","student":"Οι δύο μονάχοι","data":{}}
+{"seq":58,"t":1793358525464,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"b1","from":"__bank__","to":"g1"}}
+{"seq":59,"t":1793358526081,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"SteVa","data":{"itemId":"a2","from":"g1","to":"__bank__"}}
+{"seq":60,"t":1793358528786,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Οι δύο μονάχοι","data":{"itemId":"c1","from":"__bank__","to":"g3"}}
+{"seq":61,"t":1793358532497,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Οι δύο μονάχοι","data":{"itemId":"c2","from":"__bank__","to":"g3"}}
+{"seq":62,"t":1793358534342,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"SteVa","data":{"itemId":"b2","from":"g1","to":"__bank__"}}
+{"seq":63,"t":1793358536572,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Οι δύο μονάχοι","data":{"itemId":"a2","from":"__bank__","to":"g2"}}
+{"seq":64,"t":1793358537937,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Οι δύο μονάχοι","data":{"itemId":"a1","from":"__bank__","to":"g1"}}
+{"seq":65,"t":1793358539726,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"student.joined","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{}}
+{"seq":66,"t":1793358539827,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Οι δύο μονάχοι","data":{"itemId":"a2","from":"g2","to":"g1"}}
+{"seq":67,"t":1793358541340,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Οι δύο μονάχοι","data":{"itemId":"b1","from":"__bank__","to":"g2"}}
+{"seq":68,"t":1793358542667,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Οι δύο μονάχοι","data":{"itemId":"b2","from":"__bank__","to":"g2"}}
+{"seq":69,"t":1793358542937,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"itemId":"a1","from":"__bank__","to":"g1"}}
+{"seq":70,"t":1793358551699,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"itemId":"c2","from":"__bank__","to":"g3"}}
+{"seq":71,"t":1793358553780,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"itemId":"b1","from":"__bank__","to":"g2"}}
+{"seq":72,"t":1793358555608,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"itemId":"b2","from":"__bank__","to":"g2"}}
+{"seq":73,"t":1793358557439,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"itemId":"c1","from":"__bank__","to":"g3"}}
+{"seq":74,"t":1793358558683,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"itemId":"a2","from":"__bank__","to":"g1"}}
+{"seq":75,"t":1793358559392,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"chat.message","sender":"Οι δύο μονάχοι","data":{"message":"Hi"}}
+{"seq":76,"t":1793358571711,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"c1","from":"g2","to":"g3"}}
+{"seq":77,"t":1793358573850,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"c2","from":"g3","to":"g2"}}
+{"seq":78,"t":1793358576154,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"c2","from":"g2","to":"g3"}}
+{"seq":79,"t":1793358579643,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"chat.message","sender":"ΔεΜα","data":{"message":"Τι κανετε"}}
+{"seq":80,"t":1793358580060,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"c1","from":"g3","to":"g2"}}
+{"seq":81,"t":1793358585536,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"c1","from":"g2","to":"g3"}}
+{"seq":82,"t":1793358586772,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"c2","from":"g3","to":"g2"}}
+{"seq":83,"t":1793358590549,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"SteVa","data":{"itemId":"a2","from":"__bank__","to":"g1"}}
+{"seq":84,"t":1793358597266,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"SteVa","data":{"itemId":"b2","from":"__bank__","to":"g2"}}
+{"seq":85,"t":1793358611406,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Chriss","data":{"itemId":"c2","from":"__bank__","to":"g2"}}
+{"seq":86,"t":1793358614151,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Chriss","data":{"itemId":"c2","from":"g2","to":"__bank__"}}
+{"seq":87,"t":1793358617070,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"SteVa","data":{"itemId":"c2","from":"__bank__","to":"g3"}}
+{"seq":88,"t":1793358618414,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Chriss","data":{"itemId":"a1","from":"__bank__","to":"g2"}}
+{"seq":89,"t":1793358623622,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Chriss","data":{"itemId":"a1","from":"g2","to":"__bank__"}}
+{"seq":90,"t":1793358626008,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"chat.message","sender":"Mx karvelas","data":{"message":"Καλά εσυ"}}
+{"seq":91,"t":1793358630414,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"SteVa","data":{"itemId":"b1","from":"__bank__","to":"g1"}}
+{"seq":92,"t":1793358635241,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"b1","from":"__bank__","to":"g3"}}
+{"seq":93,"t":1793358636520,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"SteVa","data":{"itemId":"b1","from":"g1","to":"__bank__"}}
+{"seq":94,"t":1793358636570,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"b2","from":"__bank__","to":"g3"}}
+{"seq":95,"t":1793358637756,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"student.joined","student":"Giwrgos","data":{}}
+{"seq":96,"t":1793358642890,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"c1","from":"g3","to":"__bank__"}}
+{"seq":97,"t":1793358643271,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Giwrgos","data":{"itemId":"a1","from":"__bank__","to":"g1"}}
+{"seq":98,"t":1793358647370,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"chat.message","sender":"ΔεΜα","data":{"message":"Καλα"}}
+{"seq":99,"t":1793358649437,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"chat.message","sender":"Οι δύο μονάχοι","data":{"message":"O hell na"}}
+{"seq":100,"t":1793358650196,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Giwrgos","data":{"itemId":"c2","from":"__bank__","to":"g3"}}
+{"seq":101,"t":1793358652490,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Giwrgos","data":{"itemId":"b1","from":"__bank__","to":"g2"}}
+{"seq":102,"t":1793358653669,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"SteVa","data":{"itemId":"b1","from":"__bank__","to":"g2"}}
+{"seq":103,"t":1793358653938,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Giwrgos","data":{"itemId":"b2","from":"__bank__","to":"g2"}}
+{"seq":104,"t":1793358654256,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Chriss","data":{"itemId":"c1","from":"__bank__","to":"g3"}}
+{"seq":105,"t":1793358655001,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"chat.message","sender":"Mx karvelas","data":{"message":"Μαρίνο μουρ"}}
+{"seq":106,"t":1793358655352,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"c1","from":"__bank__","to":"g1"}}
+{"seq":107,"t":1793358655462,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Giwrgos","data":{"itemId":"c1","from":"__bank__","to":"g3"}}
+{"seq":108,"t":1793358656301,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Chriss","data":{"itemId":"c2","from":"__bank__","to":"g3"}}
+{"seq":109,"t":1793358656683,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Giwrgos","data":{"itemId":"a2","from":"__bank__","to":"g1"}}
+{"seq":110,"t":1793358657312,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"a2","from":"__bank__","to":"g2"}}
+{"seq":111,"t":1793358657554,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"SteVa","data":{"itemId":"b2","from":"g2","to":"__bank__"}}
+{"seq":112,"t":1793358660067,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"a1","from":"__bank__","to":"g1"}}
+{"seq":113,"t":1793358665099,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"SteVa","data":{"itemId":"c1","from":"g2","to":"__bank__"}}
+{"seq":114,"t":1793358666074,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"chat.message","sender":"ΚαλλιοπηΧριστιναΚυριακη","data":{"message":"Πιτσα"}}
+{"seq":115,"t":1793358666474,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"c1","from":"g1","to":"__bank__"}}
+{"seq":116,"t":1793358666586,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"chat.message","sender":"ΔεΜα","data":{"message":"α"}}
+{"seq":117,"t":1793358667992,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"a2","from":"g2","to":"__bank__"}}
+{"seq":118,"t":1793358670091,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Chriss","data":{"itemId":"a2","from":"__bank__","to":"g2"}}
+{"seq":119,"t":1793358673789,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Chriss","data":{"itemId":"a2","from":"g2","to":"__bank__"}}
+{"seq":120,"t":1793358683711,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Student","data":{"itemId":"a1","from":"__bank__","to":"g1"}}
+{"seq":121,"t":1793358683787,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"SteVa","data":{"itemId":"b2","from":"__bank__","to":"g2"}}
+{"seq":122,"t":1793358685697,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Student","data":{"itemId":"b1","from":"__bank__","to":"g2"}}
+{"seq":123,"t":1793358687683,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Student","data":{"itemId":"c1","from":"__bank__","to":"g3"}}
+{"seq":124,"t":1793358688246,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"c2","from":"g2","to":"__bank__"}}
+{"seq":125,"t":1793358688620,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Chriss","data":{"itemId":"a1","from":"__bank__","to":"g2"}}
+{"seq":126,"t":1793358689127,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"chat.message","sender":"Οι δύο μονάχοι","data":{"message":"Pizza mozzarella pizza mozzarella"}}
+{"seq":127,"t":1793358689396,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Student","data":{"itemId":"a2","from":"__bank__","to":"g1"}}
+{"seq":128,"t":1793358689422,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"b1","from":"g3","to":"g2"}}
+{"seq":129,"t":1793358689918,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"SteVa","data":{"itemId":"c1","from":"__bank__","to":"g3"}}
+{"seq":130,"t":1793358691387,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Student","data":{"itemId":"c2","from":"__bank__","to":"g3"}}
+{"seq":131,"t":1793358693269,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Chriss","data":{"itemId":"a1","from":"g2","to":"g1"}}
+{"seq":132,"t":1793358693537,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Student","data":{"itemId":"b2","from":"__bank__","to":"g2"}}
+{"seq":133,"t":1793358693544,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"c1","from":"__bank__","to":"g3"}}
+{"seq":134,"t":1793358693888,"activity":"1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)","event":"chat.message","sender":"ΔεΜα","data":{"message":"Ο Μάριος σηκωθηκε"}}
+{"seq":135,"t":1793358697285,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Φανου Σταμ","data":{"itemId":"c2","from":"__bank__","to":"g3"}}
+{"seq":136,"t":1793358698314,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Chriss","data":{"itemId":"a2","from":"__bank__","to":"g2"}}
+{"seq":137,"t":1793358701319,"activity":"polynomial:1.2:grouping-1","event":"grouping.item.moved","student":"Chriss","data":{"itemId":"a2","from":"g2","to":"g1"}}

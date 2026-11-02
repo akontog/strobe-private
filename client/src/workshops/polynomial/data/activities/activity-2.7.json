@@ -32,6 +32,16 @@
                   "degreeY": 0
                 }
               ],
+              "tileScoring": {
+                "pointsPerRegion": 1,
+                "unorderedGroups": [["top", "left"]],
+                "distinctGroups": [["top", "left"]],
+                "regions": {
+                  "top": [{ "x": 1, "one": 1 }, { "x": 1, "one": 2 }],
+                  "left": [{ "x": 1, "one": 1 }, { "x": 1, "one": 2 }],
+                  "center": { "x2": 1, "x": 3, "one": 2 }
+                }
+              },
               "scoreCorrect": 1,
               "scoreIncorrect": -0.5
             },
@@ -56,6 +66,16 @@
                   "degreeY": 0
                 }
               ],
+              "tileScoring": {
+                "pointsPerRegion": 1,
+                "unorderedGroups": [["top", "left"]],
+                "distinctGroups": [["top", "left"]],
+                "regions": {
+                  "top": [{ "x": 1, "one": 2 }, { "x": 1, "one": 3 }],
+                  "left": [{ "x": 1, "one": 2 }, { "x": 1, "one": 3 }],
+                  "center": { "x2": 1, "x": 5, "one": 6 }
+                }
+              },
               "scoreCorrect": 1,
               "scoreIncorrect": -0.5
             },
@@ -80,6 +100,16 @@
                   "degreeY": 0
                 }
               ],
+              "tileScoring": {
+                "pointsPerRegion": 1,
+                "unorderedGroups": [["top", "left"]],
+                "distinctGroups": [["top", "left"]],
+                "regions": {
+                  "top": [{ "x": 2, "one": 1 }, { "x": 1, "one": 2 }],
+                  "left": [{ "x": 2, "one": 1 }, { "x": 1, "one": 2 }],
+                  "center": { "x2": 2, "x": 5, "one": 2 }
+                }
+              },
               "scoreCorrect": 1,
               "scoreIncorrect": -0.5
             },
@@ -104,6 +134,16 @@
                   "degreeY": 2
                 }
               ],
+              "tileScoring": {
+                "pointsPerRegion": 1,
+                "unorderedGroups": [["top", "left"]],
+                "distinctGroups": [["top", "left"]],
+                "regions": {
+                  "top": [{ "x": 1, "y": 1 }, { "x": 1, "y": 2 }],
+                  "left": [{ "x": 1, "y": 1 }, { "x": 1, "y": 2 }],
+                  "center": { "x2": 1, "xy": 3, "y2": 2 }
+                }
+              },
               "scoreCorrect": 1,
               "scoreIncorrect": -0.5
             }

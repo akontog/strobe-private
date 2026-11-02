@@ -1,0 +1,5 @@
+{"seq":1,"t":1793549791090,"activity":"2.2 Αναγωγή ομοίων όρων","event":"student.joined","student":"pp","data":{}}
+{"seq":2,"t":1793549803039,"activity":"polynomial:2.2:reduce-1","event":"activity.input.changed","student":"pp","data":{"field":"coefficient","value":"6"}}
+{"seq":3,"t":1793549806685,"activity":"polynomial:2.2:reduce-1","event":"activity.input.changed","student":"pp","data":{"field":"degree-x","value":"1"}}
+{"seq":4,"t":1793549817182,"activity":"polynomial:2.2:reduce-1","event":"activity.input.changed","student":"pp","data":{"field":"degree-x","value":"2"}}
+{"seq":5,"t":1793549818504,"activity":"polynomial:2.2:reduce-1","event":"activity.input.changed","student":"pp","data":{"field":"degree-y","value":"1"}}

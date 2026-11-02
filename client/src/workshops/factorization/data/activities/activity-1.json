@@ -99,7 +99,12 @@
       "config": {
         "settings": {
           "card": false,
-          "mode": "area"
+          "mode": "area",
+          "tileScoring": {
+            "pointsPerRegion": 1,
+            "unorderedGroups": [["top", "left"]],
+            "regions": ["top", "left", "center"]
+          }
         }
       }
     }

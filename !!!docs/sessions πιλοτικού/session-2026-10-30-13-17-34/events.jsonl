@@ -1,0 +1,144 @@
+{"seq":1,"t":1793359054731,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"student.joined","student":"Ηρώ Μαρίσα","data":{}}
+{"seq":2,"t":1793359054753,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"student.joined","student":"Gio k⚪🔴","data":{}}
+{"seq":3,"t":1793359054971,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"student.joined","student":"Οι δύο μονάχοι","data":{}}
+{"seq":4,"t":1793359055141,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"student.joined","student":"ΔεΜα","data":{}}
+{"seq":5,"t":1793359055163,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"student.joined","student":"Mx karvelas","data":{}}
+{"seq":6,"t":1793359055259,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"student.joined","student":"Φανου Σταμ","data":{}}
+{"seq":7,"t":1793359055403,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"student.joined","student":"Chriss","data":{}}
+{"seq":8,"t":1793359055593,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"student.joined","student":"Giwrgos","data":{}}
+{"seq":9,"t":1793359055604,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"student.joined","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{}}
+{"seq":10,"t":1793359055635,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"student.joined","student":"SteVa","data":{}}
+{"seq":11,"t":1793359057718,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"coefficient","value":"3"}}
+{"seq":12,"t":1793359058268,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"SteVa","data":{"field":"coefficient","value":"1"}}
+{"seq":13,"t":1793359058507,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"coefficient","value":"1"}}
+{"seq":14,"t":1793359058678,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"coefficient","value":"1"}}
+{"seq":15,"t":1793359058897,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"coefficient","value":""}}
+{"seq":16,"t":1793359058953,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Chriss","data":{"field":"coefficient","value":"8"}}
+{"seq":17,"t":1793359059171,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"coefficient","value":"15"}}
+{"seq":18,"t":1793359059218,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"coefficient","value":"15"}}
+{"seq":19,"t":1793359059336,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"SteVa","data":{"field":"coefficient","value":"15"}}
+{"seq":20,"t":1793359059551,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"coefficient","value":"1"}}
+{"seq":21,"t":1793359060294,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"coefficient","value":"1"}}
+{"seq":22,"t":1793359060495,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"coefficient","value":"15"}}
+{"seq":23,"t":1793359060547,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"coefficient","value":"1"}}
+{"seq":24,"t":1793359061358,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"coefficient","value":"15"}}
+{"seq":25,"t":1793359061409,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"coefficient","value":"15"}}
+{"seq":26,"t":1793359061506,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"coefficient","value":"1"}}
+{"seq":27,"t":1793359062184,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"coefficient","value":"15"}}
+{"seq":28,"t":1793359064276,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"degree-x","value":"5"}}
+{"seq":29,"t":1793359065036,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"SteVa","data":{"field":"degree-x","value":"2"}}
+{"seq":30,"t":1793359065238,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Giwrgos","data":{"field":"coefficient","value":"1"}}
+{"seq":31,"t":1793359065381,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"coefficient","value":"1"}}
+{"seq":32,"t":1793359065692,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Giwrgos","data":{"field":"coefficient","value":"15"}}
+{"seq":33,"t":1793359066014,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"SteVa","data":{"field":"degree-x","value":""}}
+{"seq":34,"t":1793359066307,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"coefficient","value":"15"}}
+{"seq":35,"t":1793359066649,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"SteVa","data":{"field":"degree-x","value":"5"}}
+{"seq":36,"t":1793359067118,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"degree-y","value":"3"}}
+{"seq":37,"t":1793359067594,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-x","value":"6"}}
+{"seq":38,"t":1793359070583,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Giwrgos","data":{"field":"degree-x","value":"5"}}
+{"seq":39,"t":1793359071550,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-y","value":"2"}}
+{"seq":40,"t":1793359071852,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"degree-x","value":"6"}}
+{"seq":41,"t":1793359071885,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-x","value":"6"}}
+{"seq":42,"t":1793359073464,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Giwrgos","data":{"field":"degree-y","value":"3"}}
+{"seq":43,"t":1793359074912,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"degree-x","value":"5"}}
+{"seq":44,"t":1793359075343,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-x","value":"6"}}
+{"seq":45,"t":1793359077472,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-y","value":"4"}}
+{"seq":46,"t":1793359078500,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"degree-y","value":"5"}}
+{"seq":47,"t":1793359079372,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"degree-y","value":""}}
+{"seq":48,"t":1793359079968,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"degree-y","value":"2"}}
+{"seq":49,"t":1793359080148,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"degree-x","value":"5"}}
+{"seq":50,"t":1793359080230,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"degree-y","value":"3"}}
+{"seq":51,"t":1793359081409,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"SteVa","data":{"field":"degree-y","value":"3"}}
+{"seq":52,"t":1793359082489,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-y","value":"2"}}
+{"seq":53,"t":1793359086488,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"degree-y","value":"3"}}
+{"seq":54,"t":1793359088374,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-y","value":""}}
+{"seq":55,"t":1793359098070,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-y","value":"3"}}
+{"seq":56,"t":1793359098151,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"degree-x","value":""}}
+{"seq":57,"t":1793359102919,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"degree-x","value":"5"}}
+{"seq":58,"t":1793359104597,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"ΔεΜα","data":{"message":"Δψ σψηαιηοαδ ηιαιαδ"}}
+{"seq":59,"t":1793359107248,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"degree-x","value":""}}
+{"seq":60,"t":1793359110136,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-y","value":""}}
+{"seq":61,"t":1793359111605,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-y","value":"4"}}
+{"seq":62,"t":1793359120323,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Chriss","data":{"field":"coefficient","value":"87"}}
+{"seq":63,"t":1793359120740,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Chriss","data":{"field":"coefficient","value":"875"}}
+{"seq":64,"t":1793359121965,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"degree-y","value":""}}
+{"seq":65,"t":1793359123193,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"coefficient","value":"1"}}
+{"seq":66,"t":1793359123934,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"coefficient","value":""}}
+{"seq":67,"t":1793359124043,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Chriss","data":{"field":"coefficient","value":"85"}}
+{"seq":68,"t":1793359124173,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Chriss","data":{"field":"coefficient","value":"5"}}
+{"seq":69,"t":1793359125119,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Chriss","data":{"field":"coefficient","value":"15"}}
+{"seq":70,"t":1793359130598,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Student","data":{"field":"coefficient","value":"1"}}
+{"seq":71,"t":1793359130920,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Student","data":{"field":"coefficient","value":"15"}}
+{"seq":72,"t":1793359132100,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"ΔεΜα","data":{"message":"Αρχαία νεοελληνική γλωσσα"}}
+{"seq":73,"t":1793359134539,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Student","data":{"field":"degree-x","value":"5"}}
+{"seq":74,"t":1793359136455,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aaa"}}
+{"seq":75,"t":1793359136779,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"A"}}
+{"seq":76,"t":1793359136983,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":77,"t":1793359137390,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"A"}}
+{"seq":78,"t":1793359137610,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"degree-x","value":"5"}}
+{"seq":79,"t":1793359137867,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aa"}}
+{"seq":80,"t":1793359137897,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Student","data":{"field":"degree-y","value":"3"}}
+{"seq":81,"t":1793359138140,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":82,"t":1793359138425,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":83,"t":1793359138713,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":84,"t":1793359138918,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":85,"t":1793359139206,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":86,"t":1793359139458,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":87,"t":1793359139645,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":88,"t":1793359139862,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":89,"t":1793359140054,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":90,"t":1793359140276,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":91,"t":1793359140475,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":92,"t":1793359140822,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aa"}}
+{"seq":93,"t":1793359141143,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":94,"t":1793359141476,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":95,"t":1793359141710,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":96,"t":1793359141769,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-x","value":""}}
+{"seq":97,"t":1793359141964,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":98,"t":1793359142254,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"degree-y","value":"3"}}
+{"seq":99,"t":1793359142307,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aa"}}
+{"seq":100,"t":1793359142682,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":101,"t":1793359142754,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-x","value":"5"}}
+{"seq":102,"t":1793359143032,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":103,"t":1793359143379,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":104,"t":1793359143810,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aaa"}}
+{"seq":105,"t":1793359144734,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aa"}}
+{"seq":106,"t":1793359144975,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-x","value":""}}
+{"seq":107,"t":1793359145403,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-x","value":"5"}}
+{"seq":108,"t":1793359147353,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-y","value":""}}
+{"seq":109,"t":1793359147969,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-y","value":"3"}}
+{"seq":110,"t":1793359149381,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"coefficient","value":"1"}}
+{"seq":111,"t":1793359149745,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"coefficient","value":"15"}}
+{"seq":112,"t":1793359150907,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"degree-x","value":"5"}}
+{"seq":113,"t":1793359153318,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Gio k⚪🔴","data":{"field":"degree-y","value":"3"}}
+{"seq":114,"t":1793359168410,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-x","value":""}}
+{"seq":115,"t":1793359169281,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-x","value":"5"}}
+{"seq":116,"t":1793359170967,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"Skibidi"}}
+{"seq":117,"t":1793359172565,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-y","value":""}}
+{"seq":118,"t":1793359173085,"activity":"polynomial:1.4:mul-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-y","value":"3"}}
+{"seq":119,"t":1793359182619,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"Müt"}}
+{"seq":120,"t":1793359196919,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Οι δύο μονάχοι","data":{"message":"Nein"}}
+{"seq":121,"t":1793359196948,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"ΚαλλιοπηΧριστιναΚυριακη","data":{"message":"Gsgssgwbwb"}}
+{"seq":122,"t":1793359203769,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"A"}}
+{"seq":123,"t":1793359204151,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":124,"t":1793359204561,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":125,"t":1793359204980,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":126,"t":1793359205573,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aa"}}
+{"seq":127,"t":1793359205890,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":128,"t":1793359206519,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"qqa"}}
+{"seq":129,"t":1793359207050,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":130,"t":1793359207342,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":131,"t":1793359208024,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":132,"t":1793359208678,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":133,"t":1793359209130,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aa"}}
+{"seq":134,"t":1793359209636,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":135,"t":1793359210259,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aa"}}
+{"seq":136,"t":1793359211081,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aa"}}
+{"seq":137,"t":1793359211818,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aa"}}
+{"seq":138,"t":1793359212366,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aa"}}
+{"seq":139,"t":1793359216636,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"ΚαλλιοπηΧριστιναΚυριακη","data":{"message":"Aaaaa"}}
+{"seq":140,"t":1793359222258,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"ΚαλλιοπηΧριστιναΚυριακη","data":{"message":"Qa"}}
+{"seq":141,"t":1793359225705,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"ΚαλλιοπηΧριστιναΚυριακη","data":{"message":"Aa"}}
+{"seq":142,"t":1793359227535,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Οι δύο μονάχοι","data":{"message":"Faaaaaaa"}}
+{"seq":143,"t":1793359229688,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"ΚαλλιοπηΧριστιναΚυριακη","data":{"message":"Ssdda"}}
+{"seq":144,"t":1793359231014,"activity":"1.4 Πράξεις με μονώνυμα (πολλαπλασιασμός)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"Makhs"}}

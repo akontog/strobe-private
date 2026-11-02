@@ -13,6 +13,7 @@ import {
 import storedActivityData from './data/activities.json';
 const standaloneActivityDocuments = Object.values(import.meta.glob('./data/activities/*.json', { eager: true, import: 'default' }));
 import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
+import { getAlgebraTileRegionScore } from '../../shared/components/resources/algebraTileScoring';
 import './App.css';
 
 const activityData = resolveWorkshopDocument(storedActivityData, standaloneActivityDocuments);
@@ -65,9 +66,7 @@ export default function App({ role = 'student' }) {
 
   const selectedQuestion = questions.find((item) => item.id === selectedQuestionId) || questions[0];
   const currentAnswer = answers[selectedQuestion.id] || '';
-  const currentScore = currentAnswer === ''
-    ? 0
-    : Number(currentAnswer) === Number(selectedQuestion.solution) ? activity.scoreCorrect : activity.scoreIncorrect;
+  const currentScore = getAlgebraTileRegionScore(tiles, tileWidget.mode || tileWidget.layout, selectedQuestion.tileScoring).score;
 
   useEffect(() => {
     const syncIdentity = (event) => setStudentName(String(event.detail?.name || readIdentityName('Student')).trim());

@@ -22,6 +22,7 @@ import {
   writeIdentityName
 } from '../../shared/components';
 import { useSessionInputLogger } from '../../shared/components/activities/SessionLogContext';
+import { getAlgebraTileRegionScore } from '../../shared/components/resources/algebraTileScoring';
 import { SCORE_CORRECT, SCORE_INCORRECT, computeStudentScore, getAnswerFieldDefinitions } from './grading';
 import storedActivityData from './data/activities.json';
 const standaloneActivityDocuments = Object.values(import.meta.glob('./data/activities/*.json', {
@@ -230,7 +231,15 @@ const summarizeAlgebraTiles = (tiles, mode, selectedRegion = '', activityLabels 
   const format = (items) => {
     const counts = new Map();
     (items || []).forEach((tile) => counts.set(tile.type, (counts.get(tile.type) || 0) + (tile.sign < 0 ? -1 : 1)));
-    const parts = [...counts.entries()].filter(([, count]) => count).map(([type, count], index) => `${index === 0 ? count < 0 ? tableLabels.negativeSign : '' : count < 0 ? ` ${tableLabels.negativeSign} ` : ` ${tableLabels.positiveSign} `}${Math.abs(count) === 1 ? '' : Math.abs(count)}${labels[type] || type}`);
+    const parts = [...counts.entries()].filter(([, count]) => count).map(([type, count], index) => {
+      const isConstant = type === 'one';
+      const termLabel = isConstant ? '' : labels[type] || type;
+      const coefficient = Math.abs(count) === 1 && !isConstant ? '' : Math.abs(count);
+      const sign = index === 0
+        ? count < 0 ? tableLabels.negativeSign : ''
+        : count < 0 ? ` ${tableLabels.negativeSign} ` : ` ${tableLabels.positiveSign} `;
+      return `${sign}${coefficient}${termLabel}`;
+    });
     return parts.join(tableLabels.termSeparator) || tableLabels.emptyValue;
   };
   if (mode === 'equation') return format(selectedRegion === 'left' ? tiles?.filter((tile) => tile.side !== 'right') : tiles?.filter((tile) => tile.side === 'right'));
@@ -694,6 +703,9 @@ export default function App({ role = 'teacher' }) {
 
   const ownParticipant = participants.find((participant) => String(participant.name || participant.username || '').trim().toLocaleLowerCase() === studentName.trim().toLocaleLowerCase());
   const currentStudentTiles = ownParticipant?.algebraTiles || [];
+  const studentScoreTiles = isStudent
+    ? algebraTilesByExpression[selectedExpressionId] || currentStudentTiles
+    : currentStudentTiles;
 
   const sendSocketMessage = (payload) => {
     const ws = wsRef.current;
@@ -947,12 +959,15 @@ export default function App({ role = 'teacher' }) {
     isPolynomialResultActivity
   );
   const hasCurrentStudentAnswer = Object.values(currentStudentAnswers || {}).some((value) => String(value ?? '').trim() !== '');
-  const currentStudentScore = hasCurrentStudentAnswer
-    ? computeStudentScore({ answers: currentStudentAnswers }, activeExpression, {
-      scoreCorrect: activeExpression?.scoreCorrect ?? SCORE_CORRECT,
-      scoreIncorrect: activeExpression?.scoreIncorrect ?? SCORE_INCORRECT
-    })
-    : 0;
+  const algebraTileMode = algebraTilesWidget?.mode || algebraTilesWidget?.layout || 'simplified';
+  const currentStudentScore = activeExpression?.resultMode === 'algebraTiles'
+    ? getAlgebraTileRegionScore(studentScoreTiles, algebraTileMode, activeExpression.tileScoring).score
+    : hasCurrentStudentAnswer
+      ? computeStudentScore({ answers: currentStudentAnswers }, activeExpression, {
+        scoreCorrect: activeExpression?.scoreCorrect ?? SCORE_CORRECT,
+        scoreIncorrect: activeExpression?.scoreIncorrect ?? SCORE_INCORRECT
+      })
+      : 0;
 
   return (
     <>

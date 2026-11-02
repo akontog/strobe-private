@@ -1,0 +1,70 @@
+{
+  "sessionId": "session-2026-10-30-13-07-49",
+  "app": "polynomial-lab",
+  "startedAt": "2026-10-30T11:07:49.024Z",
+  "endedAt": "2026-10-30T11:11:41.779Z",
+  "teacherId": "antonis",
+  "students": [
+    "Mx karvelas",
+    "Φανου Σταμ",
+    "SteVa",
+    "Chriss",
+    "ΚαλλιοπηΧριστιναΚυριακη",
+    "Giwrgos",
+    "Ηρώ Μαρίσα",
+    "Οι δύο μονάχοι",
+    "ΔεΜα",
+    "Gio k🔴⚪",
+    "Gio k💚⚪"
+  ],
+  "studentScores": [
+    {
+      "student": "Mx karvelas",
+      "score": 6
+    },
+    {
+      "student": "Φανου Σταμ",
+      "score": 3.5
+    },
+    {
+      "student": "SteVa",
+      "score": 6
+    },
+    {
+      "student": "Chriss",
+      "score": 4
+    },
+    {
+      "student": "ΚαλλιοπηΧριστιναΚυριακη",
+      "score": 6
+    },
+    {
+      "student": "Giwrgos",
+      "score": 6
+    },
+    {
+      "student": "Ηρώ Μαρίσα",
+      "score": 6
+    },
+    {
+      "student": "Οι δύο μονάχοι",
+      "score": 6
+    },
+    {
+      "student": "ΔεΜα",
+      "score": 6
+    },
+    {
+      "student": "Gio k🔴⚪",
+      "score": 6
+    },
+    {
+      "student": "Gio k💚⚪",
+      "score": 6
+    }
+  ],
+  "activity": "1.2 Αναγνώριση όμοιων μονωνύμων (ομαδοποίηση)",
+  "chatEnabled": true,
+  "scoreVisible": true,
+  "feedbackEnabled": false
+}

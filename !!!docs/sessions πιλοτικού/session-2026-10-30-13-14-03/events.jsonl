@@ -1,0 +1,130 @@
+{"seq":1,"t":1793358844066,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"student.joined","student":"ΔεΜα","data":{}}
+{"seq":2,"t":1793358844117,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"student.joined","student":"Mx karvelas","data":{}}
+{"seq":3,"t":1793358844265,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"student.joined","student":"Φανου Σταμ","data":{}}
+{"seq":4,"t":1793358844317,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"student.joined","student":"SteVa","data":{}}
+{"seq":5,"t":1793358844409,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"student.joined","student":"Chriss","data":{}}
+{"seq":6,"t":1793358844604,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"student.joined","student":"Giwrgos","data":{}}
+{"seq":7,"t":1793358844618,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"student.joined","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{}}
+{"seq":8,"t":1793358844775,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"student.joined","student":"Gio k💚⚪","data":{}}
+{"seq":9,"t":1793358844823,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"student.joined","student":"Ηρώ Μαρίσα","data":{}}
+{"seq":10,"t":1793358844971,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"student.joined","student":"Οι δύο μονάχοι","data":{}}
+{"seq":11,"t":1793358847013,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Giwrgos","data":{"field":"coefficient","value":"5"}}
+{"seq":12,"t":1793358847328,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"coefficient","value":"5"}}
+{"seq":13,"t":1793358847358,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"SteVa","data":{"field":"coefficient","value":"2"}}
+{"seq":14,"t":1793358847912,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"coefficient","value":"5"}}
+{"seq":15,"t":1793358847940,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"coefficient","value":"5"}}
+{"seq":16,"t":1793358848596,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"coefficient","value":"5"}}
+{"seq":17,"t":1793358849174,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"SteVa","data":{"field":"coefficient","value":""}}
+{"seq":18,"t":1793358849274,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Chriss","data":{"field":"coefficient","value":"5"}}
+{"seq":19,"t":1793358849328,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"coefficient","value":"5"}}
+{"seq":20,"t":1793358849946,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Giwrgos","data":{"field":"degree-x","value":"4"}}
+{"seq":21,"t":1793358850070,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"SteVa","data":{"field":"coefficient","value":"5"}}
+{"seq":22,"t":1793358850242,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"coefficient","value":"5"}}
+{"seq":23,"t":1793358851455,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"degree-x","value":"4"}}
+{"seq":24,"t":1793358851483,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"degree-x","value":"2"}}
+{"seq":25,"t":1793358852009,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Giwrgos","data":{"field":"degree-y","value":"2"}}
+{"seq":26,"t":1793358852264,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"coefficient","value":"6"}}
+{"seq":27,"t":1793358852923,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"degree-x","value":"2"}}
+{"seq":28,"t":1793358853182,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"degree-y","value":"1"}}
+{"seq":29,"t":1793358853794,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"degree-y","value":"1"}}
+{"seq":30,"t":1793358853817,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Giwrgos","data":{"field":"degree-y","value":"26"}}
+{"seq":31,"t":1793358854252,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"degree-y","value":"2"}}
+{"seq":32,"t":1793358854661,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-x","value":"2"}}
+{"seq":33,"t":1793358855015,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"SteVa","data":{"field":"degree-x","value":"2"}}
+{"seq":34,"t":1793358855936,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"coefficient","value":""}}
+{"seq":35,"t":1793358856787,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"coefficient","value":"5"}}
+{"seq":36,"t":1793358856958,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"degree-x","value":"2"}}
+{"seq":37,"t":1793358857804,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"SteVa","data":{"field":"degree-y","value":"2"}}
+{"seq":38,"t":1793358858598,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"degree-y","value":"1"}}
+{"seq":39,"t":1793358860136,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-x","value":"2"}}
+{"seq":40,"t":1793358860467,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Giwrgos","data":{"field":"degree-y","value":"2"}}
+{"seq":41,"t":1793358862255,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-x","value":"4"}}
+{"seq":42,"t":1793358862349,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"degree-x","value":"4"}}
+{"seq":43,"t":1793358862956,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-y","value":"1"}}
+{"seq":44,"t":1793358865296,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Student","data":{"field":"coefficient","value":"7"}}
+{"seq":45,"t":1793358865616,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"degree-y","value":"2"}}
+{"seq":46,"t":1793358868830,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-y","value":"2"}}
+{"seq":47,"t":1793358868890,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-x","value":""}}
+{"seq":48,"t":1793358869201,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-x","value":"24"}}
+{"seq":49,"t":1793358870462,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-x","value":"2"}}
+{"seq":50,"t":1793358870627,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-x","value":""}}
+{"seq":51,"t":1793358870650,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-x","value":"4"}}
+{"seq":52,"t":1793358871372,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-x","value":"4"}}
+{"seq":53,"t":1793358874609,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-y","value":"4"}}
+{"seq":54,"t":1793358874750,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"ΔεΜα","data":{"message":"Τελειωσαμε"}}
+{"seq":55,"t":1793358877543,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-y","value":""}}
+{"seq":56,"t":1793358878779,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-y","value":"2"}}
+{"seq":57,"t":1793358880049,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"degree-x","value":""}}
+{"seq":58,"t":1793358890280,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-y","value":""}}
+{"seq":59,"t":1793358891050,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-y","value":"0"}}
+{"seq":60,"t":1793358891395,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Student","data":{"field":"coefficient","value":""}}
+{"seq":61,"t":1793358896334,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"degree-x","value":"4"}}
+{"seq":62,"t":1793358898716,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"degree-y","value":""}}
+{"seq":63,"t":1793358900037,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"degree-y","value":"0"}}
+{"seq":64,"t":1793358904175,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-y","value":""}}
+{"seq":65,"t":1793358909445,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"ΚαλλιοπηΧριστιναΚυριακη","data":{"message":"Καιεμεισ"}}
+{"seq":66,"t":1793358911503,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"SteVa","data":{"field":"degree-y","value":""}}
+{"seq":67,"t":1793358912179,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"SteVa","data":{"field":"degree-y","value":"1"}}
+{"seq":68,"t":1793358915145,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-y","value":"2"}}
+{"seq":69,"t":1793358930341,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"ΔεΜα","data":{"message":"Κοιτάξτε πίσω έχει βάλει το κηνιτο να φωρτισει"}}
+{"seq":70,"t":1793358937455,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Student","data":{"field":"coefficient","value":"5"}}
+{"seq":71,"t":1793358943224,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Student","data":{"field":"degree-x","value":"4"}}
+{"seq":72,"t":1793358943295,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"degree-x","value":""}}
+{"seq":73,"t":1793358946447,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"degree-x","value":"4"}}
+{"seq":74,"t":1793358951814,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Student","data":{"field":"degree-x","value":""}}
+{"seq":75,"t":1793358953156,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"degree-x","value":""}}
+{"seq":76,"t":1793358953311,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Student","data":{"field":"degree-x","value":"2"}}
+{"seq":77,"t":1793358953522,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"degree-x","value":"2"}}
+{"seq":78,"t":1793358955774,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"degree-y","value":""}}
+{"seq":79,"t":1793358956918,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Student","data":{"field":"degree-y","value":"4"}}
+{"seq":80,"t":1793358957016,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"degree-y","value":"1"}}
+{"seq":81,"t":1793358957425,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"ΔεΜα","data":{"message":"Το κηνιτο το σκωτωσα"}}
+{"seq":82,"t":1793358958326,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"degree-y","value":""}}
+{"seq":83,"t":1793358958888,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"degree-x","value":""}}
+{"seq":84,"t":1793358959279,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-x","value":""}}
+{"seq":85,"t":1793358960521,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-x","value":"2"}}
+{"seq":86,"t":1793358962187,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"degree-x","value":"2"}}
+{"seq":87,"t":1793358962659,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Student","data":{"field":"degree-y","value":""}}
+{"seq":88,"t":1793358963149,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"degree-y","value":"1"}}
+{"seq":89,"t":1793358963375,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Student","data":{"field":"degree-y","value":"1"}}
+{"seq":90,"t":1793358965136,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-x","value":""}}
+{"seq":91,"t":1793358965461,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"degree-y","value":""}}
+{"seq":92,"t":1793358966260,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"degree-y","value":"1"}}
+{"seq":93,"t":1793358967930,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-y","value":""}}
+{"seq":94,"t":1793358968323,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-y","value":"1"}}
+{"seq":95,"t":1793358969644,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-y","value":""}}
+{"seq":96,"t":1793358969772,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-x","value":""}}
+{"seq":97,"t":1793358970173,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-x","value":"2"}}
+{"seq":98,"t":1793358970662,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-y","value":"1"}}
+{"seq":99,"t":1793358978653,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-x","value":"2"}}
+{"seq":100,"t":1793358981321,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-x","value":""}}
+{"seq":101,"t":1793358982706,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-x","value":"2"}}
+{"seq":102,"t":1793358986348,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-y","value":""}}
+{"seq":103,"t":1793358986527,"activity":"polynomial:1.3:sum-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-y","value":"1"}}
+{"seq":104,"t":1793359022013,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"Aaaaaaaa"}}
+{"seq":105,"t":1793359024395,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"A"}}
+{"seq":106,"t":1793359024800,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":107,"t":1793359025064,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":108,"t":1793359025330,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":109,"t":1793359025639,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":110,"t":1793359025916,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":111,"t":1793359026409,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"A"}}
+{"seq":112,"t":1793359026652,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":113,"t":1793359027062,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":114,"t":1793359027439,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aaa"}}
+{"seq":115,"t":1793359027726,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aa"}}
+{"seq":116,"t":1793359027966,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":117,"t":1793359028157,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":118,"t":1793359028536,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":119,"t":1793359028886,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":120,"t":1793359029270,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":121,"t":1793359029679,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":122,"t":1793359030064,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aa"}}
+{"seq":123,"t":1793359030389,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":124,"t":1793359031056,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aaa"}}
+{"seq":125,"t":1793359031494,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":126,"t":1793359032283,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aaaa"}}
+{"seq":127,"t":1793359032912,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"aa"}}
+{"seq":128,"t":1793359033256,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":129,"t":1793359033641,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}
+{"seq":130,"t":1793359034148,"activity":"1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)","event":"chat.message","sender":"Gio k⚪🔴","data":{"message":"a"}}

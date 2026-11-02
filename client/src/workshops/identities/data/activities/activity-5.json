@@ -10,6 +10,16 @@
         "settings": {},
         "data": {
           "expression": "(x+1)(x+3)",
+          "tileScoring": {
+            "pointsPerRegion": 1,
+            "unorderedGroups": [["top", "left"]],
+            "distinctGroups": [["top", "left"]],
+            "regions": {
+              "top": [{ "x": 1, "one": 1 }, { "x": 1, "one": 3 }],
+              "left": [{ "x": 1, "one": 1 }, { "x": 1, "one": 3 }],
+              "center": { "x2": 1, "x": 4, "one": 3 }
+            }
+          },
           "scoreCorrect": 1,
           "scoreIncorrect": -0.5
         }

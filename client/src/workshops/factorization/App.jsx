@@ -7,64 +7,29 @@ import {
 import storedActivityData from './data/activities.json';
 const standaloneActivityDocuments = Object.values(import.meta.glob('./data/activities/*.json', { eager: true, import: 'default' }));
 import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
+import { getAlgebraTileRegionScore } from '../../shared/components/resources/algebraTileScoring';
 import './App.css';
 
 const activityData = resolveWorkshopDocument(storedActivityData, standaloneActivityDocuments);
 const activity = activityData.activities[0];
 const questions = activity.questions;
 const tileWidget = activity.widgets.find((widget) => widget.type === 'algebra-tiles');
-const PRODUCT_SPANS = { x2: [6, 6], xy: [6, 4], y2: [4, 4] };
 
-function getRegion(tile) {
-  const [width, height] = tile.type === 'x' ? [6, 2] : tile.type === 'y' ? [4, 2] : PRODUCT_SPANS[tile.type] || [2, 2];
-  const actualWidth = tile.orientation === 'vertical' && ['x', 'y', 'xy'].includes(tile.type) ? height : width;
-  const actualHeight = tile.orientation === 'vertical' && ['x', 'y', 'xy'].includes(tile.type) ? width : height;
-  const centerX = (tile.x || 0) * 20 + actualWidth * 10;
-  const centerY = (tile.y || 0) * 20 + actualHeight * 10;
-  if (centerY < 80 && centerX >= 120 && ['x', 'y'].includes(tile.type)) return 'horizontal';
-  if (centerY >= 80 && centerX < 120 && ['x', 'y'].includes(tile.type)) return 'vertical';
-  if (centerY >= 80 && centerX >= 120 && ['x2', 'xy', 'y2'].includes(tile.type)) return 'product';
-  return '';
-}
-
-function countTypes(tiles) {
-  return tiles.reduce((counts, tile) => ({ ...counts, [tile.type]: (counts[tile.type] || 0) + 1 }), {});
-}
-
-function isCompleteRectangle(tiles, question) {
-  const regions = { horizontal: [], vertical: [], product: [] };
-  tiles.forEach((tile) => {
-    const region = getRegion(tile);
-    if (region) regions[region].push(tile);
-  });
-  const productCounts = countTypes(regions.product);
-  if (Object.entries(question.terms).some(([type, count]) => (productCounts[type] || 0) !== count)) return false;
-  if (regions.product.length !== Object.values(question.terms).reduce((sum, count) => sum + count, 0)) return false;
-
-  const factorCounts = [countTypes(regions.horizontal), countTypes(regions.vertical)].map((counts) => [counts.x || 0, counts.y || 0]);
-  const expected = question.factors;
-  const matches = (left, right) => left[0] === right[0] && left[1] === right[1];
-  if (!(matches(factorCounts[0], expected[0]) && matches(factorCounts[1], expected[1]))
-    && !(matches(factorCounts[0], expected[1]) && matches(factorCounts[1], expected[0]))) return false;
-
-  const occupied = new Set();
-  let minX = Infinity; let minY = Infinity; let maxX = -Infinity; let maxY = -Infinity;
-  for (const tile of regions.product) {
-    let [width, height] = PRODUCT_SPANS[tile.type];
-    if (tile.orientation === 'vertical') [width, height] = [height, width];
-    const left = (tile.x || 0) - 6;
-    const top = (tile.y || 0) - 4;
-    minX = Math.min(minX, left); minY = Math.min(minY, top);
-    maxX = Math.max(maxX, left + width); maxY = Math.max(maxY, top + height);
-    for (let x = left; x < left + width; x += 1) {
-      for (let y = top; y < top + height; y += 1) {
-        const key = `${x}:${y}`;
-        if (occupied.has(key)) return false;
-        occupied.add(key);
-      }
+function scoreQuestionRegions(tiles, question) {
+  const factors = Array.isArray(question?.factors) ? question.factors : [];
+  const configuredScoring = tileWidget.settings?.tileScoring || {};
+  const distinctFactors = factors.length > 1 && (
+    factors[0][0] !== factors[1][0] || factors[0][1] !== factors[1][1]
+  );
+  return getAlgebraTileRegionScore(tiles, tileWidget.mode || tileWidget.layout || 'area', {
+    ...configuredScoring,
+    distinctGroups: distinctFactors ? [['top', 'left']] : [],
+    regions: {
+      top: factors.map(([x, y]) => ({ x, y })),
+      left: factors.map(([x, y]) => ({ x, y })),
+      center: question?.terms || {}
     }
-  }
-  return Number.isFinite(minX) && occupied.size === (maxX - minX) * (maxY - minY);
+  });
 }
 
 export default function App({ role = 'student' }) {
@@ -80,7 +45,8 @@ export default function App({ role = 'student' }) {
   const reconnectTimerRef = useRef(null);
   const lessonQuestionRef = useRef('');
   const selectedQuestion = questions.find((item) => item.id === selectedQuestionId) || questions[0];
-  const isCorrect = isCompleteRectangle(tiles, selectedQuestion);
+  const tileScore = scoreQuestionRegions(tiles, selectedQuestion);
+  const isCorrect = tileScore.score === tileScore.maxScore;
 
   useEffect(() => {
     const syncIdentity = (event) => setStudentName(String(event.detail?.name || readIdentityName('Student')).trim());
@@ -148,7 +114,8 @@ export default function App({ role = 'student' }) {
   const updateTiles = (nextTiles) => {
     setTiles(nextTiles);
     if (!isTeacher && socketRef.current?.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify({ type: 'tiles_update', tiles: nextTiles, isCorrect: isCompleteRectangle(nextTiles, selectedQuestion) }));
+      const nextScore = scoreQuestionRegions(nextTiles, selectedQuestion);
+      socketRef.current.send(JSON.stringify({ type: 'tiles_update', tiles: nextTiles, isCorrect: nextScore.score === nextScore.maxScore }));
     }
   };
 
@@ -177,7 +144,7 @@ export default function App({ role = 'student' }) {
           ]}
           emptyMessage={t('noStudents')} />
       </> : null}
-      <GroupsAccordion role={role} studentName={studentName} activity={`factorization:${selectedQuestion.id}`} currentScore={isCorrect ? activity.scoreCorrect : activity.scoreIncorrect} />
+      <GroupsAccordion role={role} studentName={studentName} activity={`factorization:${selectedQuestion.id}`} currentScore={tileScore.score} />
     </>
   );
 }

@@ -1,0 +1,414 @@
+{"seq":1,"t":1793359373034,"activity":"cartesian-plane-collab","event":"student.joined","student":"Ηρώ Μαρίσα","data":{}}
+{"seq":2,"t":1793359373047,"activity":"cartesian-plane-collab","event":"student.joined","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{}}
+{"seq":3,"t":1793359373065,"activity":"cartesian-plane-collab","event":"student.joined","student":"ΔεΜα","data":{}}
+{"seq":4,"t":1793359373071,"activity":"cartesian-plane-collab","event":"student.joined","student":"Mx karvelas","data":{}}
+{"seq":5,"t":1793359373244,"activity":"cartesian-plane-collab","event":"student.joined","student":"Φανου Σταμ","data":{}}
+{"seq":6,"t":1793359373464,"activity":"cartesian-plane-collab","event":"student.joined","student":"Giwrgos","data":{}}
+{"seq":7,"t":1793359373557,"activity":"cartesian-plane-collab","event":"student.joined","student":"Chriss","data":{}}
+{"seq":8,"t":1793359373655,"activity":"cartesian-plane-collab","event":"student.joined","student":"Οι δύο μονάχοι","data":{}}
+{"seq":9,"t":1793359373760,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Student","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":10,"t":1793359373891,"activity":"cartesian-plane-collab","event":"student.joined","student":"SteVa","data":{}}
+{"seq":11,"t":1793359373950,"activity":"cartesian-plane-collab","event":"student.joined","student":"Gio k💚⚪","data":{}}
+{"seq":12,"t":1793359374179,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Student","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":13,"t":1793359374667,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Student","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":14,"t":1793359375938,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":15,"t":1793359376137,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":16,"t":1793359376196,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":17,"t":1793359376278,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":18,"t":1793359376430,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":19,"t":1793359376477,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":20,"t":1793359376555,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":21,"t":1793359376597,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":22,"t":1793359376767,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":23,"t":1793359376880,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":24,"t":1793359376958,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":25,"t":1793359377087,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":26,"t":1793359377096,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":27,"t":1793359377138,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":28,"t":1793359377256,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":29,"t":1793359377272,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":30,"t":1793359377404,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":31,"t":1793359377495,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":32,"t":1793359377528,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":33,"t":1793359377536,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":34,"t":1793359377675,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":35,"t":1793359377694,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":36,"t":1793359377732,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":37,"t":1793359377762,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":38,"t":1793359377846,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":39,"t":1793359377901,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":40,"t":1793359377908,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":41,"t":1793359377993,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":42,"t":1793359378026,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":43,"t":1793359378078,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":44,"t":1793359378104,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":45,"t":1793359378158,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":46,"t":1793359378174,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":47,"t":1793359378298,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":48,"t":1793359378313,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":49,"t":1793359378352,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":50,"t":1793359378396,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":51,"t":1793359378448,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":52,"t":1793359378547,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":53,"t":1793359378610,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":54,"t":1793359378686,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":55,"t":1793359378727,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":56,"t":1793359378757,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":57,"t":1793359378775,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":58,"t":1793359378795,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":59,"t":1793359378926,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":60,"t":1793359378980,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":61,"t":1793359379019,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":62,"t":1793359379025,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":63,"t":1793359379042,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":64,"t":1793359379105,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":65,"t":1793359379154,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":66,"t":1793359379162,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":67,"t":1793359379179,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":68,"t":1793359379196,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":69,"t":1793359379207,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":70,"t":1793359379232,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":71,"t":1793359379326,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":72,"t":1793359379348,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":73,"t":1793359379355,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":74,"t":1793359379362,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":75,"t":1793359379373,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":76,"t":1793359379395,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":77,"t":1793359379416,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":78,"t":1793359379472,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":79,"t":1793359379475,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":80,"t":1793359379485,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":81,"t":1793359379549,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":82,"t":1793359379567,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":83,"t":1793359379582,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":84,"t":1793359379616,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":85,"t":1793359379625,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":86,"t":1793359379648,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":87,"t":1793359379652,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":88,"t":1793359379657,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":89,"t":1793359379706,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":90,"t":1793359379712,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":91,"t":1793359379751,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":92,"t":1793359379776,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":93,"t":1793359379788,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":94,"t":1793359379835,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":95,"t":1793359379875,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":96,"t":1793359379922,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":97,"t":1793359379951,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":98,"t":1793359379984,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":99,"t":1793359380003,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":100,"t":1793359380012,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":101,"t":1793359380067,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":102,"t":1793359380084,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":103,"t":1793359380137,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":104,"t":1793359380143,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":105,"t":1793359380150,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":106,"t":1793359380177,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":107,"t":1793359380195,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":108,"t":1793359380236,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":109,"t":1793359380270,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":110,"t":1793359380336,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":111,"t":1793359380359,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":112,"t":1793359380382,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":113,"t":1793359380397,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":114,"t":1793359380470,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":115,"t":1793359380512,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":116,"t":1793359380513,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":117,"t":1793359380537,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":118,"t":1793359380637,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":119,"t":1793359380661,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":120,"t":1793359380690,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":121,"t":1793359380782,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":122,"t":1793359380796,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":123,"t":1793359380848,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":124,"t":1793359380895,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":125,"t":1793359380971,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":126,"t":1793359381003,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":127,"t":1793359381004,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":128,"t":1793359381133,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":129,"t":1793359381145,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":130,"t":1793359381151,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":131,"t":1793359381214,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":132,"t":1793359381228,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":133,"t":1793359381248,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":134,"t":1793359381306,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":135,"t":1793359381318,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":136,"t":1793359381332,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":137,"t":1793359381347,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":138,"t":1793359381498,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":139,"t":1793359381505,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":140,"t":1793359381518,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":141,"t":1793359381541,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":142,"t":1793359381548,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":143,"t":1793359381561,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":144,"t":1793359381607,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":145,"t":1793359381662,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":146,"t":1793359381676,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":147,"t":1793359381693,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":148,"t":1793359381707,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":149,"t":1793359381717,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":150,"t":1793359381740,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":151,"t":1793359381759,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":152,"t":1793359381788,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":153,"t":1793359381798,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":154,"t":1793359381805,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":155,"t":1793359381901,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":156,"t":1793359381909,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":157,"t":1793359381916,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":158,"t":1793359381917,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":159,"t":1793359382280,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":160,"t":1793359382314,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":161,"t":1793359382347,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":162,"t":1793359382369,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":163,"t":1793359382386,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":164,"t":1793359382421,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":165,"t":1793359382581,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":166,"t":1793359382679,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":167,"t":1793359382695,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":168,"t":1793359382706,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":169,"t":1793359382762,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":170,"t":1793359382892,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":171,"t":1793359382900,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":172,"t":1793359382933,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":173,"t":1793359382955,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":174,"t":1793359383003,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":175,"t":1793359383011,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":176,"t":1793359383019,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":177,"t":1793359383028,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":178,"t":1793359383036,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":179,"t":1793359383051,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":180,"t":1793359383206,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":181,"t":1793359383252,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":182,"t":1793359383315,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":183,"t":1793359383323,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":184,"t":1793359383333,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":185,"t":1793359383340,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":186,"t":1793359383378,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":187,"t":1793359383387,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":188,"t":1793359383517,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":189,"t":1793359383548,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":190,"t":1793359383573,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":191,"t":1793359383598,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":192,"t":1793359383639,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":193,"t":1793359383689,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":194,"t":1793359383713,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":195,"t":1793359383730,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":196,"t":1793359383744,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":197,"t":1793359383752,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":198,"t":1793359383792,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":199,"t":1793359383909,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":200,"t":1793359383920,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":201,"t":1793359383927,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":202,"t":1793359384022,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":203,"t":1793359384157,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":204,"t":1793359384164,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":205,"t":1793359384171,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":206,"t":1793359384179,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":207,"t":1793359384198,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":208,"t":1793359384206,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":209,"t":1793359384215,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":210,"t":1793359384222,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":211,"t":1793359384232,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":212,"t":1793359384250,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":213,"t":1793359384274,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":214,"t":1793359384292,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":215,"t":1793359384302,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":216,"t":1793359384436,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":217,"t":1793359384449,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":218,"t":1793359384463,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":219,"t":1793359384485,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":220,"t":1793359384499,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":221,"t":1793359384518,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":222,"t":1793359384530,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":223,"t":1793359384539,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":224,"t":1793359384570,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":225,"t":1793359384577,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":226,"t":1793359384619,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":227,"t":1793359384682,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":228,"t":1793359384690,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":229,"t":1793359384701,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":230,"t":1793359384754,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":231,"t":1793359384762,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":232,"t":1793359384814,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":233,"t":1793359384836,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":234,"t":1793359384853,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":235,"t":1793359384867,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":236,"t":1793359384896,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":237,"t":1793359384898,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":238,"t":1793359384942,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":239,"t":1793359384962,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":240,"t":1793359384991,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":241,"t":1793359385075,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":242,"t":1793359385092,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":243,"t":1793359385105,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":244,"t":1793359385144,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":245,"t":1793359385187,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":246,"t":1793359385197,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":247,"t":1793359385219,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":248,"t":1793359385326,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":249,"t":1793359385339,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":250,"t":1793359385422,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":251,"t":1793359385433,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":252,"t":1793359385581,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":253,"t":1793359385700,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":254,"t":1793359385775,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":255,"t":1793359385800,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":256,"t":1793359385980,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":257,"t":1793359385987,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":258,"t":1793359386064,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":259,"t":1793359386152,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":260,"t":1793359386233,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":261,"t":1793359386240,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":262,"t":1793359386310,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":263,"t":1793359386324,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":264,"t":1793359386346,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":265,"t":1793359386424,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":266,"t":1793359386441,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":267,"t":1793359386461,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":268,"t":1793359386512,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":269,"t":1793359386535,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":270,"t":1793359386605,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":271,"t":1793359386643,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":272,"t":1793359386699,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":273,"t":1793359386704,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":274,"t":1793359386717,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":275,"t":1793359386811,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":276,"t":1793359386861,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":277,"t":1793359386909,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":278,"t":1793359386972,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":279,"t":1793359386994,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":280,"t":1793359387034,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":281,"t":1793359387123,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":282,"t":1793359387217,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":283,"t":1793359387262,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":284,"t":1793359387319,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":285,"t":1793359387396,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":286,"t":1793359387411,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":287,"t":1793359387511,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":288,"t":1793359387616,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":289,"t":1793359387684,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":290,"t":1793359387812,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":291,"t":1793359387886,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":292,"t":1793359388015,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":293,"t":1793359388021,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":294,"t":1793359388035,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":295,"t":1793359388076,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":296,"t":1793359388140,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":297,"t":1793359388213,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":298,"t":1793359388226,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":299,"t":1793359388237,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":300,"t":1793359388253,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":301,"t":1793359388382,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":302,"t":1793359388399,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":303,"t":1793359388445,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":304,"t":1793359388542,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":305,"t":1793359388568,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":306,"t":1793359388615,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":307,"t":1793359388638,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":308,"t":1793359388714,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":309,"t":1793359388751,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":310,"t":1793359388801,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":311,"t":1793359388831,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":312,"t":1793359388838,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":313,"t":1793359388892,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":314,"t":1793359388909,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":315,"t":1793359388984,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":316,"t":1793359389011,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":317,"t":1793359389020,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":318,"t":1793359389074,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":319,"t":1793359389104,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":320,"t":1793359389189,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":321,"t":1793359389211,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":322,"t":1793359389223,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":323,"t":1793359389242,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":324,"t":1793359389309,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":325,"t":1793359389426,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":326,"t":1793359389492,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":327,"t":1793359389504,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":328,"t":1793359389517,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":329,"t":1793359389636,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":330,"t":1793359389681,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":331,"t":1793359389732,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":332,"t":1793359389743,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":333,"t":1793359389751,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":334,"t":1793359389816,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":335,"t":1793359389876,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":336,"t":1793359389884,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":337,"t":1793359389892,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":338,"t":1793359389914,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":339,"t":1793359389916,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":340,"t":1793359390005,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":341,"t":1793359390025,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":342,"t":1793359390126,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":343,"t":1793359390172,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":344,"t":1793359390215,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":345,"t":1793359390325,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":346,"t":1793359390351,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":347,"t":1793359390465,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":348,"t":1793359390482,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":349,"t":1793359390538,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":350,"t":1793359390546,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":351,"t":1793359390564,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":352,"t":1793359390567,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":353,"t":1793359390642,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":354,"t":1793359390697,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":355,"t":1793359390711,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":356,"t":1793359390784,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":357,"t":1793359390806,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":358,"t":1793359390806,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":359,"t":1793359390814,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":360,"t":1793359390823,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":361,"t":1793359390829,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":362,"t":1793359390884,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":363,"t":1793359390912,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":364,"t":1793359391012,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"SteVa","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":365,"t":1793359391027,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":366,"t":1793359391147,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":367,"t":1793359391217,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":368,"t":1793359391238,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":369,"t":1793359391252,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":370,"t":1793359391372,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":371,"t":1793359391529,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":372,"t":1793359391597,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":373,"t":1793359391832,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":374,"t":1793359391862,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":375,"t":1793359392051,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":376,"t":1793359392060,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":377,"t":1793359392087,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":378,"t":1793359392187,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":379,"t":1793359392315,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":380,"t":1793359392391,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":381,"t":1793359392436,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":382,"t":1793359392477,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":383,"t":1793359392544,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":384,"t":1793359392748,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":385,"t":1793359392756,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":386,"t":1793359392827,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":387,"t":1793359392933,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":388,"t":1793359393037,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":389,"t":1793359393051,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":390,"t":1793359393293,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":391,"t":1793359393332,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":392,"t":1793359393663,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":393,"t":1793359393682,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":394,"t":1793359393867,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":395,"t":1793359393891,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":396,"t":1793359393961,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":397,"t":1793359393970,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":398,"t":1793359393991,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":399,"t":1793359394048,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":400,"t":1793359394057,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":401,"t":1793359394065,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":402,"t":1793359394071,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":403,"t":1793359394095,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":404,"t":1793359394156,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":405,"t":1793359394188,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":406,"t":1793359394217,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":407,"t":1793359394227,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Giwrgos","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":408,"t":1793359394265,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":409,"t":1793359394282,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Chriss","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":410,"t":1793359394338,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPointRemoved","value":"[object Object]"}}
+{"seq":411,"t":1793359394346,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":412,"t":1793359394603,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Gio k💚⚪","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":413,"t":1793359394613,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPoint","value":"[object Object]"}}
+{"seq":414,"t":1793359394785,"activity":"cartesian-plane-default","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"cartesianPoint","value":"[object Object]"}}

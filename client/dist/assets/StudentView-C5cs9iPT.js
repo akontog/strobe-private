@@ -1,0 +1,1 @@
+import{j as t}from"./index-soyyMUBT.js";import{A as r}from"./App-CTeVDWpx.js";import"./DataAccordion-HP12ahTc.js";import"./ActivitiesAccordion-DQtAXrhB.js";import"./SharedInputRow-Cx5efdqo.js";import"./algebraTileScoring-Dc3_zM9v.js";function n(){return t.jsx(r,{role:"student"})}export{n as StudentView,n as default};

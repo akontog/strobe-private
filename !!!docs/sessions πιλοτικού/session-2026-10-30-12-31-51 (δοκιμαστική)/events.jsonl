@@ -1,0 +1,10 @@
+{"seq":1,"t":1793356311872,"activity":"1.1 Βασικές έννοιες μονωνύμων","event":"student.joined","student":"antonis mobile","data":{}}
+{"seq":2,"t":1793356315186,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"antonis mobile","data":{"field":"coefficient","value":"3"}}
+{"seq":3,"t":1793356324221,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"antonis mobile","data":{"field":"degree-x","value":"4"}}
+{"seq":4,"t":1793356333956,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"antonis mobile","data":{"field":"degree-x","value":"42"}}
+{"seq":5,"t":1793356336583,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"antonis mobile","data":{"field":"degree-x","value":"4"}}
+{"seq":6,"t":1793356338096,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"antonis mobile","data":{"field":"degree-y","value":"2"}}
+{"seq":7,"t":1793356341587,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"antonis mobile","data":{"field":"total-degree","value":"6"}}
+{"seq":8,"t":1793356352162,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"antonis mobile","data":{"field":"total-degree","value":""}}
+{"seq":9,"t":1793356352613,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"antonis mobile","data":{"field":"total-degree","value":"5"}}
+{"seq":10,"t":1793356373797,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Student","data":{"field":"coefficient","value":"8"}}

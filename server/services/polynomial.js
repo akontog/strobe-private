@@ -265,6 +265,8 @@ function initPolynomial({
             type: tile.type,
             sign,
             orientation,
+            side: tile.side === 'right' ? 'right' : 'left',
+            equationIndex: Number.isInteger(tile.equationIndex) ? Math.max(0, Math.min(1, tile.equationIndex)) : 0,
             x: Math.max(0, Math.min(500, x)),
             y: Math.max(0, Math.min(500, y))
           });

@@ -1,0 +1,59 @@
+{"seq":1,"t":1793358238300,"activity":"1.1 Βασικές έννοιες μονωνύμων","event":"student.joined","student":"Φανου Σταμ","data":{}}
+{"seq":2,"t":1793358238315,"activity":"1.1 Βασικές έννοιες μονωνύμων","event":"student.joined","student":"SteVa","data":{}}
+{"seq":3,"t":1793358238421,"activity":"1.1 Βασικές έννοιες μονωνύμων","event":"student.joined","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{}}
+{"seq":4,"t":1793358238452,"activity":"1.1 Βασικές έννοιες μονωνύμων","event":"student.joined","student":"Giwrgos","data":{}}
+{"seq":5,"t":1793358238460,"activity":"1.1 Βασικές έννοιες μονωνύμων","event":"student.joined","student":"Chriss","data":{}}
+{"seq":6,"t":1793358238775,"activity":"1.1 Βασικές έννοιες μονωνύμων","event":"student.joined","student":"Gio kar🥀","data":{}}
+{"seq":7,"t":1793358238835,"activity":"1.1 Βασικές έννοιες μονωνύμων","event":"student.joined","student":"Mx karvelas","data":{}}
+{"seq":8,"t":1793358238869,"activity":"1.1 Βασικές έννοιες μονωνύμων","event":"student.joined","student":"Ηρώ Μαρίσα","data":{}}
+{"seq":9,"t":1793358238933,"activity":"1.1 Βασικές έννοιες μονωνύμων","event":"student.joined","student":"Οι δύο μονάχοι","data":{}}
+{"seq":10,"t":1793358239087,"activity":"1.1 Βασικές έννοιες μονωνύμων","event":"student.joined","student":"ΔεΜα","data":{}}
+{"seq":11,"t":1793358241251,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"coefficient","value":"3"}}
+{"seq":12,"t":1793358242106,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Giwrgos","data":{"field":"coefficient","value":"3"}}
+{"seq":13,"t":1793358242336,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"SteVa","data":{"field":"coefficient","value":"3"}}
+{"seq":14,"t":1793358242358,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"coefficient","value":"3"}}
+{"seq":15,"t":1793358242539,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"coefficient","value":"3"}}
+{"seq":16,"t":1793358243798,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"coefficient","value":"3"}}
+{"seq":17,"t":1793358243809,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Gio kar🥀","data":{"field":"coefficient","value":"3"}}
+{"seq":18,"t":1793358243955,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"degree-x","value":"4"}}
+{"seq":19,"t":1793358244796,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-x","value":"4"}}
+{"seq":20,"t":1793358245220,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Giwrgos","data":{"field":"degree-x","value":"4"}}
+{"seq":21,"t":1793358246777,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"degree-x","value":"4"}}
+{"seq":22,"t":1793358247510,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"degree-y","value":"2"}}
+{"seq":23,"t":1793358247909,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Giwrgos","data":{"field":"degree-y","value":"2"}}
+{"seq":24,"t":1793358248043,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"SteVa","data":{"field":"degree-x","value":"4"}}
+{"seq":25,"t":1793358248205,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"degree-y","value":"2"}}
+{"seq":26,"t":1793358249294,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"coefficient","value":"3"}}
+{"seq":27,"t":1793358249825,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Giwrgos","data":{"field":"total-degree","value":"6"}}
+{"seq":28,"t":1793358249839,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"ΚαλλιοπηΧριστιναΚυριακη","data":{"field":"total-degree","value":"6"}}
+{"seq":29,"t":1793358250096,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"coefficient","value":"3"}}
+{"seq":30,"t":1793358251200,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Mx karvelas","data":{"field":"total-degree","value":"6"}}
+{"seq":31,"t":1793358251783,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"SteVa","data":{"field":"degree-y","value":"2"}}
+{"seq":32,"t":1793358251987,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"degree-y","value":"2"}}
+{"seq":33,"t":1793358254232,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Ηρώ Μαρίσα","data":{"field":"total-degree","value":"6"}}
+{"seq":34,"t":1793358256398,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"degree-y","value":"2"}}
+{"seq":35,"t":1793358257598,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Gio kar🥀","data":{"field":"degree-x","value":"4"}}
+{"seq":36,"t":1793358257777,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-x","value":"3"}}
+{"seq":37,"t":1793358258842,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"degree-x","value":"4"}}
+{"seq":38,"t":1793358260662,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-x","value":""}}
+{"seq":39,"t":1793358260934,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Gio kar🥀","data":{"field":"degree-y","value":"2"}}
+{"seq":40,"t":1793358263533,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-x","value":"2"}}
+{"seq":41,"t":1793358263566,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Gio kar🥀","data":{"field":"total-degree","value":"6"}}
+{"seq":42,"t":1793358264228,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"degree-x","value":"4"}}
+{"seq":43,"t":1793358264982,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"degree-y","value":"2"}}
+{"seq":44,"t":1793358265258,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-x","value":""}}
+{"seq":45,"t":1793358268399,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"coefficient","value":"39"}}
+{"seq":46,"t":1793358270134,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"SteVa","data":{"field":"total-degree","value":"6"}}
+{"seq":47,"t":1793358271310,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"total-degree","value":"9"}}
+{"seq":48,"t":1793358272588,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"coefficient","value":"3"}}
+{"seq":49,"t":1793358272995,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"total-degree","value":""}}
+{"seq":50,"t":1793358273751,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Φανου Σταμ","data":{"field":"total-degree","value":"6"}}
+{"seq":51,"t":1793358274460,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"ΔεΜα","data":{"field":"total-degree","value":"6"}}
+{"seq":52,"t":1793358287204,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-x","value":"4"}}
+{"seq":53,"t":1793358290538,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"degree-y","value":"2"}}
+{"seq":54,"t":1793358294427,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Οι δύο μονάχοι","data":{"field":"total-degree","value":"6"}}
+{"seq":55,"t":1793358334410,"activity":"1.1 Βασικές έννοιες μονωνύμων","event":"student.joined","student":"Chriss","data":{}}
+{"seq":56,"t":1793358339280,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Chriss","data":{"field":"coefficient","value":"3"}}
+{"seq":57,"t":1793358354767,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-x","value":"4"}}
+{"seq":58,"t":1793358357785,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Chriss","data":{"field":"degree-y","value":"2"}}
+{"seq":59,"t":1793358362166,"activity":"polynomial:1.1:m-1","event":"activity.input.changed","student":"Chriss","data":{"field":"total-degree","value":"6"}}

@@ -18,6 +18,7 @@ import { useSessionInputLogger } from '../../shared/components/activities/Sessio
 import storedActivityData from './data/activities.json';
 const standaloneActivityDocuments = Object.values(import.meta.glob('./data/activities/*.json', { eager: true, import: 'default' }));
 import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
+import { getAlgebraTileRegionScore } from '../../shared/components/resources/algebraTileScoring';
 import WidgetRenderer from '../../shared/components/widgets/WidgetRenderer';
 import './App.css';
 
@@ -26,6 +27,10 @@ const activityData = resolveWorkshopDocument(storedActivityData, standaloneActiv
 const { activities: ACTIVITY_LIBRARY } = activityData;
 
 function computeActivityScore(activity, answers) {
+  if (activity?.resultMode === 'algebraTiles' || activity?.tileScoring) {
+    return getAlgebraTileRegionScore(answers?.tiles, 'area', activity.tileScoring).score;
+  }
+
   const correctAnswers = activity?.terms
     ? activity.terms.map((term) => term.correctAnswers || {})
     : activity?.correctAnswers || {};

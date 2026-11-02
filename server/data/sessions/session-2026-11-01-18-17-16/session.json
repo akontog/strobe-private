@@ -1,0 +1,21 @@
+{
+  "sessionId": "session-2026-11-01-18-17-16",
+  "app": "polynomial-lab",
+  "startedAt": "2026-11-01T16:17:16.070Z",
+  "endedAt": "2026-11-02T06:26:51.570Z",
+  "teacherId": "antonis",
+  "students": [
+    "pp",
+    "dd"
+  ],
+  "studentScores": [
+    {
+      "student": "pp",
+      "score": 0
+    }
+  ],
+  "activity": "1.1 Βασικές έννοιες μονωνύμων",
+  "chatEnabled": true,
+  "scoreVisible": true,
+  "feedbackEnabled": true
+}

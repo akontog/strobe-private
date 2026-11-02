@@ -16,6 +16,11 @@
               "id": "x-plus-2-equals-5",
               "label": "x + 2 = 5",
               "solution": 3,
+              "tileScoring": {
+                "pointsPerRegion": 1,
+                "unorderedGroups": [["left", "right"]],
+                "regions": { "left": { "x": 1 }, "right": { "one": 3 } }
+              },
               "leftTerms": [
                 {
                   "type": "x",
@@ -37,6 +42,11 @@
               "id": "2x-plus-3-equals-x-plus-7",
               "label": "2x + 3 = x + 7",
               "solution": 4,
+              "tileScoring": {
+                "pointsPerRegion": 1,
+                "unorderedGroups": [["left", "right"]],
+                "regions": { "left": { "x": 1 }, "right": { "one": 4 } }
+              },
               "leftTerms": [
                 {
                   "type": "x",
@@ -62,6 +72,11 @@
               "id": "3x-plus-2-equals-2x-plus-6",
               "label": "3x + 2 = 2x + 6",
               "solution": 4,
+              "tileScoring": {
+                "pointsPerRegion": 1,
+                "unorderedGroups": [["left", "right"]],
+                "regions": { "left": { "x": 1 }, "right": { "one": 4 } }
+              },
               "leftTerms": [
                 {
                   "type": "x",

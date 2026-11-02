@@ -1,0 +1,20 @@
+{
+  "sessionId": "session-2026-11-02-09-54-02",
+  "app": "polynomial-lab",
+  "startedAt": "2026-11-02T07:54:02.205Z",
+  "endedAt": null,
+  "teacherId": "antonis",
+  "students": [
+    "pp"
+  ],
+  "studentScores": [
+    {
+      "student": "pp",
+      "score": 0
+    }
+  ],
+  "activity": "2.6 Πολλαπλασιασμός με πλακίδια άλγεβρας",
+  "chatEnabled": true,
+  "scoreVisible": true,
+  "feedbackEnabled": true
+}

@@ -1,0 +1,70 @@
+{
+  "sessionId": "session-2026-10-30-13-03-58",
+  "app": "polynomial-lab",
+  "startedAt": "2026-10-30T11:03:58.123Z",
+  "endedAt": "2026-10-30T11:06:23.787Z",
+  "teacherId": "antonis",
+  "students": [
+    "Φανου Σταμ",
+    "SteVa",
+    "ΚαλλιοπηΧριστιναΚυριακη",
+    "Giwrgos",
+    "Chriss",
+    "Gio kar🥀",
+    "Mx karvelas",
+    "Ηρώ Μαρίσα",
+    "Οι δύο μονάχοι",
+    "ΔεΜα",
+    "Gio k🔴⚪"
+  ],
+  "studentScores": [
+    {
+      "student": "Φανου Σταμ",
+      "score": 4
+    },
+    {
+      "student": "SteVa",
+      "score": 4
+    },
+    {
+      "student": "ΚαλλιοπηΧριστιναΚυριακη",
+      "score": 4
+    },
+    {
+      "student": "Giwrgos",
+      "score": 4
+    },
+    {
+      "student": "Chriss",
+      "score": 4
+    },
+    {
+      "student": "Gio kar🥀",
+      "score": 4
+    },
+    {
+      "student": "Ηρώ Μαρίσα",
+      "score": 4
+    },
+    {
+      "student": "Mx karvelas",
+      "score": 4
+    },
+    {
+      "student": "Οι δύο μονάχοι",
+      "score": 4
+    },
+    {
+      "student": "ΔεΜα",
+      "score": 4
+    },
+    {
+      "student": "Gio k🔴⚪",
+      "score": 4
+    }
+  ],
+  "activity": "1.1 Βασικές έννοιες μονωνύμων",
+  "chatEnabled": true,
+  "scoreVisible": false,
+  "feedbackEnabled": false
+}

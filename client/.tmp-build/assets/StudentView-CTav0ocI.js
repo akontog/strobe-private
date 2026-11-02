@@ -1,1 +1,0 @@
-import{j as t}from"./index-BiE_h_1U.js";import{A as r}from"./App-BPZ1Wljq.js";import"./DataAccordion-CI604iIe.js";import"./ActivitiesAccordion-julf4IdZ.js";function m(){return t.jsx(r,{role:"student"})}export{m as StudentView,m as default};

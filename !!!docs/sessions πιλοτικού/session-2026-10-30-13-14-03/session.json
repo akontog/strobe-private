@@ -1,0 +1,70 @@
+{
+  "sessionId": "session-2026-10-30-13-14-03",
+  "app": "polynomial-lab",
+  "startedAt": "2026-10-30T11:14:03.907Z",
+  "endedAt": "2026-10-30T11:17:14.627Z",
+  "teacherId": "antonis",
+  "students": [
+    "ΔεΜα",
+    "Mx karvelas",
+    "Φανου Σταμ",
+    "SteVa",
+    "Chriss",
+    "Giwrgos",
+    "ΚαλλιοπηΧριστιναΚυριακη",
+    "Gio k💚⚪",
+    "Ηρώ Μαρίσα",
+    "Οι δύο μονάχοι",
+    "Gio k⚪🔴"
+  ],
+  "studentScores": [
+    {
+      "student": "ΔεΜα",
+      "score": 0
+    },
+    {
+      "student": "Mx karvelas",
+      "score": 0
+    },
+    {
+      "student": "Φανου Σταμ",
+      "score": 0
+    },
+    {
+      "student": "SteVa",
+      "score": 0
+    },
+    {
+      "student": "Chriss",
+      "score": 0
+    },
+    {
+      "student": "Giwrgos",
+      "score": 0
+    },
+    {
+      "student": "ΚαλλιοπηΧριστιναΚυριακη",
+      "score": 0
+    },
+    {
+      "student": "Gio k💚⚪",
+      "score": 3
+    },
+    {
+      "student": "Ηρώ Μαρίσα",
+      "score": 3
+    },
+    {
+      "student": "Οι δύο μονάχοι",
+      "score": 0
+    },
+    {
+      "student": "Gio k⚪🔴",
+      "score": 0
+    }
+  ],
+  "activity": "1.3 Πράξεις με μονώνυμα (πρόσθεση-αφαίρεση)",
+  "chatEnabled": true,
+  "scoreVisible": true,
+  "feedbackEnabled": false
+}

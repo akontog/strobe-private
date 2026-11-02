@@ -17,6 +17,8 @@
             "0 = 0"
           ],
           "tileScoring": {
+            "pointsPerRegion": 1,
+            "regions": ["left", "right"],
             "rows": [
               {
                 "equationIndex": 0,

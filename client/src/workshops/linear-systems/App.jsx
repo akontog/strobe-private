@@ -839,22 +839,30 @@ export default function App({ role = 'student' }) {
         const correctRight = Number.isInteger(expectedValue)
           && rightTiles.length === expectedValue
           && rightTiles.every((tile) => tile.type === 'one' && tile.sign === 1);
-        return { ...row, expectedValue, correct: correctLeft && correctRight };
+        return { ...row, expectedValue, correctLeft, correctRight, correct: correctLeft && correctRight };
       });
-      const correctCount = rows.filter((row) => row.correct).length;
-      const maxScore = rows.reduce((total, row) => total + (Number(row.points) || 0), 0);
-      const score = rows.reduce((total, row) => total + (row.correct ? Number(row.points) || 0 : 0), 0);
+      const scoringRegions = Array.isArray(tileScoring.regions) ? tileScoring.regions : ['left', 'right'];
+      const correctCount = rows.reduce((total, row) => total
+        + Number(scoringRegions.includes('left') && row.correctLeft)
+        + Number(scoringRegions.includes('right') && row.correctRight), 0);
+      const maxScore = rows.reduce((total, row) => total + (Number(row.points) || Number(tileScoring.pointsPerRegion) || 1) * scoringRegions.length, 0);
+      const score = rows.reduce((total, row) => {
+        const pointsPerRegion = Number(row.points) || Number(tileScoring.pointsPerRegion) || 1;
+        const correctInRow = Number(scoringRegions.includes('left') && row.correctLeft)
+          + Number(scoringRegions.includes('right') && row.correctRight);
+        return total + correctInRow * pointsPerRegion;
+      }, 0);
       return {
         ready: true,
         feedback: '',
         invalidIds: [],
         payload: {
-          completed: correctCount === rows.length ? '1' : '0',
+          completed: correctCount === rows.length * scoringRegions.length ? '1' : '0',
           score,
           maxScore,
-          correctRows: correctCount,
-          totalRows: rows.length,
-          tileSolution: rows.map(({ equationIndex, variable, expectedValue, correct }) => ({ equationIndex, variable, expectedValue, correct }))
+          correctRegions: correctCount,
+          totalRegions: rows.length * scoringRegions.length,
+          tileSolution: rows.map(({ equationIndex, variable, expectedValue, correctLeft, correctRight, correct }) => ({ equationIndex, variable, expectedValue, correctLeft, correctRight, correct }))
         }
       };
     }

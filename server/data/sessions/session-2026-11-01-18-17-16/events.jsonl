@@ -1,0 +1,5 @@
+{"seq":1,"t":1793549837062,"activity":"2.3 Πράξεις με πολυώνυμα (πρόσθεση-αφαίρεση)","event":"student.joined","student":"pp","data":{}}
+{"seq":2,"t":1793549840154,"activity":"polynomial:2.3:poly-group-1","event":"grouping.item.moved","student":"pp","data":{"itemId":"l3","from":"__bank__","to":"g-x2"}}
+{"seq":3,"t":1793549842580,"activity":"polynomial:2.3:poly-group-1","event":"grouping.item.moved","student":"pp","data":{"itemId":"l3","from":"g-x2","to":"g-xy"}}
+{"seq":4,"t":1793549843596,"activity":"polynomial:2.3:poly-group-1","event":"grouping.item.moved","student":"pp","data":{"itemId":"l3","from":"g-xy","to":"g-x2"}}
+{"seq":5,"t":1793600799622,"activity":"2.3 Πράξεις με πολυώνυμα (πρόσθεση-αφαίρεση)","event":"student.joined","student":"dd","data":{}}
