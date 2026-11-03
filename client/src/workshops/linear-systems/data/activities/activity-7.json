@@ -18,19 +18,30 @@
           ],
           "tileScoring": {
             "pointsPerRegion": 1,
-            "regions": ["left", "right"],
-            "rows": [
+            "regions": [
               {
+                "id": "top-left",
+                "label": "Πάνω αριστερά",
                 "equationIndex": 0,
-                "variable": "x",
-                "expectedKey": "x",
-                "points": 1
+                "side": "left"
               },
               {
+                "id": "top-right",
+                "label": "Πάνω δεξιά",
+                "equationIndex": 0,
+                "side": "right"
+              },
+              {
+                "id": "bottom-left",
+                "label": "Κάτω αριστερά",
                 "equationIndex": 1,
-                "variable": "y",
-                "expectedKey": "y",
-                "points": 1
+                "side": "left"
+              },
+              {
+                "id": "bottom-right",
+                "label": "Κάτω δεξιά",
+                "equationIndex": 1,
+                "side": "right"
               }
             ]
           },

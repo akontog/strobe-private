@@ -272,9 +272,9 @@ Workshop, Activities και Sequences είναι τα τρία επίπεδα ο
 
 - Υλοποίηση: PlotWidget
 
-## Απόδοση (Renderer)
+## Προεπισκόπηση (Math Preview)
 
-- Υλοποίηση: 
+- Υλοποίηση: MathPreviewWidget
 
 # Primitives
 

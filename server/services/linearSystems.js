@@ -358,6 +358,15 @@ function initLinearSystems({
         const rawAnswers = message.answers && typeof message.answers === 'object' ? message.answers : {};
         current.answers = Object.entries(rawAnswers).reduce((memo, [key, value]) => {
           const safeKey = sanitizeString(key, 48) || key;
+          if (safeKey === 'tileRegions' && value && typeof value === 'object' && !Array.isArray(value)) {
+            memo[safeKey] = Object.entries(value).slice(0, 8).reduce((regions, [regionId, expression]) => {
+              const safeRegionId = sanitizeString(regionId, 48);
+              if (!/^[a-z0-9_-]+$/i.test(safeRegionId)) return regions;
+              regions[safeRegionId] = sanitizeString(expression == null ? '' : String(expression), 96);
+              return regions;
+            }, {});
+            return memo;
+          }
           const safeValue = value === undefined || value === null ? '' : String(value).trim();
           if (safeValue !== '' || value === 0 || value === false) {
             const maxValueLength = (safeKey === 'selectedPoints' || safeKey === 'selectedLines') ? 4096 : 64;

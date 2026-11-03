@@ -103,6 +103,36 @@ function normalizeText(value) {
   return String(value || '').trim();
 }
 
+function getTilePolynomial(tiles) {
+  const coefficients = { x: 0, y: 0, one: 0 };
+  let unsupported = false;
+  tiles.forEach((tile) => {
+    if (!Object.hasOwn(coefficients, tile.type)) {
+      unsupported = true;
+      return;
+    }
+    coefficients[tile.type] += tile.sign < 0 ? -1 : 1;
+  });
+  return { coefficients, unsupported };
+}
+
+function formatTilePolynomial(tiles) {
+  const powers = { x2: 0, xy: 0, y2: 0, x: 0, y: 0, one: 0 };
+  tiles.forEach((tile) => {
+    if (Object.hasOwn(powers, tile.type)) powers[tile.type] += tile.sign < 0 ? -1 : 1;
+  });
+  const terms = [
+    ['x2', 'x²'], ['xy', 'xy'], ['y2', 'y²'], ['x', 'x'], ['y', 'y'], ['one', '']
+  ].filter(([type]) => powers[type] !== 0);
+  if (!terms.length) return '0';
+  return terms.map(([type, variable], index) => {
+    const coefficient = powers[type];
+    const body = `${variable && Math.abs(coefficient) === 1 ? '' : Math.abs(coefficient)}${variable}` || '1';
+    if (index === 0) return coefficient < 0 ? `−${body}` : body;
+    return `${coefficient < 0 ? ' − ' : ' + '}${body}`;
+  }).join('');
+}
+
 function formatWidgetLabel(template, values) {
   return String(template || '').replace(/\{(\w+)\}/g, (match, key) => String(values[key] ?? match));
 }
@@ -384,6 +414,8 @@ export default function App({ role = 'student' }) {
     () => activeItems.find((item) => item.id === selectedItemId) || activeItems[0] || null,
     [activeItems, selectedItemId]
   );
+  const algebraTileWidget = activeActivity.widgets?.find((widget) => widget.region === 'center' && widget.type === 'algebra-tiles');
+  const algebraTileScoring = algebraTileWidget?.settings?.tileScoring;
   const activeAlgebraTiles = Array.isArray(algebraTilesByItem[selectedItemId]) ? algebraTilesByItem[selectedItemId] : [];
   const activeSystemEquationSides = useMemo(
     () => extractSystemEquations(activeItem)
@@ -827,42 +859,62 @@ export default function App({ role = 'student' }) {
       return { ready: false, feedback: '', invalidIds: [], payload: null };
     }
 
-    const algebraTilesWidget = activeActivity.widgets?.find((widget) => widget.region === 'center' && widget.type === 'algebra-tiles');
-    const tileScoring = algebraTilesWidget?.settings?.tileScoring;
-    if (activeActivity.mode === 'algebra' && Array.isArray(tileScoring?.rows) && activeItem) {
-      const rows = tileScoring.rows.map((row) => {
-        const equationTiles = activeAlgebraTiles.filter((tile) => (Number.isInteger(tile.equationIndex) ? tile.equationIndex : 0) === row.equationIndex);
-        const leftTiles = equationTiles.filter((tile) => tile.side === 'left');
-        const rightTiles = equationTiles.filter((tile) => tile.side === 'right');
-        const expectedValue = Number(activeItem.expected?.[row.expectedKey]);
-        const correctLeft = leftTiles.length === 1 && leftTiles[0].type === row.variable && leftTiles[0].sign === 1;
-        const correctRight = Number.isInteger(expectedValue)
-          && rightTiles.length === expectedValue
-          && rightTiles.every((tile) => tile.type === 'one' && tile.sign === 1);
-        return { ...row, expectedValue, correctLeft, correctRight, correct: correctLeft && correctRight };
+    if (activeActivity.mode === 'algebra' && Array.isArray(algebraTileScoring?.regions) && activeItem) {
+      const regionExpressions = Object.fromEntries(algebraTileScoring.regions.map((region) => {
+        const regionTiles = activeAlgebraTiles.filter((tile) =>
+          (Number.isInteger(tile.equationIndex) ? tile.equationIndex : 0) === region.equationIndex
+          && tile.side === region.side);
+        return [region.id, regionTiles.length ? formatTilePolynomial(regionTiles) : ''];
+      }));
+      const equations = [0, 1].map((equationIndex) => {
+        const getSidePolynomial = (side) => getTilePolynomial(activeAlgebraTiles.filter((tile) =>
+          (Number.isInteger(tile.equationIndex) ? tile.equationIndex : 0) === equationIndex
+          && tile.side === side));
+        const left = getSidePolynomial('left');
+        const right = getSidePolynomial('right');
+        const difference = {
+          x: left.coefficients.x - right.coefficients.x,
+          y: left.coefficients.y - right.coefficients.y,
+          one: left.coefficients.one - right.coefficients.one
+        };
+        const variable = ['x', 'y'].find((name) => difference[name] !== 0);
+        const unsupported = left.unsupported || right.unsupported;
+        const hasOnlyOneVariable = variable && difference[variable === 'x' ? 'y' : 'x'] === 0;
+        const value = hasOnlyOneVariable ? -difference.one / difference[variable] : null;
+        const expected = Number(activeItem.expected?.[variable]);
+        return {
+          equationIndex,
+          variable: hasOnlyOneVariable && !unsupported ? variable : '',
+          value,
+          expected,
+          solvesExpectedValue: Boolean(hasOnlyOneVariable && !unsupported && Number.isFinite(expected)
+            && Math.abs(value - expected) < 1e-9)
+        };
       });
-      const scoringRegions = Array.isArray(tileScoring.regions) ? tileScoring.regions : ['left', 'right'];
-      const correctCount = rows.reduce((total, row) => total
-        + Number(scoringRegions.includes('left') && row.correctLeft)
-        + Number(scoringRegions.includes('right') && row.correctRight), 0);
-      const maxScore = rows.reduce((total, row) => total + (Number(row.points) || Number(tileScoring.pointsPerRegion) || 1) * scoringRegions.length, 0);
-      const score = rows.reduce((total, row) => {
-        const pointsPerRegion = Number(row.points) || Number(tileScoring.pointsPerRegion) || 1;
-        const correctInRow = Number(scoringRegions.includes('left') && row.correctLeft)
-          + Number(scoringRegions.includes('right') && row.correctRight);
-        return total + correctInRow * pointsPerRegion;
-      }, 0);
+      const awardedVariables = new Set();
+      const scoredEquations = equations.map((equation) => {
+        const correct = equation.solvesExpectedValue && !awardedVariables.has(equation.variable);
+        if (correct) awardedVariables.add(equation.variable);
+        return { ...equation, correct };
+      });
+      const correctEquationCount = scoredEquations.filter((equation) => equation.correct).length;
+      const pointsPerRegion = Number(algebraTileScoring.pointsPerRegion) || 1;
+      const correctRegions = correctEquationCount * 2;
+      const maxScore = algebraTileScoring.regions.length * pointsPerRegion;
+      const score = correctRegions * pointsPerRegion;
+      const completed = correctEquationCount === 2 && awardedVariables.has('x') && awardedVariables.has('y');
       return {
         ready: true,
         feedback: '',
         invalidIds: [],
         payload: {
-          completed: correctCount === rows.length * scoringRegions.length ? '1' : '0',
+          completed: completed ? '1' : '0',
           score,
           maxScore,
-          correctRegions: correctCount,
-          totalRegions: rows.length * scoringRegions.length,
-          tileSolution: rows.map(({ equationIndex, variable, expectedValue, correctLeft, correctRight, correct }) => ({ equationIndex, variable, expectedValue, correctLeft, correctRight, correct }))
+          correctRegions,
+          totalRegions: algebraTileScoring.regions.length,
+          tileRegions: regionExpressions,
+          tileSolution: scoredEquations
         }
       };
     }
@@ -888,7 +940,7 @@ export default function App({ role = 'student' }) {
         y: answerY
       }
     };
-  }, [activeActivity.mode, activeActivity.widgets, activeAlgebraTiles, activeCartesianEquations, activeCartesianSettings.distanceTolerance, activeEquationInputs.equation1, activeEquationInputs.equation2, activeGroupingPlacements, activeItem, activeItems, activePlacementItems, activePlacementPlacements, answer.x, answer.y, assignedEquationIndex, cartesianLineLimit, coordinateLines.length, isCartesianLineMode, numberLineMarks, selectedLines, selectedPoints, t]);
+  }, [activeActivity.mode, activeAlgebraTiles, algebraTileScoring, activeCartesianEquations, activeCartesianSettings.distanceTolerance, activeEquationInputs.equation1, activeEquationInputs.equation2, activeGroupingPlacements, activeItem, activeItems, activePlacementItems, activePlacementPlacements, answer.x, answer.y, assignedEquationIndex, cartesianLineLimit, coordinateLines.length, isCartesianLineMode, numberLineMarks, selectedLines, selectedPoints, t]);
 
   useEffect(() => {
     setInvalidGroupingItemIds((current) => {
@@ -1705,7 +1757,12 @@ export default function App({ role = 'student' }) {
             columns={[
               { key: 'activityCode', label: t('activities'), render: (entry) => entry.activityId || '-' },
               ...(!['cartesian-plane', 'number-line'].includes(activeActivity.mode) ? [{ key: 'itemId', label: TABLE_COPY.exerciseColumn, render: (entry) => entry.itemId || '-' }] : []),
-              ...(activeActivity.mode === 'placement-board' ? placementTableColumns : [
+              ...(activeActivity.mode === 'placement-board' ? placementTableColumns : (activeActivity.mode === 'algebra' && Array.isArray(algebraTileScoring?.regions)
+                ? algebraTileScoring.regions.map((region) => ({
+                  key: `algebra-tile-region-${region.id}`,
+                  label: region.label,
+                  render: (entry) => entry?.answers?.tileRegions?.[region.id] || '-'
+                })) : [
                 ...(activeActivity.mode === 'cartesian-plane' ? [
                   ...(isCartesianLineMode ? [
                     {
@@ -1768,7 +1825,7 @@ export default function App({ role = 'student' }) {
                     { key: 'classification', label: TABLE_COPY.classification, render: (entry) => entry.answers?.classification || '-' }
                   ])
                 ])
-              ]),
+              ])),
               ...(activeActivity.mode !== 'placement-board' && sessionLogging?.scoreVisible !== false ? [{ key: 'score', label: t('score'), render: (entry) => entry.answers?.score ?? '-' }] : [])
             ]}
             emptyMessage={t('noStudents')}

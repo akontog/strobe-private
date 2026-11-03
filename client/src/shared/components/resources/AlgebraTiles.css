@@ -31,7 +31,7 @@
     linear-gradient(90deg, rgba(100, 116, 139, 0.14) 1px, transparent 1px);
   background-size: var(--algebra-grid-unit) var(--algebra-grid-unit);
   user-select: none;
-  touch-action: pan-x pan-y;
+  touch-action: none;
 }
 
 .algebra-tiles__selection-tools {
@@ -47,26 +47,82 @@
   flex: 1 1 14rem;
 }
 
-.algebra-tiles__selection-tools button {
-  padding: 0.35rem 0.7rem;
-  border: 1px solid #94a3b8;
-  border-radius: 0.4rem;
-  background: #fff;
-  color: #172033;
-  cursor: pointer;
-}
-
-.algebra-tiles__selection-tools button:disabled {
-  cursor: default;
-  opacity: 0.5;
-}
-
 .algebra-tiles__selection-box {
   position: absolute;
   z-index: 6;
   border: 1px solid #2563eb;
   background: rgba(59, 130, 246, 0.16);
   pointer-events: none;
+}
+
+.algebra-tiles__selection-region {
+  position: absolute;
+  z-index: 7;
+  box-sizing: border-box;
+  border: 2px solid #2563eb;
+  border-radius: 0.25rem;
+  background: rgba(59, 130, 246, 0.04);
+  pointer-events: none;
+}
+
+.algebra-tiles__selection-action {
+  position: absolute;
+  display: grid;
+  width: 26px;
+  height: 26px;
+  padding: 5px;
+  place-items: center;
+  border: 1px solid #1d4ed8;
+  border-radius: 0.45rem;
+  background: #fff;
+  color: #1d4ed8;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.2);
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+.algebra-tiles__selection-action:hover {
+  background: #eff6ff;
+}
+
+.algebra-tiles__selection-action svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.algebra-tiles__selection-action--copy {
+  top: 2px;
+  right: 2px;
+}
+
+.algebra-tiles__selection-action--delete {
+  bottom: 2px;
+  left: 2px;
+  border-color: #dc2626;
+  color: #b91c1c;
+}
+
+.algebra-tiles__selection-action--delete:hover {
+  background: #fef2f2;
+}
+
+.algebra-tiles__selection-action--sign {
+  right: 2px;
+  bottom: 2px;
+  padding: 0;
+  border-color: #15803d;
+  color: #15803d;
+  font: 800 1.25rem/1 sans-serif;
+}
+
+.algebra-tiles__selection-action--sign:hover {
+  background: #f0fdf4;
 }
 
 .algebra-tiles__placed.is-area {
@@ -536,27 +592,38 @@
 }
 
 @media (max-width: 480px) {
-  .algebra-tiles__placed .algebra-tile:not(.is-merging) {
-    transform: scale(0.9);
-    transform-origin: top left;
-  }
-
   .algebra-tiles__touch-preview {
     transform: scale(0.88);
   }
 
   .algebra-tiles__palette {
-    width: min(100%, 360px);
-    grid-auto-rows: 68px;
+    justify-self: start;
+    width: min(100%, 240px);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: 56px;
+    border-radius: 0.5rem;
   }
 
-  .algebra-tile--source.algebra-tile--unit { width: 18px; height: 18px; }
-  .algebra-tile--source.algebra-tile--x { width: 44px; height: 26px; }
-  .algebra-tile--source.algebra-tile--y { width: 38px; height: 24px; }
-  .algebra-tile--source.algebra-tile--x.is-vertical { width: 26px; height: 44px; }
-  .algebra-tile--source.algebra-tile--y.is-vertical { width: 24px; height: 38px; }
-  .algebra-tile--source.algebra-tile--x2 { width: 44px; height: 44px; }
-  .algebra-tile--source.algebra-tile--xy { width: 44px; height: 30px; }
-  .algebra-tile--source.algebra-tile--xy.is-vertical { width: 30px; height: 44px; }
-  .algebra-tile--source.algebra-tile--y2 { width: 34px; height: 34px; }
+  .algebra-tile--source.algebra-tile--unit { width: 17px; height: 17px; }
+  .algebra-tile--source.algebra-tile--x { width: 40px; height: 23px; }
+  .algebra-tile--source.algebra-tile--y { width: 34px; height: 22px; }
+  .algebra-tile--source.algebra-tile--x.is-vertical { width: 23px; height: 40px; }
+  .algebra-tile--source.algebra-tile--y.is-vertical { width: 22px; height: 34px; }
+  .algebra-tile--source.algebra-tile--x2 { width: 40px; height: 40px; }
+  .algebra-tile--source.algebra-tile--xy { width: 40px; height: 28px; }
+  .algebra-tile--source.algebra-tile--xy.is-vertical { width: 28px; height: 40px; }
+  .algebra-tile--source.algebra-tile--y2 { width: 32px; height: 32px; }
+
+  .algebra-tiles__choice-cell {
+    gap: 0.1rem;
+  }
+
+  .algebra-tiles__placed {
+    height: 21rem;
+    min-height: 15rem;
+  }
+
+  .algebra-tiles__placed.is-area {
+    height: 28rem;
+  }
 }

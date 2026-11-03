@@ -165,8 +165,8 @@ export default function AlgebraTiles({
   const { t } = useTranslation('interface');
   const { t: tCommon } = useTranslation('common');
   const sessionLogging = useSessionInputLogger();
-  const canEdit = sessionLogging?.canEdit ?? true;
   const role = suppliedRole || sessionLogging?.role || 'student';
+  const canEdit = role === 'student' || shared || (sessionLogging?.canEdit ?? true);
   const variables = normalizeVariables(variableNames);
   const activeMode = normalizeMode(mode, layout);
   const [localTiles, setLocalTiles] = useState([]);
@@ -189,8 +189,10 @@ export default function AlgebraTiles({
   const [selectedTileIds, setSelectedTileIds] = useState(() => new Set());
   const [copiedTileCount, setCopiedTileCount] = useState(0);
   const [selectionBox, setSelectionBox] = useState(null);
+  const [groupDrag, setGroupDrag] = useState(null);
   const [touchMode, setTouchMode] = useState(false);
   const [touchDrag, setTouchDrag] = useState(null);
+  const groupDragRef = useRef(null);
   const touchDragRef = useRef(null);
   const suppressTouchClickRef = useRef(false);
   const mergeTimerRef = useRef(null);
@@ -374,6 +376,11 @@ export default function AlgebraTiles({
     setCopiedTileCount(copiedTilesRef.current.length);
   };
 
+  const duplicateSelectedTiles = () => {
+    copySelectedTiles();
+    pasteCopiedTiles();
+  };
+
   const pasteCopiedTiles = () => {
     if (!canEdit || !copiedTilesRef.current.length) return;
     const copies = copiedTilesRef.current.map((tile) => ({
@@ -398,6 +405,29 @@ export default function AlgebraTiles({
   const beginSelection = (event) => {
     if (!canEdit || event.button !== 0 || event.target.closest('.algebra-tile')) return;
     const point = getSelectionCoordinates(event);
+    if (selectedBounds && selectedTileIds.size && point.x >= selectedBounds.left && point.x <= selectedBounds.right
+      && point.y >= selectedBounds.top && point.y <= selectedBounds.bottom) {
+      const selectedTiles = tiles.filter((tile) => selectedTileIds.has(tile.id));
+      const primary = selectedTiles[0];
+      if (!primary) return;
+      const primaryPosition = getTileBoardPosition(primary, boardMode, placedBoardRef.current.clientWidth, placedBoardRef.current.clientHeight);
+      groupDragRef.current = {
+        pointerId: event.pointerId,
+        startX: point.x,
+        startY: point.y,
+        offsetX: point.x - primaryPosition.left,
+        offsetY: point.y - primaryPosition.top,
+        primary,
+        tiles: selectedTiles,
+        moved: false
+      };
+      setGroupDrag({ deltaX: 0, deltaY: 0 });
+      setTouchMode(true);
+      event.preventDefault();
+      event.currentTarget.setPointerCapture(event.pointerId);
+      event.currentTarget.style.cursor = 'grabbing';
+      return;
+    }
     selectionStartRef.current = { ...point, pointerId: event.pointerId };
     if (!event.ctrlKey && !event.metaKey && !event.shiftKey) setSelectedTileIds(new Set());
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -405,6 +435,15 @@ export default function AlgebraTiles({
   };
 
   const updateSelection = (event) => {
+    const group = groupDragRef.current;
+    if (group && group.pointerId === event.pointerId) {
+      const point = getSelectionCoordinates(event);
+      const deltaX = point.x - group.startX;
+      const deltaY = point.y - group.startY;
+      group.moved = Math.hypot(deltaX, deltaY) >= 4;
+      setGroupDrag({ deltaX, deltaY });
+      return;
+    }
     const start = selectionStartRef.current;
     if (!start || start.pointerId !== event.pointerId) return;
     const point = getSelectionCoordinates(event);
@@ -429,11 +468,72 @@ export default function AlgebraTiles({
   };
 
   const endSelection = (event) => {
+    const group = groupDragRef.current;
+    if (group && group.pointerId === event.pointerId) {
+      groupDragRef.current = null;
+      setGroupDrag(null);
+      setTouchMode(false);
+      event.currentTarget.style.cursor = '';
+      if (group.moved) {
+        const dragData = {
+          ...group.primary,
+          id: group.primary.id,
+          tiles: group.tiles,
+          offsetX: group.offsetX,
+          offsetY: group.offsetY
+        };
+        dropTile({
+          preventDefault() {},
+          currentTarget: event.currentTarget,
+          clientX: event.clientX,
+          clientY: event.clientY,
+          dataTransfer: { getData: () => JSON.stringify(dragData) }
+        });
+      }
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+      return;
+    }
     if (!selectionStartRef.current || selectionStartRef.current.pointerId !== event.pointerId) return;
     selectionStartRef.current = null;
     setSelectionBox(null);
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
   };
+
+  const updateBoardCursor = (event) => {
+    if (groupDragRef.current?.pointerId === event.pointerId) return;
+    const board = event.currentTarget;
+    const point = getSelectionCoordinates(event);
+    const inSelectedRegion = selectedBounds && point.x >= selectedBounds.left && point.x <= selectedBounds.right
+      && point.y >= selectedBounds.top && point.y <= selectedBounds.bottom;
+    board.style.cursor = inSelectedRegion ? 'grab' : '';
+  };
+
+  const deleteSelectedTiles = () => {
+    if (!selectedTileIds.size) return;
+    commitTiles(tiles.filter((tile) => !selectedTileIds.has(tile.id)));
+    setSelectedTileIds(new Set());
+  };
+
+  const toggleSelectedTileSigns = () => {
+    if (!selectedTileIds.size) return;
+    commitTiles(tiles.map((tile) => selectedTileIds.has(tile.id) ? { ...tile, sign: tile.sign < 0 ? 1 : -1 } : tile));
+  };
+
+  const selectedBounds = (() => {
+    if (!selectedTileIds.size || !placedBoardRef.current) return null;
+    const board = placedBoardRef.current;
+    const selected = tiles.filter((tile) => selectedTileIds.has(tile.id));
+    if (!selected.length) return null;
+    return selected.reduce((bounds, tile) => {
+      const position = getTileBoardPosition(tile, boardMode, board.clientWidth, board.clientHeight);
+      return {
+        left: Math.min(bounds.left, position.left),
+        top: Math.min(bounds.top, position.top),
+        right: Math.max(bounds.right, position.left + position.width),
+        bottom: Math.max(bounds.bottom, position.top + position.height)
+      };
+    }, { left: Infinity, top: Infinity, right: -Infinity, bottom: -Infinity });
+  })();
 
   const endTileDrag = (event, tileId) => {
     const board = placedBoardRef.current;
@@ -465,6 +565,22 @@ export default function AlgebraTiles({
     window.addEventListener('strobe:session-starting', clearOnSessionStart);
     return () => window.removeEventListener('strobe:session-starting', clearOnSessionStart);
   }, [shared, canEdit, onTilesChange, tiles]);
+
+  useEffect(() => {
+    if (!selectedTileIds.size) return undefined;
+    const clearSelectionElsewhere = (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      if (!target || target.closest('.algebra-tiles__selection-action, .algebra-tiles__selection-tools')) return;
+      const board = placedBoardRef.current;
+      if (board?.contains(target)) {
+        const tile = target.closest('[data-tile-id]');
+        if (!tile || selectedTileIds.has(tile.dataset.tileId)) return;
+      }
+      setSelectedTileIds(new Set());
+    };
+    document.addEventListener('pointerdown', clearSelectionElsewhere, true);
+    return () => document.removeEventListener('pointerdown', clearSelectionElsewhere, true);
+  }, [selectedTileIds]);
 
   const updateMode = (nextMode) => {
     if (role !== 'teacher') return;
@@ -922,8 +1038,6 @@ export default function AlgebraTiles({
       <div className="algebra-tiles__selection-tools">
         {selectedTileIds.size ? <span aria-live="polite">{selectedTileIds.size} πλακίδια επιλεγμένα</span>
           : (showSelectionHint ? <span>Σύρε το ποντίκι σε κενή περιοχή για επιλογή πλακιδίων</span> : null)}
-        <button type="button" onClick={copySelectedTiles} disabled={!selectedTileIds.size}>Αντιγραφή</button>
-        <button type="button" onClick={pasteCopiedTiles} disabled={!copiedTileCount}>Επικόλληση</button>
       </div>
       <section className={`algebra-tiles__board${isEquationLikeMode(boardMode) ? ' algebra-tiles__board--equation' : ''}`} aria-label="Πίνακας πλακιδίων">
         {equationDisplaySides && !Array.isArray(equationDisplaySides) ? (
@@ -940,9 +1054,10 @@ export default function AlgebraTiles({
         <div ref={placedBoardRef} className={`algebra-tiles__placed${boardMode === 'area' ? ' is-area' : ''}${isEquationLikeMode(boardMode) ? ' is-equation' : ''}${boardMode === 'systems' ? ' is-systems' : ''}`}
           tabIndex={canEdit ? 0 : -1}
           onPointerDown={beginSelection}
-          onPointerMove={updateSelection}
+          onPointerMove={(event) => { updateSelection(event); updateBoardCursor(event); }}
           onPointerUp={endSelection}
           onPointerCancel={endSelection}
+          onPointerLeave={(event) => { if (!groupDragRef.current) event.currentTarget.style.cursor = ''; }}
           onDragOver={(event) => { if (canEdit) event.preventDefault(); }}
           onDrop={dropTile}>
           {boardMode === 'systems' && Array.isArray(equationDisplaySides) ? (
@@ -986,7 +1101,7 @@ export default function AlgebraTiles({
             const orientation = tile.orientation || (tile.type === 'y' ? 'vertical' : 'horizontal');
             const [spanX, spanY] = getTileSpans(tile.type, orientation);
             return (
-              <div key={tile.id} role="button" tabIndex={canEdit ? 0 : -1} draggable={canEdit && !touchMode} aria-disabled={!canEdit}
+              <div key={tile.id} data-tile-id={tile.id} role="button" tabIndex={canEdit ? 0 : -1} draggable={canEdit && !touchMode} aria-disabled={!canEdit}
                 onDragStart={(event) => beginTileDrag(event, tile)}
                 onDragEnd={(event) => endTileDrag(event, tile.id)}
                 onPointerDown={(event) => startTouchTileDrag(event, tile)}
@@ -1023,6 +1138,9 @@ export default function AlgebraTiles({
                   ...(orientation === 'vertical' && ['x', 'y', 'xy'].includes(tile.type)
                     ? { boxSizing: 'border-box', width: `${spanX * GRID_UNIT}px`, height: `${spanY * GRID_UNIT}px` }
                     : {}),
+                  ...(groupDrag && selectedTileIds.has(tile.id)
+                    ? { transform: `translate(${groupDrag.deltaX}px, ${groupDrag.deltaY}px)` }
+                    : {}),
                   ...(mergeAnimation?.[tile.id] ? {
                     '--merge-x': mergeAnimation[tile.id].x,
                     '--merge-y': mergeAnimation[tile.id].y
@@ -1046,6 +1164,25 @@ export default function AlgebraTiles({
             left: `${selectionBox.left}px`, top: `${selectionBox.top}px`,
             width: `${selectionBox.width}px`, height: `${selectionBox.height}px`
           }} aria-hidden="true" /> : null}
+          {selectedBounds ? <div className="algebra-tiles__selection-region" style={{
+            left: `${selectedBounds.left + (groupDrag?.deltaX || 0)}px`, top: `${selectedBounds.top + (groupDrag?.deltaY || 0)}px`,
+            width: `${selectedBounds.right - selectedBounds.left}px`,
+            height: `${selectedBounds.bottom - selectedBounds.top}px`
+          }} aria-label={`${selectedTileIds.size} πλακίδια επιλεγμένα`}>
+            <button type="button" className="algebra-tiles__selection-action algebra-tiles__selection-action--copy"
+              aria-label="Αντιγραφή επιλεγμένων πλακιδίων" title="Αντιγραφή και δημιουργία αντιγράφου"
+              onPointerDown={(event) => event.stopPropagation()} onClick={duplicateSelectedTiles}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" /></svg>
+            </button>
+            <button type="button" className="algebra-tiles__selection-action algebra-tiles__selection-action--delete"
+              aria-label="Διαγραφή επιλεγμένων πλακιδίων" title="Διαγραφή επιλεγμένων πλακιδίων"
+              onPointerDown={(event) => event.stopPropagation()} onClick={deleteSelectedTiles}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3" /></svg>
+            </button>
+            <button type="button" className="algebra-tiles__selection-action algebra-tiles__selection-action--sign"
+              aria-label="Αντιστροφή προσήμου όλων των επιλεγμένων πλακιδίων" title="Αντιστροφή προσήμου"
+              onPointerDown={(event) => event.stopPropagation()} onClick={toggleSelectedTileSigns}>±</button>
+          </div> : null}
         </div>
       </section>
 
