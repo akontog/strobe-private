@@ -97,13 +97,15 @@
 }
 
 .algebra-tiles__selection-action--copy {
-  top: 2px;
-  right: 2px;
+  top: 0;
+  right: 0;
+  transform: translate(75%, -75%);
 }
 
 .algebra-tiles__selection-action--delete {
-  bottom: 2px;
-  left: 2px;
+  bottom: 0;
+  left: 0;
+  transform: translate(-75%, 75%);
   border-color: #dc2626;
   color: #b91c1c;
 }
@@ -113,8 +115,9 @@
 }
 
 .algebra-tiles__selection-action--sign {
-  right: 2px;
-  bottom: 2px;
+  right: 0;
+  bottom: 0;
+  transform: translate(75%, 75%);
   padding: 0;
   border-color: #15803d;
   color: #15803d;
@@ -244,55 +247,55 @@
 }
 
 .algebra-tile--source.algebra-tile--unit {
-  width: 22px;
-  height: 22px;
-  font-size: 0.75rem;
+  width: calc(var(--algebra-grid-unit) * 1.22);
+  height: calc(var(--algebra-grid-unit) * 1.22);
+  font-size: clamp(0.6rem, calc(var(--algebra-grid-unit) * 0.045), 0.75rem);
 }
 
 .algebra-tile--source.algebra-tile--x {
-  width: 52px;
-  height: 28px;
-  font-size: 0.75rem;
+  width: calc(var(--algebra-grid-unit) * 2.89);
+  height: calc(var(--algebra-grid-unit) * 1.56);
+  font-size: clamp(0.6rem, calc(var(--algebra-grid-unit) * 0.045), 0.75rem);
 }
 
 .algebra-tile--source.algebra-tile--y {
-  width: 44px;
-  height: 26px;
-  font-size: 0.75rem;
+  width: calc(var(--algebra-grid-unit) * 2.44);
+  height: calc(var(--algebra-grid-unit) * 1.44);
+  font-size: clamp(0.6rem, calc(var(--algebra-grid-unit) * 0.045), 0.75rem);
 }
 
 .algebra-tile--source.algebra-tile--x.is-vertical {
-  width: 28px;
-  height: 52px;
+  width: calc(var(--algebra-grid-unit) * 1.56);
+  height: calc(var(--algebra-grid-unit) * 2.89);
 }
 
 .algebra-tile--source.algebra-tile--y.is-vertical {
-  width: 26px;
-  height: 44px;
-  font-size: 0.75rem;
+  width: calc(var(--algebra-grid-unit) * 1.44);
+  height: calc(var(--algebra-grid-unit) * 2.44);
+  font-size: clamp(0.6rem, calc(var(--algebra-grid-unit) * 0.045), 0.75rem);
 }
 
 .algebra-tile--source.algebra-tile--x2 {
-  width: 52px;
-  height: 52px;
-  font-size: 0.85rem;
+  width: calc(var(--algebra-grid-unit) * 2.89);
+  height: calc(var(--algebra-grid-unit) * 2.89);
+  font-size: clamp(0.62rem, calc(var(--algebra-grid-unit) * 0.05), 0.85rem);
 }
 
 .algebra-tile--source.algebra-tile--xy {
-  width: 52px;
-  height: 36px;
-  font-size: 0.85rem;
+  width: calc(var(--algebra-grid-unit) * 2.89);
+  height: calc(var(--algebra-grid-unit) * 2);
+  font-size: clamp(0.62rem, calc(var(--algebra-grid-unit) * 0.05), 0.85rem);
 }
 
 .algebra-tile--source.algebra-tile--xy.is-vertical {
-  width: 36px;
-  height: 52px;
+  width: calc(var(--algebra-grid-unit) * 2);
+  height: calc(var(--algebra-grid-unit) * 2.89);
 }
 
 .algebra-tile--source.algebra-tile--y2 {
-  width: 40px;
-  height: 40px;
-  font-size: 0.85rem;
+  width: calc(var(--algebra-grid-unit) * 2.22);
+  height: calc(var(--algebra-grid-unit) * 2.22);
+  font-size: clamp(0.62rem, calc(var(--algebra-grid-unit) * 0.05), 0.85rem);
 }
 
 .algebra-tile {
@@ -304,7 +307,7 @@
   border-radius: 0.2rem;
   background: #bae6fd;
   color: #0c4a6e;
-  font: 800 1.1rem/1 sans-serif;
+  font: 800 clamp(0.65rem, calc(var(--algebra-grid-unit) * 0.065), 1.1rem)/1 sans-serif;
 }
 
 .algebra-tiles__touch-preview {
@@ -365,15 +368,15 @@
   top: 1px;
   left: 1px;
   display: grid;
-  width: 20px;
-  height: 20px;
+  width: clamp(14px, calc(var(--algebra-grid-unit) * 1.1), 20px);
+  height: clamp(14px, calc(var(--algebra-grid-unit) * 1.1), 20px);
   padding: 0;
   place-items: center;
   border: 1px solid rgba(12, 74, 110, 0.55);
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.9);
   color: #0c4a6e;
-  font: 700 0.9rem/1 sans-serif;
+  font: 700 clamp(0.65rem, calc(var(--algebra-grid-unit) * 0.05), 0.9rem)/1 sans-serif;
   cursor: pointer;
 }
 
@@ -383,15 +386,15 @@
   right: 1px;
   bottom: 1px;
   display: grid;
-  width: 16px;
-  height: 16px;
+  width: clamp(12px, calc(var(--algebra-grid-unit) * 0.9), 16px);
+  height: clamp(12px, calc(var(--algebra-grid-unit) * 0.9), 16px);
   padding: 0;
   place-items: center;
   border: 1px solid rgba(15, 23, 42, 0.5);
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.94);
   color: #0f172a;
-  font: 800 0.75rem/1 sans-serif;
+  font: 800 clamp(0.55rem, calc(var(--algebra-grid-unit) * 0.045), 0.75rem)/1 sans-serif;
   cursor: pointer;
 }
 

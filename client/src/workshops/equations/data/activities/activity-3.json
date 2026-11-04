@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "activity-data-3",
+      "type": "activity-data",
+      "config": {
+        "data": {
+          "questions": [
+            {
+              "id": "x2-minus-5x-plus-6-equals-0",
+              "label": "x² − 5x + 6 = 0",
+              "leftTerms": [{ "type": "x2", "count": 1 }, { "type": "x", "count": 5, "sign": -1 }, { "type": "one", "count": 6 }],
+              "rightTerms": []
+            },
+            {
+              "id": "x2-plus-x-minus-6-equals-0",
+              "label": "x² + x − 6 = 0",
+              "leftTerms": [{ "type": "x2", "count": 1 }, { "type": "x", "count": 1 }, { "type": "one", "count": 6, "sign": -1 }],
+              "rightTerms": []
+            },
+            {
+              "id": "x2-plus-4x-plus-4-equals-0",
+              "label": "x² + 4x + 4 = 0",
+              "leftTerms": [{ "type": "x2", "count": 1 }, { "type": "x", "count": 4 }, { "type": "one", "count": 4 }],
+              "rightTerms": []
+            },
+            {
+              "id": "2x2-minus-8-equals-0",
+              "label": "2x² − 8 = 0",
+              "leftTerms": [{ "type": "x2", "count": 2 }, { "type": "one", "count": 8, "sign": -1 }],
+              "rightTerms": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "activity-3-resource-1",
+      "type": "algebra-tiles",
+      "region": "center",
+      "config": { "settings": { "card": false, "mode": "equation", "variables": ["x", "y"] } }
+    }
+  ],
+  "activity": {
+    "id": "3",
+    "code": "3.",
+    "title": "Αναπαράσταση εξισώσεων δευτέρου βαθμού",
+    "objective": "Χρησιμοποίησε τα πλακίδια για να αναπαραστήσεις κάθε εξίσωση.",
+    "mode": "equationTiles",
+    "usesResources": ["activity-data-3", "activity-3-resource-1"]
+  }
+}

@@ -139,7 +139,9 @@ export function getAlgebraTileRegionScore(tiles, mode, tileScoring = {}) {
   });
 
   return {
-    score: correctRegions * pointsPerRegion,
+    score: tileScoring.allOrNothing && (regionKeys.length === 0 || correctRegions !== regionKeys.length)
+      ? 0
+      : correctRegions * pointsPerRegion,
     maxScore: regionKeys.length * pointsPerRegion,
     correctRegions,
     totalRegions: regionKeys.length

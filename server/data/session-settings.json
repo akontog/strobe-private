@@ -8,5 +8,10 @@
     "chatEnabled": false,
     "scoreVisible": true,
     "feedbackEnabled": true
+  },
+  "equations-lab": {
+    "chatEnabled": false,
+    "scoreVisible": true,
+    "feedbackEnabled": false
   }
 }

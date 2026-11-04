@@ -18,10 +18,34 @@
     {
       "id": "1",
       "code": "1.",
-      "title": "Επίλυση απλών εξισώσεων",
-      "objective": "Αφαίρεσε ίσα πλακίδια και από τις δύο πλευρές για να απομονώσεις το x.",
-      "mode": "equationTiles",
+      "title": "Χαρακτηρισμός εξίσωσης αx+β=0",
+      "objective": "Ταξινόμησε κάθε εξίσωση.",
+      "mode": "placement-board",
       "activityFile": "activities/activity-1.json"
+    },
+    {
+      "id": "2",
+      "code": "2.",
+      "title": "Επίλυση απλών εξισώσεων",
+      "objective": "Απομόνωσε το x.",
+      "mode": "equationTiles",
+      "activityFile": "activities/activity-2.json"
+    },
+    {
+      "id": "3",
+      "code": "3.",
+      "title": "Αναπαράσταση εξισώσεων δευτέρου βαθμού",
+      "objective": "Χρησιμοποίησε τα πλακίδια για να αναπαραστήσεις κάθε εξίσωση.",
+      "mode": "equationTiles",
+      "activityFile": "activities/activity-3.json"
+    },
+    {
+      "id": "4",
+      "code": "4.",
+      "title": "Ταξινόμηση εξισώσεων με τη διακρίνουσα",
+      "objective": "Υπολόγισε τη διακρίνουσα Δ = β² − 4αγ και ταξινόμησε κάθε εξίσωση.",
+      "mode": "placement-board",
+      "activityFile": "activities/activity-4.json"
     }
   ]
 }

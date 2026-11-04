@@ -59,11 +59,16 @@ const TILE_SPANS = {
   xy: [6, 4],
   y2: [4, 4]
 };
-const GRID_UNIT = 18;
-const T_CHART_AXIS_X = GRID_UNIT * 6;
-const T_CHART_AXIS_Y = GRID_UNIT * 4;
-const T_CHART_HORIZONTAL_ROW_Y = GRID_UNIT * 2;
-const T_CHART_VERTICAL_COLUMN_X = GRID_UNIT * 4;
+function getResponsiveGridUnit() {
+  const viewportWidth = typeof window === 'undefined' ? 640 : window.innerWidth;
+  return Math.max(10, Math.min(18, Math.round(viewportWidth * 0.028 * 100) / 100));
+}
+
+let GRID_UNIT = getResponsiveGridUnit();
+let T_CHART_AXIS_X = GRID_UNIT * 6;
+let T_CHART_AXIS_Y = GRID_UNIT * 4;
+let T_CHART_HORIZONTAL_ROW_Y = GRID_UNIT * 2;
+let T_CHART_VERTICAL_COLUMN_X = GRID_UNIT * 4;
 const SYSTEMS_ROW_HEADER_HEIGHT = 56;
 
 function normalizeMode(mode, layout) {
@@ -158,6 +163,7 @@ export default function AlgebraTiles({
   role: suppliedRole, // Optional role override for standalone resource hosts.
   promptMode = 'json', // Uses exercise JSON or a teacher-authored expression on shared boards.
   showSelectionHint = true, // Shows the drag-selection hint when enabled.
+  preserveTilesOnSessionStart = false, // Keeps supplied tiles when a teacher starts a session.
   equationsFromTiles = false, // Builds displayed equations from the placed tiles when enabled.
   settingsPortalTarget = null, // Optional DOM target for teacher settings outside the board zone.
   settingsInPortal = false // Places teacher settings in the supplied portal target when true.
@@ -183,6 +189,7 @@ export default function AlgebraTiles({
   const pendingPromptExpressionRef = useRef(null);
   const promptSendTimerRef = useRef(null);
   const promptInputId = useId();
+  const [gridUnit, setGridUnit] = useState(getResponsiveGridUnit);
   const [sourceOrientations, setSourceOrientations] = useState({ x: 'horizontal', y: 'horizontal', xy: 'horizontal' });
   const [sourceSigns, setSourceSigns] = useState({ one: 1, x: 1, y: 1, x2: 1, xy: 1, y2: 1 });
   const [mergeAnimation, setMergeAnimation] = useState(null);
@@ -208,6 +215,20 @@ export default function AlgebraTiles({
   const availableExercises = exercises[category];
   const selectedExercise = availableExercises.find((item) => item.id === exerciseId) || availableExercises[0];
   const isMerging = Boolean(mergeAnimation);
+
+  useEffect(() => {
+    const updateGridUnit = () => {
+      const nextGridUnit = getResponsiveGridUnit();
+      GRID_UNIT = nextGridUnit;
+      T_CHART_AXIS_X = GRID_UNIT * 6;
+      T_CHART_AXIS_Y = GRID_UNIT * 4;
+      T_CHART_HORIZONTAL_ROW_Y = GRID_UNIT * 2;
+      T_CHART_VERTICAL_COLUMN_X = GRID_UNIT * 4;
+      setGridUnit(nextGridUnit);
+    };
+    window.addEventListener('resize', updateGridUnit);
+    return () => window.removeEventListener('resize', updateGridUnit);
+  }, []);
 
   useEffect(() => {
     if (!shared) return undefined;
@@ -558,13 +579,13 @@ export default function AlgebraTiles({
   };
 
   useEffect(() => {
-    if (shared) return undefined;
+    if (shared || preserveTilesOnSessionStart) return undefined;
     const clearOnSessionStart = (event) => {
       if (event.detail?.clear && canEdit) commitTiles([]);
     };
     window.addEventListener('strobe:session-starting', clearOnSessionStart);
     return () => window.removeEventListener('strobe:session-starting', clearOnSessionStart);
-  }, [shared, canEdit, onTilesChange, tiles]);
+  }, [shared, preserveTilesOnSessionStart, canEdit, onTilesChange, tiles]);
 
   useEffect(() => {
     if (!selectedTileIds.size) return undefined;
@@ -918,7 +939,59 @@ export default function AlgebraTiles({
           };
         });
         const movedById = new Map(movedTiles.map((tile) => [tile.id, tile]));
-        commitTiles(tiles.map((tile) => movedById.get(tile.id) || tile));
+        const movedTilesWithStationary = tiles.map((tile) => movedById.get(tile.id) || tile);
+        const removedIds = new Set();
+        const animation = {};
+
+        movedTiles.forEach((movedTile) => {
+          if (removedIds.has(movedTile.id)) return;
+          const movedPosition = getTileBoardPosition(movedTile, boardMode, board.clientWidth, board.clientHeight);
+          const movedLeft = movedPosition.left;
+          const movedTop = movedPosition.top;
+          const movedRight = movedLeft + movedPosition.width;
+          const movedBottom = movedTop + movedPosition.height;
+          const oppositeTile = tiles.find((candidate) => {
+            if (movedIds.has(candidate.id) || removedIds.has(candidate.id)) return false;
+            if (candidate.type !== movedTile.type || (candidate.sign < 0) === (movedTile.sign < 0)) return false;
+            if (isEquationLikeMode(boardMode) && candidate.side !== movedTile.side) return false;
+            if (boardMode === 'systems' && getSystemsEquationIndex(candidate) !== getSystemsEquationIndex(movedTile)) return false;
+
+            const candidatePosition = getTileBoardPosition(candidate, boardMode, board.clientWidth, board.clientHeight);
+            return movedLeft < candidatePosition.left + candidatePosition.width
+              && movedRight > candidatePosition.left
+              && movedTop < candidatePosition.top + candidatePosition.height
+              && movedBottom > candidatePosition.top;
+          });
+          if (!oppositeTile) return;
+
+          removedIds.add(movedTile.id);
+          removedIds.add(oppositeTile.id);
+          const oppositePosition = getTileBoardPosition(oppositeTile, boardMode, board.clientWidth, board.clientHeight);
+          const centerX = (movedPosition.centerX + oppositePosition.centerX) / 2;
+          const centerY = (movedPosition.centerY + oppositePosition.centerY) / 2;
+          animation[movedTile.id] = {
+            x: `${centerX - movedPosition.centerX}px`,
+            y: `${centerY - movedPosition.centerY}px`
+          };
+          animation[oppositeTile.id] = {
+            x: `${centerX - oppositePosition.centerX}px`,
+            y: `${centerY - oppositePosition.centerY}px`
+          };
+        });
+
+        if (removedIds.size) {
+          commitTiles(movedTilesWithStationary, false);
+          setMergeAnimation(animation);
+          setSelectedTileIds(new Set([...movedIds].filter((tileId) => !removedIds.has(tileId))));
+          mergeTimerRef.current = window.setTimeout(() => {
+            commitTiles(movedTilesWithStationary.filter((tile) => !removedIds.has(tile.id)));
+            setMergeAnimation(null);
+            mergeTimerRef.current = null;
+          }, 300);
+          return;
+        }
+
+        commitTiles(movedTilesWithStationary);
         setSelectedTileIds(movedIds);
         return;
       }
@@ -1030,7 +1103,7 @@ export default function AlgebraTiles({
           {category === 'factorization' ? `${t('algebraTiles.factorize')}: ` : ''}{selectedExercise.prompt}
         </p> : null))}
       {!settingsInPortal ? settingsAccordion : null}
-      <div className={`algebra-tiles${isMerging ? ' has-merging-tiles' : ''}`} onKeyDown={handleBoardShortcuts}>
+      <div className={`algebra-tiles${isMerging ? ' has-merging-tiles' : ''}`} style={{ '--algebra-grid-unit': `${gridUnit}px` }} onKeyDown={handleBoardShortcuts}>
       {touchDrag ? <div className={`algebra-tile algebra-tile--${getTileDefinition(touchDrag.type, variables)?.className || 'unit'} is-${touchDrag.orientation}${touchDrag.sign < 0 ? ' is-negative' : ''} algebra-tiles__touch-preview`}
         style={{ left: `${touchDrag.x}px`, top: `${touchDrag.y}px`, width: `${getTileDimensions(touchDrag.type, touchDrag.orientation).width}px`, height: `${getTileDimensions(touchDrag.type, touchDrag.orientation).height}px` }} aria-hidden="true">
         {touchDrag.sign < 0 ? '−' : ''}{getTileDefinition(touchDrag.type, variables)?.label}

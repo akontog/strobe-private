@@ -32,6 +32,7 @@ export default function DataAccordion({
   labelClassName = '',
   selectClassName = '',
   getOptionLabel,
+  preserveSession = false,
   children
 }) {
   const session = useSessionInputLogger();
@@ -40,7 +41,7 @@ export default function DataAccordion({
   const handleChange = async (nextValue) => {
     if (nextValue === value || typeof onChange !== 'function') return;
     try {
-      if (session?.role === 'teacher') await session.endSession();
+      if (session?.role === 'teacher' && !preserveSession) await session.endSession();
       onChange(nextValue);
     } catch (error) {
       window.alert(error.message || 'Could not end the current session.');

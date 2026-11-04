@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "activity-4-resource-1",
+      "type": "placement-board",
+      "region": "center",
+      "config": {
+        "data": {
+          "bankLabel": "Εξισώσεις προς ταξινόμηση",
+          "groups": [
+            { "id": "two-solutions", "title": "Δύο άνισες λύσεις", "hint": "Δ > 0" },
+            { "id": "double-solution", "title": "Μία διπλή λύση", "hint": "Δ = 0" },
+            { "id": "no-solution", "title": "Αδύνατη", "hint": "Δ < 0" }
+          ],
+          "items": [
+            { "id": "quad-eq-1", "content": "x² − 5x + 6 = 0", "correctGroupId": "two-solutions" },
+            { "id": "quad-eq-2", "content": "x² + 2x + 5 = 0", "correctGroupId": "no-solution" },
+            { "id": "quad-eq-3", "content": "x² − 4x + 4 = 0", "correctGroupId": "double-solution" },
+            { "id": "quad-eq-4", "content": "2x² − 8 = 0", "correctGroupId": "two-solutions" },
+            { "id": "quad-eq-5", "content": "3x² + 2x + 4 = 0", "correctGroupId": "no-solution" },
+            { "id": "quad-eq-6", "content": "x² + 6x + 9 = 0", "correctGroupId": "double-solution" },
+            { "id": "quad-eq-7", "content": "−x² + x + 2 = 0", "correctGroupId": "two-solutions" },
+            { "id": "quad-eq-8", "content": "4x² + 4x + 3 = 0", "correctGroupId": "no-solution" },
+            { "id": "quad-eq-9", "content": "9x² − 12x + 4 = 0", "correctGroupId": "double-solution" }
+          ]
+        }
+      }
+    }
+  ],
+  "activity": {
+    "id": "4",
+    "code": "4.",
+    "title": "Ταξινόμηση εξισώσεων με τη διακρίνουσα",
+    "objective": "Υπολόγισε τη διακρίνουσα Δ = β² − 4αγ και ταξινόμησε κάθε εξίσωση.",
+    "mode": "placement-board",
+    "usesResources": ["activity-4-resource-1"]
+  }
+}
