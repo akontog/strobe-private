@@ -1,4 +1,6 @@
 const express = require('express');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const { getAppBySlug, listAppsForRole, toPublicApp } = require('../apps/registry');
 const { saveActivity, listActivities, listAllActivities, getActivity } = require('../services/appActivities');
@@ -8,6 +10,40 @@ const { getActiveSelection, setActiveLab, setActiveActivity } = require('../serv
 
 const router = express.Router();
 router.use(requireRole(['teacher']));
+
+const THEORY_DIRECTORY = path.resolve(__dirname, '..', '..', 'public', 'theory');
+const THEORY_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+router.get('/theory', (req, res) => {
+  fs.mkdirSync(THEORY_DIRECTORY, { recursive: true });
+  const chapters = fs.readdirSync(THEORY_DIRECTORY, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+    .map((entry) => {
+      const id = path.basename(entry.name, '.md');
+      const markdown = fs.readFileSync(path.join(THEORY_DIRECTORY, entry.name), 'utf8');
+      const title = markdown.match(/^#\s+(.+)\s*$/m)?.[1]?.trim() || id;
+      return { id, title };
+    })
+    .sort((left, right) => left.title.localeCompare(right.title, 'el'));
+  res.json({ chapters });
+});
+
+router.post('/theory/:id', (req, res) => {
+  const { id } = req.params;
+  const markdown = typeof req.body?.markdown === 'string' ? req.body.markdown.trim() : '';
+  const heading = markdown.split(/\r?\n/, 1)[0] || '';
+  if (!THEORY_ID_PATTERN.test(id)) {
+    return res.status(400).json({ error: 'Theory id must be a lowercase hyphenated slug.' });
+  }
+  if (!/^#\s+\S.*$/.test(heading) || markdown.split(/\r?\n/).slice(1).join('\n').trim().length === 0) {
+    return res.status(400).json({ error: 'Theory Markdown must begin with # Title and include content.' });
+  }
+  fs.mkdirSync(THEORY_DIRECTORY, { recursive: true });
+  const filepath = path.join(THEORY_DIRECTORY, `${id}.md`);
+  if (fs.existsSync(filepath)) return res.status(409).json({ error: 'A theory chapter with this id already exists.' });
+  fs.writeFileSync(filepath, `${markdown}\n`, 'utf8');
+  return res.status(201).json({ id, title: heading.replace(/^#\s+/, '').trim() });
+});
 
 const ACTIVITY_RESOURCES = [
   { slug: 'equations-lab', title: 'Equations' },

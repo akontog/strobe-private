@@ -334,6 +334,21 @@
   color: #e2e8f0;
 }
 
+.activity-theory-editor {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.activity-theory-editor [role="alert"] {
+  margin: 0;
+  color: #b91c1c;
+  font-size: 0.9rem;
+}
+
 @media (max-width: 760px) {
   .activity-common-zone .lab-workspace {
     grid-template-columns: 1fr;

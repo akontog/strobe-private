@@ -1,10 +1,11 @@
-# Strobe Private
+# Strobe
 
 Unified classroom platform with:
 - Node.js server (API, dashboards, WebSocket)
 - Vite/React client
 - Workshops source folders under client/src/workshops/*
 
+## 
 # Structure
 
 ## Server

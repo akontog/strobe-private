@@ -23,6 +23,7 @@ import {
 } from '../../shared/components';
 import { readIdentityName } from '../../shared/components/menu/identityStorage';
 import { resolveActivityDocument } from '../../shared/components/activities/activityDocument';
+import { getTheoryPath } from '../../shared/components/primitives/workshopTheory';
 import './ActivityRunner.css';
 
 function ResourceContent({ activity, role, activityKey }) {
@@ -323,7 +324,7 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
       {role === 'teacher' && activity.notes ? <p className="activity-runner-notes">{activity.notes}</p> : null}
       <section className="common-zone lab-zone">
         <FullScreenButton />
-        <TheoryButton theory={resourceActivity.theory} />
+        <TheoryButton theory={getTheoryPath(resourceActivity.theoryId) || resourceActivity.theory} />
         <SharedCommonZoneLayout
         leftPanel={widgetPanel('left')}
         centerPanel={(
