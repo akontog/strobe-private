@@ -8,7 +8,7 @@ function getResourceType(resource) {
 }
 
 /** Builds the shared activity document saved by resource workspaces. */
-export function createActivityDocument({ resource, language, title, objective, notes, config, widgets = [] }) {
+export function createActivityDocument({ resource, language, title, objective, notes, theory, config, widgets = [] }) {
   const mainType = getResourceType(resource);
   const mainId = `${mainType}-main`;
   const widgetResources = widgets.map((widget, index) => ({
@@ -33,6 +33,7 @@ export function createActivityDocument({ resource, language, title, objective, n
       title: String(title || ''),
       objective: String(objective || ''),
       notes: String(notes || ''),
+      theory: theory || { title: 'Θεωρία', content: '' },
       mode: mainType,
       usesResources: resources.map((entry) => entry.id)
     }

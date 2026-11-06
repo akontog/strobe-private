@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import '../../shared/i18n';
 import {
-  ActivitiesAccordion, AlgebraTiles, FullScreenButton, HeroTitle,
+  ActivitiesAccordion, AlgebraTiles, FullScreenButton, TheoryButton, HeroTitle,
   SharedCommonZoneLayout, GroupsAccordion, readIdentityName
 } from '../../shared/components';
 import storedActivityData from './data/activities.json';
 const standaloneActivityDocuments = Object.values(import.meta.glob('./data/activities/*.json', { eager: true, import: 'default' }));
 import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
 import { getAlgebraTileRegionScore } from '../../shared/components/resources/algebraTileScoring';
+import { getTheoryPath } from '../../shared/components/primitives/workshopTheory';
 import './App.css';
 
 const activityData = resolveWorkshopDocument(storedActivityData, standaloneActivityDocuments);
@@ -124,6 +125,7 @@ export default function App({ role = 'student' }) {
       <HeroTitle title={`${activityData.workshop.title} - ${activity.code} ${activity.title}`} subtitle={activity.objective} />
       <section className="common-zone lab-zone">
         <FullScreenButton />
+        <TheoryButton theory={getTheoryPath(activity.theoryId)} />
         <SharedCommonZoneLayout className="poly-neural-zone factorization-common-zone" leftPanel={null} rightPanel={null} centerPanel={(
           <div className="lab-card lab-card--panel poly-team-card factorization-workspace">
             <p className="factorization-target">{t('target')}: {selectedQuestion.label}</p>

@@ -96,6 +96,7 @@
   ],
   "activity": {
     "id": "single-digit-even-numbers",
+    "theoryId": "even-odd-numbers",
     "code": "1.",
     "title": "Άρτιοι μονοψήφιοι αριθμοί",
     "objective": "Σύρε τους άρτιους αριθμούς μέσα στο σύνολο και τους περιττούς έξω από αυτό.",

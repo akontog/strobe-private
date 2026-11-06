@@ -66,6 +66,7 @@
   ],
   "activity": {
     "id": "3",
+    "theoryId": "algebraic-identities",
     "code": "3.",
     "title": "Διαφορά τετραγώνων",
     "objective": "Συμπλήρωσε τα μέλη της ταυτότητας (a+b)(a-b) = a² - b².",

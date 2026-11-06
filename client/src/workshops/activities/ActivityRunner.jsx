@@ -15,6 +15,8 @@ import {
   HeroTitle,
   EntryGrid,
   SharedCommonZoneLayout,
+  FullScreenButton,
+  TheoryButton,
   GroupsAccordion,
   createPlacementGroupColumns,
   useSessionInputLogger
@@ -304,6 +306,8 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
       <>
         <HeroTitle title={tNav('items.activities')} />
         <section className="common-zone lab-zone">
+          <FullScreenButton />
+          <TheoryButton />
           {role === 'teacher' ? <p>Επιλέξτε μια δραστηριότητα από το μενού Δραστηριότητες.</p> : <p>Περιμένετε να ανοίξει ο/η εκπαιδευτικός μια δραστηριότητα.</p>}
         </section>
       </>
@@ -317,8 +321,10 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
     <>
       <HeroTitle title={`${tNav('items.activities')} - ${resourceActivity.name || resourceActivity.title || tNav('items.activities')}`} />
       {role === 'teacher' && activity.notes ? <p className="activity-runner-notes">{activity.notes}</p> : null}
-      <SharedCommonZoneLayout
-        className="common-zone lab-zone"
+      <section className="common-zone lab-zone">
+        <FullScreenButton />
+        <TheoryButton theory={resourceActivity.theory} />
+        <SharedCommonZoneLayout
         leftPanel={widgetPanel('left')}
         centerPanel={(
           <div className="activity-runner-resource">
@@ -326,7 +332,8 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
           </div>
         )}
         rightPanel={widgetPanel('right')}
-      />
+        />
+      </section>
       {role === 'teacher' && ['input-grid', 'grouping-drag-drop', 'placement-board', 'algebra-tiles', 'collaborative-algebra-tiles', 'options-grid'].includes(resourceActivity.resource) ? (
         <GroupsAccordion
           participants={students}

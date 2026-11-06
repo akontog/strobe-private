@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Accordion, FullScreenButton, HeroTitle, GroupsAccordion } from '../../shared/components';
+import { Accordion, FullScreenButton, TheoryButton, HeroTitle, GroupsAccordion } from '../../shared/components';
+import { getTheoryPath } from '../../shared/components/primitives/workshopTheory';
+import theoryReferences from './data/theory-references.json';
 import { studentTemplate } from './data/student-template';
 import { teacherSettingsTemplate } from './data/teacher-template';
 import { mountBuffonStudent } from './logic/student-logic';
@@ -70,6 +72,7 @@ function App({ role = 'teacher' }) {
       />
       <section className="common-zone lab-zone">
         <FullScreenButton />
+        <TheoryButton theory={getTheoryPath(theoryReferences.activity.theoryId)} />
         <div ref={rootRef} className={`buffon-content ${role === 'teacher' ? 'student teacher-preview' : 'student'}`} />
       </section>
       {role === 'teacher' ? (

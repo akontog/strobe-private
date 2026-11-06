@@ -266,9 +266,10 @@ OpenCV.js
 - [προσομοιώσεις - για ιδέες](https://phet.colorado.edu/) – προσομοιώσεις φυσικών επιστημών και μαθηματικών
 - [Mathigon](https://mathigon.org/) – διαδραστικά μαθηματικά με οπτικές προσεγγίσεις
 - [Graspable Math Activities](https://activities.graspablemath.com/) – διαδραστικές δραστηριότητες άλγεβρας
+- [](https://mathsbot.com/)
 
 # Διάφορα εργαλεία
-
+- [Dynamical Geometry - Compass and Ruler (C.a.R.)](https://zirkel.sourceforge.net/)
 - [h5p](https://h5p.org/)
 - [](https://www.mathlearningcenter.org/apps)
 - [desmos](https://www.desmos.com/)
@@ -285,3 +286,5 @@ OpenCV.js
 
 - [Εχει και substitute - πώς δουλεύει;;](https://www.nctm.org/Classroom-Resources/Illuminations/Interactives/Algebra-Tiles/)
 - [Algebra tiles](https://mathsbot.com/manipulatives/tiles)
+   mode για να φτιάχνει μόνο του το γινόμενο
+- [Solving Systems of Equations with Algebra Tiles | Brainingcamp](https://www.youtube.com/watch?v=TTqm-hBGpxo)

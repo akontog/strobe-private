@@ -20,8 +20,10 @@ import {
   CartesianPlane,
   readIdentitySnapshot,
   FullScreenButton,
+  TheoryButton,
   useSessionInputLogger
 } from '../../shared/components';
+import { getTheoryPath } from '../../shared/components/primitives/workshopTheory';
 import storedActivityData from './data/activities.json';
 const standaloneActivityDocuments = Object.values(import.meta.glob('./data/activities/*.json', { eager: true, import: 'default' }));
 import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
@@ -1675,6 +1677,7 @@ export default function App({ role = 'student' }) {
 
       <section className="common-zone lab-zone">
         <FullScreenButton />
+        <TheoryButton theory={getTheoryPath(activeActivity.theoryId)} />
         <SharedCommonZoneLayout
           className="linear-neural-zone"
           isGroupingMode={isGroupingMode}

@@ -4,6 +4,7 @@ import { Accordion } from '../layouts/Accordion';
 import SharedCommonZoneLayout from '../layouts/SharedCommonZoneLayout';
 import WidgetRenderer from '../widgets/WidgetRenderer';
 import FullScreenButton from '../primitives/FullScreenButton';
+import TheoryButton from '../primitives/TheoryButton';
 import ActivityResourcePreview from './ActivityResourcePreview';
 import { createActivityDocument } from './activityDocument';
 import './ActivitySettingsAccordion.css';
@@ -24,9 +25,9 @@ export default function ActivitySettingsAccordion({
   const storageKey = `strobe:activity:${resource}:${roomId || 'default'}`;
   const [metadata, setMetadata] = useState(() => {
     try {
-      return { title: defaultTitle, subtitle: '', notes: '', widgets: DEFAULT_WIDGETS, ...(JSON.parse(localStorage.getItem(storageKey) || '{}')) };
+      return { title: defaultTitle, subtitle: '', notes: '', theory: { title: 'Θεωρία', content: '' }, widgets: DEFAULT_WIDGETS, ...(JSON.parse(localStorage.getItem(storageKey) || '{}')) };
     } catch {
-      return { title: defaultTitle, subtitle: '', notes: '', widgets: DEFAULT_WIDGETS };
+      return { title: defaultTitle, subtitle: '', notes: '', theory: { title: 'Θεωρία', content: '' }, widgets: DEFAULT_WIDGETS };
     }
   });
   const [saveStatus, setSaveStatus] = useState('');
@@ -48,6 +49,7 @@ export default function ActivitySettingsAccordion({
     title: metadata.title || defaultTitle,
     objective: metadata.subtitle || '',
     notes: metadata.notes || '',
+    theory: metadata.theory || { title: 'Θεωρία', content: '' },
     config: activityConfig,
     widgets: metadata.widgets || []
   }), [resource, metadata, defaultTitle, activityConfig, i18n.language, i18n.resolvedLanguage]);
@@ -77,6 +79,7 @@ export default function ActivitySettingsAccordion({
     </header>
     <section className="common-zone lab-zone activity-common-zone">
       <FullScreenButton />
+      <TheoryButton theory={metadata.theory} />
       <SharedCommonZoneLayout
         className={`activity-workspace ${workspaceClass}`}
         leftPanel={hasLeftWidget ? <div className="activity-common-zone__widget-column"><WidgetRenderer widgets={metadata.widgets} position="left" /></div> : null}
@@ -90,6 +93,7 @@ export default function ActivitySettingsAccordion({
         <label><span>{t('activityWorkspace.title')}</span><input value={metadata.title} onChange={(event) => setMetadata({ ...metadata, title: event.target.value })} /></label>
         <label><span>{t('activityWorkspace.subtitle')}</span><input value={metadata.subtitle} onChange={(event) => setMetadata({ ...metadata, subtitle: event.target.value })} /></label>
         <label><span>{t('activityWorkspace.notes')}</span><textarea value={metadata.notes} onChange={(event) => setMetadata({ ...metadata, notes: event.target.value })} /></label>
+        <label><span>Θεωρία</span><textarea value={metadata.theory?.content || ''} onChange={(event) => setMetadata({ ...metadata, theory: { title: metadata.theory?.title || 'Θεωρία', content: event.target.value } })} /></label>
         <ActivityResourcePreview resource={resource} widgets={metadata.widgets || []} onChange={(widgets) => setMetadata({ ...metadata, widgets })} />
         <div className="activity-settings-accordion__actions"><button type="button" onClick={saveActivity}>{t('activityWorkspace.save')}</button><span role="status">{saveStatus}</span></div>
         <details><summary>{t('activityWorkspace.json')}</summary><pre>{JSON.stringify(payload, null, 2)}</pre></details>

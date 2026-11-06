@@ -80,6 +80,7 @@
   ],
   "activity": {
     "id": "4",
+    "theoryId": "algebraic-identities",
     "code": "4.",
     "title": "Αντιστοίχιση ταυτοτήτων",
     "objective": "Αντιστοίχισε κάθε ταυτότητα με τη σωστή ανάπτυξή της.",

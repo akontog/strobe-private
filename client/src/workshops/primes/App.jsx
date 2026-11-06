@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import FullScreenButton from '../../shared/components/primitives/FullScreenButton';
+import TheoryButton from '../../shared/components/primitives/TheoryButton';
+import { getTheoryPath } from '../../shared/components/primitives/workshopTheory';
+import theoryReferences from './data/theory-references.json';
 import NumberGrid from './components/NumberGrid';
 import SelectionSummaryAccordion from './components/SelectionSummaryAccordion';
 import TeacherPanel from './components/TeacherPanel';
@@ -325,6 +328,7 @@ const App = ({ role = 'teacher' }) => {
 
       <section className="common-zone lab-zone primes-board-zone">
           <FullScreenButton />
+        <TheoryButton theory={getTheoryPath(theoryReferences.sieve.theoryId)} />
           <div className="primes-board-header">
             <div>
               <p>{t('board')}</p>

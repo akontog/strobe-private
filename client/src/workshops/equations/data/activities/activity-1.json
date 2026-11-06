@@ -32,6 +32,7 @@
   ],
   "activity": {
     "id": "1",
+    "theoryId": "equation-classification-linear",
     "code": "1.",
     "title": "Χαρακτηρισμός εξίσωσης αx+β=0",
     "objective": "Ταξινόμησε κάθε εξίσωση.",

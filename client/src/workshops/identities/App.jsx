@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import '../../shared/i18n';
 import FullScreenButton from '../../shared/components/primitives/FullScreenButton';
+import TheoryButton from '../../shared/components/primitives/TheoryButton';
+import { getTheoryPath } from '../../shared/components/primitives/workshopTheory';
 import {
   Accordion,
   ActivitiesAccordion,
@@ -390,6 +392,7 @@ export default function App({ role = 'student' }) {
 
       <section className="common-zone lab-zone">
         <FullScreenButton />
+        <TheoryButton theory={getTheoryPath(activeActivity.theoryId)} />
        
 
         <SharedCommonZoneLayout

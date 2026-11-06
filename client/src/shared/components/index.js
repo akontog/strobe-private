@@ -36,6 +36,7 @@ export { default as GeoGebra } from './resources/GeoGebra';
 export { default as CollaborativeGeoGebra } from './resources/GeoGebra';
 export { default as VisionCollaborationBoard } from './resources/VisionCollaborationBoard';
 export { default as FullScreenButton } from './primitives/FullScreenButton';
+export { default as TheoryButton } from './primitives/TheoryButton';
 export { default as ConnectionNameControl } from './menu/ConnectionNameControl';
 export { default as LanguageSwitcher } from './menu/LanguageSwitcher';
 export { default as StudentIdentityControl } from './menu/StudentIdentityControl';

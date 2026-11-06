@@ -2,12 +2,13 @@ import React, { useEffect, useMemo, useState } from 'react';
 import '../../shared/i18n';
 import './App.css';
 import {
-  ActivitiesAccordion, FullScreenButton, HeroTitle, readIdentityName, SharedCommonZoneLayout,
+  ActivitiesAccordion, FullScreenButton, TheoryButton, HeroTitle, readIdentityName, SharedCommonZoneLayout,
   GroupsAccordion, useSessionInputLogger, VennBoard
 } from '../../shared/components';
 import storedActivityData from './data/activities.json';
 const standaloneActivityDocuments = Object.values(import.meta.glob('./data/activities/*.json', { eager: true, import: 'default' }));
 import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
+import { getTheoryPath } from '../../shared/components/primitives/workshopTheory';
 
 const activityData = resolveWorkshopDocument(storedActivityData, standaloneActivityDocuments);
 
@@ -101,6 +102,7 @@ export default function App({ role = 'student' }) {
       />
       <section className="common-zone lab-zone">
         <FullScreenButton />
+        <TheoryButton theory={getTheoryPath(activity.theoryId)} />
         <SharedCommonZoneLayout isGroupingMode centerPanel={(
           <div className="lab-card lab-card--panel probabilities-workspace" aria-label={activity.objective}>
             <VennBoard

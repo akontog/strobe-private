@@ -96,6 +96,7 @@
   ],
   "activity": {
     "id": "7",
+    "theoryId": "linear-systems",
     "code": "7.",
     "title": "Αλγεβρική επίλυση με αντικατάσταση (Algebra Tiles)",
     "objective": "Βρείτε τις τιμές των x και y.",

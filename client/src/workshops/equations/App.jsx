@@ -6,6 +6,7 @@ import {
   PlacementBoard,
   DataAccordion,
   FullScreenButton,
+  TheoryButton,
   HeroTitle,
   SharedCommonZoneLayout,
   GroupsAccordion,
@@ -16,6 +17,7 @@ import {
 import storedActivityData from './data/activities.json';
 const standaloneActivityDocuments = Object.values(import.meta.glob('./data/activities/*.json', { eager: true, import: 'default' }));
 import { resolveWorkshopDocument } from '../../shared/components/activities/activityDocument';
+import { getTheoryPath } from '../../shared/components/primitives/workshopTheory';
 import { getAlgebraTileRegionScore } from '../../shared/components/resources/algebraTileScoring';
 import './App.css';
 
@@ -237,6 +239,7 @@ export default function App({ role = 'student' }) {
 
       <section className="common-zone lab-zone">
         <FullScreenButton />
+        <TheoryButton theory={getTheoryPath(activePlacementActivity?.theoryId || activeTileActivity.theoryId || selectedActivity?.theoryId)} />
         <SharedCommonZoneLayout
           className={`poly-neural-zone equations-common-zone${equationWidget ? ' has-equation-widget' : ''}`}
           leftPanel={equationWidget ? <WidgetRenderer widgets={[{

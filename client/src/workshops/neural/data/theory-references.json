@@ -1,0 +1,8 @@
+{
+  "activities": {
+    "1": { "theoryId": "neural-input-output" },
+    "2": { "theoryId": "neural-weighted-products" },
+    "3": { "theoryId": "neural-weights-threshold" },
+    "4": { "theoryId": "neural-linear-classification" }
+  }
+}

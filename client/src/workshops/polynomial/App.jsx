@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import {
   FullScreenButton,
+  TheoryButton,
   DataAccordion,
   ActivitiesAccordion,
   CollaborativeGeoGebra,
@@ -21,6 +22,7 @@ import {
   writeIdentityColor,
   writeIdentityName
 } from '../../shared/components';
+import { getTheoryPath } from '../../shared/components/primitives/workshopTheory';
 import { useSessionInputLogger } from '../../shared/components/activities/SessionLogContext';
 import { getAlgebraTileRegionScore } from '../../shared/components/resources/algebraTileScoring';
 import { SCORE_CORRECT, SCORE_INCORRECT, computeStudentScore, getAnswerFieldDefinitions } from './grading';
@@ -975,6 +977,7 @@ export default function App({ role = 'teacher' }) {
 
       <section className="common-zone lab-zone">
         <FullScreenButton />
+        <TheoryButton theory={getTheoryPath(activeActivity?.theoryId)} />
         <SharedCommonZoneLayout
           className={isGeogebraAreaActivity ? 'poly-neural-zone--geogebra' : ''}
           isGroupingMode={isGroupingActivity}

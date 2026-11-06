@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import FullScreenButton from '../../shared/components/primitives/FullScreenButton';
+import TheoryButton from '../../shared/components/primitives/TheoryButton';
+import { getTheoryPath } from '../../shared/components/primitives/workshopTheory';
+import theoryReferences from './data/theory-references.json';
 import { DatasetSelector } from './components/DatasetSelector';
 import { VerticalProducts } from './components/VerticalProducts';
 import { ExamplesClassifier } from './components/ExamplesClassifier';
@@ -787,6 +790,7 @@ const [studentColor, setStudentColor] = useState(() => {
       )}
 
         <FullScreenButton />
+        <TheoryButton theory={getTheoryPath(theoryReferences.activities[activeActivity]?.theoryId)} />
         <VerticalProducts
           activity={`neural-lab:${activeActivity}`}
           icon={displayIcon}

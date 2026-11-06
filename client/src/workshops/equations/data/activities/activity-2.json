@@ -135,6 +135,7 @@
   ],
   "activity": {
     "id": "2",
+    "theoryId": "linear-equations-solving",
     "code": "2.",
     "title": "Επίλυση απλών εξισώσεων",
     "objective": "Απομόνωσε το x.",
