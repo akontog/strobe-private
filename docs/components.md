@@ -1,10 +1,10 @@
 # Γενική Περιγραφή
 
-Υλοποιούνται στο φάκελο \src\shared\components.
+Υλοποιούνται στο φάκελο client\src\shared\components.
 
 Κανόνας περιεχομένου:
-- ο κώδικας υλοποιεί μόνο rendering και interaction behavior των resources
-- δραστηριότητες, οδηγίες και μαθησιακά δεδομένα αποθηκεύονται σε JSON αρχεία (όχι σε JS/JSX constants)
+- ο κώδικας υλοποιεί μόνο rendering και interaction behavior των resources.
+- δραστηριότητες, οδηγίες και μαθησιακά δεδομένα αποθηκεύονται σε JSON αρχεία.
 - activity / sequence / workshop είναι επίπεδα οργάνωσης πάνω από τα resources
 
 Resources, Widgets και Primitives είναι τα τρία επίπεδα δομικών στοιχείων της εφαρμογής, από το πιο σύνθετο στο πιο απλό.
@@ -16,11 +16,15 @@ Resources, Widgets και Primitives είναι τα τρία επίπεδα δ�
 
 
 Workshop, Activities και Sequences είναι τα τρία επίπεδα οργάνωσης πάνω από τα resources, ανάλογα με το πόσο ελεύθερος είναι ο χρήστης να κινηθεί. 
-- activity: ένα μεμονωμένο resource — ο μαθητής ή ο δάσκαλος ασχολείται με ένα θέμα και τελειώνει εκεί, χωρίς περαιτέρω πλοήγηση. 
-- sequence είναι μια προκαθορισμένη σειρά από activities που ο χρήστης διατρέχει γραμμικά, απλώς πατώντας «Επόμενο» και «Προηγούμενο», χωρίς να διαλέγει ο ίδιος πού θα πάει. 
-- workshop: συνδυάζει πολλά resources κάτω από ένα πλούσιο μενού ή σύστημα πλοήγησης, ώστε ο δάσκαλος να μπορεί να περιηγηθεί ελεύθερα ανάμεσά τους, να επιλέξει τι θα δείξει και με ποια σειρά, και να προσαρμόσει τη ροή στην τάξη του. Με λίγα λόγια: το activity είναι ένα βήμα, η sequence είναι μια γραμμική πορεία βημάτων, και το workshop είναι ένας χώρος με πολλές διαδρομές που ο δάσκαλος χαράσσει ο ίδιος.
+
+- activity: ένα μεμονωμένο resource — ο μαθητής ή ο δάσκαλος ασχολείται με ένα θέμα και τελειώνει εκεί, χωρίς περαιτέρω πλοήγηση. Ο author συνδυάζει ένα resource με widgets δημιουργώντας ένα json αρχείο.
+- sequence είναι μια προκαθορισμένη σειρά από activities που ο εκπαιδευτικός διατρέχει γραμμικά, απλώς πατώντας «Επόμενο» και «Προηγούμενο», χωρίς να διαλέγει ο ίδιος πού θα πάει. 
+- workshop: συνδυάζει πολλά resources κάτω από ένα πλούσιο μενού ή σύστημα πλοήγησης, ώστε ο δάσκαλος να μπορεί να περιηγηθεί ελεύθερα ανάμεσά τους, να επιλέξει τι θα δείξει και με ποια σειρά, και να προσαρμόσει τη ροή στην τάξη του. 
+
+Με λίγα λόγια: το activity είναι ένα βήμα, η sequence είναι μια γραμμική πορεία βημάτων, και το workshop είναι ένας χώρος με πολλές διαδρομές που ο δάσκαλος χαράσσει ο ίδιος.
 
 # Πόροι (Resources)
+
 - Υλοποίηση: \resources
 
 ## Πλέγμα Εισόδων (Entry Grid)
@@ -241,10 +245,10 @@ Workshop, Activities και Sequences είναι τα τρία επίπεδα ο
 Να χρησιμοποιείται κυρίως για **διερεύνηση και οπτική κατανόηση**.
 
 ### Links
+
 - [GeoGebra Apps Embedding](https://geogebra.github.io/docs/reference/en/GeoGebra_Apps_Embedding/)
 - [Embedding Math Apps in your website](https://github.com/geogebra/math-apps-examples)
 - [GeoGebra Apps API](https://geogebra.github.io/docs/reference/en/GeoGebra_Apps_API/)
-- 
 
 ## Embodied / Camera
 
@@ -276,7 +280,9 @@ Workshop, Activities και Sequences είναι τα τρία επίπεδα ο
 
 # Widgets
 
-- Υλοποίηση: shared\components\widgets
+- Υλοποίηση: widgets
+
+εμφάνιση αριστερά ή δεξιά από το resource. Η προεπισκόπηση (Math Preview) στο κάτω μέρος.
 
 ## Εξίσωση (Equation)
 
@@ -285,6 +291,8 @@ Workshop, Activities και Sequences είναι τα τρία επίπεδα ο
 ## Εικονίδιο (Icon)
 
 - Υλοποίηση: IconWidget
+
+Ένα απλό unicode εικονίδιο
 
 ## Γράφημα (Plot)
 
@@ -298,11 +306,11 @@ Workshop, Activities και Sequences είναι τα τρία επίπεδα ο
 
 # Primitives
 
-- Υλοποίηση: shared\components\primitives
+- Υλοποίηση: \primitives
 
 # Services
 
-- Υλοποίηση: shared\components\services
+- Υλοποίηση: \services
 
 
 ## ActivitiesAccordion
@@ -324,3 +332,36 @@ Chat μεταξύ teacher και groups
 ## GroupsAccordion
 
 Συνδεδεμένοι μαθητές, ανάλογα με το resource και τις ιδιότητές του άλλη εικόνα στηλών
+
+
+# Activities Sequences Workshops
+
+## Workshops
+
+### Δομή
+
+```text
+client/src/workshops/<όνομα>/
+  App.jsx
+  App.css
+  StudentView.jsx
+  TeacherView.jsx
+  student.html
+  teacher.html
+  student.jsx
+  teacher.jsx
+```
+
+### Buffon Needle
+
+Προσομοίωση της βελόνας του Buffon.
+
+### Neural Lab
+
+Διδακτική εφαρμογή για νευρωνικά δίκτυα (εξίσωση w₁·i₁ + w₂·i₂ = o).  
+
+- [readme](/docs/reports/neural-lab/README.md)
+
+### Primes Lab
+
+- [readme](/docs/reports/primes-lab/README.md)

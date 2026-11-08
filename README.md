@@ -1,40 +1,44 @@
 # Strobe
 
-Unified classroom platform with:
-- Node.js server (API, dashboards, WebSocket)
-- Vite/React client
-- Workshops source folders under client/src/workshops/*
 
-## 
-# Structure
 
-## Server
+## Table of Contents
+
+- [Tech Stack](#tech-stack)
+- [Structure](#structure)
+
+## Tech Stack
+
+- **frontend**: html, css, js ή ts, react
+
+## Structure
+
+- [Client](#client)
+- [Application Server](#application-server)
+- [Vision Server](#vision-server)
+
+### Client
+
+Υλοποίηση frontend. 
+
+- [README](/client/README.md)
+
+### Application Server
+- Node.js server
 - server/ server runtime and routes
 - server/apps/registry.js app registry used by teacher/student launchers
 - server/utils/
   - COMM_EVENT_CATALOG: catalog with all events
 
-## Client
+### Vision Server 
 
-- client/src/styles/classroom-shared.css shared workshop layout styles\n- client/src/shared/services/classroom-api.js shared classroom client API
-- client/src/shared/* shared React components/hooks/i18n
-  - components
-    - resources
-    - services
-    - widgets
-- client/src/layout/* layout area (when present in client code)
+- [README](/vision/README.md)
+  
 
-
-## vision/
-	- camera_server.py
-	- camera_tracking.py
-	- models/yolov8n.pt
-	- [README-vision](./README-vision.md)
 
 ## Requirements
 - Node.js 18+
 - npm
-- Python 3.11+ (camera features)
 
 ## Install
 ```powershell
@@ -90,15 +94,3 @@ npm run build:linear
 - /labs/neural-lab/student.html
 - /labs/primes-lab/teacher.html
 - /labs/primes-lab/student.html
-
-# Εφαρμογές
-
-## Buffon Needle
-
-## Neural Lab
-
-- [readme](/!!!docs/reports/neural-lab/README-neural-lab)
-
-## Primes Lab
-
-- [readme](/!!!docs/reports/primes-lab/README-primes-lab)

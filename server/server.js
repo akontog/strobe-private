@@ -26,7 +26,6 @@ const { requireRole } = require('./middleware/checkRole');
 const {
     HOST,
     PORT,
-    publicDir,
     clientDistDir,
     REALTIME_WS_PATH
 } = require('./config/serverConfig');
@@ -240,8 +239,8 @@ app.get('/api/vision/activities', (req, res) => {
 });
 
 registerStaticFiles(app, {
-    publicDir,
-    clientDistDir
+    clientDistDir,
+    clientPublicDir: path.join(__dirname, '..', 'client', 'public')
 });
 
 app.use('/teacher', teacherRouter);

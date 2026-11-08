@@ -12,17 +12,7 @@ Each lab lives under:
 
 Recommended structure:
 
-```text
-client/src/workshops/polynomial/
-  App.jsx
-  App.css
-  StudentView.jsx
-  TeacherView.jsx
-  student.html
-  teacher.html
-  student.jsx
-  teacher.jsx
-```
+
 
 The important rule is that the lab slug must match the folder name and the server registry entry.
 

@@ -4,6 +4,14 @@
 
 ## Δομή του client
 
+- client/src/styles/classroom-shared.css shared workshop layout styles\n- client/src/shared/services/classroom-api.js shared classroom client API
+- client/src/shared/* shared React components/hooks/i18n
+  - components
+    - resources
+    - services
+    - widgets
+- client/src/layout/* layout area (when present in client code)
+- 
 ```text
 client/src/
 ├── App.jsx                     # routes και κεντρικό navigation

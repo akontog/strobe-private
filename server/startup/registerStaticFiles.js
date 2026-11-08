@@ -2,27 +2,22 @@ const path = require('node:path');
 const express = require('express');
 
 function registerStaticFiles(app, {
-    publicDir,
-    clientDistDir
+    clientDistDir,
+    clientPublicDir
 }) {
     app.use(
         '/css',
-        express.static(path.join(publicDir, 'css'))
+        express.static(path.join(__dirname, '..', '..', 'client', 'src', 'styles'))
     );
 
     app.use(
         '/icons',
-        express.static(path.join(publicDir, 'icons'))
+        express.static(clientPublicDir)
     );
 
     app.use(
         '/js',
-        express.static(path.join(publicDir, 'js'))
-    );
-
-    app.use(
-        '/public',
-        express.static(publicDir)
+        express.static(path.join(clientPublicDir, 'js'))
     );
 
     app.use(

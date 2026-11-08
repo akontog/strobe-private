@@ -120,3 +120,15 @@ npm start
 
 4. **Activity file parse issues**
    - Ο loader του server κάνει best-effort σε αρχεία με git conflict markers (κρατά το HEAD block).
+
+# Python dependencies for the vision camera worker and pose tracking.
+# Use Python 3.10–3.12 for the current MediaPipe and Ultralytics packages.
+numpy>=1.26,<3
+opencv-contrib-python>=4.8,<5
+deep-sort-realtime>=1.3,<2
+ultralytics>=8.3,<9
+mediapipe>=0.10.21,<0.11
+Pillow>=11,<13
+fastapi>=0.115,<1
+uvicorn[standard]>=0.34,<1
+websocket-client>=1.8,<2

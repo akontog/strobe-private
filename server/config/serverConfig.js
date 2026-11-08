@@ -15,12 +15,6 @@ const PORT =
         : 3000;
 
 // Διαδρομές για static αρχεία
-const publicDir = path.join(
-    __dirname,
-    '..',
-    '..',
-    'public'
-);
 const clientDistDir = path.join(
     __dirname,
     '..',
@@ -34,7 +28,6 @@ const REALTIME_WS_PATH = '/ws/realtime';
 module.exports = {
     HOST,
     PORT,
-    publicDir,
     clientDistDir,
     REALTIME_WS_PATH
 };
