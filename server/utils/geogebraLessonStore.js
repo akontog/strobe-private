@@ -28,7 +28,7 @@ function normalizeLesson(raw) {
 function createGeogebraLessonStore({ filePath } = {}) {
   const resolvedPath = filePath
     ? path.resolve(filePath)
-    : path.resolve(__dirname, '..', 'data', 'geogebraLessons.json');
+    : path.resolve(__dirname, '..', 'data', 'activities', 'geogebra', 'polynomial-area.json');
 
   let lessonsByRoom = new Map();
 

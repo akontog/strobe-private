@@ -111,6 +111,7 @@ router.post('/sessions', (req, res) => {
   const session = createSession({
     app: app ? app.slug : appSlug,
     activity: String(req.body && req.body.activity || '').trim().slice(0, 120),
+    activityId: String(req.body && req.body.activityId || appSlug).trim().slice(0, 160),
     teacherId: req.session.teacherAccount
   });
   return res.status(201).json(session);
@@ -199,7 +200,7 @@ router.post('/sessions/:sessionId/end', (req, res) => {
 });
 
 router.post('/sessions/:sessionId/activity', (req, res) => {
-  const session = updateSessionActivity(req.params.sessionId, req.body?.activity);
+  const session = updateSessionActivity(req.params.sessionId, req.body?.activity, req.body?.activityId);
   if (!session) return res.status(404).json({ error: 'Active session not found.' });
   return res.json(session);
 });

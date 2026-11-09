@@ -11,6 +11,7 @@ export function SessionLogProvider({
 }) {
   const [activeSessionId, setActiveSessionId] = useState(suppliedSessionId);
   const [activeActivity, setActiveActivity] = useState('');
+  const [activeActivityId, setActiveActivityId] = useState('');
   const [chatEnabled, setChatEnabled] = useState(false);
   const [scoreVisible, setScoreVisible] = useState(true);
   const [feedbackEnabled, setFeedbackEnabled] = useState(false);
@@ -64,6 +65,7 @@ export function SessionLogProvider({
         if (!cancelled) {
           setActiveSessionId(payload?.sessionId || null);
           setActiveActivity(String(payload?.activity || ''));
+          setActiveActivityId(String(payload?.activityId || app));
           setChatEnabled(Boolean(payload?.chatEnabled));
           setScoreVisible(payload?.scoreVisible !== false);
           setFeedbackEnabled(Boolean(payload?.feedbackEnabled));
@@ -139,18 +141,20 @@ export function SessionLogProvider({
     }
     setActiveSessionId(null);
     setActiveActivity('');
+    setActiveActivityId(app);
     window.dispatchEvent(new CustomEvent('strobe:session-ended', { detail: { sessionId } }));
   }, [activeSessionId, app, role]);
 
-  const updateActivity = useCallback(async (activity) => {
+  const updateActivity = useCallback(async (activity, activityId) => {
     if (role !== 'teacher' || !activeSessionId || !activity) return;
+    setActiveActivityId(String(activityId || app));
     const response = await fetch(`/teacher/sessions/${encodeURIComponent(activeSessionId)}/activity`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ activity })
+      body: JSON.stringify({ activity, activityId })
     });
     if (!response.ok) throw new Error('Could not update the session activity.');
-  }, [activeSessionId, role]);
+  }, [activeSessionId, app, role]);
 
   const canEdit = role === 'teacher' || Boolean(activeSessionId);
 
@@ -160,7 +164,7 @@ export function SessionLogProvider({
     setChatEnabled(Boolean(enabled));
     try {
       const response = await fetch(`/api/session-logs/active/${encodeURIComponent(app)}/chat/settings`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ enabled })
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ enabled, activityId: activeActivityId || app })
       });
       if (!response.ok) throw new Error('Could not update chat setting.');
       const payload = await response.json();
@@ -169,7 +173,7 @@ export function SessionLogProvider({
       setChatEnabled(previous);
       throw error;
     }
-  }, [app, chatEnabled, role]);
+  }, [activeActivityId, app, chatEnabled, role]);
 
   const updateScoreVisible = useCallback(async (visible) => {
     if (!app || role !== 'teacher') return;
@@ -177,7 +181,7 @@ export function SessionLogProvider({
     setScoreVisible(Boolean(visible));
     try {
       const response = await fetch(`/api/session-logs/active/${encodeURIComponent(app)}/score/settings`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ visible })
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ visible, activityId: activeActivityId || app })
       });
       if (!response.ok) throw new Error('Could not update score visibility.');
       const payload = await response.json();
@@ -186,7 +190,7 @@ export function SessionLogProvider({
       setScoreVisible(previous);
       throw error;
     }
-  }, [app, role, scoreVisible]);
+  }, [activeActivityId, app, role, scoreVisible]);
 
   const updateFeedbackEnabled = useCallback(async (enabled) => {
     if (!app || role !== 'teacher') return;
@@ -194,7 +198,7 @@ export function SessionLogProvider({
     setFeedbackEnabled(Boolean(enabled));
     try {
       const response = await fetch(`/api/session-logs/active/${encodeURIComponent(app)}/feedback/settings`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ enabled })
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ enabled, activityId: activeActivityId || app })
       });
       if (!response.ok) throw new Error('Could not update feedback setting.');
       const payload = await response.json();
@@ -203,7 +207,7 @@ export function SessionLogProvider({
       setFeedbackEnabled(previous);
       throw error;
     }
-  }, [app, feedbackEnabled, role]);
+  }, [activeActivityId, app, feedbackEnabled, role]);
 
   return (
     <SessionLogContext.Provider value={{ logEvent, canEdit, app, role, activeSessionId, activeActivity, chatEnabled, scoreVisible, feedbackEnabled, endSession, updateActivity, updateChatEnabled, updateScoreVisible, updateFeedbackEnabled }}>

@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const SESSIONS_DIR = path.join(__dirname, '..', 'data', 'sessions');
-const SETTINGS_FILE = path.join(__dirname, '..', 'data', 'session-settings.json');
+const ACTIVITY_SETTINGS_DIR = path.join(__dirname, '..', 'data', 'activities', '.settings');
 const activeSessions = new Map();
 const recentlyEndedSessions = new Map();
 const activeStudentSnapshots = new Map();
@@ -50,46 +50,60 @@ function readAppendedEvents(filename, cache) {
   }
 }
 
-function readAppSettings() {
+function getActivitySettingsPath(app, activityId) {
+  const safeApp = String(app || '').replace(/[^a-z0-9_-]/gi, '_');
+  const safeActivityId = String(activityId || '').replace(/[^a-z0-9._-]/gi, '_');
+  if (!safeApp || !safeActivityId) return null;
+  return path.join(ACTIVITY_SETTINGS_DIR, safeApp, `${safeActivityId}.json`);
+}
+
+function readActivitySettings(app, activityId) {
+  const settingsPath = getActivitySettingsPath(app, activityId);
+  if (!settingsPath) return {};
   try {
-    return JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8'));
+    return JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
   } catch {
     return {};
   }
 }
 
-function getAppSettings(app) {
-  const saved = readAppSettings()[app] || {};
+function getActivitySettings(app, activityId) {
+  const saved = readActivitySettings(app, activityId);
   return { chatEnabled: Boolean(saved.chatEnabled), scoreVisible: saved.scoreVisible !== false, feedbackEnabled: Boolean(saved.feedbackEnabled) };
 }
 
-function setAppSetting(app, key, value) {
+function setAppSetting(app, key, value, requestedActivityId) {
   const activeId = getActiveSessionForApp(app);
   const active = activeId ? getActiveSession(activeId) : null;
-  const settings = readAppSettings();
-  settings[app] = { ...getAppSettings(app), [key]: Boolean(value) };
-  fs.mkdirSync(path.dirname(SETTINGS_FILE), { recursive: true });
-  fs.writeFileSync(SETTINGS_FILE, `${JSON.stringify(settings, null, 2)}\n`);
+  const activityId = String(requestedActivityId || active?.metadata.activityId || app);
+  const settingsPath = getActivitySettingsPath(app, activityId);
+  const settings = { ...getActivitySettings(app, activityId), [key]: Boolean(value) };
+  if (settingsPath) {
+    fs.mkdirSync(path.dirname(settingsPath), { recursive: true });
+    fs.writeFileSync(settingsPath, `${JSON.stringify(settings, null, 2)}\n`);
+  }
   if (active) {
     active.metadata[key] = Boolean(value);
+    active.metadata.activityId = activityId;
     fs.writeFileSync(path.join(active.directory, 'session.json'), `${JSON.stringify(active.metadata, null, 2)}\n`);
     return active.metadata[key];
   }
-  return settings[app][key];
+  return settings[key];
 }
 
 function timestampParts(date) {
   return [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0'), String(date.getHours()).padStart(2, '0'), String(date.getMinutes()).padStart(2, '0'), String(date.getSeconds()).padStart(2, '0')];
 }
 
-function createSession({ app, activity, teacherId }) {
+function createSession({ app, activity, activityId, teacherId }) {
   const started = new Date();
   const baseName = `session-${timestampParts(started).join('-')}`;
   let folderName = baseName;
   while (fs.existsSync(path.join(SESSIONS_DIR, folderName))) folderName = `${baseName}-${++sequence}`;
   const directory = path.join(SESSIONS_DIR, folderName);
   fs.mkdirSync(directory, { recursive: true });
-  const appSettings = getAppSettings(app);
+  const resolvedActivityId = String(activityId || app);
+  const appSettings = getActivitySettings(app, resolvedActivityId);
   const metadata = {
     sessionId: folderName,
     app,
@@ -99,6 +113,7 @@ function createSession({ app, activity, teacherId }) {
     students: [],
     studentScores: [],
     activity: activity || app,
+    activityId: resolvedActivityId,
     chatEnabled: appSettings.chatEnabled,
     scoreVisible: appSettings.scoreVisible,
     feedbackEnabled: appSettings.feedbackEnabled
@@ -114,12 +129,15 @@ function getActiveSession(sessionId) {
   return activeSessions.get(sessionId);
 }
 
-function updateSessionActivity(sessionId, activity) {
+function updateSessionActivity(sessionId, activity, activityId) {
   const session = getActiveSession(sessionId);
   if (!session) return null;
   const name = String(activity || '').trim().slice(0, 160);
   if (!name) return session.metadata;
   session.metadata.activity = name;
+  const resolvedActivityId = String(activityId || name).trim().slice(0, 160);
+  session.metadata.activityId = resolvedActivityId;
+  Object.assign(session.metadata, getActivitySettings(session.metadata.app, resolvedActivityId));
   fs.writeFileSync(path.join(session.directory, 'session.json'), `${JSON.stringify(session.metadata, null, 2)}\n`);
   return session.metadata;
 }
@@ -241,4 +259,4 @@ function endSession(sessionId) {
   return session.metadata;
 }
 
-module.exports = { createSession, appendRecord, endSession, getActiveSession, getActiveSessionForApp, getAppSettings, setAppSetting, getChatMessages, getActiveSessionStudents, updateSessionActivity, updateSessionStudentScore };
+module.exports = { createSession, appendRecord, endSession, getActiveSession, getActiveSessionForApp, getActivitySettings, setAppSetting, getChatMessages, getActiveSessionStudents, updateSessionActivity, updateSessionStudentScore };

@@ -1,0 +1,1 @@
+import{j as r}from"./index-ZGqHSusp.js";import{A as t}from"./App-BbyCEazN.js";import"./DataAccordion-COjdPGBp.js";import"./ActivitiesAccordion-C2bayz0N.js";import"./algebraTileScoring-DHSbPGSh.js";function a(){return r.jsx(t,{role:"teacher"})}export{a as TeacherView,a as default};

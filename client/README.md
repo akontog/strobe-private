@@ -1,6 +1,5 @@
-# React client και shared components
+# React client
 
-Ο οδηγός περιγράφει την τρέχουσα δομή του React client και τον τρόπο χρήσης των components στο `client/src/shared/components`. Τα shared components εισάγονται κατά προτίμηση από το δημόσιο barrel `client/src/shared/components/index.js`.
 
 ## Δομή του client
 
@@ -27,6 +26,21 @@ client/src/
 ├── tools/<tool>/               # κώδικας κάθε εργαλείου
 └── lib/                        # χαμηλού επιπέδου helpers, π.χ. socket και API
 ```
+
+#### Main URLs (server)
+- / home
+- /teacher teacher dashboard
+- /student student launcher (/client alias)
+- /tools tools hub
+- /health health check
+
+#### Lab URLs
+- /labs/buffon-needle/teacher.html
+- /labs/buffon-needle/student.html
+- /labs/neural-lab/teacher.html
+- /labs/neural-lab/student.html
+- /labs/primes-lab/teacher.html
+- /labs/primes-lab/student.html
 
 Τα components που χρησιμοποιούνται από περισσότερα εργαστήρια τοποθετούνται στο `shared/components` και εξάγονται από το `index.js`. Components και δεδομένα που ανήκουν μόνο σε ένα εργαστήριο μένουν στον φάκελο του εργαστηρίου. Τα κοινά layouts βρίσκονται στο `shared/components/layouts`· δεν χρησιμοποιείται πλέον ξεχωριστός φάκελος `client/src/layout`.
 

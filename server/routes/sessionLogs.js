@@ -1,6 +1,6 @@
 const express = require('express');
 const { getAppBySlug } = require('../apps/registry');
-const { appendRecord, getActiveSessionForApp, getActiveSession, getAppSettings, setAppSetting, getChatMessages, getActiveSessionStudents } = require('../services/sessionLogs');
+const { appendRecord, getActiveSessionForApp, getActiveSession, getActivitySettings, setAppSetting, getChatMessages, getActiveSessionStudents } = require('../services/sessionLogs');
 const { requireRole } = require('../middleware/checkRole');
 
 const router = express.Router();
@@ -10,8 +10,8 @@ router.get('/api/session-logs/active/:app', (req, res) => {
   if (!isSessionApp(req.params.app)) return res.status(404).json({ error: 'Unknown app.' });
   const sessionId = getActiveSessionForApp(req.params.app);
   const session = sessionId ? getActiveSession(sessionId) : null;
-  const settings = session?.metadata || getAppSettings(req.params.app);
-  return res.json({ sessionId, activity: session?.metadata.activity || '', chatEnabled: Boolean(settings.chatEnabled), scoreVisible: settings.scoreVisible !== false, feedbackEnabled: Boolean(settings.feedbackEnabled) });
+  const settings = session?.metadata || getActivitySettings(req.params.app, req.params.app);
+  return res.json({ sessionId, activity: session?.metadata.activity || '', activityId: session?.metadata.activityId || req.params.app, chatEnabled: Boolean(settings.chatEnabled), scoreVisible: settings.scoreVisible !== false, feedbackEnabled: Boolean(settings.feedbackEnabled) });
 });
 
 router.get('/api/session-logs/active/:app/chat', (req, res) => {
@@ -28,17 +28,17 @@ router.get('/api/session-logs/active/:app/students', requireRole(['teacher']), (
 
 router.post('/api/session-logs/active/:app/chat/settings', requireRole(['teacher']), (req, res) => {
   if (!isSessionApp(req.params.app)) return res.status(404).json({ error: 'Unknown app.' });
-  return res.json({ enabled: setAppSetting(req.params.app, 'chatEnabled', req.body?.enabled) });
+  return res.json({ enabled: setAppSetting(req.params.app, 'chatEnabled', req.body?.enabled, req.body?.activityId) });
 });
 
 router.post('/api/session-logs/active/:app/score/settings', requireRole(['teacher']), (req, res) => {
   if (!isSessionApp(req.params.app)) return res.status(404).json({ error: 'Unknown app.' });
-  return res.json({ visible: setAppSetting(req.params.app, 'scoreVisible', req.body?.visible) });
+  return res.json({ visible: setAppSetting(req.params.app, 'scoreVisible', req.body?.visible, req.body?.activityId) });
 });
 
 router.post('/api/session-logs/active/:app/feedback/settings', requireRole(['teacher']), (req, res) => {
   if (!isSessionApp(req.params.app)) return res.status(404).json({ error: 'Unknown app.' });
-  return res.json({ enabled: setAppSetting(req.params.app, 'feedbackEnabled', req.body?.enabled) });
+  return res.json({ enabled: setAppSetting(req.params.app, 'feedbackEnabled', req.body?.enabled, req.body?.activityId) });
 });
 
 router.post('/api/session-logs/active/:app/chat', (req, res) => {

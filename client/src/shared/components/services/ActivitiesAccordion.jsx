@@ -30,7 +30,7 @@ export const ActivitiesAccordion = ({
 
   useEffect(() => {
     if (session?.role !== 'teacher' || !session.activeSessionId || !selectedActivityName) return;
-    session.updateActivity(selectedActivityName).catch((error) => {
+    session.updateActivity(selectedActivityName, value).catch((error) => {
       console.error('Unable to update session activity:', error);
     });
   }, [selectedActivityName, session?.activeSessionId, session?.role, session?.updateActivity]);

@@ -1,13 +1,11 @@
 # README-vision
 
-Ο παρών οδηγός περιγράφει το νέο workflow **Συνεργατικής ιχνηλάτησης vision** που ενσωματώθηκε στο `strobe-private`.
-
 ## Τι υλοποιήθηκε
 
 1. **React page στο menu “Συνεργασία”**
    - Route: `/tools/vision-collab`
    - Εμφανίζει live camera stream στον browser.
-   - Στέλνει καρέ σε FastAPI backend και λαμβάνει πίσω tracking σημεία/κουτιά.
+   - Στέλνει καρέ σε  και λαμβάνει πίσω tracking σημεία/κουτιά.
 
 2. **Shared resource component**
    - Αρχείο: `client/src/shared/components/resources/VisionCollaborationBoard.jsx`
@@ -45,7 +43,7 @@
 
 ---
 
-## Αρχεία που προστέθηκαν
+## Αρχεία 
 
 - `vision/fastapi_vision_server.py`
 - `client/src/tools/vision-collab/VisionCollabTool.jsx`
