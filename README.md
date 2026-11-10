@@ -33,7 +33,7 @@
   - [Install Deploy](#install-deploy)
     - [Install](#install)
     - [Client (Vite dev)](#client-vite-dev)
-    - [2) Server](#2-server)
+    - [Server](#server)
 
 ### Client
 
@@ -59,6 +59,7 @@ The `docs` folder contains:
 - [Explanation of structural elements/components](/docs/components.md)
 - [Guide for adding new features](/docs/deployment.md)
 - [Guide to the application's DOM trees](/docs/domtrees.md)
+- [Guide for saving sessions to json log files](/docs/sessions.md)
 - [Various useful links for technologies used, etc.](/docs/links.md)
 - [Application logo](/docs/strobe.svg)
 
@@ -107,7 +108,7 @@ npm run build:all
 The folder client/dist contains build output only.
 
 
-### 2) Server
+### Server
 ```powershell
 npm start
 ```

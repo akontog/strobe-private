@@ -1,132 +1,100 @@
-# README-vision
+# Vision Tracking
 
-## Τι υλοποιήθηκε
+Vision adds camera-based object detection and point tracking to the application. This folder contains the Python worker, the models, and the activity templates. The user interface and the collaborative connection are located in the `client` and `server` folders.
 
-1. **React page στο menu “Συνεργασία”**
-   - Route: `/tools/vision-collab`
-   - Εμφανίζει live camera stream στον browser.
-   - Στέλνει καρέ σε  και λαμβάνει πίσω tracking σημεία/κουτιά.
+## How it works
 
-2. **Shared resource component**
-   - Αρχείο: `client/src/shared/components/resources/VisionCollaborationBoard.jsx`
-   - Overlay:
-     - δραστηριότητες από `vision/temp/activities/*.json`
-     - σημεία/κουτιά tracking από Python.
+1. The teacher opens **Tools → Vision Tracking** at the path `/tools/vision` and allows camera access.
+2. The browser sends image frames via WebSocket to the Node server.
+3. The Node server forwards each frame to the Python worker `vision/camera_server.py` and sends the results to the connected users.
+4. Students see the shared points and can add their own points to the board.
 
-3. **FastAPI bridge server**
-   - Αρχείο: `vision/fastapi_vision_server.py`
-   - Endpoint WebSocket: `/ws/vision`
-   - Endpoint δραστηριοτήτων: `/vision/activities`
-   - Καλεί τον υπάρχοντα tracker του `vision/camera_server.py` (`process_request`).
+The worker starts automatically from the Node server when needed. There is no need to start the FastAPI separately for normal use of the tool.
 
-4. **Ενσωμάτωση στο υπάρχον app shell**
-   - Προστέθηκε στοιχείο στο menu `Συνεργασία`.
-   - Προστέθηκε route και tool entry στο `/api/tools`.
-   - Προστέθηκαν μεταφράσεις σε `en/el`.
-   - Προστέθηκε υποστήριξη classroom selection/session για `vision-collab`.
+## Getting Started
 
----
-
-## Αρχιτεκτονική δεδομένων (browser ↔ fastapi ↔ python)
-
-1. Browser ζητά camera με `navigator.mediaDevices.getUserMedia(...)` (WebRTC media capture API).
-2. Κάθε ~100ms:
-   - γίνεται capture frame σε hidden canvas,
-   - μετατροπή σε JPEG base64,
-   - αποστολή μέσω WebSocket στο FastAPI (`/ws/vision`).
-3. FastAPI:
-   - δίνει το frame στον tracker (`camera_server.process_request`),
-   - επιστρέφει JSON με `points`, `boxes`, `tracking`, `serverElapsedMs`.
-4. Browser:
-   - ζωγραφίζει activity template (polygon/line),
-   - ζωγραφίζει tracking points/boxes πάνω στο video.
-
----
-
-## Αρχεία 
-
-- `vision/fastapi_vision_server.py`
-- `client/src/tools/vision-collab/VisionCollabTool.jsx`
-- `client/src/shared/components/resources/VisionCollaborationBoard.jsx`
-- `client/src/shared/components/resources/VisionCollaborationBoard.css`
-
-## Αρχεία που ενημερώθηκαν (κύρια)
-
-- `client/src/App.jsx`
-- `client/src/pages/ToolsPage.jsx`
-- `client/src/shared/components/index.js`
-- `client/src/locales/en/navigation.json`
-- `client/src/locales/el/navigation.json`
-- `client/src/locales/en/interface.json`
-- `client/src/locales/el/interface.json`
-- `server/server.js`
-- `server/services/classroomSelection.js`
-- `server/routes/teacher.js`
-
----
-
-## Setup / Run
-
-### 1) Python περιβάλλον
-
-Από root του repo:
+From the repository root, create a Python environment and install the dependencies:
 
 ```powershell
-Set-Location "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private"
+py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-python -m pip install ultralytics
+python -m pip install -r vision\requirements.txt
 ```
 
-### 2) Εκκίνηση main app (Node)
+Then, in a separate terminal, start the application:
 
 ```powershell
-Set-Location "C:\Users\akont\OneDrive - aegean.gr\Έγγραφα\GitHub\strobe-private"
 npm start
 ```
+The server uses the repository's `.venv` automatically, when it exists. In a different location, you can set `CAMERA_WORKER_PYTHON` to the path of the Python interpreter that has the above dependencies.
 
-Το vision collaboration πλέον σερβίρεται από τον ίδιο Node server:
-- HTTP: `http://localhost:3000/api/vision/*`
-- WebSocket: `ws://localhost:3000/ws/vision`
+Open the application in the browser, connect the teacher, and select **Activities - Camera** or any activity that supports the camera. Camera access requires a secure browser context, such as `localhost` or HTTPS.
 
-### 3) Χρήση
+## Settings
 
-1. Συνδέσου ως teacher.
-2. Πήγαινε: `Συνεργασία -> Vision Tracking`.
-3. Πάτησε **Start collaboration stream**.
-4. Επίλεξε activity template από dropdown.
-5. Παρατήρησε overlay:
-   - μπλε/κόκκινα σχήματα δραστηριότητας,
-   - πράσινα tracking boxes,
-   - κόκκινα tracking points.
+The Node server supports the following environment variables:
 
----
+| Variable | Purpose |
+|---|---|
+| `CAMERA_WORKER_ENABLED=0` | Disables the Python worker. |
+| `CAMERA_WORKER_PYTHON` | Sets the Python interpreter for the worker. |
+| `CAMERA_YOLO_MODEL` | Sets a different YOLO model file. |
+| `CAMERA_YOLO_CONF` | Sets the detection confidence threshold. |
+| `VITE_VISION_SERVER_URL` | Sets the base server address used by the browser. By default, the current address of the application is used. |
+
+The default models are located in `vision/models/`. Pose tracking uses the MediaPipe model `pose_landmarker_lite.task`. If the file is missing, the worker attempts to download it on first use.
+
+## Node server Endpoints
+
+| Route | Description |
+|---|---|
+| `GET /api/vision/health` | Returns whether the camera worker is active. |
+| `GET /api/vision/activities` | Returns the available activity templates. |
+| `WS /ws/vision` | Transfers camera frames, tracking results, and student points. |
+
+Activity templates are loaded from `vision/temp/activities/`. Each JSON file must contain at least one point:
+
+```json
+{
+  "sourceWidth": 640,
+  "sourceHeight": 480,
+  "points": {
+    "center": { "x": 320, "y": 240, "color": "#2563eb", "width": 3 }
+  },
+  "shapes": [
+    { "type": "line", "points": ["center"], "color": "#2563eb", "width": 3 }
+  ]
+}
+```
+
+The coordinates are in pixels relative to the `sourceWidth` and `sourceHeight` dimensions. The `color` and `width` are optional. The `shapes` can be an empty array.
+
+## Files
+
+- `camera_server.py` — worker that reads JSON requests from standard input and returns JSON results.
+- `camera_tracking.py` — older standalone tracking tool.
+- `fastapi_vision_server.py` — alternative FastAPI endpoint for the same worker.
+- `pose/` — initialization and execution of pose tracking with MediaPipe.
+- `models/` — YOLO and MediaPipe model files.
+- `temp/activities/` — activity templates loaded by the Node server.
+- `requirements.txt` — Python dependencies.
+
+The UI is located in `client/src/tools/vision-collab/` and the shared canvas in `client/src/shared/components/resources/VisionCollaborationBoard.jsx`. WebSocket management and worker startup are located in `server/server.js` and `server/utils/cameraWorker.js`.
+
+### Optional FastAPI server
+
+The FastAPI does not start from `npm start`. It can be started separately for testing or independent clients:
+```powershell
+python -m uvicorn vision.fastapi_vision_server:app --host 0.0.0.0 --port 8001
+```
+
+It provides `GET /health`, `GET /vision/activities`, and `WS /ws/vision`. Its HTTP routes are different from the Node server's `/api/vision/...`.
 
 ## Troubleshooting
 
-1. **WebSocket error**
-   - Έλεγξε ότι ο Node server τρέχει στο `http://localhost:3000`.
-   - Έλεγξε ότι το URL στο πεδίο `Vision FastAPI server URL` είναι `http://localhost:3000` (ή το IP του server με port `3000`).
-
-2. **No detections**
-   - Έλεγξε φωτισμό/κάδρο.
-   - Έλεγξε ότι υπάρχουν τα μοντέλα στο `vision/models/`.
-   - Έλεγξε ότι `ultralytics` είναι εγκατεστημένο στο ίδιο `.venv`.
-
-3. **Camera denied**
-   - Ενεργοποίησε δικαιώματα κάμερας στον browser.
-
-4. **Activity file parse issues**
-   - Ο loader του server κάνει best-effort σε αρχεία με git conflict markers (κρατά το HEAD block).
-
-# Python dependencies for the vision camera worker and pose tracking.
-# Use Python 3.10–3.12 for the current MediaPipe and Ultralytics packages.
-numpy>=1.26,<3
-opencv-contrib-python>=4.8,<5
-deep-sort-realtime>=1.3,<2
-ultralytics>=8.3,<9
-mediapipe>=0.10.21,<0.11
-Pillow>=11,<13
-fastapi>=0.115,<1
-uvicorn[standard]>=0.34,<1
-websocket-client>=1.8,<2
+- **The camera does not open:** check the camera permissions in the browser and use `localhost` or HTTPS.
+- **The worker does not start:** check that the active Python environment has `vision/requirements.txt` installed. You can explicitly set `CAMERA_WORKER_PYTHON`.
+- **No detections appear:** check the `[camera-worker]` messages in the Node server terminal and that the model `vision/models/yolov8n.pt` exists.
+- **No templates appear:** check that the files in `vision/temp/activities/` are valid JSON and have `points` and `shapes`.
+- **Connection problem:** check that the browser uses the Node server and that the WebSocket `/ws/vision` is not blocked by a firewall or proxy.
