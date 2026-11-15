@@ -4,94 +4,91 @@
   "language": "el",
   "resources": [
     {
-      "id": "dataset-polynomialBasics",
-      "type": "activity-data",
-      "config": {
-        "settings": {},
-        "data": {
-          "label": "Βασικές έννοιες πολυωνύμων",
-          "items": [
-            {
-              "id": "poly-basic-1",
-              "expression": "3x^2y + 5xy^3 - 7x^4 + 2y^2",
-              "degreeX": 4,
-              "degreeY": 3,
-              "totalDegree": 7,
-              "resultMode": "degreeOnly",
-              "parts": [
-                {
-                  "degreeX": "",
-                  "degreeY": "",
-                  "totalDegree": ""
-                }
-              ],
-              "correctAnswers": {
-                "degreeX": 4,
-                "degreeY": 3,
-                "totalDegree": 7
-              },
-              "scoreCorrect": 1,
-              "scoreIncorrect": -0.5
-            },
-            {
-              "id": "poly-basic-2",
-              "expression": "2x^3y^2 - 4x^2y + 3x^5",
-              "degreeX": 5,
-              "degreeY": 2,
-              "totalDegree": 7,
-              "resultMode": "degreeOnly",
-              "parts": [
-                {
-                  "degreeX": "",
-                  "degreeY": "",
-                  "totalDegree": ""
-                }
-              ],
-              "correctAnswers": {
-                "degreeX": 5,
-                "degreeY": 2,
-                "totalDegree": 7
-              },
-              "scoreCorrect": 1,
-              "scoreIncorrect": -0.5
-            },
-            {
-              "id": "poly-basic-3",
-              "expression": "x^4y - 5xy^2 + 3x^2y^3",
-              "degreeX": 4,
-              "degreeY": 3,
-              "totalDegree": 7,
-              "resultMode": "degreeOnly",
-              "parts": [
-                {
-                  "degreeX": "",
-                  "degreeY": "",
-                  "totalDegree": ""
-                }
-              ],
-              "correctAnswers": {
-                "degreeX": 4,
-                "degreeY": 3,
-                "totalDegree": 7
-              },
-              "scoreCorrect": 1,
-              "scoreIncorrect": -0.5
-            }
-          ]
-        }
-      }
-    },
-    {
-      "id": "activity-content-2.1",
-      "type": "activity-content",
+      "id": "polynomial-types-board",
+      "type": "placement-board",
       "region": "center",
       "config": {
-        "settings": {},
-        "data": {
-          "tasks": [
-            "Βαθμός ως προς x",
-            "Βαθμός ως προς y",
-            "Βαθμός ως προς x και y"
+        "settings": {
+          "bankLabel": "Πολυώνυμα προς ταξινόμηση",
+          "groups": [
+            {
+              "id": "constant",
+              "title": "Σταθερά"
+            },
+            {
+              "id": "monomial",
+              "title": "Μονώνυμα"
+            },
+            {
+              "id": "binomial",
+              "title": "Διώνυμα"
+            },
+            {
+              "id": "trinomial",
+              "title": "Τριώνυμα"
+            }
+          ],
+          "items": [
+            {
+              "id": "poly-constant-1",
+              "content": "7",
+              "correctGroupId": "constant"
+            },
+            {
+              "id": "poly-constant-2",
+              "content": "-4",
+              "correctGroupId": "constant"
+            },
+            {
+              "id": "poly-constant-3",
+              "content": "0",
+              "correctGroupId": "constant"
+            },
+            {
+              "id": "poly-monomial-1",
+              "content": "3x²",
+              "correctGroupId": "monomial"
+            },
+            {
+              "id": "poly-monomial-2",
+              "content": "-5xy",
+              "correctGroupId": "monomial"
+            },
+            {
+              "id": "poly-monomial-3",
+              "content": "x³",
+              "correctGroupId": "monomial"
+            },
+            {
+              "id": "poly-binomial-1",
+              "content": "x² + 3x",
+              "correctGroupId": "binomial"
+            },
+            {
+              "id": "poly-binomial-2",
+              "content": "2a - b",
+              "correctGroupId": "binomial"
+            },
+            {
+              "id": "poly-binomial-3",
+              "content": "4xy + y",
+              "correctGroupId": "binomial"
+            },
+            {
+              "id": "poly-trinomial-1",
+              "content": "x² + 3x + 2",
+              "correctGroupId": "trinomial"
+            },
+            {
+              "id": "poly-trinomial-2",
+              "content": "2x² - x - 5",
+              "correctGroupId": "trinomial"
+            },
+            {
+              "id": "poly-trinomial-3",
+              "content": "a² + ab + b²",
+              "correctGroupId": "trinomial"
+            }
           ]
         }
       }
@@ -99,76 +96,13 @@
   ],
   "activity": {
     "id": "2.1",
-    "theoryId": "polynomials",
     "code": "2.1",
-    "title": "2.1 Βασικές έννοιες πολυωνύμων",
-    "objective": "Εντοπισμός βαθμού ως προς x, βαθμού ως προς y και συνολικού βαθμού ενός πολυωνύμου.",
-    "mode": "activity-content",
+    "title": "2.1 Ταξινόμηση πολυωνύμων",
+    "objective": "Αντιστοίχισε κάθε πολυώνυμο με το είδος του.",
+    "theoryId": "polynomials",
+    "mode": "placement-board",
     "usesResources": [
-      "dataset-polynomialBasics",
-      "activity-content-2.1"
-    ],
-    "labels": {
-      "expression": "Έκφραση",
-      "answer": "Απάντηση",
-      "coefficient": "Συντελεστής",
-      "degreeX": "Βαθμός ως προς x",
-      "degreeY": "Βαθμός ως προς y",
-      "totalDegree": "Βαθμός ως προς x και y",
-      "degreeXY": "Βαθμός ως προς x και y",
-      "termCoefficient": "Συντελεστής όρου {{term}}",
-      "termDegreeX": "Βαθμός ως προς x (όρος {{term}})",
-      "termDegreeY": "Βαθμός ως προς y (όρος {{term}})",
-      "termHeader": "Όρος {{term}}",
-      "resourceTable": {
-        "tilesColumn": "Πλακίδια",
-        "tileRegions": {
-          "equation": [
-            {
-              "id": "left",
-              "label": "Αριστερά"
-            },
-            {
-              "id": "right",
-              "label": "Δεξιά"
-            }
-          ],
-          "area": [
-            {
-              "id": "top",
-              "label": "Πάνω"
-            },
-            {
-              "id": "left",
-              "label": "Αριστερά"
-            },
-            {
-              "id": "center",
-              "label": "Κέντρο"
-            }
-          ],
-          "all": [
-            {
-              "id": "all",
-              "label": "Παράσταση"
-            }
-          ]
-        },
-        "tileLabels": {
-          "one": "1",
-          "x": "x",
-          "y": "y",
-          "x2": "x²",
-          "xy": "xy",
-          "y2": "y²"
-        },
-        "positiveSign": "+",
-        "negativeSign": "−",
-        "termSeparator": " ",
-        "emptyValue": "—",
-        "variableX": "x",
-        "variableY": "y"
-      }
-    }
+      "polynomial-types-board"
+    ]
   }
 }

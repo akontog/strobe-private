@@ -1,5 +1,9 @@
 # Strobe
 
+## About
+
+Strobe is a collaborative learning environment that brings interactive activities and tools together in a React-based interface. It includes dedicated learning labs, a Node.js application server, and a vision server for tracking workflows, with activity data and session records supporting the learning experience.
+
 ## Table of Contents
 
 - [Tech Stack](#tech-stack)

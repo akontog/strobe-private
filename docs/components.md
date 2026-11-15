@@ -1,3 +1,33 @@
+# [TOC]
+
+- [\[TOC\]](#toc)
+- [Γενική Περιγραφή](#γενική-περιγραφή)
+- [Πόροι (Resources)](#πόροι-resources)
+  - [Πλέγμα Εισόδων (Entry Grid)](#πλέγμα-εισόδων-entry-grid)
+  - [Πλέγμα Επιλογών (Options Grid)](#πλέγμα-επιλογών-options-grid)
+  - [Αντιστοίχιση (Placement Board)](#αντιστοίχιση-placement-board)
+  - [Διάταξη (Ordering Board)](#διάταξη-ordering-board)
+  - [Διάγραμμα Venn](#διάγραμμα-venn)
+  - [Αλγεβρικά Πλακίδια (Algebra Tiles)](#αλγεβρικά-πλακίδια-algebra-tiles)
+  - [Αριθμογραμμή (Number Line)](#αριθμογραμμή-number-line)
+  - [Καρτεσιανό Επίπεδο (Cartesian Plane)](#καρτεσιανό-επίπεδο-cartesian-plane)
+  - [GeoGebra](#geogebra)
+  - [Embodied / Camera](#embodied--camera)
+- [Widgets](#widgets-1)
+  - [Εξίσωση (Equation)](#εξίσωση-equation)
+  - [Εικονίδιο (Icon)](#εικονίδιο-icon)
+  - [Γράφημα (Plot)](#γράφημα-plot)
+  - [Προεπισκόπηση (Math Preview)](#προεπισκόπηση-math-preview)
+- [Primitives](#primitives)
+- [Services](#services)
+  - [ActivitiesAccordion](#activitiesaccordion)
+  - [ChatAccordion](#chataccordion)
+  - [DataAccordion](#dataaccordion)
+  - [QrAccordion](#qraccordion)
+  - [GroupsAccordion](#groupsaccordion)
+- [Activities Sequences Workshops](#activities-sequences-workshops)
+  - [Workshops](#workshops)
+
 # Γενική Περιγραφή
 
 Υλοποιούνται στο φάκελο client\src\shared\components.
@@ -92,9 +122,28 @@ Workshop, Activities και Sequences είναι τα τρία επίπεδα ο
 
 ####
 
+## Διάταξη (Ordering Board)
+
+- Υλοποίηση: OrderingBoard
+
+### Περιγραφή
+
+Μια σειρά από αντικείμενα (αριθμοί, βήματα (κείμενο), λέξεις, εικόνες) εμφανίζονται ήδη σε μία γραμμή αλλά ανακατεμένα. Ο μαθητής σύρει και αποθέτει τα αντικείμενα μέσα στην ίδια γραμμή ώστε να τα βάλει στη σωστή σειρά. Δεν υπάρχουν πολλές σειρές/κατηγορίες — μόνο η τελική διάταξη μετράει. Η βαθμολόγηση μπορεί να είναι αυστηρή (όλη η σειρά σωστή) ή μερική (πόσα ζεύγη βρίσκονται στη σωστή σχετική θέση).
+
+### Παράμετροι
+
+#### rows
+
+αριθμός γραμμών. Κάθε γραμμή έχει τα δικά της items και είναι ανεξάρτητη από τις υπόλοιπες. Ο μαθητής μπορεί να σύρει μόνο τα items της ίδιας γραμμής μεταξύ τους.
+
+#### items
+
+Τα αντικείμενα καθε γραμμής. Έχουν id και ακολουθεί ζεύγος με initialOrder και correctOrder για την βαθμολόγηση. Για κάθε γραμμή υπάρχει άλλο items.
+
 ## Διάγραμμα Venn
 
-- Υλοποίηση: 
+- Υλοποίηση: VennBoard
+
 ### Παράμετροι
 
 #### sets (Αριθμός συνόλων)
@@ -224,6 +273,10 @@ Workshop, Activities και Sequences είναι τα τρία επίπεδα ο
 - 'lines'
 - 'points'
 Όταν περιέχει και lines και points με drag and drop ευθείες με click σημεία
+
+
+
+
 ## GeoGebra
 
 - Υλοποίηση: GeoGebra

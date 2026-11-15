@@ -1,1 +1,0 @@
-import{j as t}from"./index-ZGqHSusp.js";import{A as r}from"./App-v0jtUx2S.js";function s(){return t.jsx(r,{role:"student"})}export{s as StudentView,s as default};

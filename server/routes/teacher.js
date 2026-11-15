@@ -54,6 +54,7 @@ const ACTIVITY_RESOURCES = [
   { slug: 'probabilities-lab', title: 'Probabilities' },
   { slug: 'input-grid', title: 'Entry Grid' },
   { slug: 'grouping-drag-drop', title: 'Placement Board' },
+  { slug: 'ordering-board', title: 'Ordering Board' },
   { slug: 'venn-board', title: 'Venn Board' },
   { slug: 'algebra-tiles', title: 'Algebra Tiles' },
   { slug: 'collaborative-geogebra', title: 'GeoGebra' },

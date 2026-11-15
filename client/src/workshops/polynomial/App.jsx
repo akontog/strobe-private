@@ -13,6 +13,7 @@ import {
   SharedCommonZoneLayout,
   SharedInputRow,
   InputGrid,
+  OrderingBoard,
   GroupsAccordion,
   AlgebraTiles,
   randomIdentityColor,
@@ -277,7 +278,7 @@ export default function App({ role = 'teacher' }) {
   const hasRegisteredRef = useRef(false);
 
   const [selectedActivityId, setSelectedActivityId] = useState(initialActivityId);
-  const [selectedExpressionId, setSelectedExpressionId] = useState(ALGEBRA_DATASETS[getActivityDatasetId(initialActivityId)].items[0].id);
+  const [selectedExpressionId, setSelectedExpressionId] = useState((ALGEBRA_DATASETS[getActivityDatasetId(initialActivityId)] || ALGEBRA_DATASETS.monomials).items[0].id);
   const [teamAnswers, setTeamAnswers] = useState({
     coefficient: '',
     degreeX: '',
@@ -286,6 +287,7 @@ export default function App({ role = 'teacher' }) {
   });
   const [isSocketConnected, setIsSocketConnected] = useState(false);
   const [participants, setParticipants] = useState([]);
+  const [activityStudents, setActivityStudents] = useState([]);
   const [scoreRecords, setScoreRecords] = useState([]);
   const [roster, setRoster] = useState([]);
   const [studentName, setStudentName] = useState(() => readIdentityName(`Student-${Math.floor(Math.random() * 900 + 100)}`));
@@ -294,6 +296,8 @@ export default function App({ role = 'teacher' }) {
   const [lessonGeogebraRoomId, setLessonGeogebraRoomId] = useState('');
   const [feedbackEnabled, setFeedbackEnabled] = useState(false);
   const [algebraTilesByExpression, setAlgebraTilesByExpression] = useState({});
+  const [orderingBoardOrderings, setOrderingBoardOrderings] = useState({});
+  const [polynomialTypePlacements, setPolynomialTypePlacements] = useState({});
   const [savedActivities, setSavedActivities] = useState([]);
 
   useEffect(() => {
@@ -338,6 +342,10 @@ export default function App({ role = 'teacher' }) {
   const labels = { ...POLYNOMIAL_LABELS, ...(activeActivity?.labels || {}) };
   const activityTitle = activeActivity?.title || '';
   const algebraTilesWidget = activeActivity?.widgets?.find((widget) => widget.type === 'algebra-tiles');
+  const orderingBoardWidget = activeActivity?.widgets?.find((widget) => widget.type === 'ordering-board');
+  const orderingBoardSettings = orderingBoardWidget?.settings || activeActivity?.resourceSettings || {};
+  const polynomialTypeBoardWidget = activeActivity?.widgets?.find((widget) => widget.type === 'placement-board');
+  const polynomialTypeBoardSettings = polynomialTypeBoardWidget?.settings || activeActivity?.resourceSettings || {};
 
   const activeDatasetId = getActivityDatasetId(selectedActivityId) || 'monomials';
   const activeDataset = ALGEBRA_DATASETS[activeDatasetId] || ALGEBRA_DATASETS.monomials;
@@ -413,25 +421,71 @@ export default function App({ role = 'teacher' }) {
   };
 
   const isMonomialGroupingActivity = selectedActivityId === '1.2';
-  const isPolynomialGroupingActivity = selectedActivityId === '2.3';
-  const isPolynomialDegreeGroupingActivity = selectedActivityId === '2.8';
-  const isGeogebraAreaActivity = selectedActivityId === '2.6';
-  const isAlgebraTilesActivity = selectedActivityId === '2.7';
+  const isOrderingBoardActivity = activeActivity?.mode === 'ordering-board';
+  const isPolynomialTypeGroupingActivity = activeActivity?.mode === 'placement-board';
+  const isResourceBoardActivity = isOrderingBoardActivity || isPolynomialTypeGroupingActivity;
+  const isPolynomialGroupingActivity = selectedActivityId === '2.5';
+  const isPolynomialDegreeGroupingActivity = selectedActivityId === '2.9';
+  const isGeogebraAreaActivity = selectedActivityId === '2.10';
+  const isAlgebraTilesActivity = selectedActivityId === '2.8';
   const isGroupingActivity = isMonomialGroupingActivity || isPolynomialGroupingActivity || isPolynomialDegreeGroupingActivity;
-  const isDegreeOnlyActivity = selectedActivityId === '2.1';
-  const isMonomialResultActivity = ['1.3', '1.4', '2.2'].includes(selectedActivityId);
-  const isPolynomialResultActivity = ['2.4', '2.5'].includes(selectedActivityId);
+  const isDegreeOnlyActivity = selectedActivityId === '2.2';
+  const isMonomialResultActivity = ['1.3', '1.4', '2.3'].includes(selectedActivityId);
+  const isPolynomialResultActivity = ['2.6', '2.7'].includes(selectedActivityId);
   const isTemplateActivity = isMonomialResultActivity || isPolynomialResultActivity || isDegreeOnlyActivity;
+  useEffect(() => {
+    setOrderingBoardOrderings({});
+    setPolynomialTypePlacements({});
+  }, [selectedActivityId]);
+  const polynomialTypeItems = Array.isArray(polynomialTypeBoardSettings.items) ? polynomialTypeBoardSettings.items : [];
+  const polynomialTypeGroups = Array.isArray(polynomialTypeBoardSettings.groups) ? polynomialTypeBoardSettings.groups : [];
+  const polynomialTypeGroupTitles = new Map(polynomialTypeGroups.map((group) => [group.id, group.title || group.id]));
+  const invalidPolynomialTypeItemIds = feedbackEnabled
+    ? polynomialTypeItems.filter((item) => polynomialTypePlacements[item.id]
+      && polynomialTypePlacements[item.id] !== item.correctGroupId).map((item) => item.id)
+    : [];
+  const orderingRows = Array.isArray(orderingBoardSettings.rows)
+    ? orderingBoardSettings.rows
+    : Array.from({ length: Math.max(0, Number(orderingBoardSettings.rows) || 0) }, (_, index) => ({
+      id: `row-${index + 1}`,
+      items: orderingBoardSettings.items?.[index] || []
+    }));
+  const orderingAnswerColumns = orderingRows.map((row, index) => {
+    const rowId = String(row.id || `row-${index + 1}`);
+    const rowItems = row.items || orderingBoardSettings.items?.[index] || [];
+    const labelsById = new Map(rowItems.map((item) => {
+      const content = item.content || item.label || item.id;
+      return [String(item.id), typeof content === 'object' ? content.alt || 'Image' : content];
+    }));
+    return {
+      key: `ordering-${rowId}`,
+      label: `Row ${index + 1}`,
+      render: (student) => {
+        let answer = [];
+        try {
+          answer = JSON.parse(student.answers?.[selectedActivityId]?.[`ordering:${rowId}`] || '[]');
+        } catch {
+          return '-';
+        }
+        return answer.map((id) => labelsById.get(String(id)) || id).join(' -> ') || '-';
+      }
+    };
+  });
+  const polynomialTypeAnswerColumns = polynomialTypeItems.map((item) => ({
+    key: `polynomial-type-${item.id}`,
+    label: item.content || item.label || item.id,
+    render: (student) => polynomialTypeGroupTitles.get(student.answers?.[selectedActivityId]?.[item.id]) || '-'
+  }));
   const expressionGeogebraRoomId = String(activeExpression?.geogebraRoomId || '').trim();
   const geogebraRoomId = isGeogebraAreaActivity
-    ? String(lessonGeogebraRoomId || expressionGeogebraRoomId || 'polynomial-lab-2-6-area-2x').trim()
+    ? String(lessonGeogebraRoomId || expressionGeogebraRoomId || 'polynomial-lab-2-10-area-2x').trim()
     : '';
   const leftExpressionText = activeExpression.expression;
   const resultInputValues = activeExpressionParts[0] || { coefficient: '', degreeX: '', degreeY: '' };
   const degreeOnlyInputValues = activeExpressionParts[0] || { degreeX: '', degreeY: '', totalDegree: '' };
   const degreeOnlyPreviewText = `\\deg_x = ${degreeOnlyInputValues.degreeX || ''}, \\deg_y = ${degreeOnlyInputValues.degreeY || ''}, \\deg_{xy} = ${degreeOnlyInputValues.totalDegree || ''}`;
   const groupedPolynomialExpression = useMemo(() => {
-    if (selectedActivityId !== '2.4') {
+    if (selectedActivityId !== '2.6') {
       return null;
     }
 
@@ -618,6 +672,44 @@ export default function App({ role = 'teacher' }) {
       .sort((a, b) => String(a.name || a.username || '').localeCompare(String(b.name || b.username || ''))),
     [participants]
   );
+
+  const orderingBoardParticipants = useMemo(() => {
+    if (!isResourceBoardActivity) return sortedParticipants;
+    const sessionStudentsByName = new Map(activityStudents.map((student) => [
+      String(student.name || '').trim().toLocaleLowerCase(), student
+    ]));
+    const participantsByName = new Map(sortedParticipants.map((student) => {
+      const name = String(student.name || student.username || '').trim().toLocaleLowerCase();
+      const loggedStudent = sessionStudentsByName.get(name);
+      return [name, loggedStudent ? { ...student, ...loggedStudent, isConnected: student.isConnected } : student];
+    }));
+    sessionStudentsByName.forEach((student, name) => {
+      if (!participantsByName.has(name)) participantsByName.set(name, student);
+    });
+    return [...participantsByName.values()].sort((left, right) => (
+      String(left.name || left.username || '').localeCompare(String(right.name || right.username || ''))
+    ));
+  }, [activityStudents, isResourceBoardActivity, sortedParticipants]);
+
+  useEffect(() => {
+    if (!isTeacher || !isResourceBoardActivity || !sessionLogging?.activeSessionId) {
+      setActivityStudents([]);
+      return undefined;
+    }
+    let cancelled = false;
+    const refreshStudents = () => fetch('/api/session-logs/active/polynomial-lab/students', { cache: 'no-store' })
+      .then((response) => response.ok ? response.json() : null)
+      .then((payload) => {
+        if (!cancelled) setActivityStudents(Array.isArray(payload?.students) ? payload.students : []);
+      })
+      .catch(() => {});
+    refreshStudents();
+    const timer = window.setInterval(refreshStudents, 1500);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [isTeacher, isResourceBoardActivity, sessionLogging?.activeSessionId]);
 
   useEffect(() => {
     if (!isTeacher || !sessionLogging?.scoreVisible) {
@@ -892,7 +984,7 @@ export default function App({ role = 'teacher' }) {
       return;
     }
 
-    if (selectedActivityId === '2.6') {
+    if (isResourceBoardActivity || selectedActivityId === '2.10') {
       return;
     }
 
@@ -931,7 +1023,8 @@ export default function App({ role = 'teacher' }) {
     isGroupingActivity,
     isDegreeOnlyActivity,
     isMonomialResultActivity,
-    isPolynomialResultActivity
+    isPolynomialResultActivity,
+    isResourceBoardActivity
   ]);
 
   useEffect(() => {
@@ -980,9 +1073,9 @@ export default function App({ role = 'teacher' }) {
         <TheoryButton theory={getTheoryPath(activeActivity?.theoryId)} />
         <SharedCommonZoneLayout
           className={isGeogebraAreaActivity ? 'poly-neural-zone--geogebra' : ''}
-          isGroupingMode={isGroupingActivity}
+          isGroupingMode={isGroupingActivity || isPolynomialTypeGroupingActivity}
         >
-          {!isGeogebraAreaActivity ? (
+          {!isGeogebraAreaActivity && !isResourceBoardActivity ? (
             <div className="lab-card lab-card--highlight poly-expression-card" aria-label={t('expressionType')}>
               <p className="lab-mini-label poly-mini-label">{leftWidgetLabel}</p>
               {isGroupingActivity ? (
@@ -1008,7 +1101,26 @@ export default function App({ role = 'teacher' }) {
           ) : null}
 
           <div className={`lab-card lab-card--panel poly-team-card ${isGeogebraAreaActivity ? 'poly-team-card--geogebra' : ''}`.trim()}>
-            {isGroupingActivity ? (
+            {isPolynomialTypeGroupingActivity ? (
+              <GroupingDragDrop
+                key={selectedActivityId}
+                items={polynomialTypeItems.map((item) => ({ id: item.id, content: item.content || item.label || item.id }))}
+                groups={polynomialTypeGroups}
+                placements={polynomialTypePlacements}
+                onChange={setPolynomialTypePlacements}
+                invalidItemIds={invalidPolynomialTypeItemIds}
+                activity={`polynomial:${selectedActivityId}:classification`}
+                bankLabel={polynomialTypeBoardSettings.bankLabel || ''}
+              />
+            ) : isOrderingBoardActivity ? (
+              <OrderingBoard
+                key={selectedActivityId}
+                {...orderingBoardSettings}
+                orderings={orderingBoardOrderings}
+                onChange={setOrderingBoardOrderings}
+                activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
+              />
+            ) : isGroupingActivity ? (
               <div className="poly-grouping-panel">
                 {isPolynomialGroupingActivity && (
                   <div className="poly-grouping-equation">
@@ -1171,7 +1283,7 @@ export default function App({ role = 'teacher' }) {
             onChange={setActivity}
           />
 
-          <DataAccordion
+          {!isResourceBoardActivity ? <DataAccordion
             title={t('expression')}
             label={t('expression')}
             icon="??"
@@ -1182,14 +1294,18 @@ export default function App({ role = 'teacher' }) {
             wrapperClassName="lab-data-section data-section poly-data-menu"
             groupClassName="lab-select-group poly-select-group"
             getOptionLabel={getExpressionOptionLabel}
-          />
+          /> : null}
 
           <GroupsAccordion
-            participants={sortedParticipants}
+            participants={orderingBoardParticipants}
             onFeedbackChange={setFeedbackOption}
             columns={[
-              ...getAnswerColumnsForExpression(activeExpression, t, labels, selectedActivityId, algebraTilesWidget?.mode || algebraTilesWidget?.layout || 'simplified'),
-              ...(sessionLogging?.scoreVisible ? [
+              ...(isPolynomialTypeGroupingActivity
+                ? polynomialTypeAnswerColumns
+                : isOrderingBoardActivity
+                  ? orderingAnswerColumns
+                : getAnswerColumnsForExpression(activeExpression, t, labels, selectedActivityId, algebraTilesWidget?.mode || algebraTilesWidget?.layout || 'simplified')),
+              ...(!isResourceBoardActivity && sessionLogging?.scoreVisible ? [
                 {
                   key: 'activityScore',
                   label: t('score'),
@@ -1202,7 +1318,7 @@ export default function App({ role = 'teacher' }) {
                 }
               ] : [])
             ]}
-            headerGroups={getAnswerHeaderGroupsForExpression(activeExpression, labels)}
+            headerGroups={isResourceBoardActivity ? [] : getAnswerHeaderGroupsForExpression(activeExpression, labels)}
             emptyMessage={t('noStudents')}
           />
 
@@ -1212,7 +1328,7 @@ export default function App({ role = 'teacher' }) {
       <GroupsAccordion
         role={role}
         studentName={studentName}
-        activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
+        activity={isResourceBoardActivity ? '' : `polynomial:${selectedActivityId}:${selectedExpressionId}`}
         currentScore={currentStudentScore}
         hidePanel
       />

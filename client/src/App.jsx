@@ -19,6 +19,7 @@ import CartesianPlaneTool from './tools/cartesian-plane/CartesianPlaneTool';
 import VennCollabTool from './tools/venn-collab/VennCollabTool';
 import OptionsGridCollabTool from './tools/options-grid-collab/OptionsGridCollabTool';
 import PlacementBoardCollabTool from './tools/placement-board-collab/PlacementBoardCollabTool';
+import OrderingBoardTool from './tools/ordering-board/OrderingBoardTool';
 import InputGridCollabTool from './tools/input-grid-collab/InputGridCollabTool';
 import VisionCollabTool from './tools/vision-collab/VisionCollabTool';
 import LinearSeparation from './tools/linear-separation/LinearSeparation';
@@ -454,6 +455,7 @@ function App() {
       { label: tNav('items.inputGrid'), path: '/tools/input-grid' },
       { label: tNav('items.optionsGrid'), path: '/tools/options-grid' },
       { label: tNav('items.placementBoard'), path: '/tools/placement-board' },
+      { label: tNav('items.orderingBoard', { defaultValue: 'Διάταξη' }), path: '/tools/ordering-board' },
       { label: tNav('items.venn'), path: '/tools/venn' },
       { label: tNav('items.algebraTiles'), path: '/tools/algebra-tiles' },
       { label: tNav('items.numberLine'), path: '/tools/number-line' },
@@ -606,6 +608,7 @@ function App() {
           <Route path="/tools/venn" element={studentToolOnly('geogebra-collab', <VennCollabTool role={appRole} />)} />
           <Route path="/tools/options-grid" element={studentToolOnly('options-grid-collab', <OptionsGridCollabTool role={appRole} />)} />
           <Route path="/tools/placement-board" element={studentToolOnly('placement-board-collab', <PlacementBoardCollabTool role={appRole} />)} />
+          <Route path="/tools/ordering-board" element={teacherOnly(<OrderingBoardTool role={appRole} />)} />
           <Route path="/tools/input-grid" element={studentToolOnly('input-grid-collab', <InputGridCollabTool role={appRole} />)} />
           <Route path="/tools/vision" element={studentToolOnly('vision-collab', <VisionCollabTool role={appRole} />)} />
           <Route path="/tools/console" element={adminOnly(<ConsoleTool />)} />

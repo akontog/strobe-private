@@ -4,6 +4,7 @@ import { decodeUnicodeCode } from '../widgets/IconWidget';
 import { ACTIVITY_WIDGETS } from '../widgets/registry';
 
 const RESOURCE_PREVIEW_TYPES = {
+  'ordering-board': 'ordering-board',
   'input-grid-collab': 'input-grid',
   'options-grid-collab': 'options-grid',
   'placement-board-collab': 'grouping-drag-drop',
@@ -20,6 +21,7 @@ function ResourceMock({ resource }) {
   if (type === 'input-grid') return <div className="activity-resource-preview__inputs"><i /><i /><i /><i /></div>;
   if (type === 'options-grid') return <div className="activity-resource-preview__options">{Array.from({ length: 9 }, (_, index) => <i key={index}>{index + 1}</i>)}</div>;
   if (type === 'placement-board' || type === 'grouping-drag-drop') return <div className="activity-resource-preview__placement"><i /><i /><i /><i /></div>;
+  if (type === 'ordering-board') return <div className="activity-resource-preview__ordering"><i /><i /><i /><i /><i /><i /></div>;
   if (type === 'venn-board') return <div className="activity-resource-preview__venn"><i /><i /></div>;
   if (type === 'number-line') return <div className="activity-resource-preview__number-line"><i /><i /><i /><i /><i /></div>;
   if (type === 'cartesian-plane') return <div className="activity-resource-preview__cartesian-plane"><i /><i /><i /><i /><i /></div>;

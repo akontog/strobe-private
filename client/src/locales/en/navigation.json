@@ -24,6 +24,7 @@
     "cartesianPlane": "Cartesian Plane",
     "optionsGrid": "Options Grid",
     "placementBoard": "Placement Board",
+    "orderingBoard": "Ordering Board",
     "inputGrid": "Input Grid",
     "vision": "Camera",
     "camera": "Camera Speed Test",

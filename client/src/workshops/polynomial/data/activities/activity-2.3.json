@@ -4,214 +4,72 @@
   "language": "el",
   "resources": [
     {
-      "id": "dataset-polynomialLikeTermGrouping",
+      "id": "dataset-likeTermReduction",
       "type": "activity-data",
       "config": {
         "settings": {},
-        "presentation": {
-          "groupingBankLabel": "Όροι πολυωνύμων προς ομαδοποίηση"
-        },
         "data": {
-          "label": "Ομαδοποίηση όμοιων όρων (δύο πολυώνυμα)",
+          "label": "Αναγωγή ομοίων όρων",
           "items": [
             {
-              "id": "poly-group-1",
-              "expression": "(3x^2 + 5xy - 2y^2) + (4x^2 - 3xy + y^2)",
-              "resultMode": "grouping",
-              "leftPolynomial": "3x^2 + 5xy - 2y^2",
-              "rightPolynomial": "4x^2 - 3xy + y^2",
-              "operator": "+",
-              "groups": [
+              "id": "reduce-1",
+              "expression": "3x^2y + 5x^2y - 2x^2y",
+              "answerTemplate": "x^{}y^{}",
+              "resultMode": "monomial",
+              "parts": [
                 {
-                  "id": "g-x2",
-                  "title": "Όμοιοι όροι x^2",
-                  "hint": "x^2",
-                  "degreeX": 2,
-                  "degreeY": 0
-                },
-                {
-                  "id": "g-xy",
-                  "title": "Όμοιοι όροι xy",
-                  "hint": "xy",
-                  "degreeX": 1,
-                  "degreeY": 1
-                },
-                {
-                  "id": "g-y2",
-                  "title": "Όμοιοι όροι y^2",
-                  "hint": "y^2",
-                  "degreeX": 0,
-                  "degreeY": 2
+                  "coefficient": "",
+                  "degreeX": "",
+                  "degreeY": ""
                 }
               ],
-              "items": [
-                {
-                  "id": "l1",
-                  "label": "3x^2",
-                  "coefficient": 3,
-                  "degreeX": 2,
-                  "degreeY": 0,
-                  "source": "L",
-                  "correctGroupId": "g-x2"
-                },
-                {
-                  "id": "l2",
-                  "label": "5xy",
-                  "coefficient": 5,
-                  "degreeX": 1,
-                  "degreeY": 1,
-                  "source": "L",
-                  "correctGroupId": "g-xy"
-                },
-                {
-                  "id": "l3",
-                  "label": "-2y^2",
-                  "coefficient": -2,
-                  "degreeX": 0,
-                  "degreeY": 2,
-                  "source": "L",
-                  "correctGroupId": "g-y2"
-                },
-                {
-                  "id": "r1",
-                  "label": "4x^2",
-                  "coefficient": 4,
-                  "degreeX": 2,
-                  "degreeY": 0,
-                  "source": "R",
-                  "correctGroupId": "g-x2"
-                },
-                {
-                  "id": "r2",
-                  "label": "-3xy",
-                  "coefficient": -3,
-                  "degreeX": 1,
-                  "degreeY": 1,
-                  "source": "R",
-                  "correctGroupId": "g-xy"
-                },
-                {
-                  "id": "r3",
-                  "label": "y^2",
-                  "coefficient": 1,
-                  "degreeX": 0,
-                  "degreeY": 2,
-                  "source": "R",
-                  "correctGroupId": "g-y2"
-                }
-              ],
-              "resultOrder": [
-                "g-x2",
-                "g-xy",
-                "g-y2"
-              ],
+              "connector": " + ",
               "correctAnswers": {
-                "item-l1": "g-x2",
-                "item-l2": "g-xy",
-                "item-l3": "g-y2",
-                "item-r1": "g-x2",
-                "item-r2": "g-xy",
-                "item-r3": "g-y2"
+                "coefficient": 6,
+                "degreeX": 2,
+                "degreeY": 1
               },
               "scoreCorrect": 1,
               "scoreIncorrect": -0.5
             },
             {
-              "id": "poly-group-2",
-              "expression": "(2x^3 + 3x^3 - 4xy) + (5y^2 + 2x^2)",
-              "resultMode": "grouping",
-              "leftPolynomial": "2x^3 + 3x^3 - 4xy",
-              "rightPolynomial": "5y^2 + 2x^2",
-              "operator": "+",
-              "groups": [
+              "id": "reduce-2",
+              "expression": "4xy^3 + 2xy^3 - 3xy^3",
+              "answerTemplate": "x^{}y^{}",
+              "resultMode": "monomial",
+              "parts": [
                 {
-                  "id": "g-x3",
-                  "title": "Όμοιοι όροι x^3",
-                  "hint": "x^3",
-                  "degreeX": 3,
-                  "degreeY": 0
-                },
-                {
-                  "id": "g-x2",
-                  "title": "Όμοιοι όροι x^2",
-                  "hint": "x^2",
-                  "degreeX": 2,
-                  "degreeY": 0
-                },
-                {
-                  "id": "g-xy",
-                  "title": "Όμοιοι όροι xy",
-                  "hint": "xy",
-                  "degreeX": 1,
-                  "degreeY": 1
-                },
-                {
-                  "id": "g-y2",
-                  "title": "Όμοιοι όροι y^2",
-                  "hint": "y^2",
-                  "degreeX": 0,
-                  "degreeY": 2
+                  "coefficient": "",
+                  "degreeX": "",
+                  "degreeY": ""
                 }
               ],
-              "items": [
-                {
-                  "id": "l1",
-                  "label": "2x^3",
-                  "coefficient": 2,
-                  "degreeX": 3,
-                  "degreeY": 0,
-                  "source": "L",
-                  "correctGroupId": "g-x3"
-                },
-                {
-                  "id": "l2",
-                  "label": "3x^3",
-                  "coefficient": 3,
-                  "degreeX": 3,
-                  "degreeY": 0,
-                  "source": "L",
-                  "correctGroupId": "g-x3"
-                },
-                {
-                  "id": "l3",
-                  "label": "-4xy",
-                  "coefficient": -4,
-                  "degreeX": 1,
-                  "degreeY": 1,
-                  "source": "L",
-                  "correctGroupId": "g-xy"
-                },
-                {
-                  "id": "r1",
-                  "label": "5y^2",
-                  "coefficient": 5,
-                  "degreeX": 0,
-                  "degreeY": 2,
-                  "source": "R",
-                  "correctGroupId": "g-y2"
-                },
-                {
-                  "id": "r2",
-                  "label": "2x^2",
-                  "coefficient": 2,
-                  "degreeX": 2,
-                  "degreeY": 0,
-                  "source": "R",
-                  "correctGroupId": "g-x2"
-                }
-              ],
-              "resultOrder": [
-                "g-x3",
-                "g-x2",
-                "g-xy",
-                "g-y2"
-              ],
+              "connector": " + ",
               "correctAnswers": {
-                "item-l1": "g-x3",
-                "item-l2": "g-x3",
-                "item-l3": "g-xy",
-                "item-r1": "g-y2",
-                "item-r2": "g-x2"
+                "coefficient": 3,
+                "degreeX": 1,
+                "degreeY": 3
+              },
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5
+            },
+            {
+              "id": "reduce-3",
+              "expression": "7x^3y^2 - 2x^3y^2 + 4x^3y^2",
+              "answerTemplate": "x^{}y^{}",
+              "resultMode": "monomial",
+              "parts": [
+                {
+                  "coefficient": "",
+                  "degreeX": "",
+                  "degreeY": ""
+                }
+              ],
+              "connector": " + ",
+              "correctAnswers": {
+                "coefficient": 9,
+                "degreeX": 3,
+                "degreeY": 2
               },
               "scoreCorrect": 1,
               "scoreIncorrect": -0.5
@@ -228,9 +86,9 @@
         "settings": {},
         "data": {
           "tasks": [
-            "Ταξινόμηση όρων",
-            "Έλεγχος ομοιότητας",
-            "Αποτέλεσμα"
+            "Όμοιοι όροι",
+            "Απλοποίηση",
+            "Αναγωγή"
           ]
         }
       }
@@ -241,7 +99,8 @@
       "region": "bottom",
       "config": {
         "settings": {
-          "label": "Αποτέλεσμα"
+          "label": "Απάντηση",
+          "answerMode": "monomial"
         }
       }
     }
@@ -250,11 +109,11 @@
     "id": "2.3",
     "theoryId": "polynomials",
     "code": "2.3",
-    "title": "2.3 Πράξεις με πολυώνυμα (πρόσθεση-αφαίρεση)",
-    "objective": "Ομαδοποίηση όρων από δύο πολυώνυμα και αυτόματη πρόσθεση ανά ομάδα ομοίων όρων.",
+    "title": "2.3 Αναγωγή ομοίων όρων",
+    "objective": "Συνδυασμός όμοιων μονωνύμων σε ένα απλοποιημένο αποτέλεσμα.",
     "mode": "activity-content",
     "usesResources": [
-      "dataset-polynomialLikeTermGrouping",
+      "dataset-likeTermReduction",
       "activity-content-2.3",
       "activity-2.3-math-preview"
     ],

@@ -5,6 +5,7 @@ import {
   AlgebraTiles,
   GeoGebra,
   PlacementBoard,
+  OrderingBoard,
   VennBoard,
   OptionsGrid,
   NumberLine,
@@ -33,6 +34,7 @@ function ResourceContent({ activity, role, activityKey }) {
   const fields = Array.isArray(props.fields) ? props.fields : [];
   const [answers, setAnswers] = React.useState(() => Object.fromEntries(fields.map((field) => [field.id, field.value || ''])));
   const [placements, setPlacements] = React.useState(props.placements || {});
+  const [orderings, setOrderings] = React.useState({});
   const [tiles, setTiles] = React.useState(props.tiles || []);
   const [selectedOption, setSelectedOption] = React.useState('');
   const correctAnswers = config.grading?.answers || {};
@@ -49,6 +51,7 @@ function ResourceContent({ activity, role, activityKey }) {
   React.useEffect(() => {
     setAnswers(Object.fromEntries(fields.map((field) => [field.id, field.value || ''])));
     setPlacements(props.placements || {});
+    setOrderings({});
     setTiles(props.tiles || []);
     setSelectedOption('');
   }, [activity]);
@@ -68,6 +71,9 @@ function ResourceContent({ activity, role, activityKey }) {
   }
   if (activity.resource === 'grouping-drag-drop' || activity.resource === 'placement-board') {
     return <PlacementBoard {...props} placements={placements} onChange={setPlacements} activity={activityKey} />;
+  }
+  if (activity.resource === 'ordering-board') {
+    return <OrderingBoard {...props} orderings={orderings} onChange={setOrderings} activity={activityKey} />;
   }
   if (activity.resource === 'venn-board') {
     return <VennBoard {...props} placements={placements} onChange={setPlacements} activity={activityKey} />;
@@ -198,6 +204,26 @@ function getStudentColumns(activity, activityKey) {
       props.items,
       (student, item) => student.answers?.[activityId]?.[item.id]
     );
+  }
+  if (resource === 'ordering-board') {
+    const rowCount = Array.isArray(props.rows) ? props.rows.length : Math.max(0, Number(props.rows) || 0);
+    return Array.from({ length: rowCount }, (_, rowIndex) => {
+      const rowId = Array.isArray(props.rows) ? String(props.rows[rowIndex]?.id || `row-${rowIndex + 1}`) : `row-${rowIndex + 1}`;
+      const rowItems = Array.isArray(props.rows) ? props.rows[rowIndex]?.items || [] : props.items?.[rowIndex] || [];
+      return {
+        key: `ordering-${rowId}`,
+        label: Array.isArray(props.rows) ? props.rows[rowIndex]?.title || `Row ${rowIndex + 1}` : `Row ${rowIndex + 1}`,
+        render: (student) => {
+          let order = [];
+          try { order = JSON.parse(student.answers?.[activityKey]?.[`ordering:${rowId}`] || '[]'); } catch {}
+          const labels = new Map(rowItems.map((item) => {
+            const content = item.content || item.label || item.id;
+            return [String(item.id), typeof content === 'object' ? content.alt || 'Image' : content];
+          }));
+          return order.map((id) => labels.get(String(id)) || id).join(' → ') || '—';
+        }
+      };
+    });
   }
   if (resource === 'venn-board') {
     const regions = new Map([
@@ -335,7 +361,7 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
         rightPanel={widgetPanel('right')}
         />
       </section>
-      {role === 'teacher' && ['input-grid', 'grouping-drag-drop', 'placement-board', 'algebra-tiles', 'collaborative-algebra-tiles', 'options-grid'].includes(resourceActivity.resource) ? (
+      {role === 'teacher' && ['input-grid', 'grouping-drag-drop', 'placement-board', 'ordering-board', 'algebra-tiles', 'collaborative-algebra-tiles', 'options-grid'].includes(resourceActivity.resource) ? (
         <GroupsAccordion
           participants={students}
           columns={getStudentColumns(resourceActivity, selectedActivityKey)}

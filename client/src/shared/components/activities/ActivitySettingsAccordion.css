@@ -217,6 +217,7 @@
 .activity-resource-preview__inputs,
 .activity-resource-preview__options,
 .activity-resource-preview__placement,
+.activity-resource-preview__ordering,
 .activity-resource-preview__tiles {
   display: grid;
   width: 100%;
@@ -228,6 +229,7 @@
 .activity-resource-preview__inputs i,
 .activity-resource-preview__options i,
 .activity-resource-preview__placement i,
+.activity-resource-preview__ordering i,
 .activity-resource-preview__tiles i {
   display: grid;
   min-height: 26px;
@@ -246,6 +248,14 @@
 
 .activity-resource-preview__placement i:nth-child(odd) {
   background: #fef3c7;
+}
+
+.activity-resource-preview__ordering {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.activity-resource-preview__ordering i:nth-child(3n + 1) {
+  grid-column: 1 / -1;
 }
 
 .activity-resource-preview__venn {

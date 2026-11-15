@@ -4,72 +4,75 @@
   "language": "el",
   "resources": [
     {
-      "id": "dataset-likeTermReduction",
+      "id": "dataset-polynomialBasics",
       "type": "activity-data",
       "config": {
         "settings": {},
         "data": {
-          "label": "Αναγωγή ομοίων όρων",
+          "label": "Βαθμός πολυωνύμου ως προς μεταβλητές",
           "items": [
             {
-              "id": "reduce-1",
-              "expression": "3x^2y + 5x^2y - 2x^2y",
-              "answerTemplate": "x^{}y^{}",
-              "resultMode": "monomial",
+              "id": "poly-basic-1",
+              "expression": "3x^2y + 5xy^3 - 7x^4 + 2y^2",
+              "degreeX": 4,
+              "degreeY": 3,
+              "totalDegree": 7,
+              "resultMode": "degreeOnly",
               "parts": [
                 {
-                  "coefficient": "",
                   "degreeX": "",
-                  "degreeY": ""
+                  "degreeY": "",
+                  "totalDegree": ""
                 }
               ],
-              "connector": " + ",
               "correctAnswers": {
-                "coefficient": 6,
-                "degreeX": 2,
-                "degreeY": 1
+                "degreeX": 4,
+                "degreeY": 3,
+                "totalDegree": 7
               },
               "scoreCorrect": 1,
               "scoreIncorrect": -0.5
             },
             {
-              "id": "reduce-2",
-              "expression": "4xy^3 + 2xy^3 - 3xy^3",
-              "answerTemplate": "x^{}y^{}",
-              "resultMode": "monomial",
+              "id": "poly-basic-2",
+              "expression": "2x^3y^2 - 4x^2y + 3x^5",
+              "degreeX": 5,
+              "degreeY": 2,
+              "totalDegree": 7,
+              "resultMode": "degreeOnly",
               "parts": [
                 {
-                  "coefficient": "",
                   "degreeX": "",
-                  "degreeY": ""
+                  "degreeY": "",
+                  "totalDegree": ""
                 }
               ],
-              "connector": " + ",
               "correctAnswers": {
-                "coefficient": 3,
-                "degreeX": 1,
-                "degreeY": 3
+                "degreeX": 5,
+                "degreeY": 2,
+                "totalDegree": 7
               },
               "scoreCorrect": 1,
               "scoreIncorrect": -0.5
             },
             {
-              "id": "reduce-3",
-              "expression": "7x^3y^2 - 2x^3y^2 + 4x^3y^2",
-              "answerTemplate": "x^{}y^{}",
-              "resultMode": "monomial",
+              "id": "poly-basic-3",
+              "expression": "x^4y - 5xy^2 + 3x^2y^3",
+              "degreeX": 4,
+              "degreeY": 3,
+              "totalDegree": 7,
+              "resultMode": "degreeOnly",
               "parts": [
                 {
-                  "coefficient": "",
                   "degreeX": "",
-                  "degreeY": ""
+                  "degreeY": "",
+                  "totalDegree": ""
                 }
               ],
-              "connector": " + ",
               "correctAnswers": {
-                "coefficient": 9,
-                "degreeX": 3,
-                "degreeY": 2
+                "degreeX": 4,
+                "degreeY": 3,
+                "totalDegree": 7
               },
               "scoreCorrect": 1,
               "scoreIncorrect": -0.5
@@ -86,21 +89,10 @@
         "settings": {},
         "data": {
           "tasks": [
-            "Όμοιοι όροι",
-            "Απλοποίηση",
-            "Αναγωγή"
+            "Βαθμός ως προς x",
+            "Βαθμός ως προς y",
+            "Βαθμός ως προς x και y"
           ]
-        }
-      }
-    },
-    {
-      "id": "activity-2.2-math-preview",
-      "type": "math-preview",
-      "region": "bottom",
-      "config": {
-        "settings": {
-          "label": "Απάντηση",
-          "answerMode": "monomial"
         }
       }
     }
@@ -109,13 +101,12 @@
     "id": "2.2",
     "theoryId": "polynomials",
     "code": "2.2",
-    "title": "2.2 Αναγωγή ομοίων όρων",
-    "objective": "Συνδυασμός όμοιων μονωνύμων σε ένα απλοποιημένο αποτέλεσμα.",
+    "title": "2.2 Βασικές έννοιες πολυωνύμων",
+    "objective": "Εντοπισμός βαθμού ως προς x, βαθμού ως προς y και συνολικού βαθμού ενός πολυωνύμου.",
     "mode": "activity-content",
     "usesResources": [
-      "dataset-likeTermReduction",
-      "activity-content-2.2",
-      "activity-2.2-math-preview"
+      "dataset-polynomialBasics",
+      "activity-content-2.2"
     ],
     "labels": {
       "expression": "Έκφραση",
@@ -123,7 +114,7 @@
       "coefficient": "Συντελεστής",
       "degreeX": "Βαθμός ως προς x",
       "degreeY": "Βαθμός ως προς y",
-      "totalDegree": "Συνολικός βαθμός",
+      "totalDegree": "Βαθμός ως προς x και y",
       "degreeXY": "Βαθμός ως προς x και y",
       "termCoefficient": "Συντελεστής όρου {{term}}",
       "termDegreeX": "Βαθμός ως προς x (όρος {{term}})",

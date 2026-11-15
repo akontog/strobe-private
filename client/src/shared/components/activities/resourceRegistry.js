@@ -2,6 +2,7 @@ export const ACTIVITY_RESOURCE_TYPES = [
   'input-grid',
   'options-grid',
   'placement-board',
+  'ordering-board',
   'grouping-drag-drop',
   'venn-board',
   'number-line',

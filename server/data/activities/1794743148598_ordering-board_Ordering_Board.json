@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "1.0",
+  "documentType": "activity",
+  "language": "el",
+  "resources": [
+    {
+      "id": "ordering-board-main",
+      "type": "ordering-board",
+      "region": "center",
+      "config": {
+        "settings": {
+          "rows": 2,
+          "grading": {
+            "mode": "strict"
+          },
+          "items": [
+            [
+              {
+                "id": "step-1",
+                "content": "Step 1",
+                "initialOrder": 2,
+                "correctOrder": 1
+              },
+              {
+                "id": "step-2",
+                "content": "Step 2",
+                "initialOrder": 3,
+                "correctOrder": 2
+              },
+              {
+                "id": "step-3",
+                "content": "Step 3",
+                "initialOrder": 1,
+                "correctOrder": 3
+              }
+            ],
+            [
+              {
+                "id": "number-1",
+                "content": "1",
+                "initialOrder": 3,
+                "correctOrder": 1
+              },
+              {
+                "id": "number-2",
+                "content": "2",
+                "initialOrder": 1,
+                "correctOrder": 2
+              },
+              {
+                "id": "number-3",
+                "content": "3",
+                "initialOrder": 2,
+                "correctOrder": 3
+              }
+            ]
+          ]
+        }
+      }
+    }
+  ],
+  "activity": {
+    "id": "ordering-board-activity",
+    "code": "1.",
+    "title": "Ordering Board",
+    "objective": "",
+    "notes": "",
+    "mode": "ordering-board",
+    "usesResources": [
+      "ordering-board-main"
+    ]
+  },
+  "metadata": {
+    "createdAt": "2026-11-15T11:45:48.598Z",
+    "author": {
+      "username": "activity-page",
+      "role": "teacher"
+    }
+  }
+}

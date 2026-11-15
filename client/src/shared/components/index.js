@@ -5,6 +5,7 @@ export { default as SharedCommonZoneLayout } from './layouts/SharedCommonZoneLay
 export { default as Toolbar } from './layouts/Toolbar';
 export { default as ActivitiesAccordion, DEFAULT_ACTIVITY_OPTIONS } from './services/ActivitiesAccordion';
 export { default as PlacementBoard } from './resources/PlacementBoard';
+export { default as OrderingBoard } from './resources/OrderingBoard';
 export { default as GroupingDragDrop } from './resources/PlacementBoard';
 export { default as VennBoard } from './resources/VennBoard';
 export { default as OptionsGrid } from './resources/OptionsGrid';
