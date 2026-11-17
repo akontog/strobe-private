@@ -55,6 +55,19 @@ Workshop, Activities και Sequences είναι τα τρία επίπεδα ο
 
 # Πόροι (Resources)
 
+| Στοιχείο | Προτεινόμενο εικονίδιο | Κωδικός |
+|---|---|---|
+| Πλέγμα Εισόδων (Entry Grid) | ▦ | U+25A6 |
+| Πλέγμα Επιλογών (Options Grid) | ▣ | U+25A3 |
+| Αντιστοίχιση (Placement Board) | 🧩 | U+1F9E9 |
+| Διάταξη (Ordering Board) | ⇅ | U+21C5 |
+| Διάγραμμα Venn | ⚭ | U+26AD |
+| Αλγεβρικά Πλακίδια (Algebra Tiles) | 🧱 | U+1F9F1 |
+| Αριθμογραμμή (Number Line) | 📏 | U+1F4CF |
+| Καρτεσιανό Επίπεδο (Cartesian Plane) | 📐 | U+1F4D0 |
+| GeoGebra | 🧮 | U+1F9EE |
+| Embodied / Camera | 📷 | U+1F4F7 |
+
 - Υλοποίηση: \resources
 
 ## Πλέγμα Εισόδων (Entry Grid)
@@ -118,9 +131,30 @@ Workshop, Activities και Sequences είναι τα τρία επίπεδα ο
 
 ### Παράμετροι
 
-#### 
+#### bankLabel (String)
 
-####
+Τίτλος στο section grouping-dd-bank με τα αντικείμενα προς τοποθέτηση
+
+#### groups (Array of objects)
+
+ονόματα και id ομάδων στις οποίες τοποθετούνται τα αντικείμενα
+
+"groups": [
+    {
+      "id": (String)
+      "title": (String)
+    },
+...
+
+#### items  (Array of objects)
+
+"items": [
+  {
+    "id": (String),
+    "content": (String),
+    "correctGroupId": (String)
+  },
+...
 
 ## Διάταξη (Ordering Board)
 
@@ -409,12 +443,15 @@ client/src/workshops/<όνομα>/
 
 Προσομοίωση της βελόνας του Buffon.
 
-### Neural Lab
+### Neural
 
 Διδακτική εφαρμογή για νευρωνικά δίκτυα (εξίσωση w₁·i₁ + w₂·i₂ = o).  
 
-- [readme](/docs/reports/neural-lab/README.md)
+- [readme](/docs/workshops/neural.md)
 
-### Primes Lab
+### Primes
 
-- [readme](/docs/reports/primes-lab/README.md)
+- [readme](/docs/workshops/primes.md)
+
+### Polynomial
+

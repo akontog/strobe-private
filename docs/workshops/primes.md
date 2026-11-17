@@ -30,25 +30,6 @@
 - node.js
 - React components με accordion-based teacher panel και κεντρικό grid 2-100
 
-## Δομή αρχείων
-
-```
-primes-lab/
-  components/
-    Accordion.jsx
-    NumberGrid.jsx
-    TeacherPanel.jsx
-  data/
-    primes.js
-  App.jsx
-  App.css
-  index.jsx
-  teacher.jsx
-  student.jsx
-  teacher.html
-  student.html
-```
-
 ## Σημείωση σχεδίασης
 
 Η διάταξη κρατά το teacher panel αριστερά και το μεγάλο αριθμητικό πάνελ δεξιά, ώστε η προσοχή να μένει στο τρέχον κόσκινο και στην οπτική αφαίρεση των αριθμών που βγαίνουν από το παιχνίδι.

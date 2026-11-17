@@ -13,66 +13,51 @@
           "items": [
             {
               "id": "reduce-1",
-              "expression": "3x^2y + 5x^2y - 2x^2y",
-              "answerTemplate": "x^{}y^{}",
-              "resultMode": "monomial",
-              "parts": [
-                {
-                  "coefficient": "",
-                  "degreeX": "",
-                  "degreeY": ""
-                }
+              "expression": "3x^2y + 5xy^2 - 2x^2y + 4xy^2 - xy^2",
+              "resultMode": "grouping",
+              "groups": [
+                { "id": "x2y", "title": "Όροι x²y", "hint": "x^2y", "degreeX": 2, "degreeY": 1 },
+                { "id": "xy2", "title": "Όροι xy²", "hint": "xy^2", "degreeX": 1, "degreeY": 2 }
               ],
-              "connector": " + ",
-              "correctAnswers": {
-                "coefficient": 6,
-                "degreeX": 2,
-                "degreeY": 1
-              },
-              "scoreCorrect": 1,
-              "scoreIncorrect": -0.5
+              "items": [
+                { "id": "r1-a", "label": "3x^2y", "coefficient": 3, "correctGroupId": "x2y" },
+                { "id": "r1-b", "label": "5xy^2", "coefficient": 5, "correctGroupId": "xy2" },
+                { "id": "r1-c", "label": "-2x^2y", "coefficient": -2, "correctGroupId": "x2y" },
+                { "id": "r1-d", "label": "4xy^2", "coefficient": 4, "correctGroupId": "xy2" },
+                { "id": "r1-e", "label": "-xy^2", "coefficient": -1, "correctGroupId": "xy2" }
+              ]
             },
             {
               "id": "reduce-2",
-              "expression": "4xy^3 + 2xy^3 - 3xy^3",
-              "answerTemplate": "x^{}y^{}",
-              "resultMode": "monomial",
-              "parts": [
-                {
-                  "coefficient": "",
-                  "degreeX": "",
-                  "degreeY": ""
-                }
+              "expression": "4xy^3 + 2x^3y - 3xy^3 + 5x^3y - xy^3",
+              "resultMode": "grouping",
+              "groups": [
+                { "id": "xy3", "title": "Όροι xy³", "hint": "xy^3", "degreeX": 1, "degreeY": 3 },
+                { "id": "x3y", "title": "Όροι x³y", "hint": "x^3y", "degreeX": 3, "degreeY": 1 }
               ],
-              "connector": " + ",
-              "correctAnswers": {
-                "coefficient": 3,
-                "degreeX": 1,
-                "degreeY": 3
-              },
-              "scoreCorrect": 1,
-              "scoreIncorrect": -0.5
+              "items": [
+                { "id": "r2-a", "label": "4xy^3", "coefficient": 4, "correctGroupId": "xy3" },
+                { "id": "r2-b", "label": "2x^3y", "coefficient": 2, "correctGroupId": "x3y" },
+                { "id": "r2-c", "label": "-3xy^3", "coefficient": -3, "correctGroupId": "xy3" },
+                { "id": "r2-d", "label": "5x^3y", "coefficient": 5, "correctGroupId": "x3y" },
+                { "id": "r2-e", "label": "-xy^3", "coefficient": -1, "correctGroupId": "xy3" }
+              ]
             },
             {
               "id": "reduce-3",
-              "expression": "7x^3y^2 - 2x^3y^2 + 4x^3y^2",
-              "answerTemplate": "x^{}y^{}",
-              "resultMode": "monomial",
-              "parts": [
-                {
-                  "coefficient": "",
-                  "degreeX": "",
-                  "degreeY": ""
-                }
+              "expression": "7x^3y^2 - 2xy + 4x^3y^2 + 5xy - 3x^3y^2",
+              "resultMode": "grouping",
+              "groups": [
+                { "id": "x3y2", "title": "Όροι x³y²", "hint": "x^3y^2", "degreeX": 3, "degreeY": 2 },
+                { "id": "xy", "title": "Όροι xy", "hint": "xy", "degreeX": 1, "degreeY": 1 }
               ],
-              "connector": " + ",
-              "correctAnswers": {
-                "coefficient": 9,
-                "degreeX": 3,
-                "degreeY": 2
-              },
-              "scoreCorrect": 1,
-              "scoreIncorrect": -0.5
+              "items": [
+                { "id": "r3-a", "label": "7x^3y^2", "coefficient": 7, "correctGroupId": "x3y2" },
+                { "id": "r3-b", "label": "-2xy", "coefficient": -2, "correctGroupId": "xy" },
+                { "id": "r3-c", "label": "4x^3y^2", "coefficient": 4, "correctGroupId": "x3y2" },
+                { "id": "r3-d", "label": "5xy", "coefficient": 5, "correctGroupId": "xy" },
+                { "id": "r3-e", "label": "-3x^3y^2", "coefficient": -3, "correctGroupId": "x3y2" }
+              ]
             }
           ]
         }
@@ -109,7 +94,7 @@
     "id": "2.3",
     "theoryId": "polynomials",
     "code": "2.3",
-    "title": "2.3 Αναγωγή ομοίων όρων",
+    "title": "2.3 Αναγωγή ομοίων όρων (🧩)",
     "objective": "Συνδυασμός όμοιων μονωνύμων σε ένα απλοποιημένο αποτέλεσμα.",
     "mode": "activity-content",
     "usesResources": [

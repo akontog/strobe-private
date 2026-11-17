@@ -97,7 +97,7 @@
   "activity": {
     "id": "2.1",
     "code": "2.1",
-    "title": "2.1 Ταξινόμηση πολυωνύμων",
+    "title": "2.1 Αριθμός Όρων (🧩)",
     "objective": "Αντιστοίχισε κάθε πολυώνυμο με το είδος του.",
     "theoryId": "polynomials",
     "mode": "placement-board",

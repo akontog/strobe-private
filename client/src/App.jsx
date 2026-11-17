@@ -452,16 +452,16 @@ function App() {
     ] },
     activities: { label: tNav('activities'), items: [
       { label: tNav('items.activityLibrary'), path: '/activities/library' },
-      { label: tNav('items.inputGrid'), path: '/tools/input-grid' },
-      { label: tNav('items.optionsGrid'), path: '/tools/options-grid' },
-      { label: tNav('items.placementBoard'), path: '/tools/placement-board' },
-      { label: tNav('items.orderingBoard', { defaultValue: 'Διάταξη' }), path: '/tools/ordering-board' },
-      { label: tNav('items.venn'), path: '/tools/venn' },
-      { label: tNav('items.algebraTiles'), path: '/tools/algebra-tiles' },
-      { label: tNav('items.numberLine'), path: '/tools/number-line' },
-      { label: tNav('items.cartesianPlane'), path: '/tools/cartesian-plane' },
-      { label: tNav('items.geogebra'), path: '/tools/geogebra' },
-      { label: tNav('items.vision'), path: '/tools/vision' }
+      { label: `${tNav('items.inputGrid')} ▦`, path: '/tools/input-grid' },
+      { label: `${tNav('items.optionsGrid')} ▣`, path: '/tools/options-grid' },
+      { label: `${tNav('items.placementBoard')} 🧩`, path: '/tools/placement-board' },
+      { label: [tNav('items.orderingBoard', { defaultValue: 'Διάταξη' }), '⇅'].join(' '), path: '/tools/ordering-board' },
+      { label: `${tNav('items.venn')} ⚭`, path: '/tools/venn' },
+      { label: `${tNav('items.algebraTiles')} 🧱`, path: '/tools/algebra-tiles' },
+      { label: `${tNav('items.numberLine')} 📏`, path: '/tools/number-line' },
+      { label: `${tNav('items.cartesianPlane')} 📐`, path: '/tools/cartesian-plane' },
+      { label: `${tNav('items.geogebra')} 🧮`, path: '/tools/geogebra' },
+      { label: `${tNav('items.vision')} 📷`, path: '/tools/vision' }
     ] },
     tools: { label: tNav('tools'), items: [
       { label: tNav('items.separation'), path: '/tools/linear-separation' },

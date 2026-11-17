@@ -21,6 +21,13 @@
               "leftPolynomial": "3x^2 + 5xy - 2y^2",
               "rightPolynomial": "4x^2 - 3xy + y^2",
               "operator": "+",
+              "placementDisplay": {
+                "delimiterBefore": "(",
+                "delimiterBetween": " ",
+                "delimiterAfter": ")",
+                "delimiterGroupBy": "source",
+                "delimiterGroupSeparator": " + "
+              },
               "groups": [
                 {
                   "id": "g-x2",
@@ -92,7 +99,7 @@
                 },
                 {
                   "id": "r3",
-                  "label": "y^2",
+                  "label": "+y^2",
                   "coefficient": 1,
                   "degreeX": 0,
                   "degreeY": 2,
@@ -123,6 +130,13 @@
               "leftPolynomial": "2x^3 + 3x^3 - 4xy",
               "rightPolynomial": "5y^2 + 2x^2",
               "operator": "+",
+              "placementDisplay": {
+                "delimiterBefore": "(",
+                "delimiterBetween": " ",
+                "delimiterAfter": ")",
+                "delimiterGroupBy": "source",
+                "delimiterGroupSeparator": " + "
+              },
               "groups": [
                 {
                   "id": "g-x3",
@@ -165,7 +179,7 @@
                 },
                 {
                   "id": "l2",
-                  "label": "3x^3",
+                  "label": "+3x^3",
                   "coefficient": 3,
                   "degreeX": 3,
                   "degreeY": 0,
@@ -192,7 +206,7 @@
                 },
                 {
                   "id": "r2",
-                  "label": "2x^2",
+                  "label": "+2x^2",
                   "coefficient": 2,
                   "degreeX": 2,
                   "degreeY": 0,
@@ -250,7 +264,7 @@
     "id": "2.5",
     "theoryId": "polynomials",
     "code": "2.5",
-    "title": "2.5 Πράξεις με πολυώνυμα (πρόσθεση-αφαίρεση)",
+    "title": "2.5 Πρόσθεση-αφαίρεση (🧩)",
     "objective": "Ομαδοποίηση όρων από δύο πολυώνυμα και αυτόματη πρόσθεση ανά ομάδα ομοίων όρων.",
     "mode": "activity-content",
     "usesResources": [

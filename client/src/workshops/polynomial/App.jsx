@@ -424,14 +424,15 @@ export default function App({ role = 'teacher' }) {
   const isOrderingBoardActivity = activeActivity?.mode === 'ordering-board';
   const isPolynomialTypeGroupingActivity = activeActivity?.mode === 'placement-board';
   const isResourceBoardActivity = isOrderingBoardActivity || isPolynomialTypeGroupingActivity;
+  const isLikeTermReductionActivity = selectedActivityId === '2.3';
   const isPolynomialGroupingActivity = selectedActivityId === '2.5';
-  const isPolynomialDegreeGroupingActivity = selectedActivityId === '2.9';
-  const isGeogebraAreaActivity = selectedActivityId === '2.10';
-  const isAlgebraTilesActivity = selectedActivityId === '2.8';
-  const isGroupingActivity = isMonomialGroupingActivity || isPolynomialGroupingActivity || isPolynomialDegreeGroupingActivity;
+  const isPolynomialDegreeGroupingActivity = selectedActivityId === '2.7';
+  const isGeogebraAreaActivity = selectedActivityId === '2.8';
+  const isAlgebraTilesActivity = selectedActivityId === '2.6';
+  const isGroupingActivity = isMonomialGroupingActivity || isLikeTermReductionActivity || isPolynomialGroupingActivity || isPolynomialDegreeGroupingActivity;
   const isDegreeOnlyActivity = selectedActivityId === '2.2';
-  const isMonomialResultActivity = ['1.3', '1.4', '2.3'].includes(selectedActivityId);
-  const isPolynomialResultActivity = ['2.6', '2.7'].includes(selectedActivityId);
+  const isMonomialResultActivity = ['1.3', '1.4'].includes(selectedActivityId);
+  const isPolynomialResultActivity = false;
   const isTemplateActivity = isMonomialResultActivity || isPolynomialResultActivity || isDegreeOnlyActivity;
   useEffect(() => {
     setOrderingBoardOrderings({});
@@ -478,28 +479,12 @@ export default function App({ role = 'teacher' }) {
   }));
   const expressionGeogebraRoomId = String(activeExpression?.geogebraRoomId || '').trim();
   const geogebraRoomId = isGeogebraAreaActivity
-    ? String(lessonGeogebraRoomId || expressionGeogebraRoomId || 'polynomial-lab-2-10-area-2x').trim()
+    ? String(lessonGeogebraRoomId || expressionGeogebraRoomId || 'polynomial-lab-2-8-area-2x').trim()
     : '';
   const leftExpressionText = activeExpression.expression;
   const resultInputValues = activeExpressionParts[0] || { coefficient: '', degreeX: '', degreeY: '' };
   const degreeOnlyInputValues = activeExpressionParts[0] || { degreeX: '', degreeY: '', totalDegree: '' };
   const degreeOnlyPreviewText = `\\deg_x = ${degreeOnlyInputValues.degreeX || ''}, \\deg_y = ${degreeOnlyInputValues.degreeY || ''}, \\deg_{xy} = ${degreeOnlyInputValues.totalDegree || ''}`;
-  const groupedPolynomialExpression = useMemo(() => {
-    if (selectedActivityId !== '2.6') {
-      return null;
-    }
-
-    const match = leftExpressionText.match(/\((.*)\)\s*([+-])\s*\((.*)\)/);
-    if (!match) {
-      return null;
-    }
-
-    return {
-      left: match[1],
-      operator: match[2],
-      right: match[3]
-    };
-  }, [selectedActivityId, leftExpressionText]);
   const rightPreviewText = isDegreeOnlyActivity
     ? degreeOnlyPreviewText
     : isMonomialResultActivity
@@ -541,7 +526,8 @@ export default function App({ role = 'teacher' }) {
   const groupingItems = useMemo(
     () => (activeExpression?.items || []).map((item) => ({
       id: item.id,
-      content: <MathFormula formula={`\\(${item.label}\\)`} />
+      content: <MathFormula formula={`\\(${item.label}\\)`} />,
+      source: item.source
     })),
     [activeExpression]
   );
@@ -585,18 +571,17 @@ export default function App({ role = 'teacher' }) {
         return null;
       }
 
-      const requiredItems = expressionItems.filter((item) => item.correctGroupId === groupId);
-      const hasWrongInGroup = expressionItems.some((item) => {
-        const placement = activeGroupingPlacements[item.id] || null;
-        return placement === groupId && item.correctGroupId !== groupId;
-      });
-      const allRequiredPlaced = requiredItems.every((item) => activeGroupingPlacements[item.id] === groupId);
-
-      if (hasWrongInGroup || !allRequiredPlaced || requiredItems.length === 0) {
+      const placedItems = expressionItems.filter((item) => (
+        item.correctGroupId === groupId && activeGroupingPlacements[item.id] === groupId
+      ));
+      if (placedItems.length === 0) {
         return null;
       }
 
-      const coefficientSum = requiredItems.reduce((sum, item) => sum + Number(item.coefficient || 0), 0);
+      const coefficientSum = placedItems.reduce((sum, item) => sum + Number(item.coefficient || 0), 0);
+      if (coefficientSum === 0) {
+        return null;
+      }
       return {
         id: groupId,
         value: formatMonomialFromParts(coefficientSum, group.degreeX || 0, group.degreeY || 0),
@@ -616,6 +601,26 @@ export default function App({ role = 'teacher' }) {
     const isComplete = resultOrder.length > 0 && termStrings.length === resultOrder.length;
     return { formula, isComplete };
   }, [isPolynomialGroupingActivity, activeExpression, activeGroupingPlacements]);
+  const likeTermReductionPreview = useMemo(() => {
+    if (!isLikeTermReductionActivity) {
+      return '';
+    }
+
+    const groups = Array.isArray(activeExpression?.groups) ? activeExpression.groups : [];
+    const items = Array.isArray(activeExpression?.items) ? activeExpression.items : [];
+    return groups.map((group) => {
+      const coefficientSum = items
+        .filter((item) => item.correctGroupId === group.id && activeGroupingPlacements[item.id] === group.id)
+        .reduce((sum, item) => sum + Number(item.coefficient || 0), 0);
+      return coefficientSum === 0 ? null : {
+        sign: coefficientSum < 0 ? '-' : '+',
+        value: formatMonomialFromParts(coefficientSum, group.degreeX || 0, group.degreeY || 0)
+      };
+    }).filter(Boolean).reduce((formula, term) => {
+      if (!formula) return term.sign === '-' ? `-${term.value}` : term.value;
+      return `${formula} ${term.sign} ${term.value}`;
+    }, '');
+  }, [isLikeTermReductionActivity, activeExpression, activeGroupingPlacements]);
 
   const updateExpressionPart = (index, field, value) => {
     setExpressionDrafts((prevDrafts) => {
@@ -984,7 +989,7 @@ export default function App({ role = 'teacher' }) {
       return;
     }
 
-    if (isResourceBoardActivity || selectedActivityId === '2.10') {
+    if (isResourceBoardActivity || isGeogebraAreaActivity) {
       return;
     }
 
@@ -1080,18 +1085,6 @@ export default function App({ role = 'teacher' }) {
               <p className="lab-mini-label poly-mini-label">{leftWidgetLabel}</p>
               {isGroupingActivity ? (
                 null
-              ) : groupedPolynomialExpression ? (
-                <div className="poly-stacked-expression">
-                  <div className="poly-stacked-expression-row">
-                    {renderWrappedExpression(groupedPolynomialExpression.left)}
-                  </div>
-                  <div className="poly-stacked-expression-operator" aria-label={t('operatorBetweenTerms')}>
-                    {groupedPolynomialExpression.operator}
-                  </div>
-                  <div className="poly-stacked-expression-row">
-                    {renderWrappedExpression(groupedPolynomialExpression.right)}
-                  </div>
-                </div>
               ) : (
                 <div className="lab-math-box poly-expression-math">
                   {renderWrappedExpression(leftExpressionText)}
@@ -1122,6 +1115,13 @@ export default function App({ role = 'teacher' }) {
               />
             ) : isGroupingActivity ? (
               <div className="poly-grouping-panel">
+                {isLikeTermReductionActivity && (
+                  <div className="poly-grouping-equation">
+                    <div className="poly-grouping-expression-card">
+                      {renderWrappedExpression(activeExpression?.expression)}
+                    </div>
+                  </div>
+                )}
                 {isPolynomialGroupingActivity && (
                   <div className="poly-grouping-equation">
                     <div className="poly-grouping-expression-card">
@@ -1134,6 +1134,7 @@ export default function App({ role = 'teacher' }) {
                   </div>
                 )}
                 <GroupingDragDrop
+                  {...(activeExpression?.placementDisplay || {})}
                   activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
                   items={groupingItems}
                   groups={groupingGroups}
@@ -1155,6 +1156,7 @@ export default function App({ role = 'teacher' }) {
                           position: 'bottom',
                           settings: {
                             ...answerPreviewWidget.settings,
+                            answerMode: 'grouping',
                             formula: polynomialGroupingResult?.formula || ''
                           }
                         }]}
@@ -1162,6 +1164,20 @@ export default function App({ role = 'teacher' }) {
                       />
                     )}
                   </>
+                )}
+                {isLikeTermReductionActivity && answerPreviewWidget && (
+                  <WidgetRenderer
+                    widgets={[{
+                      ...answerPreviewWidget,
+                      position: 'bottom',
+                      settings: {
+                        ...answerPreviewWidget.settings,
+                        answerMode: 'grouping',
+                        formula: likeTermReductionPreview
+                      }
+                    }]}
+                    position="bottom"
+                  />
                 )}
               </div>
             ) : isAlgebraTilesActivity ? (

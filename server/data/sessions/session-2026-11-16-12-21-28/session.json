@@ -1,0 +1,21 @@
+{
+  "sessionId": "session-2026-11-16-12-21-28",
+  "app": "polynomial-lab",
+  "startedAt": "2026-11-16T10:21:28.407Z",
+  "endedAt": null,
+  "teacherId": "antonis",
+  "students": [
+    "pp"
+  ],
+  "studentScores": [
+    {
+      "student": "pp",
+      "score": 0
+    }
+  ],
+  "activity": "2.3 Αναγωγή ομοίων όρων",
+  "activityId": "2.3",
+  "chatEnabled": true,
+  "scoreVisible": true,
+  "feedbackEnabled": true
+}

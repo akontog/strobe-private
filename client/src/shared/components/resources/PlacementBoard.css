@@ -97,6 +97,13 @@
   cursor: not-allowed;
 }
 
+.grouping-dd-delimiter {
+  align-self: center;
+  color: #334155;
+  font-weight: 700;
+  user-select: none;
+}
+
 .grouping-dd-empty {
   margin: 0;
   font-size: 0.78rem;
