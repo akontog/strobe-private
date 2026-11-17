@@ -137,7 +137,7 @@ Workshop, Activities και Sequences είναι τα τρία επίπεδα ο
 
 #### groups (Array of objects)
 
-ονόματα και id ομάδων στις οποίες τοποθετούνται τα αντικείμενα
+id (*id*) και ονόματα (*title*) ομάδων στις οποίες τοποθετούνται τα αντικείμενα
 
 "groups": [
     {
@@ -147,6 +147,8 @@ Workshop, Activities και Sequences είναι τα τρία επίπεδα ο
 ...
 
 #### items  (Array of objects)
+
+id (*id*) και περιεχόμενα (*content*) αντικειμένων καθώς και id του σωστού group (*correctGroupId*) που πρέπει να τοποθετηθούν 
 
 "items": [
   {
@@ -439,6 +441,20 @@ client/src/workshops/<όνομα>/
   teacher.jsx
 ```
 
+### Polynomial (Πολυώνυμα)
+
+- Φάκελος polynomial
+
+### Equations (Εξισώσεις - Ανισώσεις)
+
+### Systems (Συστήματα)
+
+### Probability (Πιθανότητες)
+
+### Geometry (Γεωμετρία)
+
+
+
 ### Buffon Needle
 
 Προσομοίωση της βελόνας του Buffon.
@@ -453,5 +469,5 @@ client/src/workshops/<όνομα>/
 
 - [readme](/docs/workshops/primes.md)
 
-### Polynomial
+
 

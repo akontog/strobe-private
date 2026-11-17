@@ -4,7 +4,8 @@ const APP_SLUG_BY_WORKSHOP = {
   identities: 'identities-lab',
   'linear-systems': 'linear-systems-lab',
   polynomial: 'polynomial-lab',
-  probabilities: 'probabilities-lab'
+  probabilities: 'probabilities-lab',
+  geometry: 'geometry-lab'
 };
 
 const activityFiles = Object.entries(import.meta.glob('./*/data/activities/*.json', {

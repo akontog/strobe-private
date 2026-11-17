@@ -95,6 +95,14 @@ const APP_DEFINITIONS = [
     kind: 'react'
   },
   {
+    slug: 'geometry-lab',
+    labId: 'geometry-lab',
+    title: 'Geometry',
+    description: 'Classify triangles by their angles and side lengths.',
+    roles: ['teacher', 'student', 'client'],
+    kind: 'react'
+  },
+  {
     slug: 'options-grid-collab',
     labId: 'options-grid-collab',
     title: 'Options Grid',

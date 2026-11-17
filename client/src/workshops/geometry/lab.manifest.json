@@ -1,0 +1,10 @@
+{
+  "labId": "geometry-lab",
+  "slug": "geometry-lab",
+  "workshopSlug": "geometry-lab",
+  "name": "Γεωμετρία",
+  "entry": {
+    "teacher": "TeacherView.jsx",
+    "student": "StudentView.jsx"
+  }
+}

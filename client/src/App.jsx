@@ -47,6 +47,7 @@ const SESSION_ENABLED_APPS = new Set([
   'equations-lab',
   'factorization-lab',
   'probabilities-lab',
+  'geometry-lab',
   'linear-systems-lab',
   'identities-lab'
 ]);
@@ -440,6 +441,7 @@ function App() {
       { label: tNav('items.equations'), path: '/workshops/equations-lab' },
       { label: tNav('items.linearSystems'), path: '/workshops/linear-systems' },
       { label: tNav('items.probabilities'), path: '/workshops/probabilities-lab' },
+      { label: tNav('items.geometry'), path: '/workshops/geometry-lab' },
       { label: tNav('items.buffon'), path: '/workshops/buffon-needle' },
       { label: tNav('items.identities'), path: '/workshops/identities-lab' },
       { label: tNav('items.factorization'), path: '/workshops/factorization-lab' },

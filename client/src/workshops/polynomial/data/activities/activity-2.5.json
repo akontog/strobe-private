@@ -21,13 +21,25 @@
               "leftPolynomial": "3x^2 + 5xy - 2y^2",
               "rightPolynomial": "4x^2 - 3xy + y^2",
               "operator": "+",
-              "placementDisplay": {
-                "delimiterBefore": "(",
-                "delimiterBetween": " ",
-                "delimiterAfter": ")",
-                "delimiterGroupBy": "source",
-                "delimiterGroupSeparator": " + "
-              },
+              "delimiters": [
+                {
+                  "position": 0,
+                  "itemId": "l1",
+                  "content": "("
+                },
+                {
+                  "position": 3,
+                  "itemId": "r1",
+                  "content": ") + ("
+                },
+                {
+                  "position": 6,
+                  "itemId": "r3",
+                  "content": ")"
+                }
+              ],
+              "delimiterGroupBy": "source",
+              "delimiterBetween": " ",
               "groups": [
                 {
                   "id": "g-x2",
@@ -130,13 +142,25 @@
               "leftPolynomial": "2x^3 + 3x^3 - 4xy",
               "rightPolynomial": "5y^2 + 2x^2",
               "operator": "+",
-              "placementDisplay": {
-                "delimiterBefore": "(",
-                "delimiterBetween": " ",
-                "delimiterAfter": ")",
-                "delimiterGroupBy": "source",
-                "delimiterGroupSeparator": " + "
-              },
+              "delimiters": [
+                {
+                  "position": 0,
+                  "itemId": "l1",
+                  "content": "("
+                },
+                {
+                  "position": 3,
+                  "itemId": "r1",
+                  "content": ") + ("
+                },
+                {
+                  "position": 5,
+                  "itemId": "r2",
+                  "content": ")"
+                }
+              ],
+              "delimiterGroupBy": "source",
+              "delimiterBetween": " ",
               "groups": [
                 {
                   "id": "g-x3",
@@ -226,6 +250,283 @@
                 "item-l3": "g-xy",
                 "item-r1": "g-y2",
                 "item-r2": "g-x2"
+              },
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5
+            },
+            {
+              "id": "poly-group-3",
+              "expression": "(5x^2 + 3x - 2) - (2x^2 - 4x + 6)",
+              "resultMode": "grouping",
+              "leftPolynomial": "5x^2 + 3x - 2",
+              "rightPolynomial": "2x^2 - 4x + 6",
+              "operator": "-",
+              "delimiters": [
+                {
+                  "position": 0,
+                  "itemId": "l1",
+                  "content": "("
+                },
+                {
+                  "position": 3,
+                  "itemId": "r1",
+                  "content": ") - ("
+                },
+                {
+                  "position": 6,
+                  "itemId": "r3",
+                  "content": ")"
+                }
+              ],
+              "delimiterGroupBy": "source",
+              "delimiterBetween": " ",
+              "groups": [
+                {
+                  "id": "g-x2",
+                  "title": "Terms x^2",
+                  "hint": "x^2",
+                  "degreeX": 2,
+                  "degreeY": 0
+                },
+                {
+                  "id": "g-x",
+                  "title": "Terms x",
+                  "hint": "x",
+                  "degreeX": 1,
+                  "degreeY": 0
+                },
+                {
+                  "id": "g-constant",
+                  "title": "Constants",
+                  "hint": "1",
+                  "degreeX": 0,
+                  "degreeY": 0
+                }
+              ],
+              "items": [
+                {
+                  "id": "l1",
+                  "label": "5x^2",
+                  "coefficient": 5,
+                  "degreeX": 2,
+                  "degreeY": 0,
+                  "source": "L",
+                  "correctGroupId": "g-x2"
+                },
+                {
+                  "id": "l2",
+                  "label": "+3x",
+                  "coefficient": 3,
+                  "degreeX": 1,
+                  "degreeY": 0,
+                  "source": "L",
+                  "correctGroupId": "g-x"
+                },
+                {
+                  "id": "l3",
+                  "label": "-2",
+                  "coefficient": -2,
+                  "degreeX": 0,
+                  "degreeY": 0,
+                  "source": "L",
+                  "correctGroupId": "g-constant"
+                },
+                {
+                  "id": "r1",
+                  "label": "2x^2",
+                  "coefficient": -2,
+                  "degreeX": 2,
+                  "degreeY": 0,
+                  "source": "R",
+                  "correctGroupId": "g-x2"
+                },
+                {
+                  "id": "r2",
+                  "label": "-4x",
+                  "coefficient": 4,
+                  "degreeX": 1,
+                  "degreeY": 0,
+                  "source": "R",
+                  "correctGroupId": "g-x"
+                },
+                {
+                  "id": "r3",
+                  "label": "+6",
+                  "coefficient": -6,
+                  "degreeX": 0,
+                  "degreeY": 0,
+                  "source": "R",
+                  "correctGroupId": "g-constant"
+                }
+              ],
+              "resultOrder": [
+                "g-x2",
+                "g-x",
+                "g-constant"
+              ],
+              "correctAnswers": {
+                "item-l1": "g-x2",
+                "item-l2": "g-x",
+                "item-l3": "g-constant",
+                "item-r1": "g-x2",
+                "item-r2": "g-x",
+                "item-r3": "g-constant"
+              },
+              "scoreCorrect": 1,
+              "scoreIncorrect": -0.5
+            },
+            {
+              "id": "poly-group-4",
+              "expression": "(2x^2 + x - 3) + (-x^2 + 4x + 5) + (3x^2 - 2x - 1)",
+              "resultMode": "grouping",
+              "leftPolynomial": "2x^2 + x - 3",
+              "rightPolynomial": "-x^2 + 4x + 5",
+              "operator": "+",
+              "delimiters": [
+                {
+                  "position": 0,
+                  "itemId": "l1",
+                  "content": "("
+                },
+                {
+                  "position": 3,
+                  "itemId": "r1",
+                  "content": ") + ("
+                },
+                {
+                  "position": 6,
+                  "itemId": "t1",
+                  "content": ") + ("
+                },
+                {
+                  "position": 9,
+                  "itemId": "t3",
+                  "content": ")"
+                }
+              ],
+              "delimiterGroupBy": "source",
+              "delimiterBetween": " ",
+              "groups": [
+                {
+                  "id": "g-x2",
+                  "title": "Terms x^2",
+                  "hint": "x^2",
+                  "degreeX": 2,
+                  "degreeY": 0
+                },
+                {
+                  "id": "g-x",
+                  "title": "Terms x",
+                  "hint": "x",
+                  "degreeX": 1,
+                  "degreeY": 0
+                },
+                {
+                  "id": "g-constant",
+                  "title": "Constants",
+                  "hint": "1",
+                  "degreeX": 0,
+                  "degreeY": 0
+                }
+              ],
+              "items": [
+                {
+                  "id": "l1",
+                  "label": "2x^2",
+                  "coefficient": 2,
+                  "degreeX": 2,
+                  "degreeY": 0,
+                  "source": "L",
+                  "correctGroupId": "g-x2"
+                },
+                {
+                  "id": "l2",
+                  "label": "+x",
+                  "coefficient": 1,
+                  "degreeX": 1,
+                  "degreeY": 0,
+                  "source": "L",
+                  "correctGroupId": "g-x"
+                },
+                {
+                  "id": "l3",
+                  "label": "-3",
+                  "coefficient": -3,
+                  "degreeX": 0,
+                  "degreeY": 0,
+                  "source": "L",
+                  "correctGroupId": "g-constant"
+                },
+                {
+                  "id": "r1",
+                  "label": "-x^2",
+                  "coefficient": -1,
+                  "degreeX": 2,
+                  "degreeY": 0,
+                  "source": "R",
+                  "correctGroupId": "g-x2"
+                },
+                {
+                  "id": "r2",
+                  "label": "+4x",
+                  "coefficient": 4,
+                  "degreeX": 1,
+                  "degreeY": 0,
+                  "source": "R",
+                  "correctGroupId": "g-x"
+                },
+                {
+                  "id": "r3",
+                  "label": "+5",
+                  "coefficient": 5,
+                  "degreeX": 0,
+                  "degreeY": 0,
+                  "source": "R",
+                  "correctGroupId": "g-constant"
+                },
+                {
+                  "id": "t1",
+                  "label": "3x^2",
+                  "coefficient": 3,
+                  "degreeX": 2,
+                  "degreeY": 0,
+                  "source": "T",
+                  "correctGroupId": "g-x2"
+                },
+                {
+                  "id": "t2",
+                  "label": "-2x",
+                  "coefficient": -2,
+                  "degreeX": 1,
+                  "degreeY": 0,
+                  "source": "T",
+                  "correctGroupId": "g-x"
+                },
+                {
+                  "id": "t3",
+                  "label": "-1",
+                  "coefficient": -1,
+                  "degreeX": 0,
+                  "degreeY": 0,
+                  "source": "T",
+                  "correctGroupId": "g-constant"
+                }
+              ],
+              "resultOrder": [
+                "g-x2",
+                "g-x",
+                "g-constant"
+              ],
+              "correctAnswers": {
+                "item-l1": "g-x2",
+                "item-l2": "g-x",
+                "item-l3": "g-constant",
+                "item-r1": "g-x2",
+                "item-r2": "g-x",
+                "item-r3": "g-constant",
+                "item-t1": "g-x2",
+                "item-t2": "g-x",
+                "item-t3": "g-constant"
               },
               "scoreCorrect": 1,
               "scoreIncorrect": -0.5

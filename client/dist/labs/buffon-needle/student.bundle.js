@@ -5752,7 +5752,8 @@ var navigation_default = {
     separation: "\u0393\u03C1\u03B1\u03BC\u03BC\u03B9\u03BA\u03CC\u03C2 \u03B4\u03B9\u03B1\u03C7\u03C9\u03C1\u03B9\u03C3\u03BC\u03CC\u03C2",
     jsonValidator: "\u0388\u03BB\u03B5\u03B3\u03C7\u03BF\u03C2 JSON",
     builder: "\u0394\u03B7\u03BC\u03B9\u03BF\u03C5\u03C1\u03B3\u03AF\u03B1 \u03B4\u03C1\u03B1\u03C3\u03C4\u03B7\u03C1\u03B9\u03BF\u03C4\u03AE\u03C4\u03C9\u03BD",
-    instructions: "\u039F\u03B4\u03B7\u03B3\u03AF\u03B5\u03C2 \u03C7\u03C1\u03AE\u03C3\u03B7\u03C2"
+    instructions: "\u039F\u03B4\u03B7\u03B3\u03AF\u03B5\u03C2 \u03C7\u03C1\u03AE\u03C3\u03B7\u03C2",
+    geometry: "\u0393\u03B5\u03C9\u03BC\u03B5\u03C4\u03C1\u03AF\u03B1"
   },
   password: "\u039A\u03C9\u03B4\u03B9\u03BA\u03CC\u03C2",
   login: "\u03A3\u03CD\u03BD\u03B4\u03B5\u03C3\u03B7",
@@ -6880,7 +6881,8 @@ var navigation_default2 = {
     separation: "Linear Separation",
     jsonValidator: "JSON Validator",
     builder: "Activity Builder",
-    instructions: "User guide"
+    instructions: "User guide",
+    geometry: "Geometry"
   },
   password: "Password",
   login: "Log in",

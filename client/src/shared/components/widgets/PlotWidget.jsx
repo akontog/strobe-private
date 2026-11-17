@@ -46,6 +46,7 @@ export default function PlotWidget({
   yMax = 10, // Maximum vertical axis value.
   showLegend = true, // Shows the line legend when true.
   showGrid = true, // Shows the coordinate grid when true.
+  showTicks = true, // Shows numeric axis tick labels when true.
   axisLabels = { x: 'x', y: 'y' }, // Text displayed beside each coordinate axis.
   accessibleLabel = '', // Accessible description of the plot.
   graphItems = [], // Additional graph objects displayed on the plot.
@@ -143,6 +144,9 @@ export default function PlotWidget({
       pointItems: (Array.isArray(graphItems) ? graphItems : [])
         .filter((item) => item?.type === 'point' && Number.isFinite(Number(item.x)) && Number.isFinite(Number(item.y)))
         .map((item, index) => ({ ...item, id: item.id || `point-${index}`, x: Number(item.x), y: Number(item.y), color: item.color || '#dc2626' })),
+      segmentItems: (Array.isArray(graphItems) ? graphItems : [])
+        .filter((item) => item?.type === 'segment' && [item.x1, item.y1, item.x2, item.y2].every((value) => Number.isFinite(Number(value))))
+        .map((item, index) => ({ ...item, id: item.id || `segment-${index}`, color: item.color || '#2563eb' })),
       xTicks: [xMin, -5, 0, 5, xMax].filter((value, index, arr) => arr.indexOf(value) === index),
       yTicks: [yMin, -5, 0, 5, yMax].filter((value, index, arr) => arr.indexOf(value) === index),
       toX,
@@ -184,20 +188,33 @@ export default function PlotWidget({
           />
         ))}
 
+        {draw.segmentItems.map((segment) => (
+          <line
+            key={segment.id}
+            x1={draw.toX(Number(segment.x1))}
+            y1={draw.toY(Number(segment.y1))}
+            x2={draw.toX(Number(segment.x2))}
+            y2={draw.toY(Number(segment.y2))}
+            stroke={segment.color}
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+        ))}
+
         {draw.pointItems.map((point) => (
           <circle key={point.id} cx={draw.toX(point.x)} cy={draw.toY(point.y)} r="4" fill={point.color} className="simple-coord__point" />
         ))}
 
         {draw.pointItems.filter((point) => point.showCoordinates !== false).map((point) => (
           <text key={`point-label-${point.id}`} x={draw.toX(point.x) + 7} y={draw.toY(point.y) - 7} className="simple-coord__point-label">
-            ({formatNumber(point.x)}, {formatNumber(point.y)})
+            {point.label || `(${formatNumber(point.x)}, ${formatNumber(point.y)})`}
           </text>
         ))}
 
-        {draw.xTicks.map((x) => (
+        {showTicks && draw.xTicks.map((x) => (
           <text key={`tx-${x}`} x={draw.toX(x)} y={safeHeight - 8} className="simple-coord__tick" textAnchor="middle">{formatNumber(x)}</text>
         ))}
-        {draw.yTicks.map((y) => (
+        {showTicks && draw.yTicks.map((y) => (
           <text key={`ty-${y}`} x={8} y={draw.toY(y) + 4} className="simple-coord__tick">{formatNumber(y)}</text>
         ))}
 

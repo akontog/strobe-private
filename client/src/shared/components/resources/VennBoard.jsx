@@ -64,6 +64,21 @@ export default function VennBoard({
   const regionIds = useMemo(() => new Set(regions.map((region) => region.id)), [regions]);
   const invalidSet = useMemo(() => new Set(invalidItemIds), [invalidItemIds]);
   const disabledSet = useMemo(() => new Set(disabledItemIds), [disabledItemIds]);
+  const getMultiRegionPosition = (region) => {
+    if (region.position) return region.position;
+    const members = (region.members || []).map((member) => validSets.findIndex((set) => set.id === member)).filter((index) => index >= 0);
+    const key = members.join('-');
+    const defaultPositions = {
+      '0': { left: '25%', top: '31%', width: '23%' },
+      '1': { left: '75%', top: '31%', width: '23%' },
+      '2': { left: '50%', top: '68%', width: '23%' },
+      '0-1': { left: '50%', top: '19%', width: '23%' },
+      '0-2': { left: '39%', top: '51%', width: '23%' },
+      '1-2': { left: '61%', top: '51%', width: '23%' },
+      '0-1-2': { left: '50%', top: '39%', width: '23%' }
+    };
+    return defaultPositions[key] || { left: '50%', top: '50%', width: '23%' };
+  };
 
   useEffect(() => {
     const clearOnSessionStart = (event) => {
@@ -235,35 +250,56 @@ export default function VennBoard({
     <div className="venn-board" role="application" aria-label="Venn diagram activity">
       {isMultiSet ? (
         <div className="venn-board__multi">
-          <svg className="venn-board__multi-diagram" viewBox="0 0 100 70" role="img" aria-label="Venn sets">
-            {validSets.map((set, index) => {
-              const points = validSets.length === 3
-                ? [[38, 31], [62, 31], [50, 49]]
-                : [[39, 29], [61, 29], [39, 49], [61, 49]];
-              const [cx, cy] = points[index];
-              const colors = ['#6374d5', '#e77852', '#38a98c', '#bb69b2'];
-              return (
-                <g key={set.id}>
-                  <circle cx={cx} cy={cy} r={validSets.length === 3 ? 23 : 22} fill={colors[index]} fillOpacity="0.12" stroke={colors[index]} strokeWidth="1.5" />
-                  <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">{set.title || set.id}</text>
-                </g>
-              );
-            })}
-          </svg>
-          <div className="venn-board__multi-regions">
-            {regions.map((region) => (
-              <section
-                key={region.id}
-                className={`venn-board__multi-region${hoverZoneId === region.id ? ' is-hovering' : ''}`}
-                data-venn-region-id={region.id}
-                onClick={() => handleRegionClick(region.id)}
-                aria-label={region.title}
-              >
-                <strong>{region.title}</strong>
-                <div>{groupedState[region.id].map((item) => renderItem(item))}</div>
-              </section>
-            ))}
+          <div className={`venn-board__multi-canvas${validSets.length === 3 ? ' venn-board__multi-canvas--three' : ''}`}>
+            <svg className="venn-board__multi-diagram" viewBox="0 0 100 70" role="img" aria-label="Venn sets">
+              {validSets.map((set, index) => {
+                const points = validSets.length === 3
+                  ? [[38, 31], [62, 31], [50, 49]]
+                  : [[39, 29], [61, 29], [39, 49], [61, 49]];
+                const [cx, cy] = points[index];
+                const colors = ['#6374d5', '#e77852', '#38a98c', '#bb69b2'];
+                return (
+                  <g key={set.id}>
+                    <circle cx={cx} cy={cy} r={validSets.length === 3 ? 23 : 22} fill={colors[index]} fillOpacity="0.12" stroke={colors[index]} strokeWidth="1.5" />
+                    <text x={cx} y={cy} textAnchor="middle" dominantBaseline="middle">{set.title || set.id}</text>
+                  </g>
+                );
+              })}
+            </svg>
+            {validSets.length === 3 && (
+              <div className="venn-board__multi-regions venn-board__multi-regions--overlay">
+                {regions.map((region) => (
+                  <section
+                    key={region.id}
+                    className={`venn-board__multi-region venn-board__multi-region--overlay${hoverZoneId === region.id ? ' is-hovering' : ''}`}
+                    style={getMultiRegionPosition(region)}
+                    data-venn-region-id={region.id}
+                    onClick={() => handleRegionClick(region.id)}
+                    aria-label={region.title}
+                  >
+                    <strong>{region.title}</strong>
+                    <div>{groupedState[region.id].map((item) => renderItem(item))}</div>
+                  </section>
+                ))}
+              </div>
+            )}
           </div>
+          {validSets.length !== 3 && (
+            <div className="venn-board__multi-regions">
+              {regions.map((region) => (
+                <section
+                  key={region.id}
+                  className={`venn-board__multi-region${hoverZoneId === region.id ? ' is-hovering' : ''}`}
+                  data-venn-region-id={region.id}
+                  onClick={() => handleRegionClick(region.id)}
+                  aria-label={region.title}
+                >
+                  <strong>{region.title}</strong>
+                  <div>{groupedState[region.id].map((item) => renderItem(item))}</div>
+                </section>
+              ))}
+            </div>
+          )}
         </div>
       ) : (
       <div className={`venn-board__diagram${isSingleSet ? ' venn-board__diagram--single' : ''}${isNested ? ' venn-board__diagram--nested' : ''}`} onClick={handleDiagramClick}>

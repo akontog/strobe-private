@@ -1,0 +1,166 @@
+﻿{
+    "schemaVersion":  "1.0",
+    "documentType":  "activity",
+    "language":  "el",
+    "resources":  [
+                      {
+                          "id":  "dataset-triangleAngles",
+                          "type":  "activity-data",
+                          "config":  {
+                                         "settings":  {
+
+                                                      },
+                                         "data":  {
+                                                      "bankLabel":  "Τρίγωνα προς ταξινόμηση",
+                                                      "scoreCorrect":  1,
+                                                      "scoreIncorrect":  0,
+                                                      "groups":  [
+                                                                     {
+                                                                         "id":  "acute",
+                                                                         "title":  "Οξυγώνιο"
+                                                                     },
+                                                                     {
+                                                                         "id":  "obtuse",
+                                                                         "title":  "Αμβλυγώνιο"
+                                                                     },
+                                                                     {
+                                                                         "id":  "right",
+                                                                         "title":  "Ορθογώνιο"
+                                                                     }
+                                                                 ],
+                                                      "items":  [
+                                                                    {
+                                                                        "id":  "acute-1",
+                                                                        "content":  "∠Α = 60°, ∠Β = 60°, ∠Γ = 60°",
+                                                                        "correctGroupId":  "acute"
+                                                                    },
+                                                                    {
+                                                                        "id":  "acute-2",
+                                                                        "content":  "∠Α = 50°, ∠Β = 60°, ∠Γ = 70°",
+                                                                        "correctGroupId":  "acute"
+                                                                    },
+                                                                    {
+                                                                        "id":  "obtuse-1",
+                                                                        "content":  "∠Α = 30°, ∠Β = 40°, ∠Γ = 110°",
+                                                                        "correctGroupId":  "obtuse"
+                                                                    },
+                                                                    {
+                                                                        "id":  "obtuse-2",
+                                                                        "content":  "∠Α = 35°, ∠Β = 35°, ∠Γ = 110°",
+                                                                        "correctGroupId":  "obtuse"
+                                                                    },
+                                                                    {
+                                                                        "id":  "right-1",
+                                                                        "content":  "∠Α = 30°, ∠Β = 60°, ∠Γ = 90°",
+                                                                        "correctGroupId":  "right"
+                                                                    },
+                                                                    {
+                                                                        "id":  "right-2",
+                                                                        "content":  "∠Α = 45°, ∠Β = 45°, ∠Γ = 90°",
+                                                                        "correctGroupId":  "right"
+                                                                    }
+                                                                ]
+                                                  }
+                                     }
+                      },
+                      {
+                          "id":  "activity-content-1.1",
+                          "type":  "activity-content",
+                          "region":  "center",
+                          "config":  {
+                                         "settings":  {
+
+                                                      },
+                                         "data":  {
+                                                      "bankLabel":  "Τρίγωνα προς ταξινόμηση"
+                                                  }
+                                     }
+                      },
+                      {
+                          "id":  "geometry-triangle-plot-1.1",
+                          "type":  "plot-widget",
+                          "region":  "left",
+                          "config":  {
+                                         "settings":  {
+                                                          "width":  280,
+                                                          "height":  260,
+                                                          "xMin":  -6,
+                                                          "xMax":  6,
+                                                          "yMin":  -4,
+                                                          "yMax":  6,
+                                                          "showGrid":  true,
+                                                          "showLegend":  false,
+                                                          "title":  "",
+                                                          "accessibleLabel":  "Σκαληνό τρίγωνο ΑΒΓ σε σύστημα αξόνων",
+                                                          "axisLabels":  {
+                                                                             "x":  "x",
+                                                                             "y":  "y"
+                                                                         },
+                                                          "graphItems":  [
+                                                                             {
+                                                                                 "id":  "vertex-a",
+                                                                                 "label":  "Α",
+                                                                                 "showCoordinates":  true,
+                                                                                 "y":  -2,
+                                                                                 "type":  "point",
+                                                                                 "x":  -4
+                                                                             },
+                                                                             {
+                                                                                 "id":  "vertex-b",
+                                                                                 "label":  "Β",
+                                                                                 "showCoordinates":  true,
+                                                                                 "y":  -1,
+                                                                                 "type":  "point",
+                                                                                 "x":  4
+                                                                             },
+                                                                             {
+                                                                                 "id":  "vertex-g",
+                                                                                 "label":  "Γ",
+                                                                                 "showCoordinates":  true,
+                                                                                 "y":  4,
+                                                                                 "type":  "point",
+                                                                                 "x":  1
+                                                                             },
+                                                                             {
+                                                                                 "id":  "side-ab",
+                                                                                 "y2":  -1,
+                                                                                 "type":  "segment",
+                                                                                 "y1":  -2,
+                                                                                 "x1":  -4,
+                                                                                 "x2":  4
+                                                                             },
+                                                                             {
+                                                                                 "id":  "side-bg",
+                                                                                 "y2":  4,
+                                                                                 "type":  "segment",
+                                                                                 "y1":  -1,
+                                                                                 "x1":  4,
+                                                                                 "x2":  1
+                                                                             },
+                                                                             {
+                                                                                 "id":  "side-ga",
+                                                                                 "y2":  -2,
+                                                                                 "type":  "segment",
+                                                                                 "y1":  4,
+                                                                                 "x1":  1,
+                                                                                 "x2":  -4
+                                                                             }
+                                                                         ],
+                                                          "showTicks":  false
+                                                      }
+                                     }
+                      }
+                  ],
+    "activity":  {
+                     "id":  "1.1",
+                     "code":  "1.1",
+                     "title":  "Είδη τριγώνων ανάλογα τις γωνίες (🧩)",
+                     "objective":  "Ταξινόμησε κάθε τρίγωνο με βάση τις γωνίες του.",
+                     "mode":  "placement-board",
+                     "usesResources":  [
+                                           "dataset-triangleAngles",
+                                           "activity-content-1.1",
+                                           "geometry-triangle-plot-1.1"
+                                       ]
+                 }
+}

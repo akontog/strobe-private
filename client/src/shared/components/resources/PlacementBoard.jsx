@@ -19,11 +19,9 @@ export default function PlacementBoard({
   disabled = false, // Disables all drag and drop interactions.
   invalidItemIds = [], // Item IDs currently marked as incorrectly placed.
   disabledItemIds = [], // Item IDs that cannot be moved.
-  delimiterBefore = '', // Optional text rendered before each grouped item sequence.
-  delimiterBetween = '', // Optional text rendered between neighboring items.
-  delimiterAfter = '', // Optional text rendered after each grouped item sequence.
+  delimiters = [], // Optional markers inserted at boundaries between item positions.
+  delimiterBetween = '', // Optional text rendered between neighboring items in a group.
   delimiterGroupBy = '', // Optional item property used to wrap separate item groups.
-  delimiterGroupSeparator = '', // Optional text rendered between delimiter groups.
   bankLabel = 'Αντικείμενα προς ομαδοποίηση', // Label shown above the ungrouped items.
 }) {
   const sessionLogging = useSessionInputLogger();
@@ -46,6 +44,7 @@ export default function PlacementBoard({
   const groupIds = useMemo(() => new Set(groups.map((group) => group.id)), [groups]);
   const invalidSet = useMemo(() => new Set(invalidItemIds), [invalidItemIds]);
   const disabledSet = useMemo(() => new Set(disabledItemIds), [disabledItemIds]);
+  const itemPositionById = useMemo(() => new Map(items.map((item, index) => [item.id, index])), [items]);
 
   const groupedState = useMemo(() => {
     const state = {
@@ -191,7 +190,76 @@ export default function PlacementBoard({
     );
   };
 
+  const renderPositionedItem = (item) => {
+    const itemPosition = itemPositionById.get(item.id);
+    const markersBefore = delimiters.filter((delimiter) => (
+      delimiter.itemId
+        ? delimiter.itemId === item.id && delimiter.position === itemPosition
+        : delimiter.position === itemPosition
+    ));
+    const markersAfter = delimiters.filter((delimiter) => (
+      delimiter.itemId
+        ? delimiter.itemId === item.id && delimiter.position === itemPosition + 1
+        : delimiter.position === items.length && itemPosition === items.length - 1
+    ));
+
+    return (
+      <React.Fragment key={item.id}>
+        {markersBefore.map((delimiter, index) => (
+          <span className="grouping-dd-delimiter" key={`before-${index}`} aria-hidden="true">{delimiter.content}</span>
+        ))}
+        {renderItem(item)}
+        {markersAfter.map((delimiter, index) => (
+          <span className="grouping-dd-delimiter" key={`after-${index}`} aria-hidden="true">{delimiter.content}</span>
+        ))}
+      </React.Fragment>
+    );
+  };
+
+  const renderBankItem = (item, index, bankItems) => {
+    if (!delimiterGroupBy) {
+      return renderPositionedItem(item);
+    }
+
+    const groupKey = item[delimiterGroupBy] ?? '';
+    const previousItem = bankItems[index - 1];
+    const nextItem = bankItems[index + 1];
+    const startsGroup = !previousItem || (previousItem[delimiterGroupBy] ?? '') !== groupKey;
+    const endsGroup = !nextItem || (nextItem[delimiterGroupBy] ?? '') !== groupKey;
+    const openingDelimiter = delimiters.find((delimiter) => delimiter.position === 0)?.content || '';
+    const closingDelimiter = delimiters.find((delimiter) => delimiter.position === items.length)?.content || '';
+    const groupBoundaryDelimiter = delimiters.find((delimiter) => delimiter.position > 0 && delimiter.position < items.length)?.content || '';
+
+    return (
+      <React.Fragment key={item.id}>
+        {startsGroup && (index === 0 ? openingDelimiter : groupBoundaryDelimiter) && (
+          <span className="grouping-dd-delimiter" aria-hidden="true">
+            {index === 0 ? openingDelimiter : groupBoundaryDelimiter}
+          </span>
+        )}
+        {!startsGroup && delimiterBetween && (
+          <span className="grouping-dd-delimiter" aria-hidden="true">{delimiterBetween}</span>
+        )}
+        {renderItem(item)}
+        {endsGroup && (index === bankItems.length - 1 ? closingDelimiter : '') && (
+          <span className="grouping-dd-delimiter" aria-hidden="true">{closingDelimiter}</span>
+        )}
+      </React.Fragment>
+    );
+  };
+
   const renderDelimitedItems = (groupItems, groupId) => {
+    if (!delimiterGroupBy) {
+      return groupItems.map((item, index) => (
+        <React.Fragment key={`${groupId}-${item.id}`}>
+          {index > 0 && delimiterBetween && (
+            <span className="grouping-dd-delimiter" aria-hidden="true">{delimiterBetween}</span>
+          )}
+          {renderPositionedItem(item)}
+        </React.Fragment>
+      ));
+    }
+
     const delimiterGroups = delimiterGroupBy
       ? groupItems.reduce((result, item) => {
         const groupKey = item[delimiterGroupBy] ?? '';
@@ -204,14 +272,17 @@ export default function PlacementBoard({
         return result;
       }, [])
       : [{ key: groupId, items: groupItems }];
+    const openingDelimiter = delimiters.find((delimiter) => delimiter.position === 0)?.content || '';
+    const closingDelimiter = delimiters.find((delimiter) => delimiter.position === items.length)?.content || '';
+    const groupBoundaryDelimiter = delimiters.find((delimiter) => delimiter.position > 0 && delimiter.position < items.length)?.content || '';
 
     return delimiterGroups.map((delimiterGroup, groupIndex) => (
       <React.Fragment key={`${groupId}-${String(delimiterGroup.key)}-${groupIndex}`}>
-        {groupIndex > 0 && delimiterGroupSeparator && (
-          <span className="grouping-dd-delimiter" aria-hidden="true">{delimiterGroupSeparator}</span>
+        {groupIndex === 0 && openingDelimiter && (
+          <span className="grouping-dd-delimiter" aria-hidden="true">{openingDelimiter}</span>
         )}
-        {delimiterBefore && (
-          <span className="grouping-dd-delimiter" aria-hidden="true">{delimiterBefore}</span>
+        {groupIndex > 0 && groupBoundaryDelimiter && (
+          <span className="grouping-dd-delimiter" aria-hidden="true">{groupBoundaryDelimiter}</span>
         )}
         {delimiterGroup.items.map((item, itemIndex) => (
           <React.Fragment key={item.id}>
@@ -221,8 +292,8 @@ export default function PlacementBoard({
             {renderItem(item)}
           </React.Fragment>
         ))}
-        {delimiterAfter && (
-          <span className="grouping-dd-delimiter" aria-hidden="true">{delimiterAfter}</span>
+        {groupIndex === delimiterGroups.length - 1 && closingDelimiter && (
+          <span className="grouping-dd-delimiter" aria-hidden="true">{closingDelimiter}</span>
         )}
       </React.Fragment>
     ));
@@ -259,7 +330,7 @@ export default function PlacementBoard({
 
       <GroupingItemBank
         items={groupedState[BANK_ZONE_ID]}
-        renderItem={renderItem}
+        renderItem={(item, index) => renderBankItem(item, index, groupedState[BANK_ZONE_ID])}
         label={bankLabel}
         isHovering={hoverZoneId === BANK_ZONE_ID}
         onClick={() => handleZoneClick(BANK_ZONE_ID)}

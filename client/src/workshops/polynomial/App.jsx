@@ -509,10 +509,6 @@ export default function App({ role = 'teacher' }) {
       return item.groups.map((group) => group.hint).join(' | ');
     }
 
-    if (isPolynomialGroupingActivity && item?.leftPolynomial && item?.rightPolynomial) {
-      return `(${item.leftPolynomial}) + (${item.rightPolynomial})`;
-    }
-
     return item?.expression || item?.id || '';
   };
   const renderWrappedExpression = (expression) => {
@@ -1125,16 +1121,14 @@ export default function App({ role = 'teacher' }) {
                 {isPolynomialGroupingActivity && (
                   <div className="poly-grouping-equation">
                     <div className="poly-grouping-expression-card">
-                      <MathFormula formula={`\\(${activeExpression.leftPolynomial}\\)`} />
-                    </div>
-                    <div className="poly-grouping-operator">+</div>
-                    <div className="poly-grouping-expression-card">
-                      <MathFormula formula={`\\(${activeExpression.rightPolynomial}\\)`} />
+                      <MathFormula formula={`\\(${activeExpression.expression}\\)`} />
                     </div>
                   </div>
                 )}
                 <GroupingDragDrop
-                  {...(activeExpression?.placementDisplay || {})}
+                  delimiters={activeExpression?.delimiters || []}
+                  delimiterGroupBy={activeExpression?.delimiterGroupBy || ''}
+                  delimiterBetween={activeExpression?.delimiterBetween || ''}
                   activity={`polynomial:${selectedActivityId}:${selectedExpressionId}`}
                   items={groupingItems}
                   groups={groupingGroups}

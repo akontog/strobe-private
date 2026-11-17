@@ -32,7 +32,8 @@
     "separation": "Γραμμικός διαχωρισμός",
     "jsonValidator": "Έλεγχος JSON",
     "builder": "Δημιουργία δραστηριοτήτων",
-    "instructions": "Οδηγίες χρήσης"
+    "instructions": "Οδηγίες χρήσης",
+    "geometry": "Γεωμετρία"
   },
   "password": "Κωδικός",
   "login": "Σύνδεση",
