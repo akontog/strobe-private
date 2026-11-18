@@ -693,12 +693,12 @@ export default function App({ role = 'teacher' }) {
   }, [activityStudents, isResourceBoardActivity, sortedParticipants]);
 
   useEffect(() => {
-    if (!isTeacher || !isResourceBoardActivity || !sessionLogging?.activeSessionId) {
+    if (!isTeacher || !isResourceBoardActivity) {
       setActivityStudents([]);
       return undefined;
     }
     let cancelled = false;
-    const refreshStudents = () => fetch('/api/session-logs/active/polynomial-lab/students', { cache: 'no-store' })
+    const refreshStudents = () => fetch(`/api/session-logs/active/polynomial-lab/students?activityId=${encodeURIComponent(selectedActivityId)}`, { cache: 'no-store' })
       .then((response) => response.ok ? response.json() : null)
       .then((payload) => {
         if (!cancelled) setActivityStudents(Array.isArray(payload?.students) ? payload.students : []);
@@ -710,7 +710,7 @@ export default function App({ role = 'teacher' }) {
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [isTeacher, isResourceBoardActivity, sessionLogging?.activeSessionId]);
+  }, [isTeacher, isResourceBoardActivity, selectedActivityId, sessionLogging?.activeSessionId]);
 
   useEffect(() => {
     if (!isTeacher || !sessionLogging?.scoreVisible) {

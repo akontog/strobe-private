@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Accordion } from '../layouts/Accordion';
 import { useSessionInputLogger } from '../activities/SessionLogContext';
 import './DataAccordion.css';
@@ -32,16 +32,37 @@ export default function DataAccordion({
   labelClassName = '',
   selectClassName = '',
   getOptionLabel,
-  preserveSession = false,
   children
 }) {
   const session = useSessionInputLogger();
   const normalizedOptions = normalizeOptions(options, getOptionLabel);
+  const selectedOption = normalizedOptions.find((option) => option.value === String(value));
+  const previousValue = useRef(String(value || ''));
+
+  useEffect(() => {
+    if (previousValue.current === String(value || '')) return;
+    previousValue.current = String(value || '');
+    window.dispatchEvent(new CustomEvent('strobe:activity-changed', { detail: { activityId: String(value || '') } }));
+  }, [value]);
+
+  useEffect(() => {
+    if (session?.role !== 'teacher' || !session.activeSessionId || !selectedOption?.label) return;
+    session.updateActivity(selectedOption.label, value).catch(() => {});
+  }, [selectedOption?.label, session?.activeSessionId, session?.role, session?.updateActivity, value]);
+
+  useEffect(() => {
+    if (session?.role !== 'teacher' || !session.app || !value) return;
+    fetch('/teacher/classroom/selection', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ app: session.app, activityId: String(value) })
+    }).catch(() => {});
+  }, [session?.app, session?.role, value]);
 
   const handleChange = async (nextValue) => {
     if (nextValue === value || typeof onChange !== 'function') return;
     try {
-      if (session?.role === 'teacher' && !preserveSession) await session.endSession();
+      if (session?.role === 'teacher') await session.endSession();
       onChange(nextValue);
     } catch (error) {
       window.alert(error.message || 'Could not end the current session.');

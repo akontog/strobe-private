@@ -68,6 +68,38 @@ function clipLineToPlane(line, minX, maxX, minY, maxY) {
   return { start: farthest[0], end: farthest[1] };
 }
 
+function clipRayToPlane(ray, minX, maxX, minY, maxY) {
+  const start = ray.start || { x: ray.x1, y: ray.y1 };
+  const end = ray.end || { x: ray.x2, y: ray.y2 };
+  const dx = Number(end.x) - Number(start.x);
+  const dy = Number(end.y) - Number(start.y);
+  if (!Number.isFinite(dx) || !Number.isFinite(dy) || (Math.abs(dx) < 1e-8 && Math.abs(dy) < 1e-8)) return null;
+  const intersections = [];
+  const addIntersection = (x, y, distance) => {
+    if (distance < -1e-8 || x < minX - 1e-8 || x > maxX + 1e-8 || y < minY - 1e-8 || y > maxY + 1e-8) return;
+    if (!intersections.some((point) => Math.hypot(point.x - x, point.y - y) < 1e-8)) intersections.push({ x, y, distance });
+  };
+  if (Math.abs(dx) >= 1e-8) {
+    [minX, maxX].forEach((x) => {
+      const distance = (x - Number(start.x)) / dx;
+      addIntersection(x, Number(start.y) + distance * dy, distance);
+    });
+  }
+  if (Math.abs(dy) >= 1e-8) {
+    [minY, maxY].forEach((y) => {
+      const distance = (y - Number(start.y)) / dy;
+      addIntersection(Number(start.x) + distance * dx, y, distance);
+    });
+  }
+  const forwardIntersections = intersections.sort((first, second) => first.distance - second.distance);
+  if (!forwardIntersections.length) return null;
+  const originInside = start.x >= minX && start.x <= maxX && start.y >= minY && start.y <= maxY;
+  return {
+    start: originInside ? { x: Number(start.x), y: Number(start.y) } : forwardIntersections[0],
+    end: forwardIntersections[forwardIntersections.length - 1]
+  };
+}
+
 function distanceToSegment(point, start, end) {
   const dx = end.x - start.x;
   const dy = end.y - start.y;
@@ -89,6 +121,14 @@ export default function CartesianPlane({
   mode = 'points',
   maxPoints = null,
   maxLines = null,
+  rayMode = false,
+  rayOrigin = null,
+  fixedRays = [],
+  fixedPoints = [],
+  fixedSegments = [],
+  connectPlacedPointsToFixedSegments = false,
+  replacePointsOnClick = false,
+  placedPointLabel = '',
   showLineCount = true,
   showLineDrawHelp = true,
   canEdit: canEditOverride,
@@ -147,6 +187,12 @@ export default function CartesianPlane({
   const ownLines = participants.find((participant) => participant.own)?.lines || [];
   const distanceSummary = calculateCartesianDistances(ownPoints, activeTargets);
   const isTeacher = ['teacher', 'admin'].includes(String(session?.role || '').toLowerCase());
+  const visibleLineParticipants = activeMode === 'lines' && !isTeacher
+    ? participants.filter((participant) => participant.own)
+    : participants;
+  const visiblePointParticipants = (activeMode === 'lines' || connectPlacedPointsToFixedSegments) && !isTeacher
+    ? participants.filter((participant) => participant.own)
+    : participants;
 
   useEffect(() => {
     function syncIdentity() {
@@ -237,10 +283,24 @@ export default function CartesianPlane({
         pointId: nearestPoint.point.id,
         pointIndex: nearestPoint.index
       });
-      session?.logEvent('activity.input.changed', roomId, { field: 'cartesianPointRemoved', value: nearestPoint.point });
+      if (!replacePointsOnClick) {
+        session?.logEvent('activity.input.changed', roomId, { field: 'cartesianPointRemoved', value: nearestPoint.point });
+        return;
+      }
+      session?.logEvent('activity.input.changed', roomId, { field: 'cartesianPoint', value: '' });
       return;
     }
-    if (pointLimit !== null && ownPoints.length >= pointLimit) return;
+    const replacingPoint = replacePointsOnClick && ownPoints.length > 0 && pointLimit !== null && ownPoints.length >= pointLimit;
+    if (pointLimit !== null && ownPoints.length >= pointLimit && !replacingPoint) return;
+    if (replacingPoint) {
+      const previousPoint = ownPoints[ownPoints.length - 1];
+      emitPlaneEvent('cartesian-plane:remove-point', {
+        roomId,
+        sessionApp,
+        pointId: previousPoint.id,
+        pointIndex: ownPoints.length - 1
+      });
+    }
     const svgX = localPoint.x;
     const svgY = localPoint.y;
     const rawX = xMin + ((svgX - padding) / (width - padding * 2)) * xSpan;
@@ -253,7 +313,7 @@ export default function CartesianPlane({
     emitPlaneEvent('cartesian-plane:point', { roomId, sessionApp, point, ...identity });
     session?.logEvent('activity.input.changed', roomId, {
       field: 'cartesianPoint',
-      value: point
+      value: replacePointsOnClick ? JSON.stringify(point) : point
     });
   }
 
@@ -275,19 +335,24 @@ export default function CartesianPlane({
     };
   }
 
-  function emitLine(line) {
-    if (lineLimit !== null && ownLines.length >= lineLimit) return;
+  function emitLine(line, { replace = false } = {}) {
+    if (!replace && lineLimit !== null && ownLines.length >= lineLimit) return;
     if (Math.hypot(line.end.x - line.start.x, line.end.y - line.start.y) < 0.01) return;
     const socket = socketRef.current;
     const payload = { roomId, sessionApp, line, ...identityRef.current };
     if (!socket?.connected) pendingEventsRef.current.push({ event: 'cartesian-plane:line', payload });
     else socket.emit('cartesian-plane:line', payload);
-    session?.logEvent('activity.input.changed', roomId, { field: 'cartesianLine', value: line });
+    session?.logEvent('activity.input.changed', roomId, {
+      field: rayMode ? 'cartesianRay' : 'cartesianLine',
+      value: rayMode ? JSON.stringify(line) : line
+    });
   }
 
   function removeOwnLineAt(point) {
     const nearestLine = ownLines.reduce((nearest, line) => {
-      const clipped = clipLineToPlane(line, xMin, xMax, yMin, yMax);
+      const clipped = rayMode && rayOrigin
+        ? clipRayToPlane({ start: rayOrigin, end: line.end }, xMin, xMax, yMin, yMax)
+        : clipLineToPlane(line, xMin, xMax, yMin, yMax);
       if (!clipped) return nearest;
       const distance = distanceToSegment(
         { x: point.svgX, y: point.svgY },
@@ -303,6 +368,23 @@ export default function CartesianPlane({
     else socket.emit('cartesian-plane:remove-line', payload);
     session?.logEvent('activity.input.changed', roomId, { field: 'cartesianLineRemoved', value: nearestLine.line });
     return true;
+  }
+
+  function selectRayPoint(event) {
+    if (!canEdit || !rayOrigin) return;
+    const point = getPlanePoint(event);
+    if (!point || Math.hypot(point.x - Number(rayOrigin.x), point.y - Number(rayOrigin.y)) < 0.05) return;
+    const lastRay = ownLines[ownLines.length - 1];
+    if (lastRay) {
+      const socket = socketRef.current;
+      const payload = { roomId, sessionApp, lineId: lastRay.id };
+      if (!socket?.connected) pendingEventsRef.current.push({ event: 'cartesian-plane:remove-line', payload });
+      else socket.emit('cartesian-plane:remove-line', payload);
+    }
+    emitLine(
+      { start: { x: Number(rayOrigin.x), y: Number(rayOrigin.y) }, end: point },
+      { replace: Boolean(lastRay) }
+    );
   }
 
   function handleLinePointerDown(event) {
@@ -358,10 +440,11 @@ export default function CartesianPlane({
         role="application"
         aria-label={t('cartesianPlane.ariaLabel')}
         onClick={activeMode === 'points' ? selectPoint : undefined}
-        onPointerDown={activeMode === 'lines' ? handleLinePointerDown : undefined}
-        onPointerMove={activeMode === 'lines' ? handleLinePointerMove : undefined}
-        onPointerUp={activeMode === 'lines' ? handleLinePointerUp : undefined}
-        onPointerCancel={activeMode === 'lines' ? cancelLineGesture : undefined}
+        onClickCapture={rayMode ? selectRayPoint : undefined}
+        onPointerDown={!rayMode && activeMode === 'lines' ? handleLinePointerDown : undefined}
+        onPointerMove={!rayMode && activeMode === 'lines' ? handleLinePointerMove : undefined}
+        onPointerUp={!rayMode && activeMode === 'lines' ? handleLinePointerUp : undefined}
+        onPointerCancel={!rayMode && activeMode === 'lines' ? cancelLineGesture : undefined}
       >
         <rect className="cartesian-plane-resource__background" x="0" y="0" width={width} height={height} />
         {xTicks.map((x) => <g key={`x-${x}`}>
@@ -374,21 +457,43 @@ export default function CartesianPlane({
         </g>)}
         {xMin <= 0 && xMax >= 0 ? <line className="cartesian-plane-resource__axis" x1={xToSvg(0)} x2={xToSvg(0)} y1={padding} y2={height - padding} /> : null}
         {yMin <= 0 && yMax >= 0 ? <line className="cartesian-plane-resource__axis" x1={padding} x2={width - padding} y1={yToSvg(0)} y2={yToSvg(0)} /> : null}
-        {participants.flatMap((participant) => (participant.lines || []).map((line, index) => {
-          const clipped = clipLineToPlane(line, xMin, xMax, yMin, yMax);
+        {fixedSegments.map((segment, index) => <line key={`fixed-segment-${segment.id || index}`} className="cartesian-plane-resource__line is-own" x1={xToSvg(Number(segment.start?.x ?? segment.x1))} y1={yToSvg(Number(segment.start?.y ?? segment.y1))} x2={xToSvg(Number(segment.end?.x ?? segment.x2))} y2={yToSvg(Number(segment.end?.y ?? segment.y2))} style={{ stroke: segment.color || '#2563eb' }} />)}
+        {fixedRays.map((ray, index) => {
+          const clipped = clipRayToPlane(ray, xMin, xMax, yMin, yMax);
           if (!clipped) return null;
+          return <line key={`fixed-ray-${ray.id || index}`} className="cartesian-plane-resource__line is-own" x1={xToSvg(clipped.start.x)} y1={yToSvg(clipped.start.y)} x2={xToSvg(clipped.end.x)} y2={yToSvg(clipped.end.y)} style={{ stroke: ray.color || '#2563eb' }} />;
+        })}
+        {visibleLineParticipants.flatMap((participant) => (participant.lines || []).map((line, index) => {
+          const clipped = rayMode && rayOrigin
+            ? clipRayToPlane({ start: rayOrigin, end: line.end }, xMin, xMax, yMin, yMax)
+            : clipLineToPlane(line, xMin, xMax, yMin, yMax);
+          if (!clipped) return null;
+          const lineEndX = xToSvg(clipped.end.x);
+          const lineEndY = yToSvg(clipped.end.y);
+          const labelOnRightEdge = lineEndX > width - padding - 100;
+          const labelNearTop = lineEndY < padding + 20;
           return (
+            <g key={`${participant.id}-line-${line.id || index}`}>
             <line
-              key={`${participant.id}-line-${line.id || index}`}
-              className={`cartesian-plane-resource__line${participant.own ? ' is-own' : ''}`}
+              className={`cartesian-plane-resource__line${participant.own ? ' is-own' : ' is-peer'}`}
               x1={xToSvg(clipped.start.x)}
               y1={yToSvg(clipped.start.y)}
-              x2={xToSvg(clipped.end.x)}
-              y2={yToSvg(clipped.end.y)}
+              x2={lineEndX}
+              y2={lineEndY}
               style={{ stroke: participant.color || '#4ECDC4' }}
             >
               <title>{`${participant.name}: (${line.start.x}, ${line.start.y}) – (${line.end.x}, ${line.end.y})`}</title>
             </line>
+            <text
+              className="cartesian-plane-resource__participant-name"
+              x={lineEndX + (labelOnRightEdge ? -8 : 8)}
+              y={lineEndY + (labelNearTop ? 17 : -8)}
+              textAnchor={labelOnRightEdge ? 'end' : 'start'}
+              style={{ fill: participant.color || '#4ECDC4' }}
+            >
+              {participant.name}
+            </text>
+            </g>
           );
         }))}
         {gestureLine ? <line
@@ -405,10 +510,41 @@ export default function CartesianPlane({
           r="6"
         /> : null}
         {activeTargets.map((target, index) => <circle key={`target-${index}`} className="cartesian-plane-resource__target" cx={xToSvg(Number(target.x))} cy={yToSvg(Number(target.y))} r="8"><title>{`(${target.x}, ${target.y})`}</title></circle>)}
-        {participants.flatMap((participant) => (participant.points || []).map((point, index) => (
-          <g key={`${participant.id}-${index}`} className={`cartesian-plane-resource__point${participant.own ? ' is-own' : ''}`}>
-            <circle cx={xToSvg(point.x)} cy={yToSvg(point.y)} r="7" style={{ fill: participant.color || '#4ECDC4' }} />
-            <title>{`${participant.name}: (${point.x}, ${point.y})`}</title>
+        {fixedPoints.map((point, index) => <g key={`fixed-point-${point.id || index}`} className="cartesian-plane-resource__point is-own"><circle cx={xToSvg(Number(point.x))} cy={yToSvg(Number(point.y))} r="7" style={{ fill: point.color || '#2563eb' }} /><text className="cartesian-plane-resource__axis-number" x={xToSvg(Number(point.x)) + 12} y={yToSvg(Number(point.y)) - 12}>{point.label}</text></g>)}
+        {visiblePointParticipants.flatMap((participant) => (participant.points || []).map((point, index) => (
+          <g key={`${participant.id}-${index}`}>
+            {connectPlacedPointsToFixedSegments ? fixedSegments.flatMap((segment, segmentIndex) => {
+              const start = segment.start || { x: segment.x1, y: segment.y1 };
+              const end = segment.end || { x: segment.x2, y: segment.y2 };
+              return [start, end].map((vertex, vertexIndex) => (
+                <line
+                  key={`${participant.id}-${index}-triangle-side-${segmentIndex}-${vertexIndex}`}
+                  className={`cartesian-plane-resource__line${participant.own ? ' is-own' : ' is-peer'}`}
+                  x1={xToSvg(Number(vertex.x))}
+                  y1={yToSvg(Number(vertex.y))}
+                  x2={xToSvg(Number(point.x))}
+                  y2={yToSvg(Number(point.y))}
+                  style={{ stroke: participant.color || '#4ECDC4' }}
+                />
+              ));
+            }) : null}
+            <g className={`cartesian-plane-resource__point${participant.own ? ' is-own' : connectPlacedPointsToFixedSegments ? ' is-peer' : ''}`}>
+              <circle cx={xToSvg(point.x)} cy={yToSvg(point.y)} r="7" style={{ fill: participant.color || '#4ECDC4' }} />
+              {connectPlacedPointsToFixedSegments ? (
+                <text
+                  className="cartesian-plane-resource__participant-name"
+                  x={xToSvg(point.x) + (xToSvg(point.x) > width - padding - 140 ? -10 : 10)}
+                  y={yToSvg(point.y) - 12}
+                  textAnchor={xToSvg(point.x) > width - padding - 140 ? 'end' : 'start'}
+                  style={{ fill: participant.color || '#4ECDC4' }}
+                >
+                  {[placedPointLabel, participant.name].filter(Boolean).join(' · ')}
+                </text>
+              ) : placedPointLabel ? (
+                <text className="cartesian-plane-resource__axis-number" x={xToSvg(point.x) + 12} y={yToSvg(point.y) - 12}>{placedPointLabel}</text>
+              ) : null}
+              <title>{`${participant.name}: (${point.x}, ${point.y})`}</title>
+            </g>
           </g>
         )))}
       </svg>

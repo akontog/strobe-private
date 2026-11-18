@@ -1,6 +1,6 @@
 const express = require('express');
 const { getAppBySlug } = require('../apps/registry');
-const { appendRecord, getActiveSessionForApp, getActiveSession, getActivitySettings, setAppSetting, getChatMessages, getActiveSessionStudents } = require('../services/sessionLogs');
+const { appendRecord, getActiveSessionForApp, getActiveSession, getCompletedSessionForApp, clearCompletedSessionSnapshots, getActivitySettings, setAppSetting, getChatMessages, getActiveSessionStudents, getConnectedStudents, reportStudentPresence } = require('../services/sessionLogs');
 const { requireRole } = require('../middleware/checkRole');
 
 const router = express.Router();
@@ -10,8 +10,9 @@ router.get('/api/session-logs/active/:app', (req, res) => {
   if (!isSessionApp(req.params.app)) return res.status(404).json({ error: 'Unknown app.' });
   const sessionId = getActiveSessionForApp(req.params.app);
   const session = sessionId ? getActiveSession(sessionId) : null;
+  const completedSession = session ? null : getCompletedSessionForApp(req.params.app);
   const settings = session?.metadata || getActivitySettings(req.params.app, req.params.app);
-  return res.json({ sessionId, activity: session?.metadata.activity || '', activityId: session?.metadata.activityId || req.params.app, chatEnabled: Boolean(settings.chatEnabled), scoreVisible: settings.scoreVisible !== false, feedbackEnabled: Boolean(settings.feedbackEnabled) });
+  return res.json({ sessionId, activity: session?.metadata.activity || '', activityId: session?.metadata.activityId || req.params.app, completedSession, chatEnabled: Boolean(settings.chatEnabled), scoreVisible: settings.scoreVisible !== false, feedbackEnabled: Boolean(settings.feedbackEnabled) });
 });
 
 router.get('/api/session-logs/active/:app/chat', (req, res) => {
@@ -23,7 +24,29 @@ router.get('/api/session-logs/active/:app/chat', (req, res) => {
 
 router.get('/api/session-logs/active/:app/students', requireRole(['teacher']), (req, res) => {
   if (!isSessionApp(req.params.app)) return res.status(404).json({ error: 'Unknown app.' });
-  return res.json({ students: getActiveSessionStudents(req.params.app, `${req.params.app === 'identities-lab' ? 'identities:' : ''}`) });
+  return res.json({ students: getActiveSessionStudents(req.params.app, `${req.params.app === 'identities-lab' ? 'identities:' : ''}`, String(req.query.activityId || '')) });
+});
+
+router.post('/api/session-logs/active/:app/presence', (req, res) => {
+  if (!isSessionApp(req.params.app)) return res.status(404).json({ error: 'Unknown app.' });
+  reportStudentPresence(req.params.app, req.body?.name);
+  return res.json({ ok: true });
+});
+
+router.post('/api/session-logs/presence', (req, res) => {
+  const app = String(req.body?.app || '');
+  if (app && !isSessionApp(app)) return res.status(404).json({ error: 'Unknown app.' });
+  reportStudentPresence(app, req.body?.name);
+  return res.json({ ok: true });
+});
+
+router.get('/api/session-logs/presence', requireRole(['teacher']), (_req, res) => (
+  res.json({ students: getConnectedStudents() })
+));
+
+router.post('/api/session-logs/completed/clear', requireRole(['teacher']), (_req, res) => {
+  clearCompletedSessionSnapshots();
+  return res.json({ ok: true });
 });
 
 router.post('/api/session-logs/active/:app/chat/settings', requireRole(['teacher']), (req, res) => {

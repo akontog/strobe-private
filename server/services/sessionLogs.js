@@ -7,6 +7,10 @@ const activeSessions = new Map();
 const recentlyEndedSessions = new Map();
 const activeStudentSnapshots = new Map();
 const activeChatSnapshots = new Map();
+const completedStudentSnapshots = new Map();
+const connectedStudents = new Map();
+const globallyConnectedStudents = new Map();
+const PRESENCE_TTL_MS = 15000;
 let sequence = 0;
 
 function readAppendedEvents(filename, cache) {
@@ -96,6 +100,7 @@ function timestampParts(date) {
 }
 
 function createSession({ app, activity, activityId, teacherId }) {
+  completedStudentSnapshots.clear();
   const started = new Date();
   const baseName = `session-${timestampParts(started).join('-')}`;
   let folderName = baseName;
@@ -136,6 +141,7 @@ function updateSessionActivity(sessionId, activity, activityId) {
   if (!name) return session.metadata;
   session.metadata.activity = name;
   const resolvedActivityId = String(activityId || name).trim().slice(0, 160);
+  if (session.metadata.activityId !== resolvedActivityId) completedStudentSnapshots.delete(session.metadata.app);
   session.metadata.activityId = resolvedActivityId;
   Object.assign(session.metadata, getActivitySettings(session.metadata.app, resolvedActivityId));
   fs.writeFileSync(path.join(session.directory, 'session.json'), `${JSON.stringify(session.metadata, null, 2)}\n`);
@@ -165,6 +171,19 @@ function getActiveSessionForApp(app) {
   return [...activeSessions.entries()].reverse().find(([, session]) => session.metadata.app === app)?.[0] || null;
 }
 
+function getCompletedSessionForApp(app) {
+  const completed = completedStudentSnapshots.get(app);
+  return completed ? {
+    sessionId: completed.sessionId,
+    activity: completed.activity,
+    activityId: completed.activityId
+  } : null;
+}
+
+function clearCompletedSessionSnapshots() {
+  completedStudentSnapshots.clear();
+}
+
 function getChatMessages(sessionId) {
   const session = getActiveSession(sessionId);
   if (!session) return [];
@@ -184,10 +203,16 @@ function getChatMessages(sessionId) {
   return cache.messages;
 }
 
-function getActiveSessionStudents(app, activityPrefix = '') {
+function getActiveSessionStudents(app, activityPrefix = '', requestedActivityId = '') {
   const sessionId = getActiveSessionForApp(app);
   const session = sessionId ? getActiveSession(sessionId) : null;
-  if (!session) return [];
+  if (!session) {
+    const completed = completedStudentSnapshots.get(app);
+    const matchingCompleted = completed && (!requestedActivityId || completed.activityId === requestedActivityId)
+      ? completed.students.map((student) => ({ ...student, answers: { ...(student.answers || {}) }, sessionId: completed.sessionId }))
+      : [];
+    return mergeConnectedStudents(app, matchingCompleted);
+  }
   const filename = path.join(session.directory, 'events.jsonl');
   const cacheKey = `${sessionId}:${activityPrefix}`;
   let cache = activeStudentSnapshots.get(cacheKey);
@@ -199,6 +224,10 @@ function getActiveSessionStudents(app, activityPrefix = '') {
   if (result.reset) cache.students.clear();
   (session.metadata.students || []).forEach((name) => {
     if (!cache.students.has(name)) cache.students.set(name, { id: name, name, activityId: '', answers: {} });
+  });
+  (session.metadata.studentScores || []).forEach((entry) => {
+    const student = cache.students.get(entry.student);
+    if (student && Number.isFinite(Number(entry.score))) student.score = Number(entry.score);
   });
 
   result.records.forEach((record) => {
@@ -223,7 +252,69 @@ function getActiveSessionStudents(app, activityPrefix = '') {
     if (field) student.answers[activityId][field] = String(record.data?.value ?? '');
   });
 
-  return [...cache.students.values()];
+  return mergeConnectedStudents(app, [...cache.students.values()].map((student) => ({ ...student, sessionId })));
+}
+
+function mergeConnectedStudents(app, students) {
+  const now = Date.now();
+  let presence = connectedStudents.get(app);
+  if (!presence) {
+    presence = new Map();
+    connectedStudents.set(app, presence);
+  }
+  presence.forEach((lastSeen, name) => {
+    if (now - lastSeen > PRESENCE_TTL_MS) presence.delete(name);
+  });
+  globallyConnectedStudents.forEach((entry, name) => {
+    if (now - entry.lastSeenAt > PRESENCE_TTL_MS) globallyConnectedStudents.delete(name);
+  });
+  const normalizeName = (name) => String(name || '').trim().toLocaleLowerCase();
+  const byName = new Map(students.map((student) => [normalizeName(student.name), student]));
+  presence.forEach((lastSeen, name) => {
+    const key = normalizeName(name);
+    const current = byName.get(key);
+    byName.set(key, { ...(current || { id: name, name, activityId: '', answers: {} }), isConnected: true });
+  });
+  globallyConnectedStudents.forEach((entry, name) => {
+    const key = normalizeName(name);
+    const current = byName.get(key);
+    byName.set(key, {
+      ...(current || { id: name, name, activityId: '', answers: {} }),
+      isConnected: true,
+      currentApp: entry.app || ''
+    });
+  });
+  byName.forEach((student, key) => {
+    if (!presence.has(student.name) && !globallyConnectedStudents.has(key)) student.isConnected = false;
+  });
+  return [...byName.values()];
+}
+
+function reportStudentPresence(app, studentName) {
+  const name = String(studentName || '').trim().slice(0, 80);
+  if (!name) return false;
+  const normalizedName = name.toLocaleLowerCase();
+  globallyConnectedStudents.set(normalizedName, { name, app: String(app || ''), lastSeenAt: Date.now() });
+  if (app) {
+    if (!connectedStudents.has(app)) connectedStudents.set(app, new Map());
+    connectedStudents.get(app).set(name, Date.now());
+  }
+  return true;
+}
+
+function getConnectedStudents() {
+  const now = Date.now();
+  globallyConnectedStudents.forEach((entry, name) => {
+    if (now - entry.lastSeenAt > PRESENCE_TTL_MS) globallyConnectedStudents.delete(name);
+  });
+  return [...globallyConnectedStudents.values()].map((entry) => ({
+    id: entry.name,
+    name: entry.name,
+    currentApp: entry.app,
+    isConnected: true,
+    activityId: '',
+    answers: {}
+  }));
 }
 
 function appendRecord(sessionId, filename, record) {
@@ -248,6 +339,12 @@ function appendRecord(sessionId, filename, record) {
 function endSession(sessionId) {
   const session = getActiveSession(sessionId);
   if (!session) return null;
+  completedStudentSnapshots.set(session.metadata.app, {
+    sessionId,
+    activity: session.metadata.activity,
+    activityId: session.metadata.activityId,
+    students: getActiveSessionStudents(session.metadata.app).map((student) => ({ ...student, isConnected: false }))
+  });
   session.metadata.endedAt = new Date().toISOString();
   fs.writeFileSync(path.join(session.directory, 'session.json'), `${JSON.stringify(session.metadata, null, 2)}\n`);
   activeSessions.delete(sessionId);
@@ -259,4 +356,4 @@ function endSession(sessionId) {
   return session.metadata;
 }
 
-module.exports = { createSession, appendRecord, endSession, getActiveSession, getActiveSessionForApp, getActivitySettings, setAppSetting, getChatMessages, getActiveSessionStudents, updateSessionActivity, updateSessionStudentScore };
+module.exports = { createSession, appendRecord, endSession, getActiveSession, getActiveSessionForApp, getCompletedSessionForApp, clearCompletedSessionSnapshots, getActivitySettings, setAppSetting, getChatMessages, getActiveSessionStudents, getConnectedStudents, reportStudentPresence, updateSessionActivity, updateSessionStudentScore };

@@ -1,0 +1,4 @@
+{"seq":1,"t":1794996747551,"activity":"1.1 Κατασκευή γωνίας με ημιευθείες (📐)","event":"student.joined","student":"pp","data":{}}
+{"seq":2,"t":1794996748455,"activity":"geometry:1.1:session-2026-11-18-12-12-27","event":"activity.input.changed","student":"pp","data":{"field":"cartesianRay","value":"{\"start\":{\"x\":0,\"y\":0},\"end\":{\"x\":4.2,\"y\":2.89,\"svgX\":578.218505859375,\"svgY\":192.2353057861328}}"}}
+{"seq":3,"t":1794996748573,"activity":"1.1 Κατασκευή γωνίας με ημιευθείες (📐)","event":"student.joined","student":"zyx","data":{}}
+{"seq":4,"t":1794996751139,"activity":"geometry:1.1:session-2026-11-18-12-12-27","event":"activity.input.changed","student":"zyx","data":{"field":"cartesianRay","value":"{\"start\":{\"x\":0,\"y\":0},\"end\":{\"x\":-5.29,\"y\":2.04,\"svgX\":85.13616943359375,\"svgY\":231.75782775878906}}"}}

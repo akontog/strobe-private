@@ -148,6 +148,8 @@ export default function GeoGebra({
   showZoomButtons = false, // Shows GeoGebra's zoom controls.
   showFullscreenButton = false, // Shows GeoGebra's fullscreen control.
   showSuggestionButtons = false, // Shows GeoGebra's suggestion controls.
+  initialCommands = [], // Creates an activity-specific starter construction in each shared board.
+  fixedObjectNames = [], // Keeps starter construction objects fixed while participants work.
   onConnectionChange, // Receives connection status changes.
   onObjectsChange, // Receives construction object changes.
   onPermissionsChange // Receives permission changes.
@@ -460,7 +462,18 @@ export default function GeoGebra({
       const state = Array.isArray(payload && payload.state) ? payload.state : [];
       withRemoteApply(() => {
         clearBoard();
+        const api = ggbApiRef.current;
+        if (typeof api?.evalCommand === 'function') {
+          initialCommands.forEach((command) => {
+            if (String(command || '').trim()) api.evalCommand(command);
+          });
+        }
         state.forEach((entry) => applyObjectFromServer(entry));
+        if (typeof api?.setFixed === 'function') {
+          fixedObjectNames.forEach((name) => {
+            if (objectExists(api, name)) api.setFixed(name, true, true);
+          });
+        }
       });
       if (typeof onObjectsChange === 'function') {
         onObjectsChange(state);
@@ -612,7 +625,9 @@ export default function GeoGebra({
     showResetIcon,
     showZoomButtons,
     showFullscreenButton,
-    showSuggestionButtons
+    showSuggestionButtons,
+    initialCommands,
+    fixedObjectNames
   ]);
 
   return (

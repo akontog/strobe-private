@@ -1858,15 +1858,35 @@ function DataAccordion({
   labelClassName = "",
   selectClassName = "",
   getOptionLabel,
-  preserveSession = false,
   children
 }) {
   const session = useSessionInputLogger();
   const normalizedOptions = normalizeOptions(options, getOptionLabel);
+  const selectedOption = normalizedOptions.find((option) => option.value === String(value));
+  const previousValue = (0, import_react14.useRef)(String(value || ""));
+  (0, import_react14.useEffect)(() => {
+    if (previousValue.current === String(value || "")) return;
+    previousValue.current = String(value || "");
+    window.dispatchEvent(new CustomEvent("strobe:activity-changed", { detail: { activityId: String(value || "") } }));
+  }, [value]);
+  (0, import_react14.useEffect)(() => {
+    if (session?.role !== "teacher" || !session.activeSessionId || !selectedOption?.label) return;
+    session.updateActivity(selectedOption.label, value).catch(() => {
+    });
+  }, [selectedOption?.label, session?.activeSessionId, session?.role, session?.updateActivity, value]);
+  (0, import_react14.useEffect)(() => {
+    if (session?.role !== "teacher" || !session.app || !value) return;
+    fetch("/teacher/classroom/selection", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ app: session.app, activityId: String(value) })
+    }).catch(() => {
+    });
+  }, [session?.app, session?.role, value]);
   const handleChange = async (nextValue) => {
     if (nextValue === value || typeof onChange !== "function") return;
     try {
-      if (session?.role === "teacher" && !preserveSession) await session.endSession();
+      if (session?.role === "teacher") await session.endSession();
       onChange(nextValue);
     } catch (error) {
       window.alert(error.message || "Could not end the current session.");
@@ -1988,8 +2008,36 @@ function GroupsAccordion({
   const { t: t3 } = useTranslation(["common", "interface"]);
   const sessionLogging = useSessionInputLogger();
   const [settingsSaving, setSettingsSaving] = (0, import_react26.useState)(false);
+  const [sessionParticipants, setSessionParticipants] = (0, import_react26.useState)([]);
+  const [selectedActivityId, setSelectedActivityId] = (0, import_react26.useState)("");
+  const participantSnapshots = (0, import_react26.useRef)(/* @__PURE__ */ new Map());
   const isTeacher = role === "teacher" || sessionLogging?.role === "teacher";
-  const resolvedRows = Array.isArray(participants) ? participants : [];
+  const liveRows = Array.isArray(participants) ? participants : [];
+  const liveRowsRef = (0, import_react26.useRef)(liveRows);
+  const staleLiveSignature = (0, import_react26.useRef)(null);
+  liveRowsRef.current = liveRows;
+  const activityId = selectedActivityId || (sessionLogging?.activeSessionId ? sessionLogging.activeActivityId : sessionLogging?.completedSession?.activityId) || "";
+  const sessionKey = sessionLogging?.activeSessionId || sessionLogging?.completedSession?.sessionId || "";
+  const snapshotKey = `${sessionLogging?.app || ""}:${sessionKey}:${activityId}`;
+  const mergedByName = /* @__PURE__ */ new Map();
+  const liveSignature = JSON.stringify(liveRows);
+  const visibleLiveRows = staleLiveSignature.current === liveSignature ? [] : liveRows;
+  if (staleLiveSignature.current && staleLiveSignature.current !== liveSignature) staleLiveSignature.current = null;
+  [...sessionParticipants, ...visibleLiveRows].forEach((participant) => {
+    if (!participant) return;
+    const name = String(participant.name || participant.username || participant.displayName || "").trim();
+    if (!name) return;
+    const key = name.toLocaleLowerCase();
+    const previous = mergedByName.get(key) || {};
+    mergedByName.set(key, {
+      ...previous,
+      ...participant,
+      answers: { ...previous.answers || {}, ...participant.answers || {} }
+    });
+  });
+  const currentRows = [...mergedByName.values()];
+  if (currentRows.length) participantSnapshots.current.set(snapshotKey, currentRows);
+  const resolvedRows = currentRows.length ? currentRows : participantSnapshots.current.get(snapshotKey) || [];
   const resolvedColumns = Array.isArray(columns) ? columns : [];
   const resolvedHeaderGroups = Array.isArray(headerGroups) ? headerGroups : [];
   const shouldRenderTable = hasTableConfiguration({
@@ -2017,6 +2065,57 @@ function GroupsAccordion({
     }, 250);
     return () => window.clearTimeout(timer);
   }, [activity, currentScore, isTeacher, sessionLogging?.activeSessionId, studentName]);
+  (0, import_react26.useEffect)(() => {
+    const handleActivityChange = (event) => {
+      setSelectedActivityId(String(event.detail?.activityId || ""));
+      setSessionParticipants([]);
+      participantSnapshots.current.clear();
+      staleLiveSignature.current = JSON.stringify(liveRowsRef.current);
+      fetch("/api/session-logs/completed/clear", { method: "POST" }).catch(() => {
+      });
+    };
+    const handleSessionStarted = () => {
+      participantSnapshots.current.clear();
+      setSessionParticipants([]);
+      staleLiveSignature.current = JSON.stringify(liveRowsRef.current);
+    };
+    window.addEventListener("strobe:activity-changed", handleActivityChange);
+    window.addEventListener("strobe:session-started", handleSessionStarted);
+    return () => {
+      window.removeEventListener("strobe:activity-changed", handleActivityChange);
+      window.removeEventListener("strobe:session-started", handleSessionStarted);
+    };
+  }, []);
+  (0, import_react26.useEffect)(() => {
+    if (!isTeacher || !sessionLogging?.app) {
+      setSessionParticipants([]);
+      return void 0;
+    }
+    let cancelled = false;
+    let requestInFlight = false;
+    const refreshStudents = async () => {
+      if (requestInFlight) return;
+      requestInFlight = true;
+      try {
+        const query = activityId ? `?activityId=${encodeURIComponent(activityId)}` : "";
+        const response = await fetch(`/api/session-logs/active/${encodeURIComponent(sessionLogging.app)}/students${query}`, { cache: "no-store" });
+        const payload = response.ok ? await response.json() : null;
+        if (!cancelled) setSessionParticipants(Array.isArray(payload?.students) ? payload.students : []);
+      } catch {
+      } finally {
+        requestInFlight = false;
+      }
+    };
+    refreshStudents();
+    const timer = window.setInterval(refreshStudents, 1e3);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [activityId, isTeacher, sessionLogging?.app]);
+  (0, import_react26.useEffect)(() => {
+    if (sessionLogging?.activeSessionId) participantSnapshots.current.clear();
+  }, [sessionLogging?.activeSessionId]);
   if (!shouldRenderTable) return null;
   const rows = resolvedRows;
   const extraColumns = resolvedColumns;

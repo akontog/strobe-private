@@ -1,0 +1,17 @@
+{"seq":1,"t":1794997154522,"activity":"1.3 Κατασκευή τριγώνων ανάλογα με τις γωνίες (📐)","event":"student.joined","student":"zyx","data":{}}
+{"seq":2,"t":1794997154772,"activity":"1.3 Κατασκευή τριγώνων ανάλογα με τις γωνίες (📐)","event":"student.joined","student":"pp","data":{}}
+{"seq":3,"t":1794997160309,"activity":"geometry:1.3:session-2026-11-18-12-19-14","event":"activity.input.changed","student":"pp","data":{"field":"cartesianPoint","value":"{\"x\":1.77,\"y\":2.32}"}}
+{"seq":4,"t":1794997170026,"activity":"geometry:1.3:session-2026-11-18-12-19-14","event":"activity.input.changed","student":"pp","data":{"field":"cartesianPoint","value":"{\"x\":-2.22,\"y\":1.82}"}}
+{"seq":5,"t":1794997171472,"activity":"geometry:1.3:session-2026-11-18-12-19-14","event":"activity.input.changed","student":"pp","data":{"field":"cartesianPoint","value":"{\"x\":1.54,\"y\":2.3}"}}
+{"seq":6,"t":1794997172381,"activity":"geometry:1.3:session-2026-11-18-12-19-14","event":"activity.input.changed","student":"pp","data":{"field":"cartesianPoint","value":"{\"x\":-1.62,\"y\":2.11}"}}
+{"seq":7,"t":1794997175510,"activity":"geometry:1.3:session-2026-11-18-12-19-14","event":"activity.input.changed","student":"dd","data":{"field":"cartesianPoint","value":"{\"x\":1.17,\"y\":2.04}"}}
+{"seq":8,"t":1794997182581,"activity":"geometry:1.3:session-2026-11-18-12-19-14","event":"activity.input.changed","student":"zyx","data":{"field":"cartesianPoint","value":"{\"x\":-3.02,\"y\":1.19}"}}
+{"seq":9,"t":1794997184131,"activity":"geometry:1.3:session-2026-11-18-12-19-14","event":"activity.input.changed","student":"zyx","data":{"field":"cartesianPoint","value":"{\"x\":1.79,\"y\":2.21}"}}
+{"seq":10,"t":1794997184765,"activity":"geometry:1.3:session-2026-11-18-12-19-14","event":"activity.input.changed","student":"zyx","data":{"field":"cartesianPoint","value":"{\"x\":3.34,\"y\":1.5}"}}
+{"seq":11,"t":1794997185341,"activity":"geometry:1.3:session-2026-11-18-12-19-14","event":"activity.input.changed","student":"zyx","data":{"field":"cartesianPoint","value":"{\"x\":3.42,\"y\":0.78}"}}
+{"seq":12,"t":1794997186369,"activity":"geometry:1.3:session-2026-11-18-12-19-14","event":"activity.input.changed","student":"zyx","data":{"field":"cartesianPoint","value":"{\"x\":-1.72,\"y\":1.43}"}}
+{"seq":13,"t":1794997186880,"activity":"geometry:1.3:session-2026-11-18-12-19-14","event":"activity.input.changed","student":"zyx","data":{"field":"cartesianPoint","value":"{\"x\":-2.88,\"y\":1.54}"}}
+{"seq":14,"t":1794997187280,"activity":"geometry:1.3:session-2026-11-18-12-19-14","event":"activity.input.changed","student":"zyx","data":{"field":"cartesianPoint","value":"{\"x\":-4.18,\"y\":1.65}"}}
+{"seq":15,"t":1794997187744,"activity":"geometry:1.3:session-2026-11-18-12-19-14","event":"activity.input.changed","student":"zyx","data":{"field":"cartesianPoint","value":"{\"x\":-3.13,\"y\":1.71}"}}
+{"seq":16,"t":1794997188145,"activity":"geometry:1.3:session-2026-11-18-12-19-14","event":"activity.input.changed","student":"zyx","data":{"field":"cartesianPoint","value":"{\"x\":-0.65,\"y\":2.43}"}}
+{"seq":17,"t":1794997188469,"activity":"geometry:1.3:session-2026-11-18-12-19-14","event":"activity.input.changed","student":"zyx","data":{"field":"cartesianPoint","value":"{\"x\":0.26,\"y\":2.43}"}}

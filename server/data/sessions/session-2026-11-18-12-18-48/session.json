@@ -1,0 +1,26 @@
+{
+  "sessionId": "session-2026-11-18-12-18-48",
+  "app": "geometry-lab",
+  "startedAt": "2026-11-18T10:18:48.654Z",
+  "endedAt": "2026-11-18T10:19:02.739Z",
+  "teacherId": "antonis",
+  "students": [
+    "pp",
+    "zyx"
+  ],
+  "studentScores": [
+    {
+      "student": "zyx",
+      "score": 0
+    },
+    {
+      "student": "pp",
+      "score": 0
+    }
+  ],
+  "activity": "1.1 Κατασκευή γωνίας με ημιευθείες (📐)",
+  "activityId": "1.1",
+  "chatEnabled": false,
+  "scoreVisible": true,
+  "feedbackEnabled": false
+}

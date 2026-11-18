@@ -1115,7 +1115,7 @@ export default function App({ role = 'student' }) {
   }, [identity.color, identity.name, isSocketConnected, isStudent]);
 
   useEffect(() => {
-    if (!isTeacher || !sessionLogging?.activeSessionId) {
+    if (!isTeacher) {
       setSessionLogParticipants([]);
       return undefined;
     }
@@ -1126,7 +1126,7 @@ export default function App({ role = 'student' }) {
       if (requestInFlight) return;
       requestInFlight = true;
       try {
-        const response = await fetch('/api/session-logs/active/linear-systems-lab/students', { cache: 'no-store' });
+        const response = await fetch(`/api/session-logs/active/linear-systems-lab/students?activityId=${encodeURIComponent(sessionLogging?.activeActivityId || '')}`, { cache: 'no-store' });
         const payload = response.ok ? await response.json() : null;
         if (!cancelled) {
           const nextStudents = Array.isArray(payload?.students) ? payload.students : [];
@@ -1147,7 +1147,7 @@ export default function App({ role = 'student' }) {
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [isTeacher, sessionLogging?.activeSessionId]);
+  }, [isTeacher, sessionLogging?.activeActivityId, sessionLogging?.activeSessionId]);
 
   useEffect(() => {
     if (!isStudent || !isSocketConnected || !evaluation.ready || !evaluation.payload) {

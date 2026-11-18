@@ -1535,6 +1535,20 @@
 .cartesian-plane-resource__line.is-own {
   stroke-width: 3.5;
 }
+.cartesian-plane-resource__line.is-peer {
+  stroke-width: 2.5;
+  opacity: 0.24;
+}
+.cartesian-plane-resource__participant-name {
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.9;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-linejoin: round;
+  stroke-width: 3px;
+  pointer-events: none;
+}
 .cartesian-plane-resource__line.is-preview {
   stroke: #0f172a;
   stroke-width: 2;
@@ -1561,6 +1575,9 @@
 }
 .cartesian-plane-resource__point.is-own circle {
   stroke: #0f172a;
+}
+.cartesian-plane-resource__point.is-peer circle {
+  opacity: 0.24;
 }
 .cartesian-plane-resource__target {
   fill: #ef4444;

@@ -60,14 +60,14 @@ export default function App({ role = 'student' }) {
   }, [isTeacher, selectedActivityId, session?.activeActivity, session?.activeSessionId]);
 
   useEffect(() => {
-    if (!isTeacher || !session?.activeSessionId) {
+    if (!isTeacher) {
       setParticipants([]);
       return undefined;
     }
     let cancelled = false;
     const loadParticipants = async () => {
       try {
-        const response = await fetch('/api/session-logs/active/probabilities-lab/students', { cache: 'no-store' });
+        const response = await fetch(`/api/session-logs/active/probabilities-lab/students?activityId=${encodeURIComponent(activity.id)}`, { cache: 'no-store' });
         const payload = response.ok ? await response.json() : null;
         if (!cancelled) setParticipants(Array.isArray(payload?.students) ? payload.students : []);
       } catch {
@@ -80,7 +80,7 @@ export default function App({ role = 'student' }) {
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [isTeacher, session?.activeSessionId]);
+  }, [activity.id, isTeacher, session?.activeSessionId]);
 
   const getStudentPlacements = (participant) => participant.answers?.[activity.id] || {};
   const getStudentScore = (participant) => Object.entries(getStudentPlacements(participant)).reduce((score, [itemId, region]) => (
@@ -124,7 +124,6 @@ export default function App({ role = 'student' }) {
             setSelectedActivityId(nextId);
             setPlacements({});
           }}
-          preserveSession
         />
       ) : null}
       {isTeacher ? (

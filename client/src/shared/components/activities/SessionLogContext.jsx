@@ -12,6 +12,7 @@ export function SessionLogProvider({
   const [activeSessionId, setActiveSessionId] = useState(suppliedSessionId);
   const [activeActivity, setActiveActivity] = useState('');
   const [activeActivityId, setActiveActivityId] = useState('');
+  const [completedSession, setCompletedSession] = useState(null);
   const [chatEnabled, setChatEnabled] = useState(false);
   const [scoreVisible, setScoreVisible] = useState(true);
   const [feedbackEnabled, setFeedbackEnabled] = useState(false);
@@ -51,6 +52,18 @@ export function SessionLogProvider({
   }, []);
 
   useEffect(() => {
+    if (role !== 'student' || !studentName) return undefined;
+    const sendPresence = () => fetch('/api/session-logs/presence', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: studentName, app: app || '' })
+    }).catch(() => {});
+    sendPresence();
+    const timer = window.setInterval(sendPresence, 5000);
+    return () => window.clearInterval(timer);
+  }, [app, role, studentName]);
+
+  useEffect(() => {
     setActiveSessionId(suppliedSessionId || null);
     if (!app) return undefined;
     let cancelled = false;
@@ -66,6 +79,7 @@ export function SessionLogProvider({
           setActiveSessionId(payload?.sessionId || null);
           setActiveActivity(String(payload?.activity || ''));
           setActiveActivityId(String(payload?.activityId || app));
+          setCompletedSession(payload?.completedSession && typeof payload.completedSession === 'object' ? payload.completedSession : null);
           setChatEnabled(Boolean(payload?.chatEnabled));
           setScoreVisible(payload?.scoreVisible !== false);
           setFeedbackEnabled(Boolean(payload?.feedbackEnabled));
@@ -210,7 +224,7 @@ export function SessionLogProvider({
   }, [activeActivityId, app, feedbackEnabled, role]);
 
   return (
-    <SessionLogContext.Provider value={{ logEvent, canEdit, app, role, activeSessionId, activeActivity, chatEnabled, scoreVisible, feedbackEnabled, endSession, updateActivity, updateChatEnabled, updateScoreVisible, updateFeedbackEnabled }}>
+    <SessionLogContext.Provider value={{ logEvent, canEdit, app, role, activeSessionId, activeActivity, activeActivityId, completedSession, chatEnabled, scoreVisible, feedbackEnabled, endSession, updateActivity, updateChatEnabled, updateScoreVisible, updateFeedbackEnabled }}>
       {children}
     </SessionLogContext.Provider>
   );

@@ -5,8 +5,8 @@ const path = require('node:path');
 const { getAppBySlug, listAppsForRole, toPublicApp } = require('../apps/registry');
 const { saveActivity, listActivities, listAllActivities, getActivity } = require('../services/appActivities');
 const { requireRole } = require('../middleware/checkRole');
-const { createSession, appendRecord, endSession, getActiveSession, updateSessionActivity } = require('../services/sessionLogs');
-const { getActiveSelection, setActiveLab, setActiveActivity } = require('../services/classroomSelection');
+const { createSession, appendRecord, endSession, getActiveSession, updateSessionActivity, clearCompletedSessionSnapshots } = require('../services/sessionLogs');
+const { getActiveSelection, setActiveLab, setActiveActivity, setActiveActivityId } = require('../services/classroomSelection');
 
 const router = express.Router();
 router.use(requireRole(['teacher']));
@@ -93,14 +93,23 @@ router.post('/classroom/selection', (req, res) => {
     if (current.app) setActiveLab(current.app, current.roomId);
     return res.json(getActiveSelection());
   }
+  const previousSelection = getActiveSelection();
   const app = req.body && req.body.app;
   const activeLab = setActiveLab(app, req.body && req.body.roomId);
   if (activeLab === null) return res.status(400).json({ error: 'Choose a valid student lab.' });
   if (activeLab === 'activity-runner' && req.body && Object.prototype.hasOwnProperty.call(req.body, 'activity')) {
-    setActiveActivity(req.body.activity);
+    const nextActivity = req.body.activity;
+    if (previousSelection.app === activeLab && JSON.stringify(previousSelection.activity) !== JSON.stringify(nextActivity)) {
+      clearCompletedSessionSnapshots();
+    }
+    setActiveActivity(nextActivity);
   }
+  if (req.body && Object.prototype.hasOwnProperty.call(req.body, 'activityId')) {
+    setActiveActivityId(req.body.activityId);
+  }
+  if (previousSelection.app && previousSelection.app !== activeLab) clearCompletedSessionSnapshots();
   const selection = getActiveSelection();
-  return res.json({ app: activeLab || null, roomId: selection.roomId, activity: selection.activity });
+  return res.json({ app: activeLab || null, roomId: selection.roomId, activity: selection.activity, activityId: selection.activityId });
 });
 
 router.post('/sessions', (req, res) => {

@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Accordion } from '../layouts/Accordion';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSessionInputLogger } from '../activities/SessionLogContext';
 import './ActivitiesAccordion.css';
 
@@ -20,13 +20,28 @@ export const ActivitiesAccordion = ({
   options = DEFAULT_OPTIONS, // Options available in the selector.
   onChange, // Receives the selected option value.
   open = false, // Opens the accordion initially when true.
-  className = '', // Additional CSS classes for the menu.
-  preserveSession = false // Keeps the current session open when changing options.
+  className = '' // Additional CSS classes for the menu.
 }) => {
   const { t } = useTranslation('interface');
   const session = useSessionInputLogger();
+  const previousValue = useRef(String(value || ''));
   const selectedActivityName = (Array.isArray(options) ? options : [])
     .find((option) => String(option.value) === String(value))?.label || String(value || '');
+
+  useEffect(() => {
+    if (previousValue.current === String(value || '')) return;
+    previousValue.current = String(value || '');
+    window.dispatchEvent(new CustomEvent('strobe:activity-changed', { detail: { activityId: String(value || '') } }));
+  }, [value]);
+
+  useEffect(() => {
+    if (session?.role !== 'teacher' || !session.app || !value) return;
+    fetch('/teacher/classroom/selection', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ app: session.app, activityId: String(value) })
+    }).catch(() => {});
+  }, [session?.app, session?.role, value]);
 
   useEffect(() => {
     if (session?.role !== 'teacher' || !session.activeSessionId || !selectedActivityName) return;
@@ -38,7 +53,7 @@ export const ActivitiesAccordion = ({
   const handleChange = async (nextValue) => {
     if (nextValue === value || typeof onChange !== 'function') return;
     try {
-      if (session?.role === 'teacher' && !preserveSession) await session.endSession();
+      if (session?.role === 'teacher') await session.endSession();
       onChange(nextValue);
     } catch (error) {
       window.alert(error.message || 'Could not end the current session.');

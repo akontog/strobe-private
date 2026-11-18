@@ -3,16 +3,21 @@ const { getAppBySlug } = require('../apps/registry');
 let activeLabSlug = '';
 let activeRoomId = '';
 let activeActivity = null;
+let activeActivityId = '';
 let activeLabUpdatedAt = 0;
 const ACTIVE_LAB_TIMEOUT_MS = 15000;
 
 function setActiveLab(slug, roomId = '') {
   const normalizedSlug = String(slug || '').trim().toLowerCase();
-  if (normalizedSlug !== activeLabSlug && normalizedSlug !== 'activity-runner') activeActivity = null;
+  if (normalizedSlug !== activeLabSlug) {
+    activeActivityId = '';
+    if (normalizedSlug !== 'activity-runner') activeActivity = null;
+  }
   if (!normalizedSlug) {
     activeLabSlug = '';
     activeRoomId = '';
     activeActivity = null;
+    activeActivityId = '';
     activeLabUpdatedAt = 0;
     return activeLabSlug;
   }
@@ -57,11 +62,18 @@ function setActiveActivity(activity) {
   return activeActivity;
 }
 
+function setActiveActivityId(activityId) {
+  activeActivityId = String(activityId || '').trim().slice(0, 160);
+  activeLabUpdatedAt = Date.now();
+  return activeActivityId;
+}
+
 function getActiveLab() {
   if (activeLabSlug && Date.now() - activeLabUpdatedAt > ACTIVE_LAB_TIMEOUT_MS) {
     activeLabSlug = '';
     activeRoomId = '';
     activeActivity = null;
+    activeActivityId = '';
     activeLabUpdatedAt = 0;
   }
   return activeLabSlug;
@@ -82,8 +94,9 @@ function getActiveSelection() {
         'input-grid-collab': 'input-grid-default'
       }[app])
       : '',
-    activity: app === 'activity-runner' ? activeActivity : null
+    activity: app === 'activity-runner' ? activeActivity : null,
+    activityId: activeActivityId
   };
 }
 
-module.exports = { getActiveLab, getActiveSelection, setActiveLab, setActiveActivity };
+module.exports = { getActiveLab, getActiveSelection, setActiveLab, setActiveActivity, setActiveActivityId };

@@ -4,161 +4,48 @@
     "language":  "el",
     "resources":  [
                       {
-                          "id":  "dataset-triangleAngleVenn",
-                          "type":  "activity-data",
-                          "config":  {
-                                         "settings":  {
-
-                                                      },
-                                         "data":  {
-                                                      "bankLabel":  "Περιγραφές προς τοποθέτηση",
-                                                      "scoreCorrect":  1,
-                                                      "scoreIncorrect":  0,
-                                                      "items":  [
-                                                                    {
-                                                                        "id":  "contained-ab-ag",
-                                                                        "content":  "Περιεχόμενη των πλευρών ΑΒ και ΑΓ",
-                                                                        "correctGroupId":  "angle-a-only"
-                                                                    },
-                                                                    {
-                                                                        "id":  "contained-ab-bg",
-                                                                        "content":  "Περιεχόμενη των πλευρών ΑΒ και ΒΓ",
-                                                                        "correctGroupId":  "angle-b-only"
-                                                                    },
-                                                                    {
-                                                                        "id":  "contained-ag-bg",
-                                                                        "content":  "Περιεχόμενη των πλευρών ΑΓ και ΒΓ",
-                                                                        "correctGroupId":  "angle-g-only"
-                                                                    },
-                                                                    {
-                                                                        "id":  "adjacent-bg",
-                                                                        "content":  "Προσκείμενη της πλευράς ΒΓ",
-                                                                        "correctGroupId":  "angle-b-g"
-                                                                    },
-                                                                    {
-                                                                        "id":  "adjacent-ag",
-                                                                        "content":  "Προσκείμενη της πλευράς ΑΓ",
-                                                                        "correctGroupId":  "angle-a-g"
-                                                                    },
-                                                                    {
-                                                                        "id":  "adjacent-ab",
-                                                                        "content":  "Προσκείμενη της πλευράς ΑΒ",
-                                                                        "correctGroupId":  "angle-a-b"
-                                                                    }
-                                                                ],
-                                                      "groups":  [
-                                                                     {
-                                                                         "id":  "angle-a-only",
-                                                                         "title":  "∠Α"
-                                                                     },
-                                                                     {
-                                                                         "id":  "angle-b-only",
-                                                                         "title":  "∠Β"
-                                                                     },
-                                                                     {
-                                                                         "id":  "angle-g-only",
-                                                                         "title":  "∠Γ"
-                                                                     },
-                                                                     {
-                                                                         "id":  "angle-a-b",
-                                                                         "title":  "∠Α ∩ ∠Β"
-                                                                     },
-                                                                     {
-                                                                         "id":  "angle-a-g",
-                                                                         "title":  "∠Α ∩ ∠Γ"
-                                                                     },
-                                                                     {
-                                                                         "id":  "angle-b-g",
-                                                                         "title":  "∠Β ∩ ∠Γ"
-                                                                     }
-                                                                 ]
-                                                  }
-                                     }
-                      },
-                      {
-                          "id":  "activity-content-1.3",
-                          "type":  "activity-content",
+                          "id":  "geometry-triangle-plane-1.3",
+                          "type":  "cartesian-plane",
                           "region":  "center",
                           "config":  {
                                          "settings":  {
-
-                                                      },
-                                         "data":  {
-                                                      "bankLabel":  "Περιγραφές προς τοποθέτηση"
-                                                  }
-                                     }
-                      },
-                      {
-                          "id":  "geometry-triangle-plot-1.3",
-                          "type":  "plot-widget",
-                          "region":  "left",
-                          "config":  {
-                                         "settings":  {
-                                                          "width":  280,
-                                                          "height":  260,
-                                                          "xMin":  -6,
-                                                          "xMax":  6,
-                                                          "yMin":  -4,
-                                                          "yMax":  6,
-                                                          "showGrid":  true,
-                                                          "showLegend":  false,
-                                                          "title":  "",
-                                                          "accessibleLabel":  "Σκαληνό τρίγωνο ΑΒΓ σε σύστημα αξόνων",
-                                                          "axisLabels":  {
-                                                                             "x":  "x",
-                                                                             "y":  "y"
-                                                                         },
-                                                          "graphItems":  [
-                                                                             {
-                                                                                 "id":  "vertex-a",
-                                                                                 "label":  "Α",
-                                                                                 "showCoordinates":  true,
-                                                                                 "y":  -2,
-                                                                                 "type":  "point",
-                                                                                 "x":  -4
-                                                                             },
-                                                                             {
-                                                                                 "id":  "vertex-b",
-                                                                                 "label":  "Β",
-                                                                                 "showCoordinates":  true,
-                                                                                 "y":  -1,
-                                                                                 "type":  "point",
-                                                                                 "x":  4
-                                                                             },
-                                                                             {
-                                                                                 "id":  "vertex-g",
-                                                                                 "label":  "Γ",
-                                                                                 "showCoordinates":  true,
-                                                                                 "y":  4,
-                                                                                 "type":  "point",
-                                                                                 "x":  1
-                                                                             },
-                                                                             {
-                                                                                 "id":  "side-ab",
-                                                                                 "y2":  -1,
-                                                                                 "type":  "segment",
-                                                                                 "y1":  -2,
-                                                                                 "x1":  -4,
-                                                                                 "x2":  4
-                                                                             },
-                                                                             {
-                                                                                 "id":  "side-bg",
-                                                                                 "y2":  4,
-                                                                                 "type":  "segment",
-                                                                                 "y1":  -1,
-                                                                                 "x1":  4,
-                                                                                 "x2":  1
-                                                                             },
-                                                                             {
-                                                                                 "id":  "side-ga",
-                                                                                 "y2":  -2,
-                                                                                 "type":  "segment",
-                                                                                 "y1":  4,
-                                                                                 "x1":  1,
-                                                                                 "x2":  -4
-                                                                             }
-                                                                         ],
-                                                          "showTicks":  false
+                                                          "minX":  -6,
+                                                          "maxX":  6,
+                                                          "minY":  -4,
+                                                          "maxY":  6,
+                                                          "mode":  "points",
+                                                          "maxPoints":  1,
+                                                          "replacePointsOnClick":  true,
+                                                          "placedPointLabel":  "Γ",
+                                                          "fixedPoints":  [
+                                                                              {
+                                                                                  "id":  "vertex-a",
+                                                                                  "x":  -4,
+                                                                                  "y":  -1,
+                                                                                  "label":  "Α"
+                                                                              },
+                                                                              {
+                                                                                  "id":  "vertex-b",
+                                                                                  "x":  4,
+                                                                                  "y":  -1,
+                                                                                  "label":  "Β"
+                                                                              }
+                                                                          ],
+                                                          "fixedSegments":  [
+                                                                                {
+                                                                                    "id":  "base-ab",
+                                                                                    "start":  {
+                                                                                                  "x":  -4,
+                                                                                                  "y":  -1
+                                                                                              },
+                                                                                    "end":  {
+                                                                                                "x":  4,
+                                                                                                "y":  -1
+                                                                                            },
+                                                                                    "color":  "#2563eb"
+                                                                                }
+                                                                            ],
+                                                          "connectPlacedPointsToFixedSegments":  true
                                                       }
                                      }
                       }
@@ -166,13 +53,11 @@
     "activity":  {
                      "id":  "1.3",
                      "code":  "1.3",
-                     "title":  "Γωνίες τριγώνου ΑΒΓ (🧩)",
-                     "objective":  "Τοποθέτησε κάθε περιγραφή στη γωνία ή στο ζεύγος γωνιών στο οποίο αναφέρεται.",
-                     "mode":  "placement-board",
+                     "title":  "Κατασκευή τριγώνων ανάλογα με τις γωνίες (📐)",
+                     "objective":  "Με βάση το σταθερό τμήμα ΑΒ, κάνε κλικ για να τοποθετήσεις το Γ και να σχηματίσεις το τρίγωνο που αντιστοιχεί στην ανάθεσή σου.",
+                     "mode":  "cartesian-triangle",
                      "usesResources":  [
-                                           "dataset-triangleAngleVenn",
-                                           "activity-content-1.3",
-                                           "geometry-triangle-plot-1.3"
+                                           "geometry-triangle-plane-1.3"
                                        ]
                  }
 }

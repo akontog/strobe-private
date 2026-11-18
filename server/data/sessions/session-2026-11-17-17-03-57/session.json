@@ -1,0 +1,21 @@
+{
+  "sessionId": "session-2026-11-17-17-03-57",
+  "app": "geometry-lab",
+  "startedAt": "2026-11-17T15:03:57.727Z",
+  "endedAt": null,
+  "teacherId": "antonis",
+  "students": [
+    "pp"
+  ],
+  "studentScores": [
+    {
+      "student": "pp",
+      "score": 0
+    }
+  ],
+  "activity": "1.2 Είδη τριγώνων ανάλογα τις γωνίες (🧩)",
+  "activityId": "1.2",
+  "chatEnabled": false,
+  "scoreVisible": true,
+  "feedbackEnabled": false
+}

@@ -272,7 +272,6 @@ export default function App({ role = 'student' }) {
       {isTeacher ? (
         <>
           <ActivitiesAccordion
-            preserveSession
             options={activityData.activities.map((entry) => ({ value: entry.id, label: `${entry.code} ${entry.title}` }))}
             value={selectedActivityId}
             onChange={selectActivity}
@@ -284,7 +283,6 @@ export default function App({ role = 'student' }) {
             value={selectedQuestion.id}
             options={questions.map((question) => ({ value: question.id, label: question.label }))}
             onChange={selectQuestion}
-            preserveSession
             selectId="equations-question"
           /> : null}
           <GroupsAccordion

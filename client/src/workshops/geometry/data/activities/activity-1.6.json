@@ -1,0 +1,43 @@
+﻿{
+    "schemaVersion":  "1.0",
+    "documentType":  "activity",
+    "language":  "el",
+    "resources":  [
+                      {
+                          "id":  "geometry-triangle-centers-1.6",
+                          "type":  "geogebra",
+                          "region":  "center",
+                          "config":  {
+                                         "settings":  {
+                                                          "roomId":  "geometry-lab-1-6-triangle-centers",
+                                                          "initialCommands":  [
+                                                                                  "A = (0, 0)",
+                                                                                  "B = (8, 0)",
+                                                                                  "C = (2, 5)",
+                                                                                  "sideAB = Segment(A, B)",
+                                                                                  "sideBC = Segment(B, C)",
+                                                                                  "sideCA = Segment(C, A)"
+                                                                              ],
+                                                          "fixedObjectNames":  [
+                                                                                   "A",
+                                                                                   "B",
+                                                                                   "C",
+                                                                                   "sideAB",
+                                                                                   "sideBC",
+                                                                                   "sideCA"
+                                                                               ]
+                                                      }
+                                     }
+                      }
+                  ],
+    "activity":  {
+                     "id":  "1.6",
+                     "code":  "1.6",
+                     "title":  "Μέσο και ύψος σε σκαληνό τρίγωνο (🧮)",
+                     "objective":  "Στο συνεργατικό GeoGebra, βρες το μέσο της απέναντι πλευράς ΒΓ ή φέρε κάθετη από το Α στη ΒΓ.",
+                     "mode":  "geogebra",
+                     "usesResources":  [
+                                           "geometry-triangle-centers-1.6"
+                                       ]
+                 }
+}

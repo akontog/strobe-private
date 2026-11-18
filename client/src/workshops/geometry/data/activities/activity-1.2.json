@@ -4,7 +4,7 @@
     "language":  "el",
     "resources":  [
                       {
-                          "id":  "dataset-triangleSides",
+                          "id":  "dataset-triangleAngles",
                           "type":  "activity-data",
                           "config":  {
                                          "settings":  {
@@ -16,48 +16,48 @@
                                                       "scoreIncorrect":  0,
                                                       "groups":  [
                                                                      {
-                                                                         "id":  "scalene",
-                                                                         "title":  "Σκαληνό"
+                                                                         "id":  "acute",
+                                                                         "title":  "Οξυγώνιο"
                                                                      },
                                                                      {
-                                                                         "id":  "isosceles",
-                                                                         "title":  "Ισοσκελές"
+                                                                         "id":  "obtuse",
+                                                                         "title":  "Αμβλυγώνιο"
                                                                      },
                                                                      {
-                                                                         "id":  "equilateral",
-                                                                         "title":  "Ισόπλευρο"
+                                                                         "id":  "right",
+                                                                         "title":  "Ορθογώνιο"
                                                                      }
                                                                  ],
                                                       "items":  [
                                                                     {
-                                                                        "id":  "scalene-1",
-                                                                        "content":  "Πλευρές: 4 cm, 5 cm, 6 cm",
-                                                                        "correctGroupId":  "scalene"
+                                                                        "id":  "acute-1",
+                                                                        "content":  "∠Α = 60°, ∠Β = 60°, ∠Γ = 60°",
+                                                                        "correctGroupId":  "acute"
                                                                     },
                                                                     {
-                                                                        "id":  "scalene-2",
-                                                                        "content":  "Πλευρές: 5 cm, 6 cm, 7 cm",
-                                                                        "correctGroupId":  "scalene"
+                                                                        "id":  "acute-2",
+                                                                        "content":  "∠Α = 50°, ∠Β = 60°, ∠Γ = 70°",
+                                                                        "correctGroupId":  "acute"
                                                                     },
                                                                     {
-                                                                        "id":  "isosceles-1",
-                                                                        "content":  "Πλευρές: 5 cm, 5 cm, 6 cm",
-                                                                        "correctGroupId":  "isosceles"
+                                                                        "id":  "obtuse-1",
+                                                                        "content":  "∠Α = 30°, ∠Β = 40°, ∠Γ = 110°",
+                                                                        "correctGroupId":  "obtuse"
                                                                     },
                                                                     {
-                                                                        "id":  "isosceles-2",
-                                                                        "content":  "Πλευρές: 7 cm, 7 cm, 10 cm",
-                                                                        "correctGroupId":  "isosceles"
+                                                                        "id":  "obtuse-2",
+                                                                        "content":  "∠Α = 35°, ∠Β = 35°, ∠Γ = 110°",
+                                                                        "correctGroupId":  "obtuse"
                                                                     },
                                                                     {
-                                                                        "id":  "equilateral-1",
-                                                                        "content":  "Πλευρές: 4 cm, 4 cm, 4 cm",
-                                                                        "correctGroupId":  "equilateral"
+                                                                        "id":  "right-1",
+                                                                        "content":  "∠Α = 30°, ∠Β = 60°, ∠Γ = 90°",
+                                                                        "correctGroupId":  "right"
                                                                     },
                                                                     {
-                                                                        "id":  "equilateral-2",
-                                                                        "content":  "Πλευρές: 6 cm, 6 cm, 6 cm",
-                                                                        "correctGroupId":  "equilateral"
+                                                                        "id":  "right-2",
+                                                                        "content":  "∠Α = 45°, ∠Β = 45°, ∠Γ = 90°",
+                                                                        "correctGroupId":  "right"
                                                                     }
                                                                 ]
                                                   }
@@ -154,11 +154,11 @@
     "activity":  {
                      "id":  "1.2",
                      "code":  "1.2",
-                     "title":  "Είδη τριγώνων ανάλογα με τη σχέση πλευρών (🧩)",
-                     "objective":  "Ταξινόμησε κάθε τρίγωνο με βάση τα μήκη των πλευρών του.",
+                     "title":  "Είδη τριγώνων ανάλογα τις γωνίες (🧩)",
+                     "objective":  "Ταξινόμησε κάθε τρίγωνο με βάση τις γωνίες του.",
                      "mode":  "placement-board",
                      "usesResources":  [
-                                           "dataset-triangleSides",
+                                           "dataset-triangleAngles",
                                            "activity-content-1.2",
                                            "geometry-triangle-plot-1.2"
                                        ]

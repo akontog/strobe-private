@@ -59,6 +59,7 @@ function App() {
   const navigate = useNavigate();
   const pathname = String(location?.pathname || '').toLowerCase();
   const routePath = pathname.replace(/\/+$/, '') || '/';
+  const routeActivityId = new URLSearchParams(location.search).get('activity') || '';
   const currentWorkshopSlug = pathname.match(/^\/workshops\/([^/]+)/)?.[1] || '';
   const currentLabSlug = getAppSlug(currentWorkshopSlug);
   const currentSessionApp = routePath.startsWith('/workshops/activities/')
@@ -83,6 +84,7 @@ function App() {
   const [classroomLab, setClassroomLab] = useState('');
   const [classroomRoomId, setClassroomRoomId] = useState('');
   const [classroomActivity, setClassroomActivity] = useState(null);
+  const [classroomActivityId, setClassroomActivityId] = useState('');
   const [classroomSelectionLoaded, setClassroomSelectionLoaded] = useState(false);
   const hasTeacherAccess = ['teacher', 'admin'].includes(role) && roles.includes('teacher');
   const hasAdminAccess = role === 'admin' && roles.includes('admin');
@@ -172,16 +174,38 @@ function App() {
         'input-grid-collab': 'input-grid-default'
       }[activeTeacherLab]))
       : '';
-    const publishSelection = () => fetch('/teacher/classroom/selection', {
+    const publishSelection = (includeRouteActivity = false) => fetch('/teacher/classroom/selection', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ app: activeTeacherLab || null, roomId })
+        body: JSON.stringify({
+          app: activeTeacherLab || null,
+          roomId,
+          ...(includeRouteActivity ? { activityId: routeActivityId } : {})
+        })
       }).catch(() => {});
-    publishSelection();
+    publishSelection(true);
     if (!activeTeacherLab) return undefined;
-    const timer = window.setInterval(publishSelection, 5000);
+    const timer = window.setInterval(() => publishSelection(), 5000);
     return () => window.clearInterval(timer);
   }, [authReady, hasTeacherAccess, location.search, pathname, routePath]);
+
+  const previousRouteActivityId = useRef(routeActivityId);
+  useEffect(() => {
+    const previousActivityId = previousRouteActivityId.current;
+    previousRouteActivityId.current = routeActivityId;
+    if (!previousActivityId || !routeActivityId || previousActivityId === routeActivityId
+      || !hasTeacherAccess || !teacherSession?.sessionId
+      || !/^\/workshops\/[^/]+\/teacher$/.test(routePath)) return;
+
+    const sessionId = teacherSession.sessionId;
+    fetch(`/teacher/sessions/${encodeURIComponent(sessionId)}/end`, { method: 'POST' }).then((response) => {
+      if (!response.ok && response.status !== 404) return;
+      setTeacherSession(null);
+      window.dispatchEvent(new CustomEvent('strobe:session-ended', {
+        detail: { sessionId, app: currentSessionApp }
+      }));
+    }).catch(() => {});
+  }, [currentSessionApp, hasTeacherAccess, routeActivityId, routePath, teacherSession?.sessionId]);
 
   useEffect(() => {
     if (!authReady || role !== 'student') return undefined;
@@ -198,6 +222,7 @@ function App() {
           setClassroomLab(typeof payload.app === 'string' ? payload.app : '');
           setClassroomRoomId(typeof payload.roomId === 'string' ? payload.roomId : '');
           setClassroomActivity(payload.activity && typeof payload.activity === 'object' ? payload.activity : null);
+          setClassroomActivityId(typeof payload.activityId === 'string' ? payload.activityId : '');
           setClassroomSelectionLoaded(true);
         }
       } catch {
@@ -238,13 +263,16 @@ function App() {
           : classroomLab === 'activity-runner'
           ? '/workshops/activities/student'
         : getWorkshopPath(classroomLab, 'student');
-      if (`${pathname}${location.search}` !== target) navigate(target, { replace: true });
+      const targetWithActivity = classroomActivityId && !['activity-runner', 'geogebra-collab', 'algebra-tiles-collab', 'number-line-collab', 'cartesian-plane-collab', 'options-grid-collab', 'placement-board-collab', 'input-grid-collab', 'vision-collab'].includes(classroomLab)
+        ? `${target}?activity=${encodeURIComponent(classroomActivityId)}`
+        : target;
+      if (`${pathname}${location.search}` !== targetWithActivity) navigate(targetWithActivity, { replace: true });
       return;
     }
     if (labRoute || pathname === '/client' || pathname === '/student' || pathname === '/tools/geogebra' || pathname === '/tools/algebra-tiles' || pathname === '/tools/number-line' || pathname === '/tools/cartesian-plane' || pathname === '/tools/venn' || pathname === '/tools/options-grid' || pathname === '/tools/placement-board' || pathname === '/tools/input-grid' || pathname === '/tools/vision') {
       navigate('/', { replace: true });
     }
-  }, [authReady, classroomLab, classroomRoomId, classroomSelectionLoaded, location.search, navigate, pathname, role]);
+  }, [authReady, classroomActivityId, classroomLab, classroomRoomId, classroomSelectionLoaded, location.search, navigate, pathname, role]);
 
   useEffect(() => {
     let active = true;

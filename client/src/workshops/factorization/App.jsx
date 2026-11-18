@@ -136,7 +136,7 @@ export default function App({ role = 'student' }) {
         )} />
       </section>
       {isTeacher ? <>
-        <ActivitiesAccordion preserveSession
+        <ActivitiesAccordion
           options={questions.map((question) => ({ value: question.id, label: question.label }))}
           value={selectedQuestion.id} onChange={selectQuestion} />
         <GroupsAccordion participants={participants.filter((participant) => participant.isConnected !== false)}

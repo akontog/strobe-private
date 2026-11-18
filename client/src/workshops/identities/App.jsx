@@ -192,7 +192,7 @@ export default function App({ role = 'student' }) {
     let cancelled = false;
     const loadStudents = async () => {
       try {
-        const response = await fetch('/api/session-logs/active/identities-lab/students', { cache: 'no-store' });
+        const response = await fetch(`/api/session-logs/active/identities-lab/students?activityId=${encodeURIComponent(activeIdentityVariant.id)}`, { cache: 'no-store' });
         const payload = response.ok ? await response.json() : null;
         if (!cancelled) setStudents(Array.isArray(payload?.students) ? payload.students : []);
       } catch {
@@ -205,7 +205,7 @@ export default function App({ role = 'student' }) {
       cancelled = true;
       window.clearInterval(intervalId);
     };
-  }, [isTeacher]);
+  }, [activeIdentityVariant.id, isTeacher]);
 
   useEffect(() => {
     if (!isTeacher || !sessionLogging?.scoreVisible) {

@@ -1,0 +1,166 @@
+﻿{
+    "schemaVersion":  "1.0",
+    "documentType":  "activity",
+    "language":  "el",
+    "resources":  [
+                      {
+                          "id":  "dataset-triangleSides",
+                          "type":  "activity-data",
+                          "config":  {
+                                         "settings":  {
+
+                                                      },
+                                         "data":  {
+                                                      "bankLabel":  "Τρίγωνα προς ταξινόμηση",
+                                                      "scoreCorrect":  1,
+                                                      "scoreIncorrect":  0,
+                                                      "groups":  [
+                                                                     {
+                                                                         "id":  "scalene",
+                                                                         "title":  "Σκαληνό"
+                                                                     },
+                                                                     {
+                                                                         "id":  "isosceles",
+                                                                         "title":  "Ισοσκελές"
+                                                                     },
+                                                                     {
+                                                                         "id":  "equilateral",
+                                                                         "title":  "Ισόπλευρο"
+                                                                     }
+                                                                 ],
+                                                      "items":  [
+                                                                    {
+                                                                        "id":  "scalene-1",
+                                                                        "content":  "Πλευρές: 4 cm, 5 cm, 6 cm",
+                                                                        "correctGroupId":  "scalene"
+                                                                    },
+                                                                    {
+                                                                        "id":  "scalene-2",
+                                                                        "content":  "Πλευρές: 5 cm, 6 cm, 7 cm",
+                                                                        "correctGroupId":  "scalene"
+                                                                    },
+                                                                    {
+                                                                        "id":  "isosceles-1",
+                                                                        "content":  "Πλευρές: 5 cm, 5 cm, 6 cm",
+                                                                        "correctGroupId":  "isosceles"
+                                                                    },
+                                                                    {
+                                                                        "id":  "isosceles-2",
+                                                                        "content":  "Πλευρές: 7 cm, 7 cm, 10 cm",
+                                                                        "correctGroupId":  "isosceles"
+                                                                    },
+                                                                    {
+                                                                        "id":  "equilateral-1",
+                                                                        "content":  "Πλευρές: 4 cm, 4 cm, 4 cm",
+                                                                        "correctGroupId":  "equilateral"
+                                                                    },
+                                                                    {
+                                                                        "id":  "equilateral-2",
+                                                                        "content":  "Πλευρές: 6 cm, 6 cm, 6 cm",
+                                                                        "correctGroupId":  "equilateral"
+                                                                    }
+                                                                ]
+                                                  }
+                                     }
+                      },
+                      {
+                          "id":  "activity-content-1.4",
+                          "type":  "activity-content",
+                          "region":  "center",
+                          "config":  {
+                                         "settings":  {
+
+                                                      },
+                                         "data":  {
+                                                      "bankLabel":  "Τρίγωνα προς ταξινόμηση"
+                                                  }
+                                     }
+                      },
+                      {
+                          "id":  "geometry-triangle-plot-1.4",
+                          "type":  "plot-widget",
+                          "region":  "left",
+                          "config":  {
+                                         "settings":  {
+                                                          "width":  280,
+                                                          "height":  260,
+                                                          "xMin":  -6,
+                                                          "xMax":  6,
+                                                          "yMin":  -4,
+                                                          "yMax":  6,
+                                                          "showGrid":  true,
+                                                          "showLegend":  false,
+                                                          "title":  "",
+                                                          "accessibleLabel":  "Σκαληνό τρίγωνο ΑΒΓ σε σύστημα αξόνων",
+                                                          "axisLabels":  {
+                                                                             "x":  "x",
+                                                                             "y":  "y"
+                                                                         },
+                                                          "graphItems":  [
+                                                                             {
+                                                                                 "id":  "vertex-a",
+                                                                                 "label":  "Α",
+                                                                                 "showCoordinates":  true,
+                                                                                 "y":  -2,
+                                                                                 "type":  "point",
+                                                                                 "x":  -4
+                                                                             },
+                                                                             {
+                                                                                 "id":  "vertex-b",
+                                                                                 "label":  "Β",
+                                                                                 "showCoordinates":  true,
+                                                                                 "y":  -1,
+                                                                                 "type":  "point",
+                                                                                 "x":  4
+                                                                             },
+                                                                             {
+                                                                                 "id":  "vertex-g",
+                                                                                 "label":  "Γ",
+                                                                                 "showCoordinates":  true,
+                                                                                 "y":  4,
+                                                                                 "type":  "point",
+                                                                                 "x":  1
+                                                                             },
+                                                                             {
+                                                                                 "id":  "side-ab",
+                                                                                 "y2":  -1,
+                                                                                 "type":  "segment",
+                                                                                 "y1":  -2,
+                                                                                 "x1":  -4,
+                                                                                 "x2":  4
+                                                                             },
+                                                                             {
+                                                                                 "id":  "side-bg",
+                                                                                 "y2":  4,
+                                                                                 "type":  "segment",
+                                                                                 "y1":  -1,
+                                                                                 "x1":  4,
+                                                                                 "x2":  1
+                                                                             },
+                                                                             {
+                                                                                 "id":  "side-ga",
+                                                                                 "y2":  -2,
+                                                                                 "type":  "segment",
+                                                                                 "y1":  4,
+                                                                                 "x1":  1,
+                                                                                 "x2":  -4
+                                                                             }
+                                                                         ],
+                                                          "showTicks":  false
+                                                      }
+                                     }
+                      }
+                  ],
+    "activity":  {
+                     "id":  "1.4",
+                     "code":  "1.4",
+                     "title":  "Είδη τριγώνων ανάλογα με τη σχέση πλευρών (🧩)",
+                     "objective":  "Ταξινόμησε κάθε τρίγωνο με βάση τα μήκη των πλευρών του.",
+                     "mode":  "placement-board",
+                     "usesResources":  [
+                                           "dataset-triangleSides",
+                                           "activity-content-1.4",
+                                           "geometry-triangle-plot-1.4"
+                                       ]
+                 }
+}

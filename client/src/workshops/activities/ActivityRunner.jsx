@@ -277,8 +277,10 @@ function getStudentColumns(activity, activityKey) {
 
 export default function ActivityRunner({ role = 'student', activity: suppliedActivity = null }) {
   const { t: tNav } = useTranslation('navigation');
+  const sessionLogging = useSessionInputLogger();
   const [activity, setActivity] = React.useState(suppliedActivity);
   const [students, setStudents] = React.useState([]);
+  const previousActivityKey = React.useRef('');
 
   React.useEffect(() => {
     setActivity((current) => JSON.stringify(current) === JSON.stringify(suppliedActivity || null)
@@ -308,9 +310,24 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
   const selectedActivityKey = activity ? `activity-runner:${activity.filename || activity.activity?.id || activity.id || activity.name || 'activity'}` : '';
 
   React.useEffect(() => {
+    if (!selectedActivityKey) return;
+    const changed = Boolean(previousActivityKey.current && previousActivityKey.current !== selectedActivityKey);
+    if (changed) {
+      window.dispatchEvent(new CustomEvent('strobe:activity-changed', { detail: { activityId: selectedActivityKey } }));
+    }
+    previousActivityKey.current = selectedActivityKey;
+    if (changed && role === 'teacher' && sessionLogging?.activeSessionId) {
+      sessionLogging.endSession().catch(() => {});
+    } else if (role === 'teacher' && sessionLogging?.activeSessionId) {
+      sessionLogging.updateActivity(activity.name || activity.title || selectedActivityKey, selectedActivityKey).catch(() => {});
+    }
+  }, [activity, role, selectedActivityKey, sessionLogging?.activeSessionId, sessionLogging?.endSession, sessionLogging?.updateActivity]);
+
+  React.useEffect(() => {
     if (role !== 'teacher' || !activity) return undefined;
     let cancelled = false;
-    const refreshStudents = () => fetch('/api/session-logs/active/activity-runner/students', { cache: 'no-store' })
+    const query = selectedActivityKey ? `?activityId=${encodeURIComponent(selectedActivityKey)}` : '';
+    const refreshStudents = () => fetch(`/api/session-logs/active/activity-runner/students${query}`, { cache: 'no-store' })
       .then((response) => response.ok ? response.json() : null)
       .then((payload) => { if (!cancelled) setStudents(Array.isArray(payload?.students) ? payload.students : []); })
       .catch(() => {});
@@ -320,7 +337,7 @@ export default function ActivityRunner({ role = 'student', activity: suppliedAct
       cancelled = true;
       window.clearInterval(timer);
     };
-  }, [activity, role]);
+  }, [activity, role, selectedActivityKey]);
 
   const config = activity?.config || {};
   const resourceActivity = React.useMemo(() => {

@@ -1,0 +1,5 @@
+{"seq":1,"t":1794995357524,"activity":"1.1 Κατασκευή γωνίας με ημιευθείες (📐)","event":"student.joined","student":"zyx","data":{}}
+{"seq":2,"t":1794995359198,"activity":"1.1 Κατασκευή γωνίας με ημιευθείες (📐)","event":"student.joined","student":"pp","data":{}}
+{"seq":3,"t":1794995362808,"activity":"geometry:1.1:session-2026-11-18-11-49-17","event":"activity.input.changed","student":"pp","data":{"field":"cartesianRay","value":"{\"start\":{\"x\":0,\"y\":0},\"end\":{\"x\":2.7,\"y\":4.39,\"svgX\":500.57147216796875,\"svgY\":122.82353210449219}}"}}
+{"seq":4,"t":1794995366567,"activity":"geometry:1.1:session-2026-11-18-11-49-17","event":"activity.input.changed","student":"pp","data":{"field":"cartesianRay","value":"{\"start\":{\"x\":0,\"y\":0},\"end\":{\"x\":0.05,\"y\":5.04,\"svgX\":362.4201965332031,\"svgY\":92.57142639160156}}"}}
+{"seq":5,"t":1794995372781,"activity":"geometry:1.1:session-2026-11-18-11-49-17","event":"activity.input.changed","student":"zyx","data":{"field":"cartesianRay","value":"{\"start\":{\"x\":0,\"y\":0},\"end\":{\"x\":2.43,\"y\":2.08,\"svgX\":486.4505920410156,\"svgY\":229.7411651611328}}"}}

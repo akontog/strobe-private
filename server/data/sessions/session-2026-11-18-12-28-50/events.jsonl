@@ -1,0 +1,5 @@
+{"seq":1,"t":1794997731532,"activity":"1.3 Κατασκευή τριγώνων ανάλογα με τις γωνίες (📐)","event":"student.joined","student":"zyx","data":{}}
+{"seq":2,"t":1794997731756,"activity":"1.3 Κατασκευή τριγώνων ανάλογα με τις γωνίες (📐)","event":"student.joined","student":"pp","data":{}}
+{"seq":3,"t":1794997733049,"activity":"geometry:1.3:session-2026-11-18-12-28-50","event":"activity.input.changed","student":"pp","data":{"field":"cartesianPoint","value":"{\"x\":0.98,\"y\":1.41}"}}
+{"seq":4,"t":1794997733910,"activity":"geometry:1.3:session-2026-11-18-12-28-50","event":"activity.input.changed","student":"pp","data":{"field":"cartesianPoint","value":"{\"x\":-1.14,\"y\":2.52}"}}
+{"seq":5,"t":1794997737830,"activity":"geometry:1.3:session-2026-11-18-12-28-50","event":"activity.input.changed","student":"dd","data":{"field":"cartesianPoint","value":"{\"x\":1.4,\"y\":2.32}"}}
